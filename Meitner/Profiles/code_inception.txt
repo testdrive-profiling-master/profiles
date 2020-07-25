@@ -1,0 +1,36 @@
+//================================================================================__CHECK__
+//__CHECK__ Copyright (c) 2013 ~ __YEAR__. HyungKi Jeong(clonextop@gmail.com)
+//__CHECK__ All rights reserved.
+//__CHECK__ 
+//__CHECK__ The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+//__CHECK__ 
+//__CHECK__ Redistribution and use in source and binary forms,
+//__CHECK__ with or without modification, are permitted provided
+//__CHECK__ that the following conditions are met:
+//__CHECK__ 
+//__CHECK__ 1. Redistributions of source code must retain the above copyright notice,
+//__CHECK__    this list of conditions and the following disclaimer.
+//__CHECK__ 
+//__CHECK__ 2. Redistributions in binary form must reproduce the above copyright notice,
+//__CHECK__    this list of conditions and the following disclaimer in the documentation
+//__CHECK__    and/or other materials provided with the distribution.
+//__CHECK__ 
+//__CHECK__ 3. Neither the name of the copyright holder nor the names of its contributors
+//__CHECK__    may be used to endorse or promote products derived from this software
+//__CHECK__    without specific prior written permission.
+//__CHECK__ 
+//__CHECK__ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+//__CHECK__ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+//__CHECK__ THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+//__CHECK__ PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS
+//__CHECK__ BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+//__CHECK__ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+//__CHECK__ GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+//__CHECK__ HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+//__CHECK__ STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+//__CHECK__ ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+//__CHECK__ OF SUCH DAMAGE.
+//__CHECK__ 
+//__CHECK__ Title : __TITLE__
+//__CHECK__ Rev.  : __DATE__ (__AUTHOR__)
+//================================================================================__CHECK__

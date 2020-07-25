@@ -1,0 +1,12 @@
+html, body {
+	height: 100%;
+	overflow: auto;
+}
+body {
+	background:#ffffff;
+	margin:0;
+	padding:0px;
+	line-height:1.0em;
+	font-family:tahoma, arial, sans-serif;
+	font-size:100%;
+}

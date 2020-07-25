@@ -1,0 +1,11 @@
+#include <windows.h>
+#include "Resource.h"
+
+IDI_MAIN_ICON ICON                       "main.ico"
+
+IDR_ACCELERATOR ACCELERATORS 
+BEGIN
+    VK_F12,         IDC_CAPTURE_SCREEN,     VIRTKEY, NOINVERT
+    VK_RETURN,      IDC_TOGGLE_FULLSCREEN,  VIRTKEY, ALT, NOINVERT
+	VK_ESCAPE,      IDC_EXIT,               VIRTKEY, NOINVERT
+END

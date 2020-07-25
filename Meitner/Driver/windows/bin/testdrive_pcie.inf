@@ -1,0 +1,92 @@
+; ===============================================================================
+; TestDrive profiling master
+; ===============================================================================
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=TestDrive
+ClassGuid={3F4BFEF1-7C2D-4FF0-9C05-FEDCED481B0A}
+Provider=%MSFT%
+DriverVer=08/04/2015,1.0.0.0
+CatalogFile.NTx86=testdrive_pcie_x86.cat
+CatalogFile.NTamd64=testdrive_pcie_x64.cat
+
+[DestinationDirs]
+DefaultDestDir = 12
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=TestDriveClassReg
+
+[TestDriveClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+HKR,,DeviceCharacteristics,0x10001,0x100     ;Use same security checks on relative opens
+HKR,,Security,,"D:P(A;;GA;;;SY)(A;;GA;;;BA)" ;Allow generic all access to system and built-in Admin. 
+;HKR,,MSICapability,0x00010001,0x00400000
+;HKR,,MsiNeeded,0x00010001,0x04
+HKR,Interrupt Management,,0x00000010
+HKR,Interrupt Management\MesssageSignalInterruptProperties,,0x00000010
+HKR,Interrupt Management\MesssageSignalInterruptProperties,MSISupported,0x00010001,1
+HKR,Interrupt Management\MesssageSignalInterruptProperties,MessageNumberLimit,0x00010001,16
+
+; ================= Device Install section =====================
+
+[ControlFlags]
+ExcludeFromSelect=*
+
+
+[Manufacturer]
+%MSFT%=MSFT,NTx86,NTamd64
+
+; For Win2K
+[MSFT]
+; DisplayName            Section           DeviceId
+; -----------       	 -------           --------
+%TestDrivePCIe.DRVDESC%=TestDrivePCIe_Inst, PCI\VEN_10EE&DEV_7022&SUBSYS_2D3DC10E
+
+; For XP and later
+[MSFT.NTx86]
+; DisplayName            Section           DeviceId
+; -----------       	 -------           --------
+%TestDrivePCIe.DRVDESC%=TestDrivePCIe_Inst, PCI\VEN_10EE&DEV_7022&SUBSYS_2D3DC10E
+
+[MSFT.NTamd64]
+; DisplayName            Section           DeviceId
+; -----------       	 -------           --------
+%TestDrivePCIe.DRVDESC%=TestDrivePCIe_Inst, PCI\VEN_10EE&DEV_7022&SUBSYS_2D3DC10E
+
+[TestDrivePCIe_Inst.NT]
+CopyFiles=TestDrivePCIe.CopyFiles
+
+
+[TestDrivePCIe.CopyFiles]
+testdrive.sys
+
+[SourceDisksFiles]
+testdrive.sys=1
+
+[SourceDisksNames.x86]
+1 = %DISK_NAME%,,,\x86
+
+[SourceDisksNames.amd64]
+1 = %DISK_NAME%,,,\x64
+
+
+[TestDrivePCIe_Inst.NT.Services]
+AddService=TestDrivePCIe,0x00000002,TestDrivePCIe_Service 
+
+[TestDrivePCIe_Service]
+DisplayName    = %TestDrivePCIe.SVCDESC%                            
+ServiceType    = 1                  ; SERVICE_KERNEL_DRIVER
+StartType      = 3                  ; SERVICE_DEMAND_START
+ErrorControl   = 1                  ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\testdrive.sys    
+
+[Strings]
+MSFT = "CloneX Developments."
+ClassName = "TestDrive"
+TestDrivePCIe.SVCDESC = "TestDrive PCIe Driver Service"
+TestDrivePCIe.DRVDESC = "TestDrive PCIe Driver"
+DISK_NAME = TestDrive PCIe driver Install Disk"

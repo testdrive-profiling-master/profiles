@@ -1,0 +1,710 @@
+// General purpose Assembly ver 0.02d
+// 문법 정의 방법
+
+/*
+#include filename_string	: C의 #include와 같은 기능을 한다.
+#function    function_name	description_function
+					function_name			: string 타입으로 ""로 문자열을 표시해야 한다.
+					description_function	: 긴 함수정의 문법들로 나열되어 동작을 수행하도록 한다.
+									@M message_string
+									#M [message_string]
+																: 로그에 메시지를 출력한다.
+									(@,#)E						: 강제로 에러를 발생시킨다.
+									(@,#)N						: 다음 저장될 명령어로 이동한다.
+									(@,#)P						: 이전의 저장된 명령어로 이동한다.
+									(@,#)L						: line feed, 코드 라인이 없으면 한번 더 받는다.
+									(@,#)I variable_(name,int,hex,float,binary,string)	
+																: Insert line, 코드 라인에 추가시킨다.
+									@F name_function
+									#F [name_function]			: 다른 함수 동작을 함수명으로 호출한다.
+									@V variable_name
+									#V [variable_name]			: 현재 참조변수를 설정한다.
+																  variable_name으로 PC를 설정하면 현재 PC address가 현재 참조 변수로 설정된다.
+									@$(i,f,s,n) variable_name
+									#$(i,f,s,n) [variable_name]	: 새로운 변수이름을 추가시키고 속성을 (i:int, f:float, s:string, n:name)로 정하며, 그 변수를 참조변수로 지정한다.
+									(@,#)A						: 새로운 PC address tag 가 추가되고 이것은 현재 PC address로 설정한다.
+																  이것은 "@V PC" 문법을 통하여 현재 참조변수로 설정할 수 있다.
+									@T (tag_address,{{,{,},#,$,%)
+									#T [tag_address]			: 어드레스 테그를 추가시키거나 현재 함수 깊이를 참조변수에 설정한다.
+																  '{{' 는 현재 함수 깊이를 증가 시키고 현재 함수가 루프임을 나타낸다.
+																  '{' 는 현재 함수 깊이를 증가 시킨다.
+																  '}' 는 현재 함수 깊이를 감소 시킨다. (감소한 함수 깊이가 0일 때, 함수 번호가 1 증가한다.)
+																  '#' 는 현재 참조변수에 함수 깊이를 넣는다. (함수 깊이는 최초 0을 가리키며, "@T{"또는 "@T{{" 명령 이후 일때 1 증가되고 "@T}" 명령 이후 1 감소한다.)
+																  '$' 는 현재 참조변수에 함수 번호를 넣는다. (함수 번호는 최초 0을 가리키며, 함수 깊이가 1일 때 "@T}" 명령 이후 함수 깊이는 1 감소해 0이 되고 함수 번호는 1 증가된다.)
+																  '%' 는 현재 참조변수에 "@T{{" 에 의한 루프문 내에 있으면 1을 그렇지 않으면 0을 넣는다.
+																  '{{' 또는 '{'과 '}'는 서로 페어로 사용되어야 한다.
+																  만약 '}'이 '{'또는 '{{'보다 먼저 선언되어 있거나, 서로 쌍의 개수로 맞지 않을 경우 에러로 처리된다.
+									
+									@(=$,=,+,-,*,/,<,>,&,|,^,~) variable_(name,int,hex,float,binary)
+									#(=$,=,+,-,*,/,<,>,&,|,^,~) [variable_(name,int,hex,float,binary)]
+																: 참조변수의 값을 지정한 변수나 상수을 (=$(대입,타입일치),=(대입),+(덧셈),-(뺄셈),*(곱셈),/(나눗셈),<(왼쪽 쉬프트),>(왼쪽 쉬프트)
+																  ,&(AND),|(OR),^(XOR),~(NOT)) 연산을 한다.
+																  문자열 변수나 이름 변수일 경우 '=' 연산자만 사용가능하다.
+																  단, 연산 대상 값이 초기화 되어 있지 않으면 오류로 처리한다.
+									@? variable_(name,int,hex,float,binary,'#','%') true_function {: false_function}
+									#? [variable_(name,int,hex,float,binary)] true_function {: false_function}
+																: 참조변수가 variable과 같으면 true 함수를 수행하고 아니면 false 함수로 수행 후 자신의 다음 함수를 수행한다.
+																  function이 들어갈 자리에 '*' 특수 문자가 있을 경우 이후의 함수 정의 문법들을 무시하고,
+																  # 문자일 경우 다음 함수 정의 문법이 바로 실행되도록 하며,
+																  @ 문자일 경우 다시 function 이름을 받아 조건에 맞게 실행 후 이후의 함수 정의 문법들을 무시한다.
+																  "@ ?variable_" 에서 '#'일 경우 참조변수가 정수일 때 true, 그렇지 않으면 false를 지시한다.
+																  "@ ?variable_" 에서 '%'일 경우 참조변수가 실수일 때 true, 그렇지 않으면 false를 지시한다.
+									(@,#)!{!} token_string true_function {: false_function}
+																: token 문자열이 있으면 true 함수를 수행하고 아니면 false 함수로 수행 후 자신의 다음 함수를 수행한다.
+																  function이 들어갈 자리에 '*' 특수 문자가 있을 경우 이후의 함수 정의 문법들을 무시하고,
+																  # 문자일 경우 다음 함수 정의 문법이 바로 실행되도록 하며,
+																  @ 문자일 경우 다시 function 이름을 받아 조건에 맞게 실행 후 이후의 함수 정의 문법들을 무시한다.
+																  !가 두번 사용되면 토큰 스트링을 비교 후 discard 되지 않는다.
+									(@,#)C token_string true_function {: false_function}
+																: 현재 문자열이나 이름 참조변수에 token 문장 존재하면 true 함수를 수행하고 아니면 false 함수로 수행 후 자신의 다음 함수를 수행한다.
+																true/false 조건 판별 이외에는 "(@,#)!" 과 동작이 동일하다.
+																만드시 먼저 문자열이나 이름 참조변수가 먼저 선택되어야 한다.
+									(@,#)W width_int true_function {: false_function}
+																: 현재 문자열 길이가 width와 같으면 true 함수를 수행하고 아니면 false 함수로 수행 후 자신의 다음 함수를 수행한다.
+																true/false 조건 판별 이외에는 "(@,#)!" 과 동작이 동일하다.
+																만드시 먼저 문자열이나 이름 참조변수가 먼저 선택되어야 한다.
+									@R{((,),[,],{,},@)} bitwidth_int position_int dest_address
+									#R{@} bitwidth_int position_int [dest_address]
+																: 현재 명령어의 position 번째 비트부터 bitwidth 만큼 dest와의 상대 주소 값을 저장한다.
+									@D{((,),[,],{,},@)} bitwidth_int position_int dest_address
+									#D{@} bitwidth_int position_int [dest_address]
+																: 현재 명령어의 position 번째 비트부터 bitwidth 만큼 dest의 절대 주소 값을 저장한다.
+																  @R과 @D에서 '(', ')'은 현재 루프의 시작과 끝 주소를 말하며,
+																              '[', ']'은 현재 함수의 깊이 레벨0의 시작과 끝을 말한다.
+																              '{', '}'는 현재 함수 깊이의 시작과 끝을 말한다.
+																              dest_addres는 동일한 함수레벨에서 선언된 주소를 가리키며, @ 선언이 있으면 함수깊이 0번에 선언한 주소를 가리킨다.
+																              "()[]{}"를 사용할 경우 dest_address는 사용되지 않는다.
+
+									@S bitwidth_int position_int dest_(name,int,hex,binary)
+									#S bitwidth_int position_int [dest_(name,int,hex,binary)]
+																: 현재 명령어의 position 번째 비트부터 bitwidth 만큼 dest의 변수 값이나 상수 값을 저장한다.
+									@@ custom_function_int		: 특수 설계된 함수 custom_function_int번을 실행한다.
+************************** 참조 **************************
+function 동작 문법에서
+*_function	: 함수의 동작을 지정하는 문자열로써 그 라인의 끝까지 동작 문법들로 정의된다.
+*_string	: ""로 묶여있는 문자열을 의미한다. ex) "home"
+*_name		: 연속된 문자, 숫자, '_' 로 이루어진 이름을 의미한다. 단 첫 시작은 문자로 시작되어야 한다. ex) Tech_12
+*_int		: 정수를 의미한다. ex) 1, 4, 6346, -1534, 0
+*_hex		: 16진수를 의미한다. ex) 0x59, 0x4F00
+*_float		: 실수를 의미한다. ex) -0.054, 11254.
+*_binary	: 이진수를 의미한다. ex) 0b00101, 0b10111111101
+()			: () 안에 상위의 속성을 ',' 문자로 구분하고 나열하여 그 중 하나만 선언 가능함을 의미한다.
+{}			: {} 안의 문법에 맞는 문장이 존재할 경우만 받아 들인다.
+[]			: #function    함수정의 문법에서가 아닌 소스에서 얻는다.
+
+*/
+// 기본 어셈블러 구현
+//--------------------------------------------------------------------------------------------------------------------
+// Common functions
+//--------------------------------------------------------------------------------------------------------------------
+// debugging message output
+#function	DEBUG_OUT		(#M);
+
+// variable calculation
+#function	GP_SET_EQL_ADD	@! "+" # : @GP_SET_EQL_SUB	#+ @F GP_SET_EQL_ADD
+#function	GP_SET_EQL_SUB	@! "-" # : @GP_SET_EQL_MUL	#- @F GP_SET_EQL_ADD
+#function	GP_SET_EQL_MUL	@! "*" # : @GP_SET_EQL_DIV	#* @F GP_SET_EQL_ADD
+#function	GP_SET_EQL_DIV	@! "/" # : @GP_SET_EQL_AND	#/ @F GP_SET_EQL_ADD
+#function	GP_SET_EQL_AND	@! "&" # : @GP_SET_EQL_OR	#& @F GP_SET_EQL_ADD
+#function	GP_SET_EQL_OR	@! "|" # : @GP_SET_EQL_XOR	#| @F GP_SET_EQL_ADD
+#function	GP_SET_EQL_XOR	@! "^" # : *				#^ @F GP_SET_EQL_ADD
+
+// equation
+#function	GP_SET_ERR		@M "잘못된 즉치 연산이 사용되었습니다." @E
+#function	GP_SET_EQUAL	@! "="  # : @GP_SET_ADD #= @F GP_SET_EQL_ADD
+#function	GP_SET_ADD		@! "+=" # : @GP_SET_SUB #+
+#function	GP_SET_SUB		@! "-=" # : @GP_SET_MUL #-
+#function	GP_SET_MUL		@! "*=" # : @GP_SET_DIV #*
+#function	GP_SET_DIV		@! "/=" # : @GP_SET_AND #/
+#function	GP_SET_AND		@! "&=" # : @GP_SET_OR  #&
+#function	GP_SET_OR		@! "|=" # : @GP_SET_XOR #|
+#function	GP_SET_XOR		@! "^=" # : @GP_SET_NOT #^
+#function	GP_SET_NOT		@! "~=" # : @GP_SET_ERR #~
+#function	put				#V @F GP_SET_EQUAL ;
+
+// new variable
+#function	GP_INT_EQUAL	#= @F GP_SET_EQL_ADD
+#function	int				#$i @! "=" GP_INT_EQUAL ;
+
+#function	_SET_EQUAL		#= 
+#function	name			#$n @! "=" _SET_EQUAL ;
+#function	string			#$s @! "=" _SET_EQUAL ;
+
+int GP_PHASE		= 0;
+int GP_UINST		= 0;
+int GP_INTEGER		= 0;
+int	_GP_CONST		= 0;
+
+int GP_INDEX_DEST	= 0;
+int GP_INDEX_SRCA	= 0;
+int GP_INDEX_SRCB	= 0;
+int GP_SI_CHECK		= 0;
+
+int GP_TEMP_VALUE	= 0;
+int GP_LOOP_ADDRESS	= 0;
+
+// enumerate
+int GP_ENUM_VAL		= 0;
+#function	GP_ENUM_SET		@V GP_ENUM_VAL #= @F GP_SET_EQL_ADD ;
+#function	enum			@! "=" @GP_ENUM_SET #$i @= GP_ENUM_VAL @V GP_ENUM_VAL @+ 1 ;
+
+// variable for common
+int GP_MO			= 0;															//micro operation 변수 저장
+
+// New instruction
+#function	GP_NEW_UINT		@N 4 @V PC@+ 1 @S 1 30 GP_PHASE							// 새로운 명령어가 추가되면 PC를 증가시키고 코드를 추가하며, 현재 페이즈 번호를 저장한다.
+
+//setting micro operation
+#function	GP_SET_MO			@S 4 26 GP_MO                                       //GP_MO 변수를 MO bit에 셋팅
+
+// operand check
+#function	GP_OPERAND_EX_SRC	@V GP_INTEGER @= 0 @V _GP_CONST @= 0 @V GP_UINST @+ 1 @F GP_NEW_UINT  @V GP_MO @= 0b0000 @F GP_GET_SRCB @F GP_SET_MISC_INDEX
+#function	GP_OPERAND_AR_MAIN	@F GP_GET_DEST, 	@F GP_GET_SRCA @! "," GP_OPERAND_EX_SRC	// 연산 명령어가 main 명령어로 구현될 때. : 추가해야 함.
+#function	GP_OPERAND_AR_SUB	@F GP_GET_MOMASK, 	@F GP_GET_SRCB 	@F GP_SET_MISC_INDEX	// 연산 명령어가 sub 명령어로 구현될 때. : 추가해야 함.
+#function	GP_OPERAND_AR		( @V GP_UINST @? 1 GP_OPERAND_AR_SUB : GP_OPERAND_AR_MAIN )
+
+//phase 
+#function	PHASE_ADD			@V GP_PHASE @+ 1
+#function	GP_CHECK_PHASE0		@V GP_PHASE @? 0 * : @M "페이즈 #0에서 허용되지 않는 명령어가 기술되었습니다." @E		// phase =0 로 셋팅
+#function	GP_CHECK_PHASE1		@V GP_PHASE @? 1 * : @PHASE_ADD              //phase =1 로 셋팅
+#function	GP_CHECK_MAIN		@V GP_UINST @? 0 * : @M "이 명령어는 MAIN 명령어로만 사용될 수 있습니다." @E			// main command가 아니면 에러
+#function	GP_CHECK_SUB		@V GP_UINST @? 1 * : @M "이 명령어는 SUB 명령어로만 사용될 수 있습니다." @E				// sub commend가 아니면 에러
+
+//error
+#function	GP_ERROR		@M "문법 오류가 발생했습니다." @E
+#function	GP_ERROR_PHASE	@M "잘못된 페이즈 사용 또는 지정이 발생했습니다." @E
+#function	GP_ERROR_UINST	@M "하나의 페이즈가 허용할 수 있는 유닛 명령어 수가 초과했습니다." @E
+
+//--------------------------------------------------------------------------------------------------------------------
+// Arithmetic Command   2008 - 12 - 20     
+//--------------------------------------------------------------------------------------------------------------------
+
+//////////////////////////WMASK & MOMASK///////////////////////////////////////
+#function	GP_WMASK_sx		@S 4 8  0b0111
+#function	GP_WMASK_sy		@S 3 8  0b011
+#function	GP_WMASK_sz		@S 2 8  0b01
+#function	GP_WMASK_sw		@S 1 8  0b0
+
+#function	GP_WMASK_X		@! "x" # : @GP_WMASK_Y @F GP_WMASK_sx @F GP_WMASK_Y
+#function	GP_WMASK_Y		@! "y" # : @GP_WMASK_Z @F GP_WMASK_sy @F GP_WMASK_Z
+#function	GP_WMASK_Z		@! "z" # : @GP_WMASK_W @F GP_WMASK_sz @F GP_WMASK_W
+#function	GP_WMASK_W		@! "w" # : * @F GP_WMASK_sw  
+#function	GP_WMASK_ALL	@S 4 8 0b0000
+#function	GP_WMASK_INIT	@S 4 8 0b1111
+#function	GP_CHECK_WMASK	@F GP_WMASK_INIT @! "." # : @GP_WMASK_ALL @F GP_WMASK_X
+
+
+#function	GP_MOMASK_sx		@S 4 22  0b0111
+#function	GP_MOMASK_sy		@S 3 22  0b011
+#function	GP_MOMASK_sz		@S 2 22  0b01
+#function	GP_MOMASK_sw		@S 1 22  0b0
+
+#function	GP_MOMASK_X			@! "x" # : @GP_MOMASK_Y @F GP_MOMASK_sx @F GP_MOMASK_Y
+#function	GP_MOMASK_Y			@! "y" # : @GP_MOMASK_Z @F GP_MOMASK_sy @F GP_MOMASK_Z
+#function	GP_MOMASK_Z			@! "z" # : @GP_MOMASK_W @F GP_MOMASK_sz @F GP_MOMASK_W
+#function	GP_MOMASK_W			@! "w" # : * @F GP_MOMASK_sw  
+#function	GP_MOMASK_ALL		@S 4 22 0b0000
+#function	GP_MOMASK_INIT		@S 4 22 0b1111
+#function	GP_CHECK_MOMASK		@F GP_MOMASK_INIT @! "." # : @GP_MOMASK_ALL @F GP_MOMASK_X
+
+// MOMASK Setting
+#function	GP_MOMASK1_sx		@S 1 25  0b1
+#function	GP_MOMASK1_sy		@S 1 24  0b1
+#function	GP_MOMASK1_sz		@S 1 23  0b1
+#function	GP_MOMASK1_sw		@S 1 22  0b1
+#function	GP_MOMASK1_X		@! "x" # : @GP_MOMASK1_Y @F GP_MOMASK1_sx @F GP_MOMASK1_Y
+#function	GP_MOMASK1_Y		@! "y" # : @GP_MOMASK1_Z @F GP_MOMASK1_sy @F GP_MOMASK1_Z
+#function	GP_MOMASK1_Z		@! "z" # : @GP_MOMASK1_W @F GP_MOMASK1_sz @F GP_MOMASK1_W
+#function	GP_MOMASK1_W		@! "w" # : * @F GP_MOMASK1_sw  
+#function	GP_MOMASK1_INIT	    @S 4 22 0b0000
+#function   GP_CHECK_MOMASK1		@! "-" * : GP_MOMASK1_X 
+#function	GP_CHECK_MOMASK_START	@F GP_MOMASK1_INIT @F GP_CHECK_MOMASK1 
+
+#function	GP_GET_MOMASK		@F GP_CHECK_MOMASK_START   //switch 셋팅 후 MOMASK check&setting
+#function	GP_SET_INTEGER		@S 1 14 1 @V GP_INTEGER @= 1
+
+#function	GP_CATCH_DEST_ERR	@V GP_UINST @? 0 * @V GP_INDEX_DEST @? 0 * @M "DEST 필드가 5비트를 넘기 때문에 서브 명령어가 선언되어야 합니다." @E
+#function	GP_CHECK_NEGATE		@! "-" # : * @S 1 12 1 @F GP_CATCH_DEST_ERR
+#function	GP_CHECK_INTEGER	@! "(int)" GP_SET_INTEGER : *
+// Source operation
+//#function	GP_GET_CONST_FP		@V GP_TEMP_VALUE #= @> 23 @- 127 @+ 63 @S 8 0 GP_TEMP_VALUE
+#function	GP_GET_CONST_ERR	@M "상수가 명령어로 표현할 수 있는 범위를 넘어 섰습니다." @E
+#function	GP_GET_CONST_FP		@> 23 @- 64 @S 8 0 GP_TEMP_VALUE
+#function	GP_CATCH_CONST_ERR	@V GP_UINST @? 0 * @V GP_INDEX_DEST @? 0 * @M "목적지 레지스터 인덱스가 31을 넘어서면 서브 명령어에서 상수 표현과 충돌합니다. 메인 명령어에서 정상적인 상수 표현이 가능합니다." @E
+#function	GP_GET_CONST		@F GP_CATCH_CONST_ERR @V _GP_CONST @= 1 @S 1 13 1 @V GP_TEMP_VALUE #=$ @? % @GP_GET_CONST_FP @S 8 0 GP_TEMP_VALUE @> 8 @S 5 16 GP_TEMP_VALUE @> 5 @? 0 # : GP_GET_CONST_ERR @F GP_SET_INTEGER
+#function	GP_GET_DEST_ERR		@M "목적지 레지스터는 다음과 같이 선언되어야 합니다. 'r[#]'." @E
+#function	GP_GET_DEST			@V GP_INDEX_DEST	@! "r[" # : GP_GET_DEST_ERR #= ] @F GP_SET_DEST @F GP_CHECK_WMASK									//destination addr set -> WMASK set
+#function	GP_GET_SRCA			@F GP_CHECK_INTEGER @F GP_CHECK_NEGATE @V GP_INDEX_SRCA @! "r[" # : @GP_GET_CONST #= ] @F GP_SET_SRCA @F GP_CHECK_SWZ	//main_src addr set  -> swizzle set
+#function	GP_GET_SRCB			@F GP_CHECK_INTEGER @F GP_CHECK_NEGATE @V GP_INDEX_SRCB @! "r[" # : @GP_GET_CONST #= ] @F GP_SET_SRCB @F GP_CHECK_SWZ	//sub_src  addr set  -> swizzle set
+
+#function	GP_SET_DEST			@S 5 21 GP_INDEX_DEST	@V GP_INDEX_DEST	@> 5
+#function	GP_SET_SRCA			@S 5 16 GP_INDEX_SRCA	@V GP_INDEX_SRCA	@> 5
+#function	GP_SET_SRCB			@S 5 16 GP_INDEX_SRCB	@V GP_INDEX_SRCB	@> 5
+
+#function	GP_SET_DEST_INDEX	@V GP_INDEX_DEST @? 0 * : # @S 1 21 1 @S 2 12 GP_INDEX_DEST
+#function	GP_SET_MISC_INDEX	@S 2 10 GP_INDEX_SRCA	@S 2 8 GP_INDEX_SRCB	@F GP_SET_DEST_INDEX
+
+// Phase & Unit instruction check
+//#function	GP_CHECK_END		@! "," # : @GP_CHECK_END0 @V GP_UINST @+ 1 @? 2 GP_ERROR												// ','로 끝나는 경우 : uinst 증가시키고 그 값이 1을 넘으면 에러.
+#function	GP_CHECK_END		@V GP_INTEGER @= 0 @V _GP_CONST @= 0 @! "," # : @GP_CHECK_BND  @V GP_UINST @+ 1 @? 2 GP_ERROR_UINST						// ','로 끝나는 경우 : uinst 증가시키고 그 값이 1을 넘으면 에러.
+// Boundary error check
+#function	GP_CHECK_BND_ERR	@M "소스 필드가 5비트를 넘기 때문에 서브 명령어가 선언되어야 합니다." @E
+#function	GP_CHECK_BND 		@V GP_UINST @? 0 # : @GP_CHECK_END0 @V GP_INDEX_DEST @? 0 # : GP_CATCH_DEST_ERR @V GP_INDEX_SRCA @? 0 GP_CHECK_END0 : GP_CHECK_BND_ERR
+
+#function	GP_CHECK_END1_ERR	@M "다음 식별자가 없습니다. ';'" @E
+#function	GP_CHECK_END0_ERR	@M "해당 식별자가 유닛 명령어 초과 선언으로 사용할 수 없습니다. '/'" @E
+#function	GP_CHECK_END0		@F GP_CLR_VAL 	@! "/" # : @GP_CHECK_END1 @V GP_UINST @= 0b0 @V GP_PHASE @+ 1 @? 2 GP_CHECK_END0_ERR	// '/'로 끝나는 경우 : uinst 초기화, phase 증가 후 1을 넘으면 에러.
+#function	GP_CHECK_END1						@! ";" # : GP_CHECK_END1_ERR @S 1 31 1 @V GP_PHASE @= 0 @V GP_UINST @= 0 @A				// ';'로 끝나는 경우 : end 비트를 1로 설정하고, phase 및 uinst를 초기화 시킨다.
+
+// Variable clear
+#function	GP_CLR_VAL			@V GP_SI_CHECK @= 0		@V GP_INDEX_DEST @= 0		@V GP_INDEX_SRCA @= 0
+
+// Swizzle [7:0]			// x/y/z/w,r/g/b/a,s/t/p/q 에 대한 swizzle을 지정 할 수 있도록 한다.
+#function	GP_SWZ_0_0		@S 8 0 0b00000000
+#function	GP_SWZ_0_1		@S 8 0 0b01010101
+#function	GP_SWZ_0_2		@S 8 0 0b10101010
+#function	GP_SWZ_0_3		@S 8 0 0b11111111
+#function	GP_SWZ_1_0		@S 6 0 0b000000
+#function	GP_SWZ_1_1		@S 6 0 0b010101
+#function	GP_SWZ_1_2		@S 6 0 0b101010
+#function	GP_SWZ_1_3		@S 6 0 0b111111
+#function	GP_SWZ_2_0		@S 4 0 0b0000
+#function	GP_SWZ_2_1		@S 4 0 0b0101
+#function	GP_SWZ_2_2		@S 4 0 0b1010
+#function	GP_SWZ_2_3		@S 4 0 0b1111
+#function	GP_SWZ_3_0		@S 2 0 0b00
+#function	GP_SWZ_3_1		@S 2 0 0b01
+#function	GP_SWZ_3_2		@S 2 0 0b10
+#function	GP_SWZ_3_3		@S 2 0 0b11
+#function	GP_SWZ_INIT		@S 8 0 0b00011011
+#function	GP_SWZ_X		@! "x" @GP_SWZ_0_0 @! "y" @GP_SWZ_0_1 @! "z" @GP_SWZ_0_2 @! "w" @GP_SWZ_0_3 @! "r" @GP_SWZ_0_0 @! "g" @GP_SWZ_0_1 @! "b" @GP_SWZ_0_2 @! "a" @GP_SWZ_0_3 @! "s" @GP_SWZ_0_0 @! "t" @GP_SWZ_0_1 @! "p" @GP_SWZ_0_2 @! "q" @GP_SWZ_0_3
+#function	GP_SWZ_Y		@! "x" @GP_SWZ_1_0 @! "y" @GP_SWZ_1_1 @! "z" @GP_SWZ_1_2 @! "w" @GP_SWZ_1_3 @! "r" @GP_SWZ_1_0 @! "g" @GP_SWZ_1_1 @! "b" @GP_SWZ_1_2 @! "a" @GP_SWZ_1_3 @! "s" @GP_SWZ_1_0 @! "t" @GP_SWZ_1_1 @! "p" @GP_SWZ_1_2 @! "q" @GP_SWZ_1_3
+#function	GP_SWZ_Z		@! "x" @GP_SWZ_2_0 @! "y" @GP_SWZ_2_1 @! "z" @GP_SWZ_2_2 @! "w" @GP_SWZ_2_3 @! "r" @GP_SWZ_2_0 @! "g" @GP_SWZ_2_1 @! "b" @GP_SWZ_2_2 @! "a" @GP_SWZ_2_3 @! "s" @GP_SWZ_2_0 @! "t" @GP_SWZ_2_1 @! "p" @GP_SWZ_2_2 @! "q" @GP_SWZ_2_3
+#function	GP_SWZ_W		@! "x" @GP_SWZ_3_0 @! "y" @GP_SWZ_3_1 @! "z" @GP_SWZ_3_2 @! "w" @GP_SWZ_3_3 @! "r" @GP_SWZ_3_0 @! "g" @GP_SWZ_3_1 @! "b" @GP_SWZ_3_2 @! "a" @GP_SWZ_3_3 @! "s" @GP_SWZ_3_0 @! "t" @GP_SWZ_3_1 @! "p" @GP_SWZ_3_2 @! "q" @GP_SWZ_3_3
+#function	GP_SWZ_INIT		@S 8 0 0b00011011
+#function	GP_CHECK_SWZ	@F GP_SWZ_INIT @! "." # : * @F GP_SWZ_X @F GP_SWZ_Y @F GP_SWZ_Z @F GP_SWZ_W
+
+//set albit
+#function	GP_SET_AL			@S 1 15 0b1
+
+#function   GP_MVS_SRC		@V GP_UINST @? 0 GP_GET_SRCA : GP_GET_SRCB
+#function   GP_MVS_DEST		@V GP_UINST @? 1 GP_GET_MOMASK : @GP_GET_DEST 
+
+
+#function	movi		@F GP_NEW_UINT  @V GP_MO @= 0b0000  @F GP_SET_INTEGER @F GP_SET_MO  @F GP_OPERAND_AR  @F GP_CHECK_END
+#function	addi		@F GP_NEW_UINT  @V GP_MO @= 0b0001  @F GP_SET_INTEGER @F GP_SET_MO  @F GP_OPERAND_AR  @F GP_CHECK_END
+#function	muli		@F GP_NEW_UINT  @V GP_MO @= 0b0010  @F GP_SET_INTEGER @F GP_SET_MO  @F GP_OPERAND_AR  @F GP_CHECK_END
+#function	cmpi		@F GP_NEW_UINT  @V GP_MO @= 0b0011  @F GP_SET_INTEGER @F GP_SET_MO  @F GP_OPERAND_AR  @F GP_CHECK_END
+#function	convi		@F GP_NEW_UINT  @V GP_MO @= 0b0111  @F GP_SET_INTEGER @F GP_SET_MO  @F GP_OPERAND_AR  @F GP_CHECK_END
+
+#function	mov			@F GP_NEW_UINT  @V GP_MO @= 0b0000  @F GP_SET_MO  @F GP_OPERAND_AR  @F GP_CHECK_END
+#function	mvs			@F GP_NEW_UINT  @V GP_MO @= 0b0000  @F GP_SET_MO  @F GP_SET_AL ( @F GP_MVS_DEST @! "," GP_MVS_SRC @F GP_SET_MISC_INDEX)  @F GP_CHECK_END
+#function	add			@F GP_NEW_UINT  @V GP_MO @= 0b0001  @F GP_SET_MO  @F GP_OPERAND_AR  @F GP_CHECK_END
+#function	mul			@F GP_NEW_UINT  @V GP_MO @= 0b0010  @F GP_SET_MO  @F GP_OPERAND_AR  @F GP_CHECK_END
+#function	cmp			@F GP_NEW_UINT  @V GP_MO @= 0b0011  @F GP_SET_MO  @F GP_OPERAND_AR  @F GP_CHECK_END
+#function	rcp			@F GP_NEW_UINT  @V GP_MO @= 0b0100  @F GP_SET_MO  @F GP_OPERAND_AR  @F GP_CHECK_END
+#function	rsq			@F GP_NEW_UINT  @V GP_MO @= 0b0100  @F GP_SET_MO  @F GP_SET_AL @F GP_OPERAND_AR  @F GP_CHECK_END
+#function	man			@F GP_NEW_UINT  @V GP_MO @= 0b0101  @F GP_SET_MO  @F GP_OPERAND_AR  @F GP_CHECK_END
+#function	exp			@F GP_NEW_UINT  @V GP_MO @= 0b0101  @F GP_SET_MO  @F GP_SET_AL @F GP_OPERAND_AR  @F GP_CHECK_END
+#function	flr			@F GP_NEW_UINT  @V GP_MO @= 0b0110  @F GP_SET_MO  @F GP_OPERAND_AR  @F GP_CHECK_END
+#function	frc			@F GP_NEW_UINT  @V GP_MO @= 0b0110  @F GP_SET_MO  @F GP_SET_AL @F GP_OPERAND_AR  @F GP_CHECK_END
+#function	and			@F GP_NEW_UINT  @V GP_MO @= 0b1000  @F GP_SET_MO  @F GP_OPERAND_AR  @F GP_CHECK_END
+#function	or			@F GP_NEW_UINT  @V GP_MO @= 0b1000  @F GP_SET_MO  @F GP_SET_AL @F GP_OPERAND_AR  @F GP_CHECK_END
+#function	xor			@F GP_NEW_UINT  @V GP_MO @= 0b1001  @F GP_SET_MO  @F GP_OPERAND_AR  @F GP_CHECK_END
+#function	shf			@F GP_NEW_UINT  @V GP_MO @= 0b1001  @F GP_SET_MO  @F GP_SET_AL @F GP_OPERAND_AR  @F GP_CHECK_END
+#function	conv		@F GP_NEW_UINT  @V GP_MO @= 0b0111  @F GP_SET_MO  @F GP_OPERAND_AR  @F GP_CHECK_END
+
+#function	badd		@F GP_NEW_UINT  @V GP_MO @= 0b1010  @F GP_SET_MO  @F GP_OPERAND_AR  @F GP_CHECK_END
+#function	fmt			@F GP_NEW_UINT  @V GP_MO @= 0b1010  @F GP_SET_MO  @F GP_SET_AL @F GP_OPERAND_AR  @F GP_CHECK_END
+
+
+//--------------------------------------------------------------------------------------------------------------------
+// Branch & Thread Command   2010/4/15
+// Thread ($op, #target)
+// $op : JMP or JMP.dir		: 현제 스레드를 분기시킨다. indirect jump(JMP) 또는 direct jump(JMP.dir)를 한다.
+//       ALL or ALL.dir		: 동일한 코어내의 모든 스레드를 생성한다. indirect new thread(ALL) 또는 direct new thread(ALL.dir)를 한다.
+//       SEQ or SEQ.dir		: 동일한 코어내의 단일 스레드 동작으로 유지한다. indirect thread sequnce(SEQ) 또는 direct thread sequnce(SEQ.dir)를 한다.
+//       SYNC or SYNC.dir	: 동일한 코어내의 단일 스레드 동작을 유지하고, 모든 코어가 동기될 때까지 기다린 후 실행한다. indirect core synchronize(SEQ) 또는 direct core synchronize(SEQ.dir)를 한다.
+//       END				: 현제 스레드를 종료한다.
+// #target					: 타겟 분기 주소
+//--------------------------------------------------------------------------------------------------------------------
+//thread 관련 함수
+#function	GP_THREAD_ERR			@M "다음 중 하나가 선택되어야 합니다. : JMP/ALL/END/SEQ/SYNC" @E
+#function	GP_CHECK_THREAD_JMP		@! "JMP" #: @GP_CHECK_THREAD_ALL  @S 4 21 0b0000 @F GP_CHECK_THREAD_CALL
+#function	GP_CHECK_THREAD_ALL		@! "ALL" #: @GP_CHECK_THREAD_END  @S 4 21 0b0001 @F GP_CHECK_THREAD_CALL
+#function	GP_CHECK_THREAD_END		@! "END" #: @GP_CHECK_THREAD_SEQ  @S 4 21 0b0010
+#function	GP_CHECK_THREAD_SEQ		@! "SEQ" #: @GP_CHECK_THREAD_SYNC @S 4 21 0b0011 @F GP_CHECK_THREAD_CALL
+#function	GP_CHECK_THREAD_SYNC	@! "SYNC" #: @GP_THREAD_ERR       @S 4 21 0b0111 @F GP_CHECK_THREAD_CALL
+
+#function	GP_CHECK_THREAD_CALL	@! ".dir" @GP_CHECK_THREAD_CALL_D @! "," # : @GP_CHECK_THREAD_NO_PC @S 1 25 1 #R 12 0	// relative branch
+#function	GP_CHECK_THREAD_NO_PC	@S 1 25 1 @S 12 0 0
+#function	GP_CHECK_THREAD_CALL_D	@! "," # : * #D 12 0												// direct branch
+#function	Thread		@F GP_CHECK_PHASE1	@F GP_CHECK_MAIN @F GP_NEW_UINT @S 4 26 0b1110 (@F GP_CHECK_THREAD_JMP) @F GP_CHECK_END
+
+// goto 로 간략화 구현
+#function	_GOTO_CALLR_LS	@! "(" # : @_GOTO_CALLR_LE @R( 12 0		// loop start
+#function	_GOTO_CALLR_LE	@! ")" # : @_GOTO_CALLR_FS @R) 12 0		// loop end
+#function	_GOTO_CALLR_FS	@! "[" # : @_GOTO_CALLR_FE @R[ 12 0		// func start
+#function	_GOTO_CALLR_FE	@! "]" # : @_GOTO_CALLR_PS @R] 12 0		// func end
+#function	_GOTO_CALLR_PS	@! "{" # : @_GOTO_CALLR_PE @R{ 12 0		// procedure start
+#function	_GOTO_CALLR_PE	@! "}" # : @_GOTO_CALLR_GC @R} 12 0		// procedure end
+#function	_GOTO_CALLR_GC	@! "@" # : @_GOTO_CALLR_N  #R@ 12 0		// global goto
+#function	_GOTO_CALLR_N	#R 12 0
+#function	_GOTO_CALLR		@!! ";" @GP_CHECK_THREAD_NO_PC @!! "," @GP_CHECK_THREAD_NO_PC @! ".dir" @_GOTO_CALLD_GC @S 1 25 1 @F _GOTO_CALLR_LS		// relative branch
+#function	_GOTO_CALLD_GC	@! "@" # : @_GOTO_CALLD_N  #D@ 12 0		// global goto		// direct branch
+#function	_GOTO_CALLD_N	#D 12 0
+
+#function	_GOTO_ALL		@! ".all" #: @_GOTO_END  @S 4 21 0b0001 @F _GOTO_CALLR
+#function	_GOTO_END		@! ".end" #: @_GOTO_SEQ  @S 4 21 0b0010
+#function	_GOTO_SEQ		@! ".seq" #: @_GOTO_SYNC @S 4 21 0b0011 @F _GOTO_CALLR
+#function	_GOTO_SYNC		@! ".sync" #: @_GOTO_JMP @S 4 21 0b0111 @F _GOTO_CALLR
+#function	_GOTO_JMP		@S 4 21 0b0000 @F _GOTO_CALLR
+
+#function	goto		@F GP_CHECK_PHASE1 @F GP_CHECK_MAIN @F GP_NEW_UINT @S 4 26 0b1110 @F _GOTO_ALL @F GP_CHECK_END
+
+//--------------------------------------------------------------------------------------------------------------------
+// pred : predication 2010/4/16
+// pred (r[#], (x/y/z/w)[-/N/EQ/NE/GE/GT/LE/LT/AL])
+//--------------------------------------------------------------------------------------------------------------------
+#function	GP_PRED_PARAM_ERR	@M "다음 중 하나가 선택되어야 합니다. : -/EQ/NE/GE/GT/LE/LT/AL." @E
+#function	GP_PRED_SET_X_N		@! "-" # :	@GP_PRED_SET_X_EQ	@S 4 12 0b0000
+#function	GP_PRED_SET_X_EQ	@! "EQ" # : @GP_PRED_SET_X_NE	@S 4 12 0b0001
+#function	GP_PRED_SET_X_NE	@! "NE" # : @GP_PRED_SET_X_GE	@S 4 12 0b0010
+#function	GP_PRED_SET_X_GE	@! "GE" # : @GP_PRED_SET_X_GT	@S 4 12 0b0101
+#function	GP_PRED_SET_X_GT	@! "GT" # : @GP_PRED_SET_X_LE	@S 4 12 0b0100
+#function	GP_PRED_SET_X_LE	@! "LE" # : @GP_PRED_SET_X_LT	@S 4 12 0b1001
+#function	GP_PRED_SET_X_LT	@! "LT" # : @GP_PRED_SET_X_ALL	@S 4 12 0b1000
+#function	GP_PRED_SET_X_ALL	@! "AL" # : @GP_PRED_PARAM_ERR	@S 4 12 0b1111
+
+#function	GP_PRED_SET_Y_N		@! "-" # :	@GP_PRED_SET_Y_EQ	@S 4 8 0b0000
+#function	GP_PRED_SET_Y_EQ	@! "EQ" # : @GP_PRED_SET_Y_NE	@S 4 8 0b0001
+#function	GP_PRED_SET_Y_NE	@! "NE" # : @GP_PRED_SET_Y_GE	@S 4 8 0b0010
+#function	GP_PRED_SET_Y_GE	@! "GE" # : @GP_PRED_SET_Y_GT	@S 4 8 0b0101
+#function	GP_PRED_SET_Y_GT	@! "GT" # : @GP_PRED_SET_Y_LE	@S 4 8 0b0100
+#function	GP_PRED_SET_Y_LE	@! "LE" # : @GP_PRED_SET_Y_LT	@S 4 8 0b1001
+#function	GP_PRED_SET_Y_LT	@! "LT" # : @GP_PRED_SET_Y_ALL	@S 4 8 0b1000
+#function	GP_PRED_SET_Y_ALL	@! "AL" # : @GP_PRED_PARAM_ERR	@S 4 8 0b1111
+
+#function	GP_PRED_SET_Z_N		@! "-" # :	@GP_PRED_SET_Z_EQ	@S 4 4 0b0000
+#function	GP_PRED_SET_Z_EQ	@! "EQ" # : @GP_PRED_SET_Z_NE	@S 4 4 0b0001
+#function	GP_PRED_SET_Z_NE	@! "NE" # : @GP_PRED_SET_Z_GE	@S 4 4 0b0010
+#function	GP_PRED_SET_Z_GE	@! "GE" # : @GP_PRED_SET_Z_GT	@S 4 4 0b0101
+#function	GP_PRED_SET_Z_GT	@! "GT" # : @GP_PRED_SET_Z_LE	@S 4 4 0b0100
+#function	GP_PRED_SET_Z_LE	@! "LE" # : @GP_PRED_SET_Z_LT	@S 4 4 0b1001
+#function	GP_PRED_SET_Z_LT	@! "LT" # : @GP_PRED_SET_Z_ALL	@S 4 4 0b1000
+#function	GP_PRED_SET_Z_ALL	@! "AL" # : @GP_PRED_PARAM_ERR	@S 4 4 0b1111
+
+#function	GP_PRED_SET_W_N		@! "-" # :	@GP_PRED_SET_W_EQ	@S 4 0 0b0000
+#function	GP_PRED_SET_W_EQ	@! "EQ" # : @GP_PRED_SET_W_NE	@S 4 0 0b0001
+#function	GP_PRED_SET_W_NE	@! "NE" # : @GP_PRED_SET_W_GE	@S 4 0 0b0010
+#function	GP_PRED_SET_W_GE	@! "GE" # : @GP_PRED_SET_W_GT	@S 4 0 0b0101
+#function	GP_PRED_SET_W_GT	@! "GT" # : @GP_PRED_SET_W_LE	@S 4 0 0b0100
+#function	GP_PRED_SET_W_LE	@! "LE" # : @GP_PRED_SET_W_LT	@S 4 0 0b1001
+#function	GP_PRED_SET_W_LT	@! "LT" # : @GP_PRED_SET_W_ALL	@S 4 0 0b1000
+#function	GP_PRED_SET_W_ALL	@! "AL" # : @GP_PRED_PARAM_ERR	@S 4 0 0b1111
+
+#function	PRED_SOURCE			( r[ @V GP_INDEX_SRCA #= @F GP_SET_SRCA  ] , @F GP_PRED_SET_X_N , @F GP_PRED_SET_Y_N , @F GP_PRED_SET_Z_N , @F GP_PRED_SET_W_N )
+
+#function	pred		@F GP_CHECK_PHASE0 @F GP_CHECK_MAIN @F GP_NEW_UINT @S 4 26 0b1100 @F PRED_SOURCE @F GP_CHECK_END
+
+//--------------------------------------------------------------------------------------------------------------------
+// addr : address coordinate	2010/4/16
+// addr (r[#], {dest.{x/y/z/w}, addr.{x/y/z/w}})
+//--------------------------------------------------------------------------------------------------------------------
+#function	GP_ADDR_ERR			@M "사용할 컴퍼넌트를 다음 중 하나를 선택하여 지정하여야 합니다. : .x/.y/.z/.w" @E
+#function	GP_ADDR_ID_ERR		@M "잘못된 address coordinate가 사용되었습니다. 다음 중 하나로 지정하십시오. : addr/dest" @E
+#function	GP_ADDR_CHECK_ERR	@V _GP_CONST @? 0 * @M "address coordinate 명령어에는 상수를 소스로 지정할 수 없습니다." @E
+#function	GP_ADDR_DEST_X		@! ".x" # : @GP_ADDR_DEST_Y @S 2 2 0
+#function	GP_ADDR_DEST_Y		@! ".y" # : @GP_ADDR_DEST_Z @S 2 2 1
+#function	GP_ADDR_DEST_Z		@! ".z" # : @GP_ADDR_DEST_W @S 2 2 2
+#function	GP_ADDR_DEST_W		@! ".w" # : @GP_ADDR_ERR @S 2 2 3
+#function	GP_ADDR_DEST		@! "dest" # : @GP_ADDR_RELATIVE @S 1 7 0 @F GP_ADDR_DEST_X
+#function	GP_ADDR_RELATIVE_X	@! ".x" # : @GP_ADDR_RELATIVE_Y @S 2 0 0
+#function	GP_ADDR_RELATIVE_Y	@! ".y" # : @GP_ADDR_RELATIVE_Z @S 2 0 1
+#function	GP_ADDR_RELATIVE_Z	@! ".z" # : @GP_ADDR_RELATIVE_W @S 2 0 2
+#function	GP_ADDR_RELATIVE_W	@! ".w" # : @GP_ADDR_ERR @S 2 0 3
+#function	GP_ADDR_RELATIVE	@! "addr" # : @GP_ADDR_ID_ERR @S 1 6 0 @F GP_ADDR_RELATIVE_X
+#function	GP_ADDR_CHECK		@F GP_ADDR_DEST @! "," GP_ADDR_DEST
+#function	GP_ADDR_WR			@! "d[" # : *  @V GP_INDEX_DEST #= ] @S 4 8 0b0000 @F GP_SET_DEST @F GP_CHECK_WMASK ,
+#function	addr				@F GP_CHECK_PHASE0 @F GP_CHECK_MAIN @F GP_NEW_UINT @S 4 26 0b1101 @S 4 8 0b1111 @S 1 14 1 (@F GP_ADDR_WR @F GP_GET_SRCA @S 8 0 0b11011011 , @F GP_ADDR_CHECK_ERR @F GP_ADDR_CHECK ) @F GP_CHECK_END
+
+//--------------------------------------------------------------------------------------------------------------------
+// MEM Command  2009 1- 7  sampler uv 좌표 추가
+//--------------------------------------------------------------------------------------------------------------------
+// sampler[id#](r[#]) : r[#+destination].rgba = Sampler(Texture[id#], r[#].x, r[#].y)
+//                											  MO         ID=2
+// 제거됨
+//#function	Sampler		@F GP_CHECK_PHASE1 @F GP_NEW_UINT @S 4 26 0b1111 @S 4 22 2 [ #S 8 0 ] (r[ #S 5 16 ]) @F GP_CHECK_END
+// 제거됨
+// GetBuffer(id#, target gprs#, source gprs#)		          MO         ID=3    W[0]
+//#function	GetBuffer	@F GP_CHECK_PHASE1 @F GP_NEW_UINT @S 4 26 0b1111 @S 4 22 3 (#S 8 8 , #S 8 0 , #S 5 16) @F GP_CHECK_END
+// SetBuffer(id#, source gprs#)	            						  MO  		   ID=3    W[1]
+//#function	SetBuffer	@F GP_CHECK_PHASE1 @F GP_NEW_UINT @S 4 26 0b1111 @S 4 22 3 @S 1 21 1 (#S 8 8 , #S 5 16) @F GP_CHECK_END
+
+//--------------------------------------------------------------------------------------------------------------------
+// Load/Store stream Command  2009/4/23
+// 
+// Stream.normal.load (r[#], #)			// 메모리 읽기 (".normal" 는 생략 가능)
+// Stream.normal.store (r[#], #)		// 메모리 쓰기 (".normal" 는 생략 가능)
+// Stream.bypass.load (r[#], #)			// bypass 메모리 읽기
+// Stream.bypass.store (r[#], #)		// bypass 메모리 쓰기
+// Stream.prefetch.load (r[#], #)		// none blocking 메모리 읽기 (중복 사용 금지)
+// Stream.prefetch.store (r[#], #)		// none blocking 메모리 쓰기 (중복 사용 금지)
+// Stream.wait							// none blocking 된 메모리 명령이 끝날 때 까지 기다리기
+//--------------------------------------------------------------------------------------------------------------------
+#function	GP_LD_ST_ERROR		@M "다음 중 하나가 선택되어야 합니다. : load/store" @E
+
+#function	GP_STREAM_MEMORY	@! "normal"		# : @GP_STREAM_CACHE @S 2 14 0b00 . @F GP_STREAM_STORE
+#function	GP_STREAM_CACHE		@! "bypass"		# : @GP_STREAM_PREFETCH @S 2 14 0b01 . @F GP_STREAM_STORE
+#function	GP_STREAM_PREFETCH	@! "prefetch"	# : @GP_STREAM_STORE @S 2 14 0b10 . @F GP_STREAM_STORE
+#function	GP_STREAM_WAIT		@S 2 14 0b11 @F GP_CHECK_END
+
+#function	GP_STREAM_STORE		@! "store"	# : @GP_STREAM_LOAD @S 1 21 1
+#function	GP_STREAM_LOAD		@! "load"	# : @GP_LD_ST_ERROR
+
+#function	GP_STREAM_FIX	@V GP_INDEX_SRCA @? 0 * @! ";" # : * @I ",mov(-,r[0]);"
+#function	Stream			@F GP_CHECK_PHASE1 @F GP_NEW_UINT @S 8 22 0b11110010 . @! "wait" @GP_STREAM_WAIT @F GP_STREAM_MEMORY (r[ @V GP_INDEX_SRCA #= @F GP_SET_SRCA ] , #S 12 0) @F GP_STREAM_FIX @F GP_CHECK_END
+#function	StreamCache		@F GP_CHECK_PHASE1 @F GP_NEW_UINT @S 8 22 0b11110010 @S 2 12 0b01 . @! "wait" @GP_STREAM_WAIT @F GP_STREAM_MEMORY (r[ @V GP_INDEX_SRCA #= @F GP_SET_SRCA ] , #S 12 0) @F GP_STREAM_FIX @F GP_CHECK_END
+#function	StreamInst		@F GP_CHECK_PHASE1 @F GP_NEW_UINT @S 8 22 0b11110010 @S 2 12 0b10 . @! "wait" @GP_STREAM_WAIT @F GP_STREAM_MEMORY (r[ @V GP_INDEX_SRCA #= @F GP_SET_SRCA ] , #S 12 0) @F GP_STREAM_FIX @F GP_CHECK_END
+
+//--------------------------------------------------------------------------------------------------------------------
+// Local memory function
+//
+//	LocalMemory.load (r[#], global_index)	// Local memory에서 GPRs로 저장
+//	LocalMemory.store (r[#], global_index)	// GPRs에서 Local memory로 저장
+//	*global_index : Global registers의 인덱스 번호
+//--------------------------------------------------------------------------------------------------------------------
+#function GP_LMB_LOAD		@! ".load" # : @GP_LMB_STORE @S 1 21 0
+#function GP_LMB_STORE		@! ".store" # : @GP_LD_ST_ERROR @S 1 21 1
+//                                                    MO            ID=0
+#function	LocalMemory		@F GP_CHECK_PHASE1 @F GP_NEW_UINT @S 4 26 0b1111 @S 4 22 0 @F GP_LMB_LOAD ( r[ @V GP_INDEX_SRCA #= @F GP_SET_SRCA ], #S 16 0 @! "," GP_OPERAND_EX_SRC ) @F GP_CHECK_END
+
+//--------------------------------------------------------------------------------------------------------------------
+// Scratch Command    
+//--------------------------------------------------------------------------------------------------------------------
+#function	GP_SC_PARAM_ERROR	@M "다음 중 하나가 선택되어야 합니다. : get/inc/set/limit/g_get/g_inc/g_rst/-" @E
+#function	GP_SCNT_X	@! "get" @GP_SCNT_X_GET @! "inc" @GP_SCNT_X_INC @! "set" @GP_SCNT_X_SET @! "limit" @GP_SCNT_X_LIMIT @! "g_get" @GP_SCNT_X_G_GET @! "g_inc" @GP_SCNT_X_G_INC @! "g_rst" @GP_SCNT_X_G_RST @! "-" * : @GP_SC_PARAM_ERROR
+#function	GP_SCNT_X_GET	@S 4 12 0b0100
+#function	GP_SCNT_X_INC	@S 4 12 0b0101
+#function	GP_SCNT_X_SET	@S 4 12 0b0110
+#function	GP_SCNT_X_LIMIT	@S 4 12 0b0111
+#function	GP_SCNT_X_G_GET	@S 4 12 0b1000
+#function	GP_SCNT_X_G_INC @S 4 12 0b1001
+#function	GP_SCNT_X_G_RST @S 4 12 0b1010
+
+#function	GP_SCNT_Y	@! "get" @GP_SCNT_Y_GET @! "inc" @GP_SCNT_Y_INC @! "set" @GP_SCNT_Y_SET @! "limit" @GP_SCNT_Y_LIMIT @! "g_get" @GP_SCNT_Y_G_GET @! "g_inc" @GP_SCNT_Y_G_INC @! "g_rst" @GP_SCNT_Y_G_RST @! "-" * : @GP_SC_PARAM_ERROR
+#function	GP_SCNT_Y_GET	@S 4 8 0b0100
+#function	GP_SCNT_Y_INC	@S 4 8 0b0101
+#function	GP_SCNT_Y_SET	@S 4 8 0b0110
+#function	GP_SCNT_Y_LIMIT	@S 4 8 0b0111
+#function	GP_SCNT_Y_G_GET	@S 4 8 0b1000
+#function	GP_SCNT_Y_G_INC @S 4 8 0b1001
+#function	GP_SCNT_Y_G_RST @S 4 8 0b1010
+
+#function	GP_SCNT_Z	@! "get" @GP_SCNT_Z_GET @! "inc" @GP_SCNT_Z_INC @! "set" @GP_SCNT_Z_SET @! "limit" @GP_SCNT_Z_LIMIT @! "g_get" @GP_SCNT_Z_G_GET @! "g_inc" @GP_SCNT_Z_G_INC @! "g_rst" @GP_SCNT_Z_G_RST @! "-" * : @GP_SC_PARAM_ERROR
+#function	GP_SCNT_Z_GET	@S 4 4 0b0100
+#function	GP_SCNT_Z_INC	@S 4 4 0b0101
+#function	GP_SCNT_Z_SET	@S 4 4 0b0110
+#function	GP_SCNT_Z_LIMIT	@S 4 4 0b0111
+#function	GP_SCNT_Z_G_GET	@S 4 4 0b1000
+#function	GP_SCNT_Z_G_INC @S 4 4 0b1001
+#function	GP_SCNT_Z_G_RST @S 4 4 0b1010
+
+#function	GP_SCNT_W	@! "get" @GP_SCNT_W_GET @! "inc" @GP_SCNT_W_INC @! "set" @GP_SCNT_W_SET @! "limit" @GP_SCNT_W_LIMIT @! "g_get" @GP_SCNT_W_G_GET @! "g_inc" @GP_SCNT_W_G_INC @! "g_rst" @GP_SCNT_W_G_RST @! "-" * : @GP_SC_PARAM_ERROR
+#function	GP_SCNT_W_GET	@S 4 0 0b0100
+#function	GP_SCNT_W_INC	@S 4 0 0b0101
+#function	GP_SCNT_W_SET	@S 4 0 0b0110
+#function	GP_SCNT_W_LIMIT	@S 4 0 0b0111
+#function	GP_SCNT_W_G_GET	@S 4 0 0b1000
+#function	GP_SCNT_W_G_INC @S 4 0 0b1001
+#function	GP_SCNT_W_G_RST @S 4 0 0b1010
+
+/*
+	scratch.[id#] (r[#], com_x, com_y, com_z, com_w)
+	id#   : 스크레치 카운터 번호. 0 또는 1을 지정할 수 있다.
+	com_* : * 컴퍼넌트의 스크레치 카운터와 GPRs로의 읽기 동작을 설정한다.
+			형식 : [none/get/inc/set/limit]
+				-     : 아무것도 수행하지 않는다.
+				get   : GPRs에 스크레치 카운터를 읽는다.
+				inc   : GPRs에 스크레치 카운터를 읽고, 스크레치 카운터를 +1 증가한다.
+				        이때 현재값이 리미트값과 같을 때에는 0으로 초기화 하고 다음 컴퍼넌트에 +1 캐리를 전달한다.
+				        단 다음 명령어가 set 명령어일 경우는 +1 증가를 하지 않으나, 캐리를 전달 받고 현재 스크레치 카운터가 리미트값일 때에는 +1 캐리를 다음 컴퍼넌트에 전달된다.
+				set   : 스크레치 카운터를 GPRs의 해당 컴퍼넌트로 대입한다.
+				limit : 스크레치 카운터의 증가 한계값을 지정한다.
+	ex) scratch.[1] (r[4], set, get, inc, -) ;
+		설명 : scratch[1].x = r[4].x, r[4].y = scratch[1].y, if(scratch[1].z==scratch[1].z_limit) scratch[1].w++, scratch[1].z++
+*/
+//                                                      MO             ID=1
+#function	Scratch		@F GP_CHECK_PHASE1 @F GP_NEW_UINT @S 4 26 0b1111 @S 4 22 1 [ #S 1 21 ] ( r[ @V GP_INDEX_SRCA #= @F GP_SET_SRCA ], @F GP_SCNT_X, @F GP_SCNT_Y, @F GP_SCNT_Z, @F GP_SCNT_W )  @F GP_CHECK_END
+
+//--------------------------------------------------------------------------------------------------------------------
+// Packing & Unpacking  
+//--------------------------------------------------------------------------------------------------------------------
+#function	Pack		@F GP_CHECK_PHASE1 @F GP_NEW_UINT @S 1 21 1 @S 4 26 0b1111 @S 4 22 3 ( r[ @V GP_INDEX_SRCA #= @F GP_SET_SRCA ])  @F GP_CHECK_END
+#function	Unpack		@F GP_CHECK_PHASE1 @F GP_NEW_UINT @S 4 26 0b1111 @S 4 22 3 ( r[ @V GP_INDEX_SRCA #= @F GP_SET_SRCA ])  @F GP_CHECK_END
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#function	/			@V GP_UINST @= 0 @V GP_PHASE @+ 1 @? 2 # : * @M "페이즈 1 명령어를 연속으로 사용할 수 없습니다. ';'로 구문을 나눈 후 사용하십시오." @E
+
+//---------------------------------------------------------------------------------------------
+// C like 문법구현
+int			_TEMP;
+name		_FUNC_NAME;
+name		_FUNC_NAME_TARGET;
+// 함수 선언
+#function	_FUNC_SET_CHECK	@V _TEMP @T# @ ? 0 * @M "함수안에 함수를 선언할 수 없습니다." @E
+#function	void			@F _FUNC_SET_CHECK @V _FUNC_NAME #= @T _FUNC_NAME ( @! "void" # ) @L { @T{
+#function	{				@T{
+#function	_FUNC_MAIN_END	@I "_FE goto.end;"
+#function	_FUNC_END		@V _FUNC_NAME @? main @_FUNC_MAIN_END @I "_FE addr(d[127].xyz,r[127],addr.x),mov(xyz,r[127].yzw)/ Thread(JMP.dir);"
+#function	_FE				@T}
+#function	_FUNC_LOOP_END	@I "continue;_FE "
+#function	_FUNC_ELSE		@L @! "if" @_FUNC_ELSE_IF @L { @V PC @+ 1 @A @T} @T{ @V PC @- 1 @A @I "goto };"
+#function	_ELIF			@F _if_BODY
+#function	_FUNC_ELSE_IF	@V PC @+ 1 @A @T} @T{ @V PC @- 1 @A @I "goto };_ELIF"
+#function	}				@V _TEMP @T# @? 1 @_FUNC_END @V _TEMP @T% @? 1 @_FUNC_LOOP_END @L @! "else" @_FUNC_ELSE @T}
+// 상황 분기
+#function	return			@I "goto ]"
+#function	continue		@I "goto ("
+#function	break			@I "goto )"
+
+// 조건절
+int			_DEST;
+int			_SRCA;
+int			_SRCB;
+int			_CONST;
+int			_IsCONST;
+int			_INT;
+int			_NEGA;
+int			_NEGB;
+name		_WMASK;
+name		_MASKA;
+name		_MASKB;
+string		_OP;
+
+#function	_CHECK_COMPARE_ERR	@M "비교 구문이 잘못 설정되어 있습니다." @E
+#function	_CHECK_COMPARE_EQ	@! "==" # : @_CHECK_COMPARE_NE	@= "NE"
+#function	_CHECK_COMPARE_NE	@! "!=" # : @_CHECK_COMPARE_GE	@= "EQ"
+#function	_CHECK_COMPARE_GE	@! ">=" # : @_CHECK_COMPARE_GT	@= "GT"
+#function	_CHECK_COMPARE_GT	@! ">"  # : @_CHECK_COMPARE_LE	@= "GE"
+#function	_CHECK_COMPARE_LE	@! "<=" # : @_CHECK_COMPARE_LT	@= "LT"
+#function	_CHECK_COMPARE_LT	@! "<"  # : @_CHECK_COMPARE_ERR	@= "LE"
+#function	_if_GET_OP			@V _OP @F _CHECK_COMPARE_EQ
+
+#function	_CHECK_INT			@! "(int)" # : * @V _INT @= 1
+#function	_PRINT_INT			@V _INT @? 0 * @I "(int)"
+#function	_CHECK_NEG			@! "-" # : * @= 1
+#function	_PRINT_NEG			@? 0 * @I "-"
+#function	_GET_MASK			@= xyzw @! "." # : * #=
+#function	_GET_CONST			@V _CONST #=$ @? # _if_INT @V _IsCONST @= 1
+#function	_PRINT_CONST		@I _CONST
+#function	_PRINT_SRCB			@I _MASKB @I "]." @I _SRCB @I "r["
+
+#function	_if_SET_NE			@I ",NE"
+#function	_if_SET_N			@I ",-"
+#function	_if_NOT				r[@V _SRCA #=] @V _MASKA @F _GET_MASK) { @I "), mov(-,r[126])/goto };" @V _MASKA @C "w" _if_SET_NE : _if_SET_N @C "z" _if_SET_NE : _if_SET_N @C "y" _if_SET_NE : _if_SET_N @C "x" _if_SET_NE : _if_SET_N \
+								@I "]);pred(r[126]" @I _SRCA @I "cmp(r[126],(int)0), mov(-,r["
+
+#function	_if_SET_PRED_4		@V _MASKA @W 4 # : @_if_SET_PRED_3 @I _OP @I "," @I _OP @I "," @I _OP @I "," @I _OP
+#function	_if_SET_PRED_3		@W 3 # : @_if_SET_PRED_2 @I ",-" @I _OP @I "," @I _OP @I "," @I _OP
+#function	_if_SET_PRED_2		@W 2 # : @_if_SET_PRED_1 @I ",-,-" @I _OP @I "," @I _OP
+#function	_if_SET_PRED_1		@I ",-,-,-" @I _OP
+
+#function	_if_SET_MASK_4		@V _MASKA @W 4 * : @_if_SET_MASK_3
+#function	_if_SET_MASK_3		@W 3 # : @_if_SET_MASK_2 @I ".xyz"
+#function	_if_SET_MASK_2		@W 2 # : @_if_SET_MASK_1 @I ".xy"
+#function	_if_SET_MASK_1		@I ".x"
+
+#function	_if_INT				@V _INT @= 1
+#function	_if_REG				@V _SRCB #=] @V _MASKB @F _GET_MASK @V _IsCONST @= 0
+#function	_if_ALWAYS			) {
+#function	_if_ENCODE			) { @I "), mov(-,r[126])/goto };" @F _if_SET_PRED_4 @I ");pred(r[126]," @I _MASKA @I "]." @I _SRCA @I "r[" @F _PRINT_INT @I "),mov(-," \
+								@V _IsCONST @? 0 _PRINT_SRCB : _PRINT_CONST @F _PRINT_INT @I "," @F _if_SET_MASK_4 @I "cmp(r[126]"
+#function	_if_ONE_HIT			@V _INT @= 1 @V _IsCONST @= 1 @V _CONST @=$ 0 @V _OP @= "EQ" @F _if_ENCODE
+#function	_if_BODY			(@! "1" @_if_ALWAYS @V _INT @= 0 @! "!" @_if_NOT @F _CHECK_INT r[@V _SRCA #=] @V _MASKA @F _GET_MASK @!! ")" @_if_ONE_HIT @F _if_GET_OP @F _CHECK_INT @! "r[" _if_REG : _GET_CONST @F _if_ENCODE
+
+#function	if					@T{ @F _if_BODY
+#function	while				@T{{ @F _if_BODY
+
+// 함수 호출
+#function	_					@V _FUNC_NAME_TARGET #= () @I _FUNC_NAME_TARGET @I "mov(r[127],r[127].xxyz),mvs(x);add(r[127].x,(int)3,(int)r[127].x)/goto @ "
+
+// 연산기 간략화
+//#function	GP_GET_DEST_ERR		@M "목적지 레지스터는 다음과 같이 선언되어야 합니다. 'r[#]'." @E
+//#function	GP_GET_DEST			@V GP_INDEX_DEST	@! "r[" # : GP_GET_DEST_ERR #= ] @F GP_SET_DEST @F GP_CHECK_WMASK @F GP_CHECK_SATURATE						//destination 
+
+#function	_reg_ERROR			@M "잘못된 레지스터 문법 표현입니다." @E
+#function	_reg_EX_INST		@V _TEMP @| _SRCA @| _SRCB @| _DEST @> 5 @? 0 * @I "])" @I _SRCA @I ",mov(-,r["
+#function	_reg_ADD_1			@! "++" # : @_reg_SUB_1 @F _reg_EX_INST @I ",1)" @I _WMASK @I "]." @I _DEST @I "add(r["
+#function	_reg_SUB_1			@! "--" # : @_reg_ADD_OP_1 @F _reg_EX_INST @I ",-1)" @I _WMASK @I "]." @I _DEST @I "add(r["
+
+#function	_INVERT_NEGB		@V _TEMP @= 1 @- _NEGB @V _NEGB @= _TEMP
+#function	_INVERT_NEGA		@V _TEMP @= 1 @- _NEGA @V _NEGA @= _TEMP
+#function	_reg_GET_SRCB		@V _SRCB #=] @V _MASKB @F _GET_MASK @V _WMASK @@ 0 _MASKB
+#function	_reg_GET_SRCA		@V _SRCA #=] @V _MASKA @F _GET_MASK @V _WMASK @@ 0 _MASKA
+#function	_reg_OP_1_CONSTB	@F _PRINT_CONST @V _NEGB @F _PRINT_NEG @F _PRINT_INT
+#function	_reg_OP_1_CONSTA	@F _PRINT_CONST @V _NEGA @F _PRINT_NEG @F _PRINT_INT
+#function	_reg_OP_1_SRCB		@I ")" @V _IsCONST @? 0 # : @_reg_OP_1_CONSTB @I _MASKB @I "]." @I _SRCB @I "r[" @V _NEGB @F _PRINT_NEG @F _PRINT_INT
+#function	_reg_OP_1_SRCB_REG	@I ")" @I _MASKB @I "]." @I _SRCB @I "r[" @V _NEGB @F _PRINT_NEG @F _PRINT_INT
+#function	_reg_OP_1_SRCA		@I ")" @V _IsCONST @? 0 # : @_reg_OP_1_CONSTA @I _MASKA @I "]." @I _SRCA @I "r[" @V _NEGA @F _PRINT_NEG @F _PRINT_INT
+#function	_reg_OP_1_DEST		@I "," @I _WMASK @I "]." @I _DEST @I "(r["
+#function	_reg_OP_1_DECODE	@F _CHECK_INT @V _NEGB @F _CHECK_NEG @! "r[" _reg_GET_SRCB : _GET_CONST @F _reg_EX_INST
+#function	_reg_ADD_OP_1		@! "+=" # : @_reg_SUB_OP_1 @F _reg_OP_1_DECODE @F _reg_OP_1_SRCB @F _reg_OP_1_DEST @I "add"
+#function	_reg_SUB_OP_1		@! "-=" # : @_reg_MUL_OP_1 @F _reg_OP_1_DECODE @F _INVERT_NEGB @F _reg_OP_1_SRCB @F _reg_OP_1_DEST @I "add"
+#function	_reg_MUL_OP_1		@! "*=" # : @_reg_AND_OP_1 @F _reg_OP_1_DECODE @F _reg_OP_1_SRCB @F _reg_OP_1_DEST @I "mul"
+#function	_reg_AND_OP_1		@! "&=" # : @_reg_OR_OP_1 @F _reg_OP_1_DECODE @F _reg_OP_1_SRCB @F _reg_OP_1_DEST @I "and"
+#function	_reg_OR_OP_1		@! "|=" # : @_reg_XOR_OP_1 @F _reg_OP_1_DECODE @F _reg_OP_1_SRCB @F _reg_OP_1_DEST @I "or"
+#function	_reg_XOR_OP_1		@! "^=" # : @_reg_SHFL_OP_1 @F _reg_OP_1_DECODE @F _reg_OP_1_SRCB @F _reg_OP_1_DEST @I "xor"
+#function	_reg_SHFL_OP_1		@! "<<=" # : @_reg_SHFR_OP_1 @F _reg_OP_1_DECODE @F _reg_OP_1_SRCB @F _reg_OP_1_DEST @I "shf"
+#function	_reg_SHFR_OP_1		@! ">>=" # : @_reg_EQ @F _reg_OP_1_DECODE @F _INVERT_NEGB @F _reg_OP_1_SRCB @F _reg_OP_1_DEST @I "shf"
+
+#function	_reg_SRC_2_CHECK	@V _IsCONST @? 0 * @M "2항 연산자에서 첫 항에 상수를 넣을 수 없습니다." @E
+#function	_reg_SRC_2			@F _reg_SRC_2_CHECK @F _CHECK_INT @V _NEGA @F _CHECK_NEG @! "r[" _reg_GET_SRCA : _GET_CONST
+#function	_reg_OP_2			@F _reg_OP_1_SRCB_REG @I ",mov(-,"@F _reg_OP_1_SRCA @F _reg_OP_1_DEST
+#function	_reg_MOV_OP_1		@F _reg_EX_INST @F _reg_OP_1_SRCB @F _reg_OP_1_DEST @I "mov"
+#function	_reg_ADD_OP_2		@!! ";" @_reg_MOV_OP_1 @!! "/" @_reg_MOV_OP_1 @! "+" # : @_reg_SUB_OP_2 @F _reg_SRC_2 @F _reg_OP_2 @I "add"
+#function	_reg_SUB_OP_2		@! "-" # : @_reg_MUL_OP_2 @F _reg_SRC_2 @F _INVERT_NEGA @F _reg_OP_2 @I "add"
+#function	_reg_MUL_OP_2		@! "*" # : @_reg_AND_OP_2 @F _reg_SRC_2 @F _reg_OP_2 @I "mul"
+#function	_reg_AND_OP_2		@! "&" # : @_reg_OR_OP_2 @F _reg_SRC_2 @F _reg_OP_2 @I "and"
+#function	_reg_OR_OP_2		@! "|" # : @_reg_XOR_OP_2 @F _reg_SRC_2 @F _reg_OP_2 @I "or"
+#function	_reg_XOR_OP_2		@! "^" # : @_reg_ERROR @F _reg_SRC_2 @F _reg_OP_2 @I "xor"
+
+#function	_reg_GSC_OP			@V _OP @= ",g_get" @! "++" # : * @= ",g_inc"
+#function	_reg_SC_OP			@V _OP @= ",get" @! "++" # : * @= ",inc"
+#function	_reg_SC_OP_2		@V _OP @= ",set" @! ".limit" # : * @= ",limit"
+#function	_reg_SC_ID			@V _CONST #= @V _TEMP @= _CONST @> 1 @? 0 * @M "스크레치 카운터 ID는 0또는 1을 지정 가능합니다." @E
+#function	_reg_WMASK_FULL		@V _WMASK @W 4 * @M "이 문법에서는 목적지 레지스터에 write mask를 지정할 수 없습니다." @E
+#function	_reg_SF_ERROR		@M "Special function은 소스로 하나의 컴퍼넌트만 지정할 수 있습니다." @E
+#function	_reg_SC_SET_OP		@I _OP
+#function	_reg_SC_SET_NN		@I ",-"
+#function	_reg_SC_SET			@I ")" @V _WMASK @C "w" _reg_SC_SET_OP : _reg_SC_SET_NN @C "z" _reg_SC_SET_OP : _reg_SC_SET_NN @C "y" _reg_SC_SET_OP : _reg_SC_SET_NN @C "x" _reg_SC_SET_OP : _reg_SC_SET_NN
+#function	_reg_SF				(@V _NEGB @F _CHECK_NEG r[ @V _SRCB #=] @V _MASKB @F _GET_MASK ) @W 1 # : @_reg_SF_ERROR @F _reg_EX_INST @F _reg_OP_1_SRCB @F _reg_OP_1_DEST
+#function	_reg_CHECK_FP_ONLY	@V _INT @? 0 * @M "이 문법에서 소스는 반드시 실수형 이어야 합니다." @E
+#function	_reg_ALU_FUNC		(@F _CHECK_INT @V _NEGB @F _CHECK_NEG r[ @F _reg_GET_SRCB ) @F _reg_EX_INST @F _reg_OP_1_SRCB @F _reg_OP_1_DEST
+#function	_reg_GSC			@! "GSC" # : @_reg_SCs @F _reg_GSC_OP @F _reg_EX_INST @F _reg_SC_SET @I "]" @I _DEST @I "Scratch[0](r["
+#function	_reg_SCs			@! "SC" # : @_reg_LMB_LOAD [@F _reg_SC_ID] @F _reg_SC_OP @F _reg_EX_INST @F _reg_SC_SET @I "]" @I _DEST @I "](r[" @I _CONST @I "Scratch["
+#function	_reg_LMB_LOAD		@! "LMB" # : @_reg_RCP @F _reg_WMASK_FULL [ @V _CONST #=] @V _SRCA @+ 1 @F _reg_EX_INST @I ")" @I _CONST @I "]," @I _DEST @I "LocalMemory.load(r["
+#function	_reg_RCP			@! "rcp" # : @_reg_RSQ @F _reg_SF @I "rcp"
+#function	_reg_RSQ			@! "rsq" # : @_reg_MAN @F _reg_SF @I "rsq"
+#function	_reg_MAN			@! "man" # : @_reg_EXP @F _reg_SF @I "man"
+#function	_reg_EXP			@! "exp" # : @_reg_FLR @F _reg_SF @I "exp"
+#function	_reg_FLR			@! "floor" # : @_reg_FRC @F _reg_ALU_FUNC @F _reg_CHECK_FP_ONLY @I "flr"
+#function	_reg_FRC			@! "frac" # : @_reg_CONV @F _reg_ALU_FUNC @F _reg_CHECK_FP_ONLY @I "frc"
+#function	_reg_CONV			@! "conv" # : @_reg_REG @F _reg_ALU_FUNC @I "conv"
+#function	_reg_REG			@F _CHECK_INT @V _NEGB @F _CHECK_NEG @! "r[" _reg_GET_SRCB : _GET_CONST @F _reg_ADD_OP_2
+
+#function	_reg_EQ				@! "=" # : @_reg_ERROR @F _reg_GSC
+
+#function	_COORD_CHECK_ERROR	@V _WMASK @W 1 * @M "수식 명령어는 하나의 컴퍼넌트만을 지정할 수 있습니다." @E
+#function	_COORD_ADDR			@V _WMASK @F _GET_MASK @F _COORD_CHECK_ERROR @F _reg_EX_INST @I ")" @I _WMASK @I "],addr." @I _DEST @I "addr(r["
+#function	_COORD_DEST			@V _WMASK @F _GET_MASK @F _COORD_CHECK_ERROR @F _reg_EX_INST @I ")" @I _WMASK @I "],dest." @I _DEST @I "addr(r["
+
+#function	_LMB_SECOND_SRC		@V _SRCB #=
+#function	LMB					[@V _CONST #=] = r[ @V _DEST #=] @V _SRCB @= _DEST @V _SRCA @= _DEST @+ 1 @F _reg_EX_INST @I ")" @I _CONST @I "]," @I _DEST @I "LocalMemory.store(r["
+#function	GSC					@V _WMASK @F _GET_MASK = 0 @V _OP @= ",g_rst" @F _reg_SC_SET @I "Scratch[0](r[0]"
+#function	SC					[@F _reg_SC_ID] @V _WMASK @F _GET_MASK = r[@V _DEST #=] @V _SRCA @= _DEST @V _SRCB @= _DEST @F _reg_SC_OP_2 @F _reg_EX_INST @F _reg_SC_SET @I "]" @I _DEST @I "](r[" @I _CONST @I "Scratch["
+
+#function	r					[@V _DEST #=] @V _SRCA @= _DEST @V _SRCB @= _DEST @V _IsCONST @= 0 @V _INT @= 0 @V _NEGA @= 0 @V _NEGB @= 0 @! ".addr" @_COORD_ADDR @! ".dest" @_COORD_DEST @V _WMASK @F _GET_MASK @F _reg_ADD_1
+
+goto @ main;					// main 엔트리 포인트 호출

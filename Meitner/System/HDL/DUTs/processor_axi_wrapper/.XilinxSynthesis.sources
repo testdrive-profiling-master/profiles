@@ -1,0 +1,19 @@
+//----------------------------------------------------------------------
+// TCLs
+#set_property verilog_define TEST_DESIGN [current_fileset]
+
+//----------------------------------------------------------------------
+// Sources
+../library/FiFo_Async.v
+../library/FiFo.v
+../library/SyncPipe.v
+../library/SRAM_Dual_Distributed.v
+
+../top/axi_slave_wrapper.v
+../top/axi_master_wrapper.v
+
+processor_axi_wrapper/*.v
+
+//----------------------------------------------------------------------
+// XDCs
+processor_axi_wrapper/synthesis.xdc

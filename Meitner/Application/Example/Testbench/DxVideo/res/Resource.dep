@@ -1,0 +1,1 @@
+Resource.o: res/resource.rc res/main.ico ./Resource.h

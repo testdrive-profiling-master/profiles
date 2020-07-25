@@ -1,0 +1,14 @@
+//----------------------------------------------------------------------
+// Sources
+../library/FiFo.v
+../library/SRAM_Dual_Distributed.v
+../library/SRAM_Single.v
+../library/demux_by_enable.v
+../library/MultiCyclePath.v
+
+meitner/*.v
+
+//----------------------------------------------------------------------
+// XDCs
+MulticycleTest/synthesis.xdc
+processor_axi_wrapper/synthesis.xdc

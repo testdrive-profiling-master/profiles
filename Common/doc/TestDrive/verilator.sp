@@ -1,0 +1,1 @@
+system.shell	"explorer", "http://www.veripool.org/projects/verilator/wiki/Manual-verilator"

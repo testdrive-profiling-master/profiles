@@ -1,0 +1,18 @@
+#include "MTSP.gpp"
+
+void main(void) {
+	r[1].x = 1;
+	r[2].y = 2;
+	r[3].z = 3;
+	r[4].w = 4;
+	goto.seq;
+	r[5].w = 5;
+	r[6].z = 6;
+	r[7].y = 7;
+	r[8].x = 8;
+	goto.all;
+	r[9].x = 1;
+	r[10].y = 2;
+	r[11].z = 3;
+	r[12].w = 4;
+}

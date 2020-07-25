@@ -1,0 +1,216 @@
+//================================================================================
+// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// All rights reserved.
+// 
+// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// 
+// Redistribution and use in source and binary forms,
+// with or without modification, are permitted provided
+// that the following conditions are met:
+// 
+// 1. Redistributions of source code must retain the above copyright notice,
+//    this list of conditions and the following disclaimer.
+// 
+// 2. Redistributions in binary form must reproduce the above copyright notice,
+//    this list of conditions and the following disclaimer in the documentation
+//    and/or other materials provided with the distribution.
+// 
+// 3. Neither the name of the copyright holder nor the names of its contributors
+//    may be used to endorse or promote products derived from this software
+//    without specific prior written permission.
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+// OF SUCH DAMAGE.
+// 
+// Title : Processor
+// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+//================================================================================
+`timescale 1ns/1ns
+`include "system_defines.vh"
+`include "dpi_defines.vh"
+`include "top/testdrive_axi4_lite_bfm.sv"
+`include "top/testdrive_axi4_master_bfm.sv"
+
+// AXI slave defines
+`ifndef AXI_SLAVE_BASE_ADDR
+`define	AXI_SLAVE_BASE_ADDR		32'h0
+`endif
+`ifndef AXI_SLAVE_ADDR_BITS
+`define	AXI_SLAVE_ADDR_BITS		16
+`endif
+// AXI master defines
+`ifndef AXI_MASTER_DATA_WIDTH
+`define AXI_MASTER_DATA_WIDTH	128
+`endif
+`ifndef AXI_MASTER_ID_WIDTH
+`define AXI_MASTER_ID_WIDTH		1
+`endif
+`ifndef AXI_MASTER_USE_AXI4
+`define AXI_MASTER_USE_AXI4		1
+`endif
+
+module top(	MCLK, nRST,
+			BUSY, INTR);
+
+// Parameters ----------------------------------------------------------------
+parameter	C_S_AXI_BASE_ADDR			= `AXI_SLAVE_BASE_ADDR;
+parameter	C_S_AXI_ADDR_BITS			= `AXI_SLAVE_ADDR_BITS;
+parameter	C_S_AXI_DATA_WIDTH			= 32;
+
+parameter	C_M_AXI_ID_WIDTH			= `AXI_MASTER_ID_WIDTH;
+parameter	C_M_AXI_ADDR_WIDTH			= 32;
+parameter	C_M_AXI_DATA_WIDTH			= `AXI_MASTER_DATA_WIDTH;
+parameter	C_M_AXI_USE_AXI4			= `AXI_MASTER_USE_AXI4;
+
+// port list -----------------------------------------------------------------
+// system
+input									MCLK, nRST;		// clock & reset (active low)
+output									BUSY;			// processor is busy
+output									INTR;			// interrupt signal
+
+// definition & assignment ---------------------------------------------------
+//// [AXI4 lite interface]
+// write address
+wire	[C_S_AXI_ADDR_BITS-1:0]			S_AWADDR;
+wire									S_AWVALID;
+wire									S_AWREADY;
+// write data
+wire	[C_S_AXI_DATA_WIDTH-1:0]		S_WDATA;
+wire	[(C_S_AXI_DATA_WIDTH/8)-1:0]	S_WSTRB;
+wire									S_WVALID;
+wire									S_WREADY;
+// read address
+wire	[C_S_AXI_ADDR_BITS-1:0]			S_ARADDR;
+wire									S_ARVALID;
+wire									S_ARREADY;
+// read data
+wire	[C_S_AXI_DATA_WIDTH-1:0]		S_RDATA;
+wire	[1:0]							S_RRESP;
+wire									S_RVALID;
+wire									S_RREADY;
+// bus
+wire	[1:0]							S_BRESP;
+wire									S_BVALID;
+wire									S_BREADY;
+
+//// [AXI4 master interface]
+// write address
+wire	[C_M_AXI_ID_WIDTH-1:0]			M_AWID;
+wire	[C_M_AXI_ADDR_WIDTH-1:0]		M_AWADDR;
+wire	[7:0]							M_AWLEN;
+wire	[2:0]							M_AWSIZE;
+wire	[1:0]							M_AWBURST;
+wire	[1:0]							M_AWLOCK;
+wire	[3:0]							M_AWCACHE;
+wire	[2:0]							M_AWPROT;
+wire	[3:0]							M_AWREGION;
+wire	[3:0]							M_AWQOS;
+wire									M_AWVALID;
+wire									M_AWREADY;
+
+// write data
+wire	[C_M_AXI_ID_WIDTH-1:0]			M_WID;
+wire	[C_M_AXI_DATA_WIDTH-1:0]		M_WDATA;
+wire	[(C_M_AXI_DATA_WIDTH/8)-1:0]	M_WSTRB;
+wire									M_WLAST;
+wire									M_WVALID;
+wire									M_WREADY;
+// bus
+wire	[C_M_AXI_ID_WIDTH-1:0]			M_BID;
+wire	[1:0]							M_BRESP;
+wire									M_BVALID;
+wire									M_BREADY;
+// read address
+wire	[C_M_AXI_ID_WIDTH-1:0]			M_ARID;
+wire	[C_M_AXI_ADDR_WIDTH-1:0]		M_ARADDR;
+wire	[7:0]							M_ARLEN;
+wire	[2:0]							M_ARSIZE;
+wire	[1:0]							M_ARBURST;
+wire	[1:0]							M_ARLOCK;
+wire	[3:0]							M_ARCACHE;
+wire	[2:0]							M_ARPROT;
+wire	[3:0]							M_ARREGION;
+wire	[3:0]							M_ARQOS;
+wire									M_ARVALID;
+wire									M_ARREADY;
+// read data
+wire	[C_M_AXI_ID_WIDTH-1:0]			M_RID;
+wire	[C_M_AXI_DATA_WIDTH-1:0]		M_RDATA;
+wire	[1:0]							M_RRESP;
+wire									M_RLAST;
+wire									M_RVALID;
+wire									M_RREADY;
+
+// implementation ------------------------------------------------------------
+// AXI4Lite bus BFM
+testdrive_axi4_lite_bfm #(
+	.C_BASE_ADDR			(C_S_AXI_BASE_ADDR),
+	.C_ADDR_BITS			(C_S_AXI_ADDR_BITS),
+	.C_DATA_WIDTH			(C_S_AXI_DATA_WIDTH)
+) axi4_lite_bfm (
+	MCLK, nRST,									// system
+	S_AWADDR, S_AWVALID, S_AWREADY,				// write address
+	S_WDATA, S_WSTRB, S_WVALID, S_WREADY,		// write data
+	S_BRESP, S_BVALID, S_BREADY,				// bus interaction
+	S_ARADDR, S_ARVALID, S_ARREADY,				// read address
+	S_RDATA, S_RRESP, S_RVALID, S_RREADY		// read data
+);
+
+//----------------------------------------------------------------------------
+// AXI4 bus implementation
+testdrive_axi4_master_bfm #(
+	.C_THREAD_ID_WIDTH			(C_M_AXI_ID_WIDTH),
+	.C_ADDR_WIDTH				(C_M_AXI_ADDR_WIDTH),
+	.C_DATA_WIDTH				(C_M_AXI_DATA_WIDTH),
+	.C_USE_AXI4					(C_M_AXI_USE_AXI4)
+) axi4_master_bfm (
+	MCLK, nRST,									// system
+	M_AWID, M_AWADDR, M_AWLEN, M_AWSIZE, M_AWBURST, M_AWLOCK, M_AWCACHE, M_AWPROT,
+	M_AWREGION, M_AWQOS, M_AWVALID, M_AWREADY, M_WID,
+	M_WDATA, M_WSTRB, M_WLAST, M_WVALID, M_WREADY,
+	M_BID, M_BRESP, M_BVALID, M_BREADY,
+	M_ARID, M_ARADDR, M_ARLEN, M_ARSIZE, M_ARBURST, M_ARLOCK, M_ARCACHE,
+	M_ARPROT, M_ARREGION, M_ARQOS, M_ARVALID, M_ARREADY,
+	M_RID, M_RDATA, M_RRESP, M_RLAST, M_RVALID, M_RREADY
+);
+
+//----------------------------------------------------------------------------
+// processor wrapper implementation
+dut_top	#(
+	// slave parameters
+	C_S_AXI_ADDR_BITS,
+	C_S_AXI_DATA_WIDTH,
+
+	// master parameters
+	C_M_AXI_ID_WIDTH,
+	C_M_AXI_ADDR_WIDTH,
+	C_M_AXI_DATA_WIDTH
+) dut_top (
+	// system
+	MCLK, nRST, BUSY, INTR,					// slave clock & reset
+	// slave bus
+	S_AWADDR, S_AWVALID, S_AWREADY,			// slave write address
+	S_WDATA, S_WSTRB, S_WVALID, S_WREADY,	// slave write data
+	S_ARADDR, S_ARVALID, S_ARREADY,			// slave read address
+	S_RDATA, S_RRESP, S_RVALID, S_RREADY,	// slave read data
+	S_BRESP, S_BVALID, S_BREADY,			// slave bus interaction
+	// master bus
+	M_AWID, M_AWADDR, M_AWLEN, M_AWSIZE, M_AWBURST, M_AWLOCK, M_AWCACHE, M_AWPROT, 			// master write address
+	M_AWREGION, M_AWQOS, M_AWVALID, M_AWREADY,
+	M_WID, M_WDATA, M_WSTRB, M_WLAST, M_WVALID, M_WREADY,									// master write data
+	M_BID, M_BRESP, M_BVALID, M_BREADY,														// master bus interaction
+	M_ARID, M_ARADDR, M_ARLEN, M_ARSIZE, M_ARBURST, M_ARLOCK, M_ARCACHE, 					// master read address
+	M_ARPROT, M_ARREGION, M_ARQOS, M_ARVALID, M_ARREADY,
+	M_RID, M_RDATA, M_RRESP, M_RLAST, M_RVALID, M_RREADY									// master read data
+);
+
+endmodule

@@ -1,0 +1,1 @@
+call run_each_dir.bat cleanup.bat ..

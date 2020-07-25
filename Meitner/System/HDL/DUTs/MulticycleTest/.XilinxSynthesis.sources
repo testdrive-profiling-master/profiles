@@ -1,0 +1,13 @@
+// 이곳에 Synthesis에 필요한 HDL 소스 리스트를 추가합니다.
+
+../library/demux_by_enable.v
+../library/MultiCyclePath.v
+../library/MultiCyclePathEx.v
+../library/MultiCycleSlice.v
+../library/SRAM_Dual_Distributed.v
+../library/SRAM_Single.v
+../library/SRAM_Single_Multicycle.v
+
+MulticycleTest/*.v
+
+MulticycleTest/synthesis.xdc

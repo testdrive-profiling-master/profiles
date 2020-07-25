@@ -1,0 +1,4 @@
+00 OKAY
+01 EXOKAY
+10 ?red?SLVERR
+11 ?red?DECERR

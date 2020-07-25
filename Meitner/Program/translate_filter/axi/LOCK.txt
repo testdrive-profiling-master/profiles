@@ -1,0 +1,4 @@
+00 Normal
+01 Exclusive
+10 Locked
+11 ?red?reserved

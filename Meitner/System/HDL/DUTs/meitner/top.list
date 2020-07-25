@@ -1,0 +1,2 @@
+TOP_DESIGN	= processor_top.v
+	OPTION	= MEITNER

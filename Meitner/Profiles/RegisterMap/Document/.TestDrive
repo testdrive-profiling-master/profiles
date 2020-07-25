@@ -1,0 +1,2 @@
+[TestDrive]
+dependency_include="$(PROJECT)\Application\include\"

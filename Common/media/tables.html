@@ -1,0 +1,156 @@
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<title>tables</title>
+	<style type="text/css"> 
+		@import url(tables.css);
+	</style>
+</head>
+
+<SCRIPT LANGUAGE="JScript">
+	// Forbid user's mouse selecting for the content 
+	//   (allow text selection in EditBox only)
+	/*function onSelect1(){
+	    if ( window.event.srcElement.tagName !="INPUT" ) {        
+	    window.event.returnValue = false;    
+	    window.event.cancelBubble = true;
+	    }
+	}
+	
+	// Forbid IE context menu 
+	//  (allow in EditBox only)
+	//  (if the real context menu must be shown - Advance&#1074; Hosting 
+	//  Interfaces must be used)
+	function onContextMenu(){
+	     if ( window.event.srcElement.tagName !="INPUT" ) {        
+	    window.event.returnValue = false;    
+	    window.event.cancelBubble = true;
+	        return false;
+	    }
+	}*/
+	
+	// Install Context Menu and Mark handlers on HTML loading.
+	//   
+	function onLoad()
+	{
+	    // forbid cursor change (except "INPUT"
+	    // entry box and "A" hyperlink) for HTML text.
+	    var Objs = document.all;
+	    for (i=0; i< Objs.length; i++)
+	        // "INPUT" entry box and "A" hyperlink
+	        if (Objs(i).tagName!="INPUT" && Objs(i).tagName!="A")
+	        Objs(i).style.cursor = "default";
+	        
+	    // event handler : content selection
+	    //document.onselectstart = onSelect1;
+	    // event handler : context menu
+	    //document.oncontextmenu = onContextMenu;
+	}
+
+	function SetBody(id, body){
+		var Txt = document.getElementById(id);
+		if(Txt)
+		Txt.innerHTML = body;
+	}
+
+	function ClearTable(){
+		var tbody	= document.getElementById("entries");
+		var len		= tbody.rows.length;
+		while(len){
+			len--;
+			tbody.deleteRow(len);
+		}
+	}
+	
+	function SetTitle(body){
+		document.all("title_bar").innerHTML	= body;
+	}
+	
+	function ShowWait(msg){
+		if(msg) document.all("wait_text").innerHTML = msg;
+		document.all.wait_text.style.visibility = msg ? "visible" : "hidden";
+		document.all.wait_image.style.visibility = msg ? "visible" : "hidden";
+		document.all.wait0.style.animationPlayState = msg ? "running" : "paused";
+		document.all.wait1.style.animationPlayState = msg ? "running" : "paused";
+		document.all.wait0.style.visibility = msg ? "visible" : "hidden";
+		document.all.wait1.style.visibility = msg ? "visible" : "hidden";
+	}
+	
+	var row;
+	var cell;
+	
+	function NewRow()						{row = document.createElement("TR");document.getElementById("entries").appendChild(row);}
+	function NewElement(ele)				{cell = document.createElement("TD");row.appendChild(cell);}
+	function NewTD()						{cell = document.createElement("TD");row.appendChild(cell);}
+	function NewTH()						{cell = document.createElement("TH");row.appendChild(cell);}
+	function SetTID(sID)					{cell.id = sID;}
+	function SetTBody(body)					{cell.innerHTML = body;}
+	function SetTColSpan(iSize)				{cell.colSpan = iSize;}
+	function SetTRowSpan(iSize)				{cell.rowSpan = iSize;}
+	function SetTStyle(sTarget, sAttrib)	{cell.style.setAttribute(sTarget,sAttrib);}
+
+</SCRIPT>
+
+<body onload="onLoad();" scroll="auto">
+	<DIV ID="dek"></DIV>
+	<DIV ID="wait0"></DIV>
+	<DIV ID="wait1"></DIV>
+	<DIV ID="wait_text">ssss</DIV>
+	<DIV ID="wait_image"><image src="test_logo.png"/></DIV>
+
+	<SCRIPT LANGUAGE="JScript">
+	//------------------------------------------------------------------------
+	// popup message
+	//------------------------------------------------------------------------
+	Xoffset= 0;    // modify these values to ...
+	Yoffset= 20;    // change the popup position.
+	var skn,yyy=-1000;
+	var ns4=document.layers
+	var ns6=document.getElementById&&!document.all
+	var ie4=document.all
+	
+	if (ns4) skn=document.dek
+	else if (ns6) skn=document.getElementById("dek").style
+	else if (ie4) skn=document.all.dek.style
+	
+	if(ns4)document.captureEvents(Event.MOUSEMOVE);
+	else{
+		skn.visibility="visible"
+		skn.display="none"
+	}
+	document.onmousemove=get_mouse;
+	
+	
+	function popup(msg,width){
+		var content="<TABLE  WIDTH="+width+" BORDER=1 BORDERCOLOR=black CELLPADDING=2 CELLSPACING=0 "+
+		"BGCOLOR='rgba(210,220,230,0.7)'><TD style='text-align:center'><FONT COLOR=black SIZE=2>"+msg+"</FONT></TD></TABLE>";
+		yyy=Yoffset;
+		Xoffset	= -width/2;
+		if(ns4){skn.document.write(content);skn.document.close();skn.visibility="visible"}
+		if(ns6){document.getElementById("dek").innerHTML=content;skn.display=''}
+		if(ie4){document.all("dek").innerHTML=content;skn.display=''}
+	}
+
+	function get_mouse(e){
+		var x=(ns4||ns6) ? e.pageX : event.x + document.body.scrollLeft;
+		skn.left=(x+Xoffset) + "px";
+		var y=(ns4||ns6) ? e.pageY : event.y + document.body.scrollTop;
+		skn.top=(y+yyy) + "px";
+	}
+
+	function kill(){
+		yyy=-1000;
+		if(ns4){skn.visibility="hidden";}
+		else if (ns6||ie4) skn.display="none"
+	}
+	
+	</SCRIPT>
+	<DIV ID="title_bar"></DIV>
+	<table class="default0">
+		<tbody id="entries">
+		</tbody>
+	</table>
+</body>
+</html>
+

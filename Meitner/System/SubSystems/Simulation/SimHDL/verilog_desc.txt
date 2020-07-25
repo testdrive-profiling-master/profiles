@@ -1,0 +1,35 @@
+Target:..\..\..\HDL\dpi\*.cpp;..\..\..\HDL\%SIM_TOP_PATH%\dpi_private\*.cpp;..\verilator\*.cpp
+
+Prefix:#-------------------------------------------------
+Prefix:# Project
+Prefix:#-------------------------------------------------
+Prefix:SRC_PATH		:= .
+Prefix:LIBPATH			:= ../../../../Application/lib
+Prefix:TARGETPATH		:= ../../../../Program
+Prefix:TARGETNAME		:= SimHDL
+Prefix:
+Prefix:ifneq ("$(wildcard ../../../HDL/$(SIM_TOP_PATH)/config.mk)","")
+Prefix:include ../../../HDL/$(SIM_TOP_PATH)/config.mk
+Prefix:endif
+Prefix:
+Prefix:SRCS := $(SRCS) \
+Prefix:	$(SRC_PATH)/SimHDL.cpp \
+Prefix:	$(SRC_PATH)/dllmain.cpp \
+
+Format:	%s \
+;Exclude:__Slow.cpp;__Trace.cpp
+
+Postfix:
+Postfix:LIBDIR			:= $(LIBDIR) -lshell32 -lz
+Postfix:INC				:= $(INC) -I. -I../../../../Application/include -I../../../HDL/dpi -I../../../HDL/$(SIM_TOP_PATH)/dpi_private -I../verilator -I$(TESTDRIVE_DIR)include/verilator -I$(TESTDRIVE_DIR)bin/msys64/mingw64/share/verilator/include -I$(TESTDRIVE_DIR)bin/msys64/mingw64/share/verilator/include/vltstd -I$(TESTDRIVE_DIR)bin/msys64/mingw64/share/verilator/include/gtkwave
+Postfix:
+Postfix:CDEFS			:= $(CDEFS) $(SIM_CDEFS) -D__STDC_FORMAT_MACROS -DSIM_HDL_EXPORTS -DUSE_VERILATOR -DUSE_TESTDRIVE -DVL_USER_FINISH -DVL_USER_STOP -DVL_USER_FATAL -DVL_THREADED
+Postfix:EXTRA_CFLAGS	:= -O2 -DNDEBUG -fno-stack-protector
+Postfix:
+Postfix:BUILD_TARGET	= $(TARGET_SO_A)
+Postfix:
+Postfix:#-------------------------------------------------
+Postfix:# common document config
+Postfix:#-------------------------------------------------
+Postfix:include $(TESTDRIVE_PROFILE)common/include/config.mk
+Postfix:

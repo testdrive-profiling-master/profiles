@@ -1,0 +1,98 @@
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<title>System Map</title>
+	<style type="text/css"> 
+		@import url(style.css);
+	</style>
+</head>
+
+<SCRIPT LANGUAGE="JScript">
+	// Forbid user?s mouse selecting for the content 
+	//   (allow text selection in EditBox only)
+
+	
+	// Forbid IE context menu 
+	//  (allow in EditBox only)
+	//  (if the real context menu must be shown - Advance&#1074; Hosting 
+	//  Interfaces must be used)
+/*	function onContextMenu(){
+	     if ( window.event.srcElement.tagName !="INPUT" ) {        
+	    window.event.returnValue = false;    
+	    window.event.cancelBubble = true;
+	        return false;
+	    }
+	}*/
+	var Request = function()
+	{
+		this.getParameter = function( name )
+		{
+			var rtnval = '';
+			var nowAddress = unescape(location.href);
+			var parameters = (nowAddress.slice(nowAddress.indexOf('?')+1,nowAddress.length)).split('&');
+
+			for(var i = 0 ; i < parameters.length ; i++)
+			{
+				var varName = parameters[i].split('=')[0];
+				if(varName.toUpperCase() == name.toUpperCase())
+				{
+					rtnval = parameters[i].split('=')[1];
+					break;
+				}
+			}
+			return rtnval;
+		}
+	}
+	
+	function visio_error(){
+		alert("SystemMap : visio is not found. Please install the 'Visio viewer 64bit' free version from Microsoft website.");
+		location.replace("https://www.google.co.kr/#q=microsoft+visio+viewer+64bit");         
+	}
+
+	var request = new Request();
+
+	function SetVisioFile(filename){
+		document.getElementById("workspace").innerHTML = "<OBJECT classid=\"clsid:279D6C9A-652E-4833-BEFC-312CA8887857\" codebase=\"https://www.microsoft.com/ko-kr/download/details.aspx?id=35811\" onError=\"visio_error()\" id=\"vsd_viewer\" width=\"100%\" height=\"100%\" scroll=\"overflow:hidden\" > " +
+		"<PARAM NAME=\"Src\" VALUE=\"" + filename + "\">" +
+		"<PARAM NAME=\"AltersEnabled\" VALUE=\"1\">" +
+		"<PARAM NAME=\"GridVisible\" VALUE=\"0\">" +
+		"<PARAM NAME=\"HighQualityRender\" VALUE=\"1\">" +
+		"<PARAM NAME=\"ContextMenuEnabled\" VALUE=\"1\">" +
+		"<PARAM NAME=\"PageVisible\" VALUE=\"0\">" +
+		"<PARAM NAME=\"PropertyDialogEnabled\" VALUE=\"1\">" +
+		"<param name=\"ScrollbarsVisible\" value=\"1\">" +
+		"<param name=\"ToolbarVisible\" value=\"0\">" +
+		"<param name=\"CurrentPageIndex\" value=\"1\">" +
+		"<param name=\"Zoom\" value=\"-1\">" +
+		"</OBJECT>";
+	}
+	
+	// Install Context Menu and Mark handlers on HTML loading.
+	function onLoad()
+	{
+		SetVisioFile(request.getParameter("file"));
+		
+		
+	    // forbid cursor change (except "INPUT"
+	    // entry box and "A" hyperlink) for HTML text.
+	    var Objs = document.all;
+	    for (i=0; i< Objs.length; i++)
+	        // "INPUT" entry box and "A" hyperlink
+	        if (Objs(i).tagName!="INPUT" && Objs(i).tagName!="A")
+	        Objs(i).style.cursor = "default";
+	        
+	    // event handler ? content selection
+	    //document.onselectstart = onSelect1;
+	    // event handler ? context menu
+	    //document.oncontextmenu = onContextMenu;
+	    document.getElementById("vsd_viewer").style.marginLeft="0px";
+	
+	}
+</SCRIPT>
+
+<div id="workspace"></div>
+
+<body onload="onLoad();" scroll="no" width="100%" height="100%">
+</BODY>
+
+</html>

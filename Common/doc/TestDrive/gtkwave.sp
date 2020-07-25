@@ -1,0 +1,1 @@
+system.shell	"explorer", "http://gtkwave.sourceforge.net/gtkwave.pdf"

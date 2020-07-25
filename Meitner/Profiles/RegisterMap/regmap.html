@@ -1,0 +1,218 @@
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	<title>GLES Conformance test 2.0</title>
+	<style type="text/css"> 
+		@import url(tables.css);
+		.DEK {POSITION:absolute;VISIBILITY:hidden;Z-INDEX:200;}
+	</style>
+</head>
+
+<SCRIPT LANGUAGE="JScript">
+	// Forbid user?s mouse selecting for the content 
+	//   (allow text selection in EditBox only)
+
+	
+	// Forbid IE context menu 
+	//  (allow in EditBox only)
+	//  (if the real context menu must be shown - Advance&#1074; Hosting 
+	//  Interfaces must be used)
+/*	function onContextMenu(){
+	     if ( window.event.srcElement.tagName !="INPUT" ) {        
+	    window.event.returnValue = false;    
+	    window.event.cancelBubble = true;
+	        return false;
+	    }
+	}*/
+	
+	// Install Context Menu and Mark handlers on HTML loading.
+	//   
+	function onLoad()
+	{
+	    // forbid cursor change (except "INPUT"
+	    // entry box and "A" hyperlink) for HTML text.
+	    var Objs = document.all;
+	    for (i=0; i< Objs.length; i++)
+	        // "INPUT" entry box and "A" hyperlink
+	        if (Objs(i).tagName!="INPUT" && Objs(i).tagName!="A")
+	        Objs(i).style.cursor = "default";
+	        
+	    // event handler ? content selection
+	    //document.onselectstart = onSelect1;
+	    // event handler ? context menu
+	    //document.oncontextmenu = onContextMenu;
+		onResize();
+	}
+	
+	function getActualHeight() {
+		/*var actualHeight = window.innerHeight ||
+			document.documentElement.clientHeight ||
+			document.body.clientHeight ||
+			document.body.offsetHeight;*/
+		//var actualHeight = document.body.offsetHeight;
+		var actualHeight = document.body.offsetHeight;
+
+		return actualHeight;
+	}
+	
+	function onResize()
+	{
+		var div_system	= document.getElementById('DivSystem');
+		var div_trace	= document.getElementById('DivTrace');
+		var trace_table	= document.getElementById('Trace');
+		var new_height	= getActualHeight() - (div_system.offsetHeight + 6);
+		if(new_height<100) new_height = 100;
+		//div_trace.style.height	= (window.height - div_system.offsetHeight) + 'px';
+		if(trace_table.offsetHeight<new_height) new_height = trace_table.offsetHeight + 10;
+		div_trace.style.height	= new_height + 'px';
+	}
+	
+	function TraceTableScrollEnd()
+	{
+		onResize();
+		el = document.getElementById('DivTrace'); 
+		if (el.scrollHeight > 0) el.scrollTop = el.scrollHeight; 
+	}
+	
+	function onBtnOk(){
+	    var Txt = txtBox.value;   // the line from TextBox
+	    window.navigate("app:btn:" + Txt);
+	}
+
+     function SetBody(id, body){
+		var Txt = document.getElementById(id);
+		if(Txt)
+		Txt.innerHTML = body;
+    }
+
+	function ClearTable(name){
+		var tbody	= document.getElementById(name);
+		var len		= tbody.rows.length;
+		while(len){
+			len--;
+			tbody.deleteRow(len);
+		}
+	}
+	var row;
+	var cell;
+	
+	function NewRow(id)						{row = document.createElement("TR");document.getElementById(id).appendChild(row);}
+	function NewElement(ele)				{cell = document.createElement("TD");row.appendChild(cell);}
+	function NewTD()						{cell = document.createElement("TD");row.appendChild(cell);}
+	function NewTH()						{cell = document.createElement("TH");row.appendChild(cell);}
+	function SetTID(sID)					{cell.id = sID;}
+	function SetTBody(body)					{cell.innerHTML = body;}
+	function SetTColSpan(iSize)				{cell.colSpan = iSize;}
+	function SetTRowSpan(iSize)				{cell.rowSpan = iSize;}
+	function SetTStyle(sTarget, sAttrib)	{cell.style.setAttribute(sTarget,sAttrib);}
+	
+	function PostSlideValue(target, id, val){
+		window.navigate("cmd://" + target + "/slide/" + id + "/" + val);
+	}
+	function SetSlideMax(name, val){
+		document.getElementById(name).max = val;
+	}
+	function SetSlideValue(name, val){
+		document.getElementById(name).value = val;
+	}
+	
+	function toggleStandBy(target, id)
+	{    
+		if(document.getElementById('buttonForSwitch').name == "TurnOn")
+		{  
+			document.getElementById('buttonForSwitch').name = "TurnOff";
+		}
+		else if(document.getElementById('buttonForSwitch').name == "TurnOff")
+		{         
+			document.getElementById('buttonForSwitch').name = "TurnOn";
+		}
+		document.getElementById('checkboxForSwitch').checked = !document.getElementById('checkboxForSwitch').checked;
+		window.navigate("cmd://" + target + "/" + id + "/" + (document.getElementById('checkboxForSwitch').checked ? 1 : 0));
+	} 
+	
+</SCRIPT>
+
+<body onload="onLoad();" onresize="onResize();" scroll="auto">
+	<DIV ID="dek" CLASS="dek"></DIV>
+	
+	
+	<SCRIPT LANGUAGE="JScript">
+	//------------------------------------------------------------------------
+	// popup message
+	//------------------------------------------------------------------------
+	Xoffset=-60;    // modify these values to ...
+	Yoffset= 20;    // change the popup position.
+	var nav,old,iex=(document.all),yyy=-1000;
+	if(navigator.appName=="Netscape"){(document.layers)?nav=true:old=true;}
+	if(!old){
+		var skn=(nav)?document.dek:dek.style;
+		if(nav)document.captureEvents(Event.MOUSEMOVE);
+		document.onmousemove=get_mouse;
+	}
+	function popup(msg,width){
+		var content="<TABLE  WIDTH="+width+" BORDER=1 BORDERCOLOR=black CELLPADDING=2 CELLSPACING=0 "+
+		"BGCOLOR='gold'><TD style='text-align=center'><FONT COLOR=black SIZE=2>"+msg+"</FONT></TD></TABLE>";
+		if(old){alert(msg);return;} 
+		else{
+			yyy=Yoffset;
+			if(nav){skn.document.write(content);skn.document.close();skn.visibility="visible"}
+			if(iex){document.all("dek").innerHTML=content;skn.visibility="visible"}
+		}
+	}
+	
+	function get_mouse(e){
+		if(skn.visibility=="hidden"){
+			//skn.left = 0;
+			//skn.top = 0;
+		}else{
+			var x=(nav)?e.pageX:event.x+document.body.scrollLeft;skn.left=x+Xoffset;
+			var y=(nav)?e.pageY:event.y+document.body.scrollTop;skn.top=y+yyy;
+		}
+	}
+	
+	function kill(){
+		if(!old){yyy=-1000;skn.visibility="hidden";}
+	}
+	</SCRIPT>
+	<div style="height:5px"></div>
+	<div class="ToggleSwitch">
+		<input type="checkbox" class = "ToggleSwitch_Check" id = "checkboxForSwitch" style = "display:none;"/>
+		<div class = "ToggleSwitch_transition">
+			<input type = "button" class = "ToggleSwitch_Btn off" id="buttonForSwitch" name = "TurnOn" onclick = "toggleStandBy('Trace','Enable')" />
+			<div class = "ToggleSwitch_slider_label off" id = "labelForSwitch">
+				<div class = "ToggleSwitch_active" id= "btnAct" ><span class = "ToggleSwitch_On">Trace On</span></div>
+				<div class = "ToggleSwitch_inactive" id= "btnInact" ><span class = "ToggleSwitch_Off">Trace Off</span></div>
+			</div>
+		</div>
+	</div>
+	<table class="default0" margin="0" BGCOLOR="#FFFFFF" width="100%">
+		<caption style="text-align=left">- System</caption>
+		<tbody id="System">
+		</tbody>
+	</table>
+	
+	<table class="default0" margin="0" BGCOLOR="#FFFFFF" width="100%">
+		<tbody id="Scratch">
+		</tbody>
+	</table>
+	
+	<table class="default0" margin="0" BGCOLOR="#FFFFFF" width="100%">
+		<caption id=THREAD_tag style="text-align=left">Threads</caption>
+		<tbody id="Trace">
+		</tbody>
+	</table>
+	
+	<table class="default0" margin="0" BGCOLOR="#FFFFFF" width="100%">
+		<caption id="GPRs_tag" style="text-align=left">GPRs</caption>
+		<tbody id="GPRs">
+		</tbody>
+	</table>
+
+	<table class="default0" width="100%">
+		<tbody id=MB>
+		</tbody>
+	</table>
+	
+</body>
+</html>
