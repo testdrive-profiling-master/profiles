@@ -2,3 +2,6 @@
 *.o
 *.dll
 *.exe
+.TestDrive
+.settings
+*.TestDrive.run.sp

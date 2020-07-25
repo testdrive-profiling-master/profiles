@@ -1,6 +1,6 @@
 @echo off
 SETLOCAL
-del /Q ..\SubSystems\Simulation\verilator\*
+del /Q ..\SubSystems\Simulation\verilator\SimTop*
 
 if "%SIM_WAVE_MODE%"=="File output" (
 	echo 	Waveform configuration : File output mode.
