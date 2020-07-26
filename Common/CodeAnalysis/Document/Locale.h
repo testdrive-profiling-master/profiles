@@ -1,5 +1,5 @@
 ﻿//================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Code Analysis
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 7/26/2020 Sun (CloneX)
 //================================================================================
 #include "LocaleString.h"
 
@@ -58,13 +58,13 @@ LOCALE_TEXT(ANALYSIS_TARGET,
 LOCALE_TEXT(NO_ERROR_FOUND,
 	_T("\t오류 없음.\n"),
 	_T("\tエラーはありません。\n"),
-	_T("\tNo error.\n"),
-	_T("\tNo hay error.\n"))
+	_T("\tNo hay error.\n"),
+	_T("\tNo error.\n"))
 LOCALE_TEXT(STATIC_CODE_ANALYSIS,
 	_T("정적 코드 분석중...\n\n"),
 	_T("静的コード分析中...\n\n"),
-	_T("Static code analysis...\n\n"),
-	_T("análisis de código estático...\n\n"))
+	_T("análisis de código estático...\n\n"),
+	_T("Static code analysis...\n\n"))
 LOCALE_TEXT(STATIC_CODE_ANALYSIS_PLEASE_WAIT,
 	_T("정적 코드 분석중입니다. 잠시 기다려주시기 비랍니다..."),
 	_T("静的コード分析中です。しばらくお待ち非んですよ..."),
