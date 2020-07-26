@@ -86,7 +86,8 @@ LOCALE_TEXT(DESC_CODING_A_STYLE,
 LOCALE_TEXT(CODING_I_STYLE,
 	_T("코딩 I-스타일"),
 	_T("コーディングI-スタイル"),
-	_T("Codificación I-style"))
+	_T("Codificación I-style"),
+	_T("Coding I-style"))
 LOCALE_TEXT(DESC_CODING_I_STYLE,
 	_T("i-Style을 사용하여, Verilog/VHDL 코딩 스타일을 체크하고 보정합니다."),
 	_T("i-Styleを使用して、Verilog/VHDL コーディングスタイルをチェックして補正します。"),
