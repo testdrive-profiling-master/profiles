@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -49,7 +49,8 @@ public:
 	void Clear(void);
 	void Refresh(void);
 	void UpdateTable(BOOL bSubGroups = FALSE);
-	inline size_t Size(void)	{return m_List.size();}
+	inline size_t Size(void)			{return m_List.size();}
+	inline CString& TestFilter(void)	{return m_sTestFilter;}
 
 	TestGroup* FindGroup(LPCTSTR sPath);
 	TestVector* FindVector(LPCTSTR sPath);
@@ -58,5 +59,6 @@ public:
 private:
 	vector<TestGroup*>		m_List;
 	TEST_ANALYSIS			m_Analysis;
+	CString					m_sTestFilter;
 };
 #endif//__TEST_LIST_H__

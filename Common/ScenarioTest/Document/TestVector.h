@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Scenario test
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 8/13/2020 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __TEST_VECTOR_H__
 #define __TEST_VECTOR_H__
@@ -82,7 +82,7 @@ public:
 	void UpdateTable(void);
 	void UpdateProfile(BOOL bUpdate = TRUE);
 	void DoTest(void);
-	CString FullName(void)	;
+	CString FullName(void);
 
 	inline LPCTSTR Name(void)			{return m_sFileName;}
 	inline TEST_STATUS Status(void)	{return m_Status;}

@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,13 +32,14 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Scenario test
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 8/13/2020 Thu (clonextop@gmail.com)
 //================================================================================
 #include "TestList.h"
 
 TestList::TestList(void)
 {
 	memset(&m_Analysis, 0, sizeof(m_Analysis));
+	m_sTestFilter.GetBuffer(MAX_PATH);
 }
 
 TestList::~TestList(void)
@@ -136,7 +137,7 @@ void TestList::Scan(LPCTSTR sPath)
 				{
 					TestGroup* pTestGroup	= new TestGroup;
 
-					if(pTestGroup->Initialize(dwGroupID, sGroupPath)) {
+					if(pTestGroup->Initialize(dwGroupID, sGroupPath, m_sTestFilter)) {
 						m_List.push_back(pTestGroup);
 						dwGroupID++;
 					} else {

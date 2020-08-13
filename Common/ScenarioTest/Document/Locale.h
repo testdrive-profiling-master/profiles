@@ -1,5 +1,5 @@
 ﻿//================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Scenario test
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 8/13/2020 Thu (clonextop@gmail.com)
 //================================================================================
 #include "LocaleString.h"
 
@@ -228,4 +228,14 @@ LOCALE_TEXT(TEST_PROGRAM_IS_NOT_FOUND,
 	_T("シナリオのテストプログラム(\"%s\")を見つけることができませんでした。 テストがキャンセルされます。"),
 	_T("No se pudo encontrar el programa(\"%s\") de prueba para el escenario. La prueba será cancelada."),
 	_T("Scenario Test program file(\"%s\") could not be found. The test is canceled."))
+LOCALE_TEXT(NAME_FILTER,
+	_T("이름 필터"),
+	_T("名前フィルター"),
+	_T("Filtro de nombre"),
+	_T("Name filter"))
+LOCALE_TEXT(DESC_NAME_FILTER,
+	_T("이름 필터를 지정합니다."),
+	_T("名前フィルターを指定します。"),
+	_T("Especifique un filtro de nombre."),
+	_T("Specify a name filter."))
 LOCALE_END

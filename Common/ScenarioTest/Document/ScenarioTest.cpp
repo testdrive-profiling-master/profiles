@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Scenario test
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 8/13/2020 Thu (clonextop@gmail.com)
 //================================================================================
 #include "ScenarioTest.h"
 
@@ -86,6 +86,11 @@ ScenarioTest::ScenarioTest(ITDDocument* pDoc)
 		g_sTestStatus[TEST_STATUS_SCORE]				= _L(TEST_STATUS_SCORE);
 	}
 	{
+		ITDPropertyData* pProperty;
+		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_NAME_FILTER, _L(NAME_FILTER), (DWORD_PTR)((LPCTSTR)m_TestList.TestFilter()), _L(DESC_NAME_FILTER));
+		pProperty->UpdateConfigFile();
+	}
+	{
 		m_TimeToday				= GetCurrentDayTime();
 		m_pDoc->SetTimer(COMMAND_ID_REFRESH_TABLE, 1000 * 60 * 60);	// every 1 hour, refresh table when day changed
 	}
@@ -100,6 +105,23 @@ BOOL ScenarioTest::OnPropertyUpdate(ITDPropertyData* pProperty)
 {
 	pProperty->UpdateData();
 	pProperty->UpdateConfigFile(FALSE);
+
+	switch(pProperty->GetID()) {
+	case PROPERTY_ID_NAME_FILTER:
+		if(m_pDoc->IsLocked()) {
+			g_pSystem->LogWarning(_L(ALREADY_TEST_IS_RUNNING));
+		} else {
+			m_TestList.Clear();
+			m_TestList.Refresh();
+			g_pSystem->LogInfo(_L(LIST_REFRESH_IS_DONE));
+		}
+
+		break;
+
+	default:
+		break;
+	}
+
 	return TRUE;
 }
 
@@ -311,7 +333,6 @@ BOOL ScenarioTest::OnTest(void)
 
 	return TRUE;
 }
-
 
 #include <TlHelp32.h>
 void ScenarioTest::ForceToQuit(LPCTSTR sFileName)

@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,9 +32,10 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Scenario test
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 8/13/2020 Thu (clonextop@gmail.com)
 //================================================================================
 #include "TestGroup.h"
+#include "TestList.h"
 
 TestGroup::TestGroup(void)
 {
@@ -70,11 +71,11 @@ static LPCTSTR	__sScenarioID[TG_DESC_SIZE] = {
 
 #define GetConfig(id, str)	GetPrivateProfileString(g_sAppName, __sScenarioID[id], g_sEmpty, str, 4096, sScenarioFileName)
 
-BOOL TestGroup::Initialize(int iGroupID, LPCTSTR sPath)
+BOOL TestGroup::Initialize(int iGroupID, LPCTSTR sPath, LPCTSTR sNameFilter)
 {
-	m_iGroupID		= iGroupID;
-	m_sPath			= sPath;
-	m_sName			= sPath;
+	m_iGroupID				= iGroupID;
+	m_sPath					= sPath;
+	m_sName					= sPath;
 	m_ScoreFormat.sFormat	= _L(TEST_STATUS_SCORE);
 	m_ScoreFormat.min		= 0;
 	m_ScoreFormat.max		= 100;
@@ -92,6 +93,11 @@ BOOL TestGroup::Initialize(int iGroupID, LPCTSTR sPath)
 		for(int i = 0; i < TG_DESC_SIZE; i++) {
 			GetConfig((TG_DESC)i, sDesc);
 			m_sDesc[i]	= sDesc;
+		}
+
+		if(sNameFilter && *sNameFilter && !m_sDesc[TG_DESC_NAME].IsEmpty()) {
+			if(m_sDesc[TG_DESC_NAME].Find(sNameFilter) < 0)
+				return FALSE;
 		}
 
 		if(m_sDesc[TG_DESC_FILES].IsEmpty()) return FALSE;

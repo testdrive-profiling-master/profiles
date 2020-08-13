@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Scenario test
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 8/13/2020 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __TEST_GROUP_H__
 #define __TEST_GROUP_H__
@@ -61,7 +61,7 @@ public:
 	TestGroup(void);
 	~TestGroup(void);
 
-	BOOL Initialize(int iGroupID, LPCTSTR sPath);
+	BOOL Initialize(int iGroupID, LPCTSTR sPath, LPCTSTR sNameFilter);
 	void Clear(void);
 	void Scan(LPCTSTR sPath);
 	void Analysis(TEST_ANALYSIS* pParent = NULL);
@@ -69,13 +69,14 @@ public:
 	void UpdateProfile(BOOL bUpdate = TRUE);
 
 	inline LPCTSTR GetConfig(TG_DESC id){return m_sDesc[id];}
-	inline CString& Path(void)	{return m_sPath;}
-	inline CString& Name(void)	{return m_sName;}
+	inline CString& Path(void)		{return m_sPath;}
+	inline CString& Name(void)		{return m_sName;}
 
 	void OpenFolder(void);
 
-	inline int GroupID(void)	{return m_iGroupID;}
-	inline size_t Size(void)	{return m_List.size();}
+	inline int GroupID(void)		{return m_iGroupID;}
+	inline LPCTSTR GroupName(void)	{return m_sGroup;}
+	inline size_t Size(void)		{return m_List.size();}
 
 	TestVector* FindVector(LPCTSTR sPath);
 	TestVector* GetNextVector(TestVector* pVector = NULL);
@@ -84,6 +85,7 @@ public:
 protected:
 	int					m_iGroupID;
 	CString				m_sName;
+	CString				m_sGroup;
 	CString				m_sPath;
 	CString				m_sDesc[TG_DESC_SIZE];
 	TG_SCORE_FORMAT		m_ScoreFormat;

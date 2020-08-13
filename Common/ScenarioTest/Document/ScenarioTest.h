@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Scenario test
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 8/13/2020 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SCENARIO_TEST_H__
 #define __SCENARIO_TEST_H__
@@ -43,6 +43,7 @@
 using namespace std;
 
 typedef enum{
+	PROPERTY_ID_NAME_FILTER,
 	PROPERTY_ID_SIZE
 }PROPERTY_ID;
 
