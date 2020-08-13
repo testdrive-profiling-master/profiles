@@ -61,7 +61,7 @@ dust_clean:
 	@$(RM) -f $(OBJS) $(OBJS_RES) $(TARGET_A) $(DEPS_CCACHE) $(DEPS)
 
 static:
-	@cppcheck $(INC) $(CDEFS) $(CPPCHECK_ARG) -D__MINGW32__ --suppress=preprocessorErrorDirective --inline-suppr $(SRCS)
+	@cppcheck $(INC) $(CDEFS) $(CPPCHECK_ARG) -D__MINGW32__ --suppress=preprocessorErrorDirective --inline-suppr --force $(SRCS)
 
 #########################################################################
 # Dependency
