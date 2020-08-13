@@ -29,7 +29,7 @@ profile.call		"Profiles\\ALUTest\\initialize.sp"						// ALU test
 profile.call		"Profiles\\RegisterMap\\initialize.sp"					// register map
 profile.call		"Profiles\\common\\initialize.sp"						// build archive
 profile.call		"Application\\Example\\initialize.sp"					// Examples
-profile.call		"System\\doc\\initialize.sp"							// documents
+profile.call		"Documents\\SystemMap\\initialize.sp"					// documents
 profile.call		"Driver\\initialize.sp"									// driver
 
 profile.call		"%TESTDRIVE_PROFILE%\\common\\Community\\initialize.sp"			// community
