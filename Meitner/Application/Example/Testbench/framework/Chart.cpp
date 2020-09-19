@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 9/19/2020 Sat (clonextop@gmail.com)
 //================================================================================
 #include "DefaultSystemConfig.h"
 #include "Chart.h"
@@ -108,8 +108,8 @@ void Chart::AddPointArray(DWORD dwID, DWORD dwCount, double* pXvalues, double* p
 {
 	if(!CheckValidate()) return;
 
-	double* pX		= (double*)(m_pCommand + sizeof(DWORD) * 2);
-	double* pY		= &(((double*)(m_pCommand + sizeof(DWORD) * 2))[dwCount]);
+	double* pX		= (double*)((BYTE*)m_pCommand + sizeof(DWORD) * 2);
+	double* pY		= &(((double*)((BYTE*)m_pCommand + sizeof(DWORD) * 2))[dwCount]);
 	((DWORD*)m_pCommand)[0]	= sizeof(DWORD) * 2;
 	((DWORD*)m_pCommand)[1]	= sizeof(DWORD) * 2 + sizeof(double) * dwCount;
 	memcpy(pX, pXvalues, sizeof(double)*dwCount);

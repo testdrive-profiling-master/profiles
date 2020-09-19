@@ -14,7 +14,7 @@ LIBDIR			:= -L$(LIBPATH) -lSimHDL -lgomp
 INC				:= -I. -Isrc -I../../../../Application/include -I../../../HDL/dpi
 
 CDEFS			:= -DSYSTEM_IMPLEMENTATION -DSIMLIB_EXPORTS -DUSE_TESTDRIVE
-CFLAGS			:= -fopenmp -O3 -DNDEBUG
+EXTRA_CFLAGS	:= -Os -std=c++11 -DNDEBUG
 #LDFLAGS			:= --def wrapper.def
 
 BUILD_TARGET	= $(TARGET_SO)

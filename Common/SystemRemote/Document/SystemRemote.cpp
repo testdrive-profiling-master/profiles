@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System remote
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 8/15/2020 Sat (clonextop@gmail.com)
 //================================================================================
 #include "common.h"
 #include "SystemRemote.h"
@@ -40,9 +40,12 @@
 #include "ProfileConfig.inl"
 
 REGISTER_LOCALED_DOCUMENT(SystemRemote)
+LPCTSTR g_sConfigPath			= _T("%PROJECT%Profiles/Config.ini");
+static LPCTSTR		__sAppName	= _T("System");
 
 SystemRemote::SystemRemote(ITDDocument* pDoc)
 {
+	CString	sConfigPath	= g_pSystem->RetrieveFullPath(g_sConfigPath);
 	m_pDoc		= pDoc;
 	m_pReport	= pDoc->CreateReport(NULL, 0, 0, 10, 10);
 	m_pReport->ShowScrollBar(TRUE);
@@ -52,11 +55,12 @@ SystemRemote::SystemRemote(ITDDocument* pDoc)
 		pProperty		= pDoc->AddPropertyData(PROPERTY_TYPE_BOOL, PROPERTY_ID_SERVER_ENABLE, _L(SERVER), (DWORD_PTR)&m_bServer, _L(DESC_SERVER_ENABLE));
 		pProperty->UpdateConfigFile();
 		m_sServer.GetBuf(MAX_PATH);
+		GetPrivateProfileString(__sAppName, _T("SERVER_IP"), _T(""), (LPTSTR)m_sServer.c_str(), MAX_PATH, sConfigPath);
 		pProperty		= pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_SERVER_IP, _L(SERVER_IP), (DWORD_PTR)(LPCTSTR)m_sServer, _L(DESC_SERVER_IP));
 		m_pPropertyServerIP	= pProperty;
 		pProperty->UpdateConfigFile();
 		m_sPort.GetBuf(MAX_PATH);
-		m_sPort			= _T("3232");
+		GetPrivateProfileString(__sAppName, _T("PORT"), _T("3232"), (LPTSTR)m_sPort.c_str(), MAX_PATH, sConfigPath);
 		pProperty		= pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_PORT, _L(SERVER_PORT), (DWORD_PTR)(LPCTSTR)m_sPort, _L(DESC_SERVER_PORT));
 		pProperty->UpdateConfigFile();
 	}

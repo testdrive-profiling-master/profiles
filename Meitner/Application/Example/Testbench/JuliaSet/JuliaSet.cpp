@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,10 +32,9 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 9/19/2020 Sat (clonextop@gmail.com)
 //================================================================================
 #include "JuliaSet.h"
-#include <omp.h>
 
 JuliaSet::JuliaSet(void)
 {
@@ -136,11 +135,7 @@ DWORD JuliaSet::RunJuliaSet(int x, int y)
 
 void JuliaSet::Present(void)
 {
-	#pragma omp parallel for
-
 	for(int y = 0; y < m_iHeight; y++) {
-		#pragma omp parallel for
-
 		for(int x = 0; x < m_iWidth; x++) {
 			OnPresent(x, y, RunJuliaSet(x, y));
 		}

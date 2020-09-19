@@ -1,9 +1,18 @@
 #-------------------------------------------------
 #	Toolchain.
 #-------------------------------------------------
+ifndef CROSS
 CROSS		:= x86_64-w64-mingw32-
+endif
+
+ifeq ($(MAIN_COMPILER), clang)
+CC 			:= clang
+CXX			:= clang++
+else
+# default compiler
 CC 			:= $(CROSS)gcc
 CXX			:= $(CROSS)g++
+endif
 AR 			:= ar
 LD 			:= $(CROSS)ld
 NM 			:= $(CROSS)nm
@@ -31,7 +40,7 @@ ifdef CROSS
 endif
 
 ifeq ($(EXTRA_CFLAGS),)
-	EXTRA_CFLAGS	:= -O3 -DNDEBUG
+	EXTRA_CFLAGS	:= -O3 -std=c++11 -DNDEBUG
 endif
 
 OPTFLAGS	:= -w -Wall -Wextra -m64 -mfpmath=sse -mieee-fp -mmmx -msse -msse2

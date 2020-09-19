@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,11 +32,10 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 9/19/2020 Sat (clonextop@gmail.com)
 //================================================================================
 #include "BruteForce.h"
 #include <time.h>
-#include <omp.h>
 
 BruteForce::BruteForce(void)
 {
@@ -116,8 +115,6 @@ void BruteForce::Initialize(int N)
 
 void BruteForce::Update(void)
 {
-	#pragma omp parallel for
-
 	for(int i = 0; i < m_iSize; i++) {
 		Body* pBody	= &m_pBodies[i];
 		pBody->ResetForce();
@@ -127,8 +124,6 @@ void BruteForce::Update(void)
 			if(i != j) pBody->AddForce(&m_pBodies[j]);
 		}
 	}
-
-	#pragma omp parallel for
 
 	for(int i = 0; i < m_iSize; i++) {
 		m_pBodies[i].Update(1e11);

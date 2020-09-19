@@ -1,5 +1,5 @@
 ﻿//================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System manager
-// Rev.  : 11/15/2019 Fri (clonextop@gmail.com)
+// Rev.  : 9/19/2020 Sat (clonextop@gmail.com)
 //================================================================================
 #include "LocaleString.h"
 
@@ -63,6 +63,16 @@ LOCALE_TEXT(DESC_BUILD_AUTOMATION,
 	_T("ビルドの自動化を有効にします。\n厳格なビルドを実行するには、'Strict build'を有効にします。\nソースの保存時に「Control」キーを1秒以上押すと、ビルドがキャンセルされます。"),
 	_T("Habilitar la automatización de compilación.\nPara realizar una compilación estricta, seleccione 'Compilación estricta'.\nSi presiona la tecla 「Control」 durante más de 1 segundo al guardar su fuente, la compilación se cancelará."),
 	_T("Enable build automation.\nTo perform strict build, select 'Strict build'.\nIf press 「Control」 key for more than 1 second during saving your source, the build will be canceled."))
+LOCALE_TEXT(COMPILER,
+	_T("컴파일러"),
+	_T("コンパイラ"),
+	_T("Compilador"),
+	_T("Compiler"))
+LOCALE_TEXT(DESC_COMPILER,
+	_T("메인 컴파일러를 선택합니다."),
+	_T("メインコンパイラを選択します。"),
+	_T("Elija un compilador principal."),
+	_T("Choose a main compiler."))
 LOCALE_TEXT(DEBUG_INFO,
 	_T("디버그 정보"),
 	_T("デバッグ情報"),

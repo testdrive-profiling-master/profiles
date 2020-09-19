@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,13 +32,19 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System manager
-// Rev.  : 11/14/2019 Thu (clonextop@gmail.com)
+// Rev.  : 9/19/2020 Sat (clonextop@gmail.com)
 //================================================================================
 #include "System.h"
 #include "Utils.h"
 #include "testdrive_document.inl"
 
 REGISTER_LOCALED_DOCUMENT(System)
+
+static LPCTSTR __sCompiler[] = {
+	_T("gcc"),
+	_T("clang"),
+	NULL
+};
 
 static LPCTSTR __sSimWaveMode[] = {
 	_T("None"),
@@ -114,7 +120,9 @@ System::System(ITDDocument* pDoc) :
 	UpdateDefaultSystemConfigHeader();
 	m_pSystemConfig->hSystemManager	= pDoc->GetWindowHandle();
 	m_SubSystemList.Initialize();
+
 	if(m_SubSystemList.Size()) m_TopDesignList.Initialize();
+
 	// Hide this document, can't close by user until program quit.
 	pDoc->Show(FALSE);
 	{
@@ -122,7 +130,7 @@ System::System(ITDDocument* pDoc) :
 		ITDPropertyData* pProperty;
 		m_sSubSystem.GetBuffer(MAX_PATH);
 
-		if(m_SubSystemList.Size()){
+		if(m_SubSystemList.Size()) {
 			m_sSubSystem			= m_SubSystemList.Item(0) ? m_SubSystemList.Item(0)->sName.c_str() : _T("");
 			pProperty				= pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_SYSTEM_TYPE, _L(SUB_SYSTEM), (DWORD_PTR)m_sSubSystem.GetBuffer(), _L(DESC_SUB_SYSTEM));
 			pProperty->UpdateConfigFile();
@@ -137,6 +145,14 @@ System::System(ITDDocument* pDoc) :
 
 			for(int i = 0; i < m_SubSystemList.Size(); i++) pProperty->AddOption(m_SubSystemList.Item(i)->sName);
 		}
+
+		m_sCompiler.GetBuffer(1024);
+		m_sCompiler			= __sCompiler[0];
+		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_COMPILER, _L(COMPILER), (DWORD_PTR)m_sCompiler.GetBuffer(), _L(DESC_COMPILER));
+		pProperty->UpdateConfigFile();
+		pProperty->AllowEdit(FALSE);
+
+		for(int i = 0; __sCompiler[i]; i++) pProperty->AddOption(__sCompiler[i]);
 
 		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_BOOL, PROPERTY_ID_BUILD_AUTOMATION, _L(BUILD_AUTOMATION), (DWORD_PTR) & (m_BuildAutomation.AutoBuild()), _L(DESC_BUILD_AUTOMATION));
 		pProperty->UpdateConfigFile();
@@ -274,6 +290,7 @@ void System::UpdateEnvironments(void)
 	}
 
 	// Set environment variables
+	WriteConfiguration(_T("MAIN_COMPILER"),		m_sCompiler);
 	WriteConfiguration(_T("SUB_SYSTEM_NAME"),	m_sSubSystem);
 	WriteConfiguration(_T("SUB_SYSTEM_PATH"),	m_SubSystemList.Find(m_sSubSystem) ? (LPCTSTR)(m_SubSystemList.Find(m_sSubSystem)->sFile) : _T(""));
 	WriteConfiguration(_T("AUTHOR"),			m_BuildAutomation.AuthorName());
@@ -391,7 +408,7 @@ BOOL System::OnCommand(DWORD command, WPARAM wParam, LPARAM lParam)
 		ExternalCommand((TESTDRIVE_CMD)LOWORD(wParam), HIWORD(wParam), lParam);
 		break;
 
-	case COMMAND_ID_MMAPVIEW:
+	case COMMAND_ID_MMAPVIEW:		// open main memory map viewer
 		RunMMapView((LPCTSTR)wParam);
 		break;
 

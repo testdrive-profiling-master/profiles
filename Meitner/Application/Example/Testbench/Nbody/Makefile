@@ -16,8 +16,8 @@ SRCS			:= \
 	$(SRC_PATH)/../framework/Display.cpp \
 	$(SRC_PATH)/../framework/Testbench.cpp
 
-INC				:= -I../framework -fopenmp
-LIBDIR			:= -lgomp
+INC				:= -I../framework
+LIBDIR			:= -lm
 CDEFS			:=
 
 #-------------------------------------------------

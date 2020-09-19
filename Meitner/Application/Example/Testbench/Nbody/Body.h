@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,12 +32,16 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 9/19/2020 Sat (clonextop@gmail.com)
 //================================================================================
 #ifndef __BODY_H__
 #define __BODY_H__
 #include "STDInterface.h"
 #include <math.h>
+
+#ifndef M_PI
+#define M_PI (3.14159265358979323846264338327950288)
+#endif
 
 #define SOLAR_MASS				1.98892e30
 #define GRAPVITY_CONSTANT		6.673e-11
