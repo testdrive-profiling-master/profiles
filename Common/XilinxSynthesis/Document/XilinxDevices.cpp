@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 12/20/2020 Sun (clonextop@gmail.com)
 //================================================================================
 #include "XilinxDevices.h"
 #include "ProjectConfig.h"
@@ -58,7 +58,13 @@ BOOL XilinxFileToken::Initialize(void)
 	sFilePath	+= _T("data\\parts\\installed_devices.txt");
 	m_fp = _tfopen(sFilePath, _T("rt"));
 
-	if(!m_fp) g_pSystem->LogError(_T("Can't found Xilinx's part list file : %s"), sFilePath.c_str());
+	if(!m_fp) {
+		g_pSystem->LogWarning(_T("Can't found Xilinx's part list file (%s). Try to retrieve device list from old DB."), sFilePath.c_str());
+		//@TODO : make device list from xilinx
+		sFilePath = ProjectConfig::m_Config.sDocPath;
+		sFilePath	+= _T("\\installed_devices.txt");
+		m_fp = _tfopen(sFilePath, _T("rt"));
+	}
 
 	return m_fp != NULL;
 }

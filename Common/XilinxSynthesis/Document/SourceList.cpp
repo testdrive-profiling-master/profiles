@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 12/20/2020 Sun (clonextop@gmail.com)
 //================================================================================
 #include "SourceList.h"
 #include <tchar.h>
@@ -466,7 +466,7 @@ BOOL SourceVector::Synthesis_Vivado(void)
 											if(pFilePart) *pFilePart = _T('\0');
 
 											do {
-												if(FindFileData.dwFileAttributes != FILE_ATTRIBUTE_DIRECTORY && FindFileData.cFileName[0] != _T('.')) {
+												if(!(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && FindFileData.cFileName[0] != _T('.')) {
 													sFullPath.Format(_T("%s%s"), sDirPath, FindFileData.cFileName);
 
 													if(sFullPath.Find(_T(".xdc")) != -1)
@@ -1038,7 +1038,7 @@ void SourceGroup::Scan(void)
 
 	do {
 		// find sub directories
-		if(FindFileData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY && FindFileData.cFileName[0] != _T('.')) {
+		if((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && FindFileData.cFileName[0] != _T('.')) {
 			CString	sNextSubPath;
 			sNextSubPath 	= TargetPath();
 			sNextSubPath	+= _T('/');
