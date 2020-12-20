@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,9 +32,10 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 12/20/2020 Sun (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
+#include "TestDriver.inl"
 #include "SimHDL.h"
 #include "SimTop.h"
 #include <time.h>		// for rand/srand
@@ -82,7 +83,7 @@ public:
 	}
 
 	STDMETHOD_(BOOL, Initialize)(void) {	// cppcheck-suppress internalAstError
-		if (!g_pSimHDL) {
+		if(!g_pSimHDL) {
 			srand(time(NULL));			// randomize seed
 			Verilated::randReset(2);	// randomize all bits
 			g_pSimHDL		= this;

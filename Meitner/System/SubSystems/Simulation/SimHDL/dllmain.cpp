@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,10 +32,9 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 12/20/2020 Sun (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
-#include "TestDriver.inl"
 
 #ifdef WIN32
 BOOL APIENTRY DllMain(HMODULE hModule,
