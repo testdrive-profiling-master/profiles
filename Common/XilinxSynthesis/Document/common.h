@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 12/22/2020 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __COMMON_H__
 #define __COMMON_H__
@@ -41,7 +41,6 @@
 #include "tchar.h"
 #include "stdlib.h"
 
-BOOL IsCurrentProcessWow64(void);
 BOOL IsFileExist(LPCTSTR sFilePath);
 void FilePrint(FILE* fp, LPCTSTR sFormat, ...);
 #endif//__COMMON_H__

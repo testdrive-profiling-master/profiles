@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 12/20/2020 Sun (clonextop@gmail.com)
+// Rev.  : 12/22/2020 Tue (clonextop@gmail.com)
 //================================================================================
 #include "XilinxDevices.h"
 #include "ProjectConfig.h"
@@ -56,14 +56,36 @@ BOOL XilinxFileToken::Initialize(void)
 	Release();
 	CString sFilePath(ProjectConfig::m_Config.sXilinxPath);
 	sFilePath	+= _T("data\\parts\\installed_devices.txt");
+
+	if(!IsFileExist(sFilePath)) {
+		// try to make device list
+		CString sBatch, sArg;
+		g_pSystem->LogInfo(_T("*I: Making Xilinx device list...\n"));
+		sBatch.Format(_T("%s\\%s_make_device_list.bat"), ProjectConfig::m_Config.sDocPath, g_sGlobalName);
+		sArg.Format(_T("\"%s\\settings64.bat\" %s"),
+					(LPCTSTR)ProjectConfig::m_Config.sXilinxPath,
+					(LPCTSTR)ProjectConfig::m_Config.sXilinxPath);
+		sArg.Replace(_T("\\"), _T("/"));
+		int iRet = g_pSystem->ExecuteFile(sBatch, sArg, TRUE, NULL, ProjectConfig::m_Config.sDocPath,
+										  _T("failed:"), -1,
+										  _T("ERROR:"), -1,
+										  NULL);
+
+		if(iRet >= 0) {
+			g_pSystem->LogInfo(_T("Done!"));
+		}
+
+		// cleanup log files.
+		sArg.Format(_T("%s\\vivado.jou"), ProjectConfig::m_Config.sDocPath);
+		_tremove(sArg.c_str());
+		sArg.Format(_T("%s\\vivado.log"), ProjectConfig::m_Config.sDocPath);
+		_tremove(sArg.c_str());
+	}
+
 	m_fp = _tfopen(sFilePath, _T("rt"));
 
 	if(!m_fp) {
-		g_pSystem->LogWarning(_T("Can't found Xilinx's part list file (%s). Try to retrieve device list from old DB."), sFilePath.c_str());
-		//@TODO : make device list from xilinx
-		sFilePath = ProjectConfig::m_Config.sDocPath;
-		sFilePath	+= _T("\\installed_devices.txt");
-		m_fp = _tfopen(sFilePath, _T("rt"));
+		g_pSystem->LogWarning(_T("Can't found Xilinx's part list file (%s)."), sFilePath.c_str());
 	}
 
 	return m_fp != NULL;

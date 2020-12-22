@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 12/20/2020 Sun (clonextop@gmail.com)
+// Rev.  : 12/22/2020 Tue (clonextop@gmail.com)
 //================================================================================
 #include "SourceList.h"
 #include <tchar.h>
@@ -531,10 +531,8 @@ BOOL SourceVector::Synthesis_Vivado(void)
 		// run synthesis
 		CString sBatch, sArg;
 		sBatch.Format(_T("%s\\%s_vivado.bat"), (LPCTSTR)m_Config.sDocPath, g_sGlobalName);
-		sArg.Format(_T("\"%s\\settings%d.bat\" %d %s"),
+		sArg.Format(_T("\"%s\\settings64.bat\" %s"),
 					(LPCTSTR)m_Config.sXilinxPath,
-					IsCurrentProcessWow64() ? 64 : 32,
-					IsCurrentProcessWow64() ? 64 : 32,
 					(LPCTSTR)sName);
 		int iRet = g_pSystem->ExecuteFile(sBatch, sArg, TRUE, NULL, m_Config.sProjectPath,
 										  _T("failed:"), -1,

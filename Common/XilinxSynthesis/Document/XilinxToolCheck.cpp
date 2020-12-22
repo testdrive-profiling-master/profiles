@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,27 +32,10 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 12/22/2020 Tue (clonextop@gmail.com)
 //================================================================================
 #include "XilinxSynthesis.h"
 #include <io.h>
-
-BOOL IsCurrentProcessWow64(void)
-{
-#if defined(WIN64) || defined(_WIN64)
-	return TRUE;
-#else
-	BOOL bIsWow64 = FALSE;
-	typedef BOOL (WINAPI * LPFN_ISWOW64PROCESS)(HANDLE, PBOOL);
-	LPFN_ISWOW64PROCESS fnIsWow64Process;
-	fnIsWow64Process = (LPFN_ISWOW64PROCESS)GetProcAddress(GetModuleHandle(TEXT("kernel32")), "IsWow64Process");
-
-	if(!fnIsWow64Process)
-		return FALSE;
-
-	return fnIsWow64Process(GetCurrentProcess(), &bIsWow64) && bIsWow64;
-#endif
-}
 
 BOOL IsFileExist(LPCTSTR sFilePath)
 {
@@ -79,7 +62,7 @@ static BOOL __FindXilinxTool_Vivado(TCHAR cDrive, LPTSTR sXilinxPath, LPTSTR sTo
 				{
 					// search environment batch file.
 					CString sFile;
-					sFile.Format(_T("%ssettings%d.bat"), sPath, IsCurrentProcessWow64() ? 64 : 32);	// actually 64bit only
+					sFile.Format(_T("%ssettings64.bat"), sPath);
 
 					if(IsFileExist(sFile)) {
 						_tcscpy(sXilinxPath, sPath);
