@@ -123,7 +123,7 @@ void TestList::Scan(LPCTSTR sPath)
 	if(hFind != INVALID_HANDLE_VALUE) {
 		do {
 			if(FindFileData.cFileName[0] == _T('.')) {
-			} else if(FindFileData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY) {
+			} else if(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
 				CString	sGroupPath;
 				sGroupPath.Format(_T("%s\\%s"), sPath, FindFileData.cFileName);
 				{

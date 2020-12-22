@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Scenario test
-// Rev.  : 8/13/2020 Thu (clonextop@gmail.com)
+// Rev.  : 12/22/2020 Tue (clonextop@gmail.com)
 //================================================================================
 #include "TestGroup.h"
 #include "TestList.h"
@@ -172,7 +172,7 @@ BOOL TestGroup::Initialize(int iGroupID, LPCTSTR sPath, LPCTSTR sNameFilter)
 		if(hFind != INVALID_HANDLE_VALUE) {
 			do {
 				if(FindFileData.cFileName[0] == _T('.')) {
-				} else if(FindFileData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY) {
+				} else if(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
 					CString	sNextPath;
 					sNextPath.Format(_T("%s\\%s"), sPath, FindFileData.cFileName);
 					Scan(sNextPath);
