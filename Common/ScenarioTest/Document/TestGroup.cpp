@@ -214,7 +214,7 @@ void TestGroup::Scan(LPCTSTR sPath)
 
 				do {
 					if(FindFileData.cFileName[0] == _T('.')) {
-					} else if(FindFileData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY) {
+					} else if(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
 						CString	sNextPath;
 						sNextPath.Format(_T("%s\\%s"), sPath, FindFileData.cFileName);
 						Scan(sNextPath);

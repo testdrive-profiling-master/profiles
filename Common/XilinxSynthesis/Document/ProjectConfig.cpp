@@ -348,7 +348,7 @@ BOOL ProjectConfig::MakeProjectConfigFile(SourceVector* pSource) 	// for ISE onl
 										if(pFilePart) *pFilePart = _T('\0');
 
 										do {
-											if(FindFileData.dwFileAttributes != FILE_ATTRIBUTE_DIRECTORY && FindFileData.cFileName[0] != _T('.')) {
+											if(!(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && FindFileData.cFileName[0] != _T('.')) {
 												sFullPath.Format(_T("%s%s"), sDirPath, FindFileData.cFileName);
 												sFullPath.Replace(_T('\\'), _T('/'));
 
