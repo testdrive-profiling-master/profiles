@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Code Analysis
-// Rev.  : 3/4/2020 Wed (clonextop@gmail.com)
+// Rev.  : 12/28/2020 Mon (clonextop@gmail.com)
 //================================================================================
 #pragma once
 #include "testdrive_document.h"
@@ -51,7 +51,8 @@ public:
 	STDMETHOD_(BOOL, OnPropertyUpdate)(ITDPropertyData* pProperty);
 
 	void DoStaticCodeAnalysis(void);
-	BOOL StaticCodeAnalysis(LPCTSTR lpszTitle, LPCTSTR lpszPath);
+	BOOL StaticCodeAnalysis(LPCTSTR lpszTitle, LPCTSTR lpszPath, LPCTSTR lpszArg);
+	BOOL StaticCodeAnalysisPrivate(LPCTSTR lpszTitle, LPCTSTR lpszPath);
 	void Restart(void);
 
 	STDMETHOD_(void, OnReportLink)(DWORD dwID, LPCTSTR lpszString, long cpMin, long cpMax);

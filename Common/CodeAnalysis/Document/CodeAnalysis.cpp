@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Code Analysis
-// Rev.  : 3/3/2020 Tue (clonextop@gmail.com)
+// Rev.  : 12/28/2020 Mon (clonextop@gmail.com)
 //================================================================================
 #include "CodeAnalysis.h"
 #include "testdrive_document.inl"
@@ -41,9 +41,10 @@
 REGISTER_LOCALED_DOCUMENT(CodeAnalysis)
 
 CodeAnalysis*	CodeAnalysis::m_pCurrent	= NULL;
-DWORD	g_dwErrorCount		= 0;
-DWORD	g_dwWarningCount	= 0;
-BOOL	g_bLogSuppress		= TRUE;
+DWORD			g_dwErrorCount		= 0;
+DWORD			g_dwWarningCount	= 0;
+BOOL			g_bLogSuppress		= TRUE;
+CString			g_sCurrentDir;
 
 typedef enum {
 	CPPCHECK_TOKEN_ERROR,
@@ -67,11 +68,10 @@ CodeAnalysis::CodeAnalysis(ITDDocument* pDoc)
 	m_pReport->SetManager(this);
 	{
 		ITDPropertyData* pProperty;
+		// Log suppression
 		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_BOOL, 0, _L(LOG_SURPPRESS), (DWORD_PTR)&g_bLogSuppress, _L(DESC_LOG_SURPPRESS));
 		pProperty->UpdateConfigFile();
-	}
-	{
-		ITDPropertyData* pProperty;
+		// Error suppression
 		m_sErrorSuppress.GetBuffer(4096);
 		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_STRING, 1, _L(STATIC_ANALYSIS_SURPPRESS), (DWORD_PTR)(LPCTSTR)m_sErrorSuppress, _L(DESC_STATIC_ANALYSIS_SURPPRESS));
 		pProperty->UpdateConfigFile();
@@ -141,18 +141,22 @@ void CodeAnalysis::OnReportLink(DWORD dwID, LPCTSTR lpszString, long cpMin, long
 }
 
 static CString	__sWorkPath;
-void ChangeToWorkPath(CString& sPath){
+void ChangeToWorkPath(CString& sPath)
+{
 	sPath.Replace(_T('\\'), _T('/'));
 	{
 		CString sOrgPath((LPCTSTR)sPath);
 		{
 			int iPos	= 0;
-			while((iPos = sOrgPath.Find(_T(':'), iPos)) > 0){
-				TCHAR ch = sOrgPath[iPos+1];
-				if(isdigit(sOrgPath[iPos+1])){
-					sOrgPath.Delete(iPos,-1);
+
+			while((iPos = sOrgPath.Find(_T(':'), iPos)) > 0) {
+				TCHAR ch = sOrgPath[iPos + 1];
+
+				if(isdigit(sOrgPath[iPos + 1])) {
+					sOrgPath.Delete(iPos, -1);
 					break;
 				}
+
 				iPos++;
 			}
 		}
@@ -281,7 +285,8 @@ const char* Log_StaticAnalysis(LPCTSTR lpszLog, int iID)
 
 				*(PSTR)sLast	= _T('\0');
 				{
-					CString sLink((LPCTSTR)str);
+					CString sLink;
+					sLink.Format(_T("%s/%s"), (LPCTSTR)g_sCurrentDir, (LPCTSTR)str);
 					ChangeToWorkPath(sLink);
 					sLink.Insert(0, _T("edit:"));
 					pReport->SetLink(sLink);
@@ -302,67 +307,121 @@ const char* Log_StaticAnalysis(LPCTSTR lpszLog, int iID)
 	return NULL;
 }
 
-BOOL CodeAnalysis::StaticCodeAnalysis(LPCTSTR lpszTitle, LPCTSTR lpszPath)
+static BOOL IsMakefileExist(LPCTSTR sPath)
+{
+	CString sFilePath;
+	sFilePath.Format(_T("%s/.TestDrive.nosearch"), sPath);
+
+	if(_taccess(g_pSystem->RetrieveFullPath(sFilePath), 0) != -1)
+		return FALSE;
+
+	sFilePath.Format(_T("%s/Makefile"), sPath);
+	return (_taccess(g_pSystem->RetrieveFullPath(sFilePath), 0) != -1);
+}
+
+BOOL CodeAnalysis::StaticCodeAnalysisPrivate(LPCTSTR lpszTitle, LPCTSTR lpszPath)
 {
 	BOOL bRet		= TRUE;
+
+	if(IsMakefileExist(lpszPath)) {
+		CString sPath(g_pSystem->RetrieveFullPath(lpszPath));
+		sPath.Replace(_T('\\'), _T('/'));
+		m_pReport->SetColor(RGB(0, 0, 0));
+		{
+			m_pReport->AppendText(_L(ANALYSIS_TARGET));
+			{
+				// set path link to title
+				CString sLink;
+				m_pReport->AppendText(_T("%s ("), lpszTitle);
+				sLink.Format(_T("open:%s"), (LPCTSTR)sPath);
+				sLink.Replace(_T('\\'), _T('/'));
+				m_pReport->SetLink(sLink);
+				m_pReport->AppendText(lpszPath);
+				m_pReport->AppendText(_T(")\n"));
+			}
+		}
+		typedef enum {
+			CPPCHECK_TOKEN_ERROR,
+			CPPCHECK_TOKEN_WARNING,
+			CPPCHECK_TOKEN_INFORMATION,
+		} CPPCHECK_TOKEN;
+		const LPCTSTR __sCppcheckTokenList[] = {
+			_T(": error:"),
+			_T(": warning:"),
+			_T(": information:"),
+		};
+		{
+			// Do static analysis
+			g_sCurrentDir	= sPath;
+
+			if(g_pSystem->ExecuteFile(_T("make"), _T("static"), TRUE, Log_StaticAnalysis, (LPCTSTR)sPath,
+			__sCppcheckTokenList[CPPCHECK_TOKEN_ERROR], -1,
+			__sCppcheckTokenList[CPPCHECK_TOKEN_WARNING], -2,
+			__sCppcheckTokenList[CPPCHECK_TOKEN_INFORMATION], 2,
+			NULL) >= 0) {
+				m_pReport->SetColor(RGB(0, 0, 255));
+				m_pReport->AppendText(_L(NO_ERROR_FOUND));
+			} else bRet = FALSE;
+
+			m_pReport->AppendText(_T("\n"));
+			Log_StaticAnalysis(NULL, 0);
+			m_pReport->ScrollToLastLine();
+		}
+	}
+
+	{
+		// searching sub directories
+		WIN32_FIND_DATA		FindFileData;
+		HANDLE				hFind;
+		CString				sPath;
+		sPath.Format(_T("%s\\*"), lpszPath);
+
+		if((hFind = FindFirstFile(sPath, &FindFileData)) != INVALID_HANDLE_VALUE) {
+			BOOL	bSearch	= TRUE;
+
+			while(bSearch) {
+				if((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && FindFileData.cFileName[0] != _T('.')) {
+					sPath.Format(_T("%s/%s"), lpszPath, FindFileData.cFileName);
+
+					if(!StaticCodeAnalysisPrivate(lpszTitle, sPath)) bRet = FALSE;
+				}
+
+				bSearch	= FindNextFile(hFind, &FindFileData);
+			}
+
+			FindClose(hFind);
+		}
+	}
+
+	return bRet;
+}
+
+BOOL CodeAnalysis::StaticCodeAnalysis(LPCTSTR lpszTitle, LPCTSTR lpszPath, LPCTSTR lpszArg)
+{
+	//BOOL bRet		= TRUE;
 	CString sPath(g_pSystem->RetrieveFullPath(lpszPath));
-	CString sArg;
 	__sWorkPath		= sPath;
 	__sWorkPath.Replace(_T('\\'), _T('/'));
-	sArg = _T("static");
-	{	// error suppress
+	{
+		// error suppress
 		LPCTSTR sDelim = _T(" ,;");
 		int	iPos = 0;
 		CString sSuppressToken(m_sErrorSuppress);
-		CString sSuppressArgs;
-		while(iPos>=0){
+		CString sArgs(lpszArg);
+
+		while(iPos >= 0) {
 			CString sToken	= sSuppressToken.Tokenize(sDelim, iPos);
-			if(iPos>=0){
-				if(sSuppressArgs.GetLength()) sSuppressArgs.Append(_T(" "));
-				sSuppressArgs.AppendFormat(_T("--suppress=%s"), (LPCTSTR)sToken);
+
+			if(iPos >= 0) {
+				if(sArgs.GetLength()) sArgs.Append(_T(" "));
+
+				sArgs.AppendFormat(_T("--suppress=%s"), (LPCTSTR)sToken);
 			}
 		}
-		if(sSuppressArgs.GetLength()){
-			SetEnvironmentVariable(_T("CPPCHECK_ARG"),	(LPCTSTR)sSuppressArgs);
-		}
-	}
-	m_pReport->SetColor(RGB(0, 0, 0));
-	{
-		m_pReport->AppendText(_L(ANALYSIS_TARGET));
-		{
-			// set path link to title
-			CString sLink;
-			sLink.Format(_T("open:%s"), (LPCTSTR)sPath);
-			sLink.Replace(_T('\\'), _T('/'));
-			m_pReport->SetLink(sLink);
-			m_pReport->AppendText(lpszTitle);
-			m_pReport->AppendText(_T("\n"));
-		}
-	}
-	typedef enum {
-		CPPCHECK_TOKEN_ERROR,
-		CPPCHECK_TOKEN_WARNING,
-		CPPCHECK_TOKEN_INFORMATION,
-	} CPPCHECK_TOKEN;
-	const LPCTSTR __sCppcheckTokenList[] = {
-		_T(": error:"),
-		_T(": warning:"),
-		_T(": information:"),
-	};
 
-	if(g_pSystem->ExecuteFile(_T("make"), sArg.c_str(), TRUE, Log_StaticAnalysis, (LPCTSTR)sPath,
-							  __sCppcheckTokenList[CPPCHECK_TOKEN_ERROR], -1,
-							  __sCppcheckTokenList[CPPCHECK_TOKEN_WARNING], -2,
-							  __sCppcheckTokenList[CPPCHECK_TOKEN_INFORMATION], 2,
-							  NULL) >= 0) {
-		m_pReport->SetColor(RGB(0, 0, 255));
-		m_pReport->AppendText(_L(NO_ERROR_FOUND));
-	} else bRet = FALSE;
-
-	m_pReport->AppendText(_T("\n"));
-	Log_StaticAnalysis(NULL, 0);
-	m_pReport->ScrollToLastLine();
-	return bRet;
+		SetEnvironmentVariable(_T("CPPCHECK_ARG"),	(LPCTSTR)sArgs);
+	}
+	return StaticCodeAnalysisPrivate(lpszTitle, sPath);
 }
 
 void CodeAnalysis::DoStaticCodeAnalysis(void)
@@ -379,17 +438,19 @@ void CodeAnalysis::DoStaticCodeAnalysis(void)
 		CString sConfigPath		= g_pSystem->RetrieveFullPath(_T("%PROJECT%Profiles/CodeAnalysis.ini"));
 		LPCTSTR	sApp			= _T("CodeAnalysis");
 		CString	sKey;
-		CString sName, sPath;
+		CString sName, sPath, sArg;
 
 		for(int i = 0;; i++) {
 			sKey.Format(_T("NAME_%d"), i);
-			sName	= g_ProfileConfig.GetString(sKey);
+			sName	= g_ProfileConfig.GetString(sKey);	// description name
 			sKey.Format(_T("PATH_%d"), i);
-			sPath	= g_ProfileConfig.GetString(sKey);
+			sPath	= g_ProfileConfig.GetString(sKey);	// target path
+			sKey.Format(_T("ARG_%d"), i);
+			sArg	= g_ProfileConfig.GetString(sKey);	// additional argument
 
 			if(sName.IsEmpty()) break;
 
-			if(!StaticCodeAnalysis(sName, sPath)) bRet = FALSE;
+			if(!StaticCodeAnalysis(sName, sPath, sArg)) bRet = FALSE;
 		}
 	}
 	m_pReport->SetColor(RGB(0, 0, 0));
