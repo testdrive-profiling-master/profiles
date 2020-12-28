@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 9/19/2020 Sat (clonextop@gmail.com)
+// Rev.  : 12/28/2020 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "SimEngine.h"
@@ -41,12 +41,6 @@
 #include "SimBusy.h"
 #include <stdio.h>
 #include <assert.h>
-
-#ifdef LOCK_TRACE
-#define DELAY_LOCK(n)
-#else
-
-#endif
 
 //-----------------------------------------------------------------------
 // SimResource
