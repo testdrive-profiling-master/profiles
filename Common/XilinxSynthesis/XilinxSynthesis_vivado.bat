@@ -17,6 +17,6 @@ if exist timing_port_%2.rpt del timing_port_%2.rpt
 
 vivado -log synthesis_%2.txt -m64 -mode batch -notrace -source XilinxSynthesis.tcl
 
-if exist vivado.jou del vivado.jou
+if exist vivado*.jou del /Q vivado*.jou
 
 endlocal
