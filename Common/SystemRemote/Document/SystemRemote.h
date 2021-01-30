@@ -69,6 +69,5 @@ protected:
 	CString					m_sPort;
 
 	ITDPropertyData*		m_pPropertyServerIP;
-	//SocketManager			m_Sock;
 };
 #endif//__SYSTEM_REMOTE_H__

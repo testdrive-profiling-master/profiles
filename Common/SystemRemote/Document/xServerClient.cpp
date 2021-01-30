@@ -34,93 +34,68 @@
 // Title : System remote
 // Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
 //================================================================================
-#include "TDIPC.h"
 #include<iostream>
-#include<boost/asio.hpp>
+#include "xServerClient.h"
 
-using namespace std;
-using boost::asio::ip::tcp;
+boost::asio::io_service	xNetService::m_Service;
 
-class session
-{
-public:
-    session(tcp::socket& sock)
-    : socket_(sock){
-        start();
-    }
+xSession::xSession(tcp::socket& sock) : m_Socket(sock){
+	start();
+}
 
-    void start(){
-        try{
-            while(1){
-                boost::system::error_code error;
-                size_t length = socket_.read_some(boost::asio::buffer(data_), error);
-                if(error == boost::asio::error::eof){
-                    // exit out
-                    break;
-                }else if(error){
-                    throw boost::system::system_error(error);
-                }
-                cout << "Message from client: " << data_ << endl;
-                boost::asio::write(socket_, boost::asio::buffer(data_, length));
-            }
-        }catch(exception& e){
-            cerr << "Exception in server: " << e.what() << endl;
-        }
-    }
-
-    tcp::socket& socket(){return socket_;}
-
-private:
-    tcp::socket& socket_;
-    enum { max_length = 1024 };
-    char data_[max_length];
-};
-
-class server
-{
-public:
-    server(boost::asio::io_service& io_service, short port)
-    : io_service_(io_service), acceptor_(io_service, tcp::endpoint(tcp::v4(), port))
-    {
+void xSession::start(void){
+    try{
         while(1){
-            tcp::socket sock(io_service);
-            //wait for client
-            acceptor_.accept(sock);
-            new session(sock);
+            boost::system::error_code error;
+            size_t length = m_Socket.read_some(boost::asio::buffer(m_Buffer), error);
+            if(error == boost::asio::error::eof){
+                // connection closed. exit out
+                break;
+            }else if(error){
+                throw boost::system::system_error(error);
+            }
+            cout << "Message from client: " << m_Buffer << endl;
+            boost::asio::write(m_Socket, boost::asio::buffer((void*)m_Buffer, length));
         }
+    }catch(exception& e){
+        cerr << "Exception in server: " << e.what() << endl;
     }
-private:
-    boost::asio::io_service& io_service_;
-    tcp::acceptor acceptor_;
-};
+}
 
-class client
+xServer::xServer(short port) : m_Acceptor(m_Service, tcp::endpoint(tcp::v4(), port))
 {
-public:
-    client(boost::asio::io_service& io_service, const string& host, const string& port) : socket_(io_service)
-    {
-        tcp::resolver resolver(io_service);
-        //try to connect to server
-        boost::asio::connect(socket_, resolver.resolve({host, port}));
+	while(1){
+		tcp::socket sock(m_Service);
+		//wait for client
+		m_Acceptor.accept(sock);
+		// connection complete
+		new xSession(sock);
+	}
+}
 
-        string msg = "Hello, world!";
-        size_t msg_length = msg.length();
 
-        //send data
-        boost::asio::write(socket_, boost::asio::buffer(msg, msg_length));
+xClient::xClient(const string& host, const string& port) : m_Socket(m_Service)
+{
+	tcp::resolver resolver(m_Service);
+	//try to connect to server
+	boost::asio::connect(m_Socket, resolver.resolve({host, port}));
 
-        char reply[max_length];
-        //get data
-        size_t reply_length = boost::asio::read(socket_, boost::asio::buffer(reply, msg_length));
-        cout << "Reply is: " << reply << endl;
+	string msg = "Hello, world!";
+	size_t msg_length = msg.length();
 
-    }
+	//send data
+	boost::asio::write(m_Socket, boost::asio::buffer(msg, msg_length));
 
-private:
-    tcp::socket socket_;
-    enum { max_length = 1024 };
-};
+	char reply[MAX_TRANS_SIZE];
+	//get data
+	size_t reply_length = boost::asio::read(m_Socket, boost::asio::buffer(reply, msg_length));
+	cout << "Reply is: " << reply << endl;
+}
 
+xClient::~xClient(void)
+{
+
+}
 
 int main_server(int argc, char* argv[]){
     try{
@@ -128,8 +103,7 @@ int main_server(int argc, char* argv[]){
             cerr << "Usage: server <port>" << endl;
             return 1;
         }
-        boost::asio::io_service io_service;
-        server s(io_service, atoi(argv[1]));
+        xServer s(atoi(argv[1]));
 
     }catch(exception& e){
         cerr << "Exception: " << e.what() << endl;
@@ -144,9 +118,7 @@ int main_client(int argc, char* argv[]){
             cerr << "Usage: client <host> <port>" << endl;
             return 1;
         }
-
-        boost::asio::io_service io_service;
-        client c(io_service, argv[1], argv[2]);
+        xClient c(argv[1], argv[2]);
 
     }catch(exception& e){
         cerr<<"Exception: " << e.what() << endl;

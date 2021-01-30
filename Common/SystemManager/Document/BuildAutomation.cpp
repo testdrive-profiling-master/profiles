@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System manager
-// Rev.  : 8/13/2020 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2021 Sat (clonextop@gmail.com)
 //================================================================================
 #include "BuildAutomation.h"
 #include "Utils.h"
@@ -128,7 +128,7 @@ void BuildAutomation::DoCheck(DWORD command, LPCTSTR sFileName)
 				sName.Find(_T(".cpp"), sName.GetLength() - 4) > 0 ||
 				sName.Find(_T(".inl"), sName.GetLength() - 4) > 0)) {
 				CString sArg;
-				CString sAstylePath	= g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_DIR%bin\\AStyle.exe"));
+				CString sAstylePath	= g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_DIR%bin\\msys64\\mingw64\\bin\\AStyle.exe"));
 				sArg.Format(_T("%s \"%s\""), m_sAStyle, sFileName);
 				g_pSystem->ExecuteFile(sAstylePath, sArg, TRUE, NULL, NULL, NULL);
 			} else if(m_siStyle.GetAt(0) && m_siStyle.GetAt(0) != ' ' &&

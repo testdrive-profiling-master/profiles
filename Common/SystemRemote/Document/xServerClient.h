@@ -37,6 +37,49 @@
 #ifndef __TD_IPC_H__
 #define __TD_IPC_H__
 #include "common.h"
+#include<boost/asio.hpp>
 
+using namespace		std;
+using				boost::asio::ip::tcp;
+#define	MAX_TRANS_SIZE				4096
+#define	DEFAULT_PORT_NUMBER			1212
+
+typedef struct {
+	DWORD	dwMagicCode;
+	DWORD	dwByteSize;
+} xHEADER_PACKET;
+
+
+class xNetService {
+protected:
+	static boost::asio::io_service		m_Service;
+};
+
+class xSession {
+public:
+	xSession(tcp::socket& sock);
+    void start(void);
+	inline tcp::socket& socket(){return m_Socket;}
+
+private:
+	tcp::socket&	m_Socket;
+    BYTE 			m_Buffer[MAX_TRANS_SIZE];
+};
+
+class xServer : public xNetService {
+public:
+	xServer(short port = DEFAULT_PORT_NUMBER);
+private:
+	tcp::acceptor				m_Acceptor;
+};
+
+class xClient : public xNetService {
+public:
+	xClient(const string& host, const string& port);
+	~xClient(void);
+
+private:
+	tcp::socket					m_Socket;
+};
 
 #endif//__TD_IPC_H__
