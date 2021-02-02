@@ -51,7 +51,7 @@ CDEFS		:= $(CDEFS) -D__int64="long long" -DWIN32 -D_WIN32 -DWIN64 -D_WIN64
 #-------------------------------------------------
 # Build sequence
 #-------------------------------------------------
-TARGET_EXE		:= $(TARGETPATH)/$(TARGETNAME)
+TARGET_EXE		:= $(TARGETPATH)/$(TARGETNAME).exe
 TARGET_A		:= $(LIBPATH)/lib$(TARGETNAME).a
 TARGET_SO		:= $(TARGETPATH)/$(TARGETNAME).dll
 TARGET_SO_A		:= $(TARGETPATH)/lib$(TARGETNAME).dll
