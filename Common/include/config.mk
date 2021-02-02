@@ -74,15 +74,7 @@ static:
 
 #########################################################################
 # Dependency
-
-ifneq ($(MAKECMDGOALS), clean)
--include $(DEPS) $(OBJS_RES:.o=.dep)
-endif
-
-#-------------------------------------------------
-# generic rules
-#-------------------------------------------------
-%.d: %.c
+%.d.d: %.c
 	echo 
 	@set -e; rm -f $@; \
 	$(CC) -M $(CDEFS) $(CFLAGS) $(INC) $< > $@.tmp; \
@@ -95,12 +87,19 @@ endif
 	sed -e 's,[^.]*.o:,$*.o:,g' < $@.tmp > $@; \
 	rm -f $@.tmp
 
-%.d: %.cc
+%.d.d: %.cc
 	@set -e; rm -f $@; \
 	$(CXX) -M $(CDEFS) $(CFLAGS) -Weffc++ $(INC) $< > $@.tmp; \
 	sed -e 's,[^.]*.o:,$*.o:,g' < $@.tmp > $@; \
 	rm -f $@.tmp
 
+ifneq ($(MAKECMDGOALS), clean)
+-include $(DEPS) $(OBJS_RES:.o=.dep)
+endif
+
+#-------------------------------------------------
+# generic rules
+#-------------------------------------------------
 %.o: %.c
 	@echo '- Compiling... : $<'
 	@ccache $(CC) $(CDEFS) $(CFLAGS) $(INC) -MD -c $< -o $@
