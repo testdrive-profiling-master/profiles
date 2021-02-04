@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System manager
-// Rev.  : 9/19/2020 Sat (clonextop@gmail.com)
+// Rev.  : 2/4/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_H__
 #define __SYSTEM_H__
@@ -47,6 +47,7 @@ typedef enum{
 	PROPERTY_ID_COMPILER,
 	PROPERTY_ID_BUILD_AUTOMATION,
 	PROPERTY_ID_USE_DEBUG,
+	PROPERTY_ID_AUTO_UPDATE,
 	PROPERTY_ID_CODING_A_STYLE,
 	PROPERTY_ID_CODING_I_STYLE,
 	PROPERTY_ID_STRICT_BUILD,
@@ -115,6 +116,7 @@ private:
 	CString				m_sSimWaveDoFile;
 	CString				m_sSimMultithreading;
 	int					m_iTraceStartTime;
+	BOOL				m_bAutoUpdate;
 
 	// properties
 	ITDPropertyData*	m_pPropertySim[SIM_PROPERTY_SIZE];

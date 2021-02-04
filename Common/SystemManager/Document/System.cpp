@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System manager
-// Rev.  : 9/19/2020 Sat (clonextop@gmail.com)
+// Rev.  : 2/4/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #include "System.h"
 #include "Utils.h"
@@ -116,6 +116,7 @@ System::System(ITDDocument* pDoc) :
 {
 	m_pDoc				= pDoc;
 	m_pSystemConfig		= (BASE_SYSTEM_CONFIG*)g_pSystem->GetMemory(NULL, TRUE)->GetConfig();
+	m_bAutoUpdate		= FALSE;
 	WriteConfiguration(_T("PROJECT_NAME"),	g_pSystem->GetMemory(NULL, TRUE)->GetName());
 	UpdateDefaultSystemConfigHeader();
 	m_pSystemConfig->hSystemManager	= pDoc->GetWindowHandle();
@@ -157,6 +158,8 @@ System::System(ITDDocument* pDoc) :
 		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_BOOL, PROPERTY_ID_BUILD_AUTOMATION, _L(BUILD_AUTOMATION), (DWORD_PTR) & (m_BuildAutomation.AutoBuild()), _L(DESC_BUILD_AUTOMATION));
 		pProperty->UpdateConfigFile();
 		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_BOOL, PROPERTY_ID_USE_DEBUG, _L(DEBUG_INFO), (DWORD_PTR) & (m_BuildAutomation.UseDebug()), _L(DESC_USE_DEBUG));
+		pProperty->UpdateConfigFile();
+		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_BOOL, PROPERTY_ID_AUTO_UPDATE, _L(AUTO_UPDATE), (DWORD_PTR) & (m_bAutoUpdate), _L(DESC_AUTO_UPDATE));
 		pProperty->UpdateConfigFile();
 		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_CODING_A_STYLE, _L(CODING_A_STYLE), (DWORD_PTR)(LPCTSTR)(m_BuildAutomation.AStyle()), _L(DESC_CODING_A_STYLE));
 		pProperty->UpdateConfigFile();
@@ -251,7 +254,7 @@ System::System(ITDDocument* pDoc) :
 					}
 				}
 
-				if(bMonthlyUpdate) {
+				if(m_bAutoUpdate && bMonthlyUpdate) {
 					g_pSystem->LogInfo(_L(MONTHLY_UPDATE));
 					g_pSystem->ExecuteFile(_T("%TESTDRIVE_DIR%bin\\upgrade_mingw.bat"), NULL, TRUE, NULL, _T("%TESTDRIVE_DIR%bin"), NULL);
 				}

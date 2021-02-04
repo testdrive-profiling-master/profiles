@@ -1,5 +1,5 @@
 ﻿//================================================================================
-// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System manager
-// Rev.  : 9/19/2020 Sat (clonextop@gmail.com)
+// Rev.  : 2/4/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #include "LocaleString.h"
 
@@ -83,6 +83,16 @@ LOCALE_TEXT(DESC_USE_DEBUG,
 	_T("デバッグ情報を有効にします。"),
 	_T("Habilitar la información de depuración."),
 	_T("Enable debugging information."))
+LOCALE_TEXT(AUTO_UPDATE,
+	_T("자동 업데이트"),
+	_T("自動更新"),
+	_T("Actualización automática"),
+	_T("Auto Update"))
+LOCALE_TEXT(DESC_AUTO_UPDATE,
+	_T("자동 업데이트를 활성화 합니다. (MinGW)"),
+	_T("自動更新を有効にします。(MinGW)"),
+	_T("Habilite las actualizaciones automáticas. (MinGW)"),
+	_T("Enable automatic updates. (MinGW)"))
 LOCALE_TEXT(CODING_A_STYLE,
 	_T("코딩 A-스타일"),
 	_T("コーディングA-スタイル"),
