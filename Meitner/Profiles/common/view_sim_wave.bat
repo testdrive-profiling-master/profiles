@@ -1,7 +1,7 @@
 @echo off
 cd Program\
 if exist "%SIM_OUTPUT_FILE%" goto RUN_GTKWAVE
-echo *E: VCD file(%SIM_OUTPUT_FILE%) is not found.
+echo *E: Waveform file(%SIM_OUTPUT_FILE%) is not found.
 pause
 goto END
 
