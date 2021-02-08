@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System manager
-// Rev.  : 2/4/2021 Thu (clonextop@gmail.com)
+// Rev.  : 2/8/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_H__
 #define __SYSTEM_H__
@@ -45,6 +45,7 @@
 typedef enum{
 	PROPERTY_ID_SYSTEM_TYPE,
 	PROPERTY_ID_COMPILER,
+	PROPERTY_ID_SIMULATOR,
 	PROPERTY_ID_BUILD_AUTOMATION,
 	PROPERTY_ID_USE_DEBUG,
 	PROPERTY_ID_AUTO_UPDATE,
@@ -109,6 +110,7 @@ private:
 
 	CString				m_sSubSystem;
 	CString				m_sCompiler;
+	CString				m_sSimulator;
 	CString				m_sSimTopFile;
 	CString				m_sSimDefinition;
 	CString				m_sSimWaveMode;

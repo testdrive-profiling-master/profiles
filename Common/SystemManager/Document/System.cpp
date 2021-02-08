@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System manager
-// Rev.  : 2/4/2021 Thu (clonextop@gmail.com)
+// Rev.  : 2/8/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #include "System.h"
 #include "Utils.h"
@@ -43,6 +43,12 @@ REGISTER_LOCALED_DOCUMENT(System)
 static LPCTSTR __sCompiler[] = {
 	_T("gcc"),
 	_T("clang"),
+	NULL
+};
+
+static LPCTSTR __sSimulator[] = {
+	_T("verilator"),
+	_T("iverilog"),
 	NULL
 };
 
@@ -150,6 +156,11 @@ System::System(ITDDocument* pDoc) :
 		m_sCompiler.GetBuffer(1024);
 		m_sCompiler			= __sCompiler[0];
 		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_COMPILER, _L(COMPILER), (DWORD_PTR)m_sCompiler.GetBuffer(), _L(DESC_COMPILER));
+		pProperty->UpdateConfigFile();
+		pProperty->AllowEdit(FALSE);
+		m_sSimulator.GetBuffer(1024);
+		m_sSimulator		= __sSimulator[0];
+		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_SIMULATOR, _L(SIMULATOR), (DWORD_PTR)m_sSimulator.GetBuffer(), _L(DESC_SIMULATOR));
 		pProperty->UpdateConfigFile();
 		pProperty->AllowEdit(FALSE);
 
@@ -294,6 +305,7 @@ void System::UpdateEnvironments(void)
 
 	// Set environment variables
 	WriteConfiguration(_T("MAIN_COMPILER"),		m_sCompiler);
+	WriteConfiguration(_T("MAIN_SIMULATOR"),	m_sSimulator);
 	WriteConfiguration(_T("SUB_SYSTEM_NAME"),	m_sSubSystem);
 	WriteConfiguration(_T("SUB_SYSTEM_PATH"),	m_SubSystemList.Find(m_sSubSystem) ? (LPCTSTR)(m_SubSystemList.Find(m_sSubSystem)->sFile) : _T(""));
 	WriteConfiguration(_T("AUTHOR"),			m_BuildAutomation.AuthorName());
