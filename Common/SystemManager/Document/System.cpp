@@ -158,13 +158,15 @@ System::System(ITDDocument* pDoc) :
 		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_COMPILER, _L(COMPILER), (DWORD_PTR)m_sCompiler.GetBuffer(), _L(DESC_COMPILER));
 		pProperty->UpdateConfigFile();
 		pProperty->AllowEdit(FALSE);
+		for(int i = 0; __sCompiler[i]; i++) pProperty->AddOption(__sCompiler[i]);
+
 		m_sSimulator.GetBuffer(1024);
 		m_sSimulator		= __sSimulator[0];
 		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_SIMULATOR, _L(SIMULATOR), (DWORD_PTR)m_sSimulator.GetBuffer(), _L(DESC_SIMULATOR));
 		pProperty->UpdateConfigFile();
 		pProperty->AllowEdit(FALSE);
 
-		for(int i = 0; __sCompiler[i]; i++) pProperty->AddOption(__sCompiler[i]);
+		for(int i = 0; __sSimulator[i]; i++) pProperty->AddOption(__sSimulator[i]);
 
 		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_BOOL, PROPERTY_ID_BUILD_AUTOMATION, _L(BUILD_AUTOMATION), (DWORD_PTR) & (m_BuildAutomation.AutoBuild()), _L(DESC_BUILD_AUTOMATION));
 		pProperty->UpdateConfigFile();
