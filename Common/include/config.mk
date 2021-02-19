@@ -120,6 +120,10 @@ $(TARGET_EXE):$(OBJS)
 	@echo
 	@echo '*** Build execution file ***'
 	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(OBJS_RES) $(LIBDIR)
+ifdef INSTALL_PATH
+	@echo Install to : $(INSTALL_PATH)
+	@cp -f $(TARGET_EXE) $(INSTALL_PATH)/
+endif
 
 $(TARGET_A):$(OBJS)
 	@echo
@@ -131,6 +135,10 @@ $(TARGET_SO):$(OBJS)
 	@echo
 	@echo '*** Build Shared Library ***'
 	$(CXX) $(LDFLAGS) -shared -o $@ $(OBJS) $(OBJS_RES) $(LIBDIR)
+ifdef INSTALL_PATH
+	@echo Install to : $(INSTALL_PATH)
+	@cp -f $(TARGET_SO) $(INSTALL_PATH)/
+endif
 	
 $(TARGET_SO_A):$(OBJS)
 	@echo
