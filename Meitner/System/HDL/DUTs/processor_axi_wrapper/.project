@@ -18,12 +18,12 @@
 		<link>
 			<name>External SV Files</name>
 			<type>2</type>
-			<locationURI>svext://MTSP</locationURI>
+			<locationURI>svext://processor_axi_wrapper</locationURI>
 		</link>
 	</linkedResources>
 	<filteredResources>
 		<filter>
-			<id>1464131303730</id>
+			<id>0</id>
 			<name></name>
 			<type>22</type>
 			<matcher>
@@ -32,7 +32,7 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1464131303731</id>
+			<id>0</id>
 			<name></name>
 			<type>22</type>
 			<matcher>
@@ -41,7 +41,7 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1464131303732</id>
+			<id>0</id>
 			<name></name>
 			<type>26</type>
 			<matcher>
@@ -50,7 +50,7 @@
 			</matcher>
 		</filter>
 		<filter>
-			<id>1464131303733</id>
+			<id>0</id>
 			<name></name>
 			<type>22</type>
 			<matcher>
