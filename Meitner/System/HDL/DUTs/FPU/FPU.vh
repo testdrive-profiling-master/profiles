@@ -34,22 +34,7 @@
 // Title : FPU
 // Rev.  : 3/1/2021 Mon (clonextop@gmail.com)
 //================================================================================
-`include "FPU.vh"
-
-/* HIDDEN */
-module top (
-	input						nRST,
-	input						MCLK,
-	output						INTR,
-	output						BUSY,
-	input	[63:0]				A,
-	input	[63:0]				B,
-	output	reg [63:0]			O
-);
-
-// definition & assignment ---------------------------------------------------
-assign	BUSY		= `FALSE;
-
-// implementation ------------------------------------------------------------
-
-endmodule
+`ifndef __FPU_VH__
+`define __FPU_VH__
+`include "system_defines.vh"
+`endif

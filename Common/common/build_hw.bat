@@ -1,6 +1,6 @@
 @echo off
 SETLOCAL
-del /Q %PROJECT%System\SubSystems\Simulation\verilator\SimTop*
+rm -f %PROJECT%System\SubSystems\Simulation\verilator\SimTop*
 goto EXIT
 
 if "%SIM_WAVE_MODE%"=="File output" (

@@ -34,22 +34,42 @@
 // Title : FPU
 // Rev.  : 3/1/2021 Mon (clonextop@gmail.com)
 //================================================================================
-`include "FPU.vh"
+#include "dpi_common.h"
 
-/* HIDDEN */
-module top (
-	input						nRST,
-	input						MCLK,
-	output						INTR,
-	output						BUSY,
-	input	[63:0]				A,
-	input	[63:0]				B,
-	output	reg [63:0]			O
-);
+DPI_FUNCTION void FPU_32f_add(const svBitVecVal* A, const svBitVecVal* B, svBitVecVal* O)
+{
+	const float& fA		= *(const float*)A;
+	const float& fB		= *(const float*)B;
+	float& fO			= *(float*)O;
+	fO					= fA + fB;
+}
 
-// definition & assignment ---------------------------------------------------
-assign	BUSY		= `FALSE;
+DPI_FUNCTION void FPU_32f_Multiply(const svBitVecVal* A, const svBitVecVal* B, svBitVecVal* O)
+{
+	const float& fA		= *(const float*)A;
+	const float& fB		= *(const float*)B;
+	float& fO			= *(float*)O;
+	fO					= fA / fB;
+}
 
-// implementation ------------------------------------------------------------
+DPI_FUNCTION void FPU_32f_Divide(const svBitVecVal* A, const svBitVecVal* B, svBitVecVal* O)
+{
+	const float& fA		= *(const float*)A;
+	const float& fB		= *(const float*)B;
+	float& fO			= *(float*)O;
+	fO					= (fB != 0) ? fA / fB : 0;
+}
 
-endmodule
+DPI_FUNCTION void FPU_32f_to_int(const svBitVecVal* A, svBitVecVal* O)
+{
+	const float& fA		= *(const float*)A;
+	int& fO				= *(int*)O;
+	fO					= fA;
+}
+
+DPI_FUNCTION void FPU_32f_from_int(const svBitVecVal* A, svBitVecVal* O)
+{
+	const int& fA		= *(const int*)A;
+	float& fO			= *(float*)O;
+	fO					= fA;
+}

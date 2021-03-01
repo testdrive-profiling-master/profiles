@@ -36,20 +36,19 @@
 //================================================================================
 `include "FPU.vh"
 
-/* HIDDEN */
-module top (
-	input						nRST,
-	input						MCLK,
-	output						INTR,
-	output						BUSY,
-	input	[63:0]				A,
-	input	[63:0]				B,
-	output	reg [63:0]			O
+module FPU_INT_to_F32 (
+	input	[31:0]				A,
+	output	[31:0]				O
 );
 
 // definition & assignment ---------------------------------------------------
-assign	BUSY		= `FALSE;
-
+`ifdef SW_FPU_MODE
+`DPI_FUNCTION void FPU32_from_int(input logic [31:0] A, output bit [31:0] O);
+`endif
 // implementation ------------------------------------------------------------
+`ifdef SW_FPU_MODE
+always@(A) FPU32_from_int(A,O);
+`else
+`endif
 
 endmodule
