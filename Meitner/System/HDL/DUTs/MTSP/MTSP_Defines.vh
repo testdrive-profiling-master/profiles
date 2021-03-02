@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,11 +32,11 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Meitner processor v1.1
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 2/3/2021 Wed (clonextop@gmail.com)
 //================================================================================
-`ifndef __MTS_DEFINES__		// rid of Warnning (Duplicated definition)
+`ifndef __MTSP_DEFINES__				// rid of Warnning (Duplicated definition)
 //----------------------------------------------------------------------------
-`define __MTS_DEFINES__
+`define __MTSP_DEFINES__
 `include "system_defines.vh"
 	
 // Processor Configuration ---------------------------------------------------
@@ -649,4 +649,4 @@ interface i_mem_command_desc;
 	modport m	(output cache_en, cache_only, req_master, req_ext, req_cache, we, size, index, paddr, gaddr);
 endinterface
 
-`endif//__MTS_DEFINES__
+`endif//__MTSP_DEFINES__
