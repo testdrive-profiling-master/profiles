@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Code Analysis
-// Rev.  : 12/28/2020 Mon (clonextop@gmail.com)
+// Rev.  : 3/8/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #include "CodeAnalysis.h"
 #include "testdrive_document.inl"
@@ -286,7 +286,12 @@ const char* Log_StaticAnalysis(LPCTSTR lpszLog, int iID)
 				*(PSTR)sLast	= _T('\0');
 				{
 					CString sLink;
-					sLink.Format(_T("%s/%s"), (LPCTSTR)g_sCurrentDir, (LPCTSTR)str);
+
+					if(str.Find(':') >= 0)
+						sLink = str;
+					else
+						sLink.Format(_T("%s/%s"), (LPCTSTR)g_sCurrentDir, (LPCTSTR)str);
+
 					ChangeToWorkPath(sLink);
 					sLink.Insert(0, _T("edit:"));
 					pReport->SetLink(sLink);
@@ -355,10 +360,10 @@ BOOL CodeAnalysis::StaticCodeAnalysisPrivate(LPCTSTR lpszTitle, LPCTSTR lpszPath
 			g_sCurrentDir	= sPath;
 
 			if(g_pSystem->ExecuteFile(_T("make"), _T("static"), TRUE, Log_StaticAnalysis, (LPCTSTR)sPath,
-			__sCppcheckTokenList[CPPCHECK_TOKEN_ERROR], -1,
-			__sCppcheckTokenList[CPPCHECK_TOKEN_WARNING], -2,
-			__sCppcheckTokenList[CPPCHECK_TOKEN_INFORMATION], 2,
-			NULL) >= 0) {
+									  __sCppcheckTokenList[CPPCHECK_TOKEN_ERROR], -1,
+									  __sCppcheckTokenList[CPPCHECK_TOKEN_WARNING], -2,
+									  __sCppcheckTokenList[CPPCHECK_TOKEN_INFORMATION], 2,
+									  NULL) >= 0) {
 				m_pReport->SetColor(RGB(0, 0, 255));
 				m_pReport->AppendText(_L(NO_ERROR_FOUND));
 			} else bRet = FALSE;

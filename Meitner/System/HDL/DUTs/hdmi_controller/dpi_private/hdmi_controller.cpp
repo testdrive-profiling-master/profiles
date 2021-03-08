@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -30,6 +30,9 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
+// 
+// Title : HDMI controller
+// Rev.  : 3/8/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #include "dpi_common.h"
 
@@ -49,6 +52,21 @@ DPI_FUNCTION void hdmi_out(unsigned char de, unsigned char hsync, unsigned char 
 	static DisplayConfig*	pDisplayConfig	= NULL;
 	static DisplayColor*	pBuffer			= NULL;
 
+	if(!pDisplayConfig) {
+		pDisplayConfig	= GetDisplayConfig();
+		pBuffer			= (DisplayColor*)GetMemoryPointer(GetMemoryBaseAddress(), 0, FALSE);
+		pDisplayConfig->bReverse		= FALSE;
+		pDisplayConfig->ColorFormat		= DISPLAY_FORMAT_ARGB_8888;
+		__display.width					= 640;
+		__display.height				= 480;
+		pDisplayConfig->dwByteStride	= 0;
+		pDisplayConfig->iWidth			= __display.width;
+		pDisplayConfig->iHeight			= __display.height;
+		pDisplayConfig->Back.dwAddress	= 0;
+		pDisplayConfig->Back.bUpdate	= TRUE;
+		memset(pBuffer, 0, __display.width * __display.height * sizeof(DWORD));
+	}
+
 	if(!hsync && !vsync) {
 		if(y) {	// frame end
 			__display.height				= y;
@@ -58,21 +76,6 @@ DPI_FUNCTION void hdmi_out(unsigned char de, unsigned char hsync, unsigned char 
 
 		x	= 0;
 		y	= 0;
-
-		if(!pDisplayConfig) {
-			pDisplayConfig	= GetDisplayConfig();
-			pBuffer			= (DisplayColor*)GetMemoryPointer(GetMemoryBaseAddress(), 0, FALSE);
-			pDisplayConfig->bReverse		= FALSE;
-			pDisplayConfig->ColorFormat		= DISPLAY_FORMAT_ARGB_8888;
-			__display.width					= 640;
-			__display.height				= 480;
-			pDisplayConfig->dwByteStride	= 0;
-			pDisplayConfig->iWidth			= __display.width;
-			pDisplayConfig->iHeight			= __display.height;
-			pDisplayConfig->Back.dwAddress	= 0;
-			pDisplayConfig->Back.bUpdate	= TRUE;
-			memset(pBuffer, 0, __display.width * __display.height * sizeof(DWORD));
-		}
 	} else {
 		if(de && hsync && vsync) {
 			if(pBuffer) pBuffer[x + y * __display.width].color	= *(DWORD*)data;
