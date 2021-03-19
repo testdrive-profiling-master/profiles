@@ -75,23 +75,22 @@ static:
 #########################################################################
 # Dependency
 %.d.d: %.c
-	echo 
+	@echo '- Dependency check... : $<'
 	@set -e; rm -f $@; \
-	$(CC) -M $(CDEFS) $(CFLAGS) $(INC) $< > $@.tmp; \
-	sed -e 's,[^.]*.o:,$*.o:,g' < $@.tmp > $@; \
-	rm -f $@.tmp
+	$(CC) -M $(CDEFS) $(CFLAGS) $(INC) $< > $@; \
+	sed -e 's,[^.]*.o:,$*.o:,g' -i $@
 
 %.d.d: %.cpp
+	@echo '- Dependency check... : $<'
 	@set -e; rm -f $@; \
-	$(CXX) -M $(CDEFS) $(CFLAGS) -Weffc++ $(INC) $< > $@.tmp; \
-	sed -e 's,[^.]*.o:,$*.o:,g' < $@.tmp > $@; \
-	rm -f $@.tmp
+	$(CXX) -M $(CDEFS) $(CFLAGS) -Weffc++ $(INC) $< > $@; \
+	sed -e 's,[^.]*.o:,$*.o:,g' -i $@
 
 %.d.d: %.cc
+	@echo '- Dependency check... : $<'
 	@set -e; rm -f $@; \
-	$(CXX) -M $(CDEFS) $(CFLAGS) -Weffc++ $(INC) $< > $@.tmp; \
-	sed -e 's,[^.]*.o:,$*.o:,g' < $@.tmp > $@; \
-	rm -f $@.tmp
+	$(CXX) -M $(CDEFS) $(CFLAGS) -Weffc++ $(INC) $< > $@; \
+	sed -e 's,[^.]*.o:,$*.o:,g' -i $@
 
 ifneq ($(MAKECMDGOALS), clean)
 -include $(DEPS) $(OBJS_RES:.o=.dep)
