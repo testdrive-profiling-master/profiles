@@ -28,8 +28,7 @@ OBJS_RES	:= $(SRCS_RES:.rc=.o)
 OBJS_C		:= $(SRCS:.c=.o)
 OBJS_CC		:= $(OBJS_C:.cc=.o)
 OBJS		:= $(OBJS_CC:.cpp=.o)
-DEPS_CCACHE	:= $(OBJS:.o=.d)
-DEPS		:= $(OBJS:.o=.d.d)
+DEPS		:= $(OBJS:.o=.d)
 INC			:= $(INC) -I$(TESTDRIVE_DIR)include -I$(TESTDRIVE_PROFILE)Common/include -I$(TESTDRIVE_DIR)bin/msys64/usr/include
 
 #-------------------------------------------------
@@ -64,16 +63,17 @@ $(TARGET_A): $(OBJS) $(OBJS_RES)
 $(TARGET_SO_A): $(OBJS) $(OBJS_RES)
 
 clean:
-	@$(RM) -f $(OBJS) $(OBJS_RES) $(BUILD_TARGET) $(TARGET_EXE).exe $(LIBPATH)/lib$(TARGETNAME).a $(DEPS_CCACHE) $(DEPS)
+	@$(RM) -f $(OBJS) $(OBJS_RES) $(BUILD_TARGET) $(TARGET_EXE).exe $(LIBPATH)/lib$(TARGETNAME).a $(DEPS)
 
 dust_clean:
-	@$(RM) -f $(OBJS) $(OBJS_RES) $(TARGET_A) $(DEPS_CCACHE) $(DEPS)
+	@$(RM) -f $(OBJS) $(OBJS_RES) $(TARGET_A) $(DEPS)
 
 static:
 	@cppcheck -j $(NUMBER_OF_PROCESSORS) $(INC) $(CDEFS) $(CPPCHECK_ARG) -D__MINGW32__ --suppress=preprocessorErrorDirective --inline-suppr --force $(SRCS)
 
 #########################################################################
 # Dependency
+ifdef NO_CCACHE
 %.d.d: %.c
 	@echo '- Dependency check... : $<'
 	@set -e; rm -f $@; \
@@ -91,6 +91,7 @@ static:
 	@set -e; rm -f $@; \
 	$(CXX) -M $(CDEFS) $(CFLAGS) -Weffc++ $(INC) $< > $@; \
 	sed -e 's,[^.]*.o:,$*.o:,g' -i $@
+endif
 
 ifneq ($(MAKECMDGOALS), clean)
 -include $(DEPS) $(OBJS_RES:.o=.dep)
