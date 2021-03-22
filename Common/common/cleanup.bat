@@ -1,5 +1,5 @@
 @echo off
-del /S /Q	%1\*.d.*
+del /S /Q	%1\*.d
 del /S /Q	%1\*.o
 del /Q		%1\*.user
 del /Q		%1\*.sdf

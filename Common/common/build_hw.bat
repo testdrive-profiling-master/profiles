@@ -1,7 +1,9 @@
 @echo off
 SETLOCAL
-rm -f %PROJECT%System\SubSystems\Simulation\verilator\SimTop*
-goto EXIT
+
+if exist "%PROJECT%System\SubSystems\Simulation\verilator\SimTop.cpp" (
+	del /Q "%PROJECT%System\SubSystems\Simulation\verilator\Sim*"
+)
 
 if "%SIM_WAVE_MODE%"=="File output" (
 	echo 	Waveform configuration : File output mode.
@@ -31,6 +33,5 @@ if "%SIM_MULTITHREADING%"=="Enable(HDL)" (
 	echo 	Multithreading : Disable
 )
 
-%TESTDRIVE_DIR%bin\\msys64\\mingw64\\bin\\verilator_bin.exe %SIM_TOP_FILE% %1 %2 %3 %4 %SIM_DEFINITION% -sv -cc --autoflush --compiler gcc -Mdir ../SubSystems/Simulation/verilator -prefix SimTop --top-module top
-:EXIT
+%TESTDRIVE_DIR%bin\\msys64\\mingw64\\bin\\verilator_bin.exe %SIM_TOP_FILE% %1 %2 %3 %4 %SIM_DEFINITION% -sv -cc --autoflush --compiler gcc -Mdir %PROJECT%System/SubSystems/Simulation/verilator -prefix SimTop --top-module top
 ENDLOCAL
