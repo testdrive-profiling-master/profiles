@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : FPU
-// Rev.  : 3/1/2021 Mon (clonextop@gmail.com)
+// Rev.  : 3/22/2021 Mon (clonextop@gmail.com)
 //================================================================================
 `include "FPU.vh"
 
@@ -42,11 +42,10 @@ module FPU_F32_to_INT (
 );
 
 // definition & assignment ---------------------------------------------------
-`ifdef SW_FPU_MODE
-`DPI_FUNCTION void FPU32_to_int(input logic [31:0] A, output bit [31:0] O);
-`endif
+
 // implementation ------------------------------------------------------------
 `ifdef SW_FPU_MODE
+`DPI_FUNCTION void FPU32_to_int(input logic [31:0] A, output bit [31:0] O);
 always@(A) FPU32_to_int(A,O);
 `else
 `endif
