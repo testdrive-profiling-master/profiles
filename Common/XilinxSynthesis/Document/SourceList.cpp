@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 12/22/2020 Tue (clonextop@gmail.com)
+// Rev.  : 3/22/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #include "SourceList.h"
 #include <tchar.h>
@@ -983,11 +983,11 @@ SourceGroup::~SourceGroup(void)
 
 void SourceGroup::ReleaseAll(void)
 {
-	for(list<SourceGroup*>::iterator i = m_GroupList.begin(); i != m_GroupList.end(); i++) delete(*i);
+	for(auto i = m_GroupList.begin(); i != m_GroupList.end(); i++) delete(*i);
 
 	m_GroupList.clear();
 
-	for(list<SourceVector*>::iterator i = m_SourceList.begin(); i != m_SourceList.end(); i++) delete(*i);
+	for(auto i = m_SourceList.begin(); i != m_SourceList.end(); i++) delete(*i);
 
 	m_SourceList.clear();
 }
@@ -996,7 +996,7 @@ size_t SourceGroup::Size(void)
 {
 	size_t	iSize	= m_SourceList.size();
 
-	for(list<SourceGroup*>::iterator i = m_GroupList.begin(); i != m_GroupList.end(); i++)
+	for(auto i = m_GroupList.begin(); i != m_GroupList.end(); i++)
 		iSize	+= (*i)->Size();
 
 	return iSize;
@@ -1006,7 +1006,7 @@ void SourceGroup::Scan(void)
 {
 	HANDLE				hFind;
 	WIN32_FIND_DATA		FindFileData;
-	CString				sFindPath	= g_pSystem->RetrieveFullPath(m_Config.sProjectPath);
+	CString				sFindPath		= g_pSystem->RetrieveFullPath(m_Config.sProjectPath);
 	BOOL				bNoSource		= FALSE;
 	ReleaseAll();
 
@@ -1041,11 +1041,14 @@ void SourceGroup::Scan(void)
 			sNextSubPath 	= TargetPath();
 			sNextSubPath	+= _T('/');
 			sNextSubPath	+= FindFileData.cFileName;
-			SourceGroup* pGroup	= new SourceGroup(sNextSubPath, this);
 
-			if(!pGroup->Size()) delete pGroup;
-			else {
-				m_GroupList.push_back(pGroup);
+			if(!m_sNameFilter[0] || sNextSubPath.Find(m_sNameFilter) >= 0) {
+				SourceGroup* pGroup	= new SourceGroup(sNextSubPath, this);
+
+				if(!pGroup->Size()) delete pGroup;
+				else {
+					m_GroupList.push_back(pGroup);
+				}
 			}
 		} else if(!bNoSource) {
 			CString	sExt(FindFileData.cFileName);
@@ -1173,19 +1176,19 @@ void SourceGroup::MakeTable(void)
 	}
 
 	// add sources
-	for(list<SourceVector*>::iterator i = m_SourceList.begin(); i != m_SourceList.end(); i++) {
+	for(auto i = m_SourceList.begin(); i != m_SourceList.end(); i++) {
 		(*i)->MakeTable();
 	}
 
 	// add sub groups
-	for(list<SourceGroup*>::iterator i = m_GroupList.begin(); i != m_GroupList.end(); i++) {
+	for(auto i = m_GroupList.begin(); i != m_GroupList.end(); i++) {
 		(*i)->MakeTable();
 	}
 }
 
 void SourceGroup::SetMark(void)
 {
-	for(list<SourceVector*>::iterator i = m_SourceList.begin(); i != m_SourceList.end(); i++)
+	for(auto i = m_SourceList.begin(); i != m_SourceList.end(); i++)
 		(*i)->SetMark();
 }
 
@@ -1197,7 +1200,7 @@ void SourceGroup::ResetData(void)
 	m_Info.timing.output_time	= -1;
 	m_Info.timing.logic_delay	= -1;
 
-	for(list<SourceVector*>::iterator i = m_SourceList.begin(); i != m_SourceList.end(); i++) {
+	for(auto i = m_SourceList.begin(); i != m_SourceList.end(); i++) {
 		const SYNTHESIS_DATA* pInfo	= (*i)->Info();
 
 		if(!pInfo) continue;
@@ -1321,10 +1324,10 @@ void SourceGroup::UpdateTable(BOOL bUpdateSubTable)
 	}
 
 	if(bUpdateSubTable) {
-		for(list<SourceGroup*>::iterator i = m_GroupList.begin(); i != m_GroupList.end(); i++)
+		for(auto i = m_GroupList.begin(); i != m_GroupList.end(); i++)
 			(*i)->UpdateTable(bUpdateSubTable);
 
-		for(list<SourceVector*>::iterator i = m_SourceList.begin(); i != m_SourceList.end(); i++)
+		for(auto i = m_SourceList.begin(); i != m_SourceList.end(); i++)
 			(*i)->UpdateTable();
 	}
 }
@@ -1351,7 +1354,7 @@ SourceGroup* SourceGroup::FindGroup(LPCTSTR sPath)
 {
 	if(!m_sTargetPath.Compare(sPath)) return this;
 
-	for(list<SourceGroup*>::iterator i = m_GroupList.begin(); i != m_GroupList.end(); i++) {
+	for(auto i = m_GroupList.begin(); i != m_GroupList.end(); i++) {
 		SourceGroup* pGroup	= (*i)->FindGroup(sPath);
 
 		if(pGroup) return pGroup;
@@ -1362,11 +1365,11 @@ SourceGroup* SourceGroup::FindGroup(LPCTSTR sPath)
 
 SourceVector* SourceGroup::FindVector(LPCTSTR sPath)
 {
-	for(list<SourceVector*>::iterator i = m_SourceList.begin(); i != m_SourceList.end(); i++) {
+	for(auto i = m_SourceList.begin(); i != m_SourceList.end(); i++) {
 		if(!(*i)->FullName().Compare(sPath)) return (*i);
 	}
 
-	for(list<SourceGroup*>::iterator i = m_GroupList.begin(); i != m_GroupList.end(); i++) {
+	for(auto i = m_GroupList.begin(); i != m_GroupList.end(); i++) {
 		SourceVector* pVector	= (*i)->FindVector(sPath);
 
 		if(pVector) return pVector;
@@ -1382,7 +1385,7 @@ SourceVector* SourceGroup::GetNextSource(SourceVector* pCurrent)
 
 		return m_SourceList.front();
 	} else {
-		for(list<SourceVector*>::iterator i = m_SourceList.begin(); i != m_SourceList.end(); i++) {
+		for(auto i = m_SourceList.begin(); i != m_SourceList.end(); i++) {
 			if((*i) == pCurrent) {
 				i++;
 				return (i == m_SourceList.end()) ? NULL : (*i);
@@ -1397,15 +1400,15 @@ void SourceGroup::RemoveScoreFile(void)
 {
 	_tremove(ScorePath());
 
-	for(list<SourceGroup*>::iterator i = m_GroupList.begin(); i != m_GroupList.end(); i++)
+	for(auto i = m_GroupList.begin(); i != m_GroupList.end(); i++)
 		(*i)->RemoveScoreFile();
 }
 
 void SourceGroup::FlushScoreFile(void)
 {
-	for(list<SourceVector*>::iterator i = m_SourceList.begin(); i != m_SourceList.end(); i++)
+	for(auto i = m_SourceList.begin(); i != m_SourceList.end(); i++)
 		(*i)->UpdateProfile(FALSE);
 
-	for(list<SourceGroup*>::iterator i = m_GroupList.begin(); i != m_GroupList.end(); i++)
+	for(auto i = m_GroupList.begin(); i != m_GroupList.end(); i++)
 		(*i)->FlushScoreFile();
 }

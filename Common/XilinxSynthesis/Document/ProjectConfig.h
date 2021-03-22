@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/22/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __PROJECT_CONFIG_H__
 #define __PROJECT_CONFIG_H__
@@ -102,9 +102,9 @@ protected:
 	BOOL IsMustRebuild(void)	{if(m_bMustRebuild){m_bMustRebuild	= FALSE;return TRUE;}return FALSE;}
 
 	static HtmlTable*	m_pTable;
+	static CString		m_sNameFilter;
 
 private:
-
 	static DWORD		m_dwProjectResourceRefCount;
 	static BOOL			m_bMustRebuild;
 };

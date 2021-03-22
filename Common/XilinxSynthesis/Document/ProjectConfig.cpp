@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/22/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #include "ProjectConfig.h"
 #include "SourceList.h"
@@ -53,10 +53,11 @@ static LPCTSTR __sKEY[CONFIG_ID_SIZE] = {
 	_T("MAX_PATHS"),	// CONFIG_ID_MAX_PATHS
 };
 
-CONFIG	ProjectConfig::m_Config;
-DWORD	ProjectConfig::m_dwProjectResourceRefCount	= 0;
-HtmlTable*	ProjectConfig::m_pTable					= NULL;
-BOOL	ProjectConfig::m_bMustRebuild				= TRUE;
+CString		ProjectConfig::m_sNameFilter;
+CONFIG		ProjectConfig::m_Config;
+DWORD		ProjectConfig::m_dwProjectResourceRefCount	= 0;
+HtmlTable*	ProjectConfig::m_pTable						= NULL;
+BOOL		ProjectConfig::m_bMustRebuild				= TRUE;
 
 time_t GetCurrentDayTime(void)
 {
@@ -68,7 +69,7 @@ time_t GetCurrentDayTime(void)
 	if(bInitial) {
 		struct tm tm_gmt	= *gmtime(&cur_time);
 		time_t	gmt_time	= mktime(&tm_gmt);
-		time_diff	= cur_time - gmt_time;
+		time_diff			= cur_time - gmt_time;
 	}
 
 	cur_time	+= time_diff;

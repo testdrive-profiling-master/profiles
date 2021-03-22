@@ -345,4 +345,14 @@ LOCALE_TEXT(PATH_COMBINATIONAL,
 	_T("最大Combinationalロジックディレイ"),
 	_T("ㄲetardo máximo lógica combinatoria"),
 	_T("Maximum combinational logic delay"))
+LOCALE_TEXT(PATH_FILTER,
+	_T("경로 필터"),
+	_T("パスフィルター"),
+	_T("Filtro de ruta"),
+	_T("Path filter"))
+LOCALE_TEXT(DESC_PATH_FILTER,
+	_T("경로 필터를 지정합니다."),
+	_T("パスフィルターを指定します。"),
+	_T("Especifique un filtro de ruta."),
+	_T("Specify a path filter."))
 LOCALE_END

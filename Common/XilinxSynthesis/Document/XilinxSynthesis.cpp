@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/22/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #include "testdrive_document.inl"
 #include "XilinxSynthesis.h"
@@ -51,6 +51,9 @@ XilinxSynthesis::XilinxSynthesis(ITDDocument* pDoc)
 	m_pTable			= &m_Table;
 	{
 		ITDPropertyData*	pProperty;
+		m_sNameFilter.GetBuffer(MAX_PATH * 2);
+		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_PATH_FILTER, _L(PATH_FILTER), (DWORD_PTR)((LPCTSTR)m_sNameFilter), _L(DESC_PATH_FILTER));
+		pProperty->UpdateConfigFile();
 		pProperty	= pDoc->AddPropertyData(PROPERTY_TYPE_DIRECTORY, PROPERTY_ID_INSTALL_PATH, _L(XILINX_INSTALL_PATH), (DWORD_PTR)(LPCTSTR)(m_Config.sXilinxPath), _L(DESC_XILINX_INSTALL_PATH));
 		pProperty->UpdateConfigFile();
 		m_pProperty[PROPERTY_ID_INSTALL_PATH]	= pProperty;
@@ -214,6 +217,11 @@ BOOL XilinxSynthesis::OnPropertyUpdate(ITDPropertyData* pProperty)
 		pProperty->UpdateData();
 
 	switch(pProperty->GetID()) {
+	case PROPERTY_ID_PATH_FILTER:
+		pProperty->UpdateConfigFile(FALSE);
+		OnButtonClick(BTN_ID_REFRESH_TABLE);
+		break;
+
 	case PROPERTY_ID_INSTALL_PATH:
 		pProperty->UpdateConfigFile(FALSE);
 		break;

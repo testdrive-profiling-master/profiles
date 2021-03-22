@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/22/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __XILINX_SYNTHESIS_H__
 #define __XILINX_SYNTHESIS_H__
@@ -42,6 +42,7 @@
 #include "SourceList.h"
 
 typedef enum{
+	PROPERTY_ID_PATH_FILTER,
 	PROPERTY_ID_INSTALL_PATH,
 	PROPERTY_ID_PROJECT_PATH,
 	PROPERTY_ID_FAMILY,
