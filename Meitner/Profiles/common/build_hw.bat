@@ -1,6 +1,9 @@
 @echo off
 SETLOCAL
-rm -f ..\SubSystems\Simulation\verilator\SimTop*
+
+if exist "%PROJECT%System\SubSystems\Simulation\verilator\SimTop.cpp" (
+	del /Q "%PROJECT%System\SubSystems\Simulation\verilator\Sim*"
+)
 
 if "%SIM_WAVE_MODE%"=="File output" (
 	echo 	Waveform configuration : File output mode.
