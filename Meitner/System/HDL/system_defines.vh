@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/23/2021 Tue (clonextop@gmail.com)
 //================================================================================
 `ifndef __SYSTEM_DEFINE_VH__
 `define __SYSTEM_DEFINE_VH__
@@ -110,7 +110,27 @@
 `define PIPE_BYPASS(w,i,o)					reg [(w)-1:0] o; `ALWAYS_CLOCK o <= i;
 `define REG_BUFFER(size, i, iv, o, ov)		reg [size-1:0] o;wire ov; assign iv=((~o[size-1])|ov); `ALWAYS_CLOCK_RESET `ON_RESET begin o <= {(size){1'b0}}; end else begin if(iv & i[size-1]) o <= i; else if(ov & o[size-1]) o <= {(size){1'b0}}; end
 
+//------------------------------------------------------------------------------------------------------
 // system verilog DPI functions
-`include "dpi_defines.vh"
+//------------------------------------------------------------------------------------------------------
+`define DPI_FUNCTION			import "DPI-C" function
+
+`ifdef USE_TESTDRIVE
+// meomory interface ---------------------------------------------------------
+`DPI_FUNCTION void MemoryWrite32 (input int ID, input int unsigned ADDR, input  int      unsigned DATA);
+`DPI_FUNCTION void MemoryWrite16 (input int ID, input int unsigned ADDR, input  shortint unsigned DATA);
+`DPI_FUNCTION void MemoryWrite8  (input int ID, input int unsigned ADDR, input  byte     unsigned DATA);
+`DPI_FUNCTION void MemoryRead32  (input int ID, input int unsigned ADDR, output int      unsigned DATA);
+`DPI_FUNCTION void MemoryRead16  (input int ID, input int unsigned ADDR, output shortint unsigned DATA);
+`DPI_FUNCTION void MemoryRead8   (input int ID, input int unsigned ADDR, output byte     unsigned DATA);
+
+`DPI_FUNCTION void BreakPoint (input string sFileName, input int iLine);
+`DPI_FUNCTION longint unsigned SimulationTime();
+`DPI_FUNCTION void SetSystemDescription(string sDesc);
+
+`define	BREAK_POINT			BreakPoint(`__FILE__, `__LINE__);
+`else//!USE_TESTDRIVE
+`define	BREAK_POINT			// for non-testdrive system
+`endif//USE_TESTDRIVE
 
 `endif//__SYSTEM_DEFINE_VH__
