@@ -29,6 +29,8 @@ if exist %2 (
 if "%1"=="cpp" (
 	mkdir %2
 	cp -rf %TESTDRIVE_PROFILE%Common/bin/project_template_cpp/. %2/
+	sed "s/Test/%2/" -i ./%2/.project
+	sed "s/Test/%2/" -i ./%2/Makefile
 ) else if "%1"=="verilog" (
 	mkdir %2
 	cp -rf %TESTDRIVE_PROFILE%Common/bin/project_template_verilog/. %2/
