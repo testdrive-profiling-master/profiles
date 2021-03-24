@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,13 +32,12 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/24/2021 Wed (clonextop@gmail.com)
 //================================================================================
 `include "system_defines.vh"
 
 module MAD_multicycled_Slice #(
-	parameter				CYCLE	= 3,
-	parameter				COUNT	= 2
+	parameter				CYCLE	= 3
 ) (
 	input					CLK,	// clock
 	input					nRST,	// reset (active low)
@@ -64,7 +63,7 @@ MAD mad_inst(
 
 MultiCycleSlice #(
 	.WIDTH			(32),
-	.CYCLE			(3),
+	.CYCLE			(CYCLE),
 	.CHAINED		(0)
 ) muti_slice (
 	.CLK			(CLK),

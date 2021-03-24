@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/24/2021 Wed (clonextop@gmail.com)
 //================================================================================
 `include "system_defines.vh"
 `include "library/demux_by_enable.v"
@@ -141,29 +141,27 @@ always@(posedge MCLK, negedge nRST) begin
 	end
 end
 
-`define MULTICYCLE_SLICE
-`define MULTICYCLE_EX
-
-`ifdef MULTICYCLE_SLICE
-MAD_multicycled_Slice #(
-	.CYCLE		(3),
-	.COUNT		(2)
-) mad_m (
-	.CLK		(MCLK),
-	.nRST		(nRST),
-	.IE			(ie),
-	.IREADY		(iready),
+//----------------------------------------------------------------------------
+// Combinational MAD
+//----------------------------------------------------------------------------
+`ifdef COMBINATIONAL
+MAD mad (
 	.A			(data_a),
 	.B			(data_b),
 	.C			(data_c),
-	.OE			(oe),
 	.O			(odata)
 );
-`else
-`ifndef MULTICYCLE_EX
+assign	iready	= 1'b1;
+assign	oe		= 1'b1;
+`endif
+
+//----------------------------------------------------------------------------
+// Multi-cycle MAD
+//----------------------------------------------------------------------------
+`ifdef MULTICYCLE
 MAD_multicycled #(
 	.CYCLE		(3)
-) mad_m (
+) mad (
 	.CLK		(MCLK),
 	.nRST		(nRST),
 	.IE			(ie),
@@ -174,12 +172,16 @@ MAD_multicycled #(
 	.O			(odata)
 );
 assign	iready	= 1'b1;
+`endif
 
-`else
+//----------------------------------------------------------------------------
+// Multi-cycle extension MAD
+//----------------------------------------------------------------------------
+`ifdef MULTICYCLE_EX
 MAD_multicycled_Ex #(
 	.CYCLE		(3),
 	.COUNT		(2)
-) mad_m (
+) mad (
 	.CLK		(MCLK),
 	.nRST		(nRST),
 	.IE			(ie),
@@ -191,6 +193,24 @@ MAD_multicycled_Ex #(
 	.O			(odata)
 );
 `endif
+
+//----------------------------------------------------------------------------
+// Multi-cycle slice MAD
+//----------------------------------------------------------------------------
+`ifdef MULTICYCLE_SLICE
+MAD_multicycled_Slice #(
+	.CYCLE		(3)
+) mad (
+	.CLK		(MCLK),
+	.nRST		(nRST),
+	.IE			(ie),
+	.IREADY		(iready),
+	.A			(data_a),
+	.B			(data_b),
+	.C			(data_c),
+	.OE			(oe),
+	.O			(odata)
+);
 `endif
 
 endmodule
