@@ -54,8 +54,6 @@ module top (
 );
 
 // definition & assignment ---------------------------------------------------
-genvar		i;
-
 reg	[31:0]					sim_counter;
 assign	INTR				= `FALSE;
 
