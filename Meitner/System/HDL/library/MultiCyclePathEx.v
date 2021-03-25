@@ -64,7 +64,7 @@ module MultiCyclePathEx #(
 	output	reg							IREADY,			// input ready
 	// i/o pipes
 	output	reg [(IWIDTH*COUNT)-1:0]	PIPE_I,			// input bus
-	input	[(OWIDTH*COUNT)-1:0]		PIPE_O,			// input bus
+	input	[(OWIDTH*COUNT)-1:0]		PIPE_O,			// output bus
 	// output
 	output								OE,				// output enable
 	output	[OWIDTH-1:0]				ODATA			// output data

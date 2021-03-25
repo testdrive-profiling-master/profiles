@@ -62,7 +62,7 @@ module MultiCyclePath #(
 	input	[IWIDTH-1:0]				IDATA,			// input data or control
 	// i/o pipes
 	output	reg [(IWIDTH*CYCLE)-1:0]	PIPE_I,			// input bus
-	input	[(OWIDTH*CYCLE)-1:0]		PIPE_O,			// input bus
+	input	[(OWIDTH*CYCLE)-1:0]		PIPE_O,			// output bus
 	// output
 	output								OE,				// output enable
 	output	[OWIDTH-1:0]				ODATA			// output data
