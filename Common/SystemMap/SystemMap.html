@@ -46,13 +46,13 @@
 	
 	function visio_error(){
 		alert("SystemMap : visio is not found. Please install the 'Visio viewer 64bit' free version from Microsoft website.");
-		location.replace("https://www.google.co.kr/#q=microsoft+visio+viewer+64bit");         
+		location.replace("https://www.google.co.kr/search?q=microsoft+visio+viewer+64bit");         
 	}
 
 	var request = new Request();
 
 	function SetVisioFile(filename){
-		document.getElementById("workspace").innerHTML = "<OBJECT classid=\"clsid:279D6C9A-652E-4833-BEFC-312CA8887857\" codebase=\"https://www.microsoft.com/ko-kr/download/details.aspx?id=35811\" onError=\"visio_error()\" id=\"vsd_viewer\" width=\"100%\" height=\"100%\" scroll=\"overflow:hidden\" > " +
+		document.getElementById("workspace").innerHTML = "<OBJECT classid=\"clsid:279D6C9A-652E-4833-BEFC-312CA8887857\" codebase=\"https://www.microsoft.com/ko-kr/download/details.aspx?id=51188\" onError=\"visio_error()\" id=\"vsd_viewer\" width=\"100%\" height=\"100%\" scroll=\"overflow:hidden\" > " +
 		"<PARAM NAME=\"Src\" VALUE=\"" + filename + "\">" +
 		"<PARAM NAME=\"AltersEnabled\" VALUE=\"1\">" +
 		"<PARAM NAME=\"GridVisible\" VALUE=\"0\">" +
