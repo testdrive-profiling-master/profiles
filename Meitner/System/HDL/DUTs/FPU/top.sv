@@ -32,9 +32,14 @@
 // OF SUCH DAMAGE.
 // 
 // Title : FPU
-// Rev.  : 3/1/2021 Mon (clonextop@gmail.com)
+// Rev.  : 3/25/2021 Thu (clonextop@gmail.com)
 //================================================================================
 `include "FPU.vh"
+`include "FPU_F32_ADD.sv"
+`include "FPU_F32_MUL.sv"
+`include "FPU_F32_DIV.sv"
+`include "FPU_F32_to_INT.sv"
+`include "FPU_INT_to_F32.sv"
 
 /* HIDDEN */
 module top (
