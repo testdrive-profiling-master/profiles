@@ -1,3 +1,3 @@
-system.document.add "TestDrive Wiki:https://groups.google.com/forum/embed/?place=forum/testdrive-profiling-master" {
+system.document.add "TestDrive Wiki:https://testdrive-profiling-master.github.io/#Wiki" {
 	SetProgram("%TESTDRIVE_PROFILE%Common\\HtmlViewer\\HtmlViewer.dll");
 }
