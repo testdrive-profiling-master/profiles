@@ -6,7 +6,8 @@ TARGETPATH		:= .
 TARGETNAME		:= Test
 
 SRCS			:= \
-	$(wildcard $(SRC_PATH)/*.cpp)
+	$(wildcard $(SRC_PATH)/*.cpp) \
+	$(wildcard $(SRC_PATH)/*.c)
 	
 INC				:= -I.
 LIBDIR			:=
