@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 3/22/2021 Mon (clonextop@gmail.com)
+// Rev.  : 3/30/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "LocaleString.h"
 
@@ -165,6 +165,11 @@ LOCALE_TEXT(CAN_NOT_FIND_XILINX_PATH,
 	_T("ザイリンクスのパスを見つけることができません。インストールされたザイリンクスのパスを確認し、再度パスを指定してください。"),
 	_T("No se puede encontrar la ruta de Xilinx. Compruebe la ruta de Xilinx instalado, y especifique la ruta de nuevo."),
 	_T("Can not found the Xilinx path. Check the installed Xilinx path, and specify the path again."))
+LOCALE_TEXT(NO_XILINX_ENVIRONMENT,
+	_T("자일링스 툴 환경이 존재하지 않습니다. 정상적으로 설치되었는지 확인 바랍니다."),
+	_T("ザイリンクスツール環境は存在しません。正しくインストールされているか確認してください。"),
+	_T("El entorno de herramientas Xilinx no existe. Compruebe si está instalado correctamente."),
+	_T("Xilinx tools environment does not exist. Please check if it is installed properly."))
 LOCALE_TEXT(FOUND_XILINX_PATH,
 	_T("설치된 Vivado 경로 : %s"),
 	_T("インストールされてVivadoパス : %s"),

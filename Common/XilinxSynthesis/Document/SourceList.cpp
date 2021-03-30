@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 3/22/2021 Mon (clonextop@gmail.com)
+// Rev.  : 3/30/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "SourceList.h"
 #include <tchar.h>
@@ -534,6 +534,12 @@ BOOL SourceVector::Synthesis_Vivado(void)
 		sArg.Format(_T("\"%s\\settings64.bat\" %s"),
 					(LPCTSTR)m_Config.sXilinxPath,
 					(LPCTSTR)sName);
+
+		if(!IsFileExist(sArg)) {
+			g_pSystem->LogError(_L(NO_XILINX_ENVIRONMENT));
+			return FALSE;
+		}
+
 		int iRet = g_pSystem->ExecuteFile(sBatch, sArg, TRUE, NULL, m_Config.sProjectPath,
 										  _T("failed:"), -1,
 										  _T("ERROR:"), -1,

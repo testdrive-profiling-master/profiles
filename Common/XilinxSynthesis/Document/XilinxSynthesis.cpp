@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 3/22/2021 Mon (clonextop@gmail.com)
+// Rev.  : 3/30/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "testdrive_document.inl"
 #include "XilinxSynthesis.h"
@@ -340,6 +340,11 @@ void XilinxSynthesis::OnButtonClick(DWORD dwID)
 
 void XilinxSynthesis::StartSynthesis(LPCTSTR sPath, BOOL bGroup)
 {
+	if(!*m_Config.sXilinxPath) {	// xilinx path is not existed.
+		g_pSystem->LogError(_L(CAN_NOT_FIND_XILINX_PATH));
+		return;
+	}
+
 	if(bGroup) {
 		SourceGroup* pGroup	= m_pSourceList->FindGroup(sPath);
 
