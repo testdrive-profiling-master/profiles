@@ -535,9 +535,13 @@ BOOL SourceVector::Synthesis_Vivado(void)
 					(LPCTSTR)m_Config.sXilinxPath,
 					(LPCTSTR)sName);
 
-		if(!IsFileExist(sArg)) {
-			g_pSystem->LogError(_L(NO_XILINX_ENVIRONMENT));
-			return FALSE;
+		{
+			CString sEnvPath;
+			sEnvPath.Format(_T("%s\\settings64.bat"), (LPCTSTR)m_Config.sXilinxPath);
+			if(!IsFileExist(sEnvPath)) {
+				g_pSystem->LogError(_L(NO_XILINX_ENVIRONMENT));
+				return FALSE;
+			}
 		}
 
 		int iRet = g_pSystem->ExecuteFile(sBatch, sArg, TRUE, NULL, m_Config.sProjectPath,
