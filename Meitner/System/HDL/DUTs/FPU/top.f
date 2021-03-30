@@ -1,9 +1,6 @@
 +incdir+./
 +incdir+../../
 
-../../system_defines.vh
-../../dpi_defines.vh
-
 FPU_F32_ADD.sv
 FPU_F32_DIV.sv
 FPU_F32_MUL.sv

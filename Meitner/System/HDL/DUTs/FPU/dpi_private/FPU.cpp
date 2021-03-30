@@ -32,11 +32,12 @@
 // OF SUCH DAMAGE.
 // 
 // Title : FPU
-// Rev.  : 3/1/2021 Mon (clonextop@gmail.com)
+// Rev.  : 3/30/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "dpi_common.h"
+#include <math.h>
 
-DPI_FUNCTION void FPU_32f_add(const svBitVecVal* A, const svBitVecVal* B, svBitVecVal* O)
+DPI_FUNCTION void FPU_32f_Add(const svBitVecVal* A, const svBitVecVal* B, svBitVecVal* O)
 {
 	const float& fA		= *(const float*)A;
 	const float& fB		= *(const float*)B;
@@ -72,4 +73,54 @@ DPI_FUNCTION void FPU_32f_from_int(const svBitVecVal* A, svBitVecVal* O)
 	const int& fA		= *(const int*)A;
 	float& fO			= *(float*)O;
 	fO					= fA;
+}
+
+DPI_FUNCTION svBit FPU_32f_testbench_get(svBitVecVal* A, svBitVecVal* B)
+{
+	static bool	test_enable	= true;
+	static int x			= 0;
+	static int y			= 0;
+	static const float	__fValueList[]	= {
+		0.f,
+		1.f,
+		1.5f,
+		10.f,
+		123.5f,
+		NAN,
+		INFINITY,
+		-INFINITY
+	};
+	static const int	table_size	= sizeof(__fValueList) / sizeof(float);
+
+	if(test_enable) {
+		float& fA		= *(float*)A;
+		float& fB		= *(float*)B;
+		fA	= __fValueList[x];
+		fB	= __fValueList[y];
+		x++;
+
+		if(x >= table_size) {
+			x	= 0;
+			y++;
+
+			if(y >= table_size) {
+				y = 0;
+				test_enable	= false;
+			}
+		}
+	}
+
+	return test_enable;
+}
+
+DPI_FUNCTION bool FPU_32f_ValueCheck(const svBitVecVal* A, const svBitVecVal* B)
+{
+	const float& fA		= *(const float*)A;
+	const float& fB		= *(const float*)B;
+
+	if(isnan(fA) && isnan(fB)) return true;
+
+	if(isinf(fA) && isinf(fB) && !(((*A) ^ (*B)) & 0x80000000)) return true;
+
+	return fA == fB;
 }

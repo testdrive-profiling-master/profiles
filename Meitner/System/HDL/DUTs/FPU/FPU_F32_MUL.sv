@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : FPU
-// Rev.  : 3/22/2021 Mon (clonextop@gmail.com)
+// Rev.  : 3/30/2021 Tue (clonextop@gmail.com)
 //================================================================================
 `include "FPU.vh"
 
@@ -43,12 +43,12 @@ module FPU_F32_MUL (
 );
 
 // definition & assignment ---------------------------------------------------
-
 // implementation ------------------------------------------------------------
 `ifdef SW_FPU_MODE
-`DPI_FUNCTION void FPU_32f_Multiply(input logic [31:0] A, input bit [31:0] B, output bit [31:0] O);
-always@(A,B) FPU_32f_Multiply(A,B,O);
+`DPI_FUNCTION void FPU_32f_Multiply(input bit [31:0] A, input bit [31:0] B, output bit [31:0] O);
+always@(A, B) FPU_32f_Multiply(A, B, O);
 `else
+//@TODO : do something!!!
 `endif
 
 endmodule

@@ -32,9 +32,34 @@
 // OF SUCH DAMAGE.
 // 
 // Title : FPU
-// Rev.  : 3/1/2021 Mon (clonextop@gmail.com)
+// Rev.  : 3/26/2021 Fri (clonextop@gmail.com)
 //================================================================================
 `ifndef __FPU_VH__
 `define __FPU_VH__
 `include "system_defines.vh"
-`endif
+
+interface fp32;
+	union packed {
+		logic [31:0]		data;
+		struct packed {
+			logic			sign;			// sign bit
+			logic	[7:0]	exp;			// exponent
+			logic	[22:0]	man;			// mantissa
+		}m;
+	} f;
+
+	function logic IsNaN();
+		IsNaN	= (&f.m.exp) & (|f.m.man);	// exp : all bits are 1, mantissa is not zero
+	endfunction
+
+	function logic IsINF();
+		IsINF	= (&f.m.exp) & (~|f.m.man);	// exp : all bits are 1, mantissa is zero
+	endfunction
+	
+	function logic IsZero();
+		IsZero	= (~|f.data[30:0]);			// exp and mantissa is zero
+	endfunction
+	
+endinterface
+
+`endif//__FPU_VH__

@@ -32,9 +32,8 @@
 // OF SUCH DAMAGE.
 // 
 // Title : FPU
-// Rev.  : 3/25/2021 Thu (clonextop@gmail.com)
+// Rev.  : 3/30/2021 Tue (clonextop@gmail.com)
 //================================================================================
-`include "FPU.vh"
 `include "FPU_F32_ADD.sv"
 `include "FPU_F32_MUL.sv"
 `include "FPU_F32_DIV.sv"
@@ -46,15 +45,93 @@ module top (
 	input						nRST,
 	input						MCLK,
 	output						INTR,
-	output						BUSY,
-	input	[63:0]				A,
-	input	[63:0]				B,
-	output	reg [63:0]			O
+	output	reg					BUSY
 );
 
 // definition & assignment ---------------------------------------------------
-assign	BUSY		= `FALSE;
+assign	INTR			= `FALSE;
+
+reg		[31:0]			A, B, golden_data;
+wire	[31:0]			O;
+wire					PASS	= (O == golden_data);
+
+`DPI_FUNCTION bit FPU_32f_testbench_get(output bit [31:0] A, output bit [31:0] B);
 
 // implementation ------------------------------------------------------------
+always@(posedge MCLK, negedge nRST) begin
+	if(!nRST) begin
+		A				= 'd0;
+		B				= 'd0;
+		BUSY			= `TRUE;
+	end
+	else begin
+		if(!FPU_32f_testbench_get(A, B)) begin
+			BUSY	= `FALSE;
+		end
+	end
+end
+
+`ifdef FPU_ADDER
+// golden data
+`DPI_FUNCTION void FPU_32f_Add(input bit [31:0] A, input bit [31:0] B, output bit [31:0] O);
+always@(A, B) FPU_32f_Add(A, B, golden_data);
+
+// FPU unit output
+FPU_F32_ADD fpu_inst(
+	.A(A),
+	.B(B),
+	.O(O)
+);
+`endif
+
+`ifdef FPU_MULTIPLIER
+// golden data
+`DPI_FUNCTION void FPU_32f_Multiply(input bit [31:0] A, input bit [31:0] B, output bit [31:0] O);
+always@(A, B) FPU_32f_Multiply(A, B, golden_data);
+
+// FPU unit output
+FPU_F32_MUL fpu_inst(
+	.A(A),
+	.B(B),
+	.O(O)
+);
+`endif
+
+`ifdef FPU_DIVIDER
+// golden data
+`DPI_FUNCTION void FPU_32f_Divide(input bit [31:0] A, input bit [31:0] B, output bit [31:0] O);
+always@(A, B) FPU_32f_Divide(A, B, golden_data);
+
+// FPU unit output
+FPU_F32_DIV fpu_inst(
+	.A(A),
+	.B(B),
+	.O(O)
+);
+`endif
+
+`ifdef FPU_FLOAT2INT
+// golden data
+`DPI_FUNCTION void FPU_32f_to_int(input bit [31:0] A, input bit [31:0] B, output bit [31:0] O);
+always@(A) FPU_32f_to_int(A, golden_data);
+
+// FPU unit output
+FPU_F32_to_INT fpu_inst(
+	.A(A),
+	.O(O)
+);
+`endif
+
+`ifdef FPU_INT2FLOAT
+// golden data
+`DPI_FUNCTION void FPU_32f_from_int(input bit [31:0] A, input bit [31:0] B, output bit [31:0] O);
+always@(A) FPU_32f_from_int(A, golden_data);
+
+// FPU unit output
+FPU_INT_to_F32 fpu_inst(
+	.A(A),
+	.O(O)
+);
+`endif
 
 endmodule
