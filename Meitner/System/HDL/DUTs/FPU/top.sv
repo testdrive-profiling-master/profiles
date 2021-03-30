@@ -112,8 +112,8 @@ FPU_F32_DIV fpu_inst(
 
 `ifdef FPU_FLOAT2INT
 // golden data
-`DPI_FUNCTION void FPU_32f_to_int(input bit [31:0] A, input bit [31:0] B, output bit [31:0] O);
-always@(A) FPU_32f_to_int(A, golden_data);
+`DPI_FUNCTION void FPU_32f_float2int(input bit [31:0] A, output bit [31:0] O);
+always@(A) FPU_32f_float2int(A, golden_data);
 
 // FPU unit output
 FPU_F32_to_INT fpu_inst(
@@ -124,8 +124,8 @@ FPU_F32_to_INT fpu_inst(
 
 `ifdef FPU_INT2FLOAT
 // golden data
-`DPI_FUNCTION void FPU_32f_from_int(input bit [31:0] A, input bit [31:0] B, output bit [31:0] O);
-always@(A) FPU_32f_from_int(A, golden_data);
+`DPI_FUNCTION void FPU_32f_int2float(input bit [31:0] A, output bit [31:0] O);
+always@(A) FPU_32f_int2float(A, golden_data);
 
 // FPU unit output
 FPU_INT_to_F32 fpu_inst(

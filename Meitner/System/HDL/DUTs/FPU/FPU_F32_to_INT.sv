@@ -44,8 +44,8 @@ module FPU_F32_to_INT (
 // definition & assignment ---------------------------------------------------
 // implementation ------------------------------------------------------------
 `ifdef SW_FPU_MODE
-`DPI_FUNCTION void FPU_32f_to_int(input bit [31:0] A, output bit [31:0] O);
-always@(A) FPU_32f_to_int(A, O);
+`DPI_FUNCTION void FPU_32f_float2int(input bit [31:0] A, output bit [31:0] O);
+always@(A) FPU_32f_float2int(A, O);
 `else
 //@TODO : do something!!!
 `endif

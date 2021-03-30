@@ -61,14 +61,14 @@ DPI_FUNCTION void FPU_32f_Divide(const svBitVecVal* A, const svBitVecVal* B, svB
 	fO					= (fB != 0) ? fA / fB : 0;
 }
 
-DPI_FUNCTION void FPU_32f_to_int(const svBitVecVal* A, svBitVecVal* O)
+DPI_FUNCTION void FPU_32f_float2int(const svBitVecVal* A, svBitVecVal* O)
 {
 	const float& fA		= *(const float*)A;
 	int& fO				= *(int*)O;
 	fO					= fA;
 }
 
-DPI_FUNCTION void FPU_32f_from_int(const svBitVecVal* A, svBitVecVal* O)
+DPI_FUNCTION void FPU_32f_int2float(const svBitVecVal* A, svBitVecVal* O)
 {
 	const int& fA		= *(const int*)A;
 	float& fO			= *(float*)O;
@@ -111,16 +111,4 @@ DPI_FUNCTION svBit FPU_32f_testbench_get(svBitVecVal* A, svBitVecVal* B)
 	}
 
 	return test_enable;
-}
-
-DPI_FUNCTION bool FPU_32f_ValueCheck(const svBitVecVal* A, const svBitVecVal* B)
-{
-	const float& fA		= *(const float*)A;
-	const float& fB		= *(const float*)B;
-
-	if(isnan(fA) && isnan(fB)) return true;
-
-	if(isinf(fA) && isinf(fB) && !(((*A) ^ (*B)) & 0x80000000)) return true;
-
-	return fA == fB;
 }
