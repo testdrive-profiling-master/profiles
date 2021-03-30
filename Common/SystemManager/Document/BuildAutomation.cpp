@@ -421,7 +421,6 @@ BOOL BuildAutomation::CppCheck(LPCTSTR lpszPath)
 	sIncCommonPath		= g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_PROFILE%Common/include"));
 	sIncTestDrivePath	= g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_DIR%include"));
 	sArg.Format(_T("-I %s -I %s --std=c++11 --suppress=preprocessorErrorDirective --suppress=unknownMacro --inline-suppr --force %s"), (LPCTSTR)sIncCommonPath, (LPCTSTR)sIncTestDrivePath, lpszPath);
-	g_pSystem->LogInfo(_T("arg : %s"), sArg.c_str());
 
 	if(g_pSystem->ExecuteFile(_T("%TESTDRIVE_DIR%bin\\msys64\\mingw64\\bin\\CppCheck.exe"), sArg.c_str(), TRUE, NULL, g_pSystem->GetProjectPath(),
 							  _T(": error:"), -1,
