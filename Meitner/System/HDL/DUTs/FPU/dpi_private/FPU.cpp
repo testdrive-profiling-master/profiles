@@ -50,7 +50,7 @@ DPI_FUNCTION void FPU_32f_Multiply(const svBitVecVal* A, const svBitVecVal* B, s
 	const float& fA		= *(const float*)A;
 	const float& fB		= *(const float*)B;
 	float& fO			= *(float*)O;
-	fO					= fA / fB;
+	fO					= fA * fB;
 }
 
 DPI_FUNCTION void FPU_32f_Divide(const svBitVecVal* A, const svBitVecVal* B, svBitVecVal* O)
@@ -111,4 +111,13 @@ DPI_FUNCTION svBit FPU_32f_testbench_get(svBitVecVal* A, svBitVecVal* B)
 	}
 
 	return test_enable;
+}
+
+DPI_FUNCTION void FPU_error_log(const svBitVecVal* A, const svBitVecVal* B, const svBitVecVal* O, const svBitVecVal* golden_data)
+{
+	const float& fA			= *(const float*)A;
+	const float& fB			= *(const float*)B;
+	const float& fO			= *(const float*)O;
+	const float& fGolden	= *(const float*)golden_data;
+	printf("*E: A(%f(0x%08X)) op B(%f(0x%08X)) => O(%f(0x%08X)) != Golden(%f(0x%08X))\n", fA, *A, fB, *B, fO, *O, fGolden, *golden_data);
 }

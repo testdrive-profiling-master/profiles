@@ -56,6 +56,7 @@ wire	[31:0]			O;
 wire					PASS	= (O == golden_data);
 
 `DPI_FUNCTION bit FPU_32f_testbench_get(output bit [31:0] A, output bit [31:0] B);
+`DPI_FUNCTION void FPU_error_log(input bit [31:0] A, input bit [31:0] B, input bit [31:0] O, input bit [31:0] golden_data);
 
 // implementation ------------------------------------------------------------
 always@(posedge MCLK, negedge nRST) begin
@@ -67,6 +68,10 @@ always@(posedge MCLK, negedge nRST) begin
 	else begin
 		if(!FPU_32f_testbench_get(A, B)) begin
 			BUSY	= `FALSE;
+		end
+
+		if(!PASS) begin
+			FPU_error_log(A, B, O, golden_data);
 		end
 	end
 end
