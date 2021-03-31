@@ -87,12 +87,9 @@ struct ISystem {
 #endif
 
 #ifndef SYSTEM_IMPLEMENTATION
+	#define SYSTEM_API		extern "C"
 	#ifdef SYSTEM_EXPORTS
-		#define SYSTEM_API __declspec(dllexport)
 		typedef ISystemImp* (*CreateSystemImplementationFunction)(void);
-	#else
-		#define SYSTEM_API __declspec(dllimport)		
-		#pragma comment(lib, "SystemHAL.lib")
 	#endif
 
 	SYSTEM_API ISystem* CreateSystem(void);		// 시스템 생성

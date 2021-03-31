@@ -38,13 +38,7 @@
 #define __SYSTEM_DDK_H__
 #include "STDInterface.h"
 
-#ifdef DDK_EXPORTS
-	#define DDK_API __declspec(dllexport)
-#else
-	#define DDK_API __declspec(dllimport)		
-	#pragma comment(lib, "SystemDDK.lib")
-
-#endif
+#define DDK_API		extern "C"
 
 typedef enum{
 	COLOR_FORMAT_R5G6B5,

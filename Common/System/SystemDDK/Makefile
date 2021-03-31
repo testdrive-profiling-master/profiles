@@ -7,8 +7,7 @@ TARGETPATH		:= ../../bin
 TARGETNAME		:= SystemDDK
 
 SRCS			:= \
-	$(wildcard $(SRC_PATH)/*.cpp) \
-	dllmain.cpp
+	$(wildcard $(SRC_PATH)/*.cpp)
 
 LIBDIR			:= -L$(LIBPATH) -lSystemHAL -lz
 INC				:= -I$(SRC_PATH)

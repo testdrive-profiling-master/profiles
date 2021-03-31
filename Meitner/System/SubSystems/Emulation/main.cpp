@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -31,22 +31,18 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : TestDrive Profiling Master's System HAL
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Title : Emulation sub-system
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
-#include "STDInterface.h"
+#include "SystemEmul.h"
+#include "SystemMemory.h"
+#include "TestDriver.inl"
 
-#ifdef WIN32
-BOOL WINAPI DllMain(HANDLE /*hInst*/, DWORD dwReason, LPVOID /*lpRes*/)
+extern "C" ISystemImp* CreateSystemImplementation(void)
 {
-	switch(dwReason) {
-	case DLL_PROCESS_ATTACH:
-		break;
-
-	case DLL_PROCESS_DETACH:
-		break;
+	if(g_SystemMemory.IsInitialized()) {
+		return new SystemEmul();
 	}
 
-	return TRUE;
+	return NULL;
 }
-#endif

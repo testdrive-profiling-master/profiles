@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,39 +32,14 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "SystemSim.h"
 #include "SystemMemory.h"
 #include "TestDriver.inl"
 
-#ifdef WIN32
-BOOL APIENTRY DllMain(HMODULE hModule,
-					  DWORD  ul_reason_for_call,
-					  LPVOID lpReserved
-					 )
-{
-	switch(ul_reason_for_call) {
-	case DLL_PROCESS_ATTACH:
-		break;
-
-	case DLL_THREAD_ATTACH:
-		break;
-
-	case DLL_THREAD_DETACH:
-		break;
-
-	case DLL_PROCESS_DETACH:
-		break;
-	}
-
-	return TRUE;
-}
-#endif
-
-extern "C"
-__declspec(dllexport) ISystemImp* CreateSystemImplementation(void)
+extern "C" ISystemImp* CreateSystemImplementation(void)
 {
 	if(g_SystemMemory.IsInitialized()) {
 		return new SystemSim();

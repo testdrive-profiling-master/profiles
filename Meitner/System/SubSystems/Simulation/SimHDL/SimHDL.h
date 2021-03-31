@@ -34,19 +34,12 @@
 // Title : Simulation HDL module
 // Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
-#ifndef _SIM_HDL_H_
-#define _SIM_HDL_H_
+#ifndef __SIM_HDL_H__
+#define __SIM_HDL_H__
 #include "STDInterface.h"
 #include "SystemConfig.h"
 #include "VirtualDisplayConfig.h"
 #include "dpi_interfaces.h"
-
-#ifdef SIM_HDL_EXPORTS
-	#define SIM_HDL_API __declspec(dllexport)
-#else
-	#define SIM_HDL_API __declspec(dllimport)
-	#pragma comment(lib, "SimHDL.lib")
-#endif
 
 #ifndef svBitVecVal
 typedef unsigned int	svBitVecVal;
@@ -83,9 +76,9 @@ struct SimHDL {
 	virtual void Release(void) = 0;
 };
 
-extern "C" SIM_HDL_API SimHDL* CreateSimHDL(SimControl* pControl);
-extern "C" SIM_HDL_API void SimulationFlush(void);
-extern "C" SIM_HDL_API UINT64 SimulationTime(void);
-extern "C" SIM_HDL_API void AdvenceSimulationTime(DWORD dwTime);
+extern "C" SimHDL* CreateSimHDL(SimControl* pControl);
+extern "C" void SimulationFlush(void);
+extern "C" UINT64 SimulationTime(void);
+extern "C" void AdvenceSimulationTime(DWORD dwTime);
 
 #endif//_SIM_HDL_H_

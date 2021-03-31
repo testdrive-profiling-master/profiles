@@ -193,7 +193,7 @@ public:
 	}
 };
 
-extern "C" SIM_HDL_API SimHDL* CreateSimHDL(SimControl* pControl)
+SimHDL* CreateSimHDL(SimControl* pControl)
 {
 	g_pSimControl	= pControl;
 	return new SimHDL_imp();
@@ -316,18 +316,18 @@ void SimulationStop(void)
 	while(GetKeyState(VK_SPACE) < 0 || GetKeyState(VK_ESCAPE) < 0) Sleep(10);	// wait key up
 }
 
-extern "C" SIM_HDL_API void SimulationFlush(void)
+void SimulationFlush(void)
 {
 	Verilated::flushCall();
 	fflush(stdout);
 }
 
-extern "C" SIM_HDL_API UINT64 SimulationTime(void)
+UINT64 SimulationTime(void)
 {
 	return g_lSimulationTime;
 }
 
-extern "C" SIM_HDL_API void AdvenceSimulationTime(DWORD dwTime)
+void AdvenceSimulationTime(DWORD dwTime)
 {
 	g_lSimulationTime	+= dwTime;
 }
