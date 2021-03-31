@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Driver(PCIe) sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_DRIVER_H__
 #define __SYSTEM_DRIVER_H__
@@ -52,27 +52,27 @@ public:
 	virtual ~SystemDriver(void);
 
 	// Identify
-	STDMETHOD_(const char*, GetDescription)(void);							// get system description
+	virtual const char* GetDescription(void);								// get system description
 
 	// life cycle
-	STDMETHOD_(BOOL, Initialize)(IMemoryImp* pMem);							// system create
-	STDMETHOD_(void, Release)(void);											// system release
+	virtual BOOL Initialize(IMemoryImp* pMem);								// system create
+	virtual void Release(void);												// system release
 	
 	// memory
-	STDMETHOD_(DWORD, GetMemoryBase)(void);									// get memory start address
-	STDMETHOD_(void*, GetMemoryPointer)(DWORD dwPhyAddress, DWORD dwByteSize = 0);	// get virtual pointer from physical address
+	virtual DWORD GetMemoryBase(void);										// get memory start address
+	virtual void* GetMemoryPointer(DWORD dwPhyAddress, DWORD dwByteSize = 0);	// get virtual pointer from physical address
 
 	// register
-	STDMETHOD_(DWORD, RegRead)(DWORD dwAddress);								// register read
-	STDMETHOD_(void, RegWrite)(DWORD dwAddress, DWORD dwData);					// register write
+	virtual DWORD RegRead(DWORD dwAddress);									// register read
+	virtual void RegWrite(DWORD dwAddress, DWORD dwData);					// register write
 
 	// system
-	STDMETHOD_(void, RegisterInterruptService)(INTRRUPT_SERVICE routine);	// register ISR
-	STDMETHOD_(void, EnableInterrupt)(BOOL bEnable = TRUE);					// enable interrupt
-	STDMETHOD_(void, ClearInterruptPending)(void);							// clear interrupt pending bit
+	virtual void RegisterInterruptService(INTRRUPT_SERVICE routine);		// register ISR
+	virtual void EnableInterrupt(BOOL bEnable = TRUE);						// enable interrupt
+	virtual void ClearInterruptPending(void);								// clear interrupt pending bit
 
 	// memory manager
-	STDMETHOD_(IMemoryNative*, CreateMemory)(DWORD dwByteSize, DWORD dwByteAlignment, BOOL bDMA = FALSE);
+	virtual IMemoryNative* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, BOOL bDMA = FALSE);
 
 protected:
 	virtual void InvokeISR(void);

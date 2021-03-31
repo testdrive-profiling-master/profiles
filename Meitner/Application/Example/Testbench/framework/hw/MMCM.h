@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __MMCM_H__
 #define __MMCM_H__
@@ -54,13 +54,12 @@ typedef struct{
 	BOOL		bLocked;
 }MMCM_READ;
 
-interface IMMCM{
-public:
-	STDMETHOD_(void, MMCM_Set)(DWORD dwID, BOOL bRST, BOOL bEN, BOOL bWE, DWORD dwAddr, DWORD dwData) PURE;
-	STDMETHOD_(void, MMCM_Get)(DWORD dwID, MMCM_READ& info) PURE;
+struct IMMCM {
+	virtual void MMCM_Set(DWORD dwID, BOOL bRST, BOOL bEN, BOOL bWE, DWORD dwAddr, DWORD dwData) = 0;
+	virtual void MMCM_Get(DWORD dwID, MMCM_READ& info) = 0;
 };
 
-class MMCM{
+class MMCM {
 public:
 	MMCM(IMMCM* pMMCM, float CLKIN_MHz);
 	~MMCM(void);

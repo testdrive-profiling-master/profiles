@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __MEMORY_HEAP_H__
 #define __MEMORY_HEAP_H__
@@ -49,13 +49,13 @@ class MemoryHeap : public IMemory
 {
 public:
 	MemoryHeap(DWORD dwReqBytes, DWORD dwByteAlignment = 4, BOOL bDMA = FALSE);
-	STDMETHOD_(void, AddRef)(void);
-	STDMETHOD_(void, Release)(void);
+	virtual void AddRef(void);
+	virtual void Release(void);
 
-	STDMETHOD_(void*, Virtual)(void);
-	STDMETHOD_(DWORD, Physical)(void);
-	STDMETHOD_(DWORD, ByteSize)(void);
-	STDMETHOD_(BOOL, Flush)(BOOL bWrite = TRUE, DWORD dwOffset = 0, DWORD dwByteSize = 0);
+	virtual void* Virtual(void);
+	virtual DWORD Physical(void);
+	virtual DWORD ByteSize(void);
+	virtual BOOL Flush(BOOL bWrite = TRUE, DWORD dwOffset = 0, DWORD dwByteSize = 0);
 
 	inline BOOL IsFree(void)			{return m_bFree;}
 
@@ -91,8 +91,8 @@ public:
 	MemoryImplementation(void);
 	virtual ~MemoryImplementation(void);
 
-	STDMETHOD_(BOOL, Initialize)(BYTE* pVirtual, DWORD dwPhysical, DWORD dwByteSize, IMemoryManager* pMemoryManager);
-	STDMETHOD_(void, Release)(void);
+	virtual BOOL Initialize(BYTE* pVirtual, DWORD dwPhysical, DWORD dwByteSize, IMemoryManager* pMemoryManager);
+	virtual void Release(void);
 
 	void Report(void);
 

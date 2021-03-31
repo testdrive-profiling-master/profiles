@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 12/20/2020 Sun (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
 #include "TestDriver.inl"
@@ -82,7 +82,7 @@ public:
 		}
 	}
 
-	STDMETHOD_(BOOL, Initialize)(void) {	// cppcheck-suppress internalAstError
+	virtual BOOL Initialize(void) {	// cppcheck-suppress internalAstError
 		if(!g_pSimHDL) {
 			srand(time(NULL));			// randomize seed
 			Verilated::randReset(2);	// randomize all bits
@@ -158,7 +158,7 @@ public:
 		return TRUE;
 	}
 
-	STDMETHOD_(BOOL, IsTrace)(void) {
+	virtual BOOL IsTrace(void) {
 #ifdef SIM_TRACE
 		return (g_pWaveDump != NULL);
 #else
@@ -166,7 +166,7 @@ public:
 #endif
 	}
 
-	STDMETHOD_(BOOL, Eval)(void) {
+	virtual BOOL Eval(void) {
 		// simulation evaluation
 		g_pSimTop->eval();
 #ifndef SIMULATION_TOP_EX
@@ -188,7 +188,7 @@ public:
 		return !Verilated::gotFinish();
 	}
 
-	STDMETHOD_(void, Release)(void) {
+	virtual void Release(void) {
 		delete this;
 	}
 };

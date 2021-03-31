@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_SIM_H__
 #define __SYSTEM_SIM_H__
@@ -51,27 +51,27 @@ public:
 	virtual ~SystemSim(void);
 
 	// Identify
-	STDMETHOD_(const char*, GetDescription)(void);							// get system description
+	virtual const char* GetDescription(void);								// get system description
 
 	// life cycle
-	STDMETHOD_(BOOL, Initialize)(IMemoryImp* pMem);							// system initialize
-	STDMETHOD_(void, Release)(void);											// release all system resources
+	virtual BOOL Initialize(IMemoryImp* pMem);								// system initialize
+	virtual void Release(void);												// release all system resources
 	
 	// memory
-	STDMETHOD_(DWORD, GetMemoryBase)(void);									// get memory start address
-	STDMETHOD_(void*, GetMemoryPointer)(DWORD dwPhyAddress, DWORD dwByteSize = 0);		// get virtual pointer from physical address
+	virtual DWORD GetMemoryBase(void);										// get memory start address
+	virtual void* GetMemoryPointer(DWORD dwPhyAddress, DWORD dwByteSize = 0);		// get virtual pointer from physical address
 
 	// register
-	STDMETHOD_(DWORD, RegRead)(DWORD dwAddress);								// register read
-	STDMETHOD_(void, RegWrite)(DWORD dwAddress, DWORD dwData);					// register write
+	virtual DWORD RegRead(DWORD dwAddress);									// register read
+	virtual void RegWrite(DWORD dwAddress, DWORD dwData);					// register write
 
 	// system
-	STDMETHOD_(void, RegisterInterruptService)(INTRRUPT_SERVICE routine);	// 인터럽트 서비스 루틴 등록
-	STDMETHOD_(void, EnableInterrupt)(BOOL bEnable = TRUE);					// 인터럽트 서비스 루틴 활성화
-	STDMETHOD_(void, ClearInterruptPending)(void);							// 인터럽트 서비스 팬딩 클리어
+	virtual void RegisterInterruptService(INTRRUPT_SERVICE routine);		// 인터럽트 서비스 루틴 등록
+	virtual void EnableInterrupt(BOOL bEnable = TRUE);						// 인터럽트 서비스 루틴 활성화
+	virtual void ClearInterruptPending(void);								// 인터럽트 서비스 팬딩 클리어
 
 	// memory manager
-	STDMETHOD_(IMemoryNative*, CreateMemory)(DWORD dwByteSize, DWORD dwByteAlignment, BOOL bDMA = FALSE);
+	virtual IMemoryNative* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, BOOL bDMA = FALSE);
 
 private:
 	SimEngine*				m_pSim;

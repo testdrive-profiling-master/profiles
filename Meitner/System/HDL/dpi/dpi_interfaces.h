@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 11/5/2019 Tue (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __DPI_INTERFACES_H__
 #define __DPI_INTERFACES_H__
@@ -46,17 +46,17 @@ typedef struct{
 	DWORD		dwData;
 }BUS_SALVE_PACKET;
 
-interface BUS_SLAVE_INTERFACE{
-	STDMETHOD_(BOOL, RequestWrite)(DWORD dwAddr, DWORD dwData) PURE;
-	STDMETHOD_(BOOL, WaitWrite)(void) PURE;
-	STDMETHOD_(BOOL, RequestRead)(DWORD dwAddr) PURE;
-	STDMETHOD_(BOOL, WaitRead)(DWORD& dwData) PURE;
+struct BUS_SLAVE_INTERFACE {
+	virtual BOOL RequestWrite(DWORD dwAddr, DWORD dwData) = 0;
+	virtual BOOL WaitWrite(void) = 0;
+	virtual BOOL RequestRead(DWORD dwAddr) = 0;
+	virtual BOOL WaitRead(DWORD& dwData) = 0;
 
-	STDMETHOD_(BUS_SALVE_PACKET*, GetWrite)(void) PURE;
-	STDMETHOD_(void, WriteAck)(void) PURE;
+	virtual BUS_SALVE_PACKET* GetWrite(void) = 0;
+	virtual void WriteAck(void) = 0;
 
-	STDMETHOD_(BUS_SALVE_PACKET*, GetRead)(void) PURE;
-	STDMETHOD_(void, ReadAck)(void) PURE;
+	virtual BUS_SALVE_PACKET* GetRead(void) = 0;
+	virtual void ReadAck(void) = 0;
 };
 
 BUS_SLAVE_INTERFACE* CreateSlave(DWORD dwAddrBase, DWORD dwAddrHigh);
@@ -65,10 +65,10 @@ BUS_SLAVE_INTERFACE* FindSlave(DWORD dwAddress);
 //-----------------------------------------------------------------------
 // clocking interface
 //-----------------------------------------------------------------------
-interface CLOCK_INTERFACE{
-	STDMETHOD_(void, SetParameters)(DWORD dwID, DWORD dwPeriod, BYTE bInitValue = 0, DWORD dwPhase = 0, BYTE ClockPolarity = 1, BYTE ResetPolarity = 0) PURE;
-	STDMETHOD_(void, DoReset)(DWORD dwCycles = 8) PURE;
-	STDMETHOD_(void, Release)(void) PURE;
+struct CLOCK_INTERFACE {
+	virtual void SetParameters(DWORD dwID, DWORD dwPeriod, BYTE bInitValue = 0, DWORD dwPhase = 0, BYTE ClockPolarity = 1, BYTE ResetPolarity = 0) = 0;
+	virtual void DoReset(DWORD dwCycles = 8) = 0;
+	virtual void Release(void) = 0;
 };
 
 #endif//__DPI_INTERFACES_H__

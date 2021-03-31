@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __VIDEO_SOURCE_H__
 #define __VIDEO_SOURCE_H__
@@ -55,11 +55,11 @@ typedef enum{
 	SOURCE_TYPE_RGB32,
 }SOURCE_TYPE;
 
-interface VideoSourceCallBack{
-	STDMETHOD_(void, SampleVideoSource)(long lSize, BYTE* pBuffer) PURE;
+struct VideoSourceCallBack {
+	STDMETHOD_(void, SampleVideoSource)(long lSize, BYTE* pBuffer) = 0;
 };
 
-class VideoSource{
+class VideoSource {
 public:
 	VideoSource(void);
 	virtual ~VideoSource(void);

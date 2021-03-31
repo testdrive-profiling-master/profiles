@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __HDMI_CONTROLLER_H__
 #define __HDMI_CONTROLLER_H__
@@ -41,7 +41,7 @@
 #include "MMCM.h"			// mmcm controller interface
 #include "CVT.h"			// coordinate video timing generator
 
-class HDMI_Controller : public II2C, public IMMCM{
+class HDMI_Controller : public II2C, public IMMCM {
 public:
 	HDMI_Controller(DDK* pDDK, DWORD dwBaseAddress, float CLKIN_MHz);
 	virtual ~HDMI_Controller(void);
@@ -53,10 +53,10 @@ public:
 protected:
 	void SetFrameSize(DWORD dwSize);
 	void VideoEnable(BOOL bEnable = TRUE);
-	STDMETHOD_(void, I2C_Set)(int SCL, int SDA, int nRST);
-	STDMETHOD_(int, I2C_Get)(void);
-	STDMETHOD_(void, MMCM_Set)(DWORD dwID, BOOL bRST, BOOL bEN, BOOL bWE, DWORD dwAddr, DWORD dwData);
-	STDMETHOD_(void, MMCM_Get)(DWORD dwID, MMCM_READ& info);
+	virtual void I2C_Set(int SCL, int SDA, int nRST);
+	virtual int I2C_Get(void);
+	virtual void MMCM_Set(DWORD dwID, BOOL bRST, BOOL bEN, BOOL bWE, DWORD dwAddr, DWORD dwData);
+	virtual void MMCM_Get(DWORD dwID, MMCM_READ& info);
 
 private:
 	struct{

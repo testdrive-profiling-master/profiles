@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Driver(PCIe) sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __NATIVE_MEMORY_H__
 #define __NATIVE_MEMORY_H__
@@ -46,8 +46,8 @@ public:
 	NativeSystemMemory(DWORD dwByteSize);
 	virtual ~NativeSystemMemory(void);
 
-	STDMETHOD_(void, Release)(void);
-	STDMETHOD_(BYTE*, Virtual)(void);
-	STDMETHOD_(BOOL, Flush)(DWORD dwOffset, DWORD dwPhyAddress, DWORD dwByteSize, BOOL bWrite);
+	virtual void Release(void);
+	virtual BYTE* Virtual(void);
+	virtual BOOL Flush(DWORD dwOffset, DWORD dwPhyAddress, DWORD dwByteSize, BOOL bWrite);
 };
 #endif//__NATIVE_MEMORY_H__

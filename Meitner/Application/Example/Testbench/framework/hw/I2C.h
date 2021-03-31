@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,19 +32,18 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __I2C_H__
 #define __I2C_H__
 #include "STDInterface.h"
 
-interface II2C{
-public:
-	STDMETHOD_(void, I2C_Set)(int SCL, int SDA, int nRST) PURE;		// set scl/sda/rst_n
-	STDMETHOD_(int, I2C_Get)(void) PURE;								// get sda
+struct II2C {
+	virtual void I2C_Set(int SCL, int SDA, int nRST) = 0;		// set scl/sda/rst_n
+	virtual int I2C_Get(void) = 0;								// get sda
 };
 
-class I2C{
+class I2C {
 public:
 	I2C(II2C* pI2C);
 	virtual ~I2C(void);

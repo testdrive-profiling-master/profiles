@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __DDK_CONTEXT_H__
 #define __DDK_CONTEXT_H__
@@ -47,26 +47,26 @@ public:
 	inline BOOL IsInitialized(void)		{return m_pSystem != NULL;}
 
 	// Identify
-	STDMETHOD_(const char*, GetSystemDescription)(void);
+	virtual const char* GetSystemDescription(void);
 
 	// life cycle
-	STDMETHOD_(void, Release)(void);		// Release display object
+	virtual void Release(void);		// Release display object
 
 	// memory
-	STDMETHOD_(DWORD, GetMemoryBase)(void);
-	STDMETHOD_(void*, GetMemoryPointer)(DWORD dwPhyAddress, DWORD dwByteSize = 0);
-	STDMETHOD_(BOOL, MakeMemoryDump)(const char* sFileName = NULL);
-	STDMETHOD_(BOOL, LoadMemoryDump)(const char* sFileName = NULL);
+	virtual DWORD GetMemoryBase(void);
+	virtual void* GetMemoryPointer(DWORD dwPhyAddress, DWORD dwByteSize = 0);
+	virtual BOOL MakeMemoryDump(const char* sFileName = NULL);
+	virtual BOOL LoadMemoryDump(const char* sFileName = NULL);
 
 	// register
-	STDMETHOD_(DWORD, RegRead)(DWORD dwAddress);
-	STDMETHOD_(void, RegWrite)(DWORD dwAddress, DWORD dwData);
+	virtual DWORD RegRead(DWORD dwAddress);
+	virtual void RegWrite(DWORD dwAddress, DWORD dwData);
 
 	// system
-	STDMETHOD_(void, RegisterInterruptService)(DDK_INTRRUPT_SERVICE routine, void* pPrivate = NULL);
-	STDMETHOD_(void, EnableInterrupt)(BOOL bEnable = TRUE);
-	STDMETHOD_(void, ClearInterruptPending)(BOOL bReleaseWait = FALSE);
-	STDMETHOD_(void, WaitInterruptDone)(void);
+	virtual void RegisterInterruptService(DDK_INTRRUPT_SERVICE routine, void* pPrivate = NULL);
+	virtual void EnableInterrupt(BOOL bEnable = TRUE);
+	virtual void ClearInterruptPending(BOOL bReleaseWait = FALSE);
+	virtual void WaitInterruptDone(void);
 
 private:
 	ISystem*	m_pSystem;

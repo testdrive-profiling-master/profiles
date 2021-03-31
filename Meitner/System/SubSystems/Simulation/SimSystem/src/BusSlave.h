@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __BUS_SLAVE_H__
 #define __BUS_SLAVE_H__
@@ -53,16 +53,16 @@ public:
 	DWORD Read(DWORD dwAddress);
 
 	//// H/W master interface
-	STDMETHOD_(BOOL, RequestWrite)(DWORD dwAddr, DWORD dwData);
-	STDMETHOD_(BOOL, WaitWrite)(void);
-	STDMETHOD_(BOOL, RequestRead)(DWORD dwAddr);
-	STDMETHOD_(BOOL, WaitRead)(DWORD& dwData);
+	virtual BOOL RequestWrite(DWORD dwAddr, DWORD dwData);
+	virtual BOOL WaitWrite(void);
+	virtual BOOL RequestRead(DWORD dwAddr);
+	virtual BOOL WaitRead(DWORD& dwData);
 
 	// H/W slave interface
-	STDMETHOD_(BUS_SALVE_PACKET*, GetWrite)(void);		// get write
-	STDMETHOD_(void, WriteAck)(void);					// write ack to S/W
-	STDMETHOD_(BUS_SALVE_PACKET*, GetRead)(void);		// get read
-	STDMETHOD_(void, ReadAck)(void);					// read ack to S/W
+	virtual BUS_SALVE_PACKET* GetWrite(void);		// get write
+	virtual void WriteAck(void);					// write ack to S/W
+	virtual BUS_SALVE_PACKET* GetRead(void);		// get read
+	virtual void ReadAck(void);						// read ack to S/W
 
 	BOOL IsValidAddress(DWORD dwAddress);
 

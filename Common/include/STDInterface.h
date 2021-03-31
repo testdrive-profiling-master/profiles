@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __STD_INTERFACE_H__
 #define __STD_INTERFACE_H__
@@ -43,10 +43,6 @@
 	#include <windows.h>
 	#include <ObjBase.h>
 #else
-	#define interface					struct
-	#define STDMETHOD_(type,method)		virtual type method
-	#define PURE						= 0
-
 	#ifndef PVOID
 		typedef void *PVOID;
 	#endif

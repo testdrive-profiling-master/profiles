@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_DDK_H__
 #define __SYSTEM_DDK_H__
@@ -51,41 +51,39 @@ typedef enum{
 	COLOR_FORMAT_A8B8G8R8,
 }COLOR_FORMAT;
 
-interface DDK;
-
 typedef void (*DDK_INTRRUPT_SERVICE)(void* pPrivate);	// user interrupt service routine template
 
-interface DDK{
+struct DDK {
 	// Identify
-	STDMETHOD_(const char*, GetSystemDescription)(void) PURE;
+	virtual const char* GetSystemDescription(void) = 0;
 
 	// life cycle
-	STDMETHOD_(void, Release)(void) PURE;		// Release display object
+	virtual void Release(void) = 0;		// Release display object
 
 	// memory
-	STDMETHOD_(DWORD, GetMemoryBase)(void) PURE;
-	STDMETHOD_(void*, GetMemoryPointer)(DWORD dwPhyAddress, DWORD dwByteSize = 0) PURE;
-	STDMETHOD_(BOOL, MakeMemoryDump)(const char* sFileName = NULL) PURE;
-	STDMETHOD_(BOOL, LoadMemoryDump)(const char* sFileName = NULL) PURE;
+	virtual DWORD GetMemoryBase(void) = 0;
+	virtual void* GetMemoryPointer(DWORD dwPhyAddress, DWORD dwByteSize = 0) = 0;
+	virtual BOOL MakeMemoryDump(const char* sFileName = NULL) = 0;
+	virtual BOOL LoadMemoryDump(const char* sFileName = NULL) = 0;
 
 	// register
-	STDMETHOD_(DWORD, RegRead)(DWORD dwAddress) PURE;
-	STDMETHOD_(void, RegWrite)(DWORD dwAddress, DWORD dwData) PURE;
+	virtual DWORD RegRead(DWORD dwAddress) = 0;
+	virtual void RegWrite(DWORD dwAddress, DWORD dwData) = 0;
 
 	// system
-	STDMETHOD_(void, RegisterInterruptService)(DDK_INTRRUPT_SERVICE routine, void* pPrivate = NULL) PURE;
-	STDMETHOD_(void, EnableInterrupt)(BOOL bEnable = TRUE) PURE;
-	STDMETHOD_(void, ClearInterruptPending)(BOOL bReleaseWait = FALSE) PURE;
-	STDMETHOD_(void, WaitInterruptDone)(void) PURE;
+	virtual void RegisterInterruptService(DDK_INTRRUPT_SERVICE routine, void* pPrivate = NULL) = 0;
+	virtual void EnableInterrupt(BOOL bEnable = TRUE) = 0;
+	virtual void ClearInterruptPending(BOOL bReleaseWait = FALSE) = 0;
+	virtual void WaitInterruptDone(void) = 0;
 };
 
-interface DDKMemory{
-	STDMETHOD_(void, AddRef)(void) PURE;		// add reference
-	STDMETHOD_(void, Release)(void) PURE;		// release memory object
-	STDMETHOD_(void*, Virtual)(void) PURE;		// virtual memory pointer
-	STDMETHOD_(DWORD, Physical)(void) PURE;		// physical memory address
-	STDMETHOD_(DWORD, ByteSize)(void) PURE;		// byte allocation size
-	STDMETHOD_(BOOL, Flush)(BOOL bWrite = TRUE, DWORD dwOffset = 0, DWORD dwByteSize = 0) PURE;	// flush memory
+struct DDKMemory{
+	virtual void AddRef(void) = 0;			// add reference
+	virtual void Release(void) = 0;			// release memory object
+	virtual void* Virtual(void) = 0;		// virtual memory pointer
+	virtual DWORD Physical(void) = 0;		// physical memory address
+	virtual DWORD ByteSize(void) = 0;		// byte allocation size
+	virtual BOOL Flush(BOOL bWrite = TRUE, DWORD dwOffset = 0, DWORD dwByteSize = 0) = 0;	// flush memory
 };
 
 // DDK

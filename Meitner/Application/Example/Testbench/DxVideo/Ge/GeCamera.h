@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __GE_CAMERA_H__
 #define __GE_CAMERA_H__
@@ -41,8 +41,8 @@
 
 class CGeCamera;
 
-interface CameraPost{
-	STDMETHOD_(BOOL, CameraPostProcess)(CGeCamera* pCamera, long lSize, BYTE* pBuffer) PURE;
+struct CameraPost {
+	virtual BOOL CameraPostProcess(CGeCamera* pCamera, long lSize, BYTE* pBuffer) = 0;
 };
 
 class CGeCamera : public CGePrimitive, public VideoSourceCallBack
@@ -63,7 +63,7 @@ public:
 	inline BOOL IsInitialized(void)	{return m_iWidth != 0;}
 
 protected:
-	STDMETHOD_(void, SampleVideoSource)(long lSize, BYTE* pBuffer);
+	virtual void SampleVideoSource(long lSize, BYTE* pBuffer);
 
 private:
 	LPDIRECT3DTEXTURE9		m_pTexture;

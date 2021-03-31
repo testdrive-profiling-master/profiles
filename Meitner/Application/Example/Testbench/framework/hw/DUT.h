@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __DUT_H__
 #define __DUT_H__
@@ -79,8 +79,8 @@ protected:
 	DDK*	m_pDDK;
 
 private:
-	STDMETHOD_(void, MMCM_Set)(DWORD dwID, BOOL bRST, BOOL bEN, BOOL bWE, DWORD dwAddr, DWORD dwData);
-	STDMETHOD_(void, MMCM_Get)(DWORD dwID, MMCM_READ& info);
+	virtual void MMCM_Set(DWORD dwID, BOOL bRST, BOOL bEN, BOOL bWE, DWORD dwAddr, DWORD dwData);
+	virtual void MMCM_Get(DWORD dwID, MMCM_READ& info);
 
 	MMCM	m_MMCM;
 };

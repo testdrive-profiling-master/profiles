@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_HAL_H__
 #define __SYSTEM_HAL_H__
@@ -43,46 +43,46 @@
 //------------------------------------------------------------------------------------------------------------------
 typedef void (*INTRRUPT_SERVICE)(void);	// interrupt service routine
 
-interface ISystem{
+struct ISystem {
 	// Identify
-	STDMETHOD_(const char*, GetDescription)(void) PURE;							// get system description
+	virtual const char* GetDescription(void) = 0;							// get system description
 
 	// Life cycle
-	STDMETHOD_(void, Release)(void) PURE;										// system release
+	virtual void Release(void) = 0;											// system release
 
 	// memory
-	STDMETHOD_(DWORD, GetMemoryBase)(void) PURE;								// get memory start address
-	STDMETHOD_(void*, GetMemoryPointer)(DWORD dwPhyAddress, DWORD dwByteSize = 0) PURE;		// get virtual pointer from physical address
+	virtual DWORD GetMemoryBase(void) = 0;									// get memory start address
+	virtual void* GetMemoryPointer(DWORD dwPhyAddress, DWORD dwByteSize = 0) = 0;		// get virtual pointer from physical address
 
 	// register
-	STDMETHOD_(DWORD, RegRead)(DWORD dwAddress) PURE;							// read register
-	STDMETHOD_(void, RegWrite)(DWORD dwAddress, DWORD dwData) PURE;				// write register
+	virtual DWORD RegRead(DWORD dwAddress) = 0;								// read register
+	virtual void RegWrite(DWORD dwAddress, DWORD dwData) = 0;				// write register
 
 	// System control
-	STDMETHOD_(void, RegisterInterruptService)(INTRRUPT_SERVICE routine) PURE;	// register ISR(interrrupt service routine)
-	STDMETHOD_(void, EnableInterrupt)(BOOL bEnable = TRUE) PURE;				// enable ISR
-	STDMETHOD_(void, ClearInterruptPending)(void) PURE;							// clear interrupt pending bit
+	virtual void RegisterInterruptService(INTRRUPT_SERVICE routine) = 0;	// register ISR(interrrupt service routine)
+	virtual void EnableInterrupt(BOOL bEnable = TRUE) = 0;					// enable ISR
+	virtual void ClearInterruptPending(void) = 0;							// clear interrupt pending bit
 };
 
 #if defined(SYSTEM_IMPLEMENTATION) || defined(SYSTEM_EXPORTS)
-	interface IMemoryNative{
-		STDMETHOD_(void, Release)(void) PURE;
-		STDMETHOD_(BYTE*, Virtual)(void) PURE;
-		STDMETHOD_(BOOL, Flush)(DWORD dwOffset, DWORD dwPhyAddress, DWORD dwByteSize, BOOL bWrite) PURE;
+	struct IMemoryNative {
+		virtual void Release(void) = 0;
+		virtual BYTE* Virtual(void) = 0;
+		virtual BOOL Flush(DWORD dwOffset, DWORD dwPhyAddress, DWORD dwByteSize, BOOL bWrite) = 0;
 	};
 
-	interface IMemoryManager{
-		STDMETHOD_(IMemoryNative*, CreateMemory)(DWORD dwByteSize, DWORD dwByteAlignment, BOOL bDMA = FALSE) PURE;
+	struct IMemoryManager {
+		virtual IMemoryNative* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, BOOL bDMA = FALSE) = 0;
 	};
 
-	interface IMemoryImp{
-		STDMETHOD_(BOOL, Initialize)(BYTE* pVirtual, DWORD dwPhysical, DWORD dwByteSize, IMemoryManager* pMemoryManager) PURE;
-		STDMETHOD_(void, Release)(void) PURE;
+	struct IMemoryImp {
+		virtual BOOL Initialize(BYTE* pVirtual, DWORD dwPhysical, DWORD dwByteSize, IMemoryManager* pMemoryManager) = 0;
+		virtual void Release(void) = 0;
 	};
 
-	interface ISystemImp : public ISystem
+	struct ISystemImp : public ISystem
 	{
-		STDMETHOD_(BOOL, Initialize)(IMemoryImp* pMem) PURE;					// create memory implementation
+		virtual BOOL Initialize(IMemoryImp* pMem) = 0;					// create memory implementation
 	};
 #endif
 
@@ -97,13 +97,13 @@ interface ISystem{
 
 	SYSTEM_API ISystem* CreateSystem(void);		// 시스템 생성
 
-	interface IMemory{
-		STDMETHOD_(void, AddRef)(void) PURE;		// add reference
-		STDMETHOD_(void, Release)(void) PURE;		// release memory object
-		STDMETHOD_(void*, Virtual)(void) PURE;		// virtual memory pointer
-		STDMETHOD_(DWORD, Physical)(void) PURE;		// physical memory address
-		STDMETHOD_(DWORD, ByteSize)(void) PURE;		// byte allocation size
-		STDMETHOD_(BOOL, Flush)(BOOL bWrite = TRUE, DWORD dwOffset = 0, DWORD dwByteSize = 0) PURE;	// flush memory
+	struct IMemory {
+		virtual void AddRef(void) = 0;			// add reference
+		virtual void Release(void) = 0;			// release memory object
+		virtual void* Virtual(void) = 0;		// virtual memory pointer
+		virtual DWORD Physical(void) = 0;		// physical memory address
+		virtual DWORD ByteSize(void) = 0;		// byte allocation size
+		virtual BOOL Flush(BOOL bWrite = TRUE, DWORD dwOffset = 0, DWORD dwByteSize = 0) = 0;	// flush memory
 	};
 
 	typedef void (*ENUMERATE_MEMORY_FUNCTION)(IMemory* pMemory, void* pPrivate);

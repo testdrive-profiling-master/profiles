@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,13 +32,8 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Private dynamic document
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
-//=======================================================================
-// CloneX developments. Copyright 2013~2014. ALL RIGHTS RESERVED
-// Title : Simulation HDL module
-// Rev.  : 4/5/2014 Sat (clonextop@gmail.com)
-//=======================================================================
 #include "common.h"
 #include "TestDriver.inl"
 #include "SimALUInterface.h"
@@ -95,11 +90,11 @@ public:
 		return TRUE;
 	}
 
-	STDMETHOD_(void, Release)(void) {
+	virtual void Release(void) {
 		delete this;
 	}
 
-	STDMETHOD_(BOOL, SimulateALU)(float DIN, float& DOUT, float& DOUT_GOLDEN) {
+	virtual BOOL SimulateALU(float DIN, float& DOUT, float& DOUT_GOLDEN) {
 		if(!m_pTop) return FALSE;
 
 		m_pTop->EN		= 1;

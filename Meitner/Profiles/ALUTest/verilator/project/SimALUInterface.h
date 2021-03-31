@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,23 +32,18 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Private dynamic document
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
-//=======================================================================
-// CloneX developments. Copyright 2013~2014. ALL RIGHTS RESERVED
-// Title : Simulation HDL module
-// Rev.  : 4/24/2014 Tue (clonextop@gmail.com)
-//=======================================================================
 #ifndef __SYSTEM_HAL_H__
 #define __SYSTEM_HAL_H__
 #include "STDInterface.h"
 
-interface ISimALU{
+struct ISimALU {
 	// Life cycle
-	STDMETHOD_(void, Release)(void) PURE;
+	virtual void Release(void) = 0;
 
 	// simulation
-	STDMETHOD_(BOOL, SimulateALU)(float DIN, float& DOUT, float& DOUT_GOLDEN) PURE;
+	virtual BOOL SimulateALU(float DIN, float& DOUT, float& DOUT_GOLDEN) = 0;
 };
 
 #ifdef SIM_HDL_EXPORTS

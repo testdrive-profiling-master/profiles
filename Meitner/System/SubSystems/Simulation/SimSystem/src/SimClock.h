@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_CLOCK_H__
 #define __SIM_CLOCK_H__
@@ -53,9 +53,9 @@ public:
 	static void Tik(void);		// Tiking clock (before the evaluation)
 	static DWORD Tok(void);		// Toking clock (after the evaluation)
 
-	STDMETHOD_(void, SetParameters)(DWORD dwID, DWORD dwPeriod, BYTE bInitValue = 0, DWORD dwPhase = 0, BYTE ClockPolarity = 1, BYTE ResetPolarity = 0);
-	STDMETHOD_(void, DoReset)(DWORD dwCycles = 8);
-	STDMETHOD_(void, Release)(void);
+	virtual void SetParameters(DWORD dwID, DWORD dwPeriod, BYTE bInitValue = 0, DWORD dwPhase = 0, BYTE ClockPolarity = 1, BYTE ResetPolarity = 0);
+	virtual void DoReset(DWORD dwCycles = 8);
+	virtual void Release(void);
 
 protected:
 	static void Refresh(void);	// refresh clock list

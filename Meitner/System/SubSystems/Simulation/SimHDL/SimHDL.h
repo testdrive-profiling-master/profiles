@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef _SIM_HDL_H_
 #define _SIM_HDL_H_
@@ -52,35 +52,35 @@
 typedef unsigned int	svBitVecVal;
 #endif
 
-interface SimControl{
-	STDMETHOD_(BUS_SLAVE_INTERFACE*, CreateSlave)(DWORD dwAddrBase, DWORD dwAddrHigh) PURE;
-	STDMETHOD_(BUS_SLAVE_INTERFACE*, FindSlave)(DWORD dwAddress) PURE;
-	STDMETHOD_(CLOCK_INTERFACE*, CreateClock)(BYTE* pCLK, BYTE* pRST) PURE;
-	STDMETHOD_(BOOL, AwakeInterrupt)(void) PURE;	// TRUE(Awaked), FALSE(Pending)
-	STDMETHOD_(void, SetMemoryBaseAddress)(DWORD dwAddress) PURE;
-	STDMETHOD_(void, MemoryRead32)(int iID, DWORD dwAddress, DWORD& dwData) PURE;
-	STDMETHOD_(void, MemoryWrite32)(int iID, DWORD dwAddress, DWORD dwData) PURE;
-	STDMETHOD_(void, MemoryRead16)(int iID, DWORD dwAddress, WORD& dwData) PURE;
-	STDMETHOD_(void, MemoryWrite16)(int iID, DWORD dwAddress, WORD dwData) PURE;
-	STDMETHOD_(void, MemoryRead8)(int iID, DWORD dwAddress, BYTE& dwData) PURE;
-	STDMETHOD_(void, MemoryWrite8)(int iID, DWORD dwAddress, BYTE dwData) PURE;
-	STDMETHOD_(SYSTEM_CONFIG*, GetSystemConfig)(void) PURE;
-	STDMETHOD_(DisplayConfig*, GetDisplayConfig)(void) PURE;
-	STDMETHOD_(BYTE*, GetMemoryPointer)(DWORD dwAddress, DWORD dwSize = 0, BOOL bDisplay = FALSE) PURE;
-	STDMETHOD_(DWORD, GetMemoryBaseAddress)(void) PURE;
-	STDMETHOD_(BOOL, GetMemory)(const char* sName, void*& pConfig, void*& pMemory) PURE;
-	STDMETHOD_(void, SimulationLock)(int iDelayTicks = 0) PURE;
-	STDMETHOD_(void, SimulationUnLock)(void) PURE;
-	STDMETHOD_(void, SimulationAddBusy)(BYTE* pBusy) PURE;
-	STDMETHOD_(void, SimulationDebugMode)(BOOL bDebug = TRUE) PURE;
-	STDMETHOD_(void, SetSystemDescription)(const char* sDesc) PURE;
+struct SimControl {
+	virtual BUS_SLAVE_INTERFACE* CreateSlave(DWORD dwAddrBase, DWORD dwAddrHigh) = 0;
+	virtual BUS_SLAVE_INTERFACE* FindSlave(DWORD dwAddress) = 0;
+	virtual CLOCK_INTERFACE* CreateClock(BYTE* pCLK, BYTE* pRST) = 0;
+	virtual BOOL AwakeInterrupt(void) = 0;	// TRUE(Awaked), FALSE(Pending)
+	virtual void SetMemoryBaseAddress(DWORD dwAddress) = 0;
+	virtual void MemoryRead32(int iID, DWORD dwAddress, DWORD& dwData) = 0;
+	virtual void MemoryWrite32(int iID, DWORD dwAddress, DWORD dwData) = 0;
+	virtual void MemoryRead16(int iID, DWORD dwAddress, WORD& dwData) = 0;
+	virtual void MemoryWrite16(int iID, DWORD dwAddress, WORD dwData) = 0;
+	virtual void MemoryRead8(int iID, DWORD dwAddress, BYTE& dwData) = 0;
+	virtual void MemoryWrite8(int iID, DWORD dwAddress, BYTE dwData) = 0;
+	virtual SYSTEM_CONFIG* GetSystemConfig(void) = 0;
+	virtual DisplayConfig* GetDisplayConfig(void) = 0;
+	virtual BYTE* GetMemoryPointer(DWORD dwAddress, DWORD dwSize = 0, BOOL bDisplay = FALSE) = 0;
+	virtual DWORD GetMemoryBaseAddress(void) = 0;
+	virtual BOOL GetMemory(const char* sName, void*& pConfig, void*& pMemory) = 0;
+	virtual void SimulationLock(int iDelayTicks = 0) = 0;
+	virtual void SimulationUnLock(void) = 0;
+	virtual void SimulationAddBusy(BYTE* pBusy) = 0;
+	virtual void SimulationDebugMode(BOOL bDebug = TRUE) = 0;
+	virtual void SetSystemDescription(const char* sDesc) = 0;
 };
 
-interface SimHDL{
-	STDMETHOD_(BOOL, Initialize)(void) PURE;
-	STDMETHOD_(BOOL, IsTrace)(void) PURE;
-	STDMETHOD_(BOOL, Eval)(void) PURE;
-	STDMETHOD_(void, Release)(void) PURE;
+struct SimHDL {
+	virtual BOOL Initialize(void) = 0;
+	virtual BOOL IsTrace(void) = 0;
+	virtual BOOL Eval(void) = 0;
+	virtual void Release(void) = 0;
 };
 
 extern "C" SIM_HDL_API SimHDL* CreateSimHDL(SimControl* pControl);

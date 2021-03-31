@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_ENGINE_H__
 #define __SIM_ENGINE_H__
@@ -87,27 +87,27 @@ protected:
 	virtual void OnThreadKill(void);
 
 	// SimControl interface
-	STDMETHOD_(BUS_SLAVE_INTERFACE*, CreateSlave)(DWORD dwAddrBase, DWORD dwAddrHigh);
-	STDMETHOD_(BUS_SLAVE_INTERFACE*, FindSlave)(DWORD dwAddress);
-	STDMETHOD_(CLOCK_INTERFACE*, CreateClock)(BYTE* pCLK, BYTE* pRST);
-	STDMETHOD_(BOOL, AwakeInterrupt)(void);	// TRUE(Awaked), FALSE(Pending)
-	STDMETHOD_(void, SetMemoryBaseAddress)(DWORD dwAddress);
-	STDMETHOD_(void, MemoryRead32)(int iID, DWORD dwAddress, DWORD& dwData);
-	STDMETHOD_(void, MemoryWrite32)(int iID, DWORD dwAddress, DWORD dwData);
-	STDMETHOD_(void, MemoryRead16)(int iID, DWORD dwAddress, WORD& dwData);
-	STDMETHOD_(void, MemoryWrite16)(int iID, DWORD dwAddress, WORD dwData);
-	STDMETHOD_(void, MemoryRead8)(int iID, DWORD dwAddress, BYTE& dwData);
-	STDMETHOD_(void, MemoryWrite8)(int iID, DWORD dwAddress, BYTE dwData);
-	STDMETHOD_(SYSTEM_CONFIG*, GetSystemConfig)(void);
-	STDMETHOD_(DisplayConfig*, GetDisplayConfig)(void);
-	STDMETHOD_(BYTE*, GetMemoryPointer)(DWORD dwAddress, DWORD dwSize = 0, BOOL bDisplay = FALSE);
-	STDMETHOD_(DWORD, GetMemoryBaseAddress)(void);
-	STDMETHOD_(BOOL, GetMemory)(const char* sName, void*& pConfig, void*& pMemory);
-	STDMETHOD_(void, SimulationLock)(int iDelayTicks = 0);
-	STDMETHOD_(void, SimulationUnLock)(void);
-	STDMETHOD_(void, SimulationAddBusy)(BYTE* pBusy);
-	STDMETHOD_(void, SimulationDebugMode)(BOOL bDebug = TRUE);
-	STDMETHOD_(void, SetSystemDescription)(const char* sDesc);
+	virtual BUS_SLAVE_INTERFACE* CreateSlave(DWORD dwAddrBase, DWORD dwAddrHigh);
+	virtual BUS_SLAVE_INTERFACE* FindSlave(DWORD dwAddress);
+	virtual CLOCK_INTERFACE* CreateClock(BYTE* pCLK, BYTE* pRST);
+	virtual BOOL AwakeInterrupt(void);	// TRUE(Awaked), FALSE(Pending)
+	virtual void SetMemoryBaseAddress(DWORD dwAddress);
+	virtual void MemoryRead32(int iID, DWORD dwAddress, DWORD& dwData);
+	virtual void MemoryWrite32(int iID, DWORD dwAddress, DWORD dwData);
+	virtual void MemoryRead16(int iID, DWORD dwAddress, WORD& dwData);
+	virtual void MemoryWrite16(int iID, DWORD dwAddress, WORD dwData);
+	virtual void MemoryRead8(int iID, DWORD dwAddress, BYTE& dwData);
+	virtual void MemoryWrite8(int iID, DWORD dwAddress, BYTE dwData);
+	virtual SYSTEM_CONFIG* GetSystemConfig(void);
+	virtual DisplayConfig* GetDisplayConfig(void);
+	virtual BYTE* GetMemoryPointer(DWORD dwAddress, DWORD dwSize = 0, BOOL bDisplay = FALSE);
+	virtual DWORD GetMemoryBaseAddress(void);
+	virtual BOOL GetMemory(const char* sName, void*& pConfig, void*& pMemory);
+	virtual void SimulationLock(int iDelayTicks = 0);
+	virtual void SimulationUnLock(void);
+	virtual void SimulationAddBusy(BYTE* pBusy);
+	virtual void SimulationDebugMode(BOOL bDebug = TRUE);
+	virtual void SetSystemDescription(const char* sDesc);
 
 public:
 	SimEngine(void);
