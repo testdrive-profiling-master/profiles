@@ -1,5 +1,5 @@
 ﻿//================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,14 +32,15 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System chart
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 4/2/2021 Fri (clonextop@gmail.com)
 //================================================================================
 #include "LocaleString.h"
 
-LOCALE_DEFINE(3, LANG_KOREAN, LANG_JAPANESE, LANG_ENGLISH)
+LOCALE_DEFINE(4, LANG_KOREAN, LANG_JAPANESE, LANG_SPANISH, LANG_ENGLISH)
 
 LOCALE_TEXT(DOCUMENT_TITLE,
 	_T("시스템 차트"),
 	_T("システムチャート"),
+	_T("Gráfico del sistema"),
 	_T("System Chart"))
 LOCALE_END
