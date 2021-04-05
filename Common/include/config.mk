@@ -73,25 +73,23 @@ static:
 
 #########################################################################
 # Dependency
-ifdef NO_CCACHE
-%.d.d: %.c
-	@echo '- Dependency check... : $<'
+%.d: %.c
+	@echo '- Dependency... : $<'
 	@set -e; rm -f $@; \
 	$(CC) -M $(CDEFS) $(CFLAGS) $(INC) $< > $@; \
 	sed -e 's,[^.]*.o:,$*.o:,g' -i $@
 
-%.d.d: %.cpp
-	@echo '- Dependency check... : $<'
+%.d: %.cpp
+	@echo '- Dependency... : $<'
 	@set -e; rm -f $@; \
 	$(CXX) -M $(CDEFS) $(CFLAGS) -Weffc++ $(INC) $< > $@; \
 	sed -e 's,[^.]*.o:,$*.o:,g' -i $@
 
-%.d.d: %.cc
-	@echo '- Dependency check... : $<'
+%.d: %.cc
+	@echo '- Dependency... : $<'
 	@set -e; rm -f $@; \
 	$(CXX) -M $(CDEFS) $(CFLAGS) -Weffc++ $(INC) $< > $@; \
 	sed -e 's,[^.]*.o:,$*.o:,g' -i $@
-endif
 
 ifneq ($(MAKECMDGOALS), clean)
 -include $(DEPS) $(OBJS_RES:.o=.dep)
