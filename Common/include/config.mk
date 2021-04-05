@@ -74,19 +74,16 @@ static:
 #########################################################################
 # Dependency
 %.d: %.c
-	@echo '- Dependency... : $<'
 	@set -e; rm -f $@; \
 	$(CC) -M $(CDEFS) $(CFLAGS) $(INC) $< > $@; \
 	sed -e 's,[^.]*.o:,$*.o:,g' -i $@
 
 %.d: %.cpp
-	@echo '- Dependency... : $<'
 	@set -e; rm -f $@; \
 	$(CXX) -M $(CDEFS) $(CFLAGS) -Weffc++ $(INC) $< > $@; \
 	sed -e 's,[^.]*.o:,$*.o:,g' -i $@
 
 %.d: %.cc
-	@echo '- Dependency... : $<'
 	@set -e; rm -f $@; \
 	$(CXX) -M $(CDEFS) $(CFLAGS) -Weffc++ $(INC) $< > $@; \
 	sed -e 's,[^.]*.o:,$*.o:,g' -i $@
