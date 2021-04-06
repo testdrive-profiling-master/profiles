@@ -42,6 +42,10 @@ ifeq ($(EXTRA_CFLAGS),)
 	EXTRA_CFLAGS	:= -O3 -std=c++11 -DNDEBUG
 endif
 
+ifndef LIBPATH
+	LIBPATH		:= $(TARGETPATH)
+endif
+
 OPTFLAGS	:= -w -Wall -Wextra -m64 -mfpmath=sse -mieee-fp -mmmx -msse -msse2
 CFLAGS		:= $(CFLAGS) $(OPTFLAGS) $(INCDIR) $(EXTRA_CFLAGS)
 ARFLAGS		:= crv
