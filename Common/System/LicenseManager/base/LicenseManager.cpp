@@ -44,7 +44,7 @@
 #define	LICENSE_FLAG_FILE		".testdrive.lic.flag"
 #define	LICENSE_KEY_FILE		".testdrive.lic"
 
-const DWORD	__DefaultPublicKey[4]		= {0xDEADBEEF, 0x20A73EDE, 0xD6CF2D11, 0x0A0D32};
+const DWORD	__DefaultPublicKey[4]		= {0x254302EA, 0xDEAD3EDA, 0x2D115413, 0xA00D48};
 
 namespace testdrive_license_manager {
 static string __timeToString(struct tm* t)
@@ -99,10 +99,14 @@ static string GetLicenseTag(void)
 	//---------------------------------------------------
 	// from license tag
 	if(access(sPath.c_str(), 0)) {	// if not exist, make new tag
+		remove(GetLicensePath(LICENSE_PATH_KEY).c_str());	// delete previous license key file
 		FILE* fp  = fopen(sPath.c_str(), "wt");
 
 		if(fp) {
-			fprintf(fp, "Do not edit or copy this file!!!\n");
+			fprintf(fp,
+					"Do not edit or copy this file!!!\n" \
+					"Otherwise, all licenses codes will be discarded.\n"
+				   );
 			fclose(fp);
 		} else {
 			goto LICENSE_FILE_ACCESS_NOT_GRANTED;
@@ -215,6 +219,9 @@ bool GetHash(DWORD* pHash, const DWORD* pPublicKey, const char* sPrivateString)
 	return true;
 }
 
+bool	g_bCustomized	= false;
+bool	g_bChecked		= false;
+
 LicenseCheck::LicenseCheck(const DWORD* pPublicKey)
 {
 	string	sLicense	= GetLicenseTag();
@@ -245,7 +252,11 @@ LicenseCheck::LicenseCheck(const DWORD* pPublicKey)
 
 				printf("\n");
 			}
-			exit(1);
+			if(!g_bCustomized){
+				exit(1);
+			}
+		} else {
+			g_bChecked	= true;
 		}
 
 		delete [] pBuff;

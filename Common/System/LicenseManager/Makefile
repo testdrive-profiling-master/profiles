@@ -8,7 +8,10 @@ TARGETNAME		:= TestDrive_LM
 SRCS			:= \
 	$(wildcard $(SRC_PATH)/base/*.cpp) \
 	$(wildcard $(SRC_PATH)/*.cpp)
-	
+
+SRCS_ENCRYPTED	:= \
+	$(wildcard $(SRC_PATH)/base/*.encrypted) \
+	$(wildcard $(SRC_PATH)/*.encrypted)
 	
 INC				:= -I. -I./base
 LIBDIR			:= -lz

@@ -61,7 +61,6 @@ SHA256_Hash::SHA256_Hash(const DWORD* pInitHash)
 	if(!pInitHash) pInitHash = __InitialHash;
 
 	memcpy(m_Hash, pInitHash, sizeof(m_Hash));
-	m_DataLen	= 0;
 }
 
 SHA256_Hash::~SHA256_Hash(void)
@@ -92,12 +91,10 @@ bool SHA256_Hash::Compare(const DWORD* pCmpHash)
 
 void SHA256_Hash::Push(const BYTE* pData, DWORD dwByteSize)
 {
-	DWORD i;
-
 	while(dwByteSize >= 64) {
 		dwByteSize		-= 64;
 		PushFrame(pData);
-		pData		+= 64;
+		pData			+= 64;
 	}
 
 	if(dwByteSize) {
@@ -106,8 +103,6 @@ void SHA256_Hash::Push(const BYTE* pData, DWORD dwByteSize)
 		memset(temp + dwByteSize, 0xDE, 64 - dwByteSize);
 		PushFrame(temp);
 	}
-
-	m_DataLen	+= dwByteSize;
 }
 
 void SHA256_Hash::PushFrame(const BYTE* pData)

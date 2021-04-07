@@ -96,13 +96,10 @@ static void RetrievePublicKey(const char* sKey, DWORD* pPublicKey)
 
 	if(s.size() != 32 || !__IsAffordableKey(s)) {
 		SHA256_Hash		hash;
-
 		// put hash
-		for(int i = 0; i < 64; i++) {
-			hash.Push((const BYTE*)s.c_str(), s.size());
-		}
+		hash.Push((const BYTE*)s.c_str(), s.size());
 
-		// make hash key
+		// make 128 bit public code from hash code
 		for(int i = 0; i < 4; i++) {
 			pPublicKey[i]	= hash.Hash()[i] ^ hash.Hash()[i + 4];
 		}
@@ -285,8 +282,10 @@ int main(int argc, const char* argv[])
 	SHOW_USAGE:
 		printf(
 			"- TestDrive Profiling Master License Manager. (SEED 128bit + SHA256)\n\n" \
-			"Usage : %s [options] ...\n" \
+			"Usage : %s [options] OP ...\n" \
 			"        [options]\n" \
+			"            -p public_key  : specify public key.\n" \
+			"        OP\n" \
 			"            set license_key\n" \
 			"            hash public_key private_string\n" \
 			"            check public_key\n" \
@@ -357,26 +356,20 @@ int main(int argc, const char* argv[])
 	case OP_DECRYPT: {
 		string	sPublicKey, sInputFile, sOutputFile;
 
-		if(__sArgList.size() <= 2) {
-			printf("*E: More argument is needed.\n");
+		if(!__sArgList.size()) {
+			printf("*E: No input files.\n");
 			exit(1);
 		}
 
 		{
-			auto i = __sArgList.begin();
-			DWORD	dwPublicKey[4];
-			RetrievePublicKey((*i).c_str(), dwPublicKey);
-			i++;
-
-			for(i++; i != __sArgList.end(); i++) {
+			for(auto i = __sArgList.begin(); i != __sArgList.end(); i++) {
 				string sInputFile	= *i;
 				string sOutputFile	= *i;
 
 				if(op == OP_ENCRYPT) {
-					printf("* Encrypting... '%s'\n", sInputFile.c_str());
 					sOutputFile		+= ".encrypted";
+					printf("* Encrypting... '%s'\n", sInputFile.c_str());
 				} else {
-					printf("* Decrypting... '%s'\n", sOutputFile.c_str());
 					int iPos	= sOutputFile.rfind(".encrypted");
 
 					if(iPos <= 0 || iPos != (sOutputFile.size() - 10)) {
@@ -384,9 +377,10 @@ int main(int argc, const char* argv[])
 					} else {
 						sOutputFile.erase(iPos, -1);
 					}
+					printf("* Decrypting... '%s'\n", sOutputFile.c_str());
 				}
 
-				__EncrpytDecryptFile((op == OP_ENCRYPT), dwPublicKey, sInputFile.c_str(), sOutputFile.c_str());
+				__EncrpytDecryptFile((op == OP_ENCRYPT), NULL, sInputFile.c_str(), sOutputFile.c_str());
 			}
 		}
 	}

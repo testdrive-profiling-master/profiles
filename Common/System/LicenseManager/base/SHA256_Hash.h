@@ -51,7 +51,6 @@ public:
 
 private:
 	DWORD					m_Hash[8];
-	unsigned long long		m_DataLen;
 };
 
 #endif   // __SHA256_H__

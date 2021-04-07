@@ -57,7 +57,6 @@ typedef unsigned short			WORD;
 typedef unsigned int			DWORD;
 #endif
 
-
 namespace testdrive_license_manager {
 	typedef enum {
 		LICENSE_PATH_TAG,
@@ -66,7 +65,6 @@ namespace testdrive_license_manager {
 
 	string GetLicensePath(LICENSE_PATH id);
 	bool GetHash(DWORD* pHash, const DWORD* pPublicKey, const char* sPrivateString);	// 8 DWORD hash, 4 DWORD public key
-
 
 	class LicenseCheck {
 	public:
