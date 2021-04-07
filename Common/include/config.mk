@@ -66,6 +66,22 @@ $(TARGET_SO): $(OBJS) $(OBJS_RES)
 $(TARGET_A): $(OBJS) $(OBJS_RES)
 $(TARGET_SO_A): $(OBJS) $(OBJS_RES)
 
+encrypt:
+ifndef KEY
+	@echo You must specify a 128 bit key code.
+	@echo Usage : make encrypt KEY=...
+else
+	@echo $(KEY) : "$(SRCS)"
+endif
+
+decript:
+ifndef KEY
+	@echo You must specify a 128 bit key code.
+	@echo Usage : make decript KEY=...
+else
+	@echo $(KEY) : "$(SRCS)"
+endif
+
 clean:
 	@$(RM) -f $(OBJS) $(OBJS_RES) $(BUILD_TARGET) $(TARGET_EXE).exe $(LIBPATH)/lib$(TARGETNAME).a $(DEPS)
 

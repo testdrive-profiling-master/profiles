@@ -1,24 +1,24 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
-//
+// 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
-//
+// 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-//
+// 
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-//
+// 
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-//
+// 
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-//
+// 
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -30,9 +30,9 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-//
-// Title : License Register
-// Rev.  : 4/6/2021 Tue (clonextop@gmail.com)
+// 
+// Title : License Manager
+// Rev.  : 4/7/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #include "LicenseManager.h"
 #include "SEED128_Crypto.h"
@@ -52,52 +52,62 @@ typedef enum {
 	OP_ENCRYPT,
 	OP_DECRYPT,
 	OP_NONE		= -1
-}OP;
+} OP;
 
 list<string>	__sArgList;
 
-static bool __PatchArgument(int iArgSize, ...){
+static bool __PatchArgument(int iArgSize, ...)
+{
 	va_list		ap;
+
 	if(iArgSize != __sArgList.size()) {
 		printf("Argument size is not matched.\n");
 		return false;
 	}
+
 	va_start(ap, iArgSize);
-	for(auto i = __sArgList.begin();i != __sArgList.end();i++) {
+
+	for(auto i = __sArgList.begin(); i != __sArgList.end(); i++) {
 		(*va_arg(ap, string*))	= (*i).c_str();
 	}
+
 	va_end(ap);
 	return true;
 }
 
-static bool __IsAffordableKey(string& s){
-	for(int i=0;i<s.size();i++) {
+static bool __IsAffordableKey(string& s)
+{
+	for(int i = 0; i < s.size(); i++) {
 		char ch = s[i];
-		if(!(ch>='a' && ch<='f') && !(ch>='A' && ch<='F') && !isdigit(ch))
+
+		if(!(ch >= 'a' && ch <= 'f') && !(ch >= 'A' && ch <= 'F') && !isdigit(ch))
 			return false;
 	}
+
 	return true;
 }
 
 static void __RetrievePublicKey(const char* sKey, DWORD* pPublicKey)
-{	// get public key
+{
+	// get public key
 	char	sKeyString[1024];
 	strcpy(sKeyString, sKey);
-
 	{
 		string s(sKey);
+
 		if(s.size() != 32 || !__IsAffordableKey(s)) {
 			printf("*E: Not a license key : %s.\n", sKey);
 			exit(1);
 		}
 	}
 
-	for(int i=0;i<4;i++) {
-		sscanf(sKeyString + (8*i), "%08X", &pPublicKey[i]);
+	for(int i = 0; i < 4; i++) {
+		sscanf(sKeyString + (8 * i), "%08X", &pPublicKey[i]);
 	}
 }
 
-static bool __EncrpytDecryptFile(bool bEncrypt, const DWORD* pPublicKey, const char* sInputFileName, const char* sOutputFileName) {
+static bool __EncrpytDecryptFile(bool bEncrypt, const DWORD* pPublicKey, const char* sInputFileName, const char* sOutputFileName)
+{
 	bool			bOk	= false;
 	SEED128_Crypto	cr(pPublicKey);
 	SHA256_Hash		hash;
@@ -106,22 +116,26 @@ static bool __EncrpytDecryptFile(bool bEncrypt, const DWORD* pPublicKey, const c
 		printf("*E: Input & output file name is identical.\n");
 		return false;
 	}
-	static const DWORD		magic_code	= 0xECDEF1AC;
 
+	static const DWORD		magic_code	= 0xECDEF1AC;
 	zFile			zf;
+
 	if(bEncrypt) {
 		//// encryption
 		// compression
-		if(!zf.Compress(sInputFileName)){
+		if(!zf.Compress(sInputFileName)) {
 			printf("*E: Can't open file.");
 			exit(1);
 		}
+
 		// create new file
 		FILE*			fo	= fopen(sOutputFileName, "wb");
+
 		if(!fo) {
 			printf("*E: Can't create file : %s\n", sOutputFileName);
 			exit(1);
 		}
+
 		{
 			BYTE	FrameData[64];						// 64 bit frame
 			BYTE*	pBuffer		= zf.Buffer();
@@ -133,36 +147,41 @@ static bool __EncrpytDecryptFile(bool bEncrypt, const DWORD* pPublicKey, const c
 			fwrite(hash.Hash(), 4, 8, fo);				// initial hash
 			fwrite(hash.Hash(), 4, 8, fo);				// dummy last hash codes
 
-
-			while(iByteSize>0){
+			while(iByteSize > 0) {
 				int	iReadByteSize	= (iByteSize >= 64) ? 64 : iByteSize;
 				memcpy(FrameData, pBuffer, iReadByteSize);
+
 				if(iReadByteSize != 64) {	// fill rest
-					for(int i = iReadByteSize;i<64;i++){
+					for(int i = iReadByteSize; i < 64; i++) {
 						FrameData[i]	= rand() & 0xFF;
 					}
 				}
+
 				hash.PushFrame((const BYTE*)FrameData);
 				cr.Encrypt(FrameData, 64);
 				fwrite(FrameData, 1, 64, fo);
 				pBuffer		+= 64;
 				iByteSize	-= iReadByteSize;
 			}
-			fseek(fo, 4*13, SEEK_SET);					// seek final hash
+
+			fseek(fo, 4 * 13, SEEK_SET);					// seek final hash
 			fwrite(hash.Hash(), 4, 8, fo);				// finalize update hash codes
 		}
+
 		fclose(fo);
 		bOk	= true;
 	} else {
 		//// decryption
 		FILE*			fi	= fopen(sInputFileName, "rb");
-		if(!fi){
+
+		if(!fi) {
 			printf("*E: Can't read file : %s\n", sInputFileName);
 			exit(1);
 		}
 
 		DWORD dwMagicCode;
 		fread(&dwMagicCode, 4, 1, fi);
+
 		if(dwMagicCode != magic_code) {
 			printf("*E: It's not a encrypted file.\n");
 		} else {
@@ -173,19 +192,19 @@ static bool __EncrpytDecryptFile(bool bEncrypt, const DWORD* pPublicKey, const c
 			fread(&iCompressedSize, 8, 1, fi);			// get compressed size
 			fread((void*)hash.Hash(), 4, 8, fi);		// get initial hash
 			fread(FinalHash, 4, 8, fi);					// get final hash
-
-			{	// read compressed data
+			{
+				// read compressed data
 				BYTE*	pCompData	= new BYTE[iCompressedSize + 64];
 				BYTE*	pFrameData	= pCompData;
 
-				while((dwReadByteSize = fread(pFrameData, 1, 64, fi)) != 0){
+				while((dwReadByteSize = fread(pFrameData, 1, 64, fi)) != 0) {
 					cr.Decrypt(pFrameData, 64);
 					hash.PushFrame(pFrameData);
 					pFrameData	+= 64;
 				}
+
 				// decompression
 				zf.Decompress(pCompData, iCompressedSize, iDecompressedSize);
-
 				delete [] pCompData;
 			}
 
@@ -193,25 +212,30 @@ static bool __EncrpytDecryptFile(bool bEncrypt, const DWORD* pPublicKey, const c
 				printf("*E: Invalid key code.\n");
 			} else {
 				FILE*			fo	= fopen(sOutputFileName, "wb");
+
 				if(!fo) {
 					printf("*E: Can't create file : %s\n", sOutputFileName);
 					exit(1);
 				}
+
 				fwrite(zf.Buffer(), 1, zf.DecompressedSize(), fo);
 				fclose(fo);
 				printf("*I: Done!\n");
 				bOk	= true;
 			}
 		}
+
 		fclose(fi);
 	}
 
 	return bOk;
 }
 
-int main(int argc, const char* argv[]) {
+int main(int argc, const char* argv[])
+{
 	OP	op		= OP_NONE;
 	srand(time(NULL));
+
 	for(int i = 1; i < argc; i++) {
 		const char* sArg	= argv[i];
 
@@ -249,33 +273,36 @@ int main(int argc, const char* argv[]) {
 		}
 	}
 
-	if(op == OP_NONE){
-SHOW_USAGE:
+	if(op == OP_NONE) {
+	SHOW_USAGE:
 		printf(
-				"- License Manager. (SEED 128bit + SHA256)\n\n" \
-				"Usage : %s set license_key\n" \
-				"        %s hash public_key private_string\n" \
-				"        %s check public_key\n" \
-				"        %s encrypt 128bit_key input_file output_file\n" \
-				"        %s decrypt 128bit_key input_file output_file\n" \
-				"             - license_key    : Acquired license key.\n" \
-				"             - public_key     : Public key string.\n" \
-				"             - private_string : Private license request string.\n"
-				, argv[0], argv[0], argv[0]);
+			"- License Manager. (SEED 128bit + SHA256)\n\n" \
+			"Usage : %s set license_key\n" \
+			"        %s hash public_key private_string\n" \
+			"        %s check public_key\n" \
+			"        %s encrypt 128bit_key input_file output_file\n" \
+			"        %s decrypt 128bit_key input_file output_file\n" \
+			"             - license_key    : Acquired license key.\n" \
+			"             - public_key     : Public key string.\n" \
+			"             - private_string : Private license request string.\n"
+			, argv[0], argv[0], argv[0], argv[0], argv[0]);
 		return 1;
 	}
-	
+
 	switch(op) {
-	case OP_SET:
-	{
+	case OP_SET: {
 		string	sLicenseKey;
+
 		if(!__PatchArgument(1, &sLicenseKey))
 			break;
+
 		if(sLicenseKey.size() != 64 || !__IsAffordableKey(sLicenseKey)) {
 			printf("*E: Not a license key : %s.\n", sLicenseKey.c_str());
 			return 1;
 		}
+
 		FILE* fp = fopen(GetLicensePath(LICENSE_PATH_KEY).c_str(), "a+");
+
 		if(fp) {
 			fprintf(fp, "%s\n", sLicenseKey.c_str());
 			fclose(fp);
@@ -284,56 +311,64 @@ SHOW_USAGE:
 			printf("*E: Can not create license file.\n");
 		}
 	}
-		break;
-	case OP_HASH:
-	{
+	break;
+
+	case OP_HASH: {
 		string	sPublicKey, sPrivateString;
+
 		if(!__PatchArgument(2, &sPublicKey, &sPrivateString))
 			break;
+
 		DWORD	dwPublicKey[4];
 		DWORD	dwHash[8];
 		__RetrievePublicKey(sPublicKey.c_str(), dwPublicKey);	// get public key
 		GetHash(dwHash, dwPublicKey, sPrivateString.c_str());
-
 		printf("\nSHA256 Hash value : ");
-		for(int i=0;i<8;i++){
+
+		for(int i = 0; i < 8; i++) {
 			printf("%08X", dwHash[i]);
 		}
-		printf("\n");
 
+		printf("\n");
 	}
-		break;
-	case OP_CHECK:
-	{
+	break;
+
+	case OP_CHECK: {
 		string	sPublicKey;
+
 		if(!__PatchArgument(1, &sPublicKey))
 			break;
+
 		DWORD	dwPublicKey[4];
 		__RetrievePublicKey(sPublicKey.c_str(), dwPublicKey);	// get public key
 		LicenseCheck	l(dwPublicKey);
 		printf("*I: License is ok!\n");
 	}
-		break;
-	case OP_ENCRYPT:
-	{
+	break;
+
+	case OP_ENCRYPT: {
 		string	sPublicKey, sInputFile, sOutputFile;
+
 		if(!__PatchArgument(3, &sPublicKey, &sInputFile, &sOutputFile))
 			break;
+
 		DWORD	dwPublicKey[4];
 		__RetrievePublicKey(sPublicKey.c_str(), dwPublicKey);
 		__EncrpytDecryptFile(true, dwPublicKey, sInputFile.c_str(), sOutputFile.c_str());
 	}
-		break;
-	case OP_DECRYPT:
-	{
+	break;
+
+	case OP_DECRYPT: {
 		string	sPublicKey, sInputFile, sOutputFile;
+
 		if(!__PatchArgument(3, &sPublicKey, &sInputFile, &sOutputFile))
 			break;
+
 		DWORD	dwPublicKey[4];
 		__RetrievePublicKey(sPublicKey.c_str(), dwPublicKey);
 		__EncrpytDecryptFile(false, dwPublicKey, sInputFile.c_str(), sOutputFile.c_str());
 	}
-		break;
+	break;
 	}
 
 	return 0;
