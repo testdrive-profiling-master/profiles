@@ -68,18 +68,22 @@ $(TARGET_SO_A): $(OBJS) $(OBJS_RES)
 
 encrypt:
 ifndef KEY
-	@echo You must specify a 128 bit key code.
-	@echo Usage : make encrypt KEY=...
+	@echo You must specify your key code.
+	@echo Usage : make encrypt KEY="..."
 else
-	@echo $(KEY) : "$(SRCS)"
+	@TestDrive_LM encrypt $(SRCS)
 endif
 
-decript:
+decrypt:
 ifndef KEY
-	@echo You must specify a 128 bit key code.
-	@echo Usage : make decript KEY=...
+	@echo You must specify your key code.
+	@echo Usage : make decript KEY="..."
 else
-	@echo $(KEY) : "$(SRCS)"
+ifndef SRCS_ENCRYPTED
+	@echo *E: You must specify 'SRCS_ENCRYPTED' variable on your Makefile first.
+else
+	@TestDrive_LM decrypt $(SRCS_ENCRYPTED)
+endif
 endif
 
 clean:

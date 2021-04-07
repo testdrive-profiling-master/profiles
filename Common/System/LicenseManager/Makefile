@@ -3,7 +3,7 @@
 #-------------------------------------------------
 SRC_PATH		:= .
 TARGETPATH		:= ../../bin
-TARGETNAME		:= TestDrive_LicenseManager
+TARGETNAME		:= TestDrive_LM
 
 SRCS			:= \
 	$(wildcard $(SRC_PATH)/base/*.cpp) \

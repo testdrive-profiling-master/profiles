@@ -87,22 +87,30 @@ static bool __IsAffordableKey(string& s)
 	return true;
 }
 
-static void __RetrievePublicKey(const char* sKey, DWORD* pPublicKey)
+static void RetrievePublicKey(const char* sKey, DWORD* pPublicKey)
 {
 	// get public key
+	string	s(sKey);
 	char	sKeyString[1024];
 	strcpy(sKeyString, sKey);
-	{
-		string s(sKey);
 
-		if(s.size() != 32 || !__IsAffordableKey(s)) {
-			printf("*E: Not a license key : %s.\n", sKey);
-			exit(1);
+	if(s.size() != 32 || !__IsAffordableKey(s)) {
+		SHA256_Hash		hash;
+
+		// put hash
+		for(int i = 0; i < 64; i++) {
+			hash.Push((const BYTE*)s.c_str(), s.size());
 		}
-	}
 
-	for(int i = 0; i < 4; i++) {
-		sscanf(sKeyString + (8 * i), "%08X", &pPublicKey[i]);
+		// make hash key
+		for(int i = 0; i < 4; i++) {
+			pPublicKey[i]	= hash.Hash()[i] ^ hash.Hash()[i + 4];
+		}
+	} else {
+		// copy 128 bit public code
+		for(int i = 0; i < 4; i++) {
+			sscanf(sKeyString + (8 * i), "%08X", &pPublicKey[i]);
+		}
 	}
 }
 
@@ -276,16 +284,15 @@ int main(int argc, const char* argv[])
 	if(op == OP_NONE) {
 	SHOW_USAGE:
 		printf(
-			"- License Manager. (SEED 128bit + SHA256)\n\n" \
-			"Usage : %s set license_key\n" \
-			"        %s hash public_key private_string\n" \
-			"        %s check public_key\n" \
-			"        %s encrypt 128bit_key input_file output_file\n" \
-			"        %s decrypt 128bit_key input_file output_file\n" \
-			"             - license_key    : Acquired license key.\n" \
-			"             - public_key     : Public key string.\n" \
-			"             - private_string : Private license request string.\n"
-			, argv[0], argv[0], argv[0], argv[0], argv[0]);
+			"- TestDrive Profiling Master License Manager. (SEED 128bit + SHA256)\n\n" \
+			"Usage : %s [options] ...\n" \
+			"        [options]\n" \
+			"            set license_key\n" \
+			"            hash public_key private_string\n" \
+			"            check public_key\n" \
+			"            encrypt key_code input_files ...\n" \
+			"            decrypt key_code input_files ...\n" \
+			, argv[0]);
 		return 1;
 	}
 
@@ -321,7 +328,7 @@ int main(int argc, const char* argv[])
 
 		DWORD	dwPublicKey[4];
 		DWORD	dwHash[8];
-		__RetrievePublicKey(sPublicKey.c_str(), dwPublicKey);	// get public key
+		RetrievePublicKey(sPublicKey.c_str(), dwPublicKey);	// get public key
 		GetHash(dwHash, dwPublicKey, sPrivateString.c_str());
 		printf("\nSHA256 Hash value : ");
 
@@ -340,33 +347,48 @@ int main(int argc, const char* argv[])
 			break;
 
 		DWORD	dwPublicKey[4];
-		__RetrievePublicKey(sPublicKey.c_str(), dwPublicKey);	// get public key
+		RetrievePublicKey(sPublicKey.c_str(), dwPublicKey);	// get public key
 		LicenseCheck	l(dwPublicKey);
 		printf("*I: License is ok!\n");
 	}
 	break;
 
-	case OP_ENCRYPT: {
-		string	sPublicKey, sInputFile, sOutputFile;
-
-		if(!__PatchArgument(3, &sPublicKey, &sInputFile, &sOutputFile))
-			break;
-
-		DWORD	dwPublicKey[4];
-		__RetrievePublicKey(sPublicKey.c_str(), dwPublicKey);
-		__EncrpytDecryptFile(true, dwPublicKey, sInputFile.c_str(), sOutputFile.c_str());
-	}
-	break;
-
+	case OP_ENCRYPT:
 	case OP_DECRYPT: {
 		string	sPublicKey, sInputFile, sOutputFile;
 
-		if(!__PatchArgument(3, &sPublicKey, &sInputFile, &sOutputFile))
-			break;
+		if(__sArgList.size() <= 2) {
+			printf("*E: More argument is needed.\n");
+			exit(1);
+		}
 
-		DWORD	dwPublicKey[4];
-		__RetrievePublicKey(sPublicKey.c_str(), dwPublicKey);
-		__EncrpytDecryptFile(false, dwPublicKey, sInputFile.c_str(), sOutputFile.c_str());
+		{
+			auto i = __sArgList.begin();
+			DWORD	dwPublicKey[4];
+			RetrievePublicKey((*i).c_str(), dwPublicKey);
+			i++;
+
+			for(i++; i != __sArgList.end(); i++) {
+				string sInputFile	= *i;
+				string sOutputFile	= *i;
+
+				if(op == OP_ENCRYPT) {
+					printf("* Encrypting... '%s'\n", sInputFile.c_str());
+					sOutputFile		+= ".encrypted";
+				} else {
+					printf("* Decrypting... '%s'\n", sOutputFile.c_str());
+					int iPos	= sOutputFile.rfind(".encrypted");
+
+					if(iPos <= 0 || iPos != (sOutputFile.size() - 10)) {
+						sOutputFile		+= ".decrypted";
+					} else {
+						sOutputFile.erase(iPos, -1);
+					}
+				}
+
+				__EncrpytDecryptFile((op == OP_ENCRYPT), dwPublicKey, sInputFile.c_str(), sOutputFile.c_str());
+			}
+		}
 	}
 	break;
 	}
