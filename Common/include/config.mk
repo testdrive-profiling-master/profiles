@@ -85,10 +85,12 @@ else
 endif
 
 clean:
-	@$(RM) -f $(OBJS) $(OBJS_RES) $(BUILD_TARGET) $(TARGET_EXE).exe $(LIBPATH)/lib$(TARGETNAME).a $(DEPS)
+	@$(RM) -f $(OBJS) $(OBJS_RES) $(DEPS)
+ifndef PRESERVE_RESULT
+	@$(RM) -f $(BUILD_TARGET)
+endif
 
-distclean:
-	@$(RM) -f $(OBJS) $(OBJS_RES) $(BUILD_TARGET) $(DEPS)
+distclean: clean
 ifdef SRCS_ENCRYPTED
 	@$(RM) -f $(SRCS_ENCRYPTED:.encrypted=)
 endif

@@ -3,9 +3,9 @@
 #-------------------------------------------------
 SRC_PATH		:= .
 LIBPATH			:= ../../lib
-TARGETPATH		:= .
-INSTALL_PATH	:= ../../bin
+TARGETPATH		:= ../../bin
 TARGETNAME		:= TestDrive_LM
+PRESERVE_RESULT	:= 1
 
 SRCS			:= \
 	$(wildcard $(SRC_PATH)/base/*.cpp) \
