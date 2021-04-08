@@ -32,11 +32,11 @@
 // OF SUCH DAMAGE.
 // 
 // Title : License Manager
-// Rev.  : 4/7/2021 Wed (clonextop@gmail.com)
+// Rev.  : 4/8/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __Z_FILE_H__
 #define __Z_FILE_H__
-#include "LicenseManager.h"
+#include "TestDrive_LM.h"
 
 class zFile {
 public:

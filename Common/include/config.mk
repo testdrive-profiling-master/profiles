@@ -25,11 +25,19 @@ PWD			:= $(shell pwd)
 #-------------------------------------------------
 LIBDIR		:= $(LIBDIR) -L$(TESTDRIVE_PROFILE)Common/lib -L$(TESTDRIVE_DIR)bin/msys64/usr/lib -lstdc++ -lpthread -lm
 OBJS_RES	:= $(SRCS_RES:.rc=.o)
-OBJS_C		:= $(SRCS:.c=.o)
-OBJS_CC		:= $(OBJS_C:.cc=.o)
-OBJS		:= $(OBJS_CC:.cpp=.o)
+OBJS		:= $(SRCS:.c=.o)
+OBJS		:= $(OBJS:.cc=.o)
+OBJS		:= $(OBJS:.cpp=.o)
 DEPS		:= $(OBJS:.o=.d)
 INC			:= $(INC) -I$(TESTDRIVE_DIR)include -I$(TESTDRIVE_PROFILE)Common/include -I$(TESTDRIVE_DIR)bin/msys64/usr/include
+
+ifdef SRCS_LIB
+OBJS_LIB	:= $(SRCS_LIB:.c=.o)
+OBJS_LIB	:= $(OBJS_LIB:.cc=.o)
+OBJS_LIB	:= $(OBJS_LIB:.cpp=.o)
+else
+OBJS_LIB	:= $(OBJS)
+endif
 
 #-------------------------------------------------
 # 	Build flags.
@@ -79,8 +87,11 @@ endif
 clean:
 	@$(RM) -f $(OBJS) $(OBJS_RES) $(BUILD_TARGET) $(TARGET_EXE).exe $(LIBPATH)/lib$(TARGETNAME).a $(DEPS)
 
-dust_clean:
-	@$(RM) -f $(OBJS) $(OBJS_RES) $(TARGET_A) $(DEPS)
+distclean:
+	@$(RM) -f $(OBJS) $(OBJS_RES) $(BUILD_TARGET) $(DEPS)
+ifdef SRCS_ENCRYPTED
+	@$(RM) -f $(SRCS_ENCRYPTED:.encrypted=)
+endif
 
 static:
 	@cppcheck -j $(NUMBER_OF_PROCESSORS) $(INC) $(CDEFS) $(CPPCHECK_ARG) -D__MINGW32__ --suppress=preprocessorErrorDirective --inline-suppr --force $(SRCS)
@@ -134,22 +145,22 @@ ifdef INSTALL_PATH
 	@cp -f $(TARGET_EXE) $(INSTALL_PATH)/
 endif
 
-$(TARGET_A):$(OBJS)
+$(TARGET_A):$(OBJS_LIB)
 	@echo
 	@echo '*** Build Static Library ***'
-	$(AR) $(ARFLAGS) $@ $(OBJS) $(OBJS_RES)
+	$(AR) $(ARFLAGS) $@ $(OBJS_LIB) $(OBJS_RES)
 	$(RANLIB) $@
 
-$(TARGET_SO):$(OBJS)
+$(TARGET_SO):$(OBJS_LIB)
 	@echo
 	@echo '*** Build Shared Library ***'
-	$(CXX) $(LDFLAGS) -shared -o $@ $(OBJS) $(OBJS_RES) $(LIBDIR)
+	$(CXX) $(LDFLAGS) -shared -o $@ $(OBJS_LIB) $(OBJS_RES) $(LIBDIR)
 ifdef INSTALL_PATH
 	@echo Install to : $(INSTALL_PATH)
 	@cp -f $(TARGET_SO) $(INSTALL_PATH)/
 endif
 	
-$(TARGET_SO_A):$(OBJS)
+$(TARGET_SO_A):$(OBJS_LIB)
 	@echo
 	@echo '*** Build Shared Library ***'
-	$(CXX) $(LDFLAGS) -shared -o $@ $(OBJS) $(OBJS_RES) $(LIBDIR) -Wl,--out-implib,$(LIBPATH)/lib$(TARGETNAME).a
+	$(CXX) $(LDFLAGS) -shared -o $@ $(OBJS_LIB) $(OBJS_RES) $(LIBDIR) -Wl,--out-implib,$(LIBPATH)/lib$(TARGETNAME).a

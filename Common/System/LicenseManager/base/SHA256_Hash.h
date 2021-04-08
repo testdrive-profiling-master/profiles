@@ -36,7 +36,7 @@
 //================================================================================
 #ifndef __SHA256_H__
 #define __SHA256_H__
-#include "LicenseManager.h"
+#include "TestDrive_LM.h"
 
 class SHA256_Hash {	// fastest custom SHA256 hash
 public:

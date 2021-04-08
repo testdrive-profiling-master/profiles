@@ -36,7 +36,7 @@
 //================================================================================
 #ifndef __SEED128_CRYPTO_H__
 #define __SEED128_CRYPTO_H__
-#include "LicenseManager.h"
+#include "TestDrive_LM.h"
 
 class SEED128_Crypto {
 public:
