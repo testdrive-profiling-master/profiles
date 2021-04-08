@@ -32,10 +32,11 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 4/7/2021 Wed (clonextop@gmail.com)
+// Rev.  : 4/8/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __TESTDRIVE_LICENSE_MANAGER_H__
 #define __TESTDRIVE_LICENSE_MANAGER_H__
+#include "STDInterface.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
@@ -49,23 +50,7 @@
 
 using namespace std;
 
-#ifdef WIN32
-#include <windows.h>
-#else
-typedef unsigned char			BYTE;
-typedef unsigned short			WORD;
-typedef unsigned int			DWORD;
-#endif
-
 namespace testdrive_license_manager {
-	typedef enum {
-		LICENSE_PATH_TAG,
-		LICENSE_PATH_KEY,
-	} LICENSE_PATH;
-
-	string GetLicensePath(LICENSE_PATH id);
-	bool GetHash(DWORD* pHash, const DWORD* pPublicKey, const char* sPrivateString);	// 8 DWORD hash, 4 DWORD public key
-
 	class LicenseCheck {
 	public:
 		LicenseCheck(const DWORD* pPublicKey);

@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 4/7/2021 Wed (clonextop@gmail.com)
+// Rev.  : 4/8/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SHA256_H__
 #define __SHA256_H__
@@ -43,6 +43,7 @@ public:
 	SHA256_Hash(const DWORD* pInitHash = NULL);
 	~SHA256_Hash(void);
 
+	void Initialize(const DWORD* pInitHash = NULL);
 	void Push(const BYTE* pData, DWORD dwByteSize);
 	void PushFrame(const BYTE* pData);
 	const DWORD* Hash(void)	{return m_Hash;}

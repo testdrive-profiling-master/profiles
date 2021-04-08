@@ -2,7 +2,9 @@
 # Project
 #-------------------------------------------------
 SRC_PATH		:= .
-TARGETPATH		:= ../../bin
+LIBPATH			:= ../../lib
+TARGETPATH		:= .
+INSTALL_PATH	:= ../../bin
 TARGETNAME		:= TestDrive_LM
 
 SRCS			:= \

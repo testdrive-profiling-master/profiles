@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 4/7/2021 Wed (clonextop@gmail.com)
+// Rev.  : 4/8/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SEED128_CRYPTO_H__
 #define __SEED128_CRYPTO_H__
@@ -40,10 +40,10 @@
 
 class SEED128_Crypto {
 public:
-	SEED128_Crypto(const DWORD* pUserKey = NULL);
+	SEED128_Crypto(const DWORD* pKey = NULL);
 	~SEED128_Crypto(void);
 
-	void SetUserKey(const DWORD* pUserKey);				// 4 DWORD input
+	void SetupKey(const DWORD* pKey);				// 4 DWORD input
 	void Encrypt(BYTE* pData, DWORD dwByteSize);	// size alignment is 16 bytes
 	void Decrypt(BYTE* pData, DWORD dwByteSize);	// size alignment is 16 bytes
 	void EncryptFrame(DWORD* pData);
