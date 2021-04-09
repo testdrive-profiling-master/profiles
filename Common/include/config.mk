@@ -39,25 +39,9 @@ else
 OBJS_LIB	:= $(OBJS)
 endif
 
-#-------------------------------------------------
-# 	Build flags.
-#-------------------------------------------------
-ifdef CROSS
-	CDEFS		:= $(CDEFS) -DCROSS_COMPILE
-endif
-
-ifeq ($(EXTRA_CFLAGS),)
-	EXTRA_CFLAGS	:= -O3 -std=c++11 -DNDEBUG
-endif
-
 ifndef LIBPATH
 	LIBPATH		:= $(TARGETPATH)
 endif
-
-OPTFLAGS	:= -w -Wall -Wextra -m64 -mfpmath=sse -mieee-fp -mmmx -msse -msse2
-CFLAGS		:= $(CFLAGS) $(OPTFLAGS) $(INCDIR) $(EXTRA_CFLAGS)
-ARFLAGS		:= crv
-CDEFS		:= $(CDEFS) -D__int64="long long" -DWIN32 -D_WIN32 -DWIN64 -D_WIN64
 
 #-------------------------------------------------
 # Build sequence
@@ -67,6 +51,34 @@ TARGET_A		:= $(LIBPATH)/lib$(TARGETNAME).a
 TARGET_SO		:= $(TARGETPATH)/$(TARGETNAME).dll
 TARGET_SO_A		:= $(TARGETPATH)/lib$(TARGETNAME).dll
 
+#-------------------------------------------------
+# 	Build flags.
+#-------------------------------------------------
+ifdef CROSS
+	CDEFS			:= $(CDEFS) -DCROSS_COMPILE
+endif
+
+ifeq ($(EXTRA_CFLAGS),)
+	EXTRA_CFLAGS	:= -O3 -std=c++11 -DNDEBUG
+endif
+
+ifneq ($(BUILD_TARGET), $(TARGET_EXE))
+	CFLAGS			:= $(CFLAGS) -fPIC
+endif
+
+OPTFLAGS		:= -w -Wall -Wextra -m64 -mfpmath=sse -mieee-fp -mmmx -msse -msse2
+CFLAGS			:= $(CFLAGS) $(OPTFLAGS) $(INCDIR) $(EXTRA_CFLAGS)
+ARFLAGS			:= crv
+CDEFS			:= $(CDEFS) -D__int64="long long" -DWIN32 -D_WIN32 -DWIN64 -D_WIN64
+
+#-------------------------------------------------
+# 	Build flags.
+#-------------------------------------------------
+ENCRYPT_LIST	:= $(ENCRYPT_LIST) $(SRCS:=.encrypted) $(SRCS_RES:=.encrypted)
+
+#-------------------------------------------------
+# Build commands
+#-------------------------------------------------
 all: $(BUILD_TARGET)
 
 $(TARGET_EXE): $(OBJS) $(OBJS_RES)
@@ -74,8 +86,7 @@ $(TARGET_SO): $(OBJS) $(OBJS_RES)
 $(TARGET_A): $(OBJS) $(OBJS_RES)
 $(TARGET_SO_A): $(OBJS) $(OBJS_RES)
 
-encrypt:
-	@TestDrive_LM encrypt $(SRCS)
+encrypt: $(ENCRYPT_LIST)
 
 decrypt:
 ifndef SRCS_ENCRYPTED
@@ -119,6 +130,11 @@ ifneq ($(MAKECMDGOALS), clean)
 -include $(DEPS) $(OBJS_RES:.o=.dep)
 endif
 
+# encrpy
+%.encrypted: %
+	@echo '- Encrypting... : $<'
+	@TestDrive_LM encrypt $<
+
 #-------------------------------------------------
 # generic rules
 #-------------------------------------------------
@@ -156,7 +172,7 @@ $(TARGET_A):$(OBJS_LIB)
 $(TARGET_SO):$(OBJS_LIB)
 	@echo
 	@echo '*** Build Shared Library ***'
-	$(CXX) $(LDFLAGS) -shared -fPIC -o $@ $(OBJS_LIB) $(OBJS_RES) $(LIBDIR)
+	$(CXX) $(LDFLAGS) -shared -o $@ $(OBJS_LIB) $(OBJS_RES) $(LIBDIR)
 ifdef INSTALL_PATH
 	@echo Install to : $(INSTALL_PATH)
 	@cp -f $(TARGET_SO) $(INSTALL_PATH)/
@@ -165,4 +181,4 @@ endif
 $(TARGET_SO_A):$(OBJS_LIB)
 	@echo
 	@echo '*** Build Shared Library ***'
-	$(CXX) $(LDFLAGS) -shared -fPIC -o $@ $(OBJS_LIB) $(OBJS_RES) $(LIBDIR) -Wl,--out-implib,$(LIBPATH)/lib$(TARGETNAME).a
+	$(CXX) $(LDFLAGS) -shared -o $@ $(OBJS_LIB) $(OBJS_RES) $(LIBDIR) -Wl,--out-implib,$(LIBPATH)/lib$(TARGETNAME).a
