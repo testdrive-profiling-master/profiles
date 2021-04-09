@@ -72,11 +72,6 @@ ARFLAGS			:= crv
 CDEFS			:= $(CDEFS) -D__int64="long long" -DWIN32 -D_WIN32 -DWIN64 -D_WIN64
 
 #-------------------------------------------------
-# 	Build flags.
-#-------------------------------------------------
-ENCRYPT_LIST	:= $(ENCRYPT_LIST) $(SRCS:=.encrypted) $(SRCS_RES:=.encrypted)
-
-#-------------------------------------------------
 # Build commands
 #-------------------------------------------------
 all: $(BUILD_TARGET)
@@ -86,9 +81,9 @@ $(TARGET_SO): $(OBJS) $(OBJS_RES)
 $(TARGET_A): $(OBJS) $(OBJS_RES)
 $(TARGET_SO_A): $(OBJS) $(OBJS_RES)
 
-encrypt: $(ENCRYPT_LIST)
+encrypt: $(ENCRYPT_EXTRA:=.encrypted) $(SRCS:=.encrypted) $(SRCS_RES:=.encrypted)
 
-decrypt: $(SRCS_ENCRYPTED:.encrypted=.decrypted)
+decrypt: $(ENCRYPT_EXTRA:=.decrypted) $(SRCS_ENCRYPTED:.encrypted=.decrypted)
 
 clean:
 	@$(RM) -f $(OBJS) $(OBJS_RES) $(DEPS)
@@ -98,7 +93,7 @@ endif
 
 distclean: clean
 ifdef SRCS_ENCRYPTED
-	@$(RM) -f $(SRCS_ENCRYPTED:.encrypted=)
+	@$(RM) -f $(SRCS_ENCRYPTED:.encrypted=) $(ENCRYPT_EXTRA)
 endif
 
 static:
@@ -125,7 +120,9 @@ ifneq ($(MAKECMDGOALS), clean)
 -include $(DEPS) $(OBJS_RES:.o=.dep)
 endif
 
-# encrpyt
+#-------------------------------------------------
+# encrpyt / decrypt
+#-------------------------------------------------
 %.encrypted: %
 	@echo '- Encrypting... : $<'
 	@TestDrive_LM encrypt $<
