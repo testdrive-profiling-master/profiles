@@ -156,7 +156,7 @@ $(TARGET_A):$(OBJS_LIB)
 $(TARGET_SO):$(OBJS_LIB)
 	@echo
 	@echo '*** Build Shared Library ***'
-	$(CXX) $(LDFLAGS) -shared -o $@ $(OBJS_LIB) $(OBJS_RES) $(LIBDIR)
+	$(CXX) $(LDFLAGS) -shared -fPIC -o $@ $(OBJS_LIB) $(OBJS_RES) $(LIBDIR)
 ifdef INSTALL_PATH
 	@echo Install to : $(INSTALL_PATH)
 	@cp -f $(TARGET_SO) $(INSTALL_PATH)/
@@ -165,4 +165,4 @@ endif
 $(TARGET_SO_A):$(OBJS_LIB)
 	@echo
 	@echo '*** Build Shared Library ***'
-	$(CXX) $(LDFLAGS) -shared -o $@ $(OBJS_LIB) $(OBJS_RES) $(LIBDIR) -Wl,--out-implib,$(LIBPATH)/lib$(TARGETNAME).a
+	$(CXX) $(LDFLAGS) -shared -fPIC -o $@ $(OBJS_LIB) $(OBJS_RES) $(LIBDIR) -Wl,--out-implib,$(LIBPATH)/lib$(TARGETNAME).a
