@@ -88,12 +88,7 @@ $(TARGET_SO_A): $(OBJS) $(OBJS_RES)
 
 encrypt: $(ENCRYPT_LIST)
 
-decrypt:
-ifndef SRCS_ENCRYPTED
-	@echo *E: You must specify 'SRCS_ENCRYPTED' variable on your Makefile first.
-else
-	@TestDrive_LM decrypt $(SRCS_ENCRYPTED)
-endif
+decrypt: $(SRCS_ENCRYPTED:.encrypted=.decrypted)
 
 clean:
 	@$(RM) -f $(OBJS) $(OBJS_RES) $(DEPS)
@@ -130,10 +125,14 @@ ifneq ($(MAKECMDGOALS), clean)
 -include $(DEPS) $(OBJS_RES:.o=.dep)
 endif
 
-# encrpy
+# encrpyt
 %.encrypted: %
 	@echo '- Encrypting... : $<'
 	@TestDrive_LM encrypt $<
+
+%.decrypted: %.encrypted
+	@echo '- Decrypting... : $<'
+	@TestDrive_LM decrypt $<
 
 #-------------------------------------------------
 # generic rules
