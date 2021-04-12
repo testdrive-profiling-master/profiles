@@ -5,3 +5,4 @@
 .TestDrive
 .settings
 *.TestDrive.run.sp
+*.XilinxSynthesis*
