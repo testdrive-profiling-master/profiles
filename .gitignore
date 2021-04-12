@@ -2,7 +2,6 @@
 *.o
 *.dll
 *.exe
-.TestDrive
 .settings
-*.TestDrive.run.sp
+*.TestDrive*
 *.XilinxSynthesis*
