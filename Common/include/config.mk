@@ -63,7 +63,9 @@ ifeq ($(EXTRA_CFLAGS),)
 endif
 
 ifneq ($(BUILD_TARGET), $(TARGET_EXE))
-	CFLAGS			:= $(CFLAGS) -fPIC
+	ifneq ($(MAIN_COMPILER), clang)
+		CFLAGS			:= $(CFLAGS) -fPIC
+	endif
 endif
 
 OPTFLAGS		:= -w -Wall -Wextra -m64 -mfpmath=sse -mieee-fp -mmmx -msse -msse2
