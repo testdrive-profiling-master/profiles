@@ -13,6 +13,7 @@ INC				:= -I.
 LIBDIR			:=
 CDEFS			:=
 EXTRA_CFLAGS	:= -O0 -std=c++11 -DDEBUG -g
+#MAIN_COMPILER	:= clang		# uncomment this code to using clang compiler
 
 #-------------------------------------------------
 # common document config
