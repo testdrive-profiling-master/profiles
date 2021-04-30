@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System manager
-// Rev.  : 1/30/2021 Sat (clonextop@gmail.com)
+// Rev.  : 4/30/2021 Fri (clonextop@gmail.com)
 //================================================================================
 #include "BuildAutomation.h"
 #include "Utils.h"
@@ -124,8 +124,10 @@ void BuildAutomation::DoCheck(DWORD command, LPCTSTR sFileName)
 			CString sName(sFileName);
 
 			if(m_sAStyle.GetAt(0) && m_sAStyle.GetAt(0) != ' ' &&
-			   (sName.Find(_T(".c"), sName.GetLength() - 2) > 0 ||
+			   (sName.Find(_T(".h"), sName.GetLength() - 2) > 0 ||
+				sName.Find(_T(".c"), sName.GetLength() - 2) > 0 ||
 				sName.Find(_T(".cpp"), sName.GetLength() - 4) > 0 ||
+				sName.Find(_T(".java"), sName.GetLength() - 5) > 0 ||
 				sName.Find(_T(".inl"), sName.GetLength() - 4) > 0)) {
 				CString sArg;
 				CString sAstylePath	= g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_DIR%bin\\msys64\\mingw64\\bin\\AStyle.exe"));
