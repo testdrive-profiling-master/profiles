@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System manager
-// Rev.  : 2/8/2021 Mon (clonextop@gmail.com)
+// Rev.  : 5/4/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "System.h"
 #include "Utils.h"
@@ -158,6 +158,7 @@ System::System(ITDDocument* pDoc) :
 		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_COMPILER, _L(COMPILER), (DWORD_PTR)m_sCompiler.GetBuffer(), _L(DESC_COMPILER));
 		pProperty->UpdateConfigFile();
 		pProperty->AllowEdit(FALSE);
+
 		for(int i = 0; __sCompiler[i]; i++) pProperty->AddOption(__sCompiler[i]);
 
 		m_sSimulator.GetBuffer(1024);
@@ -283,10 +284,7 @@ System::System(ITDDocument* pDoc) :
 		// Check need to "Build All"
 		//if(bFirstRunToday && !IsFileExisted(_T("%PROJECT%\\Program\\SimSystem.dll"))) {
 		if(m_SubSystemList.Size() && !IsFileExisted(_T("%PROJECT%\\Program\\SimSystem.dll"))) {
-			if(MessageBox(m_pDoc->GetWindowHandle(), _L(NEED_TO_BUILD_ALL), _T(""), MB_YESNO | MB_ICONQUESTION | MB_DEFBUTTON2) == IDYES) {
-				g_pSystem->RunProfile(_T("%PROJECT%Profiles/common/cleanup.sp"), TRUE);
-				g_pSystem->RunProfile(_T("%PROJECT%Profiles/common/build_all.sp"), TRUE);
-			} else g_pSystem->LogInfo(_L(INFO_BUILD_ALL));
+			g_pSystem->LogInfo(_L(INFO_BUILD_ALL));
 		}
 	}
 }
