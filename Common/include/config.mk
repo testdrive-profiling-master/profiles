@@ -99,7 +99,7 @@ ifdef SRCS_ENCRYPTED
 endif
 
 static:
-	@cppcheck -j $(NUMBER_OF_PROCESSORS) --suppress=*:*/msys64/* $(INC) $(CDEFS) $(CPPCHECK_ARG) -D__MINGW32__ --suppress=preprocessorErrorDirective --inline-suppr --force $(SRCS)
+	@cppcheck -j $(NUMBER_OF_PROCESSORS) --suppress=*:*/msys64/* --suppress=*:*/lib_src/* $(INC) $(CDEFS) $(CPPCHECK_ARG) -D__MINGW32__ --inline-suppr --force $(SRCS)
 
 #########################################################################
 # Dependency
