@@ -31,6 +31,10 @@ OBJS		:= $(OBJS:.cpp=.o)
 DEPS		:= $(OBJS:.o=.d)
 INC			:= $(INC) -I$(TESTDRIVE_DIR)include -I$(TESTDRIVE_PROFILE)Common/include -I$(TESTDRIVE_DIR)bin/msys64/usr/include
 
+ifndef CPPCHECK_SRCS
+CPPCHECK_SRCS	:= $(SRCS)
+endif
+
 ifdef SRCS_LIB
 OBJS_LIB	:= $(SRCS_LIB:.c=.o)
 OBJS_LIB	:= $(OBJS_LIB:.cc=.o)
@@ -99,7 +103,7 @@ ifdef SRCS_ENCRYPTED
 endif
 
 static:
-	@cppcheck -j $(NUMBER_OF_PROCESSORS) --suppress=*:*/msys64/* --suppress=*:*/lib_src/* $(INC) $(CDEFS) $(CPPCHECK_ARG) -D__MINGW32__ --inline-suppr --force $(SRCS)
+	@cppcheck -j $(NUMBER_OF_PROCESSORS) --suppress=*:*/msys64/* --suppress=*:*/lib_src/* $(INC) $(CDEFS) $(CPPCHECK_ARG) -D__MINGW32__ --inline-suppr --force $(CPPCHECK_SRCS)
 
 #########################################################################
 # Dependency
