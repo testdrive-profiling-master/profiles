@@ -72,8 +72,8 @@ int main(int argc, const char* argv[])
 	TestDriveSCP		tscp;
 	if(argc == 1) {
 		printf("TestDrive Proxy Secure Copy client\n" \
-				"Usage: tscp [options] source [source..] target\n" \
-				"       tscp [options] target source [source..]\n" \
+				"Usage: tscp [options] local_source [local_source..] host_target\n" \
+				"       tscp [options] host_source local_target\n" \
 				"Options:\n" \
 				"  -pgpfp    print PGP key fingerprints and exit\n" \
 				"  -p        preserve file attributes\n" \
