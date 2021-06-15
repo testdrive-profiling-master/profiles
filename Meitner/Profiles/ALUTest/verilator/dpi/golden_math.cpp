@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,13 +32,8 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Private dynamic document
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 6/15/2021 Tue (clonextop@gmail.com)
 //================================================================================
-//=======================================================================
-// CloneX developments. Copyright 2013~2014. ALL RIGHTS RESERVED
-// Title : Simulation HDL module
-// Rev.  : 4/24/2014 Tue (clonextop@gmail.com)
-//=======================================================================
 #include "dpi_common.h"
 
 svBitVecVal dpi_sine(const svBitVecVal* DIN)

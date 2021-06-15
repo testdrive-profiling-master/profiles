@@ -1,6 +1,0 @@
-Target:..\src\SimTop__Dpi.h
-Prefix:#ifndef __VERILOG_DPI_PRELOAD_H__
-Prefix:#define __VERILOG_DPI_PRELOAD_H__
-Prefix:// Verilog DPI preload.
-Format:#include "%s"
-Postfix:#endif//__VERILOG_DPI_PRELOAD_H__

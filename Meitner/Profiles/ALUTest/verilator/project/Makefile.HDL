@@ -1,0 +1,25 @@
+#-------------------------------------------------
+# Project
+#-------------------------------------------------
+SRC_PATH		:= .
+TARGETPATH		:= ../../
+TARGETNAME		:= SimTop
+
+SRCS := \
+	$(wildcard ../src/*.cpp) \
+	$(wildcard ../dpi/*.cpp) \
+	$(SRC_PATH)/dllmain.cpp
+
+LIBDIR			:= -lshell32 -lz
+INC				:= -I. -I../src -I../../../../Application/include -I$(PROJECT)System/ALUTest/dpi -I./src -I../verilator -I$(TESTDRIVE_DIR)include/verilator -I$(TESTDRIVE_DIR)bin/msys64/mingw64/share/verilator/include -I$(TESTDRIVE_DIR)bin/msys64/mingw64/share/verilator/include/vltstd -I$(TESTDRIVE_DIR)bin/msys64/mingw64/share/verilator/include/gtkwave
+
+CDEFS			:= -DSIM_HDL_EXPORTS -DUSE_VERILATOR -DUSE_TESTDRIVE -DVL_THREADED
+EXTRA_CFLAGS	:= -Os -std=c++11 -DNDEBUG -fno-stack-protector
+
+
+BUILD_TARGET	= $(TARGET_SO)
+
+#-------------------------------------------------
+# common document config
+#-------------------------------------------------
+include $(TESTDRIVE_PROFILE)common/include/config.mk
