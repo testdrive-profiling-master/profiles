@@ -34,16 +34,16 @@
 // Title : Common profiles
 // Rev.  : 6/15/2021 Tue (clonextop@gmail.com)
 //================================================================================
-#ifndef __TSCP_INTERFACE_H__
-#define __TSCP_INTERFACE_H__
+#ifndef __TESTDRIVE_SSH_INTERFACE_H__
+#define __TESTDRIVE_SSH_INTERFACE_H__
 
-#define	TSCP_MEMORY_NAME	"testdrive_scp"
-#define TSCP_MEMORY_SIZE	4096
+#define	TESTDRIVE_SSH_MEMORY_NAME	"testdrive_ssh"
+#define TESTDRIVE_SSH_MEMORY_SIZE	4096
 
 typedef struct {
 	char	sIP[256];
 	char	sID[256];
 	char	sPW[256];
-} TSCP;
+} TestDrive_SSH;
 
-#endif//__TSCP_INTERFACE_H__
+#endif//__TESTDRIVE_SSH_INTERFACE_H__

@@ -31,7 +31,7 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : TestDrive SCP
+// Title : TestDrive link
 // Rev.  : 6/15/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
@@ -39,20 +39,24 @@
 
 class TestDriveSSH {
 public:
-	TestDriveSSH(void){
+	TestDriveSSH(void) {
 		m_pMem	= NULL;
 		m_SSH	= NULL;
 	}
-	~TestDriveSSH(void){Release();}
-	void Release(void){
+	~TestDriveSSH(void) {
+		Release();
+	}
+	void Release(void) {
 		SAFE_RELEASE(m_pMem);
 		m_SSH	= NULL;
 	}
-	bool Initialize(void){
+	bool Initialize(void) {
 		Release();
 		m_pMem	= TestDriver_GetMemory(TESTDRIVE_SSH_MEMORY_NAME);
+
 		if(m_pMem) {
 			m_SSH	= (TestDrive_SSH*)(m_pMem->GetConfig()->UserConfig);
+
 			if(!*m_SSH->sID || !*m_SSH->sIP || !*m_SSH->sPW) {
 				LOGE("Need more information on TestDrive project.");
 				Release();
@@ -60,9 +64,12 @@ public:
 		} else {
 			LOGE("No TSCP's shared memory. Run the TestDrive project first!");
 		}
+
 		return m_pMem != NULL;
 	}
-	inline TestDrive_SSH* Data(void)	{return m_SSH;}
+	inline TestDrive_SSH* Data(void)	{
+		return m_SSH;
+	}
 	ITestDriverMemory*		m_pMem;
 	TestDrive_SSH*			m_SSH;
 };
@@ -70,54 +77,67 @@ public:
 int main(int argc, const char* argv[])
 {
 	TestDriveSSH		ssh;
+
 	if(argc == 1) {
-		printf("TestDrive Proxy Secure Copy client\n" \
-				"Usage: tscp [options] local_source [local_source..] host_target\n" \
-				"       tscp [options] host_source local_target\n" \
-				"Options:\n" \
-				"  -pgpfp    print PGP key fingerprints and exit\n" \
-				"  -p        preserve file attributes\n" \
-				"  -q        quiet, don't show statistics\n" \
-				"  -r        copy directories recursively\n" \
-				"  -v        show verbose messages\n" \
-				"  -load sessname  Load settings from saved session\n" \
-				"  -P port   connect to specified port\n" \
-				"  -l user   connect with specified username\n" \
-				"  -pw passw login with specified password\n" \
-				"  -1 -2     force use of particular SSH protocol version\n" \
-				"  -4 -6     force use of IPv4 or IPv6\n" \
-				"  -C        enable compression\n" \
-				"  -i key    private key file for user authentication\n" \
-				"  -noagent  disable use of Pageant\n" \
-				"  -agent    enable use of Pageant\n" \
-				"  -hostkey aa:bb:cc:...\n" \
-				"            manually specify a host key (may be repeated)\n" \
-				"  -batch    disable all interactive prompts\n" \
-				"  -no-sanitise-stderr  don't strip control chars from standard error\n" \
-				"  -proxycmd command\n" \
-				"            use 'command' as local proxy\n"
-				);
+		printf("TestDrive Proxy command-line connection utility\n" \
+			   "Usage: tlink [options] [command]\n" \
+			   "Options:\n" \
+			   "  -pgpfp    print PGP key fingerprints and exit\n" \
+			   "  -v        show verbose messages\n" \
+			   "  -load sessname  Load settings from saved session\n" \
+			   "  -P port   connect to specified port\n" \
+			   "  -l user   connect with specified username\n" \
+			   "  -proxycmd command\n" \
+			   "            use 'command' as local proxy\n" \
+			   "The following options only apply to SSH connections:\n" \
+			   "  -D [listen-IP:]listen-port\n" \
+			   "            Dynamic SOCKS-based port forwarding\n" \
+			   "  -L [listen-IP:]listen-port:host:port\n" \
+			   "            Forward local port to remote address\n" \
+			   "  -R [listen-IP:]listen-port:host:port\n" \
+			   "            Forward remote port to local address\n" \
+			   "  -A -a     enable / disable agent forwarding\n" \
+			   "  -t -T     enable / disable pty allocation\n" \
+			   "  -1 -2     force use of particular protocol version\n" \
+			   "  -4 -6     force use of IPv4 or IPv6\n" \
+			   "  -C        enable compression\n" \
+			   "  -i key    private key file for user authentication\n" \
+			   "  -noagent  disable use of Pageant\n" \
+			   "  -agent    enable use of Pageant\n" \
+			   "  -noshare  disable use of connection sharing\n" \
+			   "  -share    enable use of connection sharing\n" \
+			   "  -hostkey aa:bb:cc:...\n" \
+			   "            manually specify a host key (may be repeated)\n" \
+			   "  -sanitise-stderr, -sanitise-stdout, -no-sanitise-stderr, -no-sanitise-stdout\n" \
+			   "            do/don't strip control chars from standard output/error\n" \
+			   "  -no-antispoof   omit anti-spoofing prompt after authentication\n" \
+			   "  -m file   read remote command(s) from file\n" \
+			   "  -s        remote command is an SSH subsystem (SSH-2 only)\n" \
+			   "  -N        don't start a shell/command (SSH-2 only)\n" \
+			   "  -nc host:port\n" \
+			   "            open tunnel in place of session (SSH-2 only)\n" \
+			   "  -sshlog file\n" \
+			   "  -sshrawlog file\n" \
+			   "            log protocol details to a file\n" \
+			   "  -shareexists\n" \
+			   "            test whether a connection-sharing upstream exists\n"
+			  );
 		return 0;
 	}
 
 	if(ssh.Initialize()) {
 		bool	bServerPath	= false;
-		cstring	sCommand("pscp -scp -unsafe");
-		sCommand.AppendFormat(" -pw %s", ssh.Data()->sPW);
-		for(int i=1;i<argc;i++) {
-			sCommand	+= " ";
-			if(*argv[i] == '/' || *argv[i] == '~') {
-				if(bServerPath) {
-					LOGE("Multiple server paths specified.");
-					return 1;
-				}
-				sCommand.AppendFormat("%s@%s:", ssh.Data()->sID, ssh.Data()->sIP);
-				bServerPath	= true;
-			}
-			sCommand	+= argv[i];
+		cstring	sCommand("plink -ssh -X -batch");
+		sCommand.AppendFormat(" -pw %s %s@%s", ssh.Data()->sPW, ssh.Data()->sID, ssh.Data()->sIP);
+
+		for(int i = 1; i < argc; i++) {
+			sCommand.AppendFormat(" %s", argv[i]);
 		}
+
 		system(sCommand);
+		fflush(stdout);
 		ssh.Release();
 	}
+
 	return 0;
 }
