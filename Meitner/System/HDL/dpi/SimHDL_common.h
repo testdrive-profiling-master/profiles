@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 11/5/2019 Tue (clonextop@gmail.com)
+// Rev.  : 6/16/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIMHDL_COMMON_H__
 #define __SIMHDL_COMMON_H__
@@ -44,6 +44,7 @@
 #include "vltstd/svdpi.h"
 #include "VirtualDisplayConfig.h"
 #include "dpi_interfaces.h"
+#include "../verilator/SimTop__Dpi.h"
 
 #define LOGI(...)			printf("*I: [SimHDL] " __VA_ARGS__)
 #define LOGE(...)			printf("*E: [SimHDL] " __VA_ARGS__)
