@@ -1,4 +1,5 @@
 all:
+	rm -f SimHDL.o
 	mingw32-make -j $(NUMBER_OF_PROCESSORS) -f Makefile.HDL
 
 clean:
