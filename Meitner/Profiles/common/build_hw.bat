@@ -33,5 +33,5 @@ if "%SIM_MULTITHREADING%"=="Enable(HDL)" (
 	echo 	Multithreading : Disable
 )
 
-%TESTDRIVE_DIR%bin\\msys64\\mingw64\\bin\\verilator_bin.exe %SIM_TOP_FILE% %1 %2 %3 %4 %SIM_DEFINITION% -sv -cc --autoflush --compiler gcc --output-split 50000 -Mdir ../SubSystems/Simulation/verilator -prefix SimTop --top-module top
+%TESTDRIVE_DIR%bin\\msys64\\mingw64\\bin\\verilator_bin.exe %SIM_TOP_FILE% %1 %2 %3 %4 %SIM_DEFINITION% -sv -cc --autoflush --compiler gcc --output-split 100000 -Mdir ../SubSystems/Simulation/verilator -prefix SimTop --top-module top
 ENDLOCAL
