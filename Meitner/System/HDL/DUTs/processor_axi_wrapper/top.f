@@ -2,7 +2,6 @@
 +incdir+../../
 
 system_defines.vh
-dpi_defines.vh
 includes.vh
 
 library/SRAM_Single.v

@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 6/16/2021 Wed (clonextop@gmail.com)
+// Rev.  : 6/18/2021 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIMHDL_COMMON_H__
 #define __SIMHDL_COMMON_H__

@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Meitner processor v1.1
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 6/18/2021 Fri (clonextop@gmail.com)
 //================================================================================
 `include "DUTs/MTSP/includes.vh"
 `define NO_TEST_DESIGN		// overriding test top design
@@ -89,7 +89,6 @@ module processor_top #(
 // definition & assignment ---------------------------------------------------
 // slave bus interface wrapper
 i_bus_slave					bus_slave;
-
 assign	bus_slave.en		= P_EN;
 assign	bus_slave.we		= P_WE;
 assign	bus_slave.addr		= P_ADDR;
@@ -130,7 +129,7 @@ MTSP_System #(
 	.INTR					(INTR),
 	.bus_slave				(bus_slave),
 	.bus_master				(bus_master),
-	// external tft lcd driver interface
+	// external tft LCD driver interface
 	.VIDEO_BASE				()
 );
 

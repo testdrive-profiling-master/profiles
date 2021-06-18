@@ -1,20 +1,7 @@
 +incdir+./
 +incdir+../../
 
-MTSP_Defines.vh
-system_defines.vh
-dpi_defines.vh
 includes.vh
-
-library/SRAM_Single.v
-library/SRAM_Dual_Distributed.v
-library/FiFo.v
-library/mux_by_index.v
-library/CommandQueue.v
-library/ControlSlice.v
-library/MultiCyclePath.v
-library/MultiCyclePathEx.v
-library/MultiCycleSlice.v
 
 Core/MTSP_SF_EXP.sv
 Core/MTSP_SF_MAN.sv
@@ -86,5 +73,4 @@ System/MTSP_InterBus.sv
 System/MTSP_BusMaster.sv
 System/MTSP_System.sv
 
-top/testdrive_apb_slave_bfm.sv
 processor_top.sv

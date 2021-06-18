@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Meitner processor v1.1
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 6/18/2021 Fri (clonextop@gmail.com)
 //================================================================================
 /* verilator lint_off UNOPTFLAT */
 
@@ -54,6 +54,7 @@
 /*verilator tracing_on*/
 
 // core
+/*verilator tracing_off*/
 `include "DUTs/MTSP/Core/MTSP_SF_EXP.sv"
 `include "DUTs/MTSP/Core/MTSP_SF_MAN.sv"
 `include "DUTs/MTSP/Core/MTSP_SF_RCP_LUT.sv"
@@ -70,6 +71,7 @@
 `include "DUTs/MTSP/Core/MTSP_ALU_MOV.sv"
 `include "DUTs/MTSP/Core/MTSP_ALU_MUL.sv"
 `include "DUTs/MTSP/Core/MTSP_BRC.sv"
+/*verilator tracing_on*/
 `include "DUTs/MTSP/Core/MTSP_Core.sv"
 `include "DUTs/MTSP/Core/MTSP_EX.sv"
 `include "DUTs/MTSP/Core/MTSP_EXT.sv"
@@ -99,7 +101,9 @@
 `include "DUTs/MTSP/Single/MTSP_GPRs_Element.sv"
 `include "DUTs/MTSP/Single/MTSP_GPRs_Primitive.sv"
 `include "DUTs/MTSP/Single/MTSP_INSTx4.sv"
+/*verilator tracing_off*/
 `include "DUTs/MTSP/Single/MTSP_LMB.sv"
+/*verilator tracing_on*/
 `include "DUTs/MTSP/Single/MTSP_PackUnpack.sv"
 `include "DUTs/MTSP/Single/MTSP_SCs.sv"
 `include "DUTs/MTSP/Single/MTSP_SCs_Element.sv"
@@ -119,7 +123,9 @@
 `include "DUTs/MTSP/System/MTSP_MemoryCommand.sv"
 `include "DUTs/MTSP/System/MTSP_Cache.sv"
 `include "DUTs/MTSP/System/MTSP_CacheLUT.sv"
+/*verilator tracing_off*/
 `include "DUTs/MTSP/System/MTSP_GMB.sv"
+/*verilator tracing_on*/
 `include "DUTs/MTSP/System/MTSP_InterBus.sv"
 `include "DUTs/MTSP/System/MTSP_BusMaster.sv"
 `include "DUTs/MTSP/System/MTSP_System.sv"
