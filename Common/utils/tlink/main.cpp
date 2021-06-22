@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive link
-// Rev.  : 6/15/2021 Tue (clonextop@gmail.com)
+// Rev.  : 6/22/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "testdrive_ssh_interface.h"
@@ -126,15 +126,23 @@ int main(int argc, const char* argv[])
 	}
 
 	if(ssh.Initialize()) {
-		bool	bServerPath	= false;
-		cstring	sCommand("plink -ssh -X -batch");
-		sCommand.AppendFormat(" -pw %s %s@%s", ssh.Data()->sPW, ssh.Data()->sID, ssh.Data()->sIP);
+		vector<const char*>		arg_list;
+		cstring					sServer;
+		sServer.Format("%s@%s", ssh.Data()->sID, ssh.Data()->sIP);
+		arg_list.push_back("plink");
+		arg_list.push_back("-ssh");
+		arg_list.push_back("-X");
+		arg_list.push_back("-batch");
+		arg_list.push_back("-pw");
+		arg_list.push_back(ssh.Data()->sPW);
+		arg_list.push_back(sServer.c_str());
 
 		for(int i = 1; i < argc; i++) {
-			sCommand.AppendFormat(" %s", argv[i]);
+			arg_list.push_back(argv[i]);
 		}
 
-		system(sCommand);
+		arg_list.push_back(NULL);
+		execvp("plink", (char* const*)(&arg_list[0]));
 		fflush(stdout);
 		ssh.Release();
 	}
