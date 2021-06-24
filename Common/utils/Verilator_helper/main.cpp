@@ -15,7 +15,12 @@ int main(int argc, const char* argv[])
 	if (argc != 1) {
 		// get given arguments
 		for (int i = 1; i<argc; i++) {
-			sArg.AppendFormat(" %s", argv[i]);
+			cstring	s(argv[i]);
+			if(s.find(' ') >= 0){
+				s.insert(0, "\"");
+				s	+= "\"";
+			}
+			sArg.AppendFormat(" %s", s.c_str());
 		}
 		// get extra arguments from file description
 		{
