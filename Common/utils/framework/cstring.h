@@ -86,6 +86,8 @@ public:
 	void Set(const char* sStr);
 	void Append(const char* sStr);
 	int CheckFileExtension(const char** sExtList);
+	bool GetEnvironment(const char* sKey);
+	bool SetEnvironment(const char* sKey);
 
 	inline const char* c_str(void) const						{
 		return m_sStr.c_str();

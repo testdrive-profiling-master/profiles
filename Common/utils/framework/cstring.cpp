@@ -663,3 +663,30 @@ int cstring::CheckFileExtension(const char** sExtList)
 
 	return -1;
 }
+
+bool cstring::GetEnvironment(const char* sKey){
+	if(sKey) {
+		const char* sVal = getenv(sKey);
+		if(sVal) {
+			m_sStr	= sVal;
+			return true;
+		} else {
+			m_sStr.clear();
+		}
+	}
+	return false;
+}
+
+bool cstring::SetEnvironment(const char* sKey){
+	if(sKey) {
+		{
+			cstring sKeyName(sKey);
+			if(sKeyName.find(" ") >=0) return false;
+		}
+		cstring sEnv;
+		sEnv.Format("%s=%s", sKey, m_sStr.c_str());
+		putenv(sEnv);
+		return true;
+	}
+	return false;
+}
