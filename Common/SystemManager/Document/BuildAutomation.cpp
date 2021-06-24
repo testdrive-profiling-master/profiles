@@ -137,7 +137,7 @@ void BuildAutomation::DoCheck(DWORD command, LPCTSTR sFileName)
 					  (sName.Find(_T(".v"), sName.GetAllocLength() - 2) > 0 ||
 					   sName.Find(_T(".sv"), sName.GetAllocLength() - 3) > 0)) {
 				CString sArg;
-				CString sIstylePath	= g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_DIR%bin\\iStyle.exe"));
+				CString sIstylePath	= g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_PROFILE%Common\\bin\\iStyle.exe"));
 				sArg.Format(_T("%s \"%s\""), m_siStyle, sFileName);
 				g_pSystem->ExecuteFile(sIstylePath, sArg, TRUE, NULL, NULL, NULL);
 				SetDirtySystem();
