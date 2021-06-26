@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Meitner processor v1.1
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 6/26/2021 Sat (clonextop@gmail.com)
 //================================================================================
 #include "MTSP.h"
 
@@ -197,9 +197,9 @@ DPI_FUNCTION void MTSP_set_LMB(unsigned int dwCoreID, unsigned int dwIndex, cons
 	g_MTSP.SetLMB(dwCoreID, dwIndex, (const DWORD*)DATA);
 }
 
-DPI_FUNCTION void SetGPR(DWORD dwCoreID, DWORD dwThreadID, DWORD dwIndex, DWORD dwComponent, const svBitVecVal* DATA)
+DPI_FUNCTION void SetGPR(unsigned int dwCoreID, unsigned int dwPrimitiveID, unsigned int dwIndex, unsigned int dwComponent, const svBitVecVal* DATA)
 {
-	g_MTSP.SetGPR(dwCoreID, dwThreadID, dwIndex, dwComponent, *(const DWORD*)DATA);
+	g_MTSP.SetGPR(dwCoreID, dwPrimitiveID, dwIndex, dwComponent, *(const DWORD*)DATA);
 }
 
 DPI_FUNCTION void GetInstruction(unsigned int ThreadPC, svBitVecVal* UINSTx4)

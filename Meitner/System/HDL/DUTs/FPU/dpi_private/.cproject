@@ -30,7 +30,7 @@
 									<listOptionValue builtIn="false" value="../../../../../../Application/include"/>
 									<listOptionValue builtIn="false" value="../../../../../SubSystems/Simulation/SimHDL"/>
 									<listOptionValue builtIn="false" value="../../../../dpi"/>
-									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_DIR}bin/msys64/mingw64/share/verilator/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_DIR}bin/msys64/mingw64/share/verilator/include/vltstd&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.preprocessor.def.702854114" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="WIN32"/>
@@ -70,7 +70,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="CodeAnalysis" buildProperties="" description="" id="cdt.managedbuild.toolchain.gnu.mingw.base.1244455605.47819990" name="Debug" parent="org.eclipse.cdt.build.core.emptycfg">
+				<configuration artifactName="CodeAnalysis" buildProperties="" description="" id="cdt.managedbuild.toolchain.gnu.mingw.base.1244455605.47819990" name="Debug" optionalBuildProperties="" parent="org.eclipse.cdt.build.core.emptycfg">
 					<folderInfo id="cdt.managedbuild.toolchain.gnu.mingw.base.1244455605.47819990." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base.142025632" name="cdt.managedbuild.toolchain.gnu.mingw.base" superClass="cdt.managedbuild.toolchain.gnu.mingw.base">
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.PE" id="cdt.managedbuild.target.gnu.platform.mingw.base.1490526165" name="Debug Platform" osList="win32" superClass="cdt.managedbuild.target.gnu.platform.mingw.base"/>
@@ -86,7 +86,7 @@
 									<listOptionValue builtIn="false" value="../../../../../../Application/include"/>
 									<listOptionValue builtIn="false" value="../../../../../SubSystems/Simulation/SimHDL"/>
 									<listOptionValue builtIn="false" value="../../../../dpi"/>
-									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_DIR}bin/msys64/mingw64/share/verilator/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_DIR}bin/msys64/mingw64/share/verilator/include/vltstd&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.preprocessor.def.1778032860" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="WIN32"/>
