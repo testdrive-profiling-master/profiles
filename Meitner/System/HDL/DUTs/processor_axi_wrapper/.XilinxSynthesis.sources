@@ -9,8 +9,8 @@
 ../library/SyncPipe.v
 ../library/SRAM_Dual_Distributed.v
 
-../top/axi_slave_wrapper.v
-../top/axi_master_wrapper.v
+../template/axi_slave_wrapper.v
+../template/axi_master_wrapper.v
 
 processor_axi_wrapper/*.v
 

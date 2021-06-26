@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : processor AXI wrapper
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 6/26/2021 Sat (clonextop@gmail.com)
 //================================================================================
 `ifndef __PROCESSOR_AXI_WRAPPER_COMMON_VH__
 `define __PROCESSOR_AXI_WRAPPER_COMMON_VH__
@@ -45,7 +45,7 @@
 `include "library/FiFo.v"
 
 /*verilator tracing_off*/
-`include "top/axi_master_wrapper.v"
+`include "template/axi_master_wrapper.v"
 `include "DUTs/processor_axi_wrapper/processor_clkgen.v"
 `include "DUTs/processor_axi_wrapper/processor_clkgen_slave.v"
 `include "DUTs/processor_axi_wrapper/processor_async_slave.v"

@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -31,15 +31,15 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Processor
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Title : HDMI controller
+// Rev.  : 6/26/2021 Sat (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 `define	M_AXI_USE_AXI4			1
 
 `include "system_defines.vh"
-`include "top/testdrive_apb_slave_bfm.sv"
-`include "top/testdrive_axi4_master_bfm.sv"
+`include "template/testdrive_apb_slave_bfm.sv"
+`include "template/testdrive_axi4_master_bfm.sv"
 `include "DUTs/hdmi_controller/includes.vh"
 
 /* HIDDEN */
@@ -306,18 +306,18 @@ hdmi_controller #(
 
 // dummy connection
 import "DPI-C" function void hdmi_out (input bit de, input bit hsync, input bit vsync, input bit [31:0] data);
-	`ALWAYS_CLOCK_RESET begin
-		`ON_RESET begin
-		end
-		else begin
-			hdmi_out(hdmi_de, hdmi_hsync, hdmi_vsync,
-					 {
-						 hdmi_data[(12*2)+7+4:(12*2)+4],
-						 hdmi_data[(12*1)+7+4:(12*1)+4],
-						 hdmi_data[(12*0)+7+4:(12*0)+4]
-					 }
-					);
-		end
+`ALWAYS_CLOCK_RESET begin
+	`ON_RESET begin
 	end
+	else begin
+		hdmi_out(hdmi_de, hdmi_hsync, hdmi_vsync,
+				 {
+					 hdmi_data[(12*2)+7+4:(12*2)+4],
+					 hdmi_data[(12*1)+7+4:(12*1)+4],
+					 hdmi_data[(12*0)+7+4:(12*0)+4]
+				 }
+				);
+	end
+end
 
-	endmodule
+endmodule

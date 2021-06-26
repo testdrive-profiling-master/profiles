@@ -5,7 +5,7 @@
 ../library/SRAM_Dual_Distributed.v
 ../library/SRAM_Single.v
 
-../top/axi_slave_wrapper.v
-../top/axi_master_wrapper.v
+../template/axi_slave_wrapper.v
+../template/axi_master_wrapper.v
 
 hdmi_controller/*.v

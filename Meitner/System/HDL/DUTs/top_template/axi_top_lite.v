@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,11 +32,11 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 6/26/2021 Sat (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
-`include "top/top_axi.sv"
-`include "top/axi_wrapper.v"
+`include "template/top_axi.sv"
+`include "template/axi_wrapper.v"
 
 module dut_top_ex(
 	//// system ----------------------------

@@ -15,5 +15,5 @@ HDMI_SyncGen.v
 HDMI_TOP.v
 MultiCycleSlice.v
 
-top/testdrive_apb_slave_bfm.sv
+template/testdrive_apb_slave_bfm.sv
 processor_top.sv

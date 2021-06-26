@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -31,10 +31,10 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Processor
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Title : HDMI controller
+// Rev.  : 6/26/2021 Sat (clonextop@gmail.com)
 //================================================================================
-`include "top/axi_master_wrapper.v"
+`include "template/axi_master_wrapper.v"
 
 `include "library/FiFo_Async.v"
 `include "library/SyncPipe.v"
