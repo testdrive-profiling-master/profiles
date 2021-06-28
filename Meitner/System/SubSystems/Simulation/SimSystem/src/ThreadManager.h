@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,14 +32,13 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __THREAD_MANAGER_H__
 #define __THREAD_MANAGER_H__
 #include "Common.h"
 
-class ThreadManager
-{
+class ThreadManager {
 	HANDLE				m_Thread;
 
 	volatile BOOL		m_bThreadRunning;
@@ -55,7 +54,7 @@ public:
 	ThreadManager(void);
 	virtual ~ThreadManager(void);
 
-	BOOL SetThreadBreakable(BOOL bBreakable = TRUE);
+	void SetThreadBreakable(BOOL bBreakable = TRUE);
 	BOOL RunThread(void);										// run thread
 	void KillThread(void);										// kill thread
 };

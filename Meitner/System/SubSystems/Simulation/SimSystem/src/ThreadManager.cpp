@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "ThreadManager.h"
@@ -60,7 +60,7 @@ DWORD WINAPI ThreadManager::thBootStrap(ThreadManager* pManager)
 	return 0;
 }
 
-BOOL ThreadManager::SetThreadBreakable(BOOL bBreakable)
+void ThreadManager::SetThreadBreakable(BOOL bBreakable)
 {
 	m_bBreakable	= bBreakable;
 }
