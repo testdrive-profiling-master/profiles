@@ -2,27 +2,19 @@
 # Project
 #-------------------------------------------------
 SRC_PATH		:= .
-LIBPATH			:= ../../../Application/lib
 TARGETPATH		:= ..
-TARGETNAME		:= meitner_data.exe
+TARGETNAME		:= meitner_data
 
 SRCS			:= \
-	$(SRC_PATH)/main.cpp
+	$(wildcard $(SRC_PATH)/*.cpp)
 
-LIBDIR			:=
-INC				:= -I../../../Application/include
+INC				:= -I../../../Application/include -I$(TESTDRIVE_PROFILE)Common/include
 
 CDEFS			:= 
 CFLAGS			:= -O3
-LDFLAGS			:= -mwindows
-
-ifdef DEBUG
-CFLAGS			:= $(CFLAGS) -g
-endif
-
-BUILD_TARGET	= $(TARGET_EXE)
 
 #-------------------------------------------------
 # common document config
 #-------------------------------------------------
+BUILD_TARGET	= $(TARGET_EXE)
 include $(TESTDRIVE_PROFILE)common/include/config.mk
