@@ -7,14 +7,8 @@ TARGETPATH		:= ../../../Program
 TARGETNAME		:= PCIeDriverSystem
 
 SRCS			:= \
-	$(SRC_PATH)/src/InterruptService.cpp \
-	$(SRC_PATH)/src/SystemMemory.cpp \
-	$(SRC_PATH)/src/NativeMemory.cpp \
-	$(SRC_PATH)/src/PCIeDriver.cpp \
-	$(SRC_PATH)/src/SystemDriver.cpp \
-	$(SRC_PATH)/src/ThreadManager.cpp \
-	$(SRC_PATH)/src/Util.cpp \
-	$(SRC_PATH)/dllmain.cpp
+	$(wildcard $(SRC_PATH)/src/*.cpp) \
+	$(wildcard $(SRC_PATH)/*.cpp)
 
 LIBDIR			:= -L$(LIBPATH)
 INC				:= -I. -Isrc -I../../../Application/include -I../../../Driver/windows/src
