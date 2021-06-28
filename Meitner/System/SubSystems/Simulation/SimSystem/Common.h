@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,12 +32,16 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __COMMON_H__
 #define __COMMON_H__
 #include "STDInterface.h"
 #include "TD_Semaphore.h"
+#include <assert.h>
+#include <thread>
+
+using namespace std;
 
 //#define WIN32_LEAN_AND_MEAN             // 거의 사용되지 않는 내용은 Windows 헤더에서 제외합니다.
 // Windows 헤더 파일:

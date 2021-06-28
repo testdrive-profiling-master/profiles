@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 12/28/2020 Mon (clonextop@gmail.com)
+// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "SimEngine.h"
@@ -83,6 +83,7 @@ SimEngine::SimEngine(void) :
 	m_pInstance			= NULL;
 	m_pSim	  			= this;
 	m_pSimHDL			= NULL;
+	m_bForceToExit		= false;
 	SetSystemDescription("Simulation Simplified");
 }
 
@@ -128,9 +129,9 @@ BOOL SimEngine::Clocking(void)
 	SimClock::Tik();
 
 	// evaluation
-	if(!m_pSimHDL->Eval()) {
-		LOGE("Abnormal operation. Program will be forced to shutdown.\n");
-		_exit(1);
+	if(m_bForceToExit || !m_pSimHDL->Eval()) {
+		// finish operation
+		LOGI("Simulation will be forced to shutdown.\n");
 		return FALSE;
 	}
 
@@ -174,9 +175,12 @@ void SimEngine::MonitorThread(void)
 	SimulationFlush();
 }
 
-void SimEngine::OnThreadKill(void)
+void SimEngine::OnThreadKill(bool bForced)
 {
-	TRACE_LOG("Kill thread")
+	TRACE_LOG(bForced ? "Force to exit" : "Try to exit")
+
+	if(bForced) m_bForceToExit	= true;
+
 	m_Lock.Rlease();
 }
 

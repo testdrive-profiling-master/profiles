@@ -37,25 +37,27 @@
 #ifndef __THREAD_MANAGER_H__
 #define __THREAD_MANAGER_H__
 #include "Common.h"
+#include <atomic>
 
 class ThreadManager {
-	HANDLE				m_Thread;
-
-	volatile BOOL		m_bThreadRunning;
-	BOOL				m_bBreakable;
-
-	static DWORD WINAPI thBootStrap(ThreadManager* pManager);
-
-protected:
-	virtual void MonitorThread(void)	= 0;					// thread monitor
-	virtual void OnThreadKill(void)		= 0;					// thread kill pre-event
-
 public:
 	ThreadManager(void);
 	virtual ~ThreadManager(void);
 
-	void SetThreadBreakable(BOOL bBreakable = TRUE);
-	BOOL RunThread(void);										// run thread
+	void SetThreadBreakable(bool bBreakable = true);
+	bool RunThread(void);										// run thread
 	void KillThread(void);										// kill thread
+	bool IsRunning(void);
+
+protected:
+	virtual void MonitorThread(void)			= 0;			// thread monitor
+	virtual void OnThreadKill(bool bForced)		= 0;			// thread kill pre-event
+
+private:
+	void ThreadMain(void);
+
+	thread*				m_pThread;
+	bool				m_bBreakable;
+	atomic<bool>		m_bThreadRunning;
 };
 #endif//__THREAD_MANAGER_H__

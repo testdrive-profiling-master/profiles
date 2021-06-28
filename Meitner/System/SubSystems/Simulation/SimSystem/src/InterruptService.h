@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __INTERRUPT_SERVICE_H__
 #define __INTERRUPT_SERVICE_H__
@@ -40,21 +40,24 @@
 #include "ddk/SystemHAL.h"
 
 class InterruptService :
-	public ThreadManager
-{
+	public ThreadManager {
 public:
 	InterruptService(void);
 	~InterruptService(void);
-	
+
 	void RegisterService(INTRRUPT_SERVICE service);
 	BOOL Awake(void);
-	inline void Enable(BOOL bEnable = TRUE)	{m_bEnable	= bEnable;}
-	inline void ClearPending(void)			{m_bPending	= FALSE;}
+	inline void Enable(BOOL bEnable = TRUE)	{
+		m_bEnable	= bEnable;
+	}
+	inline void ClearPending(void)			{
+		m_bPending	= FALSE;
+	}
 
 private:
 	virtual void MonitorThread(void);					// 모니터 스레드
-	virtual void OnThreadKill(void);					// 스레드 킬 전 이벤트
-	
+	virtual void OnThreadKill(bool bForced);			// 스레드 킬 전 이벤트
+
 	INTRRUPT_SERVICE	m_ISR;
 	Semaphore			m_SemaInterrupt;
 	volatile BOOL		m_bRun;

@@ -36,59 +36,64 @@
 //================================================================================
 #include "Common.h"
 #include "ThreadManager.h"
-#include <process.h>
-#include <assert.h>
-#include <stdio.h>
+#include <chrono>
 
 ThreadManager::ThreadManager(void)
 {
-	m_Thread			= NULL;
-	m_bThreadRunning	= FALSE;
-	m_bBreakable		= TRUE;
+	m_pThread			= NULL;
+	m_bBreakable		= true;
+	m_bThreadRunning	= false;
 }
 
 ThreadManager::~ThreadManager(void)
 {
-	assert(m_Thread == NULL);
+	assert(m_pThread == NULL);
 }
 
-DWORD WINAPI ThreadManager::thBootStrap(ThreadManager* pManager)
+void ThreadManager::SetThreadBreakable(bool bBreakable)
 {
-	pManager->m_bThreadRunning = TRUE;
-	pManager->MonitorThread();
-	pManager->m_bThreadRunning = FALSE;
-	return 0;
+	m_bBreakable		= bBreakable;
 }
 
-void ThreadManager::SetThreadBreakable(BOOL bBreakable)
+void ThreadManager::ThreadMain(void)
 {
-	m_bBreakable	= bBreakable;
+	MonitorThread();
+	m_bThreadRunning	= false;
 }
 
-BOOL ThreadManager::RunThread(void)
+bool ThreadManager::RunThread(void)
 {
-	if(m_bThreadRunning) return FALSE;
+	if(m_pThread) return false;
 
-	m_Thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)thBootStrap, this, 0, NULL);
-	return m_Thread != NULL;
+	m_bThreadRunning	= true;
+	m_pThread	= new thread{&ThreadManager::ThreadMain, this};
+	return m_pThread != NULL;
 }
 
 void ThreadManager::KillThread(void)
 {
-	if(!m_Thread) return;
+	if(!m_pThread) return;
 
-	OnThreadKill();
+	OnThreadKill(false);
 RETRY_WAIT:
 
-	if(WaitForSingleObject(m_Thread, 10000) == WAIT_TIMEOUT) {	// wait for 10 seconds
-		if(!m_bBreakable) goto RETRY_WAIT;
+	for(int i = 0; i < 600; i++) {	// wait for 5 seconds
+		if(!IsRunning()) break;
 
-		//if(MessageBox(NULL, "프로세서가 알 수 없는 이유로\n너무 오랜 시간 동안 대기 상태에 있습니다.\n계속 기다리겠습니까?", "경고", MB_ICONQUESTION | MB_YESNO) == IDYES) {
-		if(MessageBox(NULL, "Processor is in a standby state too long.\nWould you want to wait?", "Warning", MB_ICONQUESTION | MB_YESNO) == IDYES) {
-			WaitForSingleObject(m_Thread, INFINITE);
-		} else _exit(1);
+		this_thread::sleep_for(chrono::milliseconds(10));
+
+		if(!((i + 1) % 100) && (i / 100) != 5) {
+			LOGI("S/W is down, but Simulation is still busy. Automatically shutdown in %d sec.\n", 5 - (i / 100));
+		}
 	}
 
-	CloseHandle(m_Thread);
-	m_Thread = NULL;
+	if(IsRunning()) OnThreadKill(true);
+
+	m_pThread->join();
+	SAFE_DELETE(m_pThread);
+}
+
+bool ThreadManager::IsRunning(void)
+{
+	return m_bThreadRunning;
 }

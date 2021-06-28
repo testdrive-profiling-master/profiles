@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "InterruptService.h"
@@ -65,7 +65,7 @@ void InterruptService::MonitorThread(void)
 	}
 }
 
-void InterruptService::OnThreadKill(void)
+void InterruptService::OnThreadKill(bool bForced)
 {
 	m_bRun		= FALSE;
 	Enable(FALSE);

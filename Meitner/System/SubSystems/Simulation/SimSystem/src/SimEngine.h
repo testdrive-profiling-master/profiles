@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
+// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_ENGINE_H__
 #define __SIM_ENGINE_H__
@@ -44,19 +44,19 @@
 
 class SimEngine;
 
-class SimResource
-{
+class SimResource {
 public:
-	SimResource(void){}
-	virtual ~SimResource(void){}
-	static inline SimEngine* Sim(void)	{return m_pSim;}
+	SimResource(void) {}
+	virtual ~SimResource(void) {}
+	static inline SimEngine* Sim(void)	{
+		return m_pSim;
+	}
 
 protected:
 	static SimEngine*	m_pSim;
 };
 
-class SimInstance : public SimResource	// 시뮬레이션 인스턴스 템플릿
-{
+class SimInstance : public SimResource {	// 시뮬레이션 인스턴스 템플릿
 	SimInstance*	m_pNext;
 
 protected:
@@ -73,8 +73,7 @@ public:
 class SimEngine :
 	protected ThreadManager,	// 시뮬레이션 단일 엔진
 	public SimControl,
-	public SimResource
-{
+	public SimResource {
 	BOOL				m_bUpdate;
 
 	SimInstance*		m_pInstance;
@@ -84,7 +83,7 @@ protected:
 	friend class SimInstance;
 
 	virtual void MonitorThread(void);
-	virtual void OnThreadKill(void);
+	virtual void OnThreadKill(bool bForced);
 
 	// SimControl interface
 	virtual BUS_SLAVE_INTERFACE* CreateSlave(DWORD dwAddrBase, DWORD dwAddrHigh);
@@ -122,13 +121,16 @@ public:
 	BOOL Start(void);
 	void Terminate(void);
 
-	inline InterruptService& Interrupt(void)	{return m_Interrupt;}
+	inline InterruptService& Interrupt(void)	{
+		return m_Interrupt;
+	}
 
 	const char* GetSystemDescription(void);
 
 private:
 	std::string			m_sSystemDesc;
 	BOOL				m_bErrorOccured;
+	volatile bool		m_bForceToExit;
 	InterruptService	m_Interrupt;
 	SimHDL*				m_pSimHDL;
 };
