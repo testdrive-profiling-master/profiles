@@ -1,6 +1,6 @@
 all:
 	make -f Makefile.HDL clean
-	make -j -f Makefile.HDL
+	make -j $(NUMBER_OF_PROCESSORS) -f Makefile.HDL
 
 clean:
 	make -f Makefile.HDL clean

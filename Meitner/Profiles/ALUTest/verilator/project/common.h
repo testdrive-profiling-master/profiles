@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,18 +32,13 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Private dynamic document
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 6/29/2021 Tue (clonextop@gmail.com)
 //================================================================================
-//=======================================================================
-// CloneX developments. Copyright 2013~2014. ALL RIGHTS RESERVED
-// Title : Simulation HDL module
-// Rev.  : 4/8/2014 Tue (clonextop@gmail.com)
-//=======================================================================
 #ifndef __COMMON_H__
 #define __COMMON_H__
 #include <math.h>
 #include <assert.h>
 #include "STDInterface.h"
-#include "verilog_dpi_preload.inl"
+#include "SimTop__Dpi.h"
 
 #endif//__COMMON_H__
