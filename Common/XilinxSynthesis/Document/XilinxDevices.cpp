@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 12/22/2020 Tue (clonextop@gmail.com)
+// Rev.  : 6/30/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #include "XilinxDevices.h"
 #include "ProjectConfig.h"
@@ -276,12 +276,18 @@ XilinxPackage* XilinxDevice::Add(LPCTSTR sPackage)
 
 XilinxPackage* XilinxDevice::FindPackage(LPCTSTR sPackage)
 {
-	XilinxPackage*	pPackage;
+	if(sPackage) {
+		CString			sSearchPackage(sPackage);
+		XilinxPackage*	pPackage;
+		sSearchPackage.MakeLower();
 
-	for(DWORD i = 0; i < Size(); i++) {
-		pPackage	= Package(i);
+		for(DWORD i = 0; i < Size(); i++) {
+			pPackage	= Package(i);
+			CString		sNodePackage(pPackage->Name());
+			sNodePackage.MakeLower();
 
-		if(!pPackage->Name().Compare(sPackage)) return pPackage;
+			if(!sNodePackage.Compare(sSearchPackage)) return pPackage;
+		}
 	}
 
 	return NULL;
@@ -310,12 +316,18 @@ XilinxDevice* XilinxFamily::Add(LPCTSTR sDesc)
 
 XilinxDevice* XilinxFamily::FindDevice(LPCTSTR sDevice)
 {
-	XilinxDevice*	pDevice;
+	if(sDevice) {
+		CString			sSearchDevice(sDevice);
+		XilinxDevice*	pDevice;
+		sSearchDevice.MakeLower();
 
-	for(DWORD i = 0; i < Size(); i++) {
-		pDevice	= Device(i);
+		for(DWORD i = 0; i < Size(); i++) {
+			pDevice	= Device(i);
+			CString		sNodeDevice(pDevice->Name());
+			sNodeDevice.MakeLower();
 
-		if(!pDevice->Name().Compare(sDevice)) return pDevice;
+			if(!sNodeDevice.Compare(sSearchDevice)) return pDevice;
+		}
 	}
 
 	return NULL;
@@ -482,12 +494,18 @@ void XilinxDevices::ListupBoards(void)
 
 XilinxFamily* XilinxDevices::FindFamily(LPCTSTR sFamily)
 {
-	XilinxFamily*	pFamily	= NULL;
+	if(sFamily) {
+		CString			sSearchFamily(sFamily);
+		XilinxFamily*	pFamily	= NULL;
+		sSearchFamily.MakeLower();
 
-	for(DWORD i = 0; i < Size(); i++) {
-		pFamily	= Family(i);
+		for(DWORD i = 0; i < Size(); i++) {
+			pFamily	= Family(i);
+			CString		sNodeFamily(pFamily->Name());
+			sNodeFamily.MakeLower();
 
-		if(!pFamily->Name().Compare(sFamily)) return pFamily;
+			if(!sNodeFamily.Compare(sSearchFamily)) return pFamily;
+		}
 	}
 
 	return NULL;
