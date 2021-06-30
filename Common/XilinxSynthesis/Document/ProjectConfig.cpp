@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 3/22/2021 Mon (clonextop@gmail.com)
+// Rev.  : 6/30/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #include "ProjectConfig.h"
 #include "SourceList.h"
@@ -125,12 +125,12 @@ BOOL ProjectConfig::UpdateConfig(CONFIG_ID id, BOOL bUpdate)
 
 	case CONFIG_ID_DEVICE:
 		sTarget	= m_Config.spec.sDevice;
-		sDefault = _T("XC7VX485T");
+		sDefault = _T("xc7vx485t");
 		break;
 
 	case CONFIG_ID_PACKAGE:
 		sTarget	= m_Config.spec.sPackage;
-		sDefault = _T("FFG1761");
+		sDefault = _T("ffg1761");
 		break;
 
 	case CONFIG_ID_SPEED_GRADE:
