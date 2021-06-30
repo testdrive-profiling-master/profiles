@@ -283,6 +283,7 @@ BOOL ProjectConfig::MakeProjectConfigFile(SourceVector* pSource) 	// for ISE onl
 
 		if(fp) {
 			// configuration
+			FilePrint(fp, _T("add_condition -notrace\n"));
 			FilePrint(fp, _T("project set family \"%s\"\n"), (LPCTSTR)m_Config.spec.sFamily);
 			FilePrint(fp, _T("project set device \"%s\"\n"), (LPCTSTR)m_Config.spec.sDevice);
 			FilePrint(fp, _T("project set package \"%s\"\n"), (LPCTSTR)m_Config.spec.sPackage);

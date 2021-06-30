@@ -15,8 +15,6 @@ if exist timing_hold_%2.rpt del timing_hold_%2.rpt
 if exist timing_clock_%2.rpt del timing_clock_%2.rpt
 if exist timing_port_%2.rpt del timing_port_%2.rpt
 
-vivado -log synthesis_%2.txt -mode batch -notrace -source XilinxSynthesis.tcl
-
-if exist vivado*.jou del /Q vivado*.jou
+vivado -nojournal -log synthesis_%2.txt -mode batch -notrace -source XilinxSynthesis.tcl
 
 endlocal
