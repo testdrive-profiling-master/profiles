@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -31,8 +31,8 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Processor
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Title : Template design
+// Rev.  : 6/30/2021 Wed (clonextop@gmail.com)
 //================================================================================
 `include "system_defines.vh"
 `timescale 1ns/1ns
@@ -47,43 +47,34 @@ module testdrive_axi4_lite_bfm #(
 	parameter			C_BASE_ADDR		= 32'h0,
 	parameter			C_ADDR_BITS		= 10
 ) (
-	CLK, nRST,							// system
-	AWADDR, AWVALID, AWREADY,			// write address
-	WDATA, WSTRB, WVALID, WREADY,		// write data
-	BRESP, BVALID, BREADY,				// bus interaction
-	ARADDR, ARVALID, ARREADY,			// read address
-	RDATA, RRESP, RVALID, RREADY		// read data
+	// system
+	input									CLK,
+	input									nRST,
+	// write address
+	output reg	[C_ADDR_BITS-1:0]			AWADDR,
+	output reg								AWVALID,
+	input									AWREADY,
+	// write data
+	output reg	[C_DATA_WIDTH-1:0]			WDATA,
+	output reg	[(C_DATA_WIDTH/8)-1:0]		WSTRB,
+	output reg								WVALID,
+	input									WREADY,
+	// bus interaction
+	input	[1:0]							BRESP,
+	input									BVALID,
+	output reg								BREADY,
+	// read address
+	output reg	[C_ADDR_BITS-1:0]			ARADDR,
+	output reg								ARVALID,
+	input									ARREADY,
+	// read data
+	input	[C_DATA_WIDTH-1:0]				RDATA,
+	input	[1:0]							RRESP,
+	input									RVALID,
+	output reg								RREADY
 );
 
 // Parameters ----------------------------------------------------------------
-
-
-// port list -----------------------------------------------------------------
-// system
-input									CLK;
-input									nRST;
-// write address
-output reg	[C_ADDR_BITS-1:0]			AWADDR;
-output reg								AWVALID;
-input									AWREADY;
-// write data
-output reg	[C_DATA_WIDTH-1:0]			WDATA;
-output reg	[(C_DATA_WIDTH/8)-1:0]		WSTRB;
-output reg								WVALID;
-input									WREADY;
-// bus interaction
-input	[1:0]							BRESP;
-input									BVALID;
-output reg								BREADY;
-// read address
-output reg	[C_ADDR_BITS-1:0]			ARADDR;
-output reg								ARVALID;
-input									ARREADY;
-// read data
-input	[C_DATA_WIDTH-1:0]				RDATA;
-input	[1:0]							RRESP;
-input									RVALID;
-output reg								RREADY;
 
 // definition & assignment ---------------------------------------------------
 `DPI_FUNCTION void SAXIW_Interface (

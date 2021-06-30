@@ -31,11 +31,10 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Processor
+// Title : Template design
 // Rev.  : 6/30/2021 Wed (clonextop@gmail.com)
 //================================================================================
 `include "system_defines.vh"
-`timescale 1ns/1ns
 /*verilator tracing_off*/
 //-----------------------------------------------------------------------------
 // The AXI 4 Master BFM

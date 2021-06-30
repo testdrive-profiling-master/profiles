@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -31,11 +31,10 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Processor
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Title : Template design
+// Rev.  : 6/30/2021 Wed (clonextop@gmail.com)
 //================================================================================
 `include "system_defines.vh"
-`timescale 1ns/1ns
 /*verilator tracing_off*/
 //-----------------------------------------------------------------------------
 // The AHB Master BFM
