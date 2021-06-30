@@ -185,16 +185,16 @@ create_generated_clock -name oobclk_250mhz_master_lane3_X1Y0 \
 #------------------------------------------------------------------------------
 
 
-set_false_path -through [get_pins -hierarchical -filter {NAME=~*/RXELECIDLE}]
-set_false_path -through [get_pins -hierarchical -filter {NAME=~*/TXPHINITDONE}]
-set_false_path -through [get_pins -hierarchical -filter {NAME=~*/TXPHALIGNDONE}]
-set_false_path -through [get_pins -hierarchical -filter {NAME=~*/TXDLYSRESETDONE}]
-set_false_path -through [get_pins -hierarchical -filter {NAME=~*/RXDLYSRESETDONE}]
-set_false_path -through [get_pins -hierarchical -filter {NAME=~*/RXPHALIGNDONE}]
-set_false_path -through [get_pins -hierarchical -filter {NAME=~*/RXCDRLOCK}]
-set_false_path -through [get_pins -hierarchical -filter {NAME=~*/CFGMSGRECEIVEDPMETO}]
-set_false_path -through [get_pins -hierarchical -filter {NAME=~*/CPLLLOCK}]
-set_false_path -through [get_pins -hierarchical -filter {NAME=~*/QPLLLOCK}]
+set_false_path -through [get_pins -filter {REF_PIN_NAME=~RXELECIDLE} -of_objects [get_cells -hierarchical -filter { PRIMITIVE_TYPE =~ IO.gt.* }]]
+set_false_path -through [get_pins -filter {REF_PIN_NAME=~TXPHINITDONE} -of_objects [get_cells -hierarchical -filter { PRIMITIVE_TYPE =~ IO.gt.* }]]
+set_false_path -through [get_pins -filter {REF_PIN_NAME=~TXPHALIGNDONE} -of_objects [get_cells -hierarchical -filter { PRIMITIVE_TYPE =~ IO.gt.* }]]
+set_false_path -through [get_pins -filter {REF_PIN_NAME=~TXDLYSRESETDONE} -of_objects [get_cells -hierarchical -filter { PRIMITIVE_TYPE =~ IO.gt.* }]]
+set_false_path -through [get_pins -filter {REF_PIN_NAME=~RXDLYSRESETDONE} -of_objects [get_cells -hierarchical -filter { PRIMITIVE_TYPE =~ IO.gt.* }]]
+set_false_path -through [get_pins -filter {REF_PIN_NAME=~RXPHALIGNDONE} -of_objects [get_cells -hierarchical -filter { PRIMITIVE_TYPE =~ IO.gt.* }]]
+set_false_path -through [get_pins -filter {REF_PIN_NAME=~RXCDRLOCK} -of_objects [get_cells -hierarchical -filter { PRIMITIVE_TYPE =~ IO.gt.* }]]
+set_false_path -through [get_pins -filter {REF_PIN_NAME=~CFGMSGRECEIVEDPMETO} -of_objects [get_cells -hierarchical -filter { PRIMITIVE_TYPE =~ * }]]
+set_false_path -through [get_pins -filter {REF_PIN_NAME=~CPLLLOCK} -of_objects [get_cells -hierarchical -filter { PRIMITIVE_TYPE =~ IO.gt.* }]]
+set_false_path -through [get_pins -filter {REF_PIN_NAME=~QPLLLOCK} -of_objects [get_cells -hierarchical -filter { PRIMITIVE_TYPE =~ IO.gt.* }]]
 
 ###############################################################################
 # End

@@ -1,8 +1,8 @@
-//Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
+//Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
 //--------------------------------------------------------------------------------
-//Tool Version: Vivado v.2018.2.2 (win64) Build 2348494 Mon Oct  1 18:25:44 MDT 2018
-//Date        : Fri Dec 28 14:36:37 2018
-//Host        : localCI running 64-bit Service Pack 1  (build 7601)
+//Tool Version: Vivado v.2021.1 (win64) Build 3247384 Thu Jun 10 19:36:33 MDT 2021
+//Date        : Wed Jun 30 13:28:05 2021
+//Host        : DESKTOP-F0P52DA running 64-bit major release  (build 9200)
 //Command     : generate_target System.bd
 //Design      : System
 //Purpose     : IP block netlist
@@ -73,14 +73,14 @@ module System
   (* X_INTERFACE_INFO = "xilinx.com:interface:ddrx:1.0 ddr3 WE_N" *) output ddr3_we_n;
   (* X_INTERFACE_INFO = "xilinx.com:interface:diff_clock:1.0 pcie_diff_clock CLK_N" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME pcie_diff_clock, CAN_DEBUG false, FREQ_HZ 100000000" *) input [0:0]pcie_diff_clock_clk_n;
   (* X_INTERFACE_INFO = "xilinx.com:interface:diff_clock:1.0 pcie_diff_clock CLK_P" *) input [0:0]pcie_diff_clock_clk_p;
-  (* X_INTERFACE_INFO = "xilinx.com:signal:reset:1.0 RST.PCIE_PERSTN RST" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME RST.PCIE_PERSTN, POLARITY ACTIVE_LOW" *) input pcie_perstn;
+  (* X_INTERFACE_INFO = "xilinx.com:signal:reset:1.0 RST.PCIE_PERSTN RST" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME RST.PCIE_PERSTN, INSERT_VIP 0, POLARITY ACTIVE_LOW" *) input pcie_perstn;
   (* X_INTERFACE_INFO = "xilinx.com:interface:pcie_7x_mgt:1.0 pcie rxn" *) input [3:0]pcie_rxn;
   (* X_INTERFACE_INFO = "xilinx.com:interface:pcie_7x_mgt:1.0 pcie rxp" *) input [3:0]pcie_rxp;
   (* X_INTERFACE_INFO = "xilinx.com:interface:pcie_7x_mgt:1.0 pcie txn" *) output [3:0]pcie_txn;
   (* X_INTERFACE_INFO = "xilinx.com:interface:pcie_7x_mgt:1.0 pcie txp" *) output [3:0]pcie_txp;
   (* X_INTERFACE_INFO = "xilinx.com:interface:diff_clock:1.0 sys_clk CLK_N" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME sys_clk, CAN_DEBUG false, FREQ_HZ 200000000" *) input sys_clk_clk_n;
   (* X_INTERFACE_INFO = "xilinx.com:interface:diff_clock:1.0 sys_clk CLK_P" *) input sys_clk_clk_p;
-  (* X_INTERFACE_INFO = "xilinx.com:signal:reset:1.0 RST.SYS_RST RST" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME RST.SYS_RST, POLARITY ACTIVE_HIGH" *) input sys_rst;
+  (* X_INTERFACE_INFO = "xilinx.com:signal:reset:1.0 RST.SYS_RST RST" *) (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME RST.SYS_RST, INSERT_VIP 0, POLARITY ACTIVE_HIGH" *) input sys_rst;
 
   wire [0:0]ARESETN_1;
   wire AXI_PCIe_INTX_MSI_Grant;
@@ -1869,7 +1869,7 @@ module System_axi_interconnect_0_0
         .S_AXI_wready(from_pcie_to_s00_couplers_WREADY),
         .S_AXI_wstrb(from_pcie_to_s00_couplers_WSTRB),
         .S_AXI_wvalid(from_pcie_to_s00_couplers_WVALID));
-  System_xbar_0 xbar
+  System_xbar_2 xbar
        (.aclk(from_pcie_ACLK_net),
         .aresetn(from_pcie_ARESETN_net),
         .m_axi_araddr({xbar_to_m02_couplers_ARADDR,xbar_to_m01_couplers_ARADDR,xbar_to_m00_couplers_ARADDR}),
@@ -2285,7 +2285,7 @@ module System_axi_interconnect_0_1
   input [3:0]S02_AXI_arcache;
   input [0:0]S02_AXI_arid;
   input [7:0]S02_AXI_arlen;
-  input S02_AXI_arlock;
+  input [0:0]S02_AXI_arlock;
   input [2:0]S02_AXI_arprot;
   input [3:0]S02_AXI_arqos;
   output S02_AXI_arready;
@@ -2296,7 +2296,7 @@ module System_axi_interconnect_0_1
   input [3:0]S02_AXI_awcache;
   input [0:0]S02_AXI_awid;
   input [7:0]S02_AXI_awlen;
-  input S02_AXI_awlock;
+  input [0:0]S02_AXI_awlock;
   input [2:0]S02_AXI_awprot;
   input [3:0]S02_AXI_awqos;
   output S02_AXI_awready;
@@ -2580,7 +2580,7 @@ module System_axi_interconnect_0_1
   wire [3:0]to_memory_to_s02_couplers_ARCACHE;
   wire [0:0]to_memory_to_s02_couplers_ARID;
   wire [7:0]to_memory_to_s02_couplers_ARLEN;
-  wire to_memory_to_s02_couplers_ARLOCK;
+  wire [0:0]to_memory_to_s02_couplers_ARLOCK;
   wire [2:0]to_memory_to_s02_couplers_ARPROT;
   wire [3:0]to_memory_to_s02_couplers_ARQOS;
   wire to_memory_to_s02_couplers_ARREADY;
@@ -2591,7 +2591,7 @@ module System_axi_interconnect_0_1
   wire [3:0]to_memory_to_s02_couplers_AWCACHE;
   wire [0:0]to_memory_to_s02_couplers_AWID;
   wire [7:0]to_memory_to_s02_couplers_AWLEN;
-  wire to_memory_to_s02_couplers_AWLOCK;
+  wire [0:0]to_memory_to_s02_couplers_AWLOCK;
   wire [2:0]to_memory_to_s02_couplers_AWPROT;
   wire [3:0]to_memory_to_s02_couplers_AWQOS;
   wire to_memory_to_s02_couplers_AWREADY;
@@ -2859,7 +2859,7 @@ module System_axi_interconnect_0_1
   assign to_memory_to_s02_couplers_ARCACHE = S02_AXI_arcache[3:0];
   assign to_memory_to_s02_couplers_ARID = S02_AXI_arid[0];
   assign to_memory_to_s02_couplers_ARLEN = S02_AXI_arlen[7:0];
-  assign to_memory_to_s02_couplers_ARLOCK = S02_AXI_arlock;
+  assign to_memory_to_s02_couplers_ARLOCK = S02_AXI_arlock[0];
   assign to_memory_to_s02_couplers_ARPROT = S02_AXI_arprot[2:0];
   assign to_memory_to_s02_couplers_ARQOS = S02_AXI_arqos[3:0];
   assign to_memory_to_s02_couplers_ARSIZE = S02_AXI_arsize[2:0];
@@ -2869,7 +2869,7 @@ module System_axi_interconnect_0_1
   assign to_memory_to_s02_couplers_AWCACHE = S02_AXI_awcache[3:0];
   assign to_memory_to_s02_couplers_AWID = S02_AXI_awid[0];
   assign to_memory_to_s02_couplers_AWLEN = S02_AXI_awlen[7:0];
-  assign to_memory_to_s02_couplers_AWLOCK = S02_AXI_awlock;
+  assign to_memory_to_s02_couplers_AWLOCK = S02_AXI_awlock[0];
   assign to_memory_to_s02_couplers_AWPROT = S02_AXI_awprot[2:0];
   assign to_memory_to_s02_couplers_AWQOS = S02_AXI_awqos[3:0];
   assign to_memory_to_s02_couplers_AWSIZE = S02_AXI_awsize[2:0];
@@ -3263,7 +3263,7 @@ module System_axi_interconnect_0_1
         .S_AXI_wready(to_memory_to_s02_couplers_WREADY),
         .S_AXI_wstrb(to_memory_to_s02_couplers_WSTRB),
         .S_AXI_wvalid(to_memory_to_s02_couplers_WVALID));
-  System_xbar_1 xbar
+  System_xbar_3 xbar
        (.aclk(to_memory_ACLK_net),
         .aresetn(to_memory_ARESETN_net),
         .m_axi_araddr({xbar_to_m01_couplers_ARADDR,xbar_to_m00_couplers_ARADDR}),
@@ -6750,7 +6750,7 @@ module s02_couplers_imp_ILKESR
   input [3:0]S_AXI_arcache;
   input [0:0]S_AXI_arid;
   input [7:0]S_AXI_arlen;
-  input S_AXI_arlock;
+  input [0:0]S_AXI_arlock;
   input [2:0]S_AXI_arprot;
   input [3:0]S_AXI_arqos;
   output S_AXI_arready;
@@ -6761,7 +6761,7 @@ module s02_couplers_imp_ILKESR
   input [3:0]S_AXI_awcache;
   input [0:0]S_AXI_awid;
   input [7:0]S_AXI_awlen;
-  input S_AXI_awlock;
+  input [0:0]S_AXI_awlock;
   input [2:0]S_AXI_awprot;
   input [3:0]S_AXI_awqos;
   output S_AXI_awready;
@@ -6790,7 +6790,7 @@ module s02_couplers_imp_ILKESR
   wire [3:0]s02_couplers_to_s02_data_fifo_ARCACHE;
   wire [0:0]s02_couplers_to_s02_data_fifo_ARID;
   wire [7:0]s02_couplers_to_s02_data_fifo_ARLEN;
-  wire s02_couplers_to_s02_data_fifo_ARLOCK;
+  wire [0:0]s02_couplers_to_s02_data_fifo_ARLOCK;
   wire [2:0]s02_couplers_to_s02_data_fifo_ARPROT;
   wire [3:0]s02_couplers_to_s02_data_fifo_ARQOS;
   wire s02_couplers_to_s02_data_fifo_ARREADY;
@@ -6801,7 +6801,7 @@ module s02_couplers_imp_ILKESR
   wire [3:0]s02_couplers_to_s02_data_fifo_AWCACHE;
   wire [0:0]s02_couplers_to_s02_data_fifo_AWID;
   wire [7:0]s02_couplers_to_s02_data_fifo_AWLEN;
-  wire s02_couplers_to_s02_data_fifo_AWLOCK;
+  wire [0:0]s02_couplers_to_s02_data_fifo_AWLOCK;
   wire [2:0]s02_couplers_to_s02_data_fifo_AWPROT;
   wire [3:0]s02_couplers_to_s02_data_fifo_AWQOS;
   wire s02_couplers_to_s02_data_fifo_AWREADY;
@@ -6904,7 +6904,7 @@ module s02_couplers_imp_ILKESR
   assign s02_couplers_to_s02_data_fifo_ARCACHE = S_AXI_arcache[3:0];
   assign s02_couplers_to_s02_data_fifo_ARID = S_AXI_arid[0];
   assign s02_couplers_to_s02_data_fifo_ARLEN = S_AXI_arlen[7:0];
-  assign s02_couplers_to_s02_data_fifo_ARLOCK = S_AXI_arlock;
+  assign s02_couplers_to_s02_data_fifo_ARLOCK = S_AXI_arlock[0];
   assign s02_couplers_to_s02_data_fifo_ARPROT = S_AXI_arprot[2:0];
   assign s02_couplers_to_s02_data_fifo_ARQOS = S_AXI_arqos[3:0];
   assign s02_couplers_to_s02_data_fifo_ARSIZE = S_AXI_arsize[2:0];
@@ -6914,7 +6914,7 @@ module s02_couplers_imp_ILKESR
   assign s02_couplers_to_s02_data_fifo_AWCACHE = S_AXI_awcache[3:0];
   assign s02_couplers_to_s02_data_fifo_AWID = S_AXI_awid[0];
   assign s02_couplers_to_s02_data_fifo_AWLEN = S_AXI_awlen[7:0];
-  assign s02_couplers_to_s02_data_fifo_AWLOCK = S_AXI_awlock;
+  assign s02_couplers_to_s02_data_fifo_AWLOCK = S_AXI_awlock[0];
   assign s02_couplers_to_s02_data_fifo_AWPROT = S_AXI_awprot[2:0];
   assign s02_couplers_to_s02_data_fifo_AWQOS = S_AXI_awqos[3:0];
   assign s02_couplers_to_s02_data_fifo_AWSIZE = S_AXI_awsize[2:0];

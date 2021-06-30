@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -31,8 +31,8 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Processor
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Title : Template design
+// Rev.  : 6/30/2021 Wed (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 `ifndef __AXI_MASTER_WRAPPER_V__
@@ -55,7 +55,7 @@ module axi_master_wrapper #(
 	output	[(C_USE_AXI4 ? 8:4)-1:0]		M_AWLEN,		// Burst_Length = AxLEN + 1
 	output	[2:0]							M_AWSIZE,		// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	output	[1:0]							M_AWBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)
-	output	[1:0]							M_AWLOCK,		// b00(Normal), b01(Exclusive), b10(Locked), b11(Reserved)
+	output									M_AWLOCK,		// b0(Normal), b1(Exclusive)
 	output	[3:0]							M_AWCACHE,		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 	output	[2:0]							M_AWPROT,		// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
 	output	[3:0]							M_AWREGION,		//
@@ -81,7 +81,7 @@ module axi_master_wrapper #(
 	output	[(C_USE_AXI4 ? 8:4)-1:0]		M_ARLEN,		// Burst_Length = AxLEN + 1
 	output	[2:0]							M_ARSIZE,		// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	output	[1:0]							M_ARBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)
-	output	[1:0]							M_ARLOCK,		// b00(Normal), b01(Exclusive), b10(Locked), b11(Reserved)
+	output									M_ARLOCK,		// b0(Normal), b1(Exclusive)
 	output	[3:0]							M_ARCACHE,		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 	output	[2:0]							M_ARPROT,		// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
 	output	[3:0]							M_ARREGION,		//
@@ -157,7 +157,7 @@ assign	M_AWSIZE			= (
 	3'b111	// 1024 bit
 );
 assign	M_AWBURST			= 2'b01;		// INCR
-assign	M_AWLOCK			= 2'b00;		// normal
+assign	M_AWLOCK			= 1'b0;			// normal
 assign	M_AWCACHE			= 4'b0000;		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 assign	M_AWPROT			= 3'b000;		// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
 assign	M_AWREGION			= 4'b0000;
@@ -187,8 +187,8 @@ assign	M_ARSIZE			= (
 	/* 1024 */                    3'b111	// 1024 bit
 );
 assign	M_ARBURST			= 2'b01;		// incrementaing-address burst
-assign	M_ARLOCK			= 2'b0;			// normal : [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
-assign	M_ARCACHE			= 4'b0;			// no cache use
+assign	M_ARLOCK			= 1'b0;			// normal
+assign	M_ARCACHE			= 4'b0;			// no cache use : [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 assign	M_ARPROT			= 3'b010;		// none secure
 assign	M_ARREGION			= 4'b0000;
 assign	M_ARQOS				= 4'b0000;

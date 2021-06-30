@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : processor AXI wrapper
-// Rev.  : 6/26/2021 Sat (clonextop@gmail.com)
+// Rev.  : 6/30/2021 Wed (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 
@@ -91,7 +91,7 @@ wire	[C_M_AXI_ADDR_WIDTH-1:0]		M_AWADDR;
 wire	[7:0]							M_AWLEN;
 wire	[2:0]							M_AWSIZE;
 wire	[1:0]							M_AWBURST;
-wire	[1:0]							M_AWLOCK;
+wire									M_AWLOCK;
 wire	[3:0]							M_AWCACHE;
 wire	[2:0]							M_AWPROT;
 wire	[3:0]							M_AWREGION;
@@ -117,7 +117,7 @@ wire	[C_M_AXI_ADDR_WIDTH-1:0]		M_ARADDR;
 wire	[7:0]							M_ARLEN;
 wire	[2:0]							M_ARSIZE;
 wire	[1:0]							M_ARBURST;
-wire	[1:0]							M_ARLOCK;
+wire									M_ARLOCK;
 wire	[3:0]							M_ARCACHE;
 wire	[2:0]							M_ARPROT;
 wire	[3:0]							M_ARREGION;

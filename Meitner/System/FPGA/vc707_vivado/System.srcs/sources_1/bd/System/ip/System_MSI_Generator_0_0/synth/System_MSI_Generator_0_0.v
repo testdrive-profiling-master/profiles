@@ -1,4 +1,4 @@
-// (c) Copyright 1995-2018 Xilinx, Inc. All rights reserved.
+// (c) Copyright 1995-2021 Xilinx, Inc. All rights reserved.
 // 
 // This file contains confidential and proprietary information
 // of Xilinx, Inc. and is protected under U.S. and
@@ -50,9 +50,9 @@
 // IP VLNV: xilinx.com:user:MSI_Generator:1.0
 // IP Revision: 16
 
-(* X_CORE_INFO = "MSI_Generator_v1_0,Vivado 2018.2.2" *)
+(* X_CORE_INFO = "MSI_Generator_v1_0,Vivado 2021.1" *)
 (* CHECK_LICENSE_TYPE = "System_MSI_Generator_0_0,MSI_Generator_v1_0,{}" *)
-(* CORE_GENERATION_INFO = "System_MSI_Generator_0_0,MSI_Generator_v1_0,{x_ipProduct=Vivado 2018.2.2,x_ipVendor=xilinx.com,x_ipLibrary=user,x_ipName=MSI_Generator,x_ipVersion=1.0,x_ipCoreRevision=16,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,INTERRUPT_SIZE=2}" *)
+(* CORE_GENERATION_INFO = "System_MSI_Generator_0_0,MSI_Generator_v1_0,{x_ipProduct=Vivado 2021.1,x_ipVendor=xilinx.com,x_ipLibrary=user,x_ipName=MSI_Generator,x_ipVersion=1.0,x_ipCoreRevision=16,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,INTERRUPT_SIZE=2}" *)
 (* DowngradeIPIdentifiedWarnings = "yes" *)
 module System_MSI_Generator_0_0 (
   CLK,
@@ -65,7 +65,7 @@ module System_MSI_Generator_0_0 (
   MSI_GRANT
 );
 
-(* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME CLK, ASSOCIATED_RESET nRST, FREQ_HZ 125000000, PHASE 0.000, CLK_DOMAIN System_axi_pcie_0_1_axi_aclk_out" *)
+(* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME CLK, ASSOCIATED_RESET nRST, FREQ_HZ 125000000, PHASE 0.0, CLK_DOMAIN System_axi_pcie_0_1_axi_aclk_out" *)
 (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 CLK CLK" *)
 input wire CLK;
 (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME nRST, POLARITY ACTIVE_LOW" *)

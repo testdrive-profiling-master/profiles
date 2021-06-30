@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 11/5/2019 Tue (clonextop@gmail.com)
+// Rev.  : 6/30/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #include "AXI_common.h"
 #include "AXI_Master.h"
@@ -265,7 +265,7 @@ DPI_FUNCTION void* CreateMAXI(const char* sTitle, int iDataWidth, int bUseAXI4, 
 
 void MAXI::BusReadRequest(
 	BYTE nRST,
-	int ARID, DWORD ARADDR, DWORD ARLEN, DWORD ARSIZE, DWORD ARBURST, DWORD ARLOCK, DWORD ARCACHE, DWORD ARPROT, DWORD& ARREGION, DWORD& ARQOS,
+	int ARID, DWORD ARADDR, DWORD ARLEN, DWORD ARSIZE, DWORD ARBURST, BYTE ARLOCK, DWORD ARCACHE, DWORD ARPROT, DWORD& ARREGION, DWORD& ARQOS,
 	BYTE ARVALID, BYTE& ARREADY
 )
 {
@@ -384,7 +384,7 @@ void MAXI::BusReadData(
 DPI_FUNCTION void MAXIR_Interface(
 	void* hMAXI,
 	unsigned char nRST,
-	int ARID, const svBitVecVal* ARADDR, const svBitVecVal* ARLEN, const svBitVecVal* ARSIZE, const svBitVecVal* ARBURST, const svBitVecVal* ARLOCK, const svBitVecVal* ARCACHE, const svBitVecVal* ARPROT, svBitVecVal* ARREGION, svBitVecVal* ARQOS,
+	int ARID, const svBitVecVal* ARADDR, const svBitVecVal* ARLEN, const svBitVecVal* ARSIZE, const svBitVecVal* ARBURST, svBit ARLOCK, const svBitVecVal* ARCACHE, const svBitVecVal* ARPROT, svBitVecVal* ARREGION, svBitVecVal* ARQOS,
 	unsigned char ARVALID, unsigned char* ARREADY,
 	int* RID, svBitVecVal* RDATA, svBitVecVal* RRESP, unsigned char* RLAST, unsigned char* RVALID, unsigned char RREADY)
 {
@@ -397,14 +397,14 @@ DPI_FUNCTION void MAXIR_Interface(
 	// read request
 	pMAXI->BusReadRequest(
 		nRST,
-		ARID, *ARADDR, *ARLEN, *ARSIZE, *ARBURST, *ARLOCK, *ARCACHE, *ARPROT, *(DWORD*)ARREGION, *(DWORD*)ARQOS,
+		ARID, *ARADDR, *ARLEN, *ARSIZE, *ARBURST, ARLOCK, *ARCACHE, *ARPROT, *(DWORD*)ARREGION, *(DWORD*)ARQOS,
 		ARVALID, *(BYTE*)ARREADY
 	);
 }
 
 void MAXI::BusWriteRequest(
 	BYTE nRST,
-	int AWID, DWORD AWADDR, DWORD AWLEN, DWORD AWSIZE, DWORD AWBURST, DWORD AWLOCK, DWORD AWCACHE, DWORD AWPROT, DWORD AWREGION, DWORD AWQOS,
+	int AWID, DWORD AWADDR, DWORD AWLEN, DWORD AWSIZE, DWORD AWBURST, BYTE AWLOCK, DWORD AWCACHE, DWORD AWPROT, DWORD AWREGION, DWORD AWQOS,
 	BYTE AWVALID, BYTE& AWREADY
 )
 {
@@ -545,7 +545,7 @@ void MAXI::BusWriteData(
 DPI_FUNCTION void MAXIW_Interface(
 	void* hMAXI,
 	unsigned char nRST,
-	int AWID, const svBitVecVal* AWADDR, const svBitVecVal* AWLEN, const svBitVecVal* AWSIZE, const svBitVecVal* AWBURST, const svBitVecVal* AWLOCK, const svBitVecVal* AWCACHE, const svBitVecVal* AWPROT, const svBitVecVal* AWREGION, const svBitVecVal* AWQOS, unsigned char AWVALID, unsigned char* AWREADY,
+	int AWID, const svBitVecVal* AWADDR, const svBitVecVal* AWLEN, const svBitVecVal* AWSIZE, const svBitVecVal* AWBURST, svBit AWLOCK, const svBitVecVal* AWCACHE, const svBitVecVal* AWPROT, const svBitVecVal* AWREGION, const svBitVecVal* AWQOS, unsigned char AWVALID, unsigned char* AWREADY,
 	int WID, const svBitVecVal* WDATA, const svBitVecVal* WSTRB, unsigned char WLAST, unsigned char WVALID, unsigned char* WREADY,
 	int* BID, svBitVecVal* BRESP, unsigned char* BVALID, unsigned char BREADY)
 {
@@ -559,7 +559,7 @@ DPI_FUNCTION void MAXIW_Interface(
 	// write request
 	pMAXI->BusWriteRequest(
 		nRST,
-		AWID, *AWADDR, *AWLEN, *AWSIZE, *AWBURST, *AWLOCK, *AWCACHE, *AWPROT, *AWREGION, *AWQOS,
+		AWID, *AWADDR, *AWLEN, *AWSIZE, *AWBURST, AWLOCK, *AWCACHE, *AWPROT, *AWREGION, *AWQOS,
 		AWVALID, *AWREADY
 	);
 }

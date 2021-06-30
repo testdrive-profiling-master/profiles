@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : processor AXI wrapper
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 6/30/2021 Wed (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 `include "system_defines.vh"
@@ -64,7 +64,7 @@ module processor_axi_wrapper #(
 	output	[7:0]							M_AWLEN,		// Burst_Length = AxLEN[7:0] + 1
 	output	[2:0]							M_AWSIZE,		// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	output	[1:0]							M_AWBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)
-	output	[1:0]							M_AWLOCK,		// b00(Normal), b01(Exclusive), b10(Locked), b11(Reserved)
+	output									M_AWLOCK,		// b0(Normal), b1(Exclusive)
 	output	[3:0]							M_AWCACHE,		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 	output	[2:0]							M_AWPROT,		// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
 	output	[3:0]							M_AWREGION,		//
@@ -90,7 +90,7 @@ module processor_axi_wrapper #(
 	output	[7:0]							M_ARLEN,		// Burst_Length = AxLEN[7:0] + 1
 	output	[2:0]							M_ARSIZE,		// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	output	[1:0]							M_ARBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)
-	output	[1:0]							M_ARLOCK,		// b00(Normal), b01(Exclusive), b10(Locked), b11(Reserved)
+	output									M_ARLOCK,		// b0(Normal), b1(Exclusive)
 	output	[3:0]							M_ARCACHE,		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 	output	[2:0]							M_ARPROT,		// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
 	output	[3:0]							M_ARREGION,		//

@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 6/30/2021 Wed (clonextop@gmail.com)
 //================================================================================
 `include "system_defines.vh"
 `timescale 1ns/1ns
@@ -57,7 +57,7 @@ module testdrive_axi4_master_bfm #(
 	input	[(C_USE_AXI4==0 ? 4:8)-1:0]		AWLEN,			// Burst_Length = AxLEN + 1
 	input	[2:0]							AWSIZE,			// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	input	[1:0]							AWBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)
-	input	[1:0]							AWLOCK,			// b00(Normal), b01(Exclusive), b10(Locked), b11(Reserved)
+	input									AWLOCK,			// b0(Normal), b1(Exclusive)
 	input	[3:0]							AWCACHE,		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 	input	[2:0]							AWPROT,			// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
 	input	[3:0]							AWREGION,		//
@@ -82,7 +82,7 @@ module testdrive_axi4_master_bfm #(
 	input	[(C_USE_AXI4==0 ? 4:8)-1:0]		ARLEN,			// Burst_Length = AxLEN + 1
 	input	[2:0]							ARSIZE,			// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	input	[1:0]							ARBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)
-	input	[1:0]							ARLOCK,			// b00(Normal), b01(Exclusive), b10(Locked), b11(Reserved)
+	input									ARLOCK,			// b0(Normal), b1(Exclusive)
 	input	[3:0]							ARCACHE,		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 	input	[2:0]							ARPROT,			// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
 	output reg	[3:0]						ARREGION,		//
@@ -123,7 +123,7 @@ end
 	input	bit [(C_USE_AXI4==0 ? 4:8)-1:0]	AWLEN,			// Burst_Length = AxLEN + 1
 	input	bit [2:0]						AWSIZE,			// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	input	bit [1:0]						AWBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)
-	input	bit [1:0]						AWLOCK,			// b00(Normal), b01(Exclusive), b10(Locked), b11(Reserved) : Locked/Reserved is removed in AXI4
+	input	bit 							AWLOCK,			// b0(Normal), b1(Exclusive)
 	input	bit [3:0]						AWCACHE,		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 	input	bit [2:0]						AWPROT,			// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
 	input	bit [3:0]						AWREGION,		//
@@ -160,7 +160,7 @@ reg								r_BVALID;
 	input	bit [(C_USE_AXI4==0 ? 4:8)-1:0]	ARLEN,			// Burst_Length = AxLEN + 1
 	input	bit [2:0]						ARSIZE,			// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	input	bit [1:0]						ARBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)
-	input	bit [1:0]						ARLOCK,			// b00(Normal), b01(Exclusive), b10(Locked), b11(Reserved)
+	input	bit 							ARLOCK,			// b0(Normal), b1(Exclusive)
 	input	bit [3:0]						ARCACHE,		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 	input	bit [2:0]						ARPROT,			// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
 	output	bit	[3:0]						ARREGION,		//

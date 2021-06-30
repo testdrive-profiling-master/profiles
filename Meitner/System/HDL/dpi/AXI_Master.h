@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 11/5/2019 Tue (clonextop@gmail.com)
+// Rev.  : 6/30/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __AXI_MASTER_H__
 #define __AXI_MASTER_H__
@@ -54,17 +54,20 @@ typedef struct {
 
 typedef RoundQueue<MAXI_DESC, 4>		MAXI_QUEUE;
 
-class MAXI_Observer : public ChainList<MAXI_Observer>{
+class MAXI_Observer : public ChainList<MAXI_Observer> {
 public:
 	MAXI_Observer(void) : ChainList<MAXI_Observer>(this) {}
-	virtual ~MAXI_Observer(void){}
+	virtual ~MAXI_Observer(void) {}
 
-	virtual BOOL OnRead(MAXI_DESC* pDesc, BYTE* pData){return TRUE;}
-	virtual BOOL OnWrite(MAXI_DESC* pDesc, BYTE* pData){return TRUE;}
+	virtual BOOL OnRead(MAXI_DESC* pDesc, BYTE* pData) {
+		return TRUE;
+	}
+	virtual BOOL OnWrite(MAXI_DESC* pDesc, BYTE* pData) {
+		return TRUE;
+	}
 };
 
-class MAXI : public SelfDestory
-{
+class MAXI : public SelfDestory {
 	// 메인 메모리 접근
 	MAXI_QUEUE	m_WriteQ;
 	MAXI_QUEUE	m_ReadQ;
@@ -87,7 +90,7 @@ public:
 
 	void BusWriteRequest(
 		BYTE nRST,
-		int AWID, DWORD AWADDR, DWORD AWLEN, DWORD AWSIZE, DWORD AWBURST, DWORD AWLOCK, DWORD AWCACHE, DWORD AWPROT, DWORD AWREGION, DWORD AWQOS,
+		int AWID, DWORD AWADDR, DWORD AWLEN, DWORD AWSIZE, DWORD AWBURST, BYTE AWLOCK, DWORD AWCACHE, DWORD AWPROT, DWORD AWREGION, DWORD AWQOS,
 		BYTE AWVALID, BYTE& AWREADY
 	);
 	void BusWriteData(
@@ -97,7 +100,7 @@ public:
 	);
 	void BusReadRequest(
 		BYTE nRST,
-		int ARID, DWORD ARADDR, DWORD ARLEN, DWORD ARSIZE, DWORD ARBURST, DWORD ARLOCK, DWORD ARCACHE, DWORD ARPROT, DWORD& ARREGION, DWORD& ARQOS,
+		int ARID, DWORD ARADDR, DWORD ARLEN, DWORD ARSIZE, DWORD ARBURST, BYTE ARLOCK, DWORD ARCACHE, DWORD ARPROT, DWORD& ARREGION, DWORD& ARQOS,
 		BYTE ARVALID, BYTE& ARREADY
 	);
 	void BusReadData(
@@ -116,15 +119,15 @@ private:
 	BUS_SLAVE_INTERFACE*	m_pWriteSlave;
 	BUS_SLAVE_INTERFACE*	m_pReadSlave;
 
-	struct{
+	struct {
 		MAXI_DESC*		pDesc;
 		BYTE			ARREADY;
 		BYTE			RVALID;
 		DWORD			RDATA[32];
 		BYTE			RLAST;
-	}m_Read;
+	} m_Read;
 
-	struct{
+	struct {
 		MAXI_DESC*		pDesc;
 		BYTE			AWREADY;
 		BYTE			WREADY;
@@ -134,7 +137,7 @@ private:
 		DWORD			WSTRB[4];
 		BYTE			BVALID;
 		DWORD			BVALID_TimeOut;
-	}m_Write;
+	} m_Write;
 	SystemLog				Log;
 };
 

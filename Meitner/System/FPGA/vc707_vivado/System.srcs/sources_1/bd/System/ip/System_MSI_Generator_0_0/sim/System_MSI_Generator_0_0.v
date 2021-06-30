@@ -1,4 +1,4 @@
-// (c) Copyright 1995-2018 Xilinx, Inc. All rights reserved.
+// (c) Copyright 1995-2021 Xilinx, Inc. All rights reserved.
 // 
 // This file contains confidential and proprietary information
 // of Xilinx, Inc. and is protected under U.S. and
@@ -64,7 +64,7 @@ module System_MSI_Generator_0_0 (
   MSI_GRANT
 );
 
-(* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME CLK, ASSOCIATED_RESET nRST, FREQ_HZ 125000000, PHASE 0.000, CLK_DOMAIN System_axi_pcie_0_1_axi_aclk_out" *)
+(* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME CLK, ASSOCIATED_RESET nRST, FREQ_HZ 125000000, PHASE 0.0, CLK_DOMAIN System_axi_pcie_0_1_axi_aclk_out" *)
 (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 CLK CLK" *)
 input wire CLK;
 (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME nRST, POLARITY ACTIVE_LOW" *)

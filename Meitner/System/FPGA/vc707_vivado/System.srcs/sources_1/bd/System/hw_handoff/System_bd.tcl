@@ -20,12 +20,12 @@ set script_folder [_tcl::get_script_folder]
 ################################################################
 # Check if script is running in correct Vivado version.
 ################################################################
-set scripts_vivado_version 2018.2
+set scripts_vivado_version 2021.1
 set current_vivado_version [version -short]
 
 if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
    puts ""
-   catch {common::send_msg_id "BD_TCL-109" "ERROR" "This script was generated using Vivado <$scripts_vivado_version> and is being run in <$current_vivado_version> of Vivado. Please run the script in Vivado <$scripts_vivado_version> then open the design in Vivado <$current_vivado_version>. Upgrade the design by running \"Tools => Report => Report IP Status...\", then run write_bd_tcl to create an updated script."}
+   catch {common::send_gid_msg -ssname BD::TCL -id 2041 -severity "ERROR" "This script was generated using Vivado <$scripts_vivado_version> and is being run in <$current_vivado_version> of Vivado. Please run the script in Vivado <$scripts_vivado_version> then open the design in Vivado <$current_vivado_version>. Upgrade the design by running \"Tools => Report => Report IP Status...\", then run write_bd_tcl to create an updated script."}
 
    return 1
 }
@@ -44,7 +44,7 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 set list_projs [get_projects -quiet]
 if { $list_projs eq "" } {
    create_project project_1 myproj -part xc7vx485tffg1761-2
-   set_property BOARD_PART xilinx.com:vc707:part0:1.2 [current_project]
+   set_property BOARD_PART xilinx.com:vc707:part0:1.4 [current_project]
 }
 
 
@@ -77,10 +77,10 @@ if { ${design_name} eq "" } {
    #    4): Current design opened AND is empty AND names diff; design_name exists in project.
 
    if { $cur_design ne $design_name } {
-      common::send_msg_id "BD_TCL-001" "INFO" "Changing value of <design_name> from <$design_name> to <$cur_design> since current design is empty."
+      common::send_gid_msg -ssname BD::TCL -id 2001 -severity "INFO" "Changing value of <design_name> from <$design_name> to <$cur_design> since current design is empty."
       set design_name [get_property NAME $cur_design]
    }
-   common::send_msg_id "BD_TCL-002" "INFO" "Constructing design in IPI design <$cur_design>..."
+   common::send_gid_msg -ssname BD::TCL -id 2002 -severity "INFO" "Constructing design in IPI design <$cur_design>..."
 
 } elseif { ${cur_design} ne "" && $list_cells ne "" && $cur_design eq $design_name } {
    # USE CASES:
@@ -101,19 +101,19 @@ if { ${design_name} eq "" } {
    #    8) No opened design, design_name not in project.
    #    9) Current opened design, has components, but diff names, design_name not in project.
 
-   common::send_msg_id "BD_TCL-003" "INFO" "Currently there is no design <$design_name> in project, so creating one..."
+   common::send_gid_msg -ssname BD::TCL -id 2003 -severity "INFO" "Currently there is no design <$design_name> in project, so creating one..."
 
    create_bd_design $design_name
 
-   common::send_msg_id "BD_TCL-004" "INFO" "Making design <$design_name> as current_bd_design."
+   common::send_gid_msg -ssname BD::TCL -id 2004 -severity "INFO" "Making design <$design_name> as current_bd_design."
    current_bd_design $design_name
 
 }
 
-common::send_msg_id "BD_TCL-005" "INFO" "Currently the variable <design_name> is equal to \"$design_name\"."
+common::send_gid_msg -ssname BD::TCL -id 2005 -severity "INFO" "Currently the variable <design_name> is equal to \"$design_name\"."
 
 if { $nRet != 0 } {
-   catch {common::send_msg_id "BD_TCL-114" "ERROR" $errMsg}
+   catch {common::send_gid_msg -ssname BD::TCL -id 2006 -severity "ERROR" $errMsg}
    return $nRet
 }
 
@@ -356,14 +356,14 @@ proc create_root_design { parentCell } {
   # Get object for parentCell
   set parentObj [get_bd_cells $parentCell]
   if { $parentObj == "" } {
-     catch {common::send_msg_id "BD_TCL-100" "ERROR" "Unable to find parent cell <$parentCell>!"}
+     catch {common::send_gid_msg -ssname BD::TCL -id 2090 -severity "ERROR" "Unable to find parent cell <$parentCell>!"}
      return
   }
 
   # Make sure parentObj is hier blk
   set parentType [get_property TYPE $parentObj]
   if { $parentType ne "hier" } {
-     catch {common::send_msg_id "BD_TCL-101" "ERROR" "Parent <$parentObj> has TYPE = <$parentType>. Expected to be <hier>."}
+     catch {common::send_gid_msg -ssname BD::TCL -id 2091 -severity "ERROR" "Parent <$parentObj> has TYPE = <$parentType>. Expected to be <hier>."}
      return
   }
 
@@ -376,12 +376,16 @@ proc create_root_design { parentCell } {
 
   # Create interface ports
   set ddr3 [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:ddrx_rtl:1.0 ddr3 ]
+
   set pcie [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:pcie_7x_mgt_rtl:1.0 pcie ]
+
   set pcie_diff_clock [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:diff_clock_rtl:1.0 pcie_diff_clock ]
+
   set sys_clk [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:diff_clock_rtl:1.0 sys_clk ]
   set_property -dict [ list \
    CONFIG.FREQ_HZ {200000000} \
    ] $sys_clk
+
 
   # Create ports
   set HDMI_CLK [ create_bd_port -dir O HDMI_CLK ]
@@ -401,7 +405,7 @@ proc create_root_design { parentCell } {
  ] $sys_rst
 
   # Create instance: AXI_PCIe, and set properties
-  set AXI_PCIe [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_pcie:2.8 AXI_PCIe ]
+  set AXI_PCIe [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_pcie:2.9 AXI_PCIe ]
   set_property -dict [ list \
    CONFIG.AXIBAR2PCIEBAR_0 {0xD0000000} \
    CONFIG.AXIBAR2PCIEBAR_1 {0xD2000000} \
@@ -429,7 +433,7 @@ proc create_root_design { parentCell } {
  ] $AXI_PCIe
 
   # Create instance: DDR3_SDRAM, and set properties
-  set DDR3_SDRAM [ create_bd_cell -type ip -vlnv xilinx.com:ip:mig_7series:4.1 DDR3_SDRAM ]
+  set DDR3_SDRAM [ create_bd_cell -type ip -vlnv xilinx.com:ip:mig_7series:4.2 DDR3_SDRAM ]
 
   # Generate the PRJ File for MIG
   set str_mig_folder [get_property IP_DIR [ get_ips [ get_property CONFIG.Component_Name $DDR3_SDRAM ] ] ]
@@ -451,7 +455,7 @@ proc create_root_design { parentCell } {
  ] $MSI_Generator_0
 
   # Create instance: PCIe_diff_clk_I, and set properties
-  set PCIe_diff_clk_I [ create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf:2.1 PCIe_diff_clk_I ]
+  set PCIe_diff_clk_I [ create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf:2.2 PCIe_diff_clk_I ]
   set_property -dict [ list \
    CONFIG.C_BUF_TYPE {IBUFDSGTE} \
    CONFIG.DIFF_CLK_IN_BOARD_INTERFACE {Custom} \
@@ -565,17 +569,18 @@ proc create_root_design { parentCell } {
   connect_bd_net -net util_vector_logic_0_Res [get_bd_pins bus_reset_0/dcm_locked] [get_bd_pins pcie_reset_0/dcm_locked] [get_bd_pins util_vector_logic_0/Res]
 
   # Create address segments
-  create_bd_addr_seg -range 0x02000000 -offset 0x40000000 [get_bd_addr_spaces AXI_PCIe/M_AXI] [get_bd_addr_segs AXI_PCIe/S_AXI/BAR0] SEG_AXI_PCIe_BAR0
-  create_bd_addr_seg -range 0x02000000 -offset 0x42000000 [get_bd_addr_spaces AXI_PCIe/M_AXI] [get_bd_addr_segs AXI_PCIe/S_AXI/BAR1] SEG_AXI_PCIe_BAR1
-  create_bd_addr_seg -range 0x00010000 -offset 0x00000000 [get_bd_addr_spaces AXI_PCIe/M_AXI] [get_bd_addr_segs AXI_PCIe/S_AXI_CTL/CTL0] SEG_AXI_PCIe_CTL0
-  create_bd_addr_seg -range 0x40000000 -offset 0x80000000 [get_bd_addr_spaces AXI_PCIe/M_AXI] [get_bd_addr_segs DDR3_SDRAM/memmap/memaddr] SEG_DDR3_SDRAM_memaddr
-  create_bd_addr_seg -range 0x00010000 -offset 0x00020000 [get_bd_addr_spaces AXI_PCIe/M_AXI] [get_bd_addr_segs dut_wrapper_0/S_APB/S_APB] SEG_dut_wrapper_0_S_APB
-  create_bd_addr_seg -range 0x00010000 -offset 0x00010000 [get_bd_addr_spaces AXI_PCIe/M_AXI] [get_bd_addr_segs hdmi_controller_0/S_APB/S_APB] SEG_hdmi_controller_0_S_APB
+  assign_bd_address -offset 0x40000000 -range 0x02000000 -target_address_space [get_bd_addr_spaces AXI_PCIe/M_AXI] [get_bd_addr_segs AXI_PCIe/S_AXI/BAR0] -force
+  assign_bd_address -offset 0x42000000 -range 0x02000000 -target_address_space [get_bd_addr_spaces AXI_PCIe/M_AXI] [get_bd_addr_segs AXI_PCIe/S_AXI/BAR1] -force
+  assign_bd_address -offset 0x00000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces AXI_PCIe/M_AXI] [get_bd_addr_segs AXI_PCIe/S_AXI_CTL/CTL0] -force
+  assign_bd_address -offset 0x80000000 -range 0x40000000 -target_address_space [get_bd_addr_spaces AXI_PCIe/M_AXI] [get_bd_addr_segs DDR3_SDRAM/memmap/memaddr] -force
+  assign_bd_address -offset 0x00020000 -range 0x00010000 -target_address_space [get_bd_addr_spaces AXI_PCIe/M_AXI] [get_bd_addr_segs dut_wrapper_0/S_APB/S_APB] -force
+  assign_bd_address -offset 0x00010000 -range 0x00010000 -target_address_space [get_bd_addr_spaces AXI_PCIe/M_AXI] [get_bd_addr_segs hdmi_controller_0/S_APB/S_APB] -force
 
 
   # Restore current instance
   current_bd_instance $oldCurInst
 
+  validate_bd_design
   save_bd_design
 }
 # End of create_root_design()
