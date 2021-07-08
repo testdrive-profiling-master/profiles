@@ -109,13 +109,11 @@ int main(int argc, const char* argv[])
 	}
 
 	if(ssh.Initialize()) {
-		vector<const char*>		arg_list;
+		string					sCmd("pscp");
 		bool					bServerPath	= false;
-		arg_list.push_back("pscp");
-		arg_list.push_back("-scp");
-		arg_list.push_back("-unsafe");
-		arg_list.push_back("-pw");
-		arg_list.push_back(ssh.Data()->sPW);
+
+		sCmd	+= " -scp -unsafe -pw ";
+		sCmd	+= ssh.Data()->sPW;
 
 		for(int i = 1; i < argc; i++) {
 			cstring		sArg;
@@ -131,11 +129,11 @@ int main(int argc, const char* argv[])
 			}
 
 			sArg	+= argv[i];
-			arg_list.push_back(strdup(sArg.c_str()));
+			sCmd	+= " ";
+			sCmd	+= sArg.c_str();
 		}
 
-		arg_list.push_back(NULL);
-		execvp("pscp", (char* const*)(&arg_list[0]));
+		system(sCmd.c_str());
 		ssh.Release();
 	}
 
