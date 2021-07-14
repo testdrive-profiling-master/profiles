@@ -10,9 +10,6 @@
       "validated": "true"
     },
     "design_tree": {
-      "MSI_Generator_0": "",
-      "hdmi_controller_0": "",
-      "dut_wrapper_0": "",
       "axi_apb_bridge_0": "",
       "from_pcie": {
         "xbar": "",
@@ -55,7 +52,10 @@
       "pcie_reset_0": "",
       "bus_reset_0": "",
       "PCIe_diff_clk_I": "",
-      "util_vector_logic_0": ""
+      "util_vector_logic_0": "",
+      "dut_wrapper_0": "",
+      "hdmi_controller_0": "",
+      "MSI_Generator_0": ""
     },
     "interface_ports": {
       "pcie": {
@@ -210,43 +210,6 @@
       }
     },
     "components": {
-      "MSI_Generator_0": {
-        "vlnv": "xilinx.com:user:MSI_Generator:1.0",
-        "xci_name": "System_MSI_Generator_0_0",
-        "xci_path": "ip\\System_MSI_Generator_0_0\\System_MSI_Generator_0_0.xci",
-        "inst_hier_path": "MSI_Generator_0",
-        "parameters": {
-          "INTERRUPT_SIZE": {
-            "value": "2"
-          }
-        }
-      },
-      "hdmi_controller_0": {
-        "vlnv": "xilinx.com:user:hdmi_controller:1.0",
-        "xci_name": "System_hdmi_controller_0_1",
-        "xci_path": "ip\\System_hdmi_controller_0_1\\System_hdmi_controller_0_1.xci",
-        "inst_hier_path": "hdmi_controller_0",
-        "interface_ports": {
-          "S_APB": {
-            "vlnv": "xilinx.com:interface:apb_rtl:1.0",
-            "mode": "Slave",
-            "memory_map_ref": "S_APB"
-          }
-        }
-      },
-      "dut_wrapper_0": {
-        "vlnv": "xilinx.com:user:dut_wrapper:1.0",
-        "xci_name": "System_dut_wrapper_0_0",
-        "xci_path": "ip\\System_dut_wrapper_0_0\\System_dut_wrapper_0_0.xci",
-        "inst_hier_path": "dut_wrapper_0",
-        "interface_ports": {
-          "S_APB": {
-            "vlnv": "xilinx.com:interface:apb_rtl:1.0",
-            "mode": "Slave",
-            "memory_map_ref": "S_APB"
-          }
-        }
-      },
       "axi_apb_bridge_0": {
         "vlnv": "xilinx.com:ip:axi_apb_bridge:3.0",
         "xci_name": "System_axi_apb_bridge_0_0",
@@ -2222,6 +2185,43 @@
             "value": "1"
           }
         }
+      },
+      "dut_wrapper_0": {
+        "vlnv": "xilinx.com:user:dut_wrapper:1.0",
+        "xci_name": "System_dut_wrapper_0_0",
+        "xci_path": "ip\\System_dut_wrapper_0_0\\System_dut_wrapper_0_0.xci",
+        "inst_hier_path": "dut_wrapper_0",
+        "interface_ports": {
+          "S_APB": {
+            "vlnv": "xilinx.com:interface:apb_rtl:1.0",
+            "mode": "Slave",
+            "memory_map_ref": "S_APB"
+          }
+        }
+      },
+      "hdmi_controller_0": {
+        "vlnv": "xilinx.com:user:hdmi_controller:1.0",
+        "xci_name": "System_hdmi_controller_0_1",
+        "xci_path": "ip\\System_hdmi_controller_0_1\\System_hdmi_controller_0_1.xci",
+        "inst_hier_path": "hdmi_controller_0",
+        "interface_ports": {
+          "S_APB": {
+            "vlnv": "xilinx.com:interface:apb_rtl:1.0",
+            "mode": "Slave",
+            "memory_map_ref": "S_APB"
+          }
+        }
+      },
+      "MSI_Generator_0": {
+        "vlnv": "xilinx.com:user:MSI_Generator:1.0",
+        "xci_name": "System_MSI_Generator_0_0",
+        "xci_path": "ip\\System_MSI_Generator_0_0\\System_MSI_Generator_0_0.xci",
+        "inst_hier_path": "MSI_Generator_0",
+        "parameters": {
+          "INTERRUPT_SIZE": {
+            "value": "2"
+          }
+        }
       }
     },
     "interface_nets": {
@@ -2332,10 +2332,10 @@
       "AXI_PCIe_axi_aclk_out": {
         "ports": [
           "AXI_PCIe/axi_aclk_out",
-          "MSI_Generator_0/CLK",
           "from_pcie/ACLK",
           "from_pcie/S00_ACLK",
-          "to_memory/M01_ACLK"
+          "to_memory/M01_ACLK",
+          "MSI_Generator_0/CLK"
         ]
       },
       "AXI_PCIe_axi_ctl_aclk_out": {
@@ -2360,8 +2360,6 @@
       "DDR3_SDRAM_ui_clk": {
         "ports": [
           "DDR3_SDRAM/ui_clk",
-          "hdmi_controller_0/ACLK",
-          "dut_wrapper_0/ACLK",
           "axi_apb_bridge_0/s_axi_aclk",
           "from_pcie/M00_ACLK",
           "from_pcie/M01_ACLK",
@@ -2370,7 +2368,9 @@
           "to_memory/S01_ACLK",
           "to_memory/S02_ACLK",
           "to_memory/M00_ACLK",
-          "bus_reset_0/slowest_sync_clk"
+          "bus_reset_0/slowest_sync_clk",
+          "dut_wrapper_0/ACLK",
+          "hdmi_controller_0/ACLK"
         ]
       },
       "DDR3_SDRAM_ui_clk_sync_rst": {
@@ -2419,11 +2419,11 @@
       "S00_ARESETN_1": {
         "ports": [
           "pcie_reset_0/peripheral_aresetn",
-          "MSI_Generator_0/nRST",
           "from_pcie/S00_ARESETN",
           "from_pcie/M02_ARESETN",
           "to_memory/M01_ARESETN",
-          "AXI_PCIe/axi_aresetn"
+          "AXI_PCIe/axi_aresetn",
+          "MSI_Generator_0/nRST"
         ]
       },
       "dut_wrapper_0_INTR": {
@@ -2502,8 +2502,6 @@
       "rst_DDR3_SDRAM_200M_peripheral_aresetn": {
         "ports": [
           "bus_reset_0/peripheral_aresetn",
-          "hdmi_controller_0/nRST",
-          "dut_wrapper_0/nRST",
           "axi_apb_bridge_0/s_axi_aresetn",
           "from_pcie/M00_ARESETN",
           "from_pcie/M01_ARESETN",
@@ -2511,7 +2509,9 @@
           "to_memory/S01_ARESETN",
           "to_memory/S02_ARESETN",
           "to_memory/M00_ARESETN",
-          "DDR3_SDRAM/aresetn"
+          "DDR3_SDRAM/aresetn",
+          "dut_wrapper_0/nRST",
+          "hdmi_controller_0/nRST"
         ]
       },
       "util_vector_logic_0_Res": {

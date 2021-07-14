@@ -48,7 +48,7 @@
 
 
 // IP VLNV: xilinx.com:user:MSI_Generator:1.0
-// IP Revision: 16
+// IP Revision: 17
 
 `timescale 1ns/1ps
 
@@ -64,10 +64,10 @@ module System_MSI_Generator_0_0 (
   MSI_GRANT
 );
 
-(* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME CLK, ASSOCIATED_RESET nRST, FREQ_HZ 125000000, PHASE 0.0, CLK_DOMAIN System_axi_pcie_0_1_axi_aclk_out" *)
+(* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME CLK, ASSOCIATED_RESET nRST, FREQ_HZ 125000000, FREQ_TOLERANCE_HZ 0, PHASE 0.0, CLK_DOMAIN System_axi_pcie_0_1_axi_aclk_out, INSERT_VIP 0" *)
 (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 CLK CLK" *)
 input wire CLK;
-(* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME nRST, POLARITY ACTIVE_LOW" *)
+(* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME nRST, POLARITY ACTIVE_LOW, INSERT_VIP 0" *)
 (* X_INTERFACE_INFO = "xilinx.com:signal:reset:1.0 nRST RST" *)
 input wire nRST;
 input wire INTR_0;

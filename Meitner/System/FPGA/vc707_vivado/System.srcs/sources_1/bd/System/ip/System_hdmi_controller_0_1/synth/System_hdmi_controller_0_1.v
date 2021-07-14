@@ -48,11 +48,11 @@
 
 
 // IP VLNV: xilinx.com:user:hdmi_controller:1.0
-// IP Revision: 16
+// IP Revision: 17
 
 (* X_CORE_INFO = "hdmi_controller_v1_0,Vivado 2021.1" *)
 (* CHECK_LICENSE_TYPE = "System_hdmi_controller_0_1,hdmi_controller_v1_0,{}" *)
-(* CORE_GENERATION_INFO = "System_hdmi_controller_0_1,hdmi_controller_v1_0,{x_ipProduct=Vivado 2021.1,x_ipVendor=xilinx.com,x_ipLibrary=user,x_ipName=hdmi_controller,x_ipVersion=1.0,x_ipCoreRevision=16,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,C_M_AXI_ID_WIDTH=1,C_M_AXI_ADDR_WIDTH=32,C_M_AXI_DATA_WIDTH=512,C_S_AXI_DATA_WIDTH=32,C_S_AXI_ADDR_WIDTH=16}" *)
+(* CORE_GENERATION_INFO = "System_hdmi_controller_0_1,hdmi_controller_v1_0,{x_ipProduct=Vivado 2021.1,x_ipVendor=xilinx.com,x_ipLibrary=user,x_ipName=hdmi_controller,x_ipVersion=1.0,x_ipCoreRevision=17,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,C_M_AXI_ID_WIDTH=1,C_M_AXI_ADDR_WIDTH=32,C_M_AXI_DATA_WIDTH=512,C_S_AXI_DATA_WIDTH=32,C_S_AXI_ADDR_WIDTH=16}" *)
 (* DowngradeIPIdentifiedWarnings = "yes" *)
 module System_hdmi_controller_0_1 (
   ACLK,
@@ -118,10 +118,10 @@ module System_hdmi_controller_0_1 (
   HDMI_SPDIF
 );
 
-(* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME ACLK, ASSOCIATED_BUSIF M_AXI:S_APB, ASSOCIATED_RESET nRST, FREQ_HZ 200000000, PHASE 0, CLK_DOMAIN System_mig_7series_0_0_ui_clk" *)
+(* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME ACLK, ASSOCIATED_BUSIF M_AXI:S_APB, ASSOCIATED_RESET nRST, FREQ_HZ 200000000, FREQ_TOLERANCE_HZ 0, PHASE 0, CLK_DOMAIN System_mig_7series_0_0_ui_clk, INSERT_VIP 0" *)
 (* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 ACLK CLK" *)
 input wire ACLK;
-(* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME nRST, POLARITY ACTIVE_LOW" *)
+(* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME nRST, POLARITY ACTIVE_LOW, INSERT_VIP 0" *)
 (* X_INTERFACE_INFO = "xilinx.com:signal:reset:1.0 nRST RST" *)
 input wire nRST;
 (* X_INTERFACE_INFO = "xilinx.com:interface:aximm:1.0 M_AXI AWID" *)
@@ -203,7 +203,7 @@ input wire [1 : 0] M_BRESP;
 (* X_INTERFACE_INFO = "xilinx.com:interface:aximm:1.0 M_AXI BVALID" *)
 input wire M_BVALID;
 (* X_INTERFACE_PARAMETER = "XIL_INTERFACENAME M_AXI, DATA_WIDTH 512, PROTOCOL AXI4, FREQ_HZ 200000000, ID_WIDTH 1, ADDR_WIDTH 32, AWUSER_WIDTH 0, ARUSER_WIDTH 0, WUSER_WIDTH 0, RUSER_WIDTH 0, BUSER_WIDTH 0, READ_WRITE_MODE READ_WRITE, HAS_BURST 1, HAS_LOCK 1, HAS_PROT 1, HAS_CACHE 1, HAS_QOS 1, HAS_REGION 1, HAS_WSTRB 1, HAS_BRESP 1, HAS_RRESP 1, SUPPORTS_NARROW_BURST 1, NUM_READ_OUTSTANDING 2, NUM_WRITE_OUTSTANDING 2, MAX_BURST_LENGTH 256, PHASE 0, CLK_DOMAIN System_mig_7series_0_0_ui_clk, NUM_READ_THREADS 1, NUM_WRITE_TH\
-READS 1, RUSER_BITS_PER_BYTE 0, WUSER_BITS_PER_BYTE 0" *)
+READS 1, RUSER_BITS_PER_BYTE 0, WUSER_BITS_PER_BYTE 0, INSERT_VIP 0" *)
 (* X_INTERFACE_INFO = "xilinx.com:interface:aximm:1.0 M_AXI BREADY" *)
 output wire M_BREADY;
 output wire INTR;

@@ -1,7 +1,7 @@
 //Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
 //--------------------------------------------------------------------------------
 //Tool Version: Vivado v.2021.1 (win64) Build 3247384 Thu Jun 10 19:36:33 MDT 2021
-//Date        : Wed Jun 30 13:28:05 2021
+//Date        : Wed Jul 14 11:24:44 2021
 //Host        : DESKTOP-F0P52DA running 64-bit major release  (build 9200)
 //Command     : generate_target System.bd
 //Design      : System
@@ -2285,7 +2285,7 @@ module System_axi_interconnect_0_1
   input [3:0]S02_AXI_arcache;
   input [0:0]S02_AXI_arid;
   input [7:0]S02_AXI_arlen;
-  input [0:0]S02_AXI_arlock;
+  input S02_AXI_arlock;
   input [2:0]S02_AXI_arprot;
   input [3:0]S02_AXI_arqos;
   output S02_AXI_arready;
@@ -2296,7 +2296,7 @@ module System_axi_interconnect_0_1
   input [3:0]S02_AXI_awcache;
   input [0:0]S02_AXI_awid;
   input [7:0]S02_AXI_awlen;
-  input [0:0]S02_AXI_awlock;
+  input S02_AXI_awlock;
   input [2:0]S02_AXI_awprot;
   input [3:0]S02_AXI_awqos;
   output S02_AXI_awready;
@@ -2580,7 +2580,7 @@ module System_axi_interconnect_0_1
   wire [3:0]to_memory_to_s02_couplers_ARCACHE;
   wire [0:0]to_memory_to_s02_couplers_ARID;
   wire [7:0]to_memory_to_s02_couplers_ARLEN;
-  wire [0:0]to_memory_to_s02_couplers_ARLOCK;
+  wire to_memory_to_s02_couplers_ARLOCK;
   wire [2:0]to_memory_to_s02_couplers_ARPROT;
   wire [3:0]to_memory_to_s02_couplers_ARQOS;
   wire to_memory_to_s02_couplers_ARREADY;
@@ -2591,7 +2591,7 @@ module System_axi_interconnect_0_1
   wire [3:0]to_memory_to_s02_couplers_AWCACHE;
   wire [0:0]to_memory_to_s02_couplers_AWID;
   wire [7:0]to_memory_to_s02_couplers_AWLEN;
-  wire [0:0]to_memory_to_s02_couplers_AWLOCK;
+  wire to_memory_to_s02_couplers_AWLOCK;
   wire [2:0]to_memory_to_s02_couplers_AWPROT;
   wire [3:0]to_memory_to_s02_couplers_AWQOS;
   wire to_memory_to_s02_couplers_AWREADY;
@@ -2859,7 +2859,7 @@ module System_axi_interconnect_0_1
   assign to_memory_to_s02_couplers_ARCACHE = S02_AXI_arcache[3:0];
   assign to_memory_to_s02_couplers_ARID = S02_AXI_arid[0];
   assign to_memory_to_s02_couplers_ARLEN = S02_AXI_arlen[7:0];
-  assign to_memory_to_s02_couplers_ARLOCK = S02_AXI_arlock[0];
+  assign to_memory_to_s02_couplers_ARLOCK = S02_AXI_arlock;
   assign to_memory_to_s02_couplers_ARPROT = S02_AXI_arprot[2:0];
   assign to_memory_to_s02_couplers_ARQOS = S02_AXI_arqos[3:0];
   assign to_memory_to_s02_couplers_ARSIZE = S02_AXI_arsize[2:0];
@@ -2869,7 +2869,7 @@ module System_axi_interconnect_0_1
   assign to_memory_to_s02_couplers_AWCACHE = S02_AXI_awcache[3:0];
   assign to_memory_to_s02_couplers_AWID = S02_AXI_awid[0];
   assign to_memory_to_s02_couplers_AWLEN = S02_AXI_awlen[7:0];
-  assign to_memory_to_s02_couplers_AWLOCK = S02_AXI_awlock[0];
+  assign to_memory_to_s02_couplers_AWLOCK = S02_AXI_awlock;
   assign to_memory_to_s02_couplers_AWPROT = S02_AXI_awprot[2:0];
   assign to_memory_to_s02_couplers_AWQOS = S02_AXI_awqos[3:0];
   assign to_memory_to_s02_couplers_AWSIZE = S02_AXI_awsize[2:0];
@@ -6352,7 +6352,7 @@ module s01_couplers_imp_TMBZ15
   input [3:0]S_AXI_arcache;
   input [0:0]S_AXI_arid;
   input [7:0]S_AXI_arlen;
-  input [0:0]S_AXI_arlock;
+  input S_AXI_arlock;
   input [2:0]S_AXI_arprot;
   input [3:0]S_AXI_arqos;
   output S_AXI_arready;
@@ -6364,7 +6364,7 @@ module s01_couplers_imp_TMBZ15
   input [3:0]S_AXI_awcache;
   input [0:0]S_AXI_awid;
   input [7:0]S_AXI_awlen;
-  input [0:0]S_AXI_awlock;
+  input S_AXI_awlock;
   input [2:0]S_AXI_awprot;
   input [3:0]S_AXI_awqos;
   output S_AXI_awready;
@@ -6394,7 +6394,7 @@ module s01_couplers_imp_TMBZ15
   wire [3:0]s01_couplers_to_s01_data_fifo_ARCACHE;
   wire [0:0]s01_couplers_to_s01_data_fifo_ARID;
   wire [7:0]s01_couplers_to_s01_data_fifo_ARLEN;
-  wire [0:0]s01_couplers_to_s01_data_fifo_ARLOCK;
+  wire s01_couplers_to_s01_data_fifo_ARLOCK;
   wire [2:0]s01_couplers_to_s01_data_fifo_ARPROT;
   wire [3:0]s01_couplers_to_s01_data_fifo_ARQOS;
   wire s01_couplers_to_s01_data_fifo_ARREADY;
@@ -6406,7 +6406,7 @@ module s01_couplers_imp_TMBZ15
   wire [3:0]s01_couplers_to_s01_data_fifo_AWCACHE;
   wire [0:0]s01_couplers_to_s01_data_fifo_AWID;
   wire [7:0]s01_couplers_to_s01_data_fifo_AWLEN;
-  wire [0:0]s01_couplers_to_s01_data_fifo_AWLOCK;
+  wire s01_couplers_to_s01_data_fifo_AWLOCK;
   wire [2:0]s01_couplers_to_s01_data_fifo_AWPROT;
   wire [3:0]s01_couplers_to_s01_data_fifo_AWQOS;
   wire s01_couplers_to_s01_data_fifo_AWREADY;
@@ -6510,7 +6510,7 @@ module s01_couplers_imp_TMBZ15
   assign s01_couplers_to_s01_data_fifo_ARCACHE = S_AXI_arcache[3:0];
   assign s01_couplers_to_s01_data_fifo_ARID = S_AXI_arid[0];
   assign s01_couplers_to_s01_data_fifo_ARLEN = S_AXI_arlen[7:0];
-  assign s01_couplers_to_s01_data_fifo_ARLOCK = S_AXI_arlock[0];
+  assign s01_couplers_to_s01_data_fifo_ARLOCK = S_AXI_arlock;
   assign s01_couplers_to_s01_data_fifo_ARPROT = S_AXI_arprot[2:0];
   assign s01_couplers_to_s01_data_fifo_ARQOS = S_AXI_arqos[3:0];
   assign s01_couplers_to_s01_data_fifo_ARREGION = S_AXI_arregion[3:0];
@@ -6521,7 +6521,7 @@ module s01_couplers_imp_TMBZ15
   assign s01_couplers_to_s01_data_fifo_AWCACHE = S_AXI_awcache[3:0];
   assign s01_couplers_to_s01_data_fifo_AWID = S_AXI_awid[0];
   assign s01_couplers_to_s01_data_fifo_AWLEN = S_AXI_awlen[7:0];
-  assign s01_couplers_to_s01_data_fifo_AWLOCK = S_AXI_awlock[0];
+  assign s01_couplers_to_s01_data_fifo_AWLOCK = S_AXI_awlock;
   assign s01_couplers_to_s01_data_fifo_AWPROT = S_AXI_awprot[2:0];
   assign s01_couplers_to_s01_data_fifo_AWQOS = S_AXI_awqos[3:0];
   assign s01_couplers_to_s01_data_fifo_AWREGION = S_AXI_awregion[3:0];
@@ -6750,7 +6750,7 @@ module s02_couplers_imp_ILKESR
   input [3:0]S_AXI_arcache;
   input [0:0]S_AXI_arid;
   input [7:0]S_AXI_arlen;
-  input [0:0]S_AXI_arlock;
+  input S_AXI_arlock;
   input [2:0]S_AXI_arprot;
   input [3:0]S_AXI_arqos;
   output S_AXI_arready;
@@ -6761,7 +6761,7 @@ module s02_couplers_imp_ILKESR
   input [3:0]S_AXI_awcache;
   input [0:0]S_AXI_awid;
   input [7:0]S_AXI_awlen;
-  input [0:0]S_AXI_awlock;
+  input S_AXI_awlock;
   input [2:0]S_AXI_awprot;
   input [3:0]S_AXI_awqos;
   output S_AXI_awready;
@@ -6790,7 +6790,7 @@ module s02_couplers_imp_ILKESR
   wire [3:0]s02_couplers_to_s02_data_fifo_ARCACHE;
   wire [0:0]s02_couplers_to_s02_data_fifo_ARID;
   wire [7:0]s02_couplers_to_s02_data_fifo_ARLEN;
-  wire [0:0]s02_couplers_to_s02_data_fifo_ARLOCK;
+  wire s02_couplers_to_s02_data_fifo_ARLOCK;
   wire [2:0]s02_couplers_to_s02_data_fifo_ARPROT;
   wire [3:0]s02_couplers_to_s02_data_fifo_ARQOS;
   wire s02_couplers_to_s02_data_fifo_ARREADY;
@@ -6801,7 +6801,7 @@ module s02_couplers_imp_ILKESR
   wire [3:0]s02_couplers_to_s02_data_fifo_AWCACHE;
   wire [0:0]s02_couplers_to_s02_data_fifo_AWID;
   wire [7:0]s02_couplers_to_s02_data_fifo_AWLEN;
-  wire [0:0]s02_couplers_to_s02_data_fifo_AWLOCK;
+  wire s02_couplers_to_s02_data_fifo_AWLOCK;
   wire [2:0]s02_couplers_to_s02_data_fifo_AWPROT;
   wire [3:0]s02_couplers_to_s02_data_fifo_AWQOS;
   wire s02_couplers_to_s02_data_fifo_AWREADY;
@@ -6904,7 +6904,7 @@ module s02_couplers_imp_ILKESR
   assign s02_couplers_to_s02_data_fifo_ARCACHE = S_AXI_arcache[3:0];
   assign s02_couplers_to_s02_data_fifo_ARID = S_AXI_arid[0];
   assign s02_couplers_to_s02_data_fifo_ARLEN = S_AXI_arlen[7:0];
-  assign s02_couplers_to_s02_data_fifo_ARLOCK = S_AXI_arlock[0];
+  assign s02_couplers_to_s02_data_fifo_ARLOCK = S_AXI_arlock;
   assign s02_couplers_to_s02_data_fifo_ARPROT = S_AXI_arprot[2:0];
   assign s02_couplers_to_s02_data_fifo_ARQOS = S_AXI_arqos[3:0];
   assign s02_couplers_to_s02_data_fifo_ARSIZE = S_AXI_arsize[2:0];
@@ -6914,7 +6914,7 @@ module s02_couplers_imp_ILKESR
   assign s02_couplers_to_s02_data_fifo_AWCACHE = S_AXI_awcache[3:0];
   assign s02_couplers_to_s02_data_fifo_AWID = S_AXI_awid[0];
   assign s02_couplers_to_s02_data_fifo_AWLEN = S_AXI_awlen[7:0];
-  assign s02_couplers_to_s02_data_fifo_AWLOCK = S_AXI_awlock[0];
+  assign s02_couplers_to_s02_data_fifo_AWLOCK = S_AXI_awlock;
   assign s02_couplers_to_s02_data_fifo_AWPROT = S_AXI_awprot[2:0];
   assign s02_couplers_to_s02_data_fifo_AWQOS = S_AXI_awqos[3:0];
   assign s02_couplers_to_s02_data_fifo_AWSIZE = S_AXI_awsize[2:0];

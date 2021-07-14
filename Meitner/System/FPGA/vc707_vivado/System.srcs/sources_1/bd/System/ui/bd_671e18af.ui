@@ -1,12 +1,12 @@
 {
    "ActiveEmotionalView":"Default View",
-   "Default View_ScaleFactor":"0.322988",
-   "Default View_TopLeft":"-313,-576",
+   "Default View_ScaleFactor":"1.38468",
+   "Default View_TopLeft":"355,-25",
    "ExpandedHierarchyInLayout":"",
    "guistr":"# # String gsaved with Nlview 7.0r6  2020-01-29 bk=1.5227 VDI=41 GEI=36 GUI=JA:10.0 non-TLS
 #  -string -flagsOSRD
 preplace port pcie -pg 1 -lvl 10 -x 3160 -y 360 -defaultsOSRD
-preplace port pcie_diff_clock -pg 1 -lvl 0 -x -170 -y 170 -defaultsOSRD
+preplace port pcie_diff_clock -pg 1 -lvl 0 -x -170 -y 150 -defaultsOSRD
 preplace port ddr3 -pg 1 -lvl 10 -x 3160 -y 740 -defaultsOSRD
 preplace port sys_clk -pg 1 -lvl 0 -x -170 -y 770 -defaultsOSRD
 preplace port port-id_sys_rst -pg 1 -lvl 0 -x -170 -y 790 -defaultsOSRD
@@ -21,63 +21,63 @@ preplace port port-id_HDMI_VSYNC -pg 1 -lvl 10 -x 3160 -y 570 -defaultsOSRD
 preplace port port-id_HDMI_SPDIF -pg 1 -lvl 10 -x 3160 -y 610 -defaultsOSRD
 preplace port port-id_I2C_SDA -pg 1 -lvl 10 -x 3160 -y 490 -defaultsOSRD
 preplace portBus HDMI_DATA -pg 1 -lvl 10 -x 3160 -y 590 -defaultsOSRD
-preplace inst MSI_Generator_0 -pg 1 -lvl 3 -x 790 -y 330 -defaultsOSRD
-preplace inst hdmi_controller_0 -pg 1 -lvl 9 -x 2960 -y 510 -defaultsOSRD
-preplace inst dut_wrapper_0 -pg 1 -lvl 7 -x 2320 -y 270 -defaultsOSRD
 preplace inst axi_apb_bridge_0 -pg 1 -lvl 6 -x 2050 -y 240 -defaultsOSRD
 preplace inst from_pcie -pg 1 -lvl 5 -x 1750 -y 220 -defaultsOSRD
-preplace inst to_memory -pg 1 -lvl 8 -x 2620 -y 210 -defaultsOSRD
+preplace inst to_memory -pg 1 -lvl 8 -x 2630 -y 210 -defaultsOSRD
 preplace inst AXI_PCIe -pg 1 -lvl 4 -x 1270 -y 120 -defaultsOSRD
-preplace inst DDR3_SDRAM -pg 1 -lvl 9 -x 2960 -y 800 -defaultsOSRD
+preplace inst DDR3_SDRAM -pg 1 -lvl 9 -x 2970 -y 800 -defaultsOSRD
 preplace inst pcie_reset_0 -pg 1 -lvl 2 -x 380 -y 580 -defaultsOSRD
 preplace inst bus_reset_0 -pg 1 -lvl 4 -x 1270 -y 660 -defaultsOSRD
 preplace inst PCIe_diff_clk_I -pg 1 -lvl 3 -x 790 -y 150 -defaultsOSRD
 preplace inst util_vector_logic_0 -pg 1 -lvl 1 -x 20 -y 620 -defaultsOSRD
-preplace netloc reset_1 1 0 9 NJ 790 NJ 790 NJ 790 NJ 790 NJ 790 NJ 790 NJ 790 NJ 790 2770J
-preplace netloc DDR3_SDRAM_ui_clk 1 3 7 1050 400 1540 400 1910 320 2190 360 2460 410 2810 700 3100
-preplace netloc DDR3_SDRAM_ui_clk_sync_rst 1 1 9 210 450 NJ 450 1030 560 NJ 560 NJ 560 NJ 560 NJ 560 2800J 670 3110
-preplace netloc rst_DDR3_SDRAM_200M_peripheral_aresetn 1 4 5 1530 430 1920 330 2200 370 2470 430 2790
-preplace netloc rst_DDR3_SDRAM_200M_interconnect_aresetn 1 4 4 NJ 680 NJ 680 NJ 680 2450
-preplace netloc util_vector_logic_0_Res 1 1 3 190 480 NJ 480 960
-preplace netloc DDR3_SDRAM_mmcm_locked 1 0 10 -140 760 NJ 760 NJ 760 NJ 760 1540J 690 NJ 690 NJ 690 NJ 690 NJ 690 3120
-preplace netloc AXI_PCIe_axi_ctl_aclk_out 1 1 4 200 20 NJ 20 1030J 300 1470
-preplace netloc pcie_perstn_1 1 0 4 NJ 550 180 470 NJ 470 1000J
-preplace netloc S00_ARESETN_1 1 2 6 550 30 1000 320 1520 60 NJ 60 NJ 60 2440
-preplace netloc hdmi_controller_0_I2C_nRST 1 9 1 NJ 450
-preplace netloc Net 1 9 1 NJ 470
+preplace inst dut_wrapper_0 -pg 1 -lvl 7 -x 2320 -y 270 -defaultsOSRD
+preplace inst hdmi_controller_0 -pg 1 -lvl 9 -x 2970 -y 510 -defaultsOSRD
+preplace inst MSI_Generator_0 -pg 1 -lvl 3 -x 790 -y 330 -defaultsOSRD
+preplace netloc ARESETN_1 1 2 3 570 220 1000J 270 1490J
+preplace netloc AXI_PCIe_INTX_MSI_Grant 1 2 3 580 30 1030J 280 1450
+preplace netloc AXI_PCIe_MSI_enable 1 2 3 590 40 1010J 290 1440
+preplace netloc AXI_PCIe_axi_aclk_out 1 2 6 610 50 980J 330 1510 380 NJ 380 NJ 380 2480
+preplace netloc AXI_PCIe_axi_ctl_aclk_out 1 1 4 200 20 NJ 20 1020J 300 1470
+preplace netloc AXI_PCIe_mmcm_lock 1 0 5 -140 440 NJ 440 NJ 440 NJ 440 1460
+preplace netloc DDR3_SDRAM_mmcm_locked 1 0 10 -130 760 NJ 760 NJ 760 NJ 760 1550J 690 NJ 690 NJ 690 NJ 690 NJ 690 3130
+preplace netloc DDR3_SDRAM_ui_clk 1 3 7 1050 400 1550 400 1910 320 2180 350 2430 0 2820 700 3110
+preplace netloc DDR3_SDRAM_ui_clk_sync_rst 1 1 9 210 450 NJ 450 1030 560 NJ 560 NJ 560 NJ 560 NJ 560 2800J 670 3120
 preplace netloc HDMI_INTR_1 1 0 9 NJ 470 170J 460 NJ 460 NJ 460 NJ 460 NJ 460 NJ 460 NJ 460 2800J
+preplace netloc MSI_Generator_0_MSI_NUM 1 3 1 990 150n
+preplace netloc MSI_Generator_0_MSI_REQ 1 3 1 950 130n
+preplace netloc Net 1 9 1 NJ 470
+preplace netloc Net1 1 9 1 NJ 490
+preplace netloc PCIe_diff_clk_I_IBUF_OUT 1 3 1 1000 140n
+preplace netloc S00_ARESETN_1 1 2 6 560 60 970 320 1530 50 NJ 50 NJ 50 2460
+preplace netloc dut_wrapper_0_INTR 1 2 6 600 70 940J 420 NJ 420 NJ 420 NJ 420 2420
 preplace netloc hdmi_controller_0_HDMI_CLK 1 9 1 NJ 510
+preplace netloc hdmi_controller_0_HDMI_DATA 1 9 1 NJ 590
 preplace netloc hdmi_controller_0_HDMI_DE 1 9 1 NJ 530
 preplace netloc hdmi_controller_0_HDMI_HSYNC 1 9 1 NJ 550
-preplace netloc hdmi_controller_0_HDMI_VSYNC 1 9 1 NJ 570
-preplace netloc hdmi_controller_0_HDMI_DATA 1 9 1 NJ 590
 preplace netloc hdmi_controller_0_HDMI_SPDIF 1 9 1 NJ 610
-preplace netloc AXI_PCIe_axi_aclk_out 1 2 6 600 60 970J 330 1500 380 NJ 380 2180J 350 2430
-preplace netloc ARESETN_1 1 2 3 560 220 990J 270 1490J
-preplace netloc Net1 1 9 1 NJ 490
-preplace netloc hdmi_controller_0_INTR 1 2 8 610 80 960J 310 1480J 0 NJ 0 NJ 0 NJ 0 NJ 0 3110
-preplace netloc dut_wrapper_0_INTR 1 2 6 590 70 940J 410 NJ 410 NJ 410 NJ 410 2420
-preplace netloc PCIe_diff_clk_I_IBUF_OUT 1 3 1 990 140n
-preplace netloc MSI_Generator_0_MSI_NUM 1 3 1 980 150n
-preplace netloc MSI_Generator_0_MSI_REQ 1 3 1 950 130n
-preplace netloc AXI_PCIe_mmcm_lock 1 0 5 -150 440 NJ 440 NJ 440 NJ 440 1460
-preplace netloc AXI_PCIe_INTX_MSI_Grant 1 2 3 570 40 1020J 280 1450
-preplace netloc AXI_PCIe_MSI_enable 1 2 3 580 50 1010J 290 1440
-preplace netloc axi4_0_M00_AXI 1 8 1 2820 200n
-preplace netloc hdmi_controller_0_M_AXI 1 7 3 2470 10 NJ 10 3100
+preplace netloc hdmi_controller_0_HDMI_VSYNC 1 9 1 NJ 570
+preplace netloc hdmi_controller_0_I2C_nRST 1 9 1 NJ 450
+preplace netloc hdmi_controller_0_INTR 1 2 8 620 80 960J 310 1480J -10 NJ -10 NJ -10 NJ -10 NJ -10 3120
+preplace netloc pcie_perstn_1 1 0 4 NJ 550 180 470 NJ 470 1000J
+preplace netloc reset_1 1 0 9 -150J 430 NJ 430 550J 810 NJ 810 NJ 810 NJ 810 NJ 810 NJ 810 NJ
+preplace netloc rst_DDR3_SDRAM_200M_interconnect_aresetn 1 4 4 1500J 60 NJ 60 NJ 60 2450
+preplace netloc rst_DDR3_SDRAM_200M_peripheral_aresetn 1 4 5 1540 410 1920 330 2190 390 2470 420 2790
+preplace netloc util_vector_logic_0_Res 1 1 3 190 480 NJ 480 960
+preplace netloc AXI_PCIe_M_AXI 1 4 1 1520 30n
+preplace netloc AXI_PCIe_pcie_7x_mgt 1 4 6 1470 -20 NJ -20 NJ -20 NJ -20 NJ -20 3130J
+preplace netloc DDR3_SDRAM_DDR3 1 9 1 3140J 740n
+preplace netloc SYS_CLK_1 1 0 9 NJ 770 NJ 770 NJ 770 NJ 770 NJ 770 NJ 770 NJ 770 NJ 770 2780J
+preplace netloc axi4_0_M00_AXI 1 8 1 2810 200n
+preplace netloc axi_apb_bridge_0_APB_M 1 6 3 2170 410 NJ 410 2830J
+preplace netloc axi_apb_bridge_0_APB_M2 1 6 1 N 250
+preplace netloc dut_wrapper_0_M_AXI 1 7 1 2440 110n
 preplace netloc from_pcie_M00_AXI 1 5 3 1900 70 NJ 70 NJ
 preplace netloc from_pcie_M01_AXI 1 5 1 N 220
-preplace netloc axi_apb_bridge_0_APB_M 1 6 3 2170 480 NJ 480 NJ
-preplace netloc axi_apb_bridge_0_APB_M2 1 6 1 N 250
-preplace netloc dut_wrapper_0_M_AXI 1 7 1 2420 110n
-preplace netloc to_memory_M01_AXI 1 3 6 1040 420 NJ 420 NJ 420 NJ 420 NJ 420 2790
 preplace netloc from_pcie_M02_AXI 1 3 3 1050 390 NJ 390 1900
-preplace netloc AXI_PCIe_M_AXI 1 4 1 1510 30n
-preplace netloc AXI_PCIe_pcie_7x_mgt 1 4 6 1470 -10 NJ -10 NJ -10 NJ -10 NJ -10 3120J
-preplace netloc pcie_diff_clk_1 1 0 3 -150J 150 NJ 150 NJ
-preplace netloc DDR3_SDRAM_DDR3 1 9 1 3130J 740n
-preplace netloc SYS_CLK_1 1 0 9 NJ 770 NJ 770 NJ 770 NJ 770 NJ 770 NJ 770 NJ 770 NJ 770 2780J
-levelinfo -pg 1 -170 20 380 790 1270 1750 2050 2320 2620 2960 3160
+preplace netloc hdmi_controller_0_M_AXI 1 7 3 2470 10 NJ 10 3110
+preplace netloc pcie_diff_clk_1 1 0 3 NJ 150 NJ 150 NJ
+preplace netloc to_memory_M01_AXI 1 3 6 1040 430 NJ 430 NJ 430 NJ 430 NJ 430 2780
+levelinfo -pg 1 -170 20 380 790 1270 1750 2050 2320 2630 2970 3160
 pagesize -pg 1 -db -bbox -sgen -320 -30 3330 900
 "
 }
