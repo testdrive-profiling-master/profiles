@@ -375,7 +375,7 @@ void cstring::Replace(const char* sSearch, const char* sReplace, bool bRecursive
 				iPos	+= iReplaceLen;
 			}
 
-			if(bRecursive) iPos = 0;
+			if(!bRecursive) break;
 		}
 	}
 }
