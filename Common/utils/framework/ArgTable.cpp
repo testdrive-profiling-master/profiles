@@ -89,14 +89,19 @@ bool ArgTable::DoParse(int argc, const char** argv)
 	if(m_ArgList.size() > 0) {
 		m_ArgList.push_back(arg_end(20));
 
-		if(argc == 1 || ((arg_lit*)m_ArgList[0])->count) {	// --help option
-			ShowHelp();
+		if(arg_parse(argc, (char**)argv, &m_ArgList.front()) > 0) {
+			if(argc == 1 || GetOption("help")) {
+				goto SHOW_HELP;
+			}
+
+			arg_print_errors(stdout, (struct arg_end*)(m_ArgList[m_ArgList.size() - 1]), m_sExecuteFile.c_str());
+			printf("Try '%s --help' for more information.\n", m_sExecuteFile.c_str());
 			return false;
 		}
 
-		if(arg_parse(argc, (char**)argv, &m_ArgList.front()) > 0) {
-			arg_print_errors(stdout, (struct arg_end*)(m_ArgList[m_ArgList.size() - 1]), m_sExecuteFile.c_str());
-			printf("Try '%s --help' for more information.\n", m_sExecuteFile.c_str());
+		if(argc == 1 || GetOption("help")) {	// --help option
+		SHOW_HELP:
+			ShowHelp();
 			return false;
 		}
 
