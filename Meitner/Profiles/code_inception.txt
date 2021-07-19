@@ -1,8 +1,7 @@
 //================================================================================__CHECK__
 //__CHECK__ Copyright (c) 2013 ~ __YEAR__. HyungKi Jeong(clonextop@gmail.com)
-//__CHECK__ All rights reserved.
-//__CHECK__ 
-//__CHECK__ The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+//__CHECK__ Freely available under the terms of the 3-Clause BSD License
+//__CHECK__ (https://opensource.org/licenses/BSD-3-Clause)
 //__CHECK__ 
 //__CHECK__ Redistribution and use in source and binary forms,
 //__CHECK__ with or without modification, are permitted provided
