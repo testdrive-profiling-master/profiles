@@ -32,7 +32,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 6/14/2021 Mon (clonextop@gmail.com)
+// Rev.  : 7/19/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #include "ArgTable.h"
 #include "argtable3/src/argtable3.h"
@@ -89,14 +89,14 @@ bool ArgTable::DoParse(int argc, const char** argv)
 	if(m_ArgList.size() > 0) {
 		m_ArgList.push_back(arg_end(20));
 
-		if(arg_parse(argc, (char**)argv, &m_ArgList.front()) > 0) {
-			arg_print_errors(stdout, (struct arg_end*)(m_ArgList[m_ArgList.size() - 1]), m_sExecuteFile.c_str());
-			printf("Try '%s --help' for more information.\n", m_sExecuteFile.c_str());
+		if(argc == 1 || ((arg_lit*)m_ArgList[0])->count) {	// --help option
+			ShowHelp();
 			return false;
 		}
 
-		if(argc == 1 || ((arg_lit*)m_ArgList[0])->count) {	// --help option
-			ShowHelp();
+		if(arg_parse(argc, (char**)argv, &m_ArgList.front()) > 0) {
+			arg_print_errors(stdout, (struct arg_end*)(m_ArgList[m_ArgList.size() - 1]), m_sExecuteFile.c_str());
+			printf("Try '%s --help' for more information.\n", m_sExecuteFile.c_str());
 			return false;
 		}
 
@@ -165,7 +165,8 @@ void ArgTable::AddOptionDouble(const char* sName, int fDefaultValue, const char*
 
 void ArgTable::AddOptionString(const char* sName, const char* sDefaultValue, const char* sOptShort, const char* sOptLong, const char* sDataType, const char* sGlossary)
 {
-	struct arg_str* pArg = arg_str0(sOptShort, sOptLong, sDataType, sGlossary);
+	bool	bOption	= (sOptShort != NULL) || (sOptLong != NULL) || (sDefaultValue != NULL);
+	struct arg_str* pArg = bOption ? arg_str0(sOptShort, sOptLong, sDataType, sGlossary) : arg_str1(sOptShort, sOptLong, sDataType, sGlossary);
 
 	if(sDefaultValue) {
 		static list<string>	__cache;
@@ -182,7 +183,8 @@ void ArgTable::AddOptionString(const char* sName, const char* sDefaultValue, con
 
 void ArgTable::AddOptionFile(const char* sName, const char* sDefaultValue, const char* sOptShort, const char* sOptLong, const char* sDataType, const char* sGlossary)
 {
-	struct arg_file* pArg = arg_file0(sOptShort, sOptLong, sDataType, sGlossary);
+	bool	bOption	= (sOptShort != NULL) || (sOptLong != NULL) || (sDefaultValue != NULL);
+	struct arg_file* pArg = bOption ? arg_file0(sOptShort, sOptLong, sDataType, sGlossary) : arg_file1(sOptShort, sOptLong, sDataType, sGlossary);
 
 	if(sDefaultValue) {
 		static list<string>	__cache;
@@ -199,7 +201,8 @@ void ArgTable::AddOptionFile(const char* sName, const char* sDefaultValue, const
 
 void ArgTable::AddOptionFiles(const char* sName, const char* sOptShort, const char* sOptLong, const char* sDataType, const char* sGlossary)
 {
-	struct arg_file* pArg = arg_filen(sOptShort, sOptLong, sDataType, 0, ArgumentSize(), sGlossary);
+	bool	bOption	= (sOptShort != NULL) || (sOptLong != NULL);
+	struct arg_file* pArg = arg_filen(sOptShort, sOptLong, sDataType, bOption ? 0 : 1, ArgumentSize(), sGlossary);
 	m_MapList[sName]	= ARG_DATA{ARG_TYPE_FILE, pArg};
 	m_ArgList.push_back(pArg);
 }
