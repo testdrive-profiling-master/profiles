@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,8 +30,8 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Meitner processor v1.1
-// Rev.  : 6/18/2021 Fri (clonextop@gmail.com)
+// Title : MTSP(Multi-thread Stream Processor) 'Meitner' v1.1
+// Rev.  : 7/20/2021 Tue (clonextop@gmail.com)
 //================================================================================
 `include "DUTs/MTSP/includes.vh"
 `define NO_TEST_DESIGN		// overriding test top design

@@ -30,7 +30,7 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Meitner processor v1.1
+// Title : MTSP(Multi-thread Stream Processor) 'Meitner' v1.1
 // Rev.  : 7/20/2021 Tue (clonextop@gmail.com)
 //================================================================================
 `ifndef __MTSP_DEFINES__				// rid of Warnning (Duplicated definition)
@@ -39,10 +39,6 @@
 `include "system_defines.vh"
 	
 // Processor Configuration ---------------------------------------------------
-`ifndef MEITNER_CORE_SIZE
-`define	MEITNER_CORE_SIZE		4		// default core size
-`endif
-	
 `ifndef MEITNER_GPRs_SIZE
 `define	MEITNER_GPRs_SIZE		128		// max 128 entries
 `endif

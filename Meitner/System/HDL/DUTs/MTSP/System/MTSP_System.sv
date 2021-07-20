@@ -30,13 +30,13 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Meitner processor v1.1
+// Title : MTSP(Multi-thread Stream Processor) 'Meitner' v1.1
 // Rev.  : 7/20/2021 Tue (clonextop@gmail.com)
 //================================================================================
 `include "MTSP_Defines.vh"
 
 module MTSP_System #(
-	parameter	CORE_SIZE			= `MEITNER_CORE_SIZE,	// multi-core size
+	parameter	CORE_SIZE			= 4,					// multi-core size
 	parameter	COMMAND_QUEUE_DEPTH	= 6						// command queue depth
 ) (
 	// System
@@ -49,6 +49,7 @@ module MTSP_System #(
 	// external control interface
 	output	[`RANGE_DWORD]			VIDEO_BASE				// base address of screen
 );
+// synopsys template
 
 // definition & assignment ---------------------------------------------------
 // External instruction registers interface

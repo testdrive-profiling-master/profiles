@@ -30,7 +30,7 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Meitner processor v1.1
+// Title : MTSP(Multi-thread Stream Processor) 'Meitner' v1.1
 // Rev.  : 7/20/2021 Tue (clonextop@gmail.com)
 //================================================================================
 `include "MTSP_Defines.vh"
@@ -51,6 +51,7 @@ module MTSP_Command #(
 	output	reg						CACHE_LUT_CLEAR,	// cache LUT clear
 	output	reg [`RANGE_DWORD]		VIDEO_BASE			// screen base address
 );
+// synopsys template
 
 // definition & assignment ---------------------------------------------------
 reg		[7:0]					q_WCOUNT;				// command write count
