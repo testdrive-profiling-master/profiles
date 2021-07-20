@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 7/20/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "hw/MTSP.h"
@@ -52,6 +51,13 @@ TESTBENCH_DESIGN {
 			return FALSE;
 
 		m_pMTSP		= new MTSP(m_pDDK);
+		{
+			// report status
+			MTSP_STATUS	status;
+			status.all	= m_pMTSP->RegRead(0);
+			printf("MTSP core size    : %d\n", status.core_size);
+			printf("Command FiFo size : %d\n", 1 << status.cmd_fifo_depth);
+		}
 		m_pMTSP->SetClock(300.f);			// set processor clock to 300MHz (High speed.) for performance
 		{
 			// initialize HDMI buffer

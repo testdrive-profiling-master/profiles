@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,12 +31,13 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Meitner processor v1.1
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 7/20/2021 Tue (clonextop@gmail.com)
 //================================================================================
 `include "MTSP_Defines.vh"
 
 module MTSP_Command #(
-	parameter	QUEUE_DEPTH			= 6					// command queue bit depth
+	parameter	CORE_SIZE			= 1,				// core size
+	parameter	QUEUE_DEPTH			= 5					// command queue bit depth(2^N, default 32 entries)
 ) (
 	// System
 	input							CLK, nRST,			// main clock & reset
@@ -61,11 +61,12 @@ wire							q_FULL, q_EMPTY;
 wire	[3:0]					q_CMD;					// Q command id
 wire	[`RANGE_DWORD]			q_DATA;					// Q command data
 
-wire							q_EN		= (~q_WAIT) & (~q_EMPTY);
-wire	[7:0]					q_DEPTH		= QUEUE_DEPTH;		// current command queue bit depth
+wire							q_EN					= (~q_WAIT) & (~q_EMPTY);
+wire	[3:0]					q_DEPTH					= QUEUE_DEPTH;		// current command queue bit depth
+wire	[7:0]					q_CORE_SIZE				= CORE_SIZE;
 
 assign	bus_slave.ready			= ~q_FULL | (bus_slave.en & (~bus_slave.we));
-assign	bus_slave.rdata			= {q_WCOUNT, q_RCOUNT, q_DEPTH, 4'b0, q_FULL, q_EMPTY, mem_command.en, BUSY};	// command status
+assign	bus_slave.rdata			= {q_CORE_SIZE, q_WCOUNT, q_RCOUNT, q_DEPTH, q_FULL, q_EMPTY, mem_command.en, BUSY};	// command status
 
 `ifdef USE_TESTDRIVE
 `DPI_FUNCTION void MTSP_WriteCommand(input int iCommand, input int unsigned dwData);
@@ -75,7 +76,7 @@ assign	bus_slave.rdata			= {q_WCOUNT, q_RCOUNT, q_DEPTH, 4'b0, q_FULL, q_EMPTY, 
 `endif
 
 // implementation ------------------------------------------------------------
-// command queue 64 entries
+// command queue entries
 FiFo #(
 	.FIFO_DEPTH		(QUEUE_DEPTH),
 	.DATA_WIDTH		((`SIZE_DWORD+4))

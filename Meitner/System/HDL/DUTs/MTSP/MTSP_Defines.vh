@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Meitner processor v1.1
-// Rev.  : 2/3/2021 Wed (clonextop@gmail.com)
+// Rev.  : 7/20/2021 Tue (clonextop@gmail.com)
 //================================================================================
 `ifndef __MTSP_DEFINES__				// rid of Warnning (Duplicated definition)
 //----------------------------------------------------------------------------
@@ -114,12 +113,7 @@
 `define RANGE_DATA4D_XYZ		`MSB_DATA4D_X:`LSB_DATA4D_Z
 */
 
-// Redefine
 `define SIGN_DATA				`MSB_DATA
-`define	SIGN_DATA4D_X			`MSB_DATA4D_X
-`define	SIGN_DATA4D_Y			`MSB_DATA4D_Y
-`define	SIGN_DATA4D_Z			`MSB_DATA4D_Z
-`define	SIGN_DATA4D_W			`MSB_DATA4D_W
 
 //----------------------------------------------------------------------------
 // Threads
