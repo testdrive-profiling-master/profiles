@@ -1,0 +1,9 @@
+TOP_DESIGN	= 1_basics.v
+TOP_DESIGN	= 2_signal.v
+	OPTION	= USER_VALUE=d1
+	OPTION	= USER_VALUE=d2
+	OPTION	= USER_VALUE=d3
+	OPTION	= USER_VALUE=hA13D
+TOP_DESIGN	= 3_simple_counter.v
+TOP_DESIGN	= 4_sim_counter.v
+TOP_DESIGN	= 5_APB_bus.v

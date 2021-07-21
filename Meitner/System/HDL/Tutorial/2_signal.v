@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 7/21/2021 Wed (clonextop@gmail.com)
 //================================================================================
 module top (
 	input							MCLK,			// clock
@@ -42,20 +41,13 @@ module top (
 );
 
 // definition & assignment ---------------------------------------------------
-int		count;
-
-assign	BUSY	= count < 100;
+assign	BUSY	= 0;
 assign	INTR	= 0;
 
-// implementation ------------------------------------------------------------
+wire	[31:0]	VALUE_A	= 3;	// assigned
+wire	[31:0]	VALUE_B;		// un-assigned (random variable)
+wire	[31:0]	VALUE_C	= 32'`USER_VALUE;
 
-always@(posedge MCLK, negedge nRST) begin
-	if(!nRST) begin
-		count	= 0;
-	end
-	else begin
-		count++;
-	end
-end
+// implementation ------------------------------------------------------------
 
 endmodule

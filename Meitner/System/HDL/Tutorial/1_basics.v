@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,70 +31,19 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 7/21/2021 Wed (clonextop@gmail.com)
 //================================================================================
-`include "system_defines.vh"
-
-// testbench example...
 module top (
 	input							MCLK,			// clock
 	input							nRST,			// reset (active low)
-	output	reg						BUSY,			// processor is busy
+	output							BUSY,			// processor is busy
 	output							INTR			// interrupt signal
 );
 
 // definition & assignment ---------------------------------------------------
-int		sim_count;
-
+assign	BUSY	= 0;
 assign	INTR	= 0;
 
-reg		[31:0]		A, B;
-wire	[31:0]		O	= A + B;
-
 // implementation ------------------------------------------------------------
-// timing counter
-always@(posedge MCLK, negedge nRST) begin
-	if(!nRST) begin
-		sim_count	= 0;
-	end
-	else begin
-		sim_count++;
-	end
-end
-`define ON_TIME(t)	if(sim_count==t)
-
-// testbench example
-always@(posedge MCLK, negedge nRST) begin
-	if(!nRST) begin
-		A		<= 'd0;
-		B		<= 'd0;
-		BUSY	<= `TRUE;
-	end
-	else begin
-		`ON_TIME(2) begin
-			A		<= 'd1;
-			B		<= 'd2;
-		end
-		`ON_TIME(3) begin
-			A		<= 'd3;
-			B		<= 'd4;
-		end
-		`ON_TIME(4) begin
-			A		<= 'd5;
-			B		<= 'd6;
-		end
-		`ON_TIME(5) begin
-			A		<= 'd7;
-			B		<= 'd8;
-		end
-		`ON_TIME(6) begin
-			A		<= 'd9;
-			B		<= 'd10;
-		end
-		`ON_TIME(7) begin
-			BUSY	<= `FALSE;
-		end
-	end
-end
 
 endmodule

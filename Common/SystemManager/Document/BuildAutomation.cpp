@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System manager
-// Rev.  : 4/30/2021 Fri (clonextop@gmail.com)
+// Rev.  : 7/21/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #include "BuildAutomation.h"
 #include "Utils.h"
@@ -295,10 +294,10 @@ RETRY_BUILD:
 			{
 				// run verilator
 				CString sArgs(sArgument);
-				TCHAR	sTopFile[1024];
-				TCHAR	sDefines[1024];
-				GetEnvironmentVariable(_T("SIM_TOP_FILE"), sTopFile, 1024);
-				GetEnvironmentVariable(_T("SIM_DEFINITION"), sDefines, 1024);
+				TCHAR	sTopFile[1024 * 32];
+				TCHAR	sDefines[1024 * 32];
+				GetEnvironmentVariable(_T("SIM_TOP_FILE"), sTopFile, 1024 * 32);
+				GetEnvironmentVariable(_T("SIM_DEFINITION"), sDefines, 1024 * 32);
 				sArgs.AppendFormat(_T(" %s"), sDefines);
 
 				if(g_pSystem->VerilatorCompile(sTopFile, sProjectPath, sArgs)) {

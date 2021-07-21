@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,51 +31,30 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 6/26/2021 Sat (clonextop@gmail.com)
+// Rev.  : 7/21/2021 Wed (clonextop@gmail.com)
 //================================================================================
-`include "system_defines.vh"
-`include "template/testdrive_apb_slave_bfm.sv"
-
-// testbench example...
 module top (
 	input							MCLK,			// clock
 	input							nRST,			// reset (active low)
-	output	reg						BUSY,			// processor is busy
+	output							BUSY,			// processor is busy
 	output							INTR			// interrupt signal
 );
 
 // definition & assignment ---------------------------------------------------
+int		count;
 
-assign	BUSY	= 0;
+assign	BUSY	= count < 100;
 assign	INTR	= 0;
 
-wire							APB_PSEL;
-wire							APB_PENABLE;
-wire							APB_PWRITE;
-wire	[10-1:0]				APB_PADDR;
-wire	[`RANGE_DWORD]			APB_PWDATA;
-wire	[3:0]					APB_PSTRB;
-wire	[`RANGE_DWORD]			APB_PRDATA	= 32'h12345678;
-wire							APB_PREADY	= `TRUE;
-wire							APB_PSLVERR	= `FALSE;
-
 // implementation ------------------------------------------------------------
-testdrive_apb_slave_bfm #(
-	.C_BUS_TITLE	("Test"),
-	.C_BASE_ADDR	(32'h12300000),
-	.C_ADDR_BITS	(10)
-) apb (
-	.CLK			(MCLK),
-	.nRST			(nRST),
-	.PSEL			(APB_PSEL),
-	.PENABLE		(APB_PENABLE),
-	.PWRITE			(APB_PWRITE),
-	.PADDR			(APB_PADDR),
-	.PWDATA			(APB_PWDATA),
-	.PSTRB			(APB_PSTRB),
-	.PRDATA			(APB_PRDATA),
-	.PREADY			(APB_PREADY),
-	.PSLVERR		(APB_PSLVERR)
-);
+
+always@(posedge MCLK, negedge nRST) begin
+	if(!nRST) begin
+		count	= 0;
+	end
+	else begin
+		count++;
+	end
+end
 
 endmodule
