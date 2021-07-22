@@ -1,8 +1,7 @@
 ﻿//================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,23 +30,23 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Meitner processor register map document
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Title : Starter Kit document
+// Rev.  : 7/22/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #include "LocaleString.h"
 
 LOCALE_DEFINE(3, LANG_KOREAN, LANG_JAPANESE, LANG_ENGLISH)
 
 LOCALE_TEXT(DOCUMENT_TITLE,
-	_T("레지스터 맵"),
-	_T("レジスタマップ"),
-	_T("Register map"))
+			_T("FPGA Starter Kit"),
+			_T("FPGAスターターキット"),
+			_T("FPGA 스타터 키트"))
 LOCALE_TEXT(SEARCH_RECENT_USE,
-	_T("최근 사용 추적"),
-	_T("最近使用状況を追跡"),
-	_T("Track recent usage"))
+			_T("최근 사용 추적"),
+			_T("最近使用状況を追跡"),
+			_T("Track recent usage"))
 LOCALE_TEXT(GOTO_LATEST,
-	_T("최근 명령"),
-	_T("最近コマンド"),
-	_T("latest command"))
+			_T("최근 명령"),
+			_T("最近コマンド"),
+			_T("latest command"))
 LOCALE_END

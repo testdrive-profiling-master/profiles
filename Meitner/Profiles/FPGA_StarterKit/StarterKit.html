@@ -6,55 +6,88 @@
 		@import url(StarterKit.css);
 	</style>
 	<script type="application/javascript">
-		var sun = new Image();
-		var moon = new Image();
-		var earth = new Image();
-		function init(){
-		  sun.src = 'img/Canvas_sun.png';
-		  moon.src = 'img/Canvas_moon.png';
-		  earth.src = 'img/Canvas_earth.png';
-		  setInterval(draw, 30);
-		}
-
-		function draw() {
-		  var ctx = document.getElementById('canvas').getContext('2d');
-
-		  ctx.globalCompositeOperation = 'destination-over';
-		  ctx.clearRect(0,0,300,300); // 캔버스를 비운다
-
-		  ctx.fillStyle = 'rgba(0,0,0,0.4)';
-		  ctx.strokeStyle = 'rgba(0,153,255,0.4)';
-		  ctx.save();
-		  ctx.translate(150,150);
-
-		  // 지구
-		  var time = new Date();
-		  ctx.rotate( ((2*Math.PI)/60)*time.getSeconds() + ((2*Math.PI)/60000)*time.getMilliseconds() );
-		  ctx.translate(105,0);
-		  ctx.fillRect(0,-12,50,24); // Shadow
-		  ctx.drawImage(earth,-12,-12);
-
-		  // 달
-		  ctx.save();
-		  ctx.rotate( ((2*Math.PI)/6)*time.getSeconds() + ((2*Math.PI)/6000)*time.getMilliseconds() );
-		  ctx.translate(0,28.5);
-		  ctx.drawImage(moon,-3.5,-3.5);
-		  ctx.restore();
-
-		  ctx.restore();
-
-		  ctx.beginPath();
-		  ctx.arc(150,150,105,0,Math.PI*2,false); // 지구 궤도
-		  ctx.stroke();
-
-		  ctx.drawImage(sun,0,0,300,300);
-		}
 	</script>
 </head>
-<body onload="init();">
+<body>
 	<div class="canvas_outer">
 		<div class="canvas_inner">
-			<canvas id="canvas" width="300" height="300"></canvas>
+			<canvas id="canvas" width="300" height="300">Your browser doesn't support canvas.</canvas>
+			<script>
+				(function() {
+					var	htmlCanvas	= document.getElementById('canvas');
+					var	ctx			= htmlCanvas.getContext('2d');
+					var sun			= new Image();
+					var moon		= new Image();
+					var earth		= new Image();
+
+				   initialize();
+
+				   function initialize() {
+				   		sun.src		= 'img/Canvas_sun.png';
+						moon.src	= 'img/Canvas_moon.png';
+						earth.src	= 'img/Canvas_earth.png';
+			
+						window.addEventListener('resize', resizeCanvas, false);
+						resizeCanvas();
+						setInterval(redraw, 30);
+					}
+
+					// Display custom canvas. In this case it's a blue, 5 pixel 
+					// border that resizes along with the browser window.
+					function redraw() {
+						ctx.save();
+						ctx.globalCompositeOperation = 'destination-over';
+						ctx.clearRect(0, 0, htmlCanvas.width, htmlCanvas.height); // 캔버스를 비운다
+
+						ctx.fillStyle = 'rgba(0,0,0,0.4)';
+						ctx.strokeStyle = 'rgba(0,153,255,0.4)';
+						ctx.save();
+						ctx.translate(150,150);
+
+						// 지구
+						var time = new Date();
+						ctx.rotate( ((2*Math.PI)/60)*time.getSeconds() + ((2*Math.PI)/60000)*time.getMilliseconds() );
+						ctx.translate(105,0);
+						ctx.fillRect(0,-12,50,24); // Shadow
+						ctx.drawImage(earth,-12,-12);
+
+						// 달
+						ctx.save();
+						ctx.rotate( ((2*Math.PI)/6)*time.getSeconds() + ((2*Math.PI)/6000)*time.getMilliseconds() );
+						ctx.translate(0,28.5);
+						ctx.drawImage(moon,-3.5,-3.5);
+						ctx.restore();
+
+						ctx.restore();
+
+						ctx.beginPath();
+						ctx.arc(150,150,105,0,Math.PI*2,false); // 지구 궤도
+						ctx.stroke();
+
+						ctx.drawImage(sun,0,0,300,300);
+						ctx.restore();
+						
+						ctx.strokeStyle = 'blue';
+						ctx.lineWidth = '5';
+						ctx.strokeRect(0, 0, window.innerWidth, window.innerHeight);
+						ctx.beginPath();
+						ctx.moveTo(0, 0);
+						ctx.lineTo(window.innerWidth, window.innerHeight);
+						ctx.lineTo(window.innerWidth, 0);
+						ctx.lineTo(0, window.innerHeight);
+						ctx.stroke();
+					}
+
+					// Runs each time the DOM window resize event fires.
+					// Resets the canvas dimensions to match window,
+					// then draws the new borders accordingly.
+					function resizeCanvas() {
+						htmlCanvas.width	= window.innerWidth;
+						htmlCanvas.height	= window.innerHeight;
+						redraw();
+					}
+				})();
+			</script>
 		</div>
 	</div>
 </body>

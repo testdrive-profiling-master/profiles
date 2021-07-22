@@ -27,6 +27,7 @@ profile.call		"%TESTDRIVE_PROFILE%\\common\\VirtualDisplay\\initialize.sp"	// vi
 // Project Profiles
 profile.call		"Profiles\\ALUTest\\initialize.sp"						// ALU test
 profile.call		"Profiles\\RegisterMap\\initialize.sp"					// register map
+profile.call		"Profiles\\FPGA_StarterKit\\initialize.sp"				// FPGA Starter kit
 profile.call		"Profiles\\common\\initialize.sp"						// build archive
 profile.call		"Application\\Example\\initialize.sp"					// Examples
 profile.call		"Documents\\SystemMap\\initialize.sp"					// documents
