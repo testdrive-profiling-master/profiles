@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System manager
-// Rev.  : 7/21/2021 Wed (clonextop@gmail.com)
+// Rev.  : 7/22/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #include "System.h"
 #include "Utils.h"
@@ -343,7 +343,8 @@ void System::UpdateEnvironments(void)
 				CString sTok	= m_sSimDefinition.Tokenize(_T(";, "), pos);
 
 				if(pos >= 0) {
-					sEnv.AppendFormat((sTok.GetAt(0) == _T('-')) ? _T(" %s") : _T(" -D%s"), (LPCTSTR)sTok);
+					TCHAR	ch = sTok.GetAt(0);
+					sEnv.AppendFormat((ch == _T('-') || ch == _T('\"')) ? _T(" %s") : _T(" -D%s"), (LPCTSTR)sTok);
 				} else break;
 			}
 
