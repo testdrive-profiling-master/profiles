@@ -8,6 +8,8 @@ PRESERVE_RESULT	:= 1
 
 SRCS			:= \
 	$(wildcard $(SRC_PATH)/argtable3/src/*.c) \
+	$(wildcard $(SRC_PATH)/pugixml/*.cpp) \
+	$(wildcard $(SRC_PATH)/minizip/*.cpp) \
 	$(wildcard $(SRC_PATH)/*.cpp)
 
 

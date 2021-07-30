@@ -33,45 +33,85 @@
 // Title : utility framework
 // Rev.  : 7/30/2021 Fri (clonextop@gmail.com)
 //================================================================================
-#ifndef __TEXT_FILE_H__
-#define __TEXT_FILE_H__
-#include "Common.h"
+#ifndef __DOC_EXCEL_H__
+#define __DOC_EXCEL_H__
+#include "DocDocument.h"
 
-class TextFile {
-public:
-	TextFile(void);
-	virtual ~TextFile(void);
+class DocExcel;
 
-	bool Open(const char* sFileName);
-	bool Create(const char* sFileName);
-	void Close(void);
-
-	off64_t Offset(void);
-	void SetOffset(off64_t offset, int base = SEEK_SET);
-	void Puts(const char* sStr);
-	const char* Gets(bool bUseComment = false);
-	void Write(const char* sFormat, ...);
-	bool GetLine(cstring& sLine, bool bUseComment = false);
-	void GetAll(cstring& sContents, bool bUseComment = false);
-	inline string& FileName(void)	{
-		return m_sFileName;
-	}
-	inline int LineNumber(void) 	{
-		return m_iLineNumber;
-	}
-	inline bool IsOpen(void)		{
-		return m_fp != NULL;
-	}
-	inline bool IsEOF(void)			{
-		return feof(m_fp) != 0;
-	}
-
+class DocExcelSheet : public DocXML {
+	friend class DocExcel;
 protected:
-	FILE*					m_fp;
-	string					m_sFileName;
-	bool					m_bWrite;
-	bool					m_bComment;
-	int						m_iLineNumber;
+	DocExcelSheet(const char* sName, DocExcel* pExcel, pugi::xml_node node);
+	virtual ~DocExcelSheet(void);
+	void OnSave(void);
+
+public:
+	void SetPosition(const char* sPos);
+	void SetPos(int x, int y);
+	string GetPosition(void);
+	inline int GetPosX(void)	{
+		return m_CurPos.x;
+	}
+	inline int GetPosY(void)	{
+		return m_CurPos.y;
+	}
+
+	bool GetRow(bool bAutoCreate = false);
+	bool GetColumn(bool bAutoCreate = false);
+
+	bool IsEmpty(void);
+	string GetValue(void);
+	bool SetInt(int iValue);
+	bool SetDouble(double fValue);
+	bool SetString(const char* sValue);
+	bool SetFunction(const char* sFunction);
+
+	const char* GetName(void) const	{
+		return m_sName.c_str();
+	}
+	void SetName(const char* sName)	{
+		m_sName	= sName;
+	}
+
+private:
+	DocExcel*			m_pExcel;
+	DocXML				m_SheetData;
+	DocXML				m_Row, m_Column;
+	string				m_sName;
+	bool				m_bRecompute;
+	struct {
+		int				sx, sy;
+		int				ex, ey;
+	} m_Dimension;
+	struct {
+		int				x, y;
+	} m_CurPos, m_Origin;
 };
 
-#endif// __TEXT_FILE_H__
+class DocExcel : public DocFile {
+public:
+	DocExcel(void);
+	virtual ~DocExcel(void);
+
+	const char* GetString(int iIndex);
+	int GetStringIndex(const char* sStr, bool bAutoAppend = true);
+	int GetSheetCount(void);
+	DocExcelSheet* GetSheet(const char* sSheetName);
+	DocExcelSheet* GetSheetByIndex(int iIndex);
+
+protected:
+	virtual bool OnOpen(void);
+	virtual void OnClose(void);
+	virtual bool OnSave(void);
+
+private:
+	DocXML						m_Sheets;
+	map<string, DocExcelSheet*>	m_SheetMap;
+
+	DocXML						m_Relationships;
+	DocXML						m_SharedStrings;
+	vector<string>				m_StringTable;
+};
+
+#endif//__DOC_EXCEL_H__

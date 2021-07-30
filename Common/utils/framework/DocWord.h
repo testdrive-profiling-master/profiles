@@ -33,45 +33,30 @@
 // Title : utility framework
 // Rev.  : 7/30/2021 Fri (clonextop@gmail.com)
 //================================================================================
-#ifndef __TEXT_FILE_H__
-#define __TEXT_FILE_H__
-#include "Common.h"
+#ifndef __DOC_WORD_H__
+#define __DOC_WORD_H__
+#include "DocDocument.h"
 
-class TextFile {
+class DocWord : public DocFile {
 public:
-	TextFile(void);
-	virtual ~TextFile(void);
-
-	bool Open(const char* sFileName);
-	bool Create(const char* sFileName);
-	void Close(void);
-
-	off64_t Offset(void);
-	void SetOffset(off64_t offset, int base = SEEK_SET);
-	void Puts(const char* sStr);
-	const char* Gets(bool bUseComment = false);
-	void Write(const char* sFormat, ...);
-	bool GetLine(cstring& sLine, bool bUseComment = false);
-	void GetAll(cstring& sContents, bool bUseComment = false);
-	inline string& FileName(void)	{
-		return m_sFileName;
-	}
-	inline int LineNumber(void) 	{
-		return m_iLineNumber;
-	}
-	inline bool IsOpen(void)		{
-		return m_fp != NULL;
-	}
-	inline bool IsEOF(void)			{
-		return feof(m_fp) != 0;
-	}
+	DocWord(void);
+	virtual ~DocWord(void);
+	void Modify(map<string, string>* pMod);
+	bool ReplaceImage(const char* sDesc, const char* sFileName);
+	bool ReplaceSubDocument(const char* sPrevName, const char* sFileName);
 
 protected:
-	FILE*					m_fp;
-	string					m_sFileName;
-	bool					m_bWrite;
-	bool					m_bComment;
-	int						m_iLineNumber;
+	virtual bool OnOpen(void);
+	virtual void OnClose(void);
+	virtual bool OnSave(void);
+
+
+private:
+	DocXML					m_Body;
+	DocXML					m_Relationships;
+	DocXML					m_ContentsType;
+	map<string, string>		m_ImageMap;
+	map<string, string>		m_OLEObjectMap;
 };
 
-#endif// __TEXT_FILE_H__
+#endif//__DOC_WORD_H__

@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,8 +30,8 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Common profiles
-// Rev.  : 6/14/2021 Mon (clonextop@gmail.com)
+// Title : utility framework
+// Rev.  : 7/30/2021 Fri (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "cstring.h"
@@ -664,9 +663,11 @@ int cstring::CheckFileExtension(const char** sExtList)
 	return -1;
 }
 
-bool cstring::GetEnvironment(const char* sKey){
+bool cstring::GetEnvironment(const char* sKey)
+{
 	if(sKey) {
 		const char* sVal = getenv(sKey);
+
 		if(sVal) {
 			m_sStr	= sVal;
 			return true;
@@ -674,19 +675,23 @@ bool cstring::GetEnvironment(const char* sKey){
 			m_sStr.clear();
 		}
 	}
+
 	return false;
 }
 
-bool cstring::SetEnvironment(const char* sKey){
+bool cstring::SetEnvironment(const char* sKey)
+{
 	if(sKey) {
 		{
 			cstring sKeyName(sKey);
-			if(sKeyName.find(" ") >=0) return false;
+
+			if(sKeyName.find(" ") >= 0) return false;
 		}
 		cstring sEnv;
 		sEnv.Format("%s=%s", sKey, m_sStr.c_str());
 		putenv(sEnv);
 		return true;
 	}
+
 	return false;
 }
