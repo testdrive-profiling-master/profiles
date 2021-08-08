@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System manager
-// Rev.  : 7/21/2021 Wed (clonextop@gmail.com)
+// Rev.  : 8/8/2021 Sun (clonextop@gmail.com)
 //================================================================================
 #include "BuildAutomation.h"
 #include "Utils.h"
@@ -129,7 +129,7 @@ void BuildAutomation::DoCheck(DWORD command, LPCTSTR sFileName)
 				sName.Find(_T(".java"), sName.GetLength() - 5) > 0 ||
 				sName.Find(_T(".inl"), sName.GetLength() - 4) > 0)) {
 				CString sArg;
-				CString sAstylePath	= g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_DIR%bin\\msys64\\mingw64\\bin\\AStyle.exe"));
+				CString sAstylePath	= g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_DIR%bin\\msys64\\ucrt64\\bin\\AStyle.exe"));
 				sArg.Format(_T("%s \"%s\""), m_sAStyle, sFileName);
 				g_pSystem->ExecuteFile(sAstylePath, sArg, TRUE, NULL, NULL, NULL);
 			} else if(m_siStyle.GetAt(0) && m_siStyle.GetAt(0) != ' ' &&
@@ -423,7 +423,7 @@ BOOL BuildAutomation::CppCheck(LPCTSTR lpszPath)
 	sIncTestDrivePath	= g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_DIR%include"));
 	sArg.Format(_T("-I %s -I %s --std=c++11 --suppress=preprocessorErrorDirective --suppress=unknownMacro --inline-suppr --force %s"), (LPCTSTR)sIncCommonPath, (LPCTSTR)sIncTestDrivePath, lpszPath);
 
-	if(g_pSystem->ExecuteFile(_T("%TESTDRIVE_DIR%bin\\msys64\\mingw64\\bin\\CppCheck.exe"), sArg.c_str(), TRUE, NULL, g_pSystem->GetProjectPath(),
+	if(g_pSystem->ExecuteFile(_T("%TESTDRIVE_DIR%bin\\msys64\\ucrt64\\bin\\CppCheck.exe"), sArg.c_str(), TRUE, NULL, g_pSystem->GetProjectPath(),
 							  _T(": error:"), -1,
 							  _T(": information:"), 2,
 							  NULL) < 0) {

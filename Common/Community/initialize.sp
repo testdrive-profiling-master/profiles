@@ -6,7 +6,7 @@ profile.tree "Community" {
 }
 
 profile.tree "System" {
-	profile ("MinGW Shell",			"%TESTDRIVE_DIR%bin\\msys64\\mingw64.exe");
+	profile ("MinGW Shell",			"%TESTDRIVE_DIR%bin\\ucrt64\\mingw64.exe");
 }
 
 profile.call		"testdrive_wiki.sp"
