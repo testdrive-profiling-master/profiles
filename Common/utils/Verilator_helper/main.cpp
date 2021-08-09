@@ -50,7 +50,7 @@ int main(int argc, const char* argv[])
 		}
 	}
 	{	// get verilator path
-		sExe.Format("%sbin/msys64/mingw64/bin", sTestDrivePath.c_str());
+		sExe.Format("%sbin/msys64/ucrt64/bin", sTestDrivePath.c_str());
 		sExe.SetEnvironment("VERILATOR_ROOT");
 		sExe += "/verilator";
 	}
