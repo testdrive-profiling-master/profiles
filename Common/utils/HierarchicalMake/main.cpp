@@ -142,6 +142,11 @@ bool LoopSearchPath(const char* sPath)
 		{
 			cstring	sCommand;
 			sCommand.Format(_T("mingw32-make %s"), __env.sArg);
+
+			if(sCommand.find(" clean") >=0) {	// "make clean"
+				sCommand.insert(0, "start /B ");
+			}
+
 			fflush(stdout);
 			__env.iErrorCode = system(sCommand);
 			fflush(stdout);
@@ -166,7 +171,7 @@ int main(int argc, const char* argv[])
 
 	if(!CheckParams(argc - 1, &argv[1])) {
 		LOGE("Option check is failed!");
-		return 0;
+		return 1;
 	}
 
 	if(!*__env.sRootPath) {
