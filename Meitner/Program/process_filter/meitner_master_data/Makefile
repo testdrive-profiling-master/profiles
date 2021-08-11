@@ -2,7 +2,8 @@
 # Project
 #-------------------------------------------------
 SRC_PATH		:= .
-TARGETPATH		:= ..
+TARGETPATH		:= .
+INSTALL_PATH	:= ..
 TARGETNAME		:= meitner_data
 
 SRCS			:= \
