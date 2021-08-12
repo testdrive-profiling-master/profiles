@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
+// Rev.  : 8/12/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_HDL_H__
 #define __SIM_HDL_H__
@@ -49,6 +48,7 @@ struct SimControl {
 	virtual BUS_SLAVE_INTERFACE* CreateSlave(DWORD dwAddrBase, DWORD dwAddrHigh) = 0;
 	virtual BUS_SLAVE_INTERFACE* FindSlave(DWORD dwAddress) = 0;
 	virtual CLOCK_INTERFACE* CreateClock(BYTE* pCLK, BYTE* pRST) = 0;
+	virtual CLOCK_INTERFACE* FindClock(BYTE* pCLK) = 0;
 	virtual BOOL AwakeInterrupt(void) = 0;	// TRUE(Awaked), FALSE(Pending)
 	virtual void SetMemoryBaseAddress(DWORD dwAddress) = 0;
 	virtual void MemoryRead32(int iID, DWORD dwAddress, DWORD& dwData) = 0;

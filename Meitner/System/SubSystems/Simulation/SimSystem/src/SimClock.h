@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
+// Rev.  : 8/12/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_CLOCK_H__
 #define __SIM_CLOCK_H__
@@ -41,14 +40,15 @@
 #include "AutoList.h"
 
 class SimClock :
-		public CLOCK_INTERFACE,
-		public AutoList<SimClock>
-{
+	public CLOCK_INTERFACE,
+	public AutoList<SimClock> {
 public:
 	SimClock(BYTE* pCLK, BYTE* pRST);
 	virtual ~SimClock(void);
 
-	static BOOL IsReset(void){return m_bReset;}
+	static BOOL IsReset(void) {
+		return m_bReset;
+	}
 
 	static void Tik(void);		// Tiking clock (before the evaluation)
 	static DWORD Tok(void);		// Toking clock (after the evaluation)
@@ -56,6 +56,13 @@ public:
 	virtual void SetParameters(DWORD dwID, DWORD dwPeriod, BYTE bInitValue = 0, DWORD dwPhase = 0, BYTE ClockPolarity = 1, BYTE ResetPolarity = 0);
 	virtual void DoReset(DWORD dwCycles = 8);
 	virtual void Release(void);
+
+	inline BYTE* CLK(void) {
+		return m_pCLK;
+	}
+	inline BYTE* RST(void) {
+		return m_pRST;
+	}
 
 protected:
 	static void Refresh(void);	// refresh clock list

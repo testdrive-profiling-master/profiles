@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 8/12/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "SimClock.h"
@@ -158,4 +157,17 @@ void SimClock::Refresh(void)
 CLOCK_INTERFACE* SimEngine::CreateClock(BYTE* pCLK, BYTE* pRST)
 {
 	return new SimClock(pCLK, pRST);
+}
+
+CLOCK_INTERFACE* SimEngine::FindClock(BYTE* pCLK)
+{
+	SimClock*	pNode	= SimClock::Head();
+
+	while(pNode) {
+		if(pNode->CLK() == pCLK) return pNode;
+
+		pNode	= pNode->Next();
+	}
+
+	return NULL;
 }

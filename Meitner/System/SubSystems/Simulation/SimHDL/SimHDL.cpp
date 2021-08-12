@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
+// Rev.  : 8/12/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
 #include "TestDriver.inl"
@@ -55,6 +54,10 @@ VerilatedVcdC*	g_pWaveDump				= NULL;
 VerilatedVcdGTKWave*	g_pGtkWave		= NULL;
 #endif
 UINT64			g_lTraceStartTime		= 0;
+#endif
+
+#ifndef DEFAULT_HALF_CLOCK_PERIOD
+#define DEFAULT_HALF_CLOCK_PERIOD		5000		// 5000ps = 5ns = 10ns clock cycle = 100MHz
 #endif
 
 class SimHDL_imp : public SimHDL {
@@ -150,7 +153,7 @@ public:
 		{
 			// make default clock, reset & busy
 			CLOCK_INTERFACE*	pClock	= g_pSimControl->CreateClock(&g_pSimTop->MCLK, &g_pSimTop->nRST);
-			pClock->SetParameters(0, 5000);	// set half clock period to 5ns
+			pClock->SetParameters(0, DEFAULT_HALF_CLOCK_PERIOD);	// set half clock period
 			pClock->DoReset();
 			g_pSimControl->SimulationAddBusy(&g_pSimTop->BUSY);
 		}
@@ -235,6 +238,11 @@ BUS_SLAVE_INTERFACE* CreateSlave(DWORD dwAddrBase, DWORD dwAddrHigh)
 BUS_SLAVE_INTERFACE* FindSlave(DWORD dwAddress)
 {
 	return g_pSimControl->FindSlave(dwAddress);
+}
+
+CLOCK_INTERFACE* FindClock(BYTE* pCLK)
+{
+	return g_pSimControl->FindClock(pCLK);
 }
 
 void MemoryRead32(int ID, unsigned int ADDR, unsigned int* DATA)

@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
+// Rev.  : 8/12/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __DPI_INTERFACES_H__
 #define __DPI_INTERFACES_H__
@@ -41,10 +40,10 @@
 //-----------------------------------------------------------------------
 // Slave bus interface
 //-----------------------------------------------------------------------
-typedef struct{
+typedef struct {
 	DWORD		dwAddr;
 	DWORD		dwData;
-}BUS_SALVE_PACKET;
+} BUS_SALVE_PACKET;
 
 struct BUS_SLAVE_INTERFACE {
 	virtual BOOL RequestWrite(DWORD dwAddr, DWORD dwData) = 0;
@@ -70,5 +69,7 @@ struct CLOCK_INTERFACE {
 	virtual void DoReset(DWORD dwCycles = 8) = 0;
 	virtual void Release(void) = 0;
 };
+
+CLOCK_INTERFACE* FindClock(BYTE* pCLK);
 
 #endif//__DPI_INTERFACES_H__
