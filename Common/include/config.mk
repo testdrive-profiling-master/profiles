@@ -63,7 +63,11 @@ ifdef CROSS
 endif
 
 ifeq ($(EXTRA_CFLAGS),)
+ifdef USE_DEBUG
+	EXTRA_CFLAGS	:= -O0 -std=c++11 -DDEBUG -g
+else
 	EXTRA_CFLAGS	:= -O3 -std=c++11 -DNDEBUG
+endif
 endif
 
 ifneq ($(BUILD_TARGET), $(TARGET_EXE))
