@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Code Analysis
-// Rev.  : 3/8/2021 Mon (clonextop@gmail.com)
+// Rev.  : 10/15/2021 Fri (clonextop@gmail.com)
 //================================================================================
 #include "CodeAnalysis.h"
 #include "testdrive_document.inl"
@@ -219,11 +218,18 @@ const char* Log_StaticAnalysis(LPCTSTR lpszLog, int iID)
 				if(sLast) {
 					CString	strLast(sLast);
 					*sLast	= _T('\0');
-					CString sLink((LPCTSTR)str);
-					ChangeToWorkPath(sLink);
+					CString sLink(str);
 					{
-						// seperate argument
-						int iPos = sLink.ReverseFind(_T(':'));
+						int iPos = str.Find(':');
+
+						if(iPos < 0 || iPos > 1) {
+							sLink.Format(_T("%s/%s"), (LPCTSTR)g_sCurrentDir, (LPCTSTR)str);
+							sLink = g_pSystem->RetrieveFullPath(sLink);
+							sLink.Replace(_T("\\"), _T("/"));
+						}
+
+						// separate argument
+						iPos = sLink.ReverseFind(_T(':'));
 
 						if(iPos != -1) {
 							iPos = sLink.ReverseFind(_T(":"), iPos - 1);
@@ -289,10 +295,12 @@ const char* Log_StaticAnalysis(LPCTSTR lpszLog, int iID)
 
 					if(str.Find(':') >= 0)
 						sLink = str;
-					else
+					else {
 						sLink.Format(_T("%s/%s"), (LPCTSTR)g_sCurrentDir, (LPCTSTR)str);
+						sLink = g_pSystem->RetrieveFullPath(sLink);
+						sLink.Replace(_T("\\"), _T("/"));
+					}
 
-					ChangeToWorkPath(sLink);
 					sLink.Insert(0, _T("edit:"));
 					pReport->SetLink(sLink);
 				}

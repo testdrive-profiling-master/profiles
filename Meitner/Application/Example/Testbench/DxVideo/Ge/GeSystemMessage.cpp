@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 10/15/2021 Fri (clonextop@gmail.com)
 //================================================================================
 #include "GeSystemMessage.h"
 
@@ -122,7 +121,7 @@ DWORD CGeSystemMessage::GetColor(DWORD index)
 	DWORD color = m_dwColor[index];
 
 	if(m_dwTime[index] < 256) color |= (m_dwTime[index] << 24);
-	else color |= (0xFF << 24);
+	else color |= ((DWORD)0xFF << 24);
 
 	return color;
 }
