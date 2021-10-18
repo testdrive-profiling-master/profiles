@@ -10,7 +10,7 @@ SRCS			:= \
 	$(wildcard $(SRC_PATH)/src/*.cpp) \
 	$(wildcard $(SRC_PATH)/*.cpp)
 
-LIBDIR			:= -L$(LIBPATH) -lSimHDL -lgomp
+LIBDIR			:= -L$(LIBPATH) -lSimHDL -lgomp -lngspice
 INC				:= -I. -Isrc -I../../../../Application/include -I../../../HDL/dpi
 
 CDEFS			:= -DSYSTEM_IMPLEMENTATION -DSIMLIB_EXPORTS -DUSE_TESTDRIVE
