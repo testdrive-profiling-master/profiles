@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 10/18/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #include "MMCM.h"
 #include <math.h>
@@ -182,9 +181,10 @@ void MMCM::SetDivide(DWORD dwNum)
 	MMCM_DIVREG	reg;
 	assert(dwNum != 0);
 	assert(dwNum <= 80);
-	reg.all		= 0;
-	reg.hiTime	= dwNum / 2;
-	reg.lowTime	= dwNum - reg.hiTime;
+	reg.all			= 0;
+	reg.hiTime		= dwNum / 2;
+	WORD	lowTime	= dwNum - reg.hiTime;
+	reg.lowTime		= lowTime;
 
 	if(!reg.hiTime) {
 		reg.no_count	= 1;
@@ -205,7 +205,8 @@ void MMCM::SetOutputDivide(DWORD dwID, DWORD dwNum)
 	reg.all			= 0;
 	reg.m1.RESERVED	= 1;
 	reg.m1.hiTime	= dwNum / 2;
-	reg.m1.lowTime	= dwNum - reg.m1.hiTime;
+	WORD	lowTime	= dwNum - reg.m1.hiTime;
+	reg.m1.lowTime	= lowTime;
 
 	if(!reg.m1.hiTime) {
 		reg.m2.no_count		= 1;
