@@ -44,12 +44,12 @@ cstring::cstring(void)
 
 cstring::cstring(const string& s)
 {
-	m_sStr	= s.c_str();
+	if(s.c_str()) m_sStr	= s.c_str();
 }
 
 cstring::cstring(const char* s)
 {
-	m_sStr	= s;
+	if(s) m_sStr	= s;
 }
 
 cstring::~cstring(void)
@@ -628,12 +628,13 @@ void cstring::AppendFormat(const char* sFormat, ...)
 
 void cstring::Set(const char* sStr)
 {
-	m_sStr	= sStr;
+	if(sStr) m_sStr	= sStr;
+	else m_sStr.clear();
 }
 
 void cstring::Append(const char* sStr)
 {
-	m_sStr	+= sStr;
+	if(sStr) m_sStr	+= sStr;
 }
 
 int cstring::CheckFileExtension(const char** sExtList)
