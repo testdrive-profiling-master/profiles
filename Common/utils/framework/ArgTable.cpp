@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 7/30/2021 Fri (clonextop@gmail.com)
+// Rev.  : 10/20/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #include "ArgTable.h"
 #include "argtable3/src/argtable3.h"
@@ -54,6 +54,9 @@ void ArgTable::Release(void)
 		m_ArgList.clear();
 		m_MapList.clear();
 	}
+
+	m_DefaultList.opt_file.clear();
+	m_DefaultList.opt_string.clear();
 }
 
 void ArgTable::SetExecuteFileName(const char* sName)
@@ -153,7 +156,6 @@ void ArgTable::AddOptionInt(const char* sName, int iDefaultValue, const char* sO
 {
 	struct arg_int* pArg = arg_int0(sOptShort, sOptLong, sDataType, sGlossary);
 	pArg->ival[0]		= iDefaultValue;
-	pArg->hdr.maxcount	= 1;
 	m_MapList[sName]	= ARG_DATA{ARG_TYPE_INT, pArg};
 	m_ArgList.push_back(pArg);
 }
@@ -162,7 +164,6 @@ void ArgTable::AddOptionDouble(const char* sName, int fDefaultValue, const char*
 {
 	struct arg_dbl* pArg = arg_dbl0(sOptShort, sOptLong, sDataType, sGlossary);
 	pArg->dval[0]		= fDefaultValue;
-	pArg->hdr.maxcount	= 1;
 	m_MapList[sName]	= ARG_DATA{ARG_TYPE_DOUBLE, pArg};
 	m_ArgList.push_back(pArg);
 }
@@ -173,14 +174,9 @@ void ArgTable::AddOptionString(const char* sName, const char* sDefaultValue, con
 	struct arg_str* pArg = bOption ? arg_str0(sOptShort, sOptLong, sDataType, sGlossary) : arg_str1(sOptShort, sOptLong, sDataType, sGlossary);
 
 	if(sDefaultValue) {
-		static list<string>	__cache;
-		__cache.push_back(sDefaultValue);
-		pArg->sval[0]		= (__cache.back()).c_str();
-	} else {
-		pArg->sval[0]		= NULL;
+		m_DefaultList.opt_string[sName]	= sDefaultValue;
 	}
 
-	pArg->hdr.maxcount	= 1;
 	m_MapList[sName]	= ARG_DATA{ARG_TYPE_STRING, pArg};
 	m_ArgList.push_back(pArg);
 }
@@ -191,14 +187,9 @@ void ArgTable::AddOptionFile(const char* sName, const char* sDefaultValue, const
 	struct arg_file* pArg = bOption ? arg_file0(sOptShort, sOptLong, sDataType, sGlossary) : arg_file1(sOptShort, sOptLong, sDataType, sGlossary);
 
 	if(sDefaultValue) {
-		static list<string>	__cache;
-		__cache.push_back(sDefaultValue);
-		pArg->filename[0]		= (__cache.back()).c_str();
-	} else {
-		pArg->filename[0]		= NULL;
+		m_DefaultList.opt_file[sName]	= sDefaultValue;
 	}
 
-	pArg->hdr.maxcount	= 1;
 	m_MapList[sName]	= ARG_DATA{ARG_TYPE_FILE, pArg};
 	m_ArgList.push_back(pArg);
 }
@@ -225,11 +216,13 @@ void ArgTable::ShowHelp(void)
 
 bool ArgTable::GetOption(const char* sName)
 {
-	ARG_DATA	arg_data	= m_MapList[sName];
+	if(m_MapList.count(sName)) {
+		ARG_DATA	arg_data	= m_MapList[sName];
 
-	if(arg_data.type == ARG_TYPE_OPT) {
-		struct arg_lit* pArg = (struct arg_lit*)arg_data.pArg;
-		return (pArg->count > 0);
+		if(arg_data.type == ARG_TYPE_OPT) {
+			struct arg_lit* pArg = (struct arg_lit*)arg_data.pArg;
+			return (pArg->count > 0);
+		}
 	}
 
 	return false;
@@ -237,10 +230,12 @@ bool ArgTable::GetOption(const char* sName)
 
 int ArgTable::GetOptionInt(const char* sName)
 {
-	ARG_DATA	arg_data	= m_MapList[sName];
+	if(m_MapList.count(sName)) {
+		ARG_DATA	arg_data	= m_MapList[sName];
 
-	if(arg_data.type == ARG_TYPE_INT) {
-		return ((struct arg_int*)arg_data.pArg)->ival[0];
+		if(arg_data.type == ARG_TYPE_INT) {
+			return ((struct arg_int*)arg_data.pArg)->ival[0];
+		}
 	}
 
 	return -1;
@@ -248,10 +243,12 @@ int ArgTable::GetOptionInt(const char* sName)
 
 double ArgTable::GetOptionDouble(const char* sName)
 {
-	ARG_DATA	arg_data	= m_MapList[sName];
+	if(m_MapList.count(sName)) {
+		ARG_DATA	arg_data	= m_MapList[sName];
 
-	if(arg_data.type == ARG_TYPE_DOUBLE) {
-		return ((struct arg_dbl*)arg_data.pArg)->dval[0];
+		if(arg_data.type == ARG_TYPE_DOUBLE) {
+			return ((struct arg_dbl*)arg_data.pArg)->dval[0];
+		}
 	}
 
 	return (double) -1;
@@ -259,10 +256,14 @@ double ArgTable::GetOptionDouble(const char* sName)
 
 const char* ArgTable::GetOptionString(const char* sName)
 {
-	ARG_DATA	arg_data	= m_MapList[sName];
+	if(m_MapList.count(sName)) {
+		ARG_DATA	arg_data	= m_MapList[sName];
 
-	if(arg_data.type == ARG_TYPE_STRING) {
-		return ((struct arg_str*)arg_data.pArg)->sval[0];
+		if(arg_data.type == ARG_TYPE_STRING) {
+			return ((struct arg_str*)arg_data.pArg)->sval[0];
+		} else if(m_DefaultList.opt_string.count(sName)) {
+			return m_DefaultList.opt_string[sName].c_str();
+		}
 	}
 
 	return NULL;
@@ -271,13 +272,17 @@ const char* ArgTable::GetOptionString(const char* sName)
 
 const char* ArgTable::GetOptionFile(const char* sName, int iIndex)
 {
-	ARG_DATA	arg_data	= m_MapList[sName];
+	if(m_MapList.count(sName)) {
+		ARG_DATA	arg_data	= m_MapList[sName];
 
-	if(arg_data.type == ARG_TYPE_FILE) {
-		struct arg_file* pArg = (struct arg_file*)arg_data.pArg;
+		if(arg_data.type == ARG_TYPE_FILE) {
+			struct arg_file* pArg = (struct arg_file*)arg_data.pArg;
 
-		if(iIndex < pArg->count) {
-			return pArg->filename[iIndex];
+			if(iIndex < pArg->count) {
+				return pArg->filename[iIndex];
+			} else if(m_DefaultList.opt_file.count(sName)) {
+				return m_DefaultList.opt_file[sName].c_str();
+			}
 		}
 	}
 

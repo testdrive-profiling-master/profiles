@@ -100,6 +100,7 @@ clean:
 ifndef PRESERVE_RESULT
 	@$(RM) -f $(BUILD_TARGET)
 endif
+	@echo Cleanup is done.
 
 distclean: clean
 ifdef SRCS_ENCRYPTED

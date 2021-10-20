@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,8 +30,8 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Common profiles
-// Rev.  : 6/14/2021 Mon (clonextop@gmail.com)
+// Title : utility framework
+// Rev.  : 10/20/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __ARG_TABLE_H__
 #define __ARG_TABLE_H__
@@ -93,6 +92,10 @@ private:
 	cstring					m_sVersion;
 	vector<void*>			m_ArgList;
 	map<string, ARG_DATA>	m_MapList;
+	struct {
+		map<string, string>		opt_file;
+		map<string, string>		opt_string;
+	} m_DefaultList;
 };
 
 #endif//__ARG_TABLE_H__
