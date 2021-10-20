@@ -78,6 +78,11 @@ endif
 
 OPTFLAGS		:= -w -Wall -Wextra -m64 -mfpmath=sse -mieee-fp -mmmx -msse -msse2
 CFLAGS			:= $(CFLAGS) $(OPTFLAGS) $(INCDIR) $(EXTRA_CFLAGS)
+CPPFLAGS		:= $(CFLAGS)
+CFLAGS			:= $(subst -std=c++11,,$(CFLAGS))
+CFLAGS			:= $(subst -std=c++14,,$(CFLAGS))
+CFLAGS			:= $(subst -std=c++17,,$(CFLAGS))
+CFLAGS			:= $(subst -std=c++20,,$(CFLAGS))
 ARFLAGS			:= crv
 CDEFS			:= $(CDEFS) -D__int64="long long" -DWIN32 -D_WIN32 -DWIN64 -D_WIN64
 
@@ -119,12 +124,12 @@ static:
 
 %.d: %.cpp
 	@echo '- Dependency... : $<'
-	@$(CXX) -M $(CDEFS) $(CFLAGS) -Weffc++ $(INC) $< > $@; \
+	@$(CXX) -M $(CDEFS) $(CPPFLAGS) -Weffc++ $(INC) $< > $@; \
 	sed -e 's,[^.]*.o:,$*.o:,g' -i $@
 
 %.d: %.cc
 	@echo '- Dependency... : $<'
-	@$(CXX) -M $(CDEFS) $(CFLAGS) -Weffc++ $(INC) $< > $@; \
+	@$(CXX) -M $(CDEFS) $(CPPFLAGS) -Weffc++ $(INC) $< > $@; \
 	sed -e 's,[^.]*.o:,$*.o:,g' -i $@
 
 ifneq ($(MAKECMDGOALS), clean)
@@ -151,11 +156,11 @@ endif
 
 %.o: %.cpp
 	@echo '- Compiling... : $<'
-	@ccache $(CXX) $(CDEFS) $(CFLAGS) -Weffc++ $(INC) -MD -c $< -o $@
+	@ccache $(CXX) $(CDEFS) $(CPPFLAGS) -Weffc++ $(INC) -MD -c $< -o $@
 	
 %.o: %.cc
 	@echo '- Compiling... : $<'
-	@ccache $(CXX) $(CDEFS) $(CFLAGS) -Weffc++ $(INC) -MD -c $< -o $@
+	@ccache $(CXX) $(CDEFS) $(CPPFLAGS) -Weffc++ $(INC) -MD -c $< -o $@
 
 %.o: %.rc
 	@echo '- Compiling... : $<'

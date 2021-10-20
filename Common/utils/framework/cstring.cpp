@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 7/30/2021 Fri (clonextop@gmail.com)
+// Rev.  : 10/20/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "cstring.h"
@@ -574,7 +574,7 @@ int cstring::RetrieveTag(const char** sTagList)
 
 void cstring::Format(const char* sFormat, ...)
 {
-	{
+	if(sFormat) {
 		int iLen		= 0;
 		va_list vaArgs;
 		va_start(vaArgs, sFormat);
@@ -601,7 +601,7 @@ void cstring::Format(const char* sFormat, ...)
 
 void cstring::AppendFormat(const char* sFormat, ...)
 {
-	{
+	if(sFormat) {
 		int iLen		= 0;
 		va_list vaArgs;
 		va_start(vaArgs, sFormat);
@@ -661,37 +661,4 @@ int cstring::CheckFileExtension(const char** sExtList)
 	}
 
 	return -1;
-}
-
-bool cstring::GetEnvironment(const char* sKey)
-{
-	if(sKey) {
-		const char* sVal = getenv(sKey);
-
-		if(sVal) {
-			m_sStr	= sVal;
-			return true;
-		} else {
-			m_sStr.clear();
-		}
-	}
-
-	return false;
-}
-
-bool cstring::SetEnvironment(const char* sKey)
-{
-	if(sKey) {
-		{
-			cstring sKeyName(sKey);
-
-			if(sKeyName.find(" ") >= 0) return false;
-		}
-		cstring sEnv;
-		sEnv.Format("%s=%s", sKey, m_sStr.c_str());
-		putenv(sEnv);
-		return true;
-	}
-
-	return false;
 }
