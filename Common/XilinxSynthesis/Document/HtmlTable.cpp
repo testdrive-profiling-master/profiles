@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 10/26/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "HtmlTable.h"
 
@@ -78,11 +77,11 @@ void HtmlTable::NewCell(TABLE_CELL type, LPCTSTR sFormat, ...)
 	m_pHtml->CallJScript((type == CELL_TD) ? _T("NewTD();") : _T("NewTH();"));
 
 	if(sFormat) {
-		TCHAR	sLine[1024];
+		TCHAR	sLine[4096];
 		va_list	args;
 		va_start(args, sFormat);
 		//_vstprintf(sLine, sFormat, args);			// not exist in mingw
-		_vsntprintf(sLine, 1024, sFormat, args);
+		_vsntprintf(sLine, 4096, sFormat, args);
 		va_end(args);
 		m_pHtml->CallJScript(_T("SetTID(\"%s\");"), sLine);
 	}
@@ -117,12 +116,12 @@ void HtmlTable::SetSpan(TABLE_SPAN span, int iSize)
 
 void HtmlTable::SetBody(LPCTSTR sFormat, ...)
 {
-	TCHAR	sLine[2048];
+	TCHAR	sLine[4096];
 	{
 		va_list args;
 		va_start(args, sFormat);
 		//_vstprintf(sLine, sFormat, args);			// not exist in mingw
-		_vsntprintf(sLine, 2048, sFormat, args);
+		_vsntprintf(sLine, 4096, sFormat, args);
 		va_end(args);
 	}
 	m_pHtml->CallJScript(_T("SetTBody(\"%s\");"), sLine);
@@ -130,14 +129,14 @@ void HtmlTable::SetBody(LPCTSTR sFormat, ...)
 
 void HtmlTable::SetField(LPCTSTR sID, LPCTSTR sFormat, ...)
 {
-	TCHAR	sLine[2048];
+	TCHAR	sLine[4096];
 	{
 		CString sFieldFormat;
 		va_list args;
 		va_start(args, sFormat);
 		sFieldFormat.Format(_T("'%s', \"%s\""), sID, sFormat);
 		//_vstprintf(sLine, sFormat, args);			// not exist in mingw
-		_vsntprintf(sLine, 2048, sFieldFormat, args);
+		_vsntprintf(sLine, 4096, sFieldFormat, args);
 		va_end(args);
 	}
 	m_pHtml->CallJScript(_T("SetBody(%s);"), sLine);
@@ -150,7 +149,7 @@ void HtmlTable::JScript(LPCTSTR sFormat, ...)
 		va_list	args;
 		va_start(args, sFormat);
 		//_vstprintf(sLine, sFormat, args);			// not exist in mingw
-		_vsntprintf(sLine, 1024, sFormat, args);
+		_vsntprintf(sLine, 4096, sFormat, args);
 		va_end(args);
 		m_pHtml->CallJScript(sLine);
 	}
