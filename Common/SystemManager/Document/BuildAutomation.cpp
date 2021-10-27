@@ -220,7 +220,7 @@ BOOL DoMakefileBuild(LPCTSTR sPath, LPVOID pData)
 
 		if(iPos > 0) sWorkPath.Delete(iPos, -1);
 
-		if(DoMake(pDesc->bClean, pDesc->sArg, sWorkPath) == -1)
+		if(DoMake(pDesc->bClean, pDesc->sArg, sWorkPath) < 0)
 			return FALSE;
 	}
 	return TRUE;

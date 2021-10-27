@@ -120,6 +120,7 @@ static:
 	@cppcheck -j $(NUMBER_OF_PROCESSORS) --suppress=*:*/msys64/* --suppress=*:*/lib_src/* $(INC) $(CDEFS) $(CPPCHECK_ARG) -D__MINGW32__ --inline-suppr --force $(CPPCHECK_SRCS)
 
 dep:
+	@echo Check dependency validation...
 	@for def_file in $(DEPS); do \
 		DependencyPrepare -s "$$def_file";  \
 	done
