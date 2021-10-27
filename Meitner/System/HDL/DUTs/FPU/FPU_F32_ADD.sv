@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,23 +31,45 @@
 // OF SUCH DAMAGE.
 // 
 // Title : FPU
-// Rev.  : 3/30/2021 Tue (clonextop@gmail.com)
+// Rev.  : 10/26/2021 Tue (clonextop@gmail.com)
 //================================================================================
 `include "FPU.vh"
 
 module FPU_F32_ADD (
+	input						SUBTRACT,
 	input	[31:0]				A,
 	input	[31:0]				B,
 	output	[31:0]				O
 );
 
 // definition & assignment ---------------------------------------------------
-// implementation ------------------------------------------------------------
 `ifdef SW_FPU_MODE
+// software implimentation
 `DPI_FUNCTION void FPU_32f_Add(input bit [31:0] A, input bit [31:0] B, output bit [31:0] O);
-always@(A, B) FPU_32f_Add(A, B, O);
+always@(A, B, SUBTRACT) FPU_32f_Add(A, {SUBTRACT^B[31], B[30:0]}, O);
 `else
-//@TODO : do something!!!
+// hardware implimentation
+wire	[22:0]		a_m, b_m, o_m;
+wire	[7:0]		a_e, b_e, o_e;
+wire				a_s, b_s, o_s;
+
+// Unpack input
+assign				{a_s, a_e, a_m}	= A;
+assign				{b_s, b_e, b_m}	= {SUBTRACT^B[31], B[30:0]};
+
+// implementation ------------------------------------------------------------
+// special case (NaN, INF)
+wire				a_nz	= |a_m;			// A's mantissa is not zero
+wire				b_nz	= |b_m;			// B's mantissa is not zero
+wire				a_ef	= &a_e;			// A's exponent is full
+wire				b_ef	= &a_e;			// B's exponent is full
+
+wire	NaN			= (a_ef & ~a_nz) | (b_ef & ~b_nz);		// If A is NaN or B is NaN, result is NaN
+wire	INF			= (a_ef & a_nz) | (b_ef & b_nz);		// Infinity number
+
+// result output
+assign	O			= NaN ? 32'b0_11111111_00000000000000000000000 : {o_s, o_e, o_m};
+
 `endif
 
 endmodule

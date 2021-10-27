@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : FPU
-// Rev.  : 3/30/2021 Tue (clonextop@gmail.com)
+// Rev.  : 10/26/2021 Tue (clonextop@gmail.com)
 //================================================================================
 `include "FPU_F32_ADD.sv"
 `include "FPU_F32_MUL.sv"
@@ -83,9 +82,10 @@ always@(A, B) FPU_32f_Add(A, B, golden_data);
 
 // FPU unit output
 FPU_F32_ADD fpu_inst(
-	.A(A),
-	.B(B),
-	.O(O)
+	.SUBTRACT		(1'b0),
+	.A				(A),
+	.B				(B),
+	.O				(O)
 );
 `endif
 
@@ -96,9 +96,9 @@ always@(A, B) FPU_32f_Multiply(A, B, golden_data);
 
 // FPU unit output
 FPU_F32_MUL fpu_inst(
-	.A(A),
-	.B(B),
-	.O(O)
+	.A				(A),
+	.B				(B),
+	.O				(O)
 );
 `endif
 
@@ -109,9 +109,9 @@ always@(A, B) FPU_32f_Divide(A, B, golden_data);
 
 // FPU unit output
 FPU_F32_DIV fpu_inst(
-	.A(A),
-	.B(B),
-	.O(O)
+	.A				(A),
+	.B				(B),
+	.O				(O)
 );
 `endif
 
@@ -122,8 +122,8 @@ always@(A) FPU_32f_float2int(A, golden_data);
 
 // FPU unit output
 FPU_F32_to_INT fpu_inst(
-	.A(A),
-	.O(O)
+	.A				(A),
+	.O				(O)
 );
 `endif
 
@@ -134,8 +134,8 @@ always@(A) FPU_32f_int2float(A, golden_data);
 
 // FPU unit output
 FPU_INT_to_F32 fpu_inst(
-	.A(A),
-	.O(O)
+	.A				(A),
+	.O				(O)
 );
 `endif
 
