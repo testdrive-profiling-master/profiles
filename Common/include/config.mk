@@ -43,6 +43,10 @@ else
 OBJS_LIB	:= $(OBJS)
 endif
 
+ifndef TARGETPATH
+	TARGETPATH	:= .
+endif
+
 ifndef LIBPATH
 	LIBPATH		:= $(TARGETPATH)
 endif
