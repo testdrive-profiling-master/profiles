@@ -11,7 +11,7 @@ SRCS			:= \
 INC				:=
 
 CDEFS			:= -s
-CFLAGS			:= -O3 -DNDEBUG
+CFLAGS			:=
 
 #-------------------------------------------------
 # common document config

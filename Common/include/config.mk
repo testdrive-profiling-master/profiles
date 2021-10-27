@@ -90,6 +90,7 @@ CDEFS			:= $(CDEFS) -D__int64="long long" -DWIN32 -D_WIN32 -DWIN64 -D_WIN64
 # Build commands
 #-------------------------------------------------
 all: $(BUILD_TARGET)
+	@echo Compilation is done!
 
 $(TARGET_EXE): $(OBJS) $(OBJS_RES)
 $(TARGET_SO): $(OBJS) $(OBJS_RES)
@@ -97,8 +98,10 @@ $(TARGET_A): $(OBJS) $(OBJS_RES)
 $(TARGET_SO_A): $(OBJS) $(OBJS_RES)
 
 encrypt: $(ENCRYPT_EXTRA:=.encrypted) $(SRCS:=.encrypted) $(SRCS_RES:=.encrypted)
+	@echo Encryption is done!
 
 decrypt: $(ENCRYPT_EXTRA:=.decrypted) $(SRCS_ENCRYPTED:.encrypted=.decrypted)
+	@echo Decryption is done!
 
 clean:
 	@$(RM) -f $(OBJS) $(OBJS_RES) $(DEPS)
@@ -111,11 +114,18 @@ distclean: clean
 ifdef SRCS_ENCRYPTED
 	@$(RM) -f $(SRCS_ENCRYPTED:.encrypted=) $(ENCRYPT_EXTRA)
 endif
+	@echo Dist-Cleanup is done.
 
 static:
 	@cppcheck -j $(NUMBER_OF_PROCESSORS) --suppress=*:*/msys64/* --suppress=*:*/lib_src/* $(INC) $(CDEFS) $(CPPCHECK_ARG) -D__MINGW32__ --inline-suppr --force $(CPPCHECK_SRCS)
 
+dep:
+	@for def_file in $(DEPS); do \
+		DependencyPrepare -s "$$def_file";  \
+	done
+
 #########################################################################
+
 # Dependency
 %.d: %.c
 	@echo '- Dependency... : $<'

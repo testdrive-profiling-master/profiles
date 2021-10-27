@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System manager
-// Rev.  : 8/8/2021 Sun (clonextop@gmail.com)
+// Rev.  : 10/27/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #include "BuildAutomation.h"
 #include "Utils.h"
@@ -200,6 +200,8 @@ int DoMake(BOOL bClean, LPCTSTR sArg, LPCTSTR sWorkPath)
 	return g_pSystem->ExecuteFile(_T("mingw32-make"), sArg, TRUE, NULL, sWorkPath,
 								  _T("error:"), -1,
 								  _T("] Error"), -1,
+								  _T("*E: "), -1,
+								  _T("*W: "), 0,
 								  _T("undefined reference to "), -1,
 								  NULL);
 }
@@ -218,7 +220,7 @@ BOOL DoMakefileBuild(LPCTSTR sPath, LPVOID pData)
 
 		if(iPos > 0) sWorkPath.Delete(iPos, -1);
 
-		if(DoMake(pDesc->bClean, pDesc->sArg, sWorkPath) < 0)
+		if(DoMake(pDesc->bClean, pDesc->sArg, sWorkPath) == -1)
 			return FALSE;
 	}
 	return TRUE;

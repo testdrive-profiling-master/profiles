@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 10/20/2021 Wed (clonextop@gmail.com)
+// Rev.  : 10/27/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "cstring.h"
@@ -662,4 +662,36 @@ int cstring::CheckFileExtension(const char** sExtList)
 	}
 
 	return -1;
+}
+
+bool cstring::GetEnvironment(const char* sKey)
+{
+	if(sKey) {
+		char* sEnv = getenv(sKey);
+
+		if(sEnv) {
+			m_sStr	= sEnv;
+			return true;
+		} else {
+			m_sStr.clear();
+		}
+	}
+
+	return false;
+}
+
+#ifdef WIN32
+static void setenv(const char* sKey, const char* sData, int replace)
+{
+	cstring sEnv;
+	sEnv.Format("%s=%s", sKey, sData);
+	putenv(sEnv);
+}
+#endif
+
+void cstring::SetEnvironment(const char* sKey)
+{
+	if(sKey) {
+		setenv(sKey, m_sStr.c_str(), 1);
+	}
 }

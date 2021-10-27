@@ -31,13 +31,79 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Dependency prepare
-// Rev.  : 10/26/2021 Tue (clonextop@gmail.com)
+// Rev.  : 10/27/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 
+bool CheckDepency(const char* sDepFileName)
+{
+	TextFile	f;
+
+	if(f.Open(sDepFileName)) {
+		bool	bFirstLine	= true;
+		cstring sLine;
+
+		while(f.GetLine(sLine)) {
+			if(bFirstLine) {
+				int iPos = sLine.find(".o:");
+
+				if(iPos > 0) {
+					sLine.erase(0, iPos + 3);
+					bFirstLine		= false;
+				}
+			}
+
+			sLine.Trim(" \\\r\n");
+			{
+				// dependency file existence check
+				for(int iPos = 0;;) {
+					cstring sFileName	= sLine.Tokenize(iPos, " ");
+
+					if(iPos < 0) break;
+
+					if(access(sFileName.c_str(), F_OK)) {
+						return false;	// can't access this file, dependency file is broken.
+					}
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
 int main(int argc, const char* argv[])
 {
-	if(argc == 2) printf("CC = %s\n", argv[1]);
+	int			arg_size;
+	ArgTable	arg_table("TestDrive's dependency preparation check.");
+	arg_table.AddOption("silence", "s", "silence", "Force to no logging.");
+	arg_table.AddOptionFile("dep_file", NULL, NULL, NULL, "dep_file", "dependency file.");
+	arg_table.AddRemark(NULL, "file extension must be .d or .dd");
+
+	if(!arg_table.DoParse(argc, argv))
+		return 0;
+
+	bool bSilence	= arg_table.GetOption("silence");
+	cstring sDepFileName(arg_table.GetOptionFile("dep_file"));
+	cstring cExt(sDepFileName);
+	cExt.CutFront(".", true);
+	cExt.MakeLower();
+
+	if(cExt != "d" && cExt != "dd") {
+		if(!bSilence) LOGE("Unknown file extension : %s", sDepFileName.c_str());
+
+		return 0;
+	}
+
+	{
+		if(!CheckDepency(sDepFileName)) {
+			cstring sCC(arg_table.GetOptionString("CC"));
+			cstring sCXX(arg_table.GetOptionString("CXX"));
+			LOGI("Dependency file is broken, it will be deleted. : %s", sDepFileName.c_str());
+			remove(sDepFileName.c_str());
+			return 1;
+		}
+	}
 
 	return 0;
 }

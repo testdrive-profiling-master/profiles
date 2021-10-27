@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 7/30/2021 Fri (clonextop@gmail.com)
+// Rev.  : 10/27/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __CSTRING_H__
 #define __CSTRING_H__
@@ -86,7 +86,7 @@ public:
 	void Append(const char* sStr);
 	int CheckFileExtension(const char** sExtList);
 	bool GetEnvironment(const char* sKey);
-	bool SetEnvironment(const char* sKey);
+	void SetEnvironment(const char* sKey);
 
 	inline const char* c_str(void) const						{
 		return m_sStr.c_str();
