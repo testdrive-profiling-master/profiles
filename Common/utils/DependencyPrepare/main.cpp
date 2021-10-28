@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Dependency prepare
-// Rev.  : 10/27/2021 Wed (clonextop@gmail.com)
+// Rev.  : 10/28/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 
@@ -101,7 +101,6 @@ int main(int argc, const char* argv[])
 			cstring sCXX(arg_table.GetOptionString("CXX"));
 			LOGI("Dependency file is broken, it will be deleted. : %s", sDepFileName.c_str());
 			remove(sDepFileName.c_str());
-			return 1;
 		}
 	}
 

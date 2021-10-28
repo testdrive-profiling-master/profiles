@@ -1,8 +1,5 @@
 profile.tree "Community" {
 	network ("TestDrive Wiki",		"testdrive_wiki.sp");
-	network ("Hangout",				"hanouts.sp");
-	network ("Gmail",				"gmail.sp");
-	network ("Calendar",			"calendar.sp");
 }
 
 profile.tree "System" {
