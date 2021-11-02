@@ -3,5 +3,6 @@
 *.dll
 *.exe
 .settings
+.tscp
 *.TestDrive*
 *.XilinxSynthesis*
