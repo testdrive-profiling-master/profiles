@@ -74,14 +74,46 @@ public:
 	TestDrive_SSH*			m_SSH;
 };
 
-int main(int argc, const char* argv[])
+void RunSCP(int argc, const char* argv[])
 {
 	TestDriveSSH		ssh;
+	if(ssh.Initialize()) {
+		string					sCmd("pscp");
+		bool					bServerPath	= false;
 
+		sCmd	+= " -scp -unsafe -pw ";
+		sCmd	+= ssh.Data()->sPW;
+
+		for(int i = 1; i < argc; i++) {
+			cstring		sArg;
+
+			if(*argv[i] == '/' || *argv[i] == '~') {
+				if(bServerPath) {
+					LOGE("Multiple server paths specified.");
+					exit(1);
+				}
+
+				sArg.AppendFormat("%s@%s:", ssh.Data()->sID, ssh.Data()->sIP);
+				bServerPath	= true;
+			}
+
+			sArg	+= argv[i];
+			sCmd	+= " ";
+			sCmd	+= sArg.c_str();
+		}
+
+		system(sCmd.c_str());
+		ssh.Release();
+	}
+}
+
+int main(int argc, const char* argv[])
+{
 	if(argc == 1) {
 		printf("TestDrive Proxy Secure Copy client\n" \
 			   "Usage: tscp [options] local_source [local_source..] host_target\n" \
 			   "       tscp [options] host_source local_target\n" \
+			   "       tscp .         (read arguments from '.tscp' file)\n"
 			   "Options:\n" \
 			   "  -pgpfp    print PGP key fingerprints and exit\n" \
 			   "  -p        preserve file attributes\n" \
@@ -108,34 +140,42 @@ int main(int argc, const char* argv[])
 		return 0;
 	}
 
-	if(ssh.Initialize()) {
-		string					sCmd("pscp");
-		bool					bServerPath	= false;
-
-		sCmd	+= " -scp -unsafe -pw ";
-		sCmd	+= ssh.Data()->sPW;
-
-		for(int i = 1; i < argc; i++) {
-			cstring		sArg;
-
-			if(*argv[i] == '/' || *argv[i] == '~') {
-				if(bServerPath) {
-					LOGE("Multiple server paths specified.");
-					return 1;
+	// read arguments from '.tscp' file
+	if(argc == 2 && !strcmp(argv[1], ".")) {
+		FILE* fp = fopen(".tscp", "rt");
+		if(fp) {
+			char sLine[8192];
+			while(fgets(sLine, 8192, fp)){
+				vector<const char*>	sArgs;
+				list<string>		sArgsData;
+				sArgs.push_back(argv[0]);
+				{
+					int	iPos	= 0;
+					cstring sArgList(sLine);
+					while(1) {
+						cstring sTok	= sArgList.Tokenize(iPos, " \t\r\n");
+						if(iPos>=0){
+							sArgsData.push_back(sTok.c_str());
+							sArgs.push_back(sArgsData.back().c_str());
+						} else break;
+					}
 				}
+				argv	= sArgs.data();
+				argc	= sArgs.size();
 
-				sArg.AppendFormat("%s@%s:", ssh.Data()->sID, ssh.Data()->sIP);
-				bServerPath	= true;
+				if(argc) {
+					RunSCP(argc, argv);
+				} else break;
 			}
-
-			sArg	+= argv[i];
-			sCmd	+= " ";
-			sCmd	+= sArg.c_str();
+			fclose(fp);
+			return 0;
+		} else {
+			LOGE("'.tscp' file is not exist.");
+			exit(1);
 		}
-
-		system(sCmd.c_str());
-		ssh.Release();
 	}
+
+	RunSCP(argc, argv);
 
 	return 0;
 }
