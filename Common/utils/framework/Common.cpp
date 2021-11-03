@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 7/30/2021 Fri (clonextop@gmail.com)
+// Rev.  : 11/3/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include <stdarg.h>
@@ -76,22 +76,43 @@ void LOG(LOG_MODE id, const char* sFormat, ...)
 		"*W: ",
 		"*E: ",
 	};
+	int		color_id	= (int)id;
+	bool	bCustom		= false;
+
+	if(!sFormat) return;
+
+	if(*sFormat == '*' || *sFormat == '@') {
+		int new_color_id = (sFormat[1]) - '0';
+		bCustom		= (*sFormat == '@');
+
+		if(new_color_id >= 0 && new_color_id <= 6) {
+			color_id = new_color_id;
+			sFormat	+= 2;
+		}
+	}
+
 #ifdef WIN32
 	static int __iColor[] = {
-		15,
-		14,		// yellow
-		12,		// red
+		15,		// 0: white
+		14,		// 1: yellow
+		12,		// 2: red
+		9,		// 3: blue
+		10,		// 4: green
+		13,		// 5: purple
+		11,		// 6: aqua
 	};
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), __iColor[(int)id]);
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), __iColor[color_id]);
 #else
 	static const char* __sColor[] = {
-		"\x1b[38;2;255;255;255m",
-		"\x1b[1;33m",		// yellow
-		"\x1b[1;31m",		// red
+		"\x1b[38;2;255;255;255m",	// 0: white
+		"\x1b[1;33m",				// 1: yellow
+		"\x1b[1;31m",				// 2: red
+		"\x1b[1;34m",				// 3: blue
+		"\x1b[1;32m",				// 4: green
+		"\x1b[1;35m",				// 5: purple
+		"\x1b[1;36m",				// 6: aqua
 	};
-
-	if(id != LOG_MODE_INFO) printf(__sColor[(int)id]);
-
+	printf(__sColor[color_id]);
 #endif
 	{
 		int iLen		= 0;
@@ -109,7 +130,12 @@ void LOG(LOG_MODE id, const char* sFormat, ...)
 			std::vector<char> zc(iLen + 1);
 			std::vsnprintf(pBuff, iLen + 1, sFormat, vaArgs);
 			va_end(vaArgs);
-			printf("%s%s\n", __sID[(int)id], pBuff);
+
+			if(bCustom)
+				printf("%s", pBuff);
+			else
+				printf("%s%s\n", __sID[(int)id], pBuff);
+
 			delete [] pBuff;
 		}
 	}
