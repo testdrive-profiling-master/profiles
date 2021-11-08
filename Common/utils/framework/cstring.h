@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 10/27/2021 Wed (clonextop@gmail.com)
+// Rev.  : 11/8/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __CSTRING_H__
 #define __CSTRING_H__
@@ -72,7 +72,7 @@ public:
 	}
 	void MakeUpper(void);
 	void MakeLower(void);
-	void Replace(const char* sSearch, const char* sReplace, bool bRecursive = false);
+	bool Replace(const char* sSearch, const char* sReplace, bool bRecursive = false);
 	void TrimLeft(const char* sDelim);
 	void TrimRight(const char* sDelim);
 	void Trim(const char* sDelim);

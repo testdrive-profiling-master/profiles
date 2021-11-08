@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 10/27/2021 Wed (clonextop@gmail.com)
+// Rev.  : 11/8/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "cstring.h"
@@ -356,17 +356,17 @@ void cstring::MakeLower(void)
 	}
 }
 
-void cstring::Replace(const char* sSearch, const char* sReplace, bool bRecursive)
+bool cstring::Replace(const char* sSearch, const char* sReplace, bool bRecursive)
 {
+	bool bRet		= false;
 	int iPos		= 0;
 	int iSearchLen	= sSearch ? strlen(sSearch) : 0;
 
-	if(!sSearch || !iSearchLen) return;
-
-	{
+	if(sSearch != NULL && iSearchLen != 0) {
 		int iReplaceLen	= sReplace ? strlen(sReplace) : 0;
 
 		while((iPos = m_sStr.find(sSearch, iPos)) >= 0) {
+			bRet	= true;
 			m_sStr.erase(iPos, iSearchLen);
 
 			if(iReplaceLen) {
@@ -377,6 +377,8 @@ void cstring::Replace(const char* sSearch, const char* sReplace, bool bRecursive
 			if(!bRecursive) break;
 		}
 	}
+
+	return bRet;
 }
 
 void cstring::TrimLeft(const char* sDelim)
