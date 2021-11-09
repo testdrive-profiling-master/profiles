@@ -117,4 +117,9 @@ private:
 	vector<string>				m_StringTable;
 };
 
+void	Excel_PosDecode(cstring sPos, int& x, int& y);
+string	Excel_PosEncode(int x, int y);
+void	Excel_DateToYMD(int iDate, int& iYear, int& iMonth, int& iDay);
+int		Excel_YMDToDate(int iYear, int iMonth, int iDay);
+
 #endif//__DOC_EXCEL_H__

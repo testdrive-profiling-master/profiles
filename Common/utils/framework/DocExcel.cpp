@@ -35,7 +35,31 @@
 //================================================================================
 #include "DocExcel.h"
 
-static void __ExcelPos(cstring sPos, int& x, int& y)
+void Excel_DateToYMD(int iDate, int& iYear, int& iMonth, int& iDay)
+{
+	// Modified Julian to YMD calculation with an addition of 2415019
+	int l  = iDate + 68569 + 2415019;
+	int n  = int((4 * l) / 146097);
+	l      = l - int((146097 * n + 3) / 4);
+	int i  = int((4000 * (l + 1)) / 1461001);
+	l      = l - int((1461 * i) / 4) + 31;
+	int j  = int((80 * l) / 2447);
+	iDay   = l - int((2447 * j) / 80);
+	l      = int(j / 11);
+	iMonth = j + 2 - (12 * l);
+	iYear  = 100 * (n - 49) + i + l;
+}
+
+int Excel_YMDToDate(int iYear, int iMonth, int iDay)
+{
+	// YMD to Modified Julian calculated with an extra subtraction of 2415019.
+	return int((1461 * (iYear + 4800 + int((iMonth - 14) / 12))) / 4) +
+		   int((367 * (iMonth - 2 - 12 * ((iMonth - 14) / 12))) / 12) -
+		   int((3 * (int((iYear + 4900 + int((iMonth - 14) / 12)) / 100))) / 4) +
+		   iDay - 2415019 - 32075;
+}
+
+void Excel_PosDecode(cstring sPos, int& x, int& y)
 {
 	const char* s	= sPos.c_str();
 
@@ -59,7 +83,7 @@ static void __ExcelPos(cstring sPos, int& x, int& y)
 	}
 }
 
-static string __ExcelPosString(int x, int y)
+string Excel_PosEncode(int x, int y)
 {
 	cstring sPos;
 
@@ -90,8 +114,8 @@ DocExcelSheet::DocExcelSheet(const char* sName, DocExcel* pExcel, pugi::xml_node
 		cstring	sDimension(child("dimension").attribute("ref").value());
 		const char* sDelim	= ":";
 		int		iPos	= 0;
-		__ExcelPos(sDimension.Tokenize(iPos, sDelim), m_Dimension.sx, m_Dimension.sy);
-		__ExcelPos(sDimension.Tokenize(iPos, sDelim), m_Dimension.ex, m_Dimension.ey);
+		Excel_PosDecode(sDimension.Tokenize(iPos, sDelim), m_Dimension.sx, m_Dimension.sy);
+		Excel_PosDecode(sDimension.Tokenize(iPos, sDelim), m_Dimension.ex, m_Dimension.ey);
 		// initialize origin & current position
 		m_CurPos.x	= m_Dimension.sx;
 		m_CurPos.y	= m_Dimension.sy;
@@ -111,7 +135,7 @@ DocExcelSheet::~DocExcelSheet(void)
 void DocExcelSheet::SetPosition(const char* sPos)
 {
 	if(sPos) {
-		__ExcelPos(sPos, m_Origin.x, m_Origin.y);
+		Excel_PosDecode(sPos, m_Origin.x, m_Origin.y);
 		m_CurPos.x	= m_Origin.x;
 		m_CurPos.y	= m_Origin.y;
 		m_Row		= pugi::xml_node(NULL);
@@ -131,7 +155,7 @@ void DocExcelSheet::SetPos(int x, int y)
 
 string DocExcelSheet::GetPosition(void)
 {
-	return __ExcelPosString(m_CurPos.x, m_CurPos.y);
+	return Excel_PosEncode(m_CurPos.x, m_CurPos.y);
 }
 
 bool DocExcelSheet::GetRow(bool bAutoCreate)
@@ -162,7 +186,7 @@ bool DocExcelSheet::GetColumn(bool bAutoCreate)
 {
 	if(m_Row.empty()) return false;
 
-	cstring	sID	= __ExcelPosString(m_CurPos.x, m_CurPos.y);
+	cstring	sID	= Excel_PosEncode(m_CurPos.x, m_CurPos.y);
 	m_Column	= m_Row.find_child_by_attribute("r", sID.c_str());
 	m_CurPos.x++;
 
@@ -226,19 +250,7 @@ struct tm* DocExcelSheet::GetDate(int iDateOverride)
 
 	if(iDate != -1) {
 		memset(&t, 0, sizeof(t));
-		{
-			// Modified Julian to DMY calculation with an addition of 2415019
-			int l		= iDate + 68569 + 2415019;
-			int n		= int((4 * l) / 146097);
-			l			= l - int((146097 * n + 3) / 4);
-			int i		= int((4000 * (l + 1)) / 1461001);
-			l			= l - int((1461 * i) / 4) + 31;
-			int j		= int((80 * l) / 2447);
-			t.tm_mday   = l - int((2447 * j) / 80);
-			l			= int(j / 11);
-			t.tm_mon	= j + 2 - (12 * l);
-			t.tm_year	= 100 * (n - 49) + i + l;
-		}
+		Excel_DateToYMD(iDate, t.tm_year, t.tm_mon, t.tm_mday);
 		return &t;
 	}
 
@@ -247,11 +259,7 @@ struct tm* DocExcelSheet::GetDate(int iDateOverride)
 
 bool DocExcelSheet::SetDate(int iYear, int iMonth, int iDay)
 {
-	// DMY to Modified Julian calculated with an extra subtraction of 2415019.
-	int iDate	= int((1461 * (iYear + 4800 + int((iMonth - 14) / 12))) / 4) +
-				  int((367 * (iMonth - 2 - 12 * ((iMonth - 14) / 12))) / 12) -
-				  int((3 * (int((iYear + 4900 + int((iMonth - 14) / 12)) / 100))) / 4) +
-				  iDay - 2415019 - 32075;
+	int iDate	= Excel_YMDToDate(iYear, iMonth, iDay);
 	return SetInt(iDate);
 }
 
@@ -318,8 +326,8 @@ void DocExcelSheet::OnSave(void)
 	// apply dimension
 	cstring sDimension;
 	sDimension.Format("%s:%s",
-					  __ExcelPosString(m_Dimension.sx, m_Dimension.sy).c_str(),
-					  __ExcelPosString(m_Dimension.ex, m_Dimension.ey).c_str());
+					  Excel_PosEncode(m_Dimension.sx, m_Dimension.sy).c_str(),
+					  Excel_PosEncode(m_Dimension.ex, m_Dimension.ey).c_str());
 	child("dimension").attribute("ref").set_value(sDimension.c_str());
 
 	// delete value on function cell to recompute all value
