@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 7/30/2021 Fri (clonextop@gmail.com)
+// Rev.  : 11/9/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "DocExcel.h"
 
@@ -185,6 +185,24 @@ bool DocExcelSheet::IsEmpty(void)
 	return (m_Row.empty() || m_Column.empty());
 }
 
+int DocExcelSheet::GetInt(int iDefault)
+{
+	int	iData	= iDefault;
+
+	if(!IsEmpty()) {
+		bool	bString	= !strcmp(m_Column.attribute("t").value(), "s");
+		iData			= m_Column.child("v").text().as_int(iDefault);
+
+		if(!bString) {
+			const char* sData	= m_pExcel->GetString(iData);
+
+			if(sData) iData	= atoi(sData);
+		}
+	}
+
+	return iData;
+}
+
 string DocExcelSheet::GetValue(void)
 {
 	string	sValue;
@@ -199,6 +217,42 @@ string DocExcelSheet::GetValue(void)
 	}
 
 	return sValue;
+}
+
+struct tm* DocExcelSheet::GetDate(int iDateOverride)
+{
+	int					iDate	= (iDateOverride == -1) ? GetInt() : iDateOverride;
+	static struct tm	t;
+
+	if(iDate != -1) {
+		memset(&t, 0, sizeof(t));
+		{
+			// Modified Julian to DMY calculation with an addition of 2415019
+			int l		= iDate + 68569 + 2415019;
+			int n		= int((4 * l) / 146097);
+			l			= l - int((146097 * n + 3) / 4);
+			int i		= int((4000 * (l + 1)) / 1461001);
+			l			= l - int((1461 * i) / 4) + 31;
+			int j		= int((80 * l) / 2447);
+			t.tm_mday   = l - int((2447 * j) / 80);
+			l			= int(j / 11);
+			t.tm_mon	= j + 2 - (12 * l);
+			t.tm_year	= 100 * (n - 49) + i + l;
+		}
+		return &t;
+	}
+
+	return NULL;
+}
+
+bool DocExcelSheet::SetDate(int iYear, int iMonth, int iDay)
+{
+	// DMY to Modified Julian calculated with an extra subtraction of 2415019.
+	int iDate	= int((1461 * (iYear + 4800 + int((iMonth - 14) / 12))) / 4) +
+				  int((367 * (iMonth - 2 - 12 * ((iMonth - 14) / 12))) / 12) -
+				  int((3 * (int((iYear + 4900 + int((iMonth - 14) / 12)) / 100))) / 4) +
+				  iDay - 2415019 - 32075;
+	return SetInt(iDate);
 }
 
 bool DocExcelSheet::SetInt(int iValue)
@@ -253,6 +307,7 @@ bool DocExcelSheet::SetFunction(const char* sFunction)
 
 		node.text().set(sFunction);
 		m_Column.remove_child("v");
+		m_Column.remove_child("t");
 	}
 	m_bRecompute	= true;
 	return true;

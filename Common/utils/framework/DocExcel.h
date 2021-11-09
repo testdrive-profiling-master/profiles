@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 7/30/2021 Fri (clonextop@gmail.com)
+// Rev.  : 11/9/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __DOC_EXCEL_H__
 #define __DOC_EXCEL_H__
@@ -61,7 +61,10 @@ public:
 	bool GetColumn(bool bAutoCreate = false);
 
 	bool IsEmpty(void);
+	int GetInt(int iDefault = -1);
 	string GetValue(void);
+	struct tm* GetDate(int iDateOverride = -1);
+	bool SetDate(int iYear, int iMonth, int iDay);
 	bool SetInt(int iValue);
 	bool SetDouble(double fValue);
 	bool SetString(const char* sValue);
