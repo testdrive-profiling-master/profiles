@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 7/30/2021 Fri (clonextop@gmail.com)
+// Rev.  : 11/15/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __TEXT_FILE_H__
 #define __TEXT_FILE_H__
@@ -63,7 +63,7 @@ public:
 		return m_fp != NULL;
 	}
 	inline bool IsEOF(void)			{
-		return feof(m_fp) != 0;
+		return !IsOpen() || (feof(m_fp) != 0);
 	}
 
 protected:
