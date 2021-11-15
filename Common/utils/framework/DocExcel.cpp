@@ -103,10 +103,11 @@ string Excel_PosEncode(int x, int y)
 	return sPos.c_str();
 }
 
-DocExcelSheet::DocExcelSheet(const char* sName, DocExcel* pExcel, pugi::xml_node node) : DocXML(node)
+DocExcelSheet::DocExcelSheet(const char* sName, DocExcel* pExcel, int iID, pugi::xml_node node) : DocXML(node)
 {
 	m_sName			= sName;
 	m_pExcel		= pExcel;
+	m_iID			= iID;
 	m_bRecompute	= false;
 	{
 		// get dimension
@@ -215,16 +216,36 @@ int DocExcelSheet::GetInt(int iDefault)
 
 	if(!IsEmpty()) {
 		bool	bString	= !strcmp(m_Column.attribute("t").value(), "s");
-		iData			= m_Column.child("v").text().as_int(iDefault);
 
-		if(!bString) {
-			const char* sData	= m_pExcel->GetString(iData);
+		if(bString) {
+			const char* sData	= m_pExcel->GetString(m_Column.child("v").text().as_int(-1));
 
-			if(sData) iData	= atoi(sData);
+			if(sData) iData		= atoi(sData);
+		} else {
+			iData				= m_Column.child("v").text().as_int(iDefault);
 		}
 	}
 
 	return iData;
+}
+
+double DocExcelSheet::GetDouble(int fDefault)
+{
+	int	fData	= fDefault;
+
+	if(!IsEmpty()) {
+		bool	bString	= !strcmp(m_Column.attribute("t").value(), "s");
+
+		if(bString) {
+			const char* sData	= m_pExcel->GetString(m_Column.child("v").text().as_int(-1));
+
+			if(sData) fData		= atof(sData);
+		} else {
+			fData				= m_Column.child("v").text().as_double(fDefault);
+		}
+	}
+
+	return fData;
 }
 
 string DocExcelSheet::GetValue(void)
@@ -381,9 +402,10 @@ bool DocExcel::OnOpen(void)
 		m_Sheets.Enumerate("sheet", &packed, [](DocXML node, void* pPrivate) -> bool {
 			SHEET_REF*	p	= (SHEET_REF*)pPrivate;
 			string		sheet_name		= node.attribute("name").value();
+			int			sheet_id		= node.attribute("sheetId").as_int(0);
 			cstring		sheet_entry_name;
 			sheet_entry_name.Format("xl/%s", p->pRelationships->find_child_by_attribute("Id", node.attribute("r:id").value()).attribute("Target").value());
-			DocExcelSheet*	pNewSheet				= new DocExcelSheet(sheet_name.c_str(), p->pExel, p->pExel->GetXML(sheet_entry_name.c_str())->child("worksheet"));
+			DocExcelSheet*	pNewSheet				= new DocExcelSheet(sheet_name.c_str(), p->pExel, sheet_id, p->pExel->GetXML(sheet_entry_name.c_str())->child("worksheet"));
 
 			(*(p->pSheetMap))[sheet_name.c_str()]	= pNewSheet;
 			return true;

@@ -42,7 +42,7 @@ class DocExcel;
 class DocExcelSheet : public DocXML {
 	friend class DocExcel;
 protected:
-	DocExcelSheet(const char* sName, DocExcel* pExcel, pugi::xml_node node);
+	DocExcelSheet(const char* sName, DocExcel* pExcel, int iID, pugi::xml_node node);
 	virtual ~DocExcelSheet(void);
 	void OnSave(void);
 
@@ -50,6 +50,9 @@ public:
 	void SetPosition(const char* sPos);
 	void SetPos(int x, int y);
 	string GetPosition(void);
+	inline int ID(void)			{
+		return m_iID;
+	}
 	inline int GetPosX(void)	{
 		return m_CurPos.x;
 	}
@@ -62,6 +65,7 @@ public:
 
 	bool IsEmpty(void);
 	int GetInt(int iDefault = -1);
+	double GetDouble(int fDefault = -1);
 	string GetValue(void);
 	struct tm* GetDate(int iDateOverride = -1);
 	bool SetDate(int iYear, int iMonth, int iDay);
@@ -79,6 +83,7 @@ public:
 
 private:
 	DocExcel*			m_pExcel;
+	int					m_iID;
 	DocXML				m_SheetData;
 	DocXML				m_Row, m_Column;
 	string				m_sName;
