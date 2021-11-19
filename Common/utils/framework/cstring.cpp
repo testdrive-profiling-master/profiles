@@ -31,12 +31,13 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 11/8/2021 Mon (clonextop@gmail.com)
+// Rev.  : 11/19/2021 Fri (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "cstring.h"
 #include <stdarg.h>
 #include <vector>
+#include <iconv.h>
 
 cstring::cstring(void)
 {
@@ -696,4 +697,42 @@ void cstring::SetEnvironment(const char* sKey)
 	if(sKey) {
 		setenv(sKey, m_sStr.c_str(), 1);
 	}
+}
+
+bool cstring::ChangeCharset(const char* szSrcCharset, const char* szDstCharset)
+{
+	bool	bRet	= false;
+	iconv_t it = iconv_open(szDstCharset, szSrcCharset);
+
+	if(it != (iconv_t)(-1)) {
+		size_t nSrcStrLen = Length();
+		size_t nDstStrLen = nSrcStrLen * 2 + 12 + 1;
+		char* sIn		= new char[nSrcStrLen + 1];
+		char* sInput	= sIn;
+		char* sOut		= new char[nDstStrLen];
+		char* sOutput	= sOut;
+		strcpy(sIn, m_sStr.c_str());
+		memset(sOut, 0, nDstStrLen);
+
+		if(iconv(it, &sInput, &nSrcStrLen, &sOutput, &nDstStrLen) != (size_t)(-1)) {
+			m_sStr		= sOut;
+			bRet		= true;
+		}
+
+		iconv_close(it);
+		delete [] sIn;
+		delete [] sOut;
+	}
+
+	return bRet;
+}
+
+bool cstring::ChangeCharsetToUTF8(void)
+{
+	return ChangeCharset("EUC-KR", "UTF-8//IGNORE");
+}
+
+bool cstring::ChangeCharsetToANSI(void)
+{
+	return ChangeCharset("UTF-8", "EUC-KR//IGNORE");
 }

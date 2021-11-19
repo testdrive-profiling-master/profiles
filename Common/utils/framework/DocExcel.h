@@ -31,20 +31,29 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 11/9/2021 Tue (clonextop@gmail.com)
+// Rev.  : 11/19/2021 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __DOC_EXCEL_H__
 #define __DOC_EXCEL_H__
 #include "DocDocument.h"
+
+typedef enum {
+	EXCEL_RELATIONSHIP_worksheet,
+	EXCEL_RELATIONSHIP_calcChain,
+	EXCEL_RELATIONSHIP_sharedStrings,
+	EXCEL_RELATIONSHIP_styles,
+	EXCEL_RELATIONSHIP_theme,
+	EXCEL_RELATIONSHIP_SIZE
+} EXCEL_RELATIONSHIP;
 
 class DocExcel;
 
 class DocExcelSheet : public DocXML {
 	friend class DocExcel;
 protected:
-	DocExcelSheet(const char* sName, DocExcel* pExcel, int iID, pugi::xml_node node);
+	DocExcelSheet(const char* sName, const char* sEntryPath, DocExcel* pExcel, int iID, pugi::xml_node node);
 	virtual ~DocExcelSheet(void);
-	void OnSave(void);
+	bool OnSave(void);
 
 public:
 	void SetPosition(const char* sPos);
@@ -73,13 +82,20 @@ public:
 	bool SetDouble(double fValue);
 	bool SetString(const char* sValue);
 	bool SetFunction(const char* sFunction);
+	void SetPane(const char* sPos);
+	bool SetStyle(int iCellStyle);
+	bool MergeCells(const char* sBegin, const char* sEnd);
 
 	const char* GetName(void) const	{
 		return m_sName.c_str();
 	}
-	void SetName(const char* sName)	{
-		m_sName	= sName;
+	void SetName(const char* sName);
+	const char* EntryPath(void) const {
+		return m_sEntryPath.c_str();
 	}
+
+protected:
+	void ExpandDimension(int x, int y);
 
 private:
 	DocExcel*			m_pExcel;
@@ -87,6 +103,7 @@ private:
 	DocXML				m_SheetData;
 	DocXML				m_Row, m_Column;
 	string				m_sName;
+	string				m_sEntryPath;
 	bool				m_bRecompute;
 	struct {
 		int				sx, sy;
@@ -102,23 +119,38 @@ public:
 	DocExcel(void);
 	virtual ~DocExcel(void);
 
+	virtual bool Open(const char* sFileName);
+
 	const char* GetString(int iIndex);
 	int GetStringIndex(const char* sStr, bool bAutoAppend = true);
 	int GetSheetCount(void);
-	DocExcelSheet* GetSheet(const char* sSheetName);
+	DocExcelSheet* GetSheet(const char* sName);
 	DocExcelSheet* GetSheetByIndex(int iIndex);
+	DocExcelSheet* CreateSheet(const char* sName);
+	void DeleteSheet(DocExcelSheet* pSheet);
+	int StyleFont(const char* sFontName, int iFontSize, bool bBold, bool bItalic);
+	int StyleFill(unsigned int dwColorARGB);
+	int StyleBorder(bool bLeft, bool bRight, bool bTop, bool bBottom, bool bThick);
+	int StyleCell(int iStyleFont, int iStyleFill, int iStyleBorder, const char* sAlignment);
+	bool ReplaceSheetName(DocExcelSheet* pSheet, const char* sName);
 
 protected:
 	virtual bool OnOpen(void);
 	virtual void OnClose(void);
 	virtual bool OnSave(void);
+	virtual bool OnDelete(const char* sEntryName);
+
+	string CreateRelationship(EXCEL_RELATIONSHIP type, const char* sEntryPath);
 
 private:
-	DocXML						m_Sheets;
+	DocXML						m_ContentTypes;
+	DocXML						m_Workbook;
+	DocXML						m_Styles;
 	map<string, DocExcelSheet*>	m_SheetMap;
 
 	DocXML						m_Relationships;
 	DocXML						m_SharedStrings;
+	DocXML						m_CalcChain;
 	vector<string>				m_StringTable;
 };
 

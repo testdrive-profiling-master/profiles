@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 7/30/2021 Fri (clonextop@gmail.com)
+// Rev.  : 11/19/2021 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __COMMON_H__
 #define __COMMON_H__
@@ -251,5 +251,7 @@ private:
 
 template<typename T>
 int	ClassType<T>::m_ClassID		= 0;
+
+string GetCommonToolPath(void);
 
 #endif// __COMMON_H__

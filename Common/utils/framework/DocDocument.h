@@ -157,6 +157,7 @@ public:
 
 class DocXML;
 typedef bool (*DOCX_NODE_ENUMERATOR_FUNC)(DocXML node, void* pPrivate);
+typedef bool (*DOCX_FILE_ENUMERATOR_FUNC)(const char* sFileName, void* pPrivate);
 
 class DocXML : public pugi::xml_node {
 public:
@@ -166,6 +167,7 @@ public:
 
 	void Enumerate(const char* sChildPath, void* pPrivate, DOCX_NODE_ENUMERATOR_FUNC func);
 	void EnumerateInDepth(const char* sChild, void* pPrivate, DOCX_NODE_ENUMERATOR_FUNC func);
+	size_t Size(const char* sChild);
 };
 
 class DocFile {
@@ -174,11 +176,13 @@ public:
 	virtual ~DocFile(void);
 
 	virtual void Close(void);
-	bool Open(const char* sFileName);
+	virtual bool Open(const char* sFileName);
 	virtual bool Save(const char* sFileName = NULL);
 
-	pugi::xml_document* GetXML(const char* sEntryName);
+	pugi::xml_document* GetXML(const char* sEntryName, bool bForceToCreate = false);
+	pugi::xml_document* EnumerateFiles(DOCX_FILE_ENUMERATOR_FUNC func, void* pPrivate);
 	bool ReplaceFile(const char* sEntryName, const char* sFileName, const char* sNewEntryName = NULL);
+	bool DeleteFile(const char* sEntryName);
 
 	inline bool IsOpen(void) {
 		return (m_pZipFile != NULL);
@@ -192,8 +196,8 @@ protected:
 	virtual bool OnOpen(void);
 	virtual void OnClose(void);
 	virtual bool OnSave(void);
+	virtual bool OnDelete(const char* sEntryName);
 
-private:
 	string								m_sDocFileName;
 	zip_t*								m_pZipFile;
 	map<string, pugi::xml_document*>	m_Documents;

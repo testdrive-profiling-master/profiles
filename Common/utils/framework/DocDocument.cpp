@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 7/30/2021 Fri (clonextop@gmail.com)
+// Rev.  : 11/19/2021 Fri (clonextop@gmail.com)
 //================================================================================
 #include "DocDocument.h"
 
@@ -330,15 +330,9 @@ static bool __EnumerateNode(cstring& sPath, int iPos, DocXML node, void* pPrivat
 		if(!func(node, pPrivate))
 			return false;
 	} else {
-		DocXML child_node = node.child(sChild);
-
-		while(!child_node.empty()) {
-			DocXML next_child_node	= child_node.next_sibling();
-
+		for(DocXML child_node = node.child(sChild); !child_node.empty(); child_node = child_node.next_sibling(sChild)) {
 			if(!__EnumerateNode(sPath, iPos, child_node, pPrivate, func))
 				return false;
-
-			child_node	= next_child_node;
 		}
 	}
 
@@ -351,6 +345,11 @@ void DocXML::Enumerate(const char* sChildPath, void* pPrivate, DOCX_NODE_ENUMERA
 		cstring sChildNodePath	= sChildPath;
 		__EnumerateNode(sChildNodePath, 0, *this, pPrivate, func);
 	}
+}
+
+size_t DocXML::Size(const char* sChild)
+{
+	return std::distance(children(sChild).begin(), children(sChild).end());
 }
 
 static bool __EnumerateNodeInDepth(cstring& sChild, DocXML node, void* pPrivate, DOCX_NODE_ENUMERATOR_FUNC func)
@@ -419,7 +418,7 @@ bool DocFile::Open(const char* sFileName)
 				Close();
 			}
 		} else {
-			printf("Not opened.\n");
+			LOGE("Can't open '%s'.", sFileName);
 		}
 	}
 
@@ -428,33 +427,68 @@ bool DocFile::Open(const char* sFileName)
 
 bool DocFile::OnOpen(void)
 {
+	// dummy
 	return true;
 }
 
-pugi::xml_document* DocFile::GetXML(const char* sEntryName)
+pugi::xml_document* DocFile::GetXML(const char* sEntryName, bool bForceToCreate)
 {
 	pugi::xml_document*	pDoc	= NULL;
 
 	if(m_pZipFile) {
-		pDoc	= m_Documents[sEntryName];
+		if(m_Documents.count(sEntryName)) {
+			return m_Documents[sEntryName];
+		}
 
-		if(!pDoc && !zip_entry_open(m_pZipFile, sEntryName) && !zip_entry_isdir(m_pZipFile)) {	// read from zip entries
-			void*		buf		= NULL;
-			size_t		bufsize;
-			zip_entry_read(m_pZipFile, &buf, &bufsize);
-			zip_entry_close(m_pZipFile);
+		if(!zip_entry_open(m_pZipFile, sEntryName)) {	// read from zip entries
+			if(!zip_entry_isdir(m_pZipFile)) {
+				void*		buf		= NULL;
+				size_t		bufsize;
+				zip_entry_read(m_pZipFile, &buf, &bufsize);
+				zip_entry_close(m_pZipFile);
+				pugi::xml_document*	pNode	= new pugi::xml_document;
+				pNode->load_buffer(buf, bufsize,  pugi::parse_default | pugi::parse_ws_pcdata | pugi::parse_declaration);
+				free(buf);
+				m_Documents[sEntryName]		= pNode;
+				pDoc	= pNode;
+			}
+		} else if(bForceToCreate) {
 			pugi::xml_document*	pNode	= new pugi::xml_document;
-			pNode->load_buffer(buf, bufsize,  pugi::parse_default | pugi::parse_ws_pcdata);
-			free(buf);
 			m_Documents[sEntryName]		= pNode;
-			pDoc	= pNode;
-		} else {
-			LOGE("no entry path : '%s'", sEntryName);
+			pDoc						= pNode;
+			pugi::xml_node decl			= pNode->prepend_child(pugi::node_declaration);
+			decl.append_attribute("version")	= "1.0";
+			decl.append_attribute("encoding")	= "UTF-8";
+			decl.append_attribute("standalone")	= "yes";
 		}
 	}
 
 	return pDoc;
 }
+
+pugi::xml_document* DocFile::EnumerateFiles(DOCX_FILE_ENUMERATOR_FUNC func, void* pPrivate)
+{
+	pugi::xml_document*	pDoc	= NULL;
+
+	if(m_pZipFile) {
+		int entry_count	= zip_total_entries(m_pZipFile);
+
+		for(int i = 0; i < entry_count; i++) {
+			zip_entry_openbyindex(m_pZipFile, i);
+
+			if(!zip_entry_isdir(m_pZipFile)) {
+				const char* sName = zip_entry_name(m_pZipFile);
+
+				if(!func(sName, pPrivate)) entry_count = 0;
+			}
+
+			zip_entry_close(m_pZipFile);
+		}
+	}
+
+	return pDoc;
+}
+
 
 bool DocFile::ReplaceFile(const char* sEntryName, const char* sFileName, const char* sNewEntryName)
 {
@@ -481,95 +515,182 @@ bool DocFile::ReplaceFile(const char* sEntryName, const char* sFileName, const c
 	return false;
 }
 
+bool DocFile::DeleteFile(const char* sEntryName)
+{
+	if(OnDelete(sEntryName)) {
+		m_Documents.erase(sEntryName);
+		m_FileReplacements[sEntryName].clear();
+		return true;
+	}
+
+	return false;
+}
+
+static bool __create_zip_entry_from_buffer(zip_t* pZip, const char* sEntryName, const void* pBuff = NULL, size_t dwByteSize = 0)
+{
+	if(pZip && sEntryName) {
+		if(!zip_entry_open(pZip, sEntryName)) {
+			if(pBuff && dwByteSize) zip_entry_write(pZip, pBuff, dwByteSize);
+
+			zip_entry_close(pZip);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+static bool __create_zip_entry_from_file(zip_t* pZip, const char* sEntryName, const char* sFileName)
+{
+	bool	bRet	= false;
+
+	if(sFileName) {
+		cstring	sNewFileName(sFileName);
+		cstring	sNewEntryName(sEntryName);
+		{
+			// filename & entry parsing replacement
+			const char*	sDelim			= ",;";
+			int			iPos			= 0;
+			cstring		sTokFileName	= sNewFileName.Tokenize(iPos, sDelim);
+			cstring		sTokEntryName	= sNewFileName.Tokenize(iPos, sDelim);
+
+			if(iPos >= 0) {
+				sNewFileName	= sTokFileName;
+				sNewEntryName	= sTokEntryName;
+			}
+		}
+
+		if(!sNewFileName.size()) return true;	// deleted entry.
+
+		FILE*	fp		= fopen(sNewFileName, "rb");
+
+		if(fp) {
+			fseek(fp, 0, SEEK_END);
+			size_t	file_size	= ftell(fp);
+			BYTE*	pBuff		= NULL;
+
+			if(file_size) {
+				pBuff		= new BYTE[file_size];
+				fseek(fp, 0, SEEK_SET);
+				fread(pBuff, 1, file_size, fp);
+			}
+
+			bRet	= __create_zip_entry_from_buffer(pZip, sNewEntryName, pBuff, file_size);
+
+			if(pBuff) delete [] pBuff;
+
+			fclose(fp);
+		} else {
+			LOGE("Can't create entry('%s') from file('%s') \n", sNewEntryName.c_str(), sNewFileName.c_str());
+		}
+	}
+
+	return bRet;
+}
+
 bool DocFile::Save(const char* sFileName)
 {
-	if(!m_pZipFile) return false;
+	if(!m_pZipFile || !OnSave()) return false;
 
 	bool	bOverwrite		= (!sFileName) || (m_sDocFileName == sFileName);
 	string	sSaveFileName	= bOverwrite ? (m_sDocFileName + ".doc_tmp") : sFileName;
 	// Create the new file
-	zip_t*	new_zip		= zip_open(sSaveFileName.c_str(), ZIP_DEFAULT_COMPRESSION_LEVEL, 'w');
+	zip_t*	new_zip			= zip_open(sSaveFileName.c_str(), ZIP_DEFAULT_COMPRESSION_LEVEL, 'w');
 
-	if(!new_zip) return false;
+	if(new_zip) {
+		bool	bRet			= true;
+		{
+			// build document container files
+			map<string, bool>	saved_entries;
 
-	if(!OnSave()) {
-		zip_close(new_zip);
-		return false;
-	}
+			// replace entry or copy from original
+			for(int i = 0; i < zip_total_entries(m_pZipFile); i++) {
+				zip_entry_openbyindex(m_pZipFile, i);
+				string					entry_name	= zip_entry_name(m_pZipFile);
+				pugi::xml_document*		pNode		= m_FileReplacements.count(entry_name) ? NULL : (m_Documents.count(entry_name) ? m_Documents.at(entry_name) : NULL);
+				saved_entries[entry_name]			= true;
 
-	// Loop & copy each relevant entry in the original zip
-	for(int i = 0; i < zip_total_entries(m_pZipFile); i++) {
-		zip_entry_openbyindex(m_pZipFile, i);
-		string					entry_name	= zip_entry_name(m_pZipFile);
-		pugi::xml_document*		pNode		= m_FileReplacements.count(entry_name) ? NULL : (m_Documents.count(entry_name) ? m_Documents.at(entry_name) : NULL);
+				if(!pNode) {	// from external file or unmanaged file
+					if(m_FileReplacements.count(entry_name)) {
+						// file replacement if target path is existed, or delete it.
+						if(m_FileReplacements[entry_name].size() && !__create_zip_entry_from_file(new_zip, entry_name.c_str(), m_FileReplacements[entry_name].c_str())) {
+							bRet	= false;
+							break;
+						}
+					} else {
+						// just copy from original document
+						void*		entry_buf;
+						size_t		entry_buf_size	= 0;
+						zip_entry_read(m_pZipFile, &entry_buf, &entry_buf_size);
 
-		if(!pNode) {
-			if(m_FileReplacements.count(entry_name)) {
-				string new_entry_name(entry_name);
-				string sExternalFileName;
-				{
-					const char* sDelim		= ",;";
-					int iPos = 0;
-					cstring	sNewFileDesc	= m_FileReplacements[entry_name].c_str();
-					sExternalFileName		= sNewFileDesc.Tokenize(iPos, sDelim);
-					cstring sNewEntryPath	= sNewFileDesc.Tokenize(iPos, sDelim);
+						if(!__create_zip_entry_from_buffer(new_zip, entry_name.c_str(), entry_buf, entry_buf_size)) {
+							free(entry_buf);
+							bRet	= false;
+							break;
+						}
 
-					if(iPos >= 0) {
-						new_entry_name		= sNewEntryPath;
+						free(entry_buf);
+					}
+				} else {		// managed XML file
+					xml_string_writer	writer;
+					pNode->print(writer, PUGIXML_TEXT("\t"), pugi::format_default | pugi::parse_ws_pcdata | pugi::format_write_bom);
+					const char* buf = writer.result.c_str();
+
+					if(!__create_zip_entry_from_buffer(new_zip, entry_name.c_str(), buf, strlen(buf))) {
+						bRet	= false;
+						break;
 					}
 				}
-				// file replacement
-				FILE* fp = fopen(sExternalFileName.c_str(), "rb");
-				zip_entry_open(new_zip, new_entry_name.c_str());
 
-				if(fp) {
-					fseek(fp, 0, SEEK_END);
-					size_t	file_size	= ftell(fp);
-
-					if(file_size) {
-						BYTE* pBuffer	= new BYTE[file_size];
-						fseek(fp, 0, SEEK_SET);
-						fread(pBuffer, 1, file_size, fp);
-						zip_entry_write(new_zip, pBuffer, file_size);
-					}
-
-					fclose(fp);
-				} else {
-					LOGE("Can't open file : '%s'\n", sExternalFileName.c_str());
-				}
-			} else {
-				// just copy from original
-				void*		entry_buf;
-				size_t		entry_buf_size;
-				zip_entry_open(new_zip, entry_name.c_str());
-				zip_entry_read(m_pZipFile, &entry_buf, &entry_buf_size);
-				zip_entry_write(new_zip, entry_buf, entry_buf_size);
-				free(entry_buf);
+				zip_entry_close(m_pZipFile);
 			}
-		} else {
-			xml_string_writer	writer;
-			zip_entry_open(new_zip, entry_name.c_str());
-			pNode->print(writer, PUGIXML_TEXT("\t"), pugi::format_default | pugi::parse_ws_pcdata | pugi::format_write_bom);
-			const char* buf = writer.result.c_str();
-			zip_entry_write(new_zip, buf, strlen(buf));
+
+			// new entry from internal DocXML object
+			for(auto& i : m_Documents) if(!saved_entries.count(i.first)) {
+					pugi::xml_document*		pNode	= i.second;
+					xml_string_writer	writer;
+					pNode->print(writer, PUGIXML_TEXT("\t"), pugi::format_default | pugi::parse_ws_pcdata | pugi::format_write_bom);
+					const char* buf = writer.result.c_str();
+
+					if(!__create_zip_entry_from_buffer(new_zip, i.first.c_str(), buf, strlen(buf))) {
+						bRet	= false;
+						break;
+					}
+
+					saved_entries[i.first]			= true;
+				}
+
+			// new entry from external file
+			for(auto& i : m_FileReplacements) if(!saved_entries.count(i.first)) {
+					if(!__create_zip_entry_from_file(new_zip, i.first.c_str(), i.second.c_str())) {
+						bRet	= false;
+						break;
+					}
+				}
+		}
+		zip_close(new_zip);
+
+		if(!bRet) {				// remove broken new document file
+			remove(sSaveFileName.c_str());
+		} else if(bOverwrite) {	// remove original & rename to original
+			Close();
+			remove(m_sDocFileName.c_str());
+			rename(sSaveFileName.c_str(), m_sDocFileName.c_str());
 		}
 
-		zip_entry_close(new_zip);
-		zip_entry_close(m_pZipFile);
+		return bRet;
 	}
 
-	zip_close(new_zip);
-
-	if(bOverwrite) {	// remove original & rename to original
-		Close();
-		remove(m_sDocFileName.c_str());
-		rename(sSaveFileName.c_str(), m_sDocFileName.c_str());
-	}
-
-	return true;
+	return false;
 }
 
 bool DocFile::OnSave(void)
 {
 	return true;
 }
+
+bool DocFile::OnDelete(const char* sEntryName)
+{
+	return true;
+}
+

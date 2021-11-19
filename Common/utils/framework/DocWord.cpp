@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 7/30/2021 Fri (clonextop@gmail.com)
+// Rev.  : 11/19/2021 Fri (clonextop@gmail.com)
 //================================================================================
 #include "DocWord.h"
 
@@ -44,11 +44,39 @@ DocWord::~DocWord(void)
 	OnClose();
 }
 
+bool DocWord::Open(const char* sFileName)
+{
+	return DocFile::Open(sFileName);
+}
+
 bool DocWord::OnOpen(void)
 {
 	m_Body			= GetXML("word/document.xml")->child("w:document").child("w:body");
 	m_Relationships	= GetXML("word/_rels/document.xml.rels")->child("Relationships");
 	m_ContentsType	= GetXML("[Content_Types].xml")->child("Types");
+	// open header and footers
+	{
+		typedef struct {
+			DocWord*		pDoc;
+			list<DocXML>*	pList;
+		} __DOCX_EXTRA;
+		__DOCX_EXTRA	extra = {this, &m_HeaderFooters};
+		EnumerateFiles([](const char* sFileName, void* pPrivate) -> bool {
+			cstring sName(sFileName);
+			__DOCX_EXTRA* pExtra = (__DOCX_EXTRA*)pPrivate;
+
+			if(sName.CompareBack(".xml"))
+			{
+				if(sName.CompareFront("word/header")) {
+					pExtra->pList->push_back(pExtra->pDoc->GetXML(sFileName)->child("w:hdr").child("w:p"));
+				} else if(sName.CompareFront("word/footer")) {
+					pExtra->pList->push_back(pExtra->pDoc->GetXML(sFileName)->child("w:ftr").child("w:p"));
+				}
+			}
+
+			return true;
+		}, &extra);
+	}
 	// make image id list
 	m_Body.EnumerateInDepth("w:drawing", &m_ImageMap, [](DocXML node, void* pPrivate) -> bool {
 		string sDesc, sID;
@@ -243,7 +271,7 @@ void DocWord::Modify(map<string, string>* pMod)
 {
 	if(!pMod || !pMod->size()) return;
 
-	m_Body.EnumerateInDepth("w:p", pMod, [](DocXML node, void* pPrivate) -> bool {
+	auto modify_func = [](DocXML node, void* pPrivate) -> bool {
 		map<string, string>& ModMap	= *((map<string, string>*)pPrivate);
 
 		for(;;)
@@ -299,6 +327,12 @@ void DocWord::Modify(map<string, string>* pMod)
 				});
 			} else break;
 		}
+
 		return true;
-	});
+	};
+	m_Body.EnumerateInDepth("w:p", pMod, modify_func);
+
+	for(auto& i : m_HeaderFooters) {
+		i.EnumerateInDepth("w:p", pMod, modify_func);
+	}
 }

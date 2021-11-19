@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 7/30/2021 Fri (clonextop@gmail.com)
+// Rev.  : 11/19/2021 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __DOC_WORD_H__
 #define __DOC_WORD_H__
@@ -41,6 +41,7 @@ class DocWord : public DocFile {
 public:
 	DocWord(void);
 	virtual ~DocWord(void);
+	virtual bool Open(const char* sFileName);
 	void Modify(map<string, string>* pMod);
 	bool ReplaceImage(const char* sDesc, const char* sFileName);
 	bool ReplaceSubDocument(const char* sPrevName, const char* sFileName);
@@ -55,6 +56,7 @@ private:
 	DocXML					m_Body;
 	DocXML					m_Relationships;
 	DocXML					m_ContentsType;
+	list<DocXML>			m_HeaderFooters;
 	map<string, string>		m_ImageMap;
 	map<string, string>		m_OLEObjectMap;
 };

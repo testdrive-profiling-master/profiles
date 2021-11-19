@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 11/9/2021 Tue (clonextop@gmail.com)
+// Rev.  : 11/19/2021 Fri (clonextop@gmail.com)
 //================================================================================
 #include "DocExcel.h"
 
@@ -103,9 +103,10 @@ string Excel_PosEncode(int x, int y)
 	return sPos.c_str();
 }
 
-DocExcelSheet::DocExcelSheet(const char* sName, DocExcel* pExcel, int iID, pugi::xml_node node) : DocXML(node)
+DocExcelSheet::DocExcelSheet(const char* sName, const char* sEntryPath, DocExcel* pExcel, int iID, pugi::xml_node node) : DocXML(node)
 {
 	m_sName			= sName;
+	m_sEntryPath	= sEntryPath;
 	m_pExcel		= pExcel;
 	m_iID			= iID;
 	m_bRecompute	= false;
@@ -342,14 +343,85 @@ bool DocExcelSheet::SetFunction(const char* sFunction)
 	return true;
 }
 
-void DocExcelSheet::OnSave(void)
+void DocExcelSheet::SetPane(const char* sPos)
+{
+	DocXML node = child("sheetViews").child("sheetView");
+	node.remove_child("pane");
+
+	if(sPos) {
+		int x, y;
+		Excel_PosDecode(sPos, x, y);
+		node = node.append_child("pane");
+
+		if(x) node.append_attribute("xSplit")	= x;
+
+		if(y) node.append_attribute("ySplit")	= y;
+
+		node.append_attribute("topLeftCell")	= sPos;
+		node.append_attribute("activePane")		= "bottomLeft";
+		node.append_attribute("state")			= "frozen";
+	}
+}
+
+bool DocExcelSheet::SetStyle(int iCellStyle)
+{
+	if(m_Column.empty()) return false;
+
+	if(m_Column.attribute("s").as_int(-1) == -1) {
+		// no style existed
+		m_Column.append_attribute("s") = iCellStyle;
+	} else {
+		m_Column.attribute("s") = iCellStyle;
+	}
+
+	return true;
+}
+
+bool DocExcelSheet::MergeCells(const char* sBegin, const char* sEnd)
+{
+	if(!Size("mergeCells")) {
+		insert_child_after("mergeCells", child("sheetData")).append_attribute("count")	= 0;
+	}
+
+	DocXML node = child("mergeCells");
+	cstring	sRef;
+	sRef.Format("%s:%s", sBegin, sEnd);
+	node.append_child("mergeCell").append_attribute("ref")	= sRef;
+	node.attribute("count")		= node.Size("mergeCell");
+	{
+		int x, y;
+		Excel_PosDecode(sBegin, x, y);
+		ExpandDimension(x, y);
+		Excel_PosDecode(sEnd, x, y);
+		ExpandDimension(x, y);
+	}
+	return true;
+}
+
+void DocExcelSheet::SetName(const char* sName)
+{
+	if(m_pExcel) m_pExcel->ReplaceSheetName(this, sName);
+}
+
+void DocExcelSheet::ExpandDimension(int x, int y)
+{
+	// fix dimension
+	if(m_Dimension.sx > x) m_Dimension.sx = x;
+	else if(m_Dimension.ex < x) m_Dimension.ex = x;
+
+	if(m_Dimension.sy > y) m_Dimension.sy = y;
+	else if(m_Dimension.ey < y) m_Dimension.ey = y;
+}
+
+
+bool DocExcelSheet::OnSave(void)
 {
 	// apply dimension
 	cstring sDimension;
 	sDimension.Format("%s:%s",
 					  Excel_PosEncode(m_Dimension.sx, m_Dimension.sy).c_str(),
 					  Excel_PosEncode(m_Dimension.ex, m_Dimension.ey).c_str());
-	child("dimension").attribute("ref").set_value(sDimension.c_str());
+	child("dimension").attribute("ref")		= sDimension;
 
 	// delete value on function cell to recompute all value
 	if(m_bRecompute) {
@@ -361,6 +433,8 @@ void DocExcelSheet::OnSave(void)
 			return true;
 		});
 	}
+
+	return false;
 }
 
 DocExcel::DocExcel(void)
@@ -372,11 +446,49 @@ DocExcel::~DocExcel(void)
 	OnClose();
 }
 
+bool DocExcel::Open(const char* sFileName)
+{
+	if(!sFileName) {
+		string	sTemplateFileName	= GetCommonToolPath() + "/bin/lua/DocExcel_template.xlsx";
+		return DocFile::Open(sTemplateFileName.c_str());
+	}
+
+	return DocFile::Open(sFileName);
+}
+
 bool DocExcel::OnOpen(void)
 {
-	m_Sheets			= GetXML("xl/workbook.xml")->child("workbook").child("sheets");
+	m_ContentTypes		= GetXML("[Content_Types].xml")->child("Types");
+	m_Workbook			= GetXML("xl/workbook.xml")->child("workbook").child("sheets");
+	m_Styles			= GetXML("xl/styles.xml")->child("styleSheet");
 	m_Relationships		= GetXML("xl/_rels/workbook.xml.rels")->child("Relationships");
-	m_SharedStrings		= GetXML("xl/sharedStrings.xml")->child("sst");
+
+	if(GetXML("xl/sharedStrings.xml")) {
+		m_SharedStrings		= GetXML("xl/sharedStrings.xml")->child("sst");
+	} else {
+		m_SharedStrings		= GetXML("xl/sharedStrings.xml", true)->append_child("sst");
+		m_SharedStrings.append_attribute("xmlns")		= "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+		m_SharedStrings.append_attribute("count")		= "0";
+		m_SharedStrings.append_attribute("uniqueCount")	= "0";
+		// add t contents
+		DocXML	xml			= m_ContentTypes.append_child("Override");
+		xml.append_attribute("PartName")		= "/xl/sharedStrings.xml";
+		xml.append_attribute("ContentType")		= "application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml";
+		CreateRelationship(EXCEL_RELATIONSHIP_sharedStrings, "/xl/sharedStrings.xml");
+	}
+
+	if(GetXML("xl/calcChain.xml")) {
+		m_CalcChain			= GetXML("xl/calcChain.xml")->child("calcChain");
+	} else {
+		m_CalcChain			= GetXML("xl/calcChain.xml", true)->child("calcChain");
+		m_CalcChain.append_attribute("xmlns")	= "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+		// add t contents
+		DocXML	xml			= m_ContentTypes.append_child("Override");
+		xml.append_attribute("PartName")		= "/xl/calcChain.xml";
+		xml.append_attribute("ContentType")		= "application/vnd.openxmlformats-package.core-properties+xml";
+		CreateRelationship(EXCEL_RELATIONSHIP_calcChain, "/xl/calcChain.xml");
+	}
+
 	// make string map
 	m_SharedStrings.EnumerateInDepth("si", &m_StringTable, [](DocXML node, void* pPrivate) -> bool {
 		vector<string>* pStringTable			= (vector<string>*)pPrivate;
@@ -399,14 +511,13 @@ bool DocExcel::OnOpen(void)
 			DocXML*							pRelationships;
 		} SHEET_REF;
 		SHEET_REF	packed = {this, &m_SheetMap, &m_Relationships};
-		m_Sheets.Enumerate("sheet", &packed, [](DocXML node, void* pPrivate) -> bool {
+		m_Workbook.Enumerate("sheet", &packed, [](DocXML node, void* pPrivate) -> bool {
 			SHEET_REF*	p	= (SHEET_REF*)pPrivate;
-			string		sheet_name		= node.attribute("name").value();
+			cstring		sheet_name		= node.attribute("name").value();
 			int			sheet_id		= node.attribute("sheetId").as_int(0);
 			cstring		sheet_entry_name;
 			sheet_entry_name.Format("xl/%s", p->pRelationships->find_child_by_attribute("Id", node.attribute("r:id").value()).attribute("Target").value());
-			DocExcelSheet*	pNewSheet				= new DocExcelSheet(sheet_name.c_str(), p->pExel, sheet_id, p->pExel->GetXML(sheet_entry_name.c_str())->child("worksheet"));
-
+			DocExcelSheet*	pNewSheet				= new DocExcelSheet(sheet_name, sheet_entry_name, p->pExel, sheet_id, p->pExel->GetXML(sheet_entry_name.c_str())->child("worksheet"));
 			(*(p->pSheetMap))[sheet_name.c_str()]	= pNewSheet;
 			return true;
 		});
@@ -422,19 +533,69 @@ void DocExcel::OnClose(void)
 
 	m_SheetMap.clear();
 	m_StringTable.clear();
+	m_CalcChain			= pugi::xml_node();
+	m_SharedStrings		= pugi::xml_node();
+	m_Relationships		= pugi::xml_node();
+	m_Workbook			= pugi::xml_node();
+	m_ContentTypes		= pugi::xml_node();
 }
 
 bool DocExcel::OnSave(void)
 {
-	for(auto& i : m_SheetMap) {
-		if(i.first != i.second->GetName()) {	// name is changed
-			m_Sheets.find_child_by_attribute("name", i.first.c_str()).attribute("name").set_value(i.second->GetName());
-		}
+	if(!m_SharedStrings.Size("si")) {	// no string table contents
+		DeleteFile("xl/sharedStrings.xml");
+	}
 
+	if(!m_SharedStrings.Size("c")) {	// no functions
+		DeleteFile("xl/calcChain.xml");
+	}
+
+	for(auto& i : m_SheetMap) {
 		i.second->OnSave();
 	}
 
 	return true;
+}
+
+bool DocExcel::OnDelete(const char* sEntryName)
+{
+	cstring	sPath;
+	sPath.Format("/%s", sEntryName);
+	m_ContentTypes.remove_child(m_ContentTypes.find_child_by_attribute("PartName", sPath));
+	sPath.DeleteFront("/xl/");
+	m_Relationships.remove_child(m_Relationships.find_child_by_attribute("Target", sPath));
+	return true;
+}
+
+string DocExcel::CreateRelationship(EXCEL_RELATIONSHIP type, const char* sEntryPath)
+{
+	static const char* __relationship_list[EXCEL_RELATIONSHIP_SIZE] = {
+		"worksheet",
+		"calcChain",
+		"sharedStrings",
+		"styles",
+		"theme",
+	};
+	cstring sID;
+	cstring sTarget(sEntryPath);
+	cstring sType;
+	sTarget.DeleteFront("/xl/");
+	sTarget.DeleteFront("xl/");
+	sType.Format("http://schemas.openxmlformats.org/officeDocument/2006/relationships/%s", __relationship_list[(int)type]);
+
+	for(int i = 1;; i++) {
+		sID.Format("rId%d", i);
+
+		if(m_Relationships.find_child_by_attribute("Id", sID).empty()) {
+			DocXML node	= m_Relationships.append_child("Relationship");
+			node.append_attribute("Id")			= sID;
+			node.append_attribute("Type")		= sType;
+			node.append_attribute("Target")		= sTarget;
+			break;
+		}
+	}
+
+	return sID.c_str();
 }
 
 int DocExcel::GetSheetCount(void)
@@ -442,12 +603,440 @@ int DocExcel::GetSheetCount(void)
 	return m_SheetMap.size();
 }
 
-DocExcelSheet* DocExcel::GetSheet(const char* sSheetName)
+int DocExcel::StyleFont(const char* sFontName, int iFontSize, bool bBold, bool bItalic)
 {
-	if(m_SheetMap.count(sSheetName))
-		return m_SheetMap[sSheetName];
+	string	sFont(sFontName);
+	DocXML	node				= m_Styles.child("fonts");
+	{
+		// setup default
+		DocXML	default_font		= node.child("font");
+
+		if(!sFont.size()) sFont		= default_font.child("name").attribute("val").value();
+
+		if(!iFontSize) iFontSize	= atoi(default_font.child("sz").attribute("val").value());
+	}
+	typedef struct {
+		int			iIndex;
+		cstring		sFontName;
+		int			iFontSize;
+		bool		bBold;
+		bool		bItalic;
+		int			iRet;
+	} private_data;
+	private_data	p;
+	p.iIndex	= -1;
+	p.sFontName	= sFont;
+	p.iFontSize	= iFontSize;
+	p.bBold		= bBold;
+	p.bItalic	= bItalic;
+	p.iRet		= -1;
+	node.Enumerate("font", &p, [](DocXML node, void* pPrivate) -> bool {
+		private_data* p = (private_data*)pPrivate;
+		p->iIndex++;
+
+		if(p->sFontName == node.child("name").attribute("val").as_string() &&
+		   p->iFontSize == node.child("sz").attribute("val").as_int() &&
+		   p->bBold == node.Size("b") &&
+		   p->bItalic == node.Size("i"))
+		{
+			p->iRet	= p->iIndex;
+			return false;
+		}
+		return true;
+	});
+
+	if(p.iRet < 0) {
+		// not matched font found, must create it
+		p.iRet			= node.Size("font");
+		DocXML	font	= node.append_child("font");
+
+		if(bBold) font.append_child("b");
+
+		if(bItalic) font.append_child("i");
+
+		font.append_child("sz").append_attribute("val")				= iFontSize;
+		font.append_child("color").append_attribute("theme")		= 1;
+		font.append_child("name").append_attribute("val")			= sFont.c_str();
+		font.append_child("family").append_attribute("val")			= 2;
+		font.append_child("scheme").append_attribute("val")			= "minor";
+		node.attribute("count")										= p.iRet + 1;
+	}
+
+	return p.iRet;
+}
+
+int DocExcel::StyleFill(unsigned int dwColorARGB)
+{
+	DocXML	node	= m_Styles.child("fills");
+	typedef struct {
+		int			iIndex;
+		cstring		sColorValue;
+		int			iRet;
+	} private_data;
+	private_data	p;
+	p.iIndex	= -1;
+	p.iRet		= -1;
+	p.sColorValue.Format("%08X", dwColorARGB);
+	node.Enumerate("fill", &p, [](DocXML node, void* pPrivate) -> bool {
+		private_data* p = (private_data*)pPrivate;
+		node	= node.child("patternFill");
+		p->iIndex++;
+
+		if(!node.empty() && !strcmp(node.attribute("patternType").as_string(), "solid") && !strcmp(node.child("fgColor").attribute("rgb").as_string(), p->sColorValue))
+		{
+			p->iRet	= p->iIndex;
+			return false;
+		}
+		return true;
+	});
+
+	if(p.iRet < 0) {
+		// not matched fill found, must create it
+		p.iRet			= node.Size("fill");
+		DocXML	fill	= node.append_child("fill").append_child("patternFill");
+		fill.append_attribute("patternType")						= "solid";
+		fill.append_child("fgColor").append_attribute("rgb")		= p.sColorValue;
+		fill.append_child("bgColor").append_attribute("indexed")	= 64;
+		node.attribute("count")										= p.iRet + 1;
+	}
+
+	return p.iRet;
+}
+
+int DocExcel::StyleBorder(bool bLeft, bool bRight, bool bTop, bool bBottom, bool bThick)
+{
+	DocXML	node	= m_Styles.child("borders");
+	cstring	sStyle	= bThick ? "thick" : "thin";
+	typedef struct {
+		int			iIndex;
+		cstring		sLeft, sRight, sTop, sBottom;
+		int			iRet;
+	} private_data;
+	private_data	p;
+	p.iIndex		= -1;
+	p.iRet			= -1;
+	{
+		if(bLeft)	p.sLeft		= sStyle;
+
+		if(bRight)	p.sRight	= sStyle;
+
+		if(bTop)	p.sTop		= sStyle;
+
+		if(bBottom)	p.sBottom	= sStyle;
+	}
+	node.Enumerate("border", &p, [](DocXML node, void* pPrivate) -> bool {
+		private_data* p = (private_data*)pPrivate;
+		p->iIndex++;
+
+		if(p->sLeft == node.child("left").attribute("style").value() &&
+		   p->sRight == node.child("right").attribute("style").value() &&
+		   p->sTop == node.child("top").attribute("style").value() &&
+		   p->sBottom == node.child("bottom").attribute("style").value() &&
+		   !*node.child("diagonal").attribute("style").value())
+		{
+			p->iRet	= p->iIndex;
+			return false;
+		}
+		return true;
+	});
+
+	if(p.iRet < 0) {
+		// not matched border found, must create it
+		p.iRet			= node.Size("border");
+		DocXML	border	= node.append_child("border");
+		DocXML	att;
+		att		= border.append_child("left");
+
+		if(bLeft) {
+			att.append_attribute("style")						= sStyle;
+			att.append_child("color").append_attribute("auto")	= 1;
+		}
+
+		att		= border.append_child("right");
+
+		if(bRight) {
+			att.append_attribute("style")						= sStyle;
+			att.append_child("color").append_attribute("auto")	= 1;
+		}
+
+		att		= border.append_child("top");
+
+		if(bTop) {
+			att.append_attribute("style")						= sStyle;
+			att.append_child("color").append_attribute("auto")	= 1;
+		}
+
+		att		= border.append_child("bottom");
+
+		if(bBottom) {
+			att.append_attribute("style")						= sStyle;
+			att.append_child("color").append_attribute("auto")	= 1;
+		}
+
+		att		= border.append_child("diagonal");
+		node.attribute("count")						= p.iRet + 1;
+	}
+
+	return p.iRet;
+}
+
+int DocExcel::StyleCell(int iStyleFont, int iStyleFill, int iStyleBorder, const char* sAlignment)
+{
+	DocXML	node	= m_Styles.child("cellXfs");
+	typedef struct {
+		int			iIndex;
+		int			iFont, iFill, iBorder;
+		struct {
+			bool		bEnable;
+			string		sHorizontal, sVertical;
+		} alignment;
+		int			iRet;
+	} private_data;
+	private_data	p;
+	p.iIndex		= -1;
+	p.iRet			= -1;
+	p.alignment.bEnable	= sAlignment || *sAlignment;
+
+	if(p.alignment.bEnable) {	// setup alignment
+		const char*	sDelim	= ",;";
+		int			iPos	= 0;
+		cstring sAlign(sAlignment);
+
+		for(;;) {
+			cstring sTok = sAlign.Tokenize(iPos, sDelim);
+
+			if(iPos >= 0) {
+				const char*	sTokDelim	= " \"=";
+				int iTokPos	= 0;
+				cstring sTarget		= sTok.Tokenize(iTokPos, sTokDelim);
+				cstring sVal		= sTok.Tokenize(iTokPos, sTokDelim);
+
+				if(iTokPos < 0) {
+					LOGE("Invalid DocExcel cell alignment : %s", sAlignment);
+					exit(1);
+				}
+
+				if(sTarget == "horizontal" && !p.alignment.sHorizontal.size()) {
+					p.alignment.sHorizontal		= sVal;
+					const char*	sList[] = {"left", "center", "right", NULL};
+
+					if(sVal.RetrieveTag(sList) < 0) {
+						LOGE("Invalid DocExcel cell alignment value : %s(%s)", sAlignment, sVal.c_str());
+						exit(1);
+					}
+				} else if(sTarget == "vertical" && !p.alignment.sVertical.size()) {
+					p.alignment.sVertical		= sVal;
+					const char*	sList[] = {"top", "center", "bottom", NULL};
+
+					if(sVal.RetrieveTag(sList) < 0) {
+						LOGE("Invalid DocExcel cell alignment value : %s(%s)", sAlignment, sVal.c_str());
+						exit(1);
+					}
+				} else {
+					LOGE("Invalid DocExcel cell alignment target : '%s'(%s, must be 'horizontal' or 'vertical')", sAlignment, sTarget.c_str());
+					exit(1);
+				}
+			} else break;
+		}
+	}
+
+	node.Enumerate("xf", &p, [](DocXML node, void* pPrivate) -> bool {
+		private_data* p = (private_data*)pPrivate;
+		p->iIndex++;
+
+		if(p->iFont == node.attribute("fontId").as_int() &&
+		   p->iFill == node.attribute("fillId").as_int() &&
+		   p->iBorder == node.attribute("borderId").as_int() &&
+		   (p->iFont != 0) == node.attribute("applyFont").as_int() &&
+		   (p->iFill != 0) == node.attribute("applyFill").as_int() &&
+		   (p->iBorder != 0) == node.attribute("applyBorder").as_int() &&
+		   (p->alignment.bEnable) == node.attribute("applyAlignment").as_int())
+		{
+			bool	bMatched	= true;
+
+			if(p->alignment.bEnable) {
+				DocXML	align	= node.child("alignment");
+
+				if(p->alignment.sHorizontal != align.attribute("horizontal").as_string() ||
+				   p->alignment.sVertical != align.attribute("vertical").as_string()) {
+					bMatched	= false;
+				}
+			}
+
+			if(bMatched) {
+				p->iRet	= p->iIndex;
+				return false;
+			}
+		}
+		return true;
+	});
+
+	if(p.iRet < 0) {
+		// not matched cell style found, must create it
+		p.iRet			= node.Size("xf");
+		DocXML	xf		= node.append_child("xf");
+		xf.append_attribute("numFmtId")			= 0;
+		xf.append_attribute("fontId")			= iStyleFont;
+		xf.append_attribute("fillId")			= iStyleFill;
+		xf.append_attribute("borderId")			= iStyleBorder;
+		xf.append_attribute("xfId")				= 0;
+
+		if(iStyleFont) xf.append_attribute("applyFont")		= 1;
+
+		if(iStyleFill) xf.append_attribute("applyFill")		= 1;
+
+		if(iStyleBorder) xf.append_attribute("applyBorder")	= 1;
+
+		if(p.alignment.bEnable) {
+			xf.append_attribute("applyAlignment")	= 1;
+			DocXML	align	= xf.append_child("alignment");
+
+			if(p.alignment.sHorizontal.size()) align.append_attribute("horizontal")	= p.alignment.sHorizontal.c_str();
+
+			if(p.alignment.sVertical.size()) align.append_attribute("vertical")	= p.alignment.sVertical.c_str();
+		}
+
+		node.attribute("count")					= p.iRet + 1;
+	}
+
+	return p.iRet;
+}
+
+bool DocExcel::ReplaceSheetName(DocExcelSheet* pSheet, const char* sName)
+{
+	if(sName && *sName) {
+		cstring	sSheetName(sName);
+		sSheetName.ChangeCharsetToUTF8();
+		sName	= sSheetName.c_str();
+		DocXML	workbook_sheet	= m_Workbook.find_child_by_attribute("name", pSheet->GetName());
+
+		// check name duplication
+		for(auto& i : m_SheetMap) if(i.second != pSheet && i.first == sName) {
+				LOGE("Sheet name('%s') is duplicated.", sName);
+				return false;
+			}
+
+		// rename sheet map
+		for(auto& i : m_SheetMap) if(i.second == pSheet) {
+				m_SheetMap.erase(i.first);
+				m_SheetMap[sName]	= pSheet;
+				break;
+			}
+
+		// rename workbook
+		workbook_sheet.attribute("name")		= sName;
+		// rename sheet name
+		pSheet->m_sName							= sName;
+	}
+
+	return true;
+}
+
+DocExcelSheet* DocExcel::GetSheet(const char* sName)
+{
+	cstring			sSheetName(sName);
+	sSheetName.ChangeCharsetToUTF8();
+
+	if(m_SheetMap.count(sSheetName.c_str()))
+		return m_SheetMap[sSheetName.c_str()];
 
 	return NULL;
+}
+
+DocExcelSheet* DocExcel::CreateSheet(const char* sName)
+{
+	DocExcelSheet*	pSheet		= NULL;
+	cstring			sEntryPath;
+	int				iSheetID;
+	cstring			sSheetID;
+	cstring			sSheetName(sName);
+	sSheetName.ChangeCharsetToUTF8();
+
+	// automatic sheet name
+	if(!sSheetName.size()) {
+		for(int i = 1;; i++) {
+			sSheetName.Format("Sheet%d", i);
+
+			if(!m_SheetMap.count(sSheetName.c_str())) break;
+		}
+	}
+
+	for(int i = 1;; i++) {	// set new entry path
+		bool	bFound = false;
+		sEntryPath.Format("xl/worksheets/sheet%d.xml", i);
+
+		for(auto& i : m_SheetMap) if(sEntryPath == i.second->EntryPath()) {
+				bFound	= true;
+				break;
+			}
+
+		if(!bFound) break;
+	}
+
+	if(m_FileReplacements.count(sEntryPath.c_str())) {
+		m_FileReplacements.erase(sEntryPath.c_str());
+	}
+
+	for(iSheetID = 1;; iSheetID++) {
+		sSheetID.Format("%d", iSheetID);
+
+		if(m_Workbook.find_child_by_attribute("sheetId", sSheetID).empty()) break;
+	}
+
+	{
+		// create sheet file
+		DocXML xml	= GetXML(sEntryPath.c_str(), true)->append_child("worksheet");
+		xml.append_attribute("xmlns")			= "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
+		xml.append_attribute("xmlns:r")			= "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
+		xml.append_attribute("xmlns:mc")		= "http://schemas.openxmlformats.org/markup-compatibility/2006";
+		xml.append_attribute("xmlns:x14ac")		= "http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac";
+		xml.append_attribute("mc:Ignorable")	= "x14ac";
+		xml.append_child("dimension").append_attribute("ref")	= "A1:A1";
+		{
+			DocXML node;
+			node	= xml.append_child("sheetViews").append_child("sheetView");
+			node.append_attribute("tabSelected")		= "1";
+			node.append_attribute("workbookViewId")		= "0";
+			node	= xml.append_child("sheetFormatPr");
+			node.append_attribute("defaultRowHeight")	= "15";
+			node.append_attribute("x14ac:dyDescent")	= "0.25";
+			xml.append_child("sheetData");
+			node	= xml.append_child("pageMargins");
+			node.append_attribute("left")				= "0.7";
+			node.append_attribute("right")				= "0.7";
+			node.append_attribute("top")				= "0.75";
+			node.append_attribute("bottom")				= "0.75";
+			node.append_attribute("header")				= "0.3";
+			node.append_attribute("footer")				= "0.3";
+		}
+		// create sheet object
+		pSheet	= new DocExcelSheet(sSheetName, sEntryPath, this, iSheetID, xml);
+		m_SheetMap[sSheetName.c_str()]	= pSheet;
+		// add to contents
+		xml				= m_ContentTypes.append_child("Override");
+		xml.append_attribute("PartName")		= cstring("/") + sEntryPath.c_str();
+		xml.append_attribute("ContentType")		= "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml";
+		// add to workbook
+		DocXML	workbook	= m_Workbook.append_child("sheet");
+		workbook.append_attribute("name")		= sSheetName;
+		workbook.append_attribute("sheetId")	= sSheetID;
+		workbook.append_attribute("r:id")		= CreateRelationship(EXCEL_RELATIONSHIP_worksheet, sEntryPath).c_str();
+	}
+
+	return pSheet;
+}
+
+void DocExcel::DeleteSheet(DocExcelSheet* pSheet)	//@FIXME : not working
+{
+	if(pSheet) {
+		{
+			DocXML	child	= m_Workbook.find_child_by_attribute("name", pSheet->GetName());
+			m_Workbook.remove_child(child);
+		}
+		DeleteFile(pSheet->EntryPath());
+		m_SheetMap.erase(pSheet->GetName());
+		delete pSheet;
+	}
 }
 
 DocExcelSheet* DocExcel::GetSheetByIndex(int iIndex)
@@ -468,9 +1057,12 @@ int DocExcel::GetStringIndex(const char* sStr, bool bAutoAppend)
 
 	if(!sStr) return -1;
 
+	cstring		sData(sStr);
+	sData.ChangeCharsetToUTF8();
+
 	// search from shared string table
 	for(auto i = m_StringTable.begin(); i != m_StringTable.end(); i++) {
-		if((*i) == sStr)
+		if((*i) == sData.c_str())
 			return iIndex;
 
 		iIndex++;
@@ -479,9 +1071,9 @@ int DocExcel::GetStringIndex(const char* sStr, bool bAutoAppend)
 	// add new string
 	if(bAutoAppend) {
 		iIndex	= m_StringTable.size();
-		m_StringTable.push_back(sStr);
+		m_StringTable.push_back(sData.c_str());
 		DocXML	node	= m_SharedStrings.append_child("si");
-		node.append_child("t").text().set(sStr);
+		node.append_child("t").text().set(sData);
 		node	= node.append_child("phoneticPr");
 		node.append_attribute("fontId").set_value("1");
 		node.append_attribute("type").set_value("noConversion");

@@ -31,12 +31,22 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 11/3/2021 Wed (clonextop@gmail.com)
+// Rev.  : 11/19/2021 Fri (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include <stdarg.h>
 #include "TestDrive_LM.h"
 #include "TestDriver.inl"
+
+string GetCommonToolPath(void)
+{
+	string sEnv;
+#ifdef WIN32
+	sEnv	= getenv("TESTDRIVE_PROFILE");
+	sEnv	+= "Common/";
+#endif
+	return sEnv;
+}
 
 Reference::Reference(void) : m_dwReferCount(1)
 {
