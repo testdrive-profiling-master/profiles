@@ -944,6 +944,8 @@ int DocExcel::StyleCell(int iStyleFont, int iStyleFill, int iStyleBorder, const 
 			if(p.alignment.sHorizontal.size()) align.append_attribute("horizontal")	= p.alignment.sHorizontal.c_str();
 
 			if(p.alignment.sVertical.size()) align.append_attribute("vertical")	= p.alignment.sVertical.c_str();
+
+			align.append_attribute("wrapText")	= 1;	// preserve 'enter' code
 		}
 
 		node.attribute("count")					= p.iRet + 1;
@@ -1125,14 +1127,12 @@ int DocExcel::GetStringIndex(const char* sStr, bool bAutoAppend)
 		DocXML	node	= m_SharedStrings.append_child("si");
 		node.append_child("t").text().set(sData);
 		node	= node.append_child("phoneticPr");
-		node.append_attribute("fontId").set_value("1");
-		node.append_attribute("type").set_value("noConversion");
+		node.append_attribute("fontId")		= 1;
+		node.append_attribute("type")		= "noConversion";
 		// set spread size
-		cstring sNum;
-		sNum.Format("%lld", m_StringTable.size());
-		m_SharedStrings.attribute("uniqueCount").set_value(sNum.c_str());
-		//sNum.Format("%lld", m_StringTable.size() + 1);
-		m_SharedStrings.attribute("count").set_value(sNum.c_str());
+		size_t	str_count							= m_SharedStrings.Size("si");
+		m_SharedStrings.attribute("count")			= str_count;
+		m_SharedStrings.attribute("uniqueCount")	= str_count;
 	} else {
 		iIndex	= -1;
 	}
