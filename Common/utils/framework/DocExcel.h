@@ -87,6 +87,7 @@ public:
 	bool SetColumnWidth(double fWidth, bool bBestFit);
 	void SetTabColor(unsigned int dwColorRGB);
 	bool MergeCells(const char* sBegin, const char* sEnd);
+	bool HideColumn(bool bHide);
 
 	const char* GetName(void) const	{
 		return m_sName.c_str();

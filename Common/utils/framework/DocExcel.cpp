@@ -448,6 +448,39 @@ bool DocExcelSheet::MergeCells(const char* sBegin, const char* sEnd)
 	return true;
 }
 
+bool DocExcelSheet::HideColumn(bool bHide)
+{
+	if(m_Column.empty()) return false;
+
+	cstring	sPos;
+	sPos.Format("%d", m_CurPos.x);
+	// get 'cols'
+	DocXML	node	= child("cols");
+
+	if(!node) {	// create if not existed
+		node	= insert_child_after("cols", child("sheetData").previous_sibling());
+	}
+
+	// find 'col'
+	DocXML	col		= node.find_child_by_attribute("min", sPos);
+
+	// if not existed, create new 'col'
+	if(!col) {
+		col								= node.append_child("col");
+		col.append_attribute("min")		= sPos;
+		col.append_attribute("max")		= sPos;
+	}
+
+	// create new 'col'
+	col.remove_attribute("hidden");
+
+	if(bHide) {
+		col.append_attribute("hidden")	= 1;
+	}
+
+	return true;
+}
+
 void DocExcelSheet::SetName(const char* sName)
 {
 	if(m_pExcel) m_pExcel->ReplaceSheetName(this, sName);
