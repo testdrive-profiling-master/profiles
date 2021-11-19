@@ -84,6 +84,7 @@ public:
 	bool SetFunction(const char* sFunction);
 	void SetPane(const char* sPos);
 	bool SetStyle(int iCellStyle);
+	bool SetColumnWidth(double fWidth, bool bBestFit);
 	bool MergeCells(const char* sBegin, const char* sEnd);
 
 	const char* GetName(void) const	{

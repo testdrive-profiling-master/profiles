@@ -377,6 +377,37 @@ bool DocExcelSheet::SetStyle(int iCellStyle)
 	return true;
 }
 
+bool DocExcelSheet::SetColumnWidth(double fWidth, bool bBestFit)
+{
+	if(m_Column.empty()) return false;
+
+	cstring	sPos;
+	sPos.Format("%d", m_CurPos.x);
+	// get 'cols'
+	DocXML	node	= child("cols");
+
+	if(!node) {	// create if not existed
+		node	= insert_child_after("cols", child("sheetData").previous_sibling());
+	}
+
+	// remove previous 'col'
+	DocXML	col		= node.find_child_by_attribute("min", sPos);
+
+	if(col) node.remove_child(col);
+
+	// create new 'col'
+	col	= node.append_child("col");
+	// set attributes
+	col.append_attribute("min")				= sPos;
+	col.append_attribute("max")				= sPos;
+	col.append_attribute("width")			= fWidth;
+
+	if(bBestFit) col.append_attribute("bestFit")	= 1;
+
+	col.append_attribute("customWidth")		= 1;
+	return true;
+}
+
 bool DocExcelSheet::MergeCells(const char* sBegin, const char* sEnd)
 {
 	if(!Size("mergeCells")) {
