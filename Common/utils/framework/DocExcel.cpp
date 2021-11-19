@@ -408,6 +408,25 @@ bool DocExcelSheet::SetColumnWidth(double fWidth, bool bBestFit)
 	return true;
 }
 
+void DocExcelSheet::SetTabColor(unsigned int dwColorRGB)
+{
+	DocXML	node	= child("sheetPr");
+	cstring	sColor;
+	sColor.Format("%08X", dwColorRGB | 0xFF000000);
+
+	if(!node) {	// create if not existed
+		node	= prepend_child("sheetPr");
+	}
+
+	DocXML	tab_color	= node.child("tabColor");
+
+	if(!tab_color)	tab_color = node.append_child("tabColor");
+
+	if(!tab_color.attribute("rgb")) tab_color.append_attribute("rgb");
+
+	tab_color.attribute("rgb")		= sColor;
+}
+
 bool DocExcelSheet::MergeCells(const char* sBegin, const char* sEnd)
 {
 	if(!Size("mergeCells")) {

@@ -85,6 +85,7 @@ public:
 	void SetPane(const char* sPos);
 	bool SetStyle(int iCellStyle);
 	bool SetColumnWidth(double fWidth, bool bBestFit);
+	void SetTabColor(unsigned int dwColorRGB);
 	bool MergeCells(const char* sBegin, const char* sEnd);
 
 	const char* GetName(void) const	{
