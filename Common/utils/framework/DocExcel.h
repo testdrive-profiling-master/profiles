@@ -150,7 +150,7 @@ public:
 	void DeleteSheet(DocExcelSheet* pSheet);
 	int StyleFont(const char* sFontName, int iFontSize, bool bBold, bool bItalic);
 	int StyleFill(unsigned int dwColorARGB);
-	int StyleBorder(bool bLeft, bool bRight, bool bTop, bool bBottom, bool bThick);
+	int StyleBorder(const char* sBorderStyle);
 	int StyleCell(int iStyleFont, int iStyleFill, int iStyleBorder, const char* sAlignment);
 	int StyleFormat(const char* sFormat);
 	bool ReplaceSheetName(DocExcelSheet* pSheet, const char* sName);

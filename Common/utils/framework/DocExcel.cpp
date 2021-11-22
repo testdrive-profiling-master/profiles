@@ -869,27 +869,70 @@ int DocExcel::StyleFill(unsigned int dwColorARGB)
 	return p.iRet;
 }
 
-int DocExcel::StyleBorder(bool bLeft, bool bRight, bool bTop, bool bBottom, bool bThick)
+int DocExcel::StyleBorder(const char* sBorderStyle)
 {
-	DocXML	node	= m_Styles.child("borders");
-	cstring	sStyle	= bThick ? "thick" : "thin";
+	if(!sBorderStyle || !*sBorderStyle) return 0;
+
 	typedef struct {
 		int			iIndex;
-		cstring		sLeft, sRight, sTop, sBottom;
+		cstring		sLeft, sRight, sTop, sBottom, sDiagonal;
+		bool		bDiagonalUp, bDiagonalDown;
 		int			iRet;
 	} private_data;
-	private_data	p;
-	p.iIndex		= -1;
-	p.iRet			= -1;
+	private_data		p;
+	p.iIndex			= -1;
+	p.iRet				= -1;
+	p.bDiagonalUp		= false;
+	p.bDiagonalDown		= false;
+	// parsing style
 	{
-		if(bLeft)	p.sLeft		= sStyle;
+		const char*	__sTokensDelim	= ",;";
+		int iPos	= 0;
+		cstring sTokens(sBorderStyle);
 
-		if(bRight)	p.sRight	= sStyle;
+		for(; iPos >= 0;) {
+			const char*	__sDelim	= " =\t";
+			cstring	sTok = sTokens.Tokenize(iPos, __sTokensDelim);
 
-		if(bTop)	p.sTop		= sStyle;
+			if(iPos > 0) {
+				int		iTokPos	= 0;
+				cstring	sID = sTok.Tokenize(iTokPos, __sDelim);
+				cstring	sVal = sTok.Tokenize(iTokPos, __sDelim);
 
-		if(bBottom)	p.sBottom	= sStyle;
+				if(iPos < 0 || sID == "") break;
+
+				if(sID == "left") {
+					p.sLeft		= sVal;
+				} else if(sID == "right") {
+					p.sRight	= sVal;
+				} else if(sID == "top") {
+					p.sTop		= sVal;
+				} else if(sID == "bottom") {
+					p.sBottom	= sVal;
+				} else if(sID == "all") {
+					p.sLeft		= sVal;
+					p.sRight	= sVal;
+					p.sTop		= sVal;
+					p.sBottom	= sVal;
+				} else if(sID == "diagonal_up") {
+					p.sDiagonal		= sVal;
+					p.bDiagonalUp	= true;
+				} else if(sID == "diagonal_down") {
+					p.sDiagonal		= sVal;
+					p.bDiagonalDown	= true;
+				} else if(sID == "diagonal_all") {
+					p.sDiagonal		= sVal;
+					p.bDiagonalUp	= true;
+					p.bDiagonalDown	= true;
+				}  else {
+					LOGE("Invalid border style ID : %s", sID.c_str());
+					return -1;
+				}
+			}
+		}
 	}
+	// searching existed style
+	DocXML	node		= m_Styles.child("borders");
 	node.Enumerate("border", &p, [](DocXML node, void* pPrivate) -> bool {
 		private_data* p = (private_data*)pPrivate;
 		p->iIndex++;
@@ -898,7 +941,9 @@ int DocExcel::StyleBorder(bool bLeft, bool bRight, bool bTop, bool bBottom, bool
 		   p->sRight == node.child("right").attribute("style").value() &&
 		   p->sTop == node.child("top").attribute("style").value() &&
 		   p->sBottom == node.child("bottom").attribute("style").value() &&
-		   !*node.child("diagonal").attribute("style").value())
+		   p->bDiagonalUp == node.attribute("diagonalUp").as_bool() &&
+		   p->bDiagonalDown == node.attribute("diagonalDown").as_bool() &&
+		   p->sDiagonal == node.child("diagonal").attribute("style").as_string())
 		{
 			p->iRet	= p->iIndex;
 			return false;
@@ -913,33 +958,43 @@ int DocExcel::StyleBorder(bool bLeft, bool bRight, bool bTop, bool bBottom, bool
 		DocXML	att;
 		att		= border.append_child("left");
 
-		if(bLeft) {
-			att.append_attribute("style")						= sStyle;
+		if(p.sLeft.size()) {
+			att.append_attribute("style")						= p.sLeft;
 			att.append_child("color").append_attribute("auto")	= 1;
 		}
 
 		att		= border.append_child("right");
 
-		if(bRight) {
-			att.append_attribute("style")						= sStyle;
+		if(p.sRight.size()) {
+			att.append_attribute("style")						= p.sRight;
 			att.append_child("color").append_attribute("auto")	= 1;
 		}
 
 		att		= border.append_child("top");
 
-		if(bTop) {
-			att.append_attribute("style")						= sStyle;
+		if(p.sTop.size()) {
+			att.append_attribute("style")						= p.sTop;
 			att.append_child("color").append_attribute("auto")	= 1;
 		}
 
 		att		= border.append_child("bottom");
 
-		if(bBottom) {
-			att.append_attribute("style")						= sStyle;
+		if(p.sBottom.size()) {
+			att.append_attribute("style")						= p.sBottom;
 			att.append_child("color").append_attribute("auto")	= 1;
 		}
 
 		att		= border.append_child("diagonal");
+
+		if(p.bDiagonalUp || p.bDiagonalDown) {
+			if(p.bDiagonalUp) border.append_attribute("diagonalUp")		= 1;
+
+			if(p.bDiagonalDown) border.append_attribute("diagonalDown")	= 1;
+
+			att.append_attribute("style")						= p.sDiagonal;
+			att.append_child("color").append_attribute("auto")	= 1;
+		}
+
 		node.attribute("count")						= p.iRet + 1;
 	}
 
