@@ -84,7 +84,9 @@ public:
 	inline int GetPosY(void)	{
 		return m_CurPos.y;
 	}
-
+	inline DocExcel* Parent(void) {
+		return m_pExcel;
+	}
 	bool GetRow(bool bAutoCreate = false);
 	bool GetColumn(bool bAutoCreate = false);
 
@@ -100,7 +102,7 @@ public:
 	bool SetFunction(const char* sFunction);
 	void SetPane(const char* sPos);
 	bool SetStyle(int iCellStyle);
-	bool SetColumnWidth(double fWidth, bool bBestFit);
+	bool SetColumnWidth(double fWidth, bool bBestFit = true);
 	void SetTabColor(unsigned int dwColorRGB);
 	bool SetConditionalFormatting(const char* sFomula, int iStyleFormat);
 	bool MergeCells(const char* sBegin, const char* sEnd);
@@ -148,7 +150,7 @@ public:
 	DocExcelSheet* GetSheetByIndex(int iIndex);
 	DocExcelSheet* CreateSheet(const char* sName);
 	void DeleteSheet(DocExcelSheet* pSheet);
-	int StyleFont(const char* sFontName, int iFontSize, bool bBold, bool bItalic);
+	int StyleFont(const char* sFontName, int iFontSize, bool bBold = false, bool bItalic = false);
 	int StyleFill(unsigned int dwColorARGB);
 	int StyleBorder(const char* sBorderStyle);
 	int StyleCell(int iStyleFont, int iStyleFill, int iStyleBorder, const char* sAlignment);

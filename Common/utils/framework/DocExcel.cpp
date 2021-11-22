@@ -771,7 +771,7 @@ int DocExcel::GetSheetCount(void)
 
 int DocExcel::StyleFont(const char* sFontName, int iFontSize, bool bBold, bool bItalic)
 {
-	string	sFont(sFontName);
+	cstring	sFont(sFontName);
 	DocXML	node				= m_Styles.child("fonts");
 	{
 		// setup default
@@ -1016,7 +1016,7 @@ int DocExcel::StyleCell(int iStyleFont, int iStyleFill, int iStyleBorder, const 
 	private_data	p;
 	p.iIndex		= -1;
 	p.iRet			= -1;
-	p.alignment.bEnable	= sAlignment || *sAlignment;
+	p.alignment.bEnable	= (sAlignment && *sAlignment);
 
 	if(p.alignment.bEnable) {	// setup alignment
 		const char*	sDelim	= ",;";
