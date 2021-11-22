@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 11/19/2021 Fri (clonextop@gmail.com)
+// Rev.  : 11/22/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #include "DocExcel.h"
 
@@ -155,9 +155,15 @@ void DocExcelSheet::SetPos(int x, int y)
 	m_Column	= pugi::xml_node(NULL);
 }
 
+void DocExcelSheet::GetPos(int& x, int& y)
+{
+	x	= m_CurPos.x - 1;
+	y	= m_CurPos.y;
+}
+
 string DocExcelSheet::GetPosition(void)
 {
-	return Excel_PosEncode(m_CurPos.x, m_CurPos.y);
+	return Excel_PosEncode(m_CurPos.x - 1, m_CurPos.y);
 }
 
 bool DocExcelSheet::GetRow(bool bAutoCreate)
@@ -481,6 +487,42 @@ bool DocExcelSheet::HideColumn(bool bHide)
 	return true;
 }
 
+bool DocExcelSheet::SetConditionalFormatting(const char* sFomula, int iStyleFormat)
+{
+	if(m_Column.empty()) return false;
+
+	cstring sPos = GetPosition();
+	DocXML	node = this->find_child_by_attribute("conditionalFormatting", "sqref", sPos);
+
+	// get condition formatting
+	if(!node) {
+		node	= insert_child_after("conditionalFormatting", child("pageMargins").previous_sibling());
+		node.append_attribute("sqref")	= sPos;
+	}
+
+	// get rule
+	if(node.Size("cfRule")) {
+		node	= child("cfRule");
+	} else {
+		node	= node.append_child("cfRule");
+		node.append_attribute("type")		= "expression";
+		node.append_attribute("dxfId")		= 0;
+		node.append_attribute("priority")	= 1;
+	}
+
+	node.attribute("dxfId")		= iStyleFormat;
+
+	// get formula
+	if(node.Size("formula")) {
+		node	= node.child("formula");
+	} else {
+		node	= node.append_child("formula");
+	}
+
+	node.text()	= sFomula;
+	return false;
+}
+
 void DocExcelSheet::SetName(const char* sName)
 {
 	if(m_pExcel) m_pExcel->ReplaceSheetName(this, sName);
@@ -531,7 +573,7 @@ DocExcel::~DocExcel(void)
 
 bool DocExcel::Open(const char* sFileName)
 {
-	if(!sFileName) {
+	if(!sFileName || !*sFileName) {
 		string	sTemplateFileName	= GetCommonToolPath() + "/bin/lua/DocExcel_template.xlsx";
 		return DocFile::Open(sTemplateFileName.c_str());
 	}
@@ -986,6 +1028,116 @@ int DocExcel::StyleCell(int iStyleFont, int iStyleFill, int iStyleBorder, const 
 
 	return p.iRet;
 }
+
+int DocExcel::StyleFormat(const char* sFormat)
+{
+	int iPos = 0;
+	typedef struct {
+		int			iIndex;
+		cstring		font_color, bg_color;
+		int			iRet;
+	} private_data;
+	private_data	p;
+	p.iIndex	= -1;
+	p.iRet		= -1;
+	// parsing format
+	{
+		const char*	__sTokensDelim	= ",;";
+		cstring sTokens(sFormat);
+
+		for(; iPos >= 0;) {
+			const char*	__sDelim	= " =\t";
+			cstring	sTok = sTokens.Tokenize(iPos, __sTokensDelim);
+
+			if(iPos > 0) {
+				int		iTokPos	= 0;
+				cstring	sID = sTok.Tokenize(iTokPos, __sDelim);
+				cstring	sVal = sTok.Tokenize(iTokPos, __sDelim);
+
+				if(iPos < 0 || sID == "") break;
+
+				if(sVal.CompareFront("0x")) sVal.DeleteFront("0x");
+
+				sVal.MakeUpper();
+
+				if(sID == "fontColor") {
+					p.font_color	= sVal;
+				} else if(sID == "bgColor") {
+					p.bg_color		= sVal;
+				} else {
+					LOGE("Invalid Font style ID : %s", sID.c_str());
+					return -1;
+				}
+			}
+		}
+
+		if(!p.font_color.size() && !p.bg_color.size()) {
+			LOGE("No format style is specified.");
+			return -1;
+		}
+	}
+	// get 'dxfs'
+	DocXML	node	= m_Styles.child("dxfs");
+
+	if(!node) {
+		const char* sFollowList[] = {
+			"cellStyles",
+			"cellXfs",
+			"cellStyleXfs",
+			"borders",
+			NULL
+		};
+
+		for(int i = 0; sFollowList[i]; i++) {
+			node	= m_Styles.child("cellStyles");
+
+			if(node) {
+				node	= m_Styles.insert_child_after("dxfs", node);
+				break;
+			}
+		}
+
+		node.append_attribute("count")	= 0;
+	}
+
+	// searching existence
+	node.Enumerate("dxf", &p, [](DocXML node, void* pPrivate) -> bool {
+		private_data* p = (private_data*)pPrivate;
+		p->iIndex++;
+
+		if(p->bg_color.size())
+		{
+			if(p->bg_color != node.child("fill").child("patternFill").child("bgColor").attribute("rgb").as_string())
+				return true;
+		} else if(node.Size("fill")) return true;
+
+		if(p->font_color.size())
+		{
+			if(p->font_color != node.child("font").child("color").attribute("rgb").as_string())
+				return true;
+		} else if(node.Size("font")) return true;
+
+		p->iRet		= p->iIndex;
+		return false;
+	});
+
+	// not exist. must create it
+	if(p.iRet < 0) {
+		p.iRet	= node.Size("dxf");
+		node	= node.append_child("dxf");
+
+		if(p.font_color.size())
+			node.append_child("font").append_child("color").append_attribute("rgb")	= p.font_color.c_str();
+
+		if(p.bg_color.size())
+			node.append_child("fill").append_child("patternFill").append_child("bgColor").append_attribute("rgb") = p.bg_color.c_str();
+
+		node.attribute("count")	= node.Size("dxf");
+	}
+
+	return p.iRet;
+}
+
 
 bool DocExcel::ReplaceSheetName(DocExcelSheet* pSheet, const char* sName)
 {

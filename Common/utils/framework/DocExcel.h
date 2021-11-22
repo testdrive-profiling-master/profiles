@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 11/19/2021 Fri (clonextop@gmail.com)
+// Rev.  : 11/22/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __DOC_EXCEL_H__
 #define __DOC_EXCEL_H__
@@ -59,11 +59,12 @@ public:
 	void SetPosition(const char* sPos);
 	void SetPos(int x, int y);
 	string GetPosition(void);
+	void GetPos(int& x, int& y);
 	inline int ID(void)			{
 		return m_iID;
 	}
 	inline int GetPosX(void)	{
-		return m_CurPos.x;
+		return m_CurPos.x - 1;
 	}
 	inline int GetPosY(void)	{
 		return m_CurPos.y;
@@ -86,6 +87,7 @@ public:
 	bool SetStyle(int iCellStyle);
 	bool SetColumnWidth(double fWidth, bool bBestFit);
 	void SetTabColor(unsigned int dwColorRGB);
+	bool SetConditionalFormatting(const char* sFomula, int iStyleFormat);
 	bool MergeCells(const char* sBegin, const char* sEnd);
 	bool HideColumn(bool bHide);
 
@@ -135,6 +137,7 @@ public:
 	int StyleFill(unsigned int dwColorARGB);
 	int StyleBorder(bool bLeft, bool bRight, bool bTop, bool bBottom, bool bThick);
 	int StyleCell(int iStyleFont, int iStyleFill, int iStyleBorder, const char* sAlignment);
+	int StyleFormat(const char* sFormat);
 	bool ReplaceSheetName(DocExcelSheet* pSheet, const char* sName);
 
 protected:
