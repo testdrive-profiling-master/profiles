@@ -103,6 +103,47 @@ string Excel_PosEncode(int x, int y)
 	return sPos.c_str();
 }
 
+DocExcelPos::DocExcelPos(void)
+{
+	x = y = 0;
+}
+DocExcelPos::DocExcelPos(const char* sPos)
+{
+	x = y = 0;
+	Set(sPos);
+}
+DocExcelPos::DocExcelPos(int iX, int iY)
+{
+	x = iX;
+	y = iY;
+}
+DocExcelPos::DocExcelPos(DocExcelSheet* pSheet)
+{
+	x = y = 0;
+
+	if(pSheet) {
+		x	= pSheet->GetPosX();
+		y	= pSheet->GetPosY();
+	}
+}
+DocExcelPos::~DocExcelPos(void) {}
+void DocExcelPos::Set(const char* sPos)
+{
+	if(sPos) {
+		Excel_PosDecode(sPos, x, y);
+	}
+}
+
+string DocExcelPos::Get(void) const
+{
+	return Excel_PosEncode(x, y);
+}
+
+string DocExcelPos::Relative(int iIncreaseX, int iIncreaseY) const
+{
+	return Excel_PosEncode(x + iIncreaseX, y + iIncreaseY);
+}
+
 DocExcelSheet::DocExcelSheet(const char* sName, const char* sEntryPath, DocExcel* pExcel, int iID, pugi::xml_node node) : DocXML(node)
 {
 	m_sName			= sName;
@@ -155,10 +196,10 @@ void DocExcelSheet::SetPos(int x, int y)
 	m_Column	= pugi::xml_node(NULL);
 }
 
-void DocExcelSheet::GetPos(int& x, int& y)
+DocExcelPos DocExcelSheet::GetPos(void)
 {
-	x	= m_CurPos.x - 1;
-	y	= m_CurPos.y;
+	DocExcelPos	pos(m_CurPos.x - 1, m_CurPos.y);
+	return pos;
 }
 
 string DocExcelSheet::GetPosition(void)

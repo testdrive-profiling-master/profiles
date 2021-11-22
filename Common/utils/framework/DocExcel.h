@@ -47,6 +47,21 @@ typedef enum {
 } EXCEL_RELATIONSHIP;
 
 class DocExcel;
+class DocExcelSheet;
+
+class DocExcelPos {
+public:
+	DocExcelPos(void);
+	DocExcelPos(const char* sPos);
+	DocExcelPos(int iX, int iY);
+	DocExcelPos(DocExcelSheet* pSheet);
+	~DocExcelPos(void);
+	void Set(const char* sPos);
+	string Get(void) const;
+	string Relative(int iIncreaseX, int iIncreaseY) const;
+
+	int x, y;
+};
 
 class DocExcelSheet : public DocXML {
 	friend class DocExcel;
@@ -59,7 +74,7 @@ public:
 	void SetPosition(const char* sPos);
 	void SetPos(int x, int y);
 	string GetPosition(void);
-	void GetPos(int& x, int& y);
+	DocExcelPos GetPos(void);
 	inline int ID(void)			{
 		return m_iID;
 	}
