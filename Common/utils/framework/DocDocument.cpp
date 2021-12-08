@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 11/19/2021 Fri (clonextop@gmail.com)
+// Rev.  : 12/8/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #include "DocDocument.h"
 
@@ -350,6 +350,40 @@ void DocXML::Enumerate(const char* sChildPath, void* pPrivate, DOCX_NODE_ENUMERA
 size_t DocXML::Size(const char* sChild)
 {
 	return std::distance(children(sChild).begin(), children(sChild).end());
+}
+
+static void __enum_copy(pugi::xml_node dst, pugi::xml_node src)
+{
+	for(auto child = src.first_child(); child ; child = child.next_sibling()) {
+		const char* sChildName	= child.name();
+		//if(!*sChildName) continue;
+		pugi::xml_node	node = dst.append_child(sChildName);
+
+		if(!child.text().empty()) {
+			// copy value
+			node.text().set(child.text().get());
+		}
+
+		for(auto attr = child.first_attribute(); attr; attr = attr.next_attribute()) {
+			node.append_attribute(attr.name())	= attr.value();
+		}
+
+		__enum_copy(node, child);
+	}
+}
+
+void DocXML::AddChildFromBuffer(const char* sBuffer)
+{
+	pugi::xml_document*	pDoc	= new pugi::xml_document;
+
+	if(pDoc) {
+		pDoc->load_buffer(sBuffer, strlen(sBuffer),  pugi::parse_default | pugi::parse_ws_pcdata);
+
+		for(auto child = pDoc->first_child(); !child.empty() ; child = child.next_sibling())
+			append_copy(child);
+
+		delete pDoc;
+	}
 }
 
 static bool __EnumerateNodeInDepth(cstring& sChild, DocXML node, void* pPrivate, DOCX_NODE_ENUMERATOR_FUNC func)

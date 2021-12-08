@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 11/22/2021 Mon (clonextop@gmail.com)
+// Rev.  : 12/8/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __DOC_EXCEL_H__
 #define __DOC_EXCEL_H__
@@ -106,7 +106,8 @@ public:
 	void SetTabColor(unsigned int dwColorRGB);
 	bool SetConditionalFormatting(const char* sFomula, int iStyleFormat);
 	bool MergeCells(const char* sBegin, const char* sEnd);
-	bool HideColumn(bool bHide);
+	bool HideColumn(bool bHide = true);
+	void SetProtection(const char* sHash, const char* sSalt, const char* sExceptionRangeList);
 
 	const char* GetName(void) const	{
 		return m_sName.c_str();
@@ -150,10 +151,11 @@ public:
 	DocExcelSheet* GetSheetByIndex(int iIndex);
 	DocExcelSheet* CreateSheet(const char* sName);
 	void DeleteSheet(DocExcelSheet* pSheet);
-	int StyleFont(const char* sFontName, int iFontSize, bool bBold = false, bool bItalic = false);
+	int StyleFont(const char* sFontName, int iFontSize, bool bBold = false, bool bItalic = false, unsigned int dwARGB = 0);
 	int StyleFill(unsigned int dwColorARGB);
 	int StyleBorder(const char* sBorderStyle);
-	int StyleCell(int iStyleFont, int iStyleFill, int iStyleBorder, const char* sAlignment);
+	int StyleNumberFormat(const char* sFormat);
+	int StyleCell(int iStyleFont, int iStyleFill, int iStyleBorder, int iStyleNumberFormat, const char* sAlignment);
 	int StyleFormat(const char* sFormat);
 	bool ReplaceSheetName(DocExcelSheet* pSheet, const char* sName);
 
@@ -163,7 +165,9 @@ protected:
 	virtual bool OnSave(void);
 	virtual bool OnDelete(const char* sEntryName);
 
+	friend class DocExcelSheet;
 	string CreateRelationship(EXCEL_RELATIONSHIP type, const char* sEntryPath);
+	void AddCalChain(DocExcelSheet* pSheet);
 
 private:
 	DocXML						m_ContentTypes;

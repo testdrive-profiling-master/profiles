@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 7/30/2021 Fri (clonextop@gmail.com)
+// Rev.  : 12/8/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __DOCX_DOCUMENT_H__
 #define __DOCX_DOCUMENT_H__
@@ -168,6 +168,7 @@ public:
 	void Enumerate(const char* sChildPath, void* pPrivate, DOCX_NODE_ENUMERATOR_FUNC func);
 	void EnumerateInDepth(const char* sChild, void* pPrivate, DOCX_NODE_ENUMERATOR_FUNC func);
 	size_t Size(const char* sChild);
+	void AddChildFromBuffer(const char* sBuffer);
 };
 
 class DocFile {

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 11/22/2021 Mon (clonextop@gmail.com)
+// Rev.  : 12/8/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #include "DocExcel.h"
 
@@ -379,12 +379,15 @@ bool DocExcelSheet::SetFunction(const char* sFunction)
 	{
 		DocXML	node	= m_Column.child("f");
 
-		if(node.empty())
+		if(!node) {
 			node		= m_Column.append_child("f");
+			node.append_attribute("ca")		= 1;
+		}
 
 		node.text().set(sFunction);
 		m_Column.remove_child("v");
 		m_Column.remove_child("t");
+		Parent()->AddCalChain(this);
 	}
 	m_bRecompute	= true;
 	return true;
@@ -528,6 +531,43 @@ bool DocExcelSheet::HideColumn(bool bHide)
 	return true;
 }
 
+void DocExcelSheet::SetProtection(const char* sHash, const char* sSalt, const char* sExceptionRangeList)
+{
+	DocXML	node	= child("sheetProtection");
+
+	if(node) remove_child(node);
+
+	if(sHash && sSalt) {
+		node	= insert_child_after("sheetProtection", child("sheetData"));
+		node.append_attribute("algorithmName")		= "SHA-512";
+		node.append_attribute("hashValue")			= sHash;
+		node.append_attribute("saltValue")			= sSalt;
+		node.append_attribute("spinCount")			= 100000;
+		node.append_attribute("sheet")				= 1;
+		node.append_attribute("objects")			= 1;
+		node.append_attribute("scenarios")			= 1;
+
+		if(sExceptionRangeList) {
+			int iPos	= 0;
+			cstring sExceptions(sExceptionRangeList);
+			remove_child("protectedRanges");
+			node	= insert_child_after("protectedRanges", node);
+
+			for(int i = 1; iPos >= 0; i++) {
+				cstring sRange	= sExceptions.Tokenize(iPos, " ,;");
+
+				if(iPos > 0) {
+					DocXML	child	= node.append_child("protectedRange");
+					child.append_attribute("sqref")	= sRange;
+					cstring sName;
+					sName.Format("Range%d", i);
+					child.append_attribute("name")	= sName;
+				}
+			}
+		}
+	}
+}
+
 bool DocExcelSheet::SetConditionalFormatting(const char* sFomula, int iStyleFormat)
 {
 	if(m_Column.empty()) return false;
@@ -646,7 +686,7 @@ bool DocExcel::OnOpen(void)
 	if(GetXML("xl/calcChain.xml")) {
 		m_CalcChain			= GetXML("xl/calcChain.xml")->child("calcChain");
 	} else {
-		m_CalcChain			= GetXML("xl/calcChain.xml", true)->child("calcChain");
+		m_CalcChain			= GetXML("xl/calcChain.xml", true)->append_child("calcChain");
 		m_CalcChain.append_attribute("xmlns")	= "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
 		// add t contents
 		DocXML	xml			= m_ContentTypes.append_child("Override");
@@ -712,7 +752,7 @@ bool DocExcel::OnSave(void)
 		DeleteFile("xl/sharedStrings.xml");
 	}
 
-	if(!m_SharedStrings.Size("c")) {	// no functions
+	if(!m_CalcChain.Size("c")) {	// no functions
 		DeleteFile("xl/calcChain.xml");
 	}
 
@@ -764,12 +804,48 @@ string DocExcel::CreateRelationship(EXCEL_RELATIONSHIP type, const char* sEntryP
 	return sID.c_str();
 }
 
+void DocExcel::AddCalChain(DocExcelSheet* pSheet)
+{
+	if(!pSheet) return;
+
+	// find function
+	typedef struct {
+		cstring		sPos;
+		cstring		sID;
+		int			bFound;
+	} private_data;
+	private_data	p;
+	p.sID.Format("%d", pSheet->ID());
+	p.sPos		= pSheet->GetPosition();
+	p.bFound	= false;
+	m_CalcChain.Enumerate("c", &p, [](DocXML node, void* pPrivate) -> bool{
+		private_data*	p	= (private_data*)pPrivate;
+
+		if(p->sPos == node.attribute("r").as_string() && p->sID == node.attribute("i").as_string())
+		{
+			p->bFound	= true;
+			return false;
+		}
+		return true;
+	});
+
+	if(!p.bFound) {
+		size_t	node_count	= m_CalcChain.Size("c");
+		DocXML	node		= m_CalcChain.append_child("c");
+		node.append_attribute("r")	= p.sPos;
+		node.append_attribute("i")	= p.sID;
+
+		if(!node_count)
+			node.append_attribute("l")	= 1;
+	}
+}
+
 int DocExcel::GetSheetCount(void)
 {
 	return m_SheetMap.size();
 }
 
-int DocExcel::StyleFont(const char* sFontName, int iFontSize, bool bBold, bool bItalic)
+int DocExcel::StyleFont(const char* sFontName, int iFontSize, bool bBold, bool bItalic, unsigned int dwColorARGB)
 {
 	cstring	sFont(sFontName);
 	DocXML	node				= m_Styles.child("fonts");
@@ -782,20 +858,22 @@ int DocExcel::StyleFont(const char* sFontName, int iFontSize, bool bBold, bool b
 		if(!iFontSize) iFontSize	= atoi(default_font.child("sz").attribute("val").value());
 	}
 	typedef struct {
-		int			iIndex;
-		cstring		sFontName;
-		int			iFontSize;
-		bool		bBold;
-		bool		bItalic;
-		int			iRet;
+		int				iIndex;
+		cstring			sFontName;
+		int				iFontSize;
+		bool			bBold;
+		bool			bItalic;
+		unsigned int	dwColorARGB;
+		int				iRet;
 	} private_data;
 	private_data	p;
-	p.iIndex	= -1;
-	p.sFontName	= sFont;
-	p.iFontSize	= iFontSize;
-	p.bBold		= bBold;
-	p.bItalic	= bItalic;
-	p.iRet		= -1;
+	p.iIndex		= -1;
+	p.sFontName		= sFont;
+	p.iFontSize		= iFontSize;
+	p.bBold			= bBold;
+	p.bItalic		= bItalic;
+	p.dwColorARGB	= dwColorARGB;
+	p.iRet			= -1;
 	node.Enumerate("font", &p, [](DocXML node, void* pPrivate) -> bool {
 		private_data* p = (private_data*)pPrivate;
 		p->iIndex++;
@@ -805,6 +883,14 @@ int DocExcel::StyleFont(const char* sFontName, int iFontSize, bool bBold, bool b
 		   p->bBold == node.Size("b") &&
 		   p->bItalic == node.Size("i"))
 		{
+			if(p->dwColorARGB) {
+				cstring sARGB;
+				sARGB.Format("%08X", p->dwColorARGB);
+
+				if(sARGB != node.child("color").attribute("rgb").as_string(""))
+					return true;
+			}
+
 			p->iRet	= p->iIndex;
 			return false;
 		}
@@ -821,7 +907,13 @@ int DocExcel::StyleFont(const char* sFontName, int iFontSize, bool bBold, bool b
 		if(bItalic) font.append_child("i");
 
 		font.append_child("sz").append_attribute("val")				= iFontSize;
-		font.append_child("color").append_attribute("theme")		= 1;
+
+		if(dwColorARGB) {
+			cstring sARGB;
+			sARGB.Format("%08X", dwColorARGB);
+			font.append_child("color").append_attribute("rgb")		= sARGB;
+		} else font.append_child("color").append_attribute("theme")		= 1;
+
 		font.append_child("name").append_attribute("val")			= sFont.c_str();
 		font.append_child("family").append_attribute("val")			= 2;
 		font.append_child("scheme").append_attribute("val")			= "minor";
@@ -1001,12 +1093,60 @@ int DocExcel::StyleBorder(const char* sBorderStyle)
 	return p.iRet;
 }
 
-int DocExcel::StyleCell(int iStyleFont, int iStyleFill, int iStyleBorder, const char* sAlignment)
+int DocExcel::StyleNumberFormat(const char* sFormat)
+{
+	if(sFormat && *sFormat) {
+		DocXML	node	= m_Styles.child("numFmts");
+		typedef struct {
+			int			iMaxID;
+			int			iRet;
+			const char*	sFormat;
+		} private_data;
+		private_data	p;
+		p.iMaxID		= 175;
+		p.iRet			= -1;
+		p.sFormat		= sFormat;
+
+		if(!node) {
+			node	= m_Styles.insert_child_after("numFmts", m_Styles.child("fonts").previous_sibling());
+			node.append_attribute("count")	= 0;
+		}
+
+		// find matched format
+		node.Enumerate("numFmt", &p, [](DocXML node, void* pPrivate) -> bool{
+			private_data* p	= (private_data*)pPrivate;
+			int iID = node.attribute("numFmtId").as_int(-1);
+
+			if(iID > p->iMaxID) p->iMaxID = iID;
+			cstring sCode(node.attribute("formatCode").as_string());
+			if(sCode == p->sFormat)
+			{
+				p->iRet	= iID;
+				return false;
+			}
+			return true;
+		});
+
+		if(p.iRet < 0) {	// no matched format, must be created
+			p.iRet	= p.iMaxID + 1;
+			DocXML	fmt	= node.append_child("numFmt");
+			fmt.append_attribute("numFmtId")	= p.iRet;
+			fmt.append_attribute("formatCode")	= sFormat;
+			node.attribute("count")				= node.Size("numFmt");
+		}
+
+		return p.iRet;
+	}
+
+	return 0;
+}
+
+int DocExcel::StyleCell(int iStyleFont, int iStyleFill, int iStyleBorder, int iStyleNumberFormat, const char* sAlignment)
 {
 	DocXML	node	= m_Styles.child("cellXfs");
 	typedef struct {
 		int			iIndex;
-		int			iFont, iFill, iBorder;
+		int			iFont, iFill, iBorder, iNumberFormat;
 		struct {
 			bool		bEnable;
 			string		sHorizontal, sVertical;
@@ -1016,6 +1156,10 @@ int DocExcel::StyleCell(int iStyleFont, int iStyleFill, int iStyleBorder, const 
 	private_data	p;
 	p.iIndex		= -1;
 	p.iRet			= -1;
+	p.iFont			= iStyleFont;
+	p.iFill			= iStyleFill;
+	p.iBorder		= iStyleBorder;
+	p.iNumberFormat	= iStyleNumberFormat;
 	p.alignment.bEnable	= (sAlignment && *sAlignment);
 
 	if(p.alignment.bEnable) {	// setup alignment
@@ -1068,9 +1212,11 @@ int DocExcel::StyleCell(int iStyleFont, int iStyleFill, int iStyleBorder, const 
 		if(p->iFont == node.attribute("fontId").as_int() &&
 		   p->iFill == node.attribute("fillId").as_int() &&
 		   p->iBorder == node.attribute("borderId").as_int() &&
+		   p->iNumberFormat == node.attribute("numFmtId").as_int() &&
 		   (p->iFont != 0) == node.attribute("applyFont").as_int() &&
 		   (p->iFill != 0) == node.attribute("applyFill").as_int() &&
 		   (p->iBorder != 0) == node.attribute("applyBorder").as_int() &&
+		   (p->iNumberFormat != 0) == node.attribute("applyNumberFormat").as_int() &&
 		   (p->alignment.bEnable) == node.attribute("applyAlignment").as_int())
 		{
 			bool	bMatched	= true;
@@ -1096,7 +1242,7 @@ int DocExcel::StyleCell(int iStyleFont, int iStyleFill, int iStyleBorder, const 
 		// not matched cell style found, must create it
 		p.iRet			= node.Size("xf");
 		DocXML	xf		= node.append_child("xf");
-		xf.append_attribute("numFmtId")			= 0;
+		xf.append_attribute("numFmtId")			= iStyleNumberFormat;
 		xf.append_attribute("fontId")			= iStyleFont;
 		xf.append_attribute("fillId")			= iStyleFill;
 		xf.append_attribute("borderId")			= iStyleBorder;
@@ -1107,6 +1253,8 @@ int DocExcel::StyleCell(int iStyleFont, int iStyleFill, int iStyleBorder, const 
 		if(iStyleFill) xf.append_attribute("applyFill")		= 1;
 
 		if(iStyleBorder) xf.append_attribute("applyBorder")	= 1;
+
+		if(iStyleNumberFormat) xf.append_attribute("applyNumberFormat")	= 1;
 
 		if(p.alignment.bEnable) {
 			xf.append_attribute("applyAlignment")	= 1;
@@ -1406,7 +1554,12 @@ int DocExcel::GetStringIndex(const char* sStr, bool bAutoAppend)
 		iIndex	= m_StringTable.size();
 		m_StringTable.push_back(sData.c_str());
 		DocXML	node	= m_SharedStrings.append_child("si");
-		node.append_child("t").text().set(sData);
+
+		if(sData.CompareFront("<r>")) {
+			node.AddChildFromBuffer(sData);
+		} else node.append_child("t").text().set(sData);
+
+		// add tail
 		node	= node.append_child("phoneticPr");
 		node.append_attribute("fontId")		= 1;
 		node.append_attribute("type")		= "noConversion";
