@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 4/8/2021 Thu (clonextop@gmail.com)
+// Rev.  : 12/15/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __TESTDRIVE_LICENSE_MANAGER_H__
 #define __TESTDRIVE_LICENSE_MANAGER_H__
@@ -51,11 +50,11 @@
 using namespace std;
 
 namespace testdrive_license_manager {
-	class LicenseCheck {
-	public:
-		LicenseCheck(const DWORD* pPublicKey);
-		~LicenseCheck(void);
-	};
+class LicenseCheck {
+public:
+	LicenseCheck(const DWORD* pPublicKey);
+	~LicenseCheck(void);
+};
 };
 
 #endif// __TESTDRIVE_LICENSE_MANAGER_H__

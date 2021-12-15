@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : License Manager
-// Rev.  : 4/8/2021 Thu (clonextop@gmail.com)
+// Rev.  : 12/15/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __Z_FILE_H__
 #define __Z_FILE_H__
@@ -41,21 +40,28 @@
 class zFile {
 public:
 	zFile(void);
-	~zFile(void);
+	virtual ~zFile(void);
 
 	void Release(void);
 
 	bool Compress(const char* sFileName);
+	bool Compress(BYTE* pBuffer, size_t dwByteSize);
 	bool Decompress(BYTE* pCompressedBuffer, size_t iCompressedSize, size_t iDecompressedSize);
 
-	inline size_t& DecompressedSize(void)	{return m_iDecompressedSize;}
-	inline size_t& CompressedSize(void)		{return m_iCompressedSize;}
-	inline BYTE* Buffer(void)				{return m_pData;}
+	inline size_t& DecompressedSize(void)	{
+		return m_dwDecompressedSize;
+	}
+	inline size_t& CompressedSize(void)		{
+		return m_dwCompressedSize;
+	}
+	inline BYTE* Buffer(void)				{
+		return m_pData;
+	}
 
 private:
 	BYTE*		m_pData;
-	size_t		m_iCompressedSize;
-	size_t		m_iDecompressedSize;
+	size_t		m_dwCompressedSize;
+	size_t		m_dwDecompressedSize;
 };
 
 #endif//__Z_FILE_H__

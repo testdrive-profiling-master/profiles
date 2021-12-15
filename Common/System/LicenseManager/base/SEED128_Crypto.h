@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 4/8/2021 Thu (clonextop@gmail.com)
+// Rev.  : 12/15/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SEED128_CRYPTO_H__
 #define __SEED128_CRYPTO_H__
@@ -41,7 +40,7 @@
 class SEED128_Crypto {
 public:
 	SEED128_Crypto(const DWORD* pKey = NULL);
-	~SEED128_Crypto(void);
+	virtual ~SEED128_Crypto(void);
 
 	void SetupKey(const DWORD* pKey);				// 4 DWORD input
 	void Encrypt(BYTE* pData, DWORD dwByteSize);	// size alignment is 16 bytes

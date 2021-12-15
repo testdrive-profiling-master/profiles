@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 4/8/2021 Thu (clonextop@gmail.com)
+// Rev.  : 12/15/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SHA256_H__
 #define __SHA256_H__
@@ -46,7 +45,9 @@ public:
 	void Initialize(const DWORD* pInitHash = NULL);
 	void Push(const BYTE* pData, DWORD dwByteSize);
 	void PushFrame(const BYTE* pData);
-	const DWORD* Hash(void)	{return m_Hash;}
+	const DWORD* Hash(void)	{
+		return m_Hash;
+	}
 	void Randomize(void);
 	bool Compare(const DWORD* pCmpHash);
 
