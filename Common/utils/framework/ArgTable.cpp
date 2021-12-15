@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 10/20/2021 Wed (clonextop@gmail.com)
+// Rev.  : 12/15/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #include "ArgTable.h"
 #include "argtable3/src/argtable3.h"
@@ -260,9 +260,13 @@ const char* ArgTable::GetOptionString(const char* sName)
 		ARG_DATA	arg_data	= m_MapList[sName];
 
 		if(arg_data.type == ARG_TYPE_STRING) {
+			struct arg_str* pArg = (struct arg_str*)arg_data.pArg;
+
+			if(!pArg->count && m_DefaultList.opt_string.count(sName)) {
+				return m_DefaultList.opt_string[sName].c_str();
+			}
+
 			return ((struct arg_str*)arg_data.pArg)->sval[0];
-		} else if(m_DefaultList.opt_string.count(sName)) {
-			return m_DefaultList.opt_string[sName].c_str();
 		}
 	}
 
