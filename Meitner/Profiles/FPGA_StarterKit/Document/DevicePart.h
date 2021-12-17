@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,30 +30,48 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Meitner processor register map document
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Title : Starter Kit document
+// Rev.  : 12/17/2021 Fri (clonextop@gmail.com)
 //================================================================================
-#ifndef __HSTRING_H__
-#define __HSTRING_H__
-#include "TestDrive.h"
+#ifndef __DEVICE_PART_H__
+#define __DEVICE_PART_H__
+#include "testdrive_document.h"
+#include "SystemConfigMTSP.h"
+#include "Locale.h"
 
-class HString :
-	public CString
-{
+extern ITDDocument*		g_pDoc;
+extern ITDHtml*			g_pHtml;
+
+class DevicePart {
+protected:
+	virtual ~DevicePart(void);
+
 public:
-	HString(void);
-	virtual ~HString(void);
+	DevicePart(LPCTSTR sName = NULL);
+	static void ReleaseAll(void);
+	static BOOL Update(void);
+	static void PostUpdate(void);
+	static void Initialize(void);
+	static void Broadcast(LPVOID pData);
+	static void Command(LPCTSTR lpszURL);
+	inline LPCTSTR Name(void) const	{
+		return m_sName;
+	}
 
-	void AppendColoredFormat(DWORD dwColor, LPCTSTR format, ...);
-	void AppendImage(LPCTSTR format, ...);
-	void SetLink(LPCTSTR format, ...);
-	void SetColor(DWORD dwColor);
-	void AppendEnter(void);
-	void SetTag(LPCTSTR sTag);
-	inline void bold(void)		{SetTag(_T("b"));}
-	inline void italic(void)	{SetTag(_T("i"));}
-	inline void underline(void)	{SetTag(_T("u"));}
-	inline void sup(void)		{SetTag(_T("sup"));}
-	inline void sub(void)		{SetTag(_T("sub"));}
+	static MTSP_REGMAP*	m_pReg;
+
+protected:
+	static void SetText(LPCTSTR lpszTarget, LPCTSTR lpszFormat, ...);
+
+	virtual BOOL OnUpdate(void) = 0;
+	virtual void OnBroadcast(LPVOID pData);
+	virtual BOOL OnCommand(LPCTSTR lpszURL);
+
+private:
+	static DevicePart*	m_pHead;
+	DevicePart*			m_pNext;
+	LPCTSTR				m_sName;
+	BOOL				m_bTableNewRow;
 };
-#endif//__HSTRING_H__
+
+#endif//__DEVICE_PART_H__

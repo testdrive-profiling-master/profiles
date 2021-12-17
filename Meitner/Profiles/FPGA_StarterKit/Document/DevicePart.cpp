@@ -1,4 +1,4 @@
-﻿//================================================================================
+//================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
@@ -33,20 +33,103 @@
 // Title : Starter Kit document
 // Rev.  : 12/17/2021 Fri (clonextop@gmail.com)
 //================================================================================
-#include "LocaleString.h"
+#include "DevicePart.h"
 
-LOCALE_DEFINE(3, LANG_KOREAN, LANG_JAPANESE, LANG_ENGLISH)
+DevicePart*			DevicePart::m_pHead		= NULL;
+MTSP_REGMAP*	DevicePart::m_pReg		= NULL;
 
-LOCALE_TEXT(DOCUMENT_TITLE,
-			_T("FPGA 스타터 키트"),
-			_T("FPGAスターターキット"),
-			_T("FPGA Starter Kit"))
-LOCALE_TEXT(SEARCH_RECENT_USE,
-			_T("최근 사용 추적"),
-			_T("最近使用状況を追跡"),
-			_T("Track recent usage"))
-LOCALE_TEXT(GOTO_LATEST,
-			_T("최근 명령"),
-			_T("最近コマンド"),
-			_T("latest command"))
-LOCALE_END
+DevicePart::DevicePart(LPCTSTR sName)
+{
+	m_pNext			= m_pHead;
+	m_pHead			= this;
+	m_sName			= sName;
+	m_bTableNewRow	= NULL;
+}
+
+DevicePart::~DevicePart(void)
+{
+	if(m_pNext) {
+		delete m_pNext;
+		m_pNext	= NULL;
+	}
+}
+
+void DevicePart::ReleaseAll(void)
+{
+	if(m_pHead) {
+		delete m_pHead;
+		m_pHead	= NULL;
+	}
+}
+
+BOOL DevicePart::Update(void)
+{
+	BOOL	bUpdate	= FALSE;
+	DevicePart* pRegmap	= m_pHead;
+
+	if(m_pReg->magic_code == SYSTEM_MAGIC_CODE)	// check correct register map.
+		while(pRegmap) {
+			if(pRegmap->OnUpdate()) bUpdate = TRUE;
+
+			pRegmap	= pRegmap->m_pNext;
+		}
+
+	return bUpdate;
+}
+
+void DevicePart::PostUpdate(void)
+{
+	PostMessage(g_pDoc->GetWindowHandle(), WM_TIMER, 10, 0);
+}
+
+void DevicePart::Command(LPCTSTR lpszURL)
+{
+	DevicePart* pRegmap	= m_pHead;
+
+	while(pRegmap) {
+		if(pRegmap->Name() && (_tcsstr(lpszURL, pRegmap->Name()) == lpszURL)) {
+			pRegmap->OnCommand(lpszURL + _tcslen(pRegmap->Name()) + 1);
+			break;
+		}
+
+		pRegmap	= pRegmap->m_pNext;
+	}
+}
+
+void DevicePart::Initialize(void)
+{
+	Broadcast(NULL);
+}
+
+void DevicePart::Broadcast(LPVOID pData)
+{
+	DevicePart* pRegmap	= m_pHead;
+
+	while(pRegmap) {
+		pRegmap->OnBroadcast(pData);
+		pRegmap	= pRegmap->m_pNext;
+	}
+}
+
+void DevicePart::OnBroadcast(LPVOID pData)
+{
+}
+
+BOOL DevicePart::OnCommand(LPCTSTR lpszURL)
+{
+	return FALSE;
+}
+
+void DevicePart::SetText(LPCTSTR lpszTarget, LPCTSTR lpszFormat, ...)
+{
+	CString cmd;
+	{
+		CString str;
+		va_list args;
+		va_start(args, lpszFormat);
+		str.FormatV(lpszFormat, args);
+		va_end(args);
+		cmd.Format(_T("SetBody(\"%s\", \"%s\");"), lpszTarget, str);
+	}
+	g_pHtml->CallJScript(cmd);
+}

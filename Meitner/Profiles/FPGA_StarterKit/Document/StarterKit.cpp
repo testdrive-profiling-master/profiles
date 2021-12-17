@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Starter Kit document
-// Rev.  : 7/21/2021 Wed (clonextop@gmail.com)
+// Rev.  : 12/17/2021 Fri (clonextop@gmail.com)
 //================================================================================
 #include "testdrive_document.inl"
 #include "StarterKit.h"
@@ -51,7 +51,7 @@ StarterKit::StarterKit(ITDDocument* pDoc)
 		ITDMemory*	pMainMem	= g_pSystem->GetMemory();
 		CString		sName;
 		sName.Format(_T("%s_Display"), pMainMem->GetName());
-		Regmap::m_pReg	= (MTSP_REGMAP*)pDoc->GetSystem()->GetMemory(sName)->GetPointer();
+		DevicePart::m_pReg	= (MTSP_REGMAP*)pDoc->GetSystem()->GetMemory(sName)->GetPointer();
 	}
 	/*{
 		// add register monitors
@@ -69,7 +69,7 @@ StarterKit::StarterKit(ITDDocument* pDoc)
 StarterKit::~StarterKit(void)
 {
 	g_pDoc->KillTimer(10);
-	Regmap::ReleaseAll();
+	DevicePart::ReleaseAll();
 }
 
 BOOL StarterKit::OnPropertyUpdate(ITDPropertyData* pProperty)
@@ -83,7 +83,7 @@ BOOL StarterKit::OnCommand(DWORD command, WPARAM wParam, LPARAM lParam)
 {
 	if(command == 10) {
 		g_pDoc->KillTimer(10);
-		g_pDoc->SetTimer(10, Regmap::Update() ? 50 : 1000);
+		g_pDoc->SetTimer(10, DevicePart::Update() ? 30 : 1000);
 	}
 
 	return 0;
@@ -102,7 +102,7 @@ LPCTSTR StarterKit::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 {
 	if(m_bInitialize) {
 		if(_tcsstr(lpszURL, _T("cmd://")) == lpszURL) {
-			Regmap::Command(&lpszURL[6]);
+			DevicePart::Command(&lpszURL[6]);
 		}
 
 		return NULL;
@@ -115,7 +115,7 @@ void StarterKit::OnHtmlDocumentComplete(DWORD dwID, LPCTSTR lpszURL)
 {
 	if(!m_bInitialize) {
 		m_bInitialize	= TRUE;
-		Regmap::Initialize();
+		DevicePart::Initialize();
 		g_pDoc->SetTimer(10, 50);
 	}
 }

@@ -31,11 +31,11 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Starter Kit document
-// Rev.  : 7/21/2021 Wed (clonextop@gmail.com)
+// Rev.  : 12/17/2021 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __STARTER_KIT_H__
 #define __STARTER_KIT_H__
-#include "Regmap.h"
+#include "DevicePart.h"
 
 class StarterKit :
 	public TDImplDocumentBase,
