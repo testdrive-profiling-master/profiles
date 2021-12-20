@@ -1,0 +1,1 @@
+seven segment : https://cdn-shop.adafruit.com/datasheets/1001datasheet.pdf
