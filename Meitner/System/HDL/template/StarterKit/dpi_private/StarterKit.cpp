@@ -111,7 +111,12 @@ void StarterKit::Eval(void)
 	if(!m_pReg) return;
 
 	for(int i = 0; i < 8; i++) {
-		m_pReg->led.val[i]	= m_LEDs[i].Level();
+		BYTE	val	= m_LEDs[i].Level();
+
+		if(m_pReg->led.val[i] != val) {
+			m_pReg->led.val[i]		= val;
+			m_pReg->led.bUpdate		= true;
+		}
 	}
 }
 

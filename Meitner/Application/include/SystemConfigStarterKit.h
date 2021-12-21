@@ -44,8 +44,17 @@ typedef struct REGMAP_LED {
 	BYTE	val[8];		// 0 ~ 32 (max)
 };
 
+typedef struct REGMAP_NUMERIC_DISPLAY {
+	bool	bUpdate;
+	struct {
+		BYTE	segment[8];		// A~G, DP
+	} num[4];
+	BYTE	mid;
+};
+
 typedef struct : public SYSTEM_REGMAP {
-	REGMAP_LED		led;
+	REGMAP_LED					led;
+	REGMAP_NUMERIC_DISPLAY		numeric_display;
 } STARTERKIT_REGMAP;
 
 #endif//__SYSTEM_CONFIG_VIRTUAL_FPGA_STARTER_KIT_H__

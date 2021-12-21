@@ -33,41 +33,32 @@
 // Title : Starter Kit document
 // Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
 //================================================================================
-#include "RegmapLED.h"
+#include "RegmapNumericDisplay.h"
 
-RegmapLED::RegmapLED(void) : Regmap(_T("LED"))
+RegmapNumericDisplay::RegmapNumericDisplay(void) : Regmap(_T("NUM"))
 {
-	m_pLED		= &m_pReg->led;
+	m_pNum		= &m_pReg->numeric_display;
 }
 
-RegmapLED::~RegmapLED(void)
+RegmapNumericDisplay::~RegmapNumericDisplay(void)
 {
 }
 
-BOOL RegmapLED::OnUpdate(void)
+BOOL RegmapNumericDisplay::OnUpdate(void)
 {
-	if(m_pLED->bUpdate) {
-		m_pLED->bUpdate	= false;
-		g_pHtml->CallJScript(_T("SetLED(%.1f, %.1f, %.1f, %.1f, %.1f, %.1f, %.1f, %.1f);"),
-							 m_pLED->val[0] / 32.f,
-							 m_pLED->val[1] / 32.f,
-							 m_pLED->val[2] / 32.f,
-							 m_pLED->val[3] / 32.f,
-							 m_pLED->val[4] / 32.f,
-							 m_pLED->val[5] / 32.f,
-							 m_pLED->val[6] / 32.f,
-							 m_pLED->val[7] / 32.f);
+	if(m_pNum->bUpdate) {
+		m_pNum->bUpdate	= false;
 		return true;
 	}
 
 	return FALSE;
 }
 
-void RegmapLED::OnBroadcast(LPVOID pData)
+void RegmapNumericDisplay::OnBroadcast(LPVOID pData)
 {
 }
 
-BOOL RegmapLED::OnCommand(LPCTSTR lpszURL)
+BOOL RegmapNumericDisplay::OnCommand(LPCTSTR lpszURL)
 {
 	return FALSE;
 }

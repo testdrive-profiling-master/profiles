@@ -6,7 +6,7 @@
 		@import url(StarterKit.css);
 	</style>
 	<script type="application/javascript">
-		var	led_power = [0.1, 0.3, 0.5, 0.7, 0, 0, 0, 0];
+		var	led_power = [0.1, 0.3, 0.5, 0.7, 0.1, 0.1, 0.1, 0.1];
 		function SetLED(led0, led1, led2, led3, led4, led5, led6, led7) {
 			led_power[0]	= led0;
 			led_power[1]	= led1;
@@ -16,6 +16,18 @@
 			led_power[5]	= led5;
 			led_power[6]	= led6;
 			led_power[7]	= led7;
+		}
+		
+		var numeric_display_power	= [[0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0]];
+		function SetNumericDisplay(index, A, B, C, D, E, F, G, DP) {
+			numeric_display_power[index][0]	= A;
+			numeric_display_power[index][1]	= B;
+			numeric_display_power[index][2]	= C;
+			numeric_display_power[index][3]	= D;
+			numeric_display_power[index][4]	= E;
+			numeric_display_power[index][5]	= F;
+			numeric_display_power[index][6]	= G;
+			numeric_display_power[index][7]	= DP;
 		}
 	</script>
 </head>
@@ -49,8 +61,8 @@
 						ctx.clearRect(0, 0, htmlCanvas.width, htmlCanvas.height); // 캔버스를 비운다
 
 						{
-							var scale_x = (htmlCanvas.width - 20) / img_board.width;
-							var scale_y = (htmlCanvas.height - 20) / img_board.height;
+							var scale_x		= (htmlCanvas.width - 20) / img_board.width;
+							var scale_y		= (htmlCanvas.height - 20) / img_board.height;
 							canvas_scale	= scale_x < scale_y ? scale_x : scale_y;
 							if (canvas_scale <= 0) return;
 						}
@@ -62,21 +74,16 @@
 						ctx.scale(canvas_scale, canvas_scale);
 						ctx.drawImage(img_board, 0, 0);
 						
-						//ctx.translate(x_pos, y_pos);
-						//ctx.drawImage(img_board, x_pos, y_pos, 20, 20);
 						{
+							var i;
 							ctx.save();
+							// LED module
 							ctx.globalCompositeOperation = 'lighter';
-							ctx.globalAlpha = led_power[0];
-							ctx.drawImage(img_board, 50, 50, 30, 30);
-							ctx.globalAlpha = led_power[1];
-							ctx.drawImage(img_board, 50+ 50, 50, 30, 30);
-							ctx.globalAlpha = led_power[2];
-							ctx.drawImage(img_board, 50+ 100, 50, 30, 30);
-							ctx.globalAlpha = led_power[3];
-							ctx.drawImage(img_board, 50+ 150, 50, 30, 30);
-
-							// do something...
+							for(i=0;i<8;i++) {
+								ctx.globalAlpha = led_power[i];
+								ctx.drawImage(img_board, 50 + 40*i, 50, 30, 30);
+							}
+							// Numeric display
 							ctx.restore();
 						}
 						ctx.restore();

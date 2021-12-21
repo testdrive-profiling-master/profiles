@@ -33,41 +33,21 @@
 // Title : Starter Kit document
 // Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
 //================================================================================
-#include "RegmapLED.h"
+#ifndef __REGMAP_NUMERIC_DISPLAY_H__
+#define __REGMAP_NUMERIC_DISPLAY_H__
+#include "Regmap.h"
 
-RegmapLED::RegmapLED(void) : Regmap(_T("LED"))
-{
-	m_pLED		= &m_pReg->led;
-}
+class RegmapNumericDisplay :
+	public Regmap {
+public:
+	RegmapNumericDisplay(void);
+	virtual ~RegmapNumericDisplay(void);
 
-RegmapLED::~RegmapLED(void)
-{
-}
+private:
+	virtual BOOL OnUpdate(void);
+	virtual BOOL OnCommand(LPCTSTR lpszURL);
+	virtual void OnBroadcast(LPVOID pData = NULL);
 
-BOOL RegmapLED::OnUpdate(void)
-{
-	if(m_pLED->bUpdate) {
-		m_pLED->bUpdate	= false;
-		g_pHtml->CallJScript(_T("SetLED(%.1f, %.1f, %.1f, %.1f, %.1f, %.1f, %.1f, %.1f);"),
-							 m_pLED->val[0] / 32.f,
-							 m_pLED->val[1] / 32.f,
-							 m_pLED->val[2] / 32.f,
-							 m_pLED->val[3] / 32.f,
-							 m_pLED->val[4] / 32.f,
-							 m_pLED->val[5] / 32.f,
-							 m_pLED->val[6] / 32.f,
-							 m_pLED->val[7] / 32.f);
-		return true;
-	}
-
-	return FALSE;
-}
-
-void RegmapLED::OnBroadcast(LPVOID pData)
-{
-}
-
-BOOL RegmapLED::OnCommand(LPCTSTR lpszURL)
-{
-	return FALSE;
-}
+	REGMAP_NUMERIC_DISPLAY*		m_pNum;
+};
+#endif//__REGMAP_LED_H__
