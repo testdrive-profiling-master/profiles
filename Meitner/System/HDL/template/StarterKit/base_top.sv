@@ -30,28 +30,67 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Starter Kit document
+// Title : Template design
 // Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
 //================================================================================
-#ifndef __STARTER_KIT_H__
-#define __STARTER_KIT_H__
-#include "Regmap.h"
+`timescale 1ns/1ns
 
-class StarterKit :
-	public TDImplDocumentBase,
-	public ITDHtmlManager {
-public:
-	StarterKit(ITDDocument* pDoc);
-	~StarterKit(void);
+/*verilator tracing_off*/
+module top (
+	//// system ----------------------------
+	input									MCLK,				// clock
+	input									nRST,				// reset (active low)
+	output									BUSY,				// processor is busy
+	output									INTR				// interrupt signal
+);
 
-	STDMETHOD_(BOOL, OnPropertyUpdate)(ITDPropertyData* pProperty);
-	STDMETHOD_(BOOL, OnCommand)(DWORD command, WPARAM wParam = NULL, LPARAM lParam = NULL);
-	STDMETHOD_(void, OnSize)(int width, int height);
-	STDMETHOD_(LPCTSTR, OnHtmlBeforeNavigate)(DWORD dwID, LPCTSTR lpszURL);
-	STDMETHOD_(void, OnHtmlDocumentComplete)(DWORD dwID, LPCTSTR lpszURL);
-	STDMETHOD_(void, OnShow)(BOOL bShow);
+// definition & assignment ---------------------------------------------------
+`DPI_FUNCTION void StarterKit_Initialize();
+`DPI_FUNCTION void StarterKit_LED(input bit [7:0] LED_pins);
+`DPI_FUNCTION void StarterKit_NumericDisplay(input bit [13:0] pins);
+`DPI_FUNCTION void StarterKit_Eval();
 
-protected:
-	BOOL				m_bInitialize;
-};
-#endif//__STARTER_KIT_H__
+wire					RSTn_Board;
+wire					CLK_10MHz;
+wire					CLK_10MHz_RSTn;
+wire	[13:0]			KW4_56NCWB_P_Y;
+wire	[7:0]			LED;
+
+initial	begin
+	StarterKit_Initialize();
+	//	INTR	= 1'b0;
+	//	BUSY	= 1'b0;
+end
+
+testdrive_clock_bfm #(
+	.C_CLOCK_ID				(0),		// clock ID#
+	.C_CLOCK_PERIOD_PS		(100000),	// default 100MHz
+	.C_RESET_CYCLES			(32),		// first reset cycles
+	.C_RESET_POLARITY		(0)			// default active low reset
+) board_10MHz_clock (
+	.CLK					(CLK_10MHz),
+	.RST					(CLK_10MHz_RSTn)
+);
+
+always@(posedge CLK_10MHz) begin
+	StarterKit_LED(LED);
+	StarterKit_NumericDisplay(KW4_56NCWB_P_Y);
+	StarterKit_Eval();
+end
+
+/*verilator tracing_on*/
+
+// implementation ------------------------------------------------------------
+dut_top	system (
+	// system
+	.MCLK					(MCLK),
+	.nRST					(nRST),
+	.BUSY					(BUSY),
+	.INTR					(INTR),
+	.LED_pins				(LED),
+	.RSTn_Board				(RSTn_Board & CLK_10MHz_RSTn),
+	.CLK_10MHz				(CLK_10MHz),
+	.KW4_56NCWB_P_Y_pins	(KW4_56NCWB_P_Y)
+);
+
+endmodule

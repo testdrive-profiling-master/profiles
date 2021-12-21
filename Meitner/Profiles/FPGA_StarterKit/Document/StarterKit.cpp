@@ -31,10 +31,11 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Starter Kit document
-// Rev.  : 12/17/2021 Fri (clonextop@gmail.com)
+// Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "testdrive_document.inl"
 #include "StarterKit.h"
+#include "RegmapLED.h"
 
 ITDDocument*	g_pDoc				= NULL;
 ITDHtml*		g_pHtml				= NULL;
@@ -51,17 +52,12 @@ StarterKit::StarterKit(ITDDocument* pDoc)
 		ITDMemory*	pMainMem	= g_pSystem->GetMemory();
 		CString		sName;
 		sName.Format(_T("%s_Display"), pMainMem->GetName());
-		DevicePart::m_pReg	= (MTSP_REGMAP*)pDoc->GetSystem()->GetMemory(sName)->GetPointer();
+		Regmap::m_pReg	= (STARTERKIT_REGMAP*)pDoc->GetSystem()->GetMemory(sName)->GetPointer();
 	}
-	/*{
+	{
 		// add register monitors
-		new RegmapCommand;
-		new RegmapSystem;
-		new RegmapScratchCounter;
-		new RegmapGPRs;
-		new RegmapMB;
-		new RegmapTrace;
-	}*/
+		new RegmapLED;
+	}
 	g_pHtml->SetManager(this);
 	g_pHtml->Navigate(_T("StarterKit.html"));
 }
@@ -69,7 +65,7 @@ StarterKit::StarterKit(ITDDocument* pDoc)
 StarterKit::~StarterKit(void)
 {
 	g_pDoc->KillTimer(10);
-	DevicePart::ReleaseAll();
+	Regmap::ReleaseAll();
 }
 
 BOOL StarterKit::OnPropertyUpdate(ITDPropertyData* pProperty)
@@ -83,7 +79,7 @@ BOOL StarterKit::OnCommand(DWORD command, WPARAM wParam, LPARAM lParam)
 {
 	if(command == 10) {
 		g_pDoc->KillTimer(10);
-		g_pDoc->SetTimer(10, DevicePart::Update() ? 30 : 1000);
+		g_pDoc->SetTimer(10, Regmap::Update() ? 30 : 1000);
 	}
 
 	return 0;
@@ -102,10 +98,10 @@ LPCTSTR StarterKit::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 {
 	if(m_bInitialize) {
 		if(_tcsstr(lpszURL, _T("cmd://")) == lpszURL) {
-			DevicePart::Command(&lpszURL[6]);
-		}
-
-		return NULL;
+			Regmap::Command(&lpszURL[6]);
+			g_pSystem->LogInfo(&lpszURL[6]);
+		} else
+			return NULL;
 	}
 
 	return lpszURL;
@@ -115,7 +111,7 @@ void StarterKit::OnHtmlDocumentComplete(DWORD dwID, LPCTSTR lpszURL)
 {
 	if(!m_bInitialize) {
 		m_bInitialize	= TRUE;
-		DevicePart::Initialize();
+		Regmap::Initialize();
 		g_pDoc->SetTimer(10, 50);
 	}
 }

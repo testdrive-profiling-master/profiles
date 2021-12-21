@@ -33,25 +33,102 @@
 // Title : Starter Kit document
 // Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
 //================================================================================
-#ifndef __STARTER_KIT_H__
-#define __STARTER_KIT_H__
 #include "Regmap.h"
 
-class StarterKit :
-	public TDImplDocumentBase,
-	public ITDHtmlManager {
-public:
-	StarterKit(ITDDocument* pDoc);
-	~StarterKit(void);
+Regmap*				Regmap::m_pHead		= NULL;
+STARTERKIT_REGMAP*	Regmap::m_pReg		= NULL;
 
-	STDMETHOD_(BOOL, OnPropertyUpdate)(ITDPropertyData* pProperty);
-	STDMETHOD_(BOOL, OnCommand)(DWORD command, WPARAM wParam = NULL, LPARAM lParam = NULL);
-	STDMETHOD_(void, OnSize)(int width, int height);
-	STDMETHOD_(LPCTSTR, OnHtmlBeforeNavigate)(DWORD dwID, LPCTSTR lpszURL);
-	STDMETHOD_(void, OnHtmlDocumentComplete)(DWORD dwID, LPCTSTR lpszURL);
-	STDMETHOD_(void, OnShow)(BOOL bShow);
+Regmap::Regmap(LPCTSTR sName)
+{
+	m_pNext			= m_pHead;
+	m_pHead			= this;
+	m_sName			= sName;
+}
 
-protected:
-	BOOL				m_bInitialize;
-};
-#endif//__STARTER_KIT_H__
+Regmap::~Regmap(void)
+{
+	if(m_pNext) {
+		delete m_pNext;
+		m_pNext	= NULL;
+	}
+}
+
+void Regmap::ReleaseAll(void)
+{
+	if(m_pHead) {
+		delete m_pHead;
+		m_pHead	= NULL;
+	}
+}
+
+BOOL Regmap::Update(void)
+{
+	BOOL	bUpdate	= FALSE;
+	Regmap* pRegmap	= m_pHead;
+
+	if(m_pReg->magic_code == SYSTEM_MAGIC_CODE)	// check correct register map.
+		while(pRegmap) {
+			if(pRegmap->OnUpdate()) bUpdate = TRUE;
+
+			pRegmap	= pRegmap->m_pNext;
+		}
+
+	return bUpdate;
+}
+
+void Regmap::PostUpdate(void)
+{
+	PostMessage(g_pDoc->GetWindowHandle(), WM_TIMER, 10, 0);
+}
+
+void Regmap::Command(LPCTSTR lpszURL)
+{
+	Regmap* pRegmap	= m_pHead;
+
+	while(pRegmap) {
+		if(pRegmap->Name() && (_tcsstr(lpszURL, pRegmap->Name()) == lpszURL)) {
+			pRegmap->OnCommand(lpszURL + _tcslen(pRegmap->Name()) + 1);
+			break;
+		}
+
+		pRegmap	= pRegmap->m_pNext;
+	}
+}
+
+void Regmap::Initialize(void)
+{
+	Broadcast(NULL);
+}
+
+void Regmap::Broadcast(LPVOID pData)
+{
+	Regmap* pRegmap	= m_pHead;
+
+	while(pRegmap) {
+		pRegmap->OnBroadcast(pData);
+		pRegmap	= pRegmap->m_pNext;
+	}
+}
+
+void Regmap::OnBroadcast(LPVOID pData)
+{
+}
+
+BOOL Regmap::OnCommand(LPCTSTR lpszURL)
+{
+	return FALSE;
+}
+
+void Regmap::SetText(LPCTSTR lpszTarget, LPCTSTR lpszFormat, ...)
+{
+	CString cmd;
+	{
+		CString str;
+		va_list args;
+		va_start(args, lpszFormat);
+		str.FormatV(lpszFormat, args);
+		va_end(args);
+		cmd.Format(_T("SetBody(\"%s\", \"%s\");"), lpszTarget, str);
+	}
+	g_pHtml->CallJScript(cmd);
+}

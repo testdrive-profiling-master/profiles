@@ -30,28 +30,32 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Starter Kit document
+// Title : Template design
 // Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
 //================================================================================
-#ifndef __STARTER_KIT_H__
-#define __STARTER_KIT_H__
-#include "Regmap.h"
+#include "LED_PIN.h"
 
-class StarterKit :
-	public TDImplDocumentBase,
-	public ITDHtmlManager {
-public:
-	StarterKit(ITDDocument* pDoc);
-	~StarterKit(void);
+LED_PIN::LED_PIN(void) : m_EnableMask(0), m_dwPowerLevel(0)
+{
+}
 
-	STDMETHOD_(BOOL, OnPropertyUpdate)(ITDPropertyData* pProperty);
-	STDMETHOD_(BOOL, OnCommand)(DWORD command, WPARAM wParam = NULL, LPARAM lParam = NULL);
-	STDMETHOD_(void, OnSize)(int width, int height);
-	STDMETHOD_(LPCTSTR, OnHtmlBeforeNavigate)(DWORD dwID, LPCTSTR lpszURL);
-	STDMETHOD_(void, OnHtmlDocumentComplete)(DWORD dwID, LPCTSTR lpszURL);
-	STDMETHOD_(void, OnShow)(BOOL bShow);
+LED_PIN::~LED_PIN(void)
+{
+}
 
-protected:
-	BOOL				m_bInitialize;
-};
-#endif//__STARTER_KIT_H__
+void LED_PIN::Eval(DWORD bOn)
+{
+	// modify power level for LED.
+	DWORD	dwNextPowerLevel	= m_dwPowerLevel;
+
+	if(m_EnableMask & 0x80000000) dwNextPowerLevel--;
+
+	m_EnableMask		<<= 1;
+
+	if(bOn & 1) {
+		dwNextPowerLevel++;
+		m_EnableMask	|= 1;
+	}
+
+	m_dwPowerLevel	= dwNextPowerLevel;
+}

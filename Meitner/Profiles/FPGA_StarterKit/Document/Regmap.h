@@ -31,105 +31,46 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Starter Kit document
-// Rev.  : 12/17/2021 Fri (clonextop@gmail.com)
+// Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
 //================================================================================
-#include "DevicePart.h"
+#ifndef __REGMAP_H__
+#define __REGMAP_H__
+#include "testdrive_document.h"
+#include "SystemConfigStarterKit.h"
+#include "Locale.h"
 
-DevicePart*			DevicePart::m_pHead		= NULL;
-MTSP_REGMAP*	DevicePart::m_pReg		= NULL;
+extern ITDDocument*		g_pDoc;
+extern ITDHtml*			g_pHtml;
 
-DevicePart::DevicePart(LPCTSTR sName)
-{
-	m_pNext			= m_pHead;
-	m_pHead			= this;
-	m_sName			= sName;
-	m_bTableNewRow	= NULL;
-}
+class Regmap {
+protected:
+	virtual ~Regmap(void);
 
-DevicePart::~DevicePart(void)
-{
-	if(m_pNext) {
-		delete m_pNext;
-		m_pNext	= NULL;
+public:
+	Regmap(LPCTSTR sName = NULL);
+	static void ReleaseAll(void);
+	static BOOL Update(void);
+	static void PostUpdate(void);
+	static void Initialize(void);
+	static void Broadcast(LPVOID pData);
+	static void Command(LPCTSTR lpszURL);
+	inline LPCTSTR Name(void) const	{
+		return m_sName;
 	}
-}
 
-void DevicePart::ReleaseAll(void)
-{
-	if(m_pHead) {
-		delete m_pHead;
-		m_pHead	= NULL;
-	}
-}
+	static STARTERKIT_REGMAP*	m_pReg;
 
-BOOL DevicePart::Update(void)
-{
-	BOOL	bUpdate	= FALSE;
-	DevicePart* pRegmap	= m_pHead;
+protected:
+	static void SetText(LPCTSTR lpszTarget, LPCTSTR lpszFormat, ...);
 
-	if(m_pReg->magic_code == SYSTEM_MAGIC_CODE)	// check correct register map.
-		while(pRegmap) {
-			if(pRegmap->OnUpdate()) bUpdate = TRUE;
+	virtual BOOL OnUpdate(void) = 0;
+	virtual void OnBroadcast(LPVOID pData);
+	virtual BOOL OnCommand(LPCTSTR lpszURL);
 
-			pRegmap	= pRegmap->m_pNext;
-		}
+private:
+	static Regmap*		m_pHead;
+	Regmap*				m_pNext;
+	LPCTSTR				m_sName;
+};
 
-	return bUpdate;
-}
-
-void DevicePart::PostUpdate(void)
-{
-	PostMessage(g_pDoc->GetWindowHandle(), WM_TIMER, 10, 0);
-}
-
-void DevicePart::Command(LPCTSTR lpszURL)
-{
-	DevicePart* pRegmap	= m_pHead;
-
-	while(pRegmap) {
-		if(pRegmap->Name() && (_tcsstr(lpszURL, pRegmap->Name()) == lpszURL)) {
-			pRegmap->OnCommand(lpszURL + _tcslen(pRegmap->Name()) + 1);
-			break;
-		}
-
-		pRegmap	= pRegmap->m_pNext;
-	}
-}
-
-void DevicePart::Initialize(void)
-{
-	Broadcast(NULL);
-}
-
-void DevicePart::Broadcast(LPVOID pData)
-{
-	DevicePart* pRegmap	= m_pHead;
-
-	while(pRegmap) {
-		pRegmap->OnBroadcast(pData);
-		pRegmap	= pRegmap->m_pNext;
-	}
-}
-
-void DevicePart::OnBroadcast(LPVOID pData)
-{
-}
-
-BOOL DevicePart::OnCommand(LPCTSTR lpszURL)
-{
-	return FALSE;
-}
-
-void DevicePart::SetText(LPCTSTR lpszTarget, LPCTSTR lpszFormat, ...)
-{
-	CString cmd;
-	{
-		CString str;
-		va_list args;
-		va_start(args, lpszFormat);
-		str.FormatV(lpszFormat, args);
-		va_end(args);
-		cmd.Format(_T("SetBody(\"%s\", \"%s\");"), lpszTarget, str);
-	}
-	g_pHtml->CallJScript(cmd);
-}
+#endif//__REGMAP_H__

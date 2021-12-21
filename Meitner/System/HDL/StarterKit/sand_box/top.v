@@ -30,28 +30,25 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Starter Kit document
+// Title : Virtual FPGA Starter Kit
 // Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
 //================================================================================
-#ifndef __STARTER_KIT_H__
-#define __STARTER_KIT_H__
-#include "Regmap.h"
+`timescale 1ns/1ns
+`include "template/StarterKit/includes.vh"
 
-class StarterKit :
-	public TDImplDocumentBase,
-	public ITDHtmlManager {
-public:
-	StarterKit(ITDDocument* pDoc);
-	~StarterKit(void);
+module dut_top (
+	input						MCLK,				// clock
+	input						nRST,				// reset (active low)
+	output						BUSY,				// processor is busy
+	output						INTR,				// interrupt signal
 
-	STDMETHOD_(BOOL, OnPropertyUpdate)(ITDPropertyData* pProperty);
-	STDMETHOD_(BOOL, OnCommand)(DWORD command, WPARAM wParam = NULL, LPARAM lParam = NULL);
-	STDMETHOD_(void, OnSize)(int width, int height);
-	STDMETHOD_(LPCTSTR, OnHtmlBeforeNavigate)(DWORD dwID, LPCTSTR lpszURL);
-	STDMETHOD_(void, OnHtmlDocumentComplete)(DWORD dwID, LPCTSTR lpszURL);
-	STDMETHOD_(void, OnShow)(BOOL bShow);
+	input						RSTn_Board,			// board reset button (active low)
+	input						CLK_10MHz,			// 10 MHz ocilator clock
+	output	[7:0]				LED_pins,			// LED pins
+	output	[13:0]				KW4_56NCWB_P_Y_pins	// Quadruple Digit Numeric Displays (Model # : KW4_56NCWB_P_Y)
+);
 
-protected:
-	BOOL				m_bInitialize;
-};
-#endif//__STARTER_KIT_H__
+assign	BUSY	= 1'b1;
+assign	INTR	= 1'b0;
+
+endmodule

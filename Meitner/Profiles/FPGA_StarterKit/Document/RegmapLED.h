@@ -33,25 +33,21 @@
 // Title : Starter Kit document
 // Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
 //================================================================================
-#ifndef __STARTER_KIT_H__
-#define __STARTER_KIT_H__
+#ifndef __REGMAP_LED_H__
+#define __REGMAP_LED_H__
 #include "Regmap.h"
 
-class StarterKit :
-	public TDImplDocumentBase,
-	public ITDHtmlManager {
+class RegmapLED :
+	public Regmap {
 public:
-	StarterKit(ITDDocument* pDoc);
-	~StarterKit(void);
+	RegmapLED(void);
+	virtual ~RegmapLED(void);
 
-	STDMETHOD_(BOOL, OnPropertyUpdate)(ITDPropertyData* pProperty);
-	STDMETHOD_(BOOL, OnCommand)(DWORD command, WPARAM wParam = NULL, LPARAM lParam = NULL);
-	STDMETHOD_(void, OnSize)(int width, int height);
-	STDMETHOD_(LPCTSTR, OnHtmlBeforeNavigate)(DWORD dwID, LPCTSTR lpszURL);
-	STDMETHOD_(void, OnHtmlDocumentComplete)(DWORD dwID, LPCTSTR lpszURL);
-	STDMETHOD_(void, OnShow)(BOOL bShow);
+private:
+	virtual BOOL OnUpdate(void);
+	virtual BOOL OnCommand(LPCTSTR lpszURL);
+	virtual void OnBroadcast(LPVOID pData = NULL);
 
-protected:
-	BOOL				m_bInitialize;
+	REGMAP_LED*		m_pLED;
 };
-#endif//__STARTER_KIT_H__
+#endif//__REGMAP_LED_H__

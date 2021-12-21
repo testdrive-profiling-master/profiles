@@ -30,28 +30,26 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Starter Kit document
+// Title : Template design
 // Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
 //================================================================================
-#ifndef __STARTER_KIT_H__
-#define __STARTER_KIT_H__
-#include "Regmap.h"
+#include "dpi_common.h"
+#ifndef __LED_PIN_H__
+#define __LED_PIN_H__
 
-class StarterKit :
-	public TDImplDocumentBase,
-	public ITDHtmlManager {
+class LED_PIN {
 public:
-	StarterKit(ITDDocument* pDoc);
-	~StarterKit(void);
+	LED_PIN(void);
+	~LED_PIN(void);
 
-	STDMETHOD_(BOOL, OnPropertyUpdate)(ITDPropertyData* pProperty);
-	STDMETHOD_(BOOL, OnCommand)(DWORD command, WPARAM wParam = NULL, LPARAM lParam = NULL);
-	STDMETHOD_(void, OnSize)(int width, int height);
-	STDMETHOD_(LPCTSTR, OnHtmlBeforeNavigate)(DWORD dwID, LPCTSTR lpszURL);
-	STDMETHOD_(void, OnHtmlDocumentComplete)(DWORD dwID, LPCTSTR lpszURL);
-	STDMETHOD_(void, OnShow)(BOOL bShow);
+	void Eval(DWORD bOn);
+	inline DWORD Level(void) {
+		return m_dwPowerLevel;
+	}
 
-protected:
-	BOOL				m_bInitialize;
+private:
+	DWORD		m_EnableMask;
+	DWORD		m_dwPowerLevel;
 };
-#endif//__STARTER_KIT_H__
+
+#endif//__LED_PIN_H__

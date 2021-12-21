@@ -30,28 +30,22 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Starter Kit document
+// Title : Global system configuration
 // Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
 //================================================================================
-#ifndef __STARTER_KIT_H__
-#define __STARTER_KIT_H__
-#include "Regmap.h"
+#ifndef __SYSTEM_CONFIG_VIRTUAL_FPGA_STARTER_KIT_H__
+#define __SYSTEM_CONFIG_VIRTUAL_FPGA_STARTER_KIT_H__
+#include "SystemConfig.h"
 
-class StarterKit :
-	public TDImplDocumentBase,
-	public ITDHtmlManager {
-public:
-	StarterKit(ITDDocument* pDoc);
-	~StarterKit(void);
+#define	SYSTEM_MAGIC_CODE					0x54494B53	// System magic code : "SKIT"
 
-	STDMETHOD_(BOOL, OnPropertyUpdate)(ITDPropertyData* pProperty);
-	STDMETHOD_(BOOL, OnCommand)(DWORD command, WPARAM wParam = NULL, LPARAM lParam = NULL);
-	STDMETHOD_(void, OnSize)(int width, int height);
-	STDMETHOD_(LPCTSTR, OnHtmlBeforeNavigate)(DWORD dwID, LPCTSTR lpszURL);
-	STDMETHOD_(void, OnHtmlDocumentComplete)(DWORD dwID, LPCTSTR lpszURL);
-	STDMETHOD_(void, OnShow)(BOOL bShow);
-
-protected:
-	BOOL				m_bInitialize;
+typedef struct REGMAP_LED {
+	bool	bUpdate;
+	BYTE	val[8];		// 0 ~ 32 (max)
 };
-#endif//__STARTER_KIT_H__
+
+typedef struct : public SYSTEM_REGMAP {
+	REGMAP_LED		led;
+} STARTERKIT_REGMAP;
+
+#endif//__SYSTEM_CONFIG_VIRTUAL_FPGA_STARTER_KIT_H__

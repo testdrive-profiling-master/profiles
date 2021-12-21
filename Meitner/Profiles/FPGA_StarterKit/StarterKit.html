@@ -6,82 +6,99 @@
 		@import url(StarterKit.css);
 	</style>
 	<script type="application/javascript">
+		var	led_power = [0.1, 0.3, 0.5, 0.7, 0, 0, 0, 0];
+		function SetLED(led0, led1, led2, led3, led4, led5, led6, led7) {
+			led_power[0]	= led0;
+			led_power[1]	= led1;
+			led_power[2]	= led2;
+			led_power[3]	= led3;
+			led_power[4]	= led4;
+			led_power[5]	= led5;
+			led_power[6]	= led6;
+			led_power[7]	= led7;
+		}
 	</script>
 </head>
 <body>
 	<div class="canvas_outer">
 		<div class="canvas_inner">
-			<div class="button_area">
-			FPGA Starter kit Demo
-			</div>
 			<canvas id="canvas" width="300" height="300" oncontextmenu='return false'>Your browser doesn't support canvas.</canvas>
 			<script>
 				(function() {
-					var	htmlCanvas	= document.getElementById('canvas');
-					var	ctx			= htmlCanvas.getContext('2d');
-					var img_board	= new Image();
-					var x_pos		= 0;
-					var y_pos		= 0;
+					var	htmlCanvas		= document.getElementById('canvas');
+					var	ctx				= htmlCanvas.getContext('2d');
+					var canvas_scale	= 1.0;
+					var offset_x		= 0;
+					var offset_y		= 0;
+					var img_board		= new Image();
 
-				   initialize();
+					initialize();
 
-				   function initialize() {
+					function initialize() {
 						img_board.src	= 'img/background.png';
 			
 						window.addEventListener('resize', resizeCanvas, false);
 						resizeCanvas();
 						setInterval(redraw, 30);
-						htmlCanvas.addEventListener('click', clickCanvas, false);
 					}
 
 					// Display custom canvas. In this case it's a blue, 5 pixel 
 					// border that resizes along with the browser window.
 					function redraw() {
-						var scale;
 						ctx.globalCompositeOperation = 'source-over';
 						ctx.clearRect(0, 0, htmlCanvas.width, htmlCanvas.height); // 캔버스를 비운다
 
 						{
 							var scale_x = (htmlCanvas.width - 20) / img_board.width;
 							var scale_y = (htmlCanvas.height - 20) / img_board.height;
-							scale	= scale_x < scale_y ? scale_x : scale_y;
-							if (scale <= 0) return;
+							canvas_scale	= scale_x < scale_y ? scale_x : scale_y;
+							if (canvas_scale <= 0) return;
 						}
 						
 						ctx.save();
-						ctx.translate((htmlCanvas.width - scale * img_board.width)/2, (htmlCanvas.height - scale * img_board.height)/2);
-						ctx.scale(scale, scale);
+						offset_x	= (htmlCanvas.width - canvas_scale * img_board.width)/2;
+						offset_y	= (htmlCanvas.height - canvas_scale * img_board.height)/2;
+						ctx.translate(offset_x, offset_y);
+						ctx.scale(canvas_scale, canvas_scale);
 						ctx.drawImage(img_board, 0, 0);
 						
 						//ctx.translate(x_pos, y_pos);
-						ctx.drawImage(img_board, x_pos, y_pos, 20, 20);
+						//ctx.drawImage(img_board, x_pos, y_pos, 20, 20);
 						{
 							ctx.save();
-							ctx.globalCompositeOperation = 'screen';
+							ctx.globalCompositeOperation = 'lighter';
+							ctx.globalAlpha = led_power[0];
+							ctx.drawImage(img_board, 50, 50, 30, 30);
+							ctx.globalAlpha = led_power[1];
+							ctx.drawImage(img_board, 50+ 50, 50, 30, 30);
+							ctx.globalAlpha = led_power[2];
+							ctx.drawImage(img_board, 50+ 100, 50, 30, 30);
+							ctx.globalAlpha = led_power[3];
+							ctx.drawImage(img_board, 50+ 150, 50, 30, 30);
+
 							// do something...
 							ctx.restore();
 						}
 						ctx.restore();
 					}
 
-					// Runs each time the DOM window resize event fires.
-					// Resets the canvas dimensions to match window,
-					// then draws the new borders accordingly.
 					function resizeCanvas() {
 						htmlCanvas.width	= window.innerWidth;
 						htmlCanvas.height	= window.innerHeight;
 						redraw();
 					}
 					
-					function clickCanvas() {
-					var elemLeft = htmlCanvas.offsetLeft + htmlCanvas.clientLeft,
-						elemTop = htmlCanvas.offsetTop + htmlCanvas.clientTop;
+					htmlCanvas.onmousedown = function(e) {
+						mouseIsDown	= true;
+						window.navigate("cmd://mouse.d." + String(parseInt((e.x - offset_x)/canvas_scale)) + "." + String(parseInt((e.y - offset_y)/canvas_scale)));
+					}
 					
-							var x = event.pageX - elemLeft,
-								y = event.pageY - elemTop;
-
-							x_pos	+= 10;
-							y_pos	+= 10;
+					htmlCanvas.onmouseup = function(e) {
+						if(mouseIsDown) {
+							// click
+							window.navigate("cmd://mouse.u." + String(parseInt((e.x - offset_x)/canvas_scale)) + "." + String(parseInt((e.y - offset_y)/canvas_scale)));
+							mouseIsDown	= false;
+						}
 					}
 				})();
 			</script>

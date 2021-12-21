@@ -33,25 +33,40 @@
 // Title : Starter Kit document
 // Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
 //================================================================================
-#ifndef __STARTER_KIT_H__
-#define __STARTER_KIT_H__
-#include "Regmap.h"
+#include "RegmapLED.h"
 
-class StarterKit :
-	public TDImplDocumentBase,
-	public ITDHtmlManager {
-public:
-	StarterKit(ITDDocument* pDoc);
-	~StarterKit(void);
+RegmapLED::RegmapLED(void) : Regmap(_T("LED"))
+{
+	m_pLED		= &m_pReg->led;
+}
 
-	STDMETHOD_(BOOL, OnPropertyUpdate)(ITDPropertyData* pProperty);
-	STDMETHOD_(BOOL, OnCommand)(DWORD command, WPARAM wParam = NULL, LPARAM lParam = NULL);
-	STDMETHOD_(void, OnSize)(int width, int height);
-	STDMETHOD_(LPCTSTR, OnHtmlBeforeNavigate)(DWORD dwID, LPCTSTR lpszURL);
-	STDMETHOD_(void, OnHtmlDocumentComplete)(DWORD dwID, LPCTSTR lpszURL);
-	STDMETHOD_(void, OnShow)(BOOL bShow);
+RegmapLED::~RegmapLED(void)
+{
+}
 
-protected:
-	BOOL				m_bInitialize;
-};
-#endif//__STARTER_KIT_H__
+BOOL RegmapLED::OnUpdate(void)
+{
+	if(m_pLED->bUpdate) {
+		m_pLED->bUpdate	= false;
+		g_pHtml->CallJScript(_T("SetLED(%.1f, %.1f, %.1f, %.1f, %.1f, %.1f, %.1f, %.1f);"),
+							 m_pLED->val[0] / 32.f,
+							 m_pLED->val[1] / 32.f,
+							 m_pLED->val[2] / 32.f,
+							 m_pLED->val[3] / 32.f,
+							 m_pLED->val[4] / 32.f,
+							 m_pLED->val[5] / 32.f,
+							 m_pLED->val[6] / 32.f,
+							 m_pLED->val[7] / 32.f);
+	}
+
+	return FALSE;
+}
+
+void RegmapLED::OnBroadcast(LPVOID pData)
+{
+}
+
+BOOL RegmapLED::OnCommand(LPCTSTR lpszURL)
+{
+	return FALSE;
+}

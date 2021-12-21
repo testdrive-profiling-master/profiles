@@ -1,0 +1,2 @@
+TOP_DESIGN	= top.v
+	OPTION	= SAND_BOX

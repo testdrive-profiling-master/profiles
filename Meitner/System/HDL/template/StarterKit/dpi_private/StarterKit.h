@@ -30,48 +30,40 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Starter Kit document
-// Rev.  : 12/17/2021 Fri (clonextop@gmail.com)
+// Title : Template design
+// Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
 //================================================================================
-#ifndef __DEVICE_PART_H__
-#define __DEVICE_PART_H__
-#include "testdrive_document.h"
-#include "SystemConfigMTSP.h"
-#include "Locale.h"
+#ifndef __VIRTUAL_FPGA_STARTER_KIT_H__
+#define __VIRTUAL_FPGA_STARTER_KIT_H__
+#include "dpi_common.h"
+#include "LED_PIN.h"
+#include "SystemConfigStarterKit.h"
 
-extern ITDDocument*		g_pDoc;
-extern ITDHtml*			g_pHtml;
-
-class DevicePart {
-protected:
-	virtual ~DevicePart(void);
-
+class StarterKit {
 public:
-	DevicePart(LPCTSTR sName = NULL);
-	static void ReleaseAll(void);
-	static BOOL Update(void);
-	static void PostUpdate(void);
-	static void Initialize(void);
-	static void Broadcast(LPVOID pData);
-	static void Command(LPCTSTR lpszURL);
-	inline LPCTSTR Name(void) const	{
-		return m_sName;
-	}
+	StarterKit(void);
+	~StarterKit(void);
 
-	static MTSP_REGMAP*	m_pReg;
-
-protected:
-	static void SetText(LPCTSTR lpszTarget, LPCTSTR lpszFormat, ...);
-
-	virtual BOOL OnUpdate(void) = 0;
-	virtual void OnBroadcast(LPVOID pData);
-	virtual BOOL OnCommand(LPCTSTR lpszURL);
+	void Initialize(void);
+	void LED(DWORD pins);
+	void NumericDisplay(DWORD pins);
+	void Eval(void);
 
 private:
-	static DevicePart*	m_pHead;
-	DevicePart*			m_pNext;
-	LPCTSTR				m_sName;
-	BOOL				m_bTableNewRow;
+	STARTERKIT_REGMAP*	m_pReg;
+	LED_PIN				m_LEDs[8];
+	struct {
+		struct {
+			LED_PIN		segment[7];		// A~G, DP
+			LED_PIN		DP;
+		} num[4];
+		LED_PIN		mid;
+	} m_NumericDisplay;
 };
 
-#endif//__DEVICE_PART_H__
+DPI_FUNCTION void StarterKit_Initialize(void);
+DPI_FUNCTION void StarterKit_LED(const svBitVecVal* pins);
+DPI_FUNCTION void StarterKit_NumericDisplay(const svBitVecVal* pins);
+DPI_FUNCTION void StarterKit_Eval(void);
+
+#endif//__VIRTUAL_FPGA_STARTER_KIT_H__
