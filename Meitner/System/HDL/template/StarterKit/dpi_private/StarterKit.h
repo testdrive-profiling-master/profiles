@@ -48,14 +48,14 @@ public:
 	void LED(DWORD pins);
 	void NumericDisplay(DWORD pins);
 	void Eval(void);
+	void GetButtons(DWORD& dwButtons);
 
 private:
 	STARTERKIT_REGMAP*	m_pReg;
 	LED_PIN				m_LEDs[8];
 	struct {
 		struct {
-			LED_PIN		segment[7];		// A~G, DP
-			LED_PIN		DP;
+			LED_PIN		segment[8];		// A~G, DP
 		} num[4];
 		LED_PIN		mid;
 	} m_NumericDisplay;
@@ -65,5 +65,6 @@ DPI_FUNCTION void StarterKit_Initialize(void);
 DPI_FUNCTION void StarterKit_LED(const svBitVecVal* pins);
 DPI_FUNCTION void StarterKit_NumericDisplay(const svBitVecVal* pins);
 DPI_FUNCTION void StarterKit_Eval(void);
+DPI_FUNCTION void StarterKit_GetButtons(svBitVecVal* pins);
 
 #endif//__VIRTUAL_FPGA_STARTER_KIT_H__

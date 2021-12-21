@@ -49,15 +49,21 @@ module top (
 `DPI_FUNCTION void StarterKit_LED(input bit [7:0] LED_pins);
 `DPI_FUNCTION void StarterKit_NumericDisplay(input bit [13:0] pins);
 `DPI_FUNCTION void StarterKit_Eval();
+`DPI_FUNCTION void StarterKit_GetButtons(output bit [12:0] pins);
 
 wire					RSTn_Board;
 wire					CLK_10MHz;
 wire					CLK_10MHz_RSTn;
 wire	[13:0]			KW4_56NCWB_P_Y;
 wire	[7:0]			LED;
+reg		[12:0]			r_button;
+reg		[7:0]			TOGGLE_SWITCH;
+reg		[4:0]			ARROW_BUTTON;
 
 initial	begin
 	StarterKit_Initialize();
+	TOGGLE_SWITCH	= 'd0;
+	ARROW_BUTTON	= 'd0;
 	//	INTR	= 1'b0;
 	//	BUSY	= 1'b0;
 end
@@ -76,6 +82,8 @@ always@(posedge CLK_10MHz) begin
 	StarterKit_LED(LED);
 	StarterKit_NumericDisplay(KW4_56NCWB_P_Y);
 	StarterKit_Eval();
+	StarterKit_GetButtons(r_button);
+	{TOGGLE_SWITCH, ARROW_BUTTON}	<= r_button;
 end
 
 /*verilator tracing_on*/
@@ -90,7 +98,9 @@ dut_top	system (
 	.LED_pins				(LED),
 	.RSTn_Board				(RSTn_Board & CLK_10MHz_RSTn),
 	.CLK_10MHz				(CLK_10MHz),
-	.KW4_56NCWB_P_Y_pins	(KW4_56NCWB_P_Y)
+	.KW4_56NCWB_P_Y_pins	(KW4_56NCWB_P_Y),
+	.TOGGLE_SWITCH			(TOGGLE_SWITCH),
+	.ARROW_BUTTON			(ARROW_BUTTON)
 );
 
 endmodule

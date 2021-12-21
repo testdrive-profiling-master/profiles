@@ -55,6 +55,7 @@ typedef struct REGMAP_NUMERIC_DISPLAY {
 typedef struct : public SYSTEM_REGMAP {
 	REGMAP_LED					led;
 	REGMAP_NUMERIC_DISPLAY		numeric_display;
+	DWORD						buttons;
 } STARTERKIT_REGMAP;
 
 #endif//__SYSTEM_CONFIG_VIRTUAL_FPGA_STARTER_KIT_H__

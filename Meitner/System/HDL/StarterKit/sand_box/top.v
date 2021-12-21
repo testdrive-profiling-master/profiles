@@ -37,15 +37,17 @@
 `include "template/StarterKit/includes.vh"
 
 module dut_top (
-	input						MCLK,				// clock
-	input						nRST,				// reset (active low)
-	output						BUSY,				// processor is busy
-	output						INTR,				// interrupt signal
+	input						MCLK,					// clock
+	input						nRST,					// reset (active low)
+	output						BUSY,					// processor is busy
+	output						INTR,					// interrupt signal
 
-	input						RSTn_Board,			// board reset button (active low)
-	input						CLK_10MHz,			// 10 MHz ocilator clock
-	output	[7:0]				LED_pins,			// LED pins
-	output	[13:0]				KW4_56NCWB_P_Y_pins	// Quadruple Digit Numeric Displays (Model # : KW4_56NCWB_P_Y)
+	input						RSTn_Board,				// board reset button (active low)
+	input						CLK_10MHz,				// 10 MHz ocilator clock
+	output	[7:0]				LED_pins,				// LED pins
+	output	[13:0]				KW4_56NCWB_P_Y_pins,	// Quadruple Digit Numeric Displays (Model # : KW4_56NCWB_P_Y)
+	input	[7:0]				TOGGLE_SWITCH,
+	input	[4:0]				ARROW_BUTTON
 );
 
 assign	BUSY	= 1'b1;

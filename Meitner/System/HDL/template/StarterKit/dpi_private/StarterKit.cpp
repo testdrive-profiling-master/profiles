@@ -100,7 +100,7 @@ void StarterKit::NumericDisplay(DWORD pins)
 		m_NumericDisplay.num[i].segment[4].Eval(nd.E & num_en[i]);
 		m_NumericDisplay.num[i].segment[5].Eval(nd.F & num_en[i]);
 		m_NumericDisplay.num[i].segment[6].Eval(nd.G & num_en[i]);
-		m_NumericDisplay.num[i].DP.Eval(nd.DP & num_en[i]);
+		m_NumericDisplay.num[i].segment[7].Eval(nd.DP & num_en[i]);
 	}
 
 	m_NumericDisplay.mid.Eval(nd.MID & ~nd.COM3);
@@ -110,6 +110,7 @@ void StarterKit::Eval(void)
 {
 	if(!m_pReg) return;
 
+	// led array
 	for(int i = 0; i < 8; i++) {
 		BYTE	val	= m_LEDs[i].Level();
 
@@ -118,6 +119,32 @@ void StarterKit::Eval(void)
 			m_pReg->led.bUpdate		= true;
 		}
 	}
+
+	// numeric display
+	for(int i = 0; i < 4; i++) {
+		for(int t = 0; t < 8; t++) {
+			BYTE	val	= m_NumericDisplay.num[i].segment[t].Level();
+
+			if(m_pReg->numeric_display.num[i].segment[t] != val) {
+				m_pReg->numeric_display.num[i].segment[t]	= val;
+				m_pReg->numeric_display.bUpdate	= true;
+			}
+		}
+	}
+
+	{
+		BYTE	val	= m_NumericDisplay.mid.Level();
+
+		if(m_pReg->numeric_display.mid != val) {
+			m_pReg->numeric_display.mid		= val;
+			m_pReg->numeric_display.bUpdate	= true;
+		}
+	}
+}
+
+void StarterKit::GetButtons(DWORD& dwButtons)
+{
+	dwButtons	= m_pReg->buttons;
 }
 
 //-------------------------------------------------------------------------
@@ -141,4 +168,9 @@ void StarterKit_NumericDisplay(const svBitVecVal* pins)
 void StarterKit_Eval(void)
 {
 	__starter_kit.Eval();
+}
+
+void StarterKit_GetButtons(svBitVecVal* pins)
+{
+	__starter_kit.GetButtons(*(DWORD*)pins);
 }
