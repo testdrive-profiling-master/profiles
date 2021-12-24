@@ -33,96 +33,19 @@
 // Title : Starter Kit document
 // Rev.  : 12/24/2021 Fri (clonextop@gmail.com)
 //================================================================================
-#include "testdrive_document.inl"
-#include "StarterKit.h"
-#include "RegmapLED.h"
-#include "RegmapSwitch.h"
+#ifndef __REGMAP_SWITCH_H__
+#define __REGMAP_SWITCH_H__
+#include "Regmap.h"
 
-ITDDocument*	g_pDoc				= NULL;
-ITDHtml*		g_pHtml				= NULL;
+class RegmapSwitch :
+	public Regmap {
+public:
+	RegmapSwitch(void);
+	virtual ~RegmapSwitch(void);
 
-REGISTER_LOCALED_DOCUMENT(StarterKit);
-
-StarterKit::StarterKit(ITDDocument* pDoc)
-{
-	m_bInitialize	= FALSE;
-	g_pDoc			= pDoc;
-	g_pHtml			= pDoc->GetHtml(_T("StarterKit"));
-	{
-		// system's display memory == register map
-		ITDMemory*	pMainMem	= g_pSystem->GetMemory();
-		CString		sName;
-		sName.Format(_T("%s_Display"), pMainMem->GetName());
-		Regmap::m_pReg	= (STARTERKIT_REGMAP*)pDoc->GetSystem()->GetMemory(sName)->GetPointer();
-	}
-	{
-		// add register monitors
-		new RegmapLED;
-		new RegmapSwitch;
-	}
-	g_pHtml->SetManager(this);
-	g_pHtml->Navigate(_T("StarterKit.html"));
-}
-
-StarterKit::~StarterKit(void)
-{
-	g_pDoc->KillTimer(10);
-	Regmap::ReleaseAll();
-}
-
-BOOL StarterKit::OnPropertyUpdate(ITDPropertyData* pProperty)
-{
-	pProperty->UpdateData();
-	pProperty->UpdateConfigFile(FALSE);
-	return TRUE;
-}
-
-BOOL StarterKit::OnCommand(DWORD command, WPARAM wParam, LPARAM lParam)
-{
-	if(command == 10) {
-		g_pDoc->KillTimer(10);
-		g_pDoc->SetTimer(10, Regmap::Update() ? 30 : 1000);
-	}
-
-	return 0;
-}
-
-void StarterKit::OnSize(int width, int height)
-{
-	if(g_pHtml) {
-		ITDLayout* pLayout = g_pHtml->GetObject()->GetLayout();
-		pLayout->SetSize(width, height);
-		g_pHtml->GetObject()->UpdateLayout();
-	}
-}
-
-LPCTSTR StarterKit::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
-{
-	if(m_bInitialize) {
-		if(_tcsstr(lpszURL, _T("cmd://")) == lpszURL) {
-			Regmap::Command(&lpszURL[6]);
-		} else
-			return NULL;
-	}
-
-	return lpszURL;
-}
-
-void StarterKit::OnHtmlDocumentComplete(DWORD dwID, LPCTSTR lpszURL)
-{
-	if(!m_bInitialize) {
-		m_bInitialize	= TRUE;
-		Regmap::Initialize();
-		g_pDoc->SetTimer(10, 50);
-	}
-}
-
-void StarterKit::OnShow(BOOL bShow)
-{
-	if(!m_bInitialize) return;
-
-	if(bShow)
-		g_pDoc->SetTimer(10, 50);
-	else
-		g_pDoc->KillTimer(10);
-}
+private:
+	virtual BOOL OnUpdate(void);
+	virtual BOOL OnCommand(LPCTSTR lpszURL);
+	virtual void OnBroadcast(LPVOID pData = NULL);
+};
+#endif//__REGMAP_SWITCH_H__

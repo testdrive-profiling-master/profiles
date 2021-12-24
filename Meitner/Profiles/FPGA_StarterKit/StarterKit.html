@@ -97,13 +97,13 @@
 					
 					htmlCanvas.onmousedown = function(e) {
 						mouseIsDown	= true;
-						window.navigate("cmd://mouse.d." + String(parseInt((e.x - offset_x)/canvas_scale)) + "." + String(parseInt((e.y - offset_y)/canvas_scale)));
+						window.navigate("cmd://SW/D" + String(parseInt((e.x - offset_x)/canvas_scale)) + "," + String(parseInt((e.y - offset_y)/canvas_scale)));
 					}
 					
 					htmlCanvas.onmouseup = function(e) {
 						if(mouseIsDown) {
 							// click
-							window.navigate("cmd://mouse.u." + String(parseInt((e.x - offset_x)/canvas_scale)) + "." + String(parseInt((e.y - offset_y)/canvas_scale)));
+							window.navigate("cmd://SW/U" + String(parseInt((e.x - offset_x)/canvas_scale)) + "," + String(parseInt((e.y - offset_y)/canvas_scale)));
 							mouseIsDown	= false;
 						}
 					}
