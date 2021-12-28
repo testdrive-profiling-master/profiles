@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,8 +30,8 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Processor
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Title : Template design
+// Rev.  : 12/29/2021 Wed (clonextop@gmail.com)
 //================================================================================
 `include "system_defines.vh"
 
@@ -61,7 +60,7 @@ always@(posedge CLK, negedge nRST) begin
 		_prev_INTR	<= INTR;
 	end begin
 		if(EN && (INTR^_prev_INTR) && (INTR == _Active)) begin
-			SimulationAwakeInterrupt();
+			/* verilator lint_off IGNOREDRETURN */ SimulationAwakeInterrupt();
 		end
 		_prev_INTR	<= INTR;
 	end
@@ -91,7 +90,7 @@ always@(posedge CLK, negedge nRST) begin
 	if(nRST) begin
 	end begin
 		if(EN && (INTR == _Active)) begin
-			SimulationAwakeInterrupt();
+			/* verilator lint_off IGNOREDRETURN */ SimulationAwakeInterrupt() ;
 		end
 	end
 end
