@@ -86,7 +86,7 @@ testdrive_clock_bfm #(
 
 always@(posedge CLK_10MHz) begin
 	StarterKit_LED({LED_power, LED});
-	StarterKit_NumericDisplay(KW4_56NCWB_P_Y);
+	StarterKit_NumericDisplay(RSTn_Board ? KW4_56NCWB_P_Y : 14'b00_0000_0000_0000);
 	StarterKit_Eval();
 	StarterKit_GetButtons(r_button);
 	BUTTONS		<= r_button[8:0];
