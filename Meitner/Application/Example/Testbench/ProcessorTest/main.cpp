@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,41 +31,38 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "hw/DUT.h"
 
-TESTBENCH_DESIGN {
+class Testbench : public TestbenchFramework {
 	DUT*			m_pDUT;		// Processor (Design Under Testing)
 	DDKMemory*		m_pBuff;
 
-	virtual BOOL OnInitialize(int argc, char** argv)
-	{
+	virtual bool OnInitialize(int argc, char** argv) {
 		m_pDUT	= NULL;
 		m_pBuff	= NULL;
 
 		// H/W system equality check
 		if(!CheckSimulation("Processor axi wrapper"))
-			return FALSE;
+			return false;
 
 		m_pDUT	= new DUT(m_pDDK);
 		m_pDUT->SetClock(300.f);	// set processor clock to 300MHz (High speed.) for performance
 		m_pBuff		= CreateDDKMemory(1024 * 8, 32);	// 8KB, 256bit alignment
 		MemoryLog(m_pBuff, "Test buffer memory");
-		return TRUE;
+		return true;
 	}
 
-	virtual void OnRelease(void)
-	{
+	virtual void OnRelease(void) {
 		if(m_pDUT) m_pDUT->SetClock(50.f);	// set processor clock to 50MHz (Low speed.) for IDLE status
 
 		SAFE_RELEASE(m_pBuff);
 		SAFE_DELETE(m_pDUT);
 	}
 
-	virtual BOOL OnTestBench(void)
-	{
+	virtual bool OnTestBench(void) {
 		//-----------------------------------------------------
 		// slave R/W test
 		//-----------------------------------------------------
@@ -158,6 +154,19 @@ TESTBENCH_DESIGN {
 		m_pDDK->WaitInterruptDone();
 		printf("\tInterrupt Counted = 0x%X\n", (m_pDDK->RegRead((DUT_CLOCKGEN_BASE | (4 << 2))) >> 18) & 0x3FF);	// clear & get interrupt counter
 		printf("process is done!\n");
-		return TRUE;
+		return true;
 	}
-} __END__;
+};
+
+int main(int argc, char** argv)
+{
+	Testbench	tb;
+
+	if(tb.Initialize(argc, argv)) {
+		if(!tb.DoTestbench())
+			printf("Testbench is failed.\n");
+	} else {
+		printf("Initialization is failed.\n");
+	}
+}
+

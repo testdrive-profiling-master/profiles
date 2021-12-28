@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Global system configuration
-// Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
+// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_CONFIG_VIRTUAL_FPGA_STARTER_KIT_H__
 #define __SYSTEM_CONFIG_VIRTUAL_FPGA_STARTER_KIT_H__
@@ -41,7 +41,7 @@
 
 typedef struct REGMAP_LED {
 	bool	bUpdate;
-	BYTE	val[8];		// 0 ~ 32 (max)
+	BYTE	val[9];		// 0 ~ 32 (max)
 };
 
 typedef struct REGMAP_NUMERIC_DISPLAY {
@@ -55,7 +55,8 @@ typedef struct REGMAP_NUMERIC_DISPLAY {
 typedef struct : public SYSTEM_REGMAP {
 	REGMAP_LED					led;
 	REGMAP_NUMERIC_DISPLAY		numeric_display;
-	DWORD						buttons;
+	DWORD						buttons;			// active low button
+	DWORD						switches;
 } STARTERKIT_REGMAP;
 
 #endif//__SYSTEM_CONFIG_VIRTUAL_FPGA_STARTER_KIT_H__

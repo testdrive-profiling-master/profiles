@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,6 +31,8 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
+// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
+//================================================================================
 // Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
@@ -80,10 +81,12 @@ RETRY_WAIT:
 	for(int i = 0; i < 600; i++) {	// wait for 5 seconds
 		if(!IsRunning()) break;
 
+		if(GetKeyState(VK_ESCAPE) < 0) break;
+
 		this_thread::sleep_for(chrono::milliseconds(10));
 
 		if(!((i + 1) % 100) && (i / 100) != 5) {
-			LOGI("S/W is down, but Simulation is still busy. Automatically shutdown in %d sec.\n", 5 - (i / 100));
+			LOGI("S/W is down, but Simulation is still busy. Automatically shutdown in %d sec. or press 'ESC' key to exit.\n", 5 - (i / 100));
 		}
 	}
 

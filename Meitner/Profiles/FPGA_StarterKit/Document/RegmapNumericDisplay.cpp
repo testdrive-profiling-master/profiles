@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Starter Kit document
-// Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
+// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "RegmapNumericDisplay.h"
 
@@ -48,6 +48,7 @@ BOOL RegmapNumericDisplay::OnUpdate(void)
 {
 	if(m_pNum->bUpdate) {
 		m_pNum->bUpdate	= false;
+		UpdateData();
 		return true;
 	}
 
@@ -56,9 +57,45 @@ BOOL RegmapNumericDisplay::OnUpdate(void)
 
 void RegmapNumericDisplay::OnBroadcast(LPVOID pData)
 {
+	if(!pData) {
+		UpdateData();
+	}
 }
 
 BOOL RegmapNumericDisplay::OnCommand(LPCTSTR lpszURL)
 {
 	return FALSE;
 }
+
+void RegmapNumericDisplay::UpdateData(void)
+{
+	// seven segments
+	for(int t = 0; t < 4; t++) {
+		BYTE*	pSegment	= m_pNum->num[t].segment;
+		float	segment_val[8];
+
+		for(int i = 0; i < 8; i++) {
+			DWORD	dwVal	= 32 - pSegment[i];
+			segment_val[i]	= (1024 - (dwVal * dwVal)) / 1024.f;
+		}
+
+		g_pHtml->CallJScript(_T("SetNumericDisplay(%d,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f)"),
+							 t,
+							 segment_val[0],
+							 segment_val[1],
+							 segment_val[2],
+							 segment_val[3],
+							 segment_val[4],
+							 segment_val[5],
+							 segment_val[6],
+							 segment_val[7]);
+	}
+
+	// mid
+	{
+		DWORD	dwVal			= 32 - m_pNum->num[4].segment[7];
+		float	segment_val		= (1024 - (dwVal * dwVal)) / 1024.f;
+		g_pHtml->CallJScript(_T("SetNumericDisplay(4,0,0,0,0,0,0,0,%.2f)"), segment_val);
+	}
+}
+

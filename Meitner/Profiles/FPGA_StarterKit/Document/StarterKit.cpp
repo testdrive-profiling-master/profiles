@@ -31,11 +31,13 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Starter Kit document
-// Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
+// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "testdrive_document.inl"
 #include "StarterKit.h"
 #include "RegmapLED.h"
+#include "RegmapButton.h"
+#include "RegmapNumericDisplay.h"
 
 ITDDocument*	g_pDoc				= NULL;
 ITDHtml*		g_pHtml				= NULL;
@@ -44,7 +46,7 @@ REGISTER_LOCALED_DOCUMENT(StarterKit);
 
 StarterKit::StarterKit(ITDDocument* pDoc)
 {
-	m_bInitialize	= FALSE;
+	m_bInitialized	= FALSE;
 	g_pDoc			= pDoc;
 	g_pHtml			= pDoc->GetHtml(_T("StarterKit"));
 	{
@@ -57,7 +59,10 @@ StarterKit::StarterKit(ITDDocument* pDoc)
 	{
 		// add register monitors
 		new RegmapLED;
+		new RegmapButton;
+		new RegmapNumericDisplay;
 	}
+	g_sMediaPath	= g_pSystem->RetrieveFullPath(_T("./media/"));
 	g_pHtml->SetManager(this);
 	g_pHtml->Navigate(_T("StarterKit.html"));
 }
@@ -79,7 +84,7 @@ BOOL StarterKit::OnCommand(DWORD command, WPARAM wParam, LPARAM lParam)
 {
 	if(command == 10) {
 		g_pDoc->KillTimer(10);
-		g_pDoc->SetTimer(10, Regmap::Update() ? 30 : 1000);
+		g_pDoc->SetTimer(10, Regmap::Update() ? 10 : 30);
 	}
 
 	return 0;
@@ -96,10 +101,9 @@ void StarterKit::OnSize(int width, int height)
 
 LPCTSTR StarterKit::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 {
-	if(m_bInitialize) {
+	if(m_bInitialized) {
 		if(_tcsstr(lpszURL, _T("cmd://")) == lpszURL) {
 			Regmap::Command(&lpszURL[6]);
-			g_pSystem->LogInfo(&lpszURL[6]);
 		} else
 			return NULL;
 	}
@@ -109,8 +113,8 @@ LPCTSTR StarterKit::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 
 void StarterKit::OnHtmlDocumentComplete(DWORD dwID, LPCTSTR lpszURL)
 {
-	if(!m_bInitialize) {
-		m_bInitialize	= TRUE;
+	if(!m_bInitialized) {
+		m_bInitialized	= TRUE;
 		Regmap::Initialize();
 		g_pDoc->SetTimer(10, 50);
 	}
@@ -118,7 +122,7 @@ void StarterKit::OnHtmlDocumentComplete(DWORD dwID, LPCTSTR lpszURL)
 
 void StarterKit::OnShow(BOOL bShow)
 {
-	if(!m_bInitialize) return;
+	if(!m_bInitialized) return;
 
 	if(bShow)
 		g_pDoc->SetTimer(10, 50);

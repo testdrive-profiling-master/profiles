@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8"/>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 	<style type="text/css"> 
 		@import url(StarterKit.css);
 	</style>
 	<script type="application/javascript">
-		var	led_power = [0.1, 0.3, 0.5, 0.7, 0.1, 0.1, 0.1, 0.1];
-		function SetLED(led0, led1, led2, led3, led4, led5, led6, led7) {
+		var	sw_value	= [false, false, false, false, false, false, false, false];
+		var	led_power	= [0, 0, 0, 0, 0, 0, 0, 0, 0];
+		function SetLED(led0, led1, led2, led3, led4, led5, led6, led7, led_pw) {
 			led_power[0]	= led0;
 			led_power[1]	= led1;
 			led_power[2]	= led2;
@@ -16,6 +17,7 @@
 			led_power[5]	= led5;
 			led_power[6]	= led6;
 			led_power[7]	= led7;
+			led_power[8]	= led_pw;
 		}
 		
 		var numeric_display_power	= [[0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0], [0,0,0,0,0,0,0,0]];
@@ -29,12 +31,22 @@
 			numeric_display_power[index][6]	= G;
 			numeric_display_power[index][7]	= DP;
 		}
+		function SetSwitch(sw0, sw1, sw2, sw3, sw4, sw5, sw6, sw7) {
+			sw_value[0]	= sw0;
+			sw_value[1]	= sw1;
+			sw_value[2]	= sw2;
+			sw_value[3]	= sw3;
+			sw_value[4]	= sw4;
+			sw_value[5]	= sw5;
+			sw_value[6]	= sw6;
+			sw_value[7]	= sw7;
+		}
 	</script>
 </head>
 <body>
 	<div class="canvas_outer">
 		<div class="canvas_inner">
-			<canvas id="canvas" width="300" height="300" oncontextmenu='return false'>Your browser doesn't support canvas.</canvas>
+			<canvas id="canvas" width="98%" height="98%" oncontextmenu='return false'>Your browser doesn't support canvas.</canvas>
 			<script>
 				(function() {
 					var	htmlCanvas		= document.getElementById('canvas');
@@ -42,13 +54,95 @@
 					var canvas_scale	= 1.0;
 					var offset_x		= 0;
 					var offset_y		= 0;
+					var mouseIsDown		= false;
 					var img_board		= new Image();
+					var img_section		= new Image();
+					var img_sw_nob		= new Image();
+					var img_led_green	= new Image();
+					var img_led_red		= new Image();
+					var img_segment		= new Array();
+					var pos_segment		= [
+						[91,298],		// A
+						[177,313],		// B
+						[162,426],		// C
+						[61,519],		// D
+						[49,426],		// E
+						[65,313],		// F
+						[78,408],		// G
+						[187,516],		// DP
+						[209,337]		// :
+					];
+					var section_canvas	= document.createElement('canvas');
+					var section_ctx		= section_canvas.getContext('2d');
+					var mouse_cursor	= -1;
 
+					img_section.src		= 'media/section.png';
+					img_sw_nob.src		= 'media/switch_nob.png';
+					img_led_green.src	= 'media/led_green.png';
+					img_led_red.src		= 'media/led_red.png';
+					
+					for (i = 0; i <= 8; i++) {
+						img_segment[i]		= new Image();
+						img_segment[i].src	= "media/segment_" + i + ".png";
+					}
+
+					img_section.addEventListener('load', function() {
+						section_canvas.width	= img_section.width;
+						section_canvas.height	= img_section.height;
+						section_ctx.globalCompositeOperation = 'source-over';
+						section_ctx.drawImage(img_section, 0, 0);
+					}, false);
+					
 					initialize();
 
+					function resizeCanvas() {
+						htmlCanvas.width	= window.innerWidth;
+						htmlCanvas.height	= window.innerHeight;
+						redraw();
+					}
+					
+					function section_pick(e) {
+						var x = parseInt((e.x - offset_x)/canvas_scale);
+						var y = parseInt((e.y - offset_y)/canvas_scale);
+						return section_ctx.getImageData(x, y, 1, 1).data;
+					}
+					
+					htmlCanvas.onmousedown = function(e) {
+						mouseIsDown	= true;
+						var data	= section_pick(e);
+						window.navigate("cmd://BTN.d." + String(data[1]) + "." + String(data[2]));
+					}
+					
+					htmlCanvas.onmouseup = function(e) {
+						if(mouseIsDown) {
+							var data	= section_pick(e);
+							mouseIsDown	= false;
+							window.navigate("cmd://BTN.u." + String(data[1]) + "." + String(data[2]));
+						}
+					}
+					
+					htmlCanvas.onmousemove = function(e) {
+						var data	= section_pick(e);
+						if(mouse_cursor != data[0]) {
+							switch(data[0]) {
+							case 127:
+								document.body.style.cursor = 'help';
+								break;
+							case 128:
+								document.body.style.cursor = 'pointer';
+								break;
+							default:
+								document.body.style.cursor = 'crosshair';
+								if(mouseIsDown) mouseIsDown = false;
+								break;
+							}
+							mouse_cursor	= data[0];
+						}
+					}
+
 					function initialize() {
-						img_board.src	= 'img/background.png';
-			
+						img_board.src	= 'media/background.png';
+
 						window.addEventListener('resize', resizeCanvas, false);
 						setInterval(redraw, 30);
 						resizeCanvas();
@@ -58,7 +152,7 @@
 					// border that resizes along with the browser window.
 					function redraw() {
 						ctx.globalCompositeOperation = 'source-over';
-						ctx.clearRect(0, 0, htmlCanvas.width, htmlCanvas.height); // 캔버스를 비운다
+						ctx.clearRect(0, 0, htmlCanvas.width, htmlCanvas.height);
 
 						{
 							var scale_x		= (htmlCanvas.width - 20) / img_board.width;
@@ -73,39 +167,53 @@
 						ctx.translate(offset_x, offset_y);
 						ctx.scale(canvas_scale, canvas_scale);
 						ctx.drawImage(img_board, 0, 0);
+
 						
 						{
 							var i;
 							ctx.save();
-							// LED module
-							ctx.globalCompositeOperation = 'lighter';
+							// switch nob
 							for(i=0;i<8;i++) {
-								ctx.globalAlpha = led_power[i];
-								ctx.drawImage(img_board, 50 + 40*i, 50, 30, 30);
+								ctx.drawImage(img_sw_nob, 99 + 160*i, 1460 + (sw_value[7-i] ? 0 : 100));
 							}
-							// Numeric display
+							
+							ctx.globalCompositeOperation = 'screen';
+							// power LED
+							ctx.globalAlpha = led_power[8];
+							ctx.drawImage(img_led_red, 152, 0);
+
+							// LED array
+							for(i=0;i<8;i++) {
+								ctx.globalAlpha = led_power[7-i];
+								ctx.drawImage(img_led_green, 355 + 117*i, 9);
+							}
+							// Numeric display #0
+							for(i=0;i<8;i++) {
+								ctx.globalAlpha = numeric_display_power[0][i];
+								ctx.drawImage(img_segment[i], pos_segment[i][0], pos_segment[i][1]);
+							}
+							// Numeric display #1
+							for(i=0;i<8;i++) {
+								ctx.globalAlpha = numeric_display_power[1][i];
+								ctx.drawImage(img_segment[i], 209+pos_segment[i][0], pos_segment[i][1]);
+							}
+							// Numeric display #2
+							for(i=0;i<8;i++) {
+								ctx.globalAlpha = numeric_display_power[2][i];
+								ctx.drawImage(img_segment[i], 417+pos_segment[i][0], pos_segment[i][1]);
+							}
+							// Numeric display #3
+							for(i=0;i<8;i++) {
+								ctx.globalAlpha = numeric_display_power[3][i];
+								ctx.drawImage(img_segment[i], 626+pos_segment[i][0], pos_segment[i][1]);
+							}
+							// Numeric display #mid
+							ctx.globalAlpha = numeric_display_power[4][7];
+							ctx.drawImage(img_segment[8], 209+pos_segment[8][0], pos_segment[8][1]);
+							
 							ctx.restore();
 						}
 						ctx.restore();
-					}
-
-					function resizeCanvas() {
-						htmlCanvas.width	= window.innerWidth;
-						htmlCanvas.height	= window.innerHeight;
-						redraw();
-					}
-					
-					htmlCanvas.onmousedown = function(e) {
-						mouseIsDown	= true;
-						window.navigate("cmd://mouse.d." + String(parseInt((e.x - offset_x)/canvas_scale)) + "." + String(parseInt((e.y - offset_y)/canvas_scale)));
-					}
-					
-					htmlCanvas.onmouseup = function(e) {
-						if(mouseIsDown) {
-							// click
-							window.navigate("cmd://mouse.u." + String(parseInt((e.x - offset_x)/canvas_scale)) + "." + String(parseInt((e.y - offset_y)/canvas_scale)));
-							mouseIsDown	= false;
-						}
 					}
 				})();
 			</script>

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Template design
-// Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
+// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __VIRTUAL_FPGA_STARTER_KIT_H__
 #define __VIRTUAL_FPGA_STARTER_KIT_H__
@@ -49,6 +49,7 @@ public:
 	void NumericDisplay(DWORD pins);
 	void Eval(void);
 	void GetButtons(DWORD& dwButtons);
+	void GetSwitches(DWORD& dwSwitches);
 
 private:
 	STARTERKIT_REGMAP*	m_pReg;
@@ -66,5 +67,6 @@ DPI_FUNCTION void StarterKit_LED(const svBitVecVal* pins);
 DPI_FUNCTION void StarterKit_NumericDisplay(const svBitVecVal* pins);
 DPI_FUNCTION void StarterKit_Eval(void);
 DPI_FUNCTION void StarterKit_GetButtons(svBitVecVal* pins);
+DPI_FUNCTION void StarterKit_GetSwitches(svBitVecVal* pins);
 
 #endif//__VIRTUAL_FPGA_STARTER_KIT_H__

@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,23 +31,22 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "ScenarioTest.inl"
 #include "Conformance.h"
 #include "hw/MTSP.h"
 
-TESTBENCH_DESIGN, public TestDriveResource {
+class Testbench : public TestbenchFramework, public TestDriveResource {
 	MTSP*					m_pMTSP;		// Processor (Design Under Testing)
 	ConformanceTestItem*	m_pItem;		// test item
 	char					m_sTitle[MAX_PATH], m_sItem[MAX_PATH];
 
-	BOOL GetArgName(const char* sArg, char* sTitle, char* sItem)
-	{
+	bool GetArgName(const char* sArg, char* sTitle, char* sItem) {
 		char	sCom[1024], *sTok;
 
-		if(!sArg) return FALSE;
+		if(!sArg) return false;
 
 		{
 			// get name only
@@ -63,7 +61,7 @@ TESTBENCH_DESIGN, public TestDriveResource {
 				while(sTarget) {
 					char* sNext	= strstr(sTarget, "\\");
 
-					if(!sNext) return FALSE;
+					if(!sNext) return false;
 
 					sNext++;
 
@@ -81,25 +79,24 @@ TESTBENCH_DESIGN, public TestDriveResource {
 			const char*	sDelim	= ".\\";
 
 			// 타이틀 이름 얻기
-			if(!(sTok = strtok(sCom, sDelim))) return FALSE;
+			if(!(sTok = strtok(sCom, sDelim))) return false;
 
 			strcpy(sTitle, sTok);
 
 			// 아이템 이름 얻기
-			if(!(sTok = strtok(NULL, sDelim))) return FALSE;
+			if(!(sTok = strtok(NULL, sDelim))) return false;
 
 			strcpy(sItem, sTok);
 		}
-		return TRUE;
+		return true;
 	}
 
-	virtual BOOL OnInitialize(int argc, char** argv)
-	{
+	virtual bool OnInitialize(int argc, char** argv) {
 		m_pItem	= NULL;
 
 		if(!(m_pMTSP = new MTSP(m_pDDK))) {
 			printf("*E: System is not ready...\n");
-			return FALSE;
+			return false;
 		}
 
 		{
@@ -114,26 +111,26 @@ TESTBENCH_DESIGN, public TestDriveResource {
 			// check simulation system...
 			if(!strstr(sSystemDesc, "Simulation Simplified")) {
 				printf("\t*E: Must be simulation only...\n");
-				return FALSE;
+				return false;
 			}
 		}
 
 		{
 			if(argc != 2) {
 				printf("*E: No argument...\n");
-				return 0;
+				return false;
 			}
 
 			if((_access(argv[1], 0)) == -1) {
 				printf("*E: File is not existed...\n");
-				return 0;
+				return false;
 			}
 		}
 
 		{
 			if(!GetArgName(argv[1], m_sTitle, m_sItem)) {
 				printf("*E: Invalid argument...\n");
-				return 0;
+				return false;
 			}
 
 			// Get test item
@@ -141,36 +138,46 @@ TESTBENCH_DESIGN, public TestDriveResource {
 
 			if(!pRoot) {
 				printf("*I: This test root title is not exist yet. : \"%s\"\n", m_sTitle);
-				return FALSE;
+				return false;
 			}
 
 			if(!pRoot->CheckSystemValidation(m_pDDK->GetSystemDescription())) {
 				TestResultOut(TEST_STATUS_SYSTEM_IS_REQUIRED);
-				return FALSE;
+				return false;
 			}
 
 			if(!(m_pItem = pRoot->Item(m_sItem))) {
 				printf("*I: This test item is not exist yet. : \"%s (%s)\"\n", m_sTitle, m_sItem);
-				return FALSE;
+				return false;
 			}
 
 			printf("Target Conformance Test : \"%s (%s)\"\n", m_sTitle, m_sItem);
 		}
 
-		return TRUE;
+		return true;
 	}
 
-	virtual void OnRelease(void)
-	{
+	virtual void OnRelease(void) {
 		m_pMTSP->SetClock(50);	// set minimum operation speed
 		SAFE_DELETE(m_pMTSP);
 	}
 
-	virtual BOOL OnTestBench(void)
-	{
+	virtual bool OnTestBench(void) {
 		// 테스트 시작
 		m_pItem->Function()(m_pMTSP, (MTSP_REGMAP*)m_TestDrive.Memory.pDisplay->GetPointer(0, 0));
 		printf("Conformance test is done!\n");
-		return TRUE;
+		return true;
 	}
-} __END__;
+};
+
+int main(int argc, char** argv)
+{
+	Testbench	tb;
+
+	if(tb.Initialize(argc, argv)) {
+		if(!tb.DoTestbench())
+			printf("Testbench is failed.\n");
+	} else {
+		printf("Initialization is failed.\n");
+	}
+}

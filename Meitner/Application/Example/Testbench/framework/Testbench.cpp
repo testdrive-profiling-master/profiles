@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,34 +31,32 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 
-TestbenchFramework*	TestbenchFramework::m_pTestbench	= NULL;
+static TestbenchFramework*	__pTestbench	= NULL;
 
 // interrupt service routine
 void TestbenchFramework::__ISR__(DDK* pDDK)
 {
-	TestbenchFramework* pInst	= TestbenchFramework::GetInstance();
-
-	if(pInst) pInst->OnInterrupt();
+	if(__pTestbench) __pTestbench->OnInterrupt();
 	else pDDK->ClearInterruptPending(TRUE);
 }
 
 TestbenchFramework::TestbenchFramework(void)
 {
-	m_pTestbench	= this;
 	m_pDDK			= NULL;
+	__pTestbench	= this;
 }
 
 TestbenchFramework::~TestbenchFramework(void)
 {
+	__pTestbench	= NULL;
 	Release();
-	m_pTestbench	= NULL;
 }
 
-BOOL TestbenchFramework::Initialize(int argc, char** argv)
+bool TestbenchFramework::Initialize(int argc, char** argv)
 {
 	// create DDK
 	if(!m_pDDK) {
@@ -86,14 +83,14 @@ void TestbenchFramework::OnInterrupt(void)
 	m_pDDK->ClearInterruptPending(TRUE);
 }
 
-BOOL TestbenchFramework::CheckSimulation(const char* sRequired, BOOL bLogOut)
+bool TestbenchFramework::CheckSimulation(const char* sRequired, bool bLogOut)
 {
-	BOOL			bSuccess	= TRUE;
+	bool			bSuccess	= true;
 
 	if(sRequired) {
 		const char*	sSystemDesc	= m_pDDK->GetSystemDescription();
 
-		if(!strstr(sSystemDesc, "Simulation Simplified")) return TRUE;	// check simulation environment only.
+		if(!strstr(sSystemDesc, "Simulation Simplified")) return true;	// check simulation environment only.
 
 		bSuccess	= sSystemDesc && (strstr(sSystemDesc, sRequired) != NULL);
 
@@ -116,18 +113,4 @@ void TestbenchFramework::Release(void)
 		m_pDDK	= NULL;
 		_flushall();
 	}
-}
-
-int main(int argc, char** argv)
-{
-	TestbenchFramework* pTestbench	= TestbenchFramework::GetInstance();
-
-	if(pTestbench->Initialize(argc, argv)) {
-		if(!pTestbench->DoTestbench())
-			printf("Testbench is failed.\n");
-	} else {
-		printf("Initialization is failed.\n");
-	}
-
-	pTestbench->Release();
 }

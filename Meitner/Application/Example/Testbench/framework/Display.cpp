@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Display.h"
 
@@ -123,7 +122,7 @@ BOOL Display::LoadFromFile(const char* sFileName, DDKMemory* pMem, DWORD dwByteS
 	return (BOOL)pCmd->format;
 }
 
-void Display::Invalidate(BOOL bFront)
+void Display::Invalidate(bool bFront)
 {
 	if(bFront)
 		m_pConfig->Front.bUpdate	= TRUE;
@@ -131,7 +130,7 @@ void Display::Invalidate(BOOL bFront)
 		m_pConfig->Back.bUpdate		= TRUE;
 }
 
-void Display::SetBuffer(DDKMemory* pMem, BOOL bFront)
+void Display::SetBuffer(DDKMemory* pMem, bool bFront)
 {
 	if(!pMem) return;
 
@@ -143,7 +142,7 @@ void Display::SetBuffer(DDKMemory* pMem, BOOL bFront)
 		m_pConfig->Back.dwAddress	= dwAddr;
 }
 
-void Display::SetReverse(BOOL bReverse)
+void Display::SetReverse(bool bReverse)
 {
 	m_pConfig->bReverse	= bReverse;
 }

@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,25 +31,24 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "hw/DUT.h"
 #include "hw/hdmi_controller.h"
 
-TESTBENCH_DESIGN {
+class Testbench : public TestbenchFramework {
 	DDKMemory*			m_pFrame;
 	DUT*				m_pDUT;
 	HDMI_Controller*	m_pHDMI;
 
-	virtual BOOL OnInitialize(int argc, char** argv)
-	{
+	virtual bool OnInitialize(int argc, char** argv) {
 		m_pHDMI		= NULL;
 		m_pDUT		= NULL;
 
 		// H/W system equality check
 		if(!CheckSimulation("Meitner"))
-			return FALSE;
+			return false;
 
 		m_pHDMI		= new HDMI_Controller(m_pDDK, 0x10000, 200.f);	// 0x10000 hdmi base address, @200Mhz
 		m_pDUT		= new DUT(m_pDDK);
@@ -70,19 +68,17 @@ TESTBENCH_DESIGN {
 			// set *front framebuffer base address
 			m_pHDMI->SetBaseAddress(m_pFrame->Physical());
 		}
-		return TRUE;
+		return true;
 	}
 
-	virtual void OnRelease(void)
-	{
+	virtual void OnRelease(void) {
 		if(m_pDUT) m_pDUT->SetClock(50.f);		// set processor clock to 50MHz (Low speed.) for IDLE status
 
 		SAFE_DELETE(m_pDUT);
 		SAFE_RELEASE(m_pFrame);
 	}
 
-	virtual BOOL OnTestBench(void)
-	{
+	virtual bool OnTestBench(void) {
 		{
 			// slave read test
 			printf("Slave Write test.\n");
@@ -99,6 +95,18 @@ TESTBENCH_DESIGN {
 				printf("\tRead = %d\n", m_pDUT->RegRead(i));
 			}
 		}
-		return TRUE;
+		return true;
 	}
-} __END__;
+};
+
+int main(int argc, char** argv)
+{
+	Testbench	tb;
+
+	if(tb.Initialize(argc, argv)) {
+		if(!tb.DoTestbench())
+			printf("Testbench is failed.\n");
+	} else {
+		printf("Initialization is failed.\n");
+	}
+}

@@ -31,24 +31,23 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 7/20/2021 Tue (clonextop@gmail.com)
+// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "hw/MTSP.h"
 
-TESTBENCH_DESIGN {
+class Testbench : public TestbenchFramework {
 	DDKMemory*			m_pFrame;
 	MTSP*				m_pMTSP;
 	DDKMemory*			m_pProgram;
 
-	virtual BOOL OnInitialize(int argc, char** argv)
-	{
+	virtual bool OnInitialize(int argc, char** argv) {
 		m_pMTSP		= NULL;
 		m_pProgram	= NULL;
 
 		// H/W system equality check
 		if(!CheckSimulation("MTSP"))
-			return FALSE;
+			return false;
 
 		m_pMTSP		= new MTSP(m_pDDK);
 		{
@@ -74,11 +73,10 @@ TESTBENCH_DESIGN {
 			m_pMTSP->HDMI()->SetBaseAddress(m_pFrame->Physical());
 			m_pMTSP->HDMI()->SetScreen(1920, 1080);		// set resolution
 		}
-		return TRUE;
+		return true;
 	}
 
-	virtual void OnRelease(void)
-	{
+	virtual void OnRelease(void) {
 		if(m_pMTSP) m_pMTSP->SetClock(50.f);		// set processor clock to 50MHz (Low speed.) for IDLE status
 
 		SAFE_DELETE(m_pMTSP);
@@ -86,8 +84,7 @@ TESTBENCH_DESIGN {
 		SAFE_RELEASE(m_pProgram);
 	}
 
-	virtual BOOL OnTestBench(void)
-	{
+	virtual bool OnTestBench(void) {
 		m_pProgram	= m_pMTSP->Compile("GPASM/sample/simple_program.gpp");
 
 		if(m_pProgram) {
@@ -109,6 +106,18 @@ TESTBENCH_DESIGN {
 			}*/
 		}
 
-		return TRUE;
+		return true;
 	}
-} __END__;
+};
+
+int main(int argc, char** argv)
+{
+	Testbench	tb;
+
+	if(tb.Initialize(argc, argv)) {
+		if(!tb.DoTestbench())
+			printf("Testbench is failed.\n");
+	} else {
+		printf("Initialization is failed.\n");
+	}
+}

@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 9/19/2020 Sat (clonextop@gmail.com)
+// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "BruteForce.h"
 #include <time.h>
@@ -73,7 +72,7 @@ double BruteForce::circlev(double rx, double ry)
 	return sqrt(numerator / r2);
 }
 
-void BruteForce::Initialize(int N)
+void BruteForce::InitializeBruteForce(int N)
 {
 	SAFE_DELETE_ARRAY(m_pBodies);
 	m_iSize		= N;

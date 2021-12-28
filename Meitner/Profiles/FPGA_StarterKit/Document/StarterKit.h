@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Starter Kit document
-// Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
+// Rev.  : 12/27/2021 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __STARTER_KIT_H__
 #define __STARTER_KIT_H__
@@ -52,6 +52,6 @@ public:
 	STDMETHOD_(void, OnShow)(BOOL bShow);
 
 protected:
-	BOOL				m_bInitialize;
+	BOOL				m_bInitialized;
 };
 #endif//__STARTER_KIT_H__

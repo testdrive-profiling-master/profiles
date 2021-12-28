@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Starter Kit document
-// Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
+// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __REGMAP_H__
 #define __REGMAP_H__
@@ -41,6 +41,9 @@
 
 extern ITDDocument*		g_pDoc;
 extern ITDHtml*			g_pHtml;
+extern CString			g_sMediaPath;
+
+void TestDrivePlaySound(LPCTSTR sFilePath);
 
 class Regmap {
 protected:

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Template design
-// Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
+// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "StarterKit.h"
 
@@ -51,11 +51,17 @@ void StarterKit::Initialize(void)
 	m_pReg				= (STARTERKIT_REGMAP*)GET_SYSTEM_REGMAP;
 	m_pReg->magic_code	= SYSTEM_MAGIC_CODE;
 	memset(&m_pReg->led, 0, sizeof(m_pReg->led));
+	m_pReg->led.val[8]	= 32;
+	m_pReg->buttons		= 0xFFFFFFFF;
 	m_pReg->led.bUpdate	= true;
 }
 
 void StarterKit::LED(DWORD pins)
 {
+	// power LED
+	m_pReg->led.val[8]	= (pins & 0x100) ? 32 : 0;
+
+	// LED array
 	for(int i = 0; i < 8; i++) {
 		m_LEDs[i].Eval(pins);
 		pins	>>= 1;
@@ -110,7 +116,8 @@ void StarterKit::Eval(void)
 {
 	if(!m_pReg) return;
 
-	// led array
+	// power LED
+	// LED array
 	for(int i = 0; i < 8; i++) {
 		BYTE	val	= m_LEDs[i].Level();
 
@@ -147,6 +154,11 @@ void StarterKit::GetButtons(DWORD& dwButtons)
 	dwButtons	= m_pReg->buttons;
 }
 
+void StarterKit::GetSwitches(DWORD& dwSwitches)
+{
+	dwSwitches	= m_pReg->switches;
+}
+
 //-------------------------------------------------------------------------
 // DPI functions
 //-------------------------------------------------------------------------
@@ -162,7 +174,7 @@ void StarterKit_LED(const svBitVecVal* pins)
 
 void StarterKit_NumericDisplay(const svBitVecVal* pins)
 {
-	__starter_kit.NumericDisplay(*pins);
+	__starter_kit.NumericDisplay(*(DWORD*)pins);
 }
 
 void StarterKit_Eval(void)
@@ -173,4 +185,9 @@ void StarterKit_Eval(void)
 void StarterKit_GetButtons(svBitVecVal* pins)
 {
 	__starter_kit.GetButtons(*(DWORD*)pins);
+}
+
+void StarterKit_GetSwitches(svBitVecVal* pins)
+{
+	__starter_kit.GetSwitches(*(DWORD*)pins);
 }

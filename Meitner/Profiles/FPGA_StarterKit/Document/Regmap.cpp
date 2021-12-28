@@ -31,12 +31,19 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Starter Kit document
-// Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
+// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Regmap.h"
+#include <mmsystem.h>
 
 Regmap*				Regmap::m_pHead		= NULL;
 STARTERKIT_REGMAP*	Regmap::m_pReg		= NULL;
+CString				g_sMediaPath;
+
+void TestDrivePlaySound(LPCTSTR sFilePath)
+{
+	sndPlaySound(g_sMediaPath + sFilePath, SND_ASYNC);
+}
 
 Regmap::Regmap(LPCTSTR sName)
 {

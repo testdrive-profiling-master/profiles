@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Virtual FPGA Starter Kit
-// Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
+// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 `include "template/StarterKit/includes.vh"
@@ -39,18 +39,30 @@
 module dut_top (
 	input						MCLK,					// clock
 	input						nRST,					// reset (active low)
-	output						BUSY,					// processor is busy
 	output						INTR,					// interrupt signal
 
 	input						RSTn_Board,				// board reset button (active low)
 	input						CLK_10MHz,				// 10 MHz ocilator clock
-	output	[7:0]				LED_pins,				// LED pins
+	output	reg [7:0]			LED_pins,				// LED pins
 	output	[13:0]				KW4_56NCWB_P_Y_pins,	// Quadruple Digit Numeric Displays (Model # : KW4_56NCWB_P_Y)
-	input	[7:0]				TOGGLE_SWITCH,
-	input	[4:0]				ARROW_BUTTON
+	input	[7:0]				SWITCHE_pins,			// switche pins
+	input	[8:0]				BUTTON_pins				// buttons ()(active low)
 );
 
-assign	BUSY	= 1'b1;
-assign	INTR	= 1'b0;
+reg		[16:0]	t_count;
+
+always@(posedge CLK_10MHz) begin
+	if(!RSTn_Board) begin
+		t_count		<= 'd0;
+		LED_pins	<= 'd0;
+
+	end
+	else begin
+		t_count		<= t_count + 1'b1;
+		if (t_count == 'd0) begin
+			LED_pins	<= LED_pins + 1'b1;
+		end
+	end
+end
 
 endmodule

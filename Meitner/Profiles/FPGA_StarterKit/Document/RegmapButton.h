@@ -30,33 +30,24 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Testbench
+// Title : Starter Kit document
 // Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
-#ifndef __BRUTEFORCE_H__
-#define __BRUTEFORCE_H__
-#include "STDInterface.h"
-#include "Body.h"
+#ifndef __REGMAP_BUTTON_H__
+#define __REGMAP_BUTTON_H__
+#include "Regmap.h"
 
-class BruteForce {
+class RegmapButton :
+	public Regmap {
 public:
-	BruteForce(void);
-	virtual ~BruteForce(void);
-
-	void InitializeBruteForce(int N);
-	void Update(void);
-	void Present(void);
-
-protected:
-	virtual void OnPresent(Body* pBody) {}
+	RegmapButton(void);
+	virtual ~RegmapButton(void);
 
 private:
-	double circlev(double rx, double ry);
-	double MathSignum(double n);
-	double Exp(double lambda);
+	virtual BOOL OnUpdate(void);
+	virtual BOOL OnCommand(LPCTSTR lpszURL);
+	virtual void OnBroadcast(LPVOID pData = NULL);
 
-	int			m_iSize;
-	Body*		m_pBodies;
+	void UpdateSwitches(void);
 };
-
-#endif//__BRUTEFORCE_H__
+#endif//__REGMAP_BUTTON_H__

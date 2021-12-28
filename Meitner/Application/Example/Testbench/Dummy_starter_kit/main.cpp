@@ -33,30 +33,35 @@
 // Title : Testbench
 // Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
-#ifndef __BRUTEFORCE_H__
-#define __BRUTEFORCE_H__
-#include "STDInterface.h"
-#include "Body.h"
+#include "Testbench.h"
 
-class BruteForce {
-public:
-	BruteForce(void);
-	virtual ~BruteForce(void);
+class Testbench : public TestbenchFramework {
+	virtual bool OnInitialize(int argc, char** argv) {
+		printf("Current system : %s\n", m_pDDK->GetSystemDescription());
+		return CheckSimulation("FPGA Starter Kit");
+	}
 
-	void InitializeBruteForce(int N);
-	void Update(void);
-	void Present(void);
+	virtual void OnRelease(void) {
+	}
 
-protected:
-	virtual void OnPresent(Body* pBody) {}
+	virtual bool OnTestBench(void) {
+		printf("Press 'ESC' key to exit.\n");
+		fflush(stdout);
 
-private:
-	double circlev(double rx, double ry);
-	double MathSignum(double n);
-	double Exp(double lambda);
+		while(GetKeyState(VK_ESCAPE) >= 0) Sleep(100);
 
-	int			m_iSize;
-	Body*		m_pBodies;
+		return true;
+	}
 };
 
-#endif//__BRUTEFORCE_H__
+int main(int argc, char** argv)
+{
+	Testbench	tb;
+
+	if(tb.Initialize(argc, argv)) {
+		if(!tb.DoTestbench())
+			printf("Testbench is failed.\n");
+	} else {
+		printf("Initialization is failed.\n");
+	}
+}

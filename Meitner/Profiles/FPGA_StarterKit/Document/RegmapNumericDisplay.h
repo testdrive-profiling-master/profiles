@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Starter Kit document
-// Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
+// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __REGMAP_NUMERIC_DISPLAY_H__
 #define __REGMAP_NUMERIC_DISPLAY_H__
@@ -47,6 +47,8 @@ private:
 	virtual BOOL OnUpdate(void);
 	virtual BOOL OnCommand(LPCTSTR lpszURL);
 	virtual void OnBroadcast(LPVOID pData = NULL);
+
+	void UpdateData(void);
 
 	REGMAP_NUMERIC_DISPLAY*		m_pNum;
 };

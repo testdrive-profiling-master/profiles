@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "Display.h"
@@ -48,13 +47,12 @@ typedef enum {
 	FRAMEBUFFER_SIZE
 };
 
-TESTBENCH_DESIGN , public JuliaSet {
+class Testbench : public TestbenchFramework, public JuliaSet {
 	Display			m_Display;
 	DDKMemory*		m_pFrame[FRAMEBUFFER_SIZE];
 	DWORD*			m_pScreen;
 
-	virtual BOOL OnInitialize(int argc, char** argv)
-	{
+	virtual bool OnInitialize(int argc, char** argv) {
 		// create memory
 		m_pFrame[FRAMEBUFFER_FRONT]	= CreateDDKMemory(SCREEN_BUFFER_SIZE, 16);
 		m_pFrame[FRAMEBUFFER_BACK]	= CreateDDKMemory(SCREEN_BUFFER_SIZE, 16);
@@ -64,10 +62,9 @@ TESTBENCH_DESIGN , public JuliaSet {
 		ExchangeFramebuffer();
 		m_Display.SetForeground();
 		SetMatrix(SCREEN_WIDTH, SCREEN_HEIGHT);
-		return TRUE;
+		return true;
 	}
-	virtual void OnRelease(void)
-	{
+	virtual void OnRelease(void) {
 		// release memory
 		for(int i = 0; i < FRAMEBUFFER_SIZE; i++)
 			SAFE_RELEASE(m_pFrame[i]);
@@ -75,26 +72,23 @@ TESTBENCH_DESIGN , public JuliaSet {
 		m_Display.Release();
 	}
 
-	void ExchangeFramebuffer(void)
-	{
+	void ExchangeFramebuffer(void) {
 		DDKMemory* pTemp			= m_pFrame[FRAMEBUFFER_BACK];
 		m_pFrame[FRAMEBUFFER_BACK]	= m_pFrame[FRAMEBUFFER_FRONT];
 		m_pFrame[FRAMEBUFFER_FRONT]	= pTemp;
 		m_pFrame[FRAMEBUFFER_FRONT]->Flush();
-		m_Display.SetBuffer(m_pFrame[FRAMEBUFFER_FRONT], TRUE);
-		m_Display.SetBuffer(m_pFrame[FRAMEBUFFER_BACK], FALSE);
-		m_Display.Invalidate(TRUE);
+		m_Display.SetBuffer(m_pFrame[FRAMEBUFFER_FRONT], true);
+		m_Display.SetBuffer(m_pFrame[FRAMEBUFFER_BACK], false);
+		m_Display.Invalidate(true);
 		m_pScreen	= (DWORD*)m_pFrame[FRAMEBUFFER_BACK]->Virtual();
 	}
 
-	virtual void OnPresent(int x, int y, DWORD color)
-	{
+	virtual void OnPresent(int x, int y, DWORD color) {
 		m_pScreen[x + y * SCREEN_WIDTH]	= color;
-		m_Display.Invalidate(FALSE);
+		m_Display.Invalidate(false);
 	}
 
-	virtual BOOL OnTestBench(void)
-	{
+	virtual bool OnTestBench(void) {
 		printf("Press 'ESC' key to stop the process...\n");
 		_flushall();
 		DWORD mode	= 0;
@@ -129,7 +123,18 @@ TESTBENCH_DESIGN , public JuliaSet {
 			ExchangeFramebuffer();
 		}
 
-		return TRUE;
+		return true;
+	}
+};
+
+int main(int argc, char** argv)
+{
+	Testbench	tb;
+
+	if(tb.Initialize(argc, argv)) {
+		if(!tb.DoTestbench())
+			printf("Testbench is failed.\n");
+	} else {
+		printf("Initialization is failed.\n");
 	}
 }
-__END__;

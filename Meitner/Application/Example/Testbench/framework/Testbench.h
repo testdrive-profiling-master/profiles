@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,42 +31,43 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "common.h"
 
 #ifndef __TESTBENCH_H__
 #define __TESTBENCH_H__
 
-class TestbenchFramework
-{
+class TestbenchFramework {
 public:
 	TestbenchFramework(void);
 	virtual ~TestbenchFramework(void);
-	BOOL Initialize(int argc, char** argv);
+	bool Initialize(int argc, char** argv);
 	void Release(void);
 
-	inline BOOL IsInitialized(void)		{return (m_pDDK != NULL);}
-	BOOL DoTestbench(void)				{return OnTestBench();}
-
-	static inline TestbenchFramework* GetInstance(void)	{return m_pTestbench;}
+	inline bool IsInitialized(void)		{
+		return (m_pDDK != NULL);
+	}
+	inline DDK* GetDDK(void)			{
+		return m_pDDK;
+	}
+	bool DoTestbench(void)				{
+		return OnTestBench();
+	}
 
 protected:
-	virtual BOOL OnInitialize(int argc, char** argv)	{return TRUE;}
-	virtual BOOL OnTestBench(void) = 0;
+	virtual bool OnInitialize(int argc, char** argv)	{
+		return true;
+	}
+	virtual bool OnTestBench(void) = 0;
 	virtual void OnRelease(void)	{}
 	virtual void OnInterrupt(void);
-	BOOL CheckSimulation(const char* sRequired = NULL, BOOL bLogOut = TRUE);
-	
+	bool CheckSimulation(const char* sRequired = NULL, bool bLogOut = true);
+
 	DDK*			m_pDDK;
 
 private:
 	static void __ISR__(DDK* pDDK);
-	static TestbenchFramework*		m_pTestbench;
 };
-
-TestbenchFramework* CreateTestbench(void);
-
-#define TESTBENCH_DESIGN		static class Testbench : public TestbenchFramework
 
 #endif//__TESTBENCH_H__

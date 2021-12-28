@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,14 +31,13 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __DISPLAY_H__
 #define __DISPLAY_H__
 #include "common.h"
 
-class Display : protected TestDriveResource
-{
+class Display : protected TestDriveResource {
 public:
 	Display(void);
 	~Display(void);
@@ -49,15 +47,19 @@ public:
 
 	void SaveToFile(const char* sFileName);
 	BOOL LoadFromFile(const char* sFileName, DDKMemory* pMem, DWORD dwByteStride = 0, DISPLAY_FORMAT format = DISPLAY_FORMAT_ABGR_8888);
-	void SetReverse(BOOL bReverse = TRUE);
-	void SetBuffer(DDKMemory* pMem, BOOL bFront = TRUE);
+	void SetReverse(bool bReverse = true);
+	void SetBuffer(DDKMemory* pMem, bool bFront = true);
 	void SetFormat(DISPLAY_FORMAT format);
-	void Invalidate(BOOL bFront = FALSE);
+	void Invalidate(bool bFront = false);
 	void SetForeground(void);
 	void SetResolution(int width, int height, DISPLAY_FORMAT format = DISPLAY_FORMAT_ARGB_8888);
 
-	inline	int Width(void)	{return m_pConfig->iWidth;}
-	inline	int Height(void)	{return m_pConfig->iHeight;}
+	inline	int Width(void)	{
+		return m_pConfig->iWidth;
+	}
+	inline	int Height(void)	{
+		return m_pConfig->iHeight;
+	}
 
 protected:
 	BOOL CheckDisplay(void);

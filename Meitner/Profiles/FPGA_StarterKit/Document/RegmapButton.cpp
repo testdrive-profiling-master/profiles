@@ -33,50 +33,96 @@
 // Title : Starter Kit document
 // Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
-#include "RegmapLED.h"
+#include "RegmapButton.h"
 
-RegmapLED::RegmapLED(void) : Regmap(_T("LED"))
-{
-	m_pLED		= &m_pReg->led;
-}
 
-RegmapLED::~RegmapLED(void)
+RegmapButton::RegmapButton(void) : Regmap(_T("BTN"))
 {
 }
 
-BOOL RegmapLED::OnUpdate(void)
+RegmapButton::~RegmapButton(void)
 {
-	if(m_pLED->bUpdate) {
-		m_pLED->bUpdate	= false;
-		UpdateLED();
-		return true;
-	}
+}
 
+BOOL RegmapButton::OnUpdate(void)
+{
 	return FALSE;
 }
 
-void RegmapLED::OnBroadcast(LPVOID pData)
+void RegmapButton::OnBroadcast(LPVOID pData)
 {
 	if(!pData) {
-		UpdateLED();
+		UpdateSwitches();
 	}
 }
 
-BOOL RegmapLED::OnCommand(LPCTSTR lpszURL)
+BOOL RegmapButton::OnCommand(LPCTSTR lpszURL)
 {
+	bool	bPressed	= (*lpszURL == _T('d'));
+	int		iType, iID;
+	{
+		LPCTSTR		sDelim	= _T(".");
+		int			iPos = 0;
+		CString		sTok(lpszURL + 2);
+		iType	= _ttoi(sTok.Tokenize(sDelim, iPos));
+		iID		= _ttoi(sTok.Tokenize(sDelim, iPos));
+	}
+
+	switch(iType) {
+	case 0:	// just link
+		if(!bPressed) {
+			switch(iID) {
+			case 0:	// CPU
+				g_pSystem->LogWarning(_T("Document is not ready yet."));
+				break;
+
+			case 1:	// Memory
+				g_pSystem->ExecuteFile(_T("%PROJECT%/Profiles/common/view_system_memory.bat"), NULL, FALSE, NULL, NULL, NULL);
+				break;
+
+			case 2:	// Numeric Display
+				g_pSystem->ExecuteFile(_T("explorer"), _T("https://cdn-shop.adafruit.com/datasheets/1001datasheet.pdf"), FALSE, NULL, NULL, NULL);
+				break;
+			}
+		}
+
+		break;
+
+	case 1:	// push button
+		if(bPressed)
+			TestDrivePlaySound(_T("btn_start.wav"));
+		else
+			TestDrivePlaySound(_T("btn_end.wav"));
+
+		if(bPressed)
+			m_pReg->buttons	&= ~(1 << iID);
+		else
+			m_pReg->buttons	|= (1 << iID);
+
+		break;
+
+	case 2:	// toggle switch
+		if(!bPressed) {
+			TestDrivePlaySound(_T("switch.wav"));
+			m_pReg->switches ^= (1 << iID);
+			UpdateSwitches();
+		}
+
+		break;
+	}
+
 	return FALSE;
 }
 
-void RegmapLED::UpdateLED(void)
+void RegmapButton::UpdateSwitches(void)
 {
-	g_pHtml->CallJScript(_T("SetLED(%.1f, %.1f, %.1f, %.1f, %.1f, %.1f, %.1f, %.1f, %.1f);"),
-						 m_pLED->val[0] / 32.f,
-						 m_pLED->val[1] / 32.f,
-						 m_pLED->val[2] / 32.f,
-						 m_pLED->val[3] / 32.f,
-						 m_pLED->val[4] / 32.f,
-						 m_pLED->val[5] / 32.f,
-						 m_pLED->val[6] / 32.f,
-						 m_pLED->val[7] / 32.f,
-						 m_pLED->val[8] / 32.f);
+	g_pHtml->CallJScript(_T("SetSwitch(%s,%s,%s,%s,%s,%s,%s,%s)"),
+						 (m_pReg->switches & (1 << 0)) ? _T("true") : _T("false"),
+						 (m_pReg->switches & (1 << 1)) ? _T("true") : _T("false"),
+						 (m_pReg->switches & (1 << 2)) ? _T("true") : _T("false"),
+						 (m_pReg->switches & (1 << 3)) ? _T("true") : _T("false"),
+						 (m_pReg->switches & (1 << 4)) ? _T("true") : _T("false"),
+						 (m_pReg->switches & (1 << 5)) ? _T("true") : _T("false"),
+						 (m_pReg->switches & (1 << 6)) ? _T("true") : _T("false"),
+						 (m_pReg->switches & (1 << 7)) ? _T("true") : _T("false"));
 }

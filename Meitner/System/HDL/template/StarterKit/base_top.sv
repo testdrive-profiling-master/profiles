@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Template design
-// Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
+// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 
@@ -46,26 +46,32 @@ module top (
 
 // definition & assignment ---------------------------------------------------
 `DPI_FUNCTION void StarterKit_Initialize();
-`DPI_FUNCTION void StarterKit_LED(input bit [7:0] LED_pins);
+`DPI_FUNCTION void StarterKit_LED(input bit [8:0] LED_pins);
 `DPI_FUNCTION void StarterKit_NumericDisplay(input bit [13:0] pins);
 `DPI_FUNCTION void StarterKit_Eval();
-`DPI_FUNCTION void StarterKit_GetButtons(output bit [12:0] pins);
+`DPI_FUNCTION void StarterKit_GetButtons(output bit [31:0] pins);
+`DPI_FUNCTION void StarterKit_GetSwitches(output bit [31:0] pins);
 
 wire					RSTn_Board;
 wire					CLK_10MHz;
 wire					CLK_10MHz_RSTn;
 wire	[13:0]			KW4_56NCWB_P_Y;
+wire					LED_power;
 wire	[7:0]			LED;
-reg		[12:0]			r_button;
-reg		[7:0]			TOGGLE_SWITCH;
-reg		[4:0]			ARROW_BUTTON;
+reg		[31:0]			r_button;
+reg		[8:0]			BUTTONS;
+reg		[31:0]			r_switch;
+reg		[7:0]			SWITCHES;
+
+
+assign	RSTn_Board		= r_button[31];
+assign	LED_power		= CLK_10MHz_RSTn & RSTn_Board;
+assign	BUSY			= 1'b1;
 
 initial	begin
+	SetSystemDescription("FPGA Starter Kit");
 	StarterKit_Initialize();
-	TOGGLE_SWITCH	= 'd0;
-	ARROW_BUTTON	= 'd0;
 	//	INTR	= 1'b0;
-	//	BUSY	= 1'b0;
 end
 
 testdrive_clock_bfm #(
@@ -79,11 +85,13 @@ testdrive_clock_bfm #(
 );
 
 always@(posedge CLK_10MHz) begin
-	StarterKit_LED(LED);
+	StarterKit_LED({LED_power, LED});
 	StarterKit_NumericDisplay(KW4_56NCWB_P_Y);
 	StarterKit_Eval();
 	StarterKit_GetButtons(r_button);
-	{TOGGLE_SWITCH, ARROW_BUTTON}	<= r_button;
+	BUTTONS		<= r_button[8:0];
+	StarterKit_GetSwitches(r_switch);
+	SWITCHES	<= r_switch[7:0];
 end
 
 /*verilator tracing_on*/
@@ -93,14 +101,13 @@ dut_top	system (
 	// system
 	.MCLK					(MCLK),
 	.nRST					(nRST),
-	.BUSY					(BUSY),
 	.INTR					(INTR),
 	.LED_pins				(LED),
 	.RSTn_Board				(RSTn_Board & CLK_10MHz_RSTn),
 	.CLK_10MHz				(CLK_10MHz),
 	.KW4_56NCWB_P_Y_pins	(KW4_56NCWB_P_Y),
-	.TOGGLE_SWITCH			(TOGGLE_SWITCH),
-	.ARROW_BUTTON			(ARROW_BUTTON)
+	.SWITCHE_pins			(SWITCHES),
+	.BUTTON_pins			(BUTTONS)
 );
 
 endmodule
