@@ -31,12 +31,15 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Template design
-// Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
+// Rev.  : 12/29/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #include "LED_PIN.h"
 
-LED_PIN::LED_PIN(void) : m_EnableMask(0), m_dwPowerLevel(0)
+LED_PIN::LED_PIN(void)
 {
+	m_dwIndex		= 0;
+	m_dwAccumulate	= 0;
+	memset(m_Buffer, 0, LED_PIN_BUFFER_SIZE);
 }
 
 LED_PIN::~LED_PIN(void)
@@ -46,16 +49,18 @@ LED_PIN::~LED_PIN(void)
 void LED_PIN::Eval(DWORD bOn)
 {
 	// modify power level for LED.
-	DWORD	dwNextPowerLevel	= m_dwPowerLevel;
+	DWORD	dwAccumulate	= m_dwAccumulate;
+	bOn	&= 1;
 
-	if(m_EnableMask & 0x80000000) dwNextPowerLevel--;
+	if(m_Buffer[m_dwIndex]) dwAccumulate--;
 
-	m_EnableMask		<<= 1;
+	m_Buffer[m_dwIndex]	= bOn;
 
-	if(bOn & 1) {
-		dwNextPowerLevel++;
-		m_EnableMask	|= 1;
-	}
+	if(bOn) dwAccumulate++;
 
-	m_dwPowerLevel	= dwNextPowerLevel;
+	m_dwIndex++;
+
+	if(m_dwIndex >= LED_PIN_BUFFER_SIZE) m_dwIndex = 0;
+
+	m_dwAccumulate	= dwAccumulate;
 }

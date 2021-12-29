@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Template design
-// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
+// Rev.  : 12/29/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #include "StarterKit.h"
 
@@ -119,10 +119,10 @@ void StarterKit::Eval(void)
 	// power LED
 	// LED array
 	for(int i = 0; i < 8; i++) {
-		BYTE	val	= m_LEDs[i].Level();
+		float	fVal	= m_LEDs[i].Level();
 
-		if(m_pReg->led.val[i] != val) {
-			m_pReg->led.val[i]		= val;
+		if(m_pReg->led.val[i] != fVal) {
+			m_pReg->led.val[i]		= fVal;
 			m_pReg->led.bUpdate		= true;
 		}
 	}
@@ -130,20 +130,20 @@ void StarterKit::Eval(void)
 	// numeric display
 	for(int i = 0; i < 4; i++) {
 		for(int t = 0; t < 8; t++) {
-			BYTE	val	= m_NumericDisplay.num[i].segment[t].Level();
+			float	fVal	= m_NumericDisplay.num[i].segment[t].Level();
 
-			if(m_pReg->numeric_display.num[i].segment[t] != val) {
-				m_pReg->numeric_display.num[i].segment[t]	= val;
+			if(m_pReg->numeric_display.num[i].segment[t] != fVal) {
+				m_pReg->numeric_display.num[i].segment[t]	= fVal;
 				m_pReg->numeric_display.bUpdate	= true;
 			}
 		}
 	}
 
 	{
-		BYTE	val	= m_NumericDisplay.mid.Level();
+		float	fVal	= m_NumericDisplay.mid.Level();
 
-		if(m_pReg->numeric_display.mid != val) {
-			m_pReg->numeric_display.mid		= val;
+		if(m_pReg->numeric_display.mid != fVal) {
+			m_pReg->numeric_display.mid		= fVal;
 			m_pReg->numeric_display.bUpdate	= true;
 		}
 	}

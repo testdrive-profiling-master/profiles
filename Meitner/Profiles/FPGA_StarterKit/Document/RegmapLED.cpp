@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Starter Kit document
-// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
+// Rev.  : 12/29/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #include "RegmapLED.h"
 
@@ -70,13 +70,13 @@ BOOL RegmapLED::OnCommand(LPCTSTR lpszURL)
 void RegmapLED::UpdateLED(void)
 {
 	g_pHtml->CallJScript(_T("SetLED(%.1f, %.1f, %.1f, %.1f, %.1f, %.1f, %.1f, %.1f, %.1f);"),
-						 m_pLED->val[0] / 32.f,
-						 m_pLED->val[1] / 32.f,
-						 m_pLED->val[2] / 32.f,
-						 m_pLED->val[3] / 32.f,
-						 m_pLED->val[4] / 32.f,
-						 m_pLED->val[5] / 32.f,
-						 m_pLED->val[6] / 32.f,
-						 m_pLED->val[7] / 32.f,
-						 m_pLED->val[8] / 32.f);
+						 m_pLED->val[0],
+						 m_pLED->val[1],
+						 m_pLED->val[2],
+						 m_pLED->val[3],
+						 m_pLED->val[4],
+						 m_pLED->val[5],
+						 m_pLED->val[6],
+						 m_pLED->val[7],
+						 m_pLED->val[8]);
 }

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Starter Kit document
-// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
+// Rev.  : 12/29/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #include "RegmapNumericDisplay.h"
 
@@ -71,14 +71,7 @@ void RegmapNumericDisplay::UpdateData(void)
 {
 	// seven segments
 	for(int t = 0; t < 4; t++) {
-		BYTE*	pSegment	= m_pNum->num[t].segment;
-		float	segment_val[8];
-
-		for(int i = 0; i < 8; i++) {
-			DWORD	dwVal	= 32 - pSegment[i];
-			segment_val[i]	= (1024 - (dwVal * dwVal)) / 1024.f;
-		}
-
+		float*	segment_val	= m_pNum->num[t].segment;
 		g_pHtml->CallJScript(_T("SetNumericDisplay(%d,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f)"),
 							 t,
 							 segment_val[0],
@@ -93,8 +86,7 @@ void RegmapNumericDisplay::UpdateData(void)
 
 	// mid
 	{
-		DWORD	dwVal			= 32 - m_pNum->num[4].segment[7];
-		float	segment_val		= (1024 - (dwVal * dwVal)) / 1024.f;
+		float	segment_val		= m_pNum->num[4].segment[7];
 		g_pHtml->CallJScript(_T("SetNumericDisplay(4,0,0,0,0,0,0,0,%.2f)"), segment_val);
 	}
 }

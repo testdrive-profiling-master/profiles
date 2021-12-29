@@ -31,11 +31,13 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Template design
-// Rev.  : 12/21/2021 Tue (clonextop@gmail.com)
+// Rev.  : 12/29/2021 Wed (clonextop@gmail.com)
 //================================================================================
 #include "dpi_common.h"
 #ifndef __LED_PIN_H__
 #define __LED_PIN_H__
+
+#define LED_PIN_BUFFER_SIZE		4096
 
 class LED_PIN {
 public:
@@ -43,13 +45,14 @@ public:
 	~LED_PIN(void);
 
 	void Eval(DWORD bOn);
-	inline DWORD Level(void) {
-		return m_dwPowerLevel;
+	float Level(void) {
+		return (m_dwAccumulate / (float)LED_PIN_BUFFER_SIZE);
 	}
 
 private:
-	DWORD		m_EnableMask;
-	DWORD		m_dwPowerLevel;
+	DWORD		m_dwAccumulate;
+	BYTE		m_Buffer[LED_PIN_BUFFER_SIZE];
+	DWORD		m_dwIndex;
 };
 
 #endif//__LED_PIN_H__
