@@ -108,16 +108,21 @@
 					}
 					
 					htmlCanvas.onmousedown = function(e) {
-						mouseIsDown	= true;
+						
 						var data	= section_pick(e);
-						window.navigate("cmd://BTN.d." + String(data[1]) + "." + String(data[2]));
+						if(data[0] != 0) {
+							window.navigate("cmd://BTN.d." + String(data[1]) + "." + String(data[2]));
+							mouseIsDown	= true;
+						}
 					}
 					
 					htmlCanvas.onmouseup = function(e) {
 						if(mouseIsDown) {
 							var data	= section_pick(e);
 							mouseIsDown	= false;
-							window.navigate("cmd://BTN.u." + String(data[1]) + "." + String(data[2]));
+							if(data[0] != 0) {
+								window.navigate("cmd://BTN.u." + String(data[1]) + "." + String(data[2]));
+							}
 						}
 					}
 					
