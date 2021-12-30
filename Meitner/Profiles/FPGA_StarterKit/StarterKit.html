@@ -6,8 +6,10 @@
 		@import url(StarterKit.css);
 	</style>
 	<script type="application/javascript">
-		var	sw_value	= [false, false, false, false, false, false, false, false];
-		var	led_power	= [0, 0, 0, 0, 0, 0, 0, 0, 0];
+		var	sw_value		= [false, false, false, false, false, false, false, false];
+		var	led_power		= [0, 0, 0, 0, 0, 0, 0, 0, 0];
+		var rotor_value		= 0;
+		
 		function SetLED(led0, led1, led2, led3, led4, led5, led6, led7, led_pw) {
 			led_power[0]	= led0;
 			led_power[1]	= led1;
@@ -41,6 +43,9 @@
 			sw_value[6]	= sw6;
 			sw_value[7]	= sw7;
 		}
+		function SetRotor(val) {
+			rotor_value	= val;
+		}
 	</script>
 </head>
 <body>
@@ -57,6 +62,7 @@
 					var mouseIsDown		= false;
 					var img_board		= new Image();
 					var img_section		= new Image();
+					var img_rotor		= new Image();
 					var img_sw_nob		= new Image();
 					var img_led_green	= new Image();
 					var img_led_red		= new Image();
@@ -80,6 +86,7 @@
 					img_sw_nob.src		= 'media/switch_nob.png';
 					img_led_green.src	= 'media/led_green.png';
 					img_led_red.src		= 'media/led_red.png';
+					img_rotor.src		= 'media/rotor.png';
 					
 					for (i = 0; i <= 8; i++) {
 						img_segment[i]		= new Image();
@@ -218,6 +225,14 @@
 							
 							ctx.restore();
 						}
+						ctx.restore();
+
+						// show rotor
+						ctx.save();
+						rotor_value	+= 0.1;
+						ctx.setTransform(canvas_scale, 0, 0, canvas_scale, offset_x + (canvas_scale*1705), offset_y + (canvas_scale*1137));
+						ctx.rotate(rotor_value);
+						ctx.drawImage(img_rotor, -180.5, -180.5);
 						ctx.restore();
 					}
 				})();
