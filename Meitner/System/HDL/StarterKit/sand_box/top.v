@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Virtual FPGA Starter Kit
-// Rev.  : 12/29/2021 Wed (clonextop@gmail.com)
+// Rev.  : 12/30/2021 Thu (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 `include "template/StarterKit/includes.vh"
@@ -49,13 +49,13 @@ module dut_top (
 	input	[31:0]				S_PWDATA,
 	output	[31:0]				S_PRDATA,
 	output						S_PREADY,
-	input						S_PSLVERR,
+	output						S_PSLVERR,
 
 	// I/Os
 	output	reg [7:0]			LED_pins,				// LED pins
 	output	[13:0]				KW4_56NCWB_P_Y_pins,	// Quadruple Digit Numeric Displays (Model # : KW4_56NCWB_P_Y)
 	input	[7:0]				SWITCH_pins,			// toggle switch pins
-	input	[8:0]				BUTTON_pins				// buttons ()(active low)
+	input	[8:0]				BUTTON_pins				// buttons (active low)
 );
 
 reg		[16:0]	t_count;
