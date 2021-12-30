@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 8/12/2021 Thu (clonextop@gmail.com)
+// Rev.  : 12/30/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
 #include "TestDriver.inl"
@@ -310,8 +310,10 @@ BOOL GetMemory(const char* sName, void*& pConfig, void*& pMemory)
 	return g_pSimControl->GetMemory(sName, pConfig, pMemory);
 }
 
-void SimulationQuit(void)
+void SimulationQuit(bool bError)
 {
+	if(g_pSimControl) g_pSimControl->SetError();
+
 	Verilated::gotFinish(true);
 }
 

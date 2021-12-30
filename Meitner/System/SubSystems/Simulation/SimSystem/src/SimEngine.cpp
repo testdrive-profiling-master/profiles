@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Rev.  : 12/30/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "SimEngine.h"
@@ -77,7 +76,7 @@ SimInstance::~SimInstance(void)
 // SimEngine
 //-----------------------------------------------------------------------
 SimEngine::SimEngine(void) :
-	m_bErrorOccured(FALSE)
+	m_bErrorOccured(false)
 {
 	m_bUpdate			= TRUE;
 	m_pInstance			= NULL;
@@ -173,6 +172,8 @@ void SimEngine::MonitorThread(void)
 	LOGI("Simulation H/W daemon is down.\n");
 	TRACE_LOG("End thread")
 	SimulationFlush();
+
+	if(IsGotError()) exit(1);
 }
 
 void SimEngine::OnThreadKill(bool bForced)
@@ -349,6 +350,11 @@ void SimEngine::SetSystemDescription(const char* sDesc)
 
 		m_sSystemDesc.insert(0, sDesc);
 	}
+}
+
+void SimEngine::SetError(bool bError)
+{
+	m_bErrorOccured	= bError;
 }
 
 const char* SimEngine::GetSystemDescription(void)

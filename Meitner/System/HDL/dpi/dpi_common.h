@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 11/5/2019 Tue (clonextop@gmail.com)
+// Rev.  : 12/30/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __DPI_COMMON_H__
 #define __DPI_COMMON_H__
@@ -41,22 +40,22 @@
 #include "SelfDestory.h"
 #include "ChainList.h"
 
-class SystemLog{
+class SystemLog {
 public:
-	typedef enum{
+	typedef enum {
 		LOG_ID_INFO,
 		LOG_ID_WARNING,
 		LOG_ID_ERROR
-	}LOG_ID;
+	} LOG_ID;
 
 	SystemLog(const char* sTitle = NULL);
 	~SystemLog(void);
-	
+
 	void SetTitle(const char* fmt, ...);
 
-	#define Info(...)		Log(SystemLog::LOG_ID_INFO, __VA_ARGS__)
-	#define Warning(...)	Log(SystemLog::LOG_ID_WARNING, __VA_ARGS__)
-	#define Error(...)		Log(SystemLog::LOG_ID_ERROR, __VA_ARGS__)
+#define Info(...)		Log(SystemLog::LOG_ID_INFO, __VA_ARGS__)
+#define Warning(...)	Log(SystemLog::LOG_ID_WARNING, __VA_ARGS__)
+#define Error(...)		Log(SystemLog::LOG_ID_ERROR, __VA_ARGS__)
 
 	void Log(LOG_ID id, const char* fmt, ...);
 
@@ -64,17 +63,16 @@ private:
 	std::string		m_sTitle;
 };
 
-class MemoryWriteFilter : public SelfDestory
-{
+class MemoryWriteFilter : public SelfDestory {
 public:
 	MemoryWriteFilter(void);
 	virtual ~MemoryWriteFilter(void);
-	
+
 	static void DoFilter(DWORD dwAddress, DWORD dwByteSize);
-	
+
 protected:
 	virtual void OnDoFilter(DWORD dwAddress, DWORD dwByteSize) = 0;
-	
+
 private:
 	ChainList<MemoryWriteFilter>	m_pChain;
 };

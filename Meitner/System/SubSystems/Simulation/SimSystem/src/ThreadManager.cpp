@@ -31,9 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
-//================================================================================
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Rev.  : 12/30/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "ThreadManager.h"

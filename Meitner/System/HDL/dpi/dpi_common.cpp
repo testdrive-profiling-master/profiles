@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 11/5/2019 Tue (clonextop@gmail.com)
+// Rev.  : 12/30/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #include "dpi_common.h"
 #include <stdarg.h>
@@ -121,8 +120,9 @@ void SystemLog::Log(LOG_ID id, const char* fmt, ...)
 	printf("\n");
 	fflush(stdout);
 
-	if(id == LOG_ID_ERROR)
-		SimulationQuit();
+	if(id == LOG_ID_ERROR) {
+		SimulationQuit(true);
+	}
 }
 
 MemoryWriteFilter::MemoryWriteFilter(void) : m_pChain(this)

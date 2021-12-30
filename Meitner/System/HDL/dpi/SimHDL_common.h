@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 6/18/2021 Fri (clonextop@gmail.com)
+// Rev.  : 12/30/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIMHDL_COMMON_H__
 #define __SIMHDL_COMMON_H__
@@ -61,7 +60,7 @@ BOOL GetMemory(const char* sName, void*& pConfig, void*& pMemory);
 // DPI functions
 DPI_FUNCTION void SimulationLock(int iDelayTicks = 0);
 DPI_FUNCTION void SimulationUnLock(void);
-DPI_FUNCTION void SimulationQuit(void);
+DPI_FUNCTION void SimulationQuit(bool bError = false);
 DPI_FUNCTION void SimulationStop(void);
 DPI_FUNCTION void SimulationFlush(void);
 DPI_FUNCTION void SimulationDebugMode(BOOL bDebug = TRUE);

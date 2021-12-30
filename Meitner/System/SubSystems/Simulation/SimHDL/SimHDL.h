@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 8/12/2021 Thu (clonextop@gmail.com)
+// Rev.  : 12/30/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_HDL_H__
 #define __SIM_HDL_H__
@@ -67,6 +67,7 @@ struct SimControl {
 	virtual void SimulationAddBusy(BYTE* pBusy) = 0;
 	virtual void SimulationDebugMode(BOOL bDebug = TRUE) = 0;
 	virtual void SetSystemDescription(const char* sDesc) = 0;
+	virtual void SetError(bool bError = true) = 0;
 };
 
 struct SimHDL {

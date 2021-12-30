@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 8/12/2021 Thu (clonextop@gmail.com)
+// Rev.  : 12/30/2021 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_ENGINE_H__
 #define __SIM_ENGINE_H__
@@ -107,6 +107,7 @@ protected:
 	virtual void SimulationAddBusy(BYTE* pBusy);
 	virtual void SimulationDebugMode(BOOL bDebug = TRUE);
 	virtual void SetSystemDescription(const char* sDesc);
+	virtual void SetError(bool bError = true);
 
 public:
 	SimEngine(void);
@@ -126,10 +127,13 @@ public:
 	}
 
 	const char* GetSystemDescription(void);
+	inline bool IsGotError(void) {
+		return m_bErrorOccured;
+	}
 
 private:
 	std::string			m_sSystemDesc;
-	BOOL				m_bErrorOccured;
+	bool				m_bErrorOccured;
 	volatile bool		m_bForceToExit;
 	InterruptService	m_Interrupt;
 	SimHDL*				m_pSimHDL;
