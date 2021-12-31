@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Global system configuration
-// Rev.  : 12/29/2021 Wed (clonextop@gmail.com)
+// Rev.  : 12/31/2021 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_CONFIG_VIRTUAL_FPGA_STARTER_KIT_H__
 #define __SYSTEM_CONFIG_VIRTUAL_FPGA_STARTER_KIT_H__
@@ -52,11 +52,19 @@ typedef struct REGMAP_NUMERIC_DISPLAY {
 	float	mid;
 };
 
+#define	TFT_LCD_DISPLAY_WIDTH		480
+#define	TFT_LCD_DISPLAY_HEIGHT		272
+typedef struct REGMAP_TFT_LCD_DISPLAY {
+	bool	bUpdate;
+	DWORD	buff[TFT_LCD_DISPLAY_WIDTH * TFT_LCD_DISPLAY_HEIGHT];
+};
+
 typedef struct : public SYSTEM_REGMAP {
 	REGMAP_LED					led;
 	REGMAP_NUMERIC_DISPLAY		numeric_display;
 	DWORD						buttons;			// active low button
 	DWORD						switches;
+	REGMAP_TFT_LCD_DISPLAY		tft_lcd_display;
 } STARTERKIT_REGMAP;
 
 #endif//__SYSTEM_CONFIG_VIRTUAL_FPGA_STARTER_KIT_H__

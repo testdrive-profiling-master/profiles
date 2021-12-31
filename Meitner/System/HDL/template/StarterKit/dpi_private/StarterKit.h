@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Template design
-// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
+// Rev.  : 12/31/2021 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __VIRTUAL_FPGA_STARTER_KIT_H__
 #define __VIRTUAL_FPGA_STARTER_KIT_H__
@@ -47,6 +47,8 @@ public:
 	void Initialize(void);
 	void LED(DWORD pins);
 	void NumericDisplay(DWORD pins);
+	void Motor(BYTE PWM, BYTE DIR, BYTE& SENSOR);
+	void TFTLCD_Display(BYTE DISP, BYTE HSYNC, BYTE VSYNC, BYTE DE, DWORD dwRGB);
 	void Eval(void);
 	void GetButtons(DWORD& dwButtons);
 	void GetSwitches(DWORD& dwSwitches);
@@ -68,5 +70,7 @@ DPI_FUNCTION void StarterKit_NumericDisplay(const svBitVecVal* pins);
 DPI_FUNCTION void StarterKit_Eval(void);
 DPI_FUNCTION void StarterKit_GetButtons(svBitVecVal* pins);
 DPI_FUNCTION void StarterKit_GetSwitches(svBitVecVal* pins);
+DPI_FUNCTION void StarterKit_Motor(svBit PWM, svBit DIR, svBit* SENSOR);
+DPI_FUNCTION void StarterKit_TFT_LCD(svBit DISP, svBit HSYNC, svBit VSYNC, svBit DE, const svBitVecVal* RGB);
 
 #endif//__VIRTUAL_FPGA_STARTER_KIT_H__

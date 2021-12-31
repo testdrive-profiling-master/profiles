@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Template design
-// Rev.  : 6/30/2021 Wed (clonextop@gmail.com)
+// Rev.  : 12/31/2021 Fri (clonextop@gmail.com)
 //================================================================================
 `include "system_defines.vh"
 /*verilator tracing_off*/
@@ -59,14 +58,14 @@ module testdrive_axi4_master_bfm #(
 	input									AWLOCK,			// b0(Normal), b1(Exclusive)
 	input	[3:0]							AWCACHE,		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 	input	[2:0]							AWPROT,			// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
-	input	[3:0]							AWREGION,		//
-	input	[3:0]							AWQOS,			//
+	input	[3:0]							AWREGION,		// Write region identifier (not defined in this)
+	input	[3:0]							AWQOS,			// Write Quality of Service (not defined in this)
 	input									AWVALID,		// Write address valid
 	output reg								AWREADY,		// Write address ready (1 = slave ready, 0 = slave not ready)
 	// write data
-	input [C_THREAD_ID_WIDTH-1:0]			WID,			//
-	input [C_DATA_WIDTH-1:0]				WDATA,			// Write data
-	input [(C_DATA_WIDTH/8)-1:0]			WSTRB,			// Write strobes (WSTRB[n] = WDATA[(8  n) + 7:(8  n)])
+	input	[C_THREAD_ID_WIDTH-1:0]			WID,			// Write ID tag
+	input	[C_DATA_WIDTH-1:0]				WDATA,			// Write data
+	input	[(C_DATA_WIDTH/8)-1:0]			WSTRB,			// Write strobes (WSTRB[n] = WDATA[(8  n) + 7:(8  n)])
 	input									WLAST,			// Write last
 	input									WVALID,			// Write valid
 	output reg								WREADY,			// Write ready
@@ -84,13 +83,13 @@ module testdrive_axi4_master_bfm #(
 	input									ARLOCK,			// b0(Normal), b1(Exclusive)
 	input	[3:0]							ARCACHE,		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 	input	[2:0]							ARPROT,			// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
-	output reg	[3:0]						ARREGION,		//
-	output reg	[3:0]						ARQOS,			//
+	output reg	[3:0]						ARREGION,		// Read region identifier (not defined in this)
+	output reg	[3:0]						ARQOS,			// Read Quality of Service (not defined in this)
 	input									ARVALID,		// Read address valid
 	output reg								ARREADY,		// Read address ready (1 = slave ready, 0 = slave not ready)
 	// read data
-	output reg	[C_THREAD_ID_WIDTH-1:0]		RID,			// Read ID tag.
-	output reg	[C_DATA_WIDTH-1:0]			RDATA,			// Read data.
+	output reg	[C_THREAD_ID_WIDTH-1:0]		RID,			// Read ID tag
+	output reg	[C_DATA_WIDTH-1:0]			RDATA,			// Read data
 	output reg	[1:0]						RRESP,			// Read response. b00(OKAY), b01(EXOKAY), b10(SLVERR), b11(DECERR)
 	output reg								RLAST,			// Read last. This signal indicates the last transfer in a read burst.
 	output reg								RVALID,			// Read valid (1 = read data available, 0 = read data not available)

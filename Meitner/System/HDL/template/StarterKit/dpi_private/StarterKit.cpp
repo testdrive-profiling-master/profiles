@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Template design
-// Rev.  : 12/29/2021 Wed (clonextop@gmail.com)
+// Rev.  : 12/31/2021 Fri (clonextop@gmail.com)
 //================================================================================
 #include "StarterKit.h"
 
@@ -54,6 +54,8 @@ void StarterKit::Initialize(void)
 	m_pReg->led.val[8]	= 32;
 	m_pReg->buttons		= 0xFFFFFFFF;
 	m_pReg->led.bUpdate	= true;
+	memset(m_pReg->tft_lcd_display.buff, 0, sizeof(m_pReg->tft_lcd_display.buff));
+	m_pReg->tft_lcd_display.bUpdate	= true;
 }
 
 void StarterKit::LED(DWORD pins)
@@ -110,6 +112,14 @@ void StarterKit::NumericDisplay(DWORD pins)
 	}
 
 	m_NumericDisplay.mid.Eval(nd.MID & ~nd.COM3);
+}
+
+void StarterKit::Motor(BYTE PWM, BYTE DIR, BYTE& SENSOR)
+{
+}
+
+void StarterKit::TFTLCD_Display(BYTE DISPLAY, BYTE DE, BYTE VSYNC, BYTE HSYNC, DWORD dwRGB)
+{
 }
 
 void StarterKit::Eval(void)
@@ -190,4 +200,14 @@ void StarterKit_GetButtons(svBitVecVal* pins)
 void StarterKit_GetSwitches(svBitVecVal* pins)
 {
 	__starter_kit.GetSwitches(*(DWORD*)pins);
+}
+
+void StarterKit_Motor(svBit PWM, svBit DIR, svBit* SENSOR)
+{
+	__starter_kit.Motor(PWM, DIR, *(BYTE*)SENSOR);
+}
+
+void StarterKit_TFT_LCD(svBit DISP, svBit HSYNC, svBit VSYNC, svBit DE, const svBitVecVal* RGB)
+{
+	__starter_kit.TFTLCD_Display(DISP, HSYNC, VSYNC, DE, *RGB);
 }

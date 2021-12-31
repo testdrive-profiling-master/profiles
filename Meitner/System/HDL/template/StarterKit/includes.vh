@@ -31,11 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Template design
-// Rev.  : 12/29/2021 Wed (clonextop@gmail.com)
+// Rev.  : 12/31/2021 Fri (clonextop@gmail.com)
 //================================================================================
 `include "system_defines.vh"
-`include "template/testdrive_clock_bfm.sv"
-`include "template/testdrive_apb_slave_bfm.sv"
-`include "template/testdrive_busy_bfm.sv"
-`include "template/testdrive_interrupt_bfm.sv"
 `include "template/StarterKit/base_top.sv"
