@@ -83,11 +83,9 @@ BOOL RegmapTFT::OnCommand(LPCTSTR lpszURL)
 		width	= _ttoi(sTok.Tokenize(sDelim, iPos));
 		height	= _ttoi(sTok.Tokenize(sDelim, iPos));
 	}
-	//m_pBuffer->SetDrawRect(&rc);
 	pBufferLayout->SetPosition(sx, sy);
 	pBufferLayout->SetSize(width, height);
 	m_pBuffer->GetObject()->UpdateLayout();
-	g_pSystem->LogInfo(_T("Got : %s (%d,%d)"), lpszURL, sx, sy);
 	return FALSE;
 }
 

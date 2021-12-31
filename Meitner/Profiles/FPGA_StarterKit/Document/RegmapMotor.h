@@ -30,51 +30,26 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Template design
+// Title : Starter Kit document
 // Rev.  : 12/31/2021 Fri (clonextop@gmail.com)
 //================================================================================
-#ifndef __VIRTUAL_FPGA_STARTER_KIT_H__
-#define __VIRTUAL_FPGA_STARTER_KIT_H__
-#include "dpi_common.h"
-#include "SystemConfigStarterKit.h"
+#ifndef __REGMAP_MOTOR_H__
+#define __REGMAP_MOTOR_H__
+#include "Regmap.h"
 
-#include "Power_Accumulate.h"
-
-class StarterKit {
+class RegmapMotor :
+	public Regmap {
 public:
-	StarterKit(void);
-	~StarterKit(void);
-
-	void Initialize(void);
-	void LED(DWORD pins);
-	void NumericDisplay(DWORD pins);
-	void Motor(BYTE PWM, BYTE DIR, BYTE& SENSOR);
-	void TFTLCD_Display(BYTE EN, BYTE HSYNC, BYTE VSYNC, BYTE DE, DWORD dwRGB);
-	void Eval(void);
-	void GetButtons(DWORD& dwButtons);
-	void GetSwitches(DWORD& dwSwitches);
+	RegmapMotor(void);
+	virtual ~RegmapMotor(void);
 
 private:
-	STARTERKIT_REGMAP*	m_pReg;
-	PowerAccumulate				m_LEDs[8];
-	struct {
-		struct {
-			PowerAccumulate		segment[8];		// A~G, DP
-		} num[4];
-		PowerAccumulate		mid;
-	} m_NumericDisplay;
-	struct {
-		PowerAccumulate		cw, ccw;
-	} m_Motor;
+	virtual BOOL OnUpdate(void);
+	virtual BOOL OnCommand(LPCTSTR lpszURL);
+	virtual void OnBroadcast(LPVOID pData = NULL);
+
+	void UpdateData(void);
+
+	REGMAP_MOTOR*		m_pMotor;
 };
-
-DPI_FUNCTION void StarterKit_Initialize(void);
-DPI_FUNCTION void StarterKit_LED(const svBitVecVal* pins);
-DPI_FUNCTION void StarterKit_NumericDisplay(const svBitVecVal* pins);
-DPI_FUNCTION void StarterKit_Eval(void);
-DPI_FUNCTION void StarterKit_GetButtons(svBitVecVal* pins);
-DPI_FUNCTION void StarterKit_GetSwitches(svBitVecVal* pins);
-DPI_FUNCTION void StarterKit_Motor(svBit PWM, svBit DIR, svBit* SENSOR);
-DPI_FUNCTION void StarterKit_TFT_LCD(svBit DISP, svBit HSYNC, svBit VSYNC, svBit DE, const svBitVecVal* RGB);
-
-#endif//__VIRTUAL_FPGA_STARTER_KIT_H__
+#endif//__REGMAP_MOTOR_H__

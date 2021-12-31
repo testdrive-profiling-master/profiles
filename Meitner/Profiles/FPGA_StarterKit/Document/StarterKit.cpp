@@ -39,6 +39,7 @@
 #include "RegmapButton.h"
 #include "RegmapNumericDisplay.h"
 #include "RegmapTFT.h"
+#include "RegmapMotor.h"
 
 ITDDocument*	g_pDoc				= NULL;
 ITDHtml*		g_pHtml				= NULL;
@@ -63,6 +64,7 @@ StarterKit::StarterKit(ITDDocument* pDoc)
 		new RegmapButton;
 		new RegmapNumericDisplay;
 		new RegmapTFT;
+		new RegmapMotor;
 	}
 	g_sMediaPath	= g_pSystem->RetrieveFullPath(_T("./media/"));
 	g_pHtml->SetManager(this);

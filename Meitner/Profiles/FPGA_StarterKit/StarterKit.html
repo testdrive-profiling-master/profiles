@@ -8,7 +8,7 @@
 	<script type="application/javascript">
 		var	sw_value		= [false, false, false, false, false, false, false, false];
 		var	led_power		= [0, 0, 0, 0, 0, 0, 0, 0, 0];
-		var rotor_value		= 0;
+		var rotor_rad		= 0;
 		
 		function SetLED(led0, led1, led2, led3, led4, led5, led6, led7, led_pw) {
 			led_power[0]	= led0;
@@ -43,8 +43,8 @@
 			sw_value[6]	= sw6;
 			sw_value[7]	= sw7;
 		}
-		function SetRotor(val) {
-			rotor_value	= val;
+		function SetMotor(rad) {
+			rotor_rad	= rad;
 		}
 	</script>
 </head>
@@ -239,7 +239,7 @@
 						// show rotor
 						ctx.save();
 						ctx.setTransform(canvas_scale, 0, 0, canvas_scale, offset_x + (canvas_scale*1704), offset_y + (canvas_scale*1136));
-						ctx.rotate(rotor_value);
+						ctx.rotate(rotor_rad);
 						ctx.drawImage(img_rotor, -180.5, -180.5);
 						ctx.restore();
 					}

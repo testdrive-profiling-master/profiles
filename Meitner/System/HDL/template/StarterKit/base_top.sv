@@ -58,7 +58,8 @@ wire					CLK, nRST, INTR;
 wire					RSTn_Board;
 wire	[13:0]			KW4_56NCWB_P_Y;
 wire	[7:0]			LED;
-wire					MOTOR_PWM, MOTOR_DIR, MOTOR_SENSOR;
+wire					MOTOR_PWM, MOTOR_DIR;
+reg						MOTOR_SENSOR, r_motor_sensor;
 reg		[31:0]			r_button;
 reg		[8:0]			BUTTONS;
 reg		[31:0]			r_switch;
@@ -97,9 +98,11 @@ always@(posedge CLK) begin
 	StarterKit_NumericDisplay(RSTn_Board ? KW4_56NCWB_P_Y : 14'b00_0000_0000_0000);
 	StarterKit_Eval();
 	StarterKit_GetButtons(r_button);
-	BUTTONS		<= r_button[8:0];
+	BUTTONS			<= r_button[8:0];
 	StarterKit_GetSwitches(r_switch);
-	SWITCHES	<= r_switch[7:0];
+	SWITCHES		<= r_switch[7:0];
+	StarterKit_Motor(MOTOR_PWM, MOTOR_DIR, r_motor_sensor);
+	MOTOR_SENSOR	<= r_motor_sensor;
 end
 
 always@(negedge tft_pclk) begin

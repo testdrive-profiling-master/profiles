@@ -52,6 +52,12 @@ typedef struct REGMAP_NUMERIC_DISPLAY {
 	float	mid;
 };
 
+typedef struct REGMAP_MOTOR {
+	bool	bUpdate;
+	int		iRatio;
+	float	rad;
+};
+
 #define	TFT_LCD_DISPLAY_WIDTH		480
 #define	TFT_LCD_DISPLAY_HEIGHT		272
 typedef struct REGMAP_TFT_LCD_DISPLAY {
@@ -67,6 +73,7 @@ typedef struct : public SYSTEM_REGMAP {
 	REGMAP_NUMERIC_DISPLAY		numeric_display;
 	DWORD						buttons;			// active low button
 	DWORD						switches;
+	REGMAP_MOTOR				motor;
 	REGMAP_TFT_LCD_DISPLAY		tft_lcd_display;
 } STARTERKIT_REGMAP;
 

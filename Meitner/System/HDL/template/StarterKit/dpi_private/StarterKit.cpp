@@ -123,10 +123,67 @@ void StarterKit::NumericDisplay(DWORD pins)
 
 void StarterKit::Motor(BYTE PWM, BYTE DIR, BYTE& SENSOR)
 {
+	static double	fValocity	= 0;
+	int				iRatio		= m_pReg->motor.iRatio;
+	m_Motor.cw.Eval(PWM & ~DIR);
+	m_Motor.ccw.Eval(PWM & DIR);
+	fValocity	= ((fValocity * (1024 * 1024 - 1)) + ((double)(m_Motor.cw.Level() - m_Motor.ccw.Level()))) / (1024 * 1024);
+	iRatio		+= (int)(fValocity * (1024 - 32 + (rand() & 31)));	// randomize forced.
+
+	if(iRatio < 0) {
+		iRatio		+= 1024 * 1024 * 1024;
+	} else if(iRatio >= 1024 * 1024 * 1024) {
+		iRatio		-= 1024 * 1024 * 1024;
+	}
+
+	if(iRatio != m_pReg->motor.iRatio) {
+		m_pReg->motor.iRatio	= iRatio;
+		m_pReg->motor.rad		= (iRatio * (3.14159265359 * 2)) / (1024 * 1024 * 1024);
+		m_pReg->motor.bUpdate	= true;
+	}
 }
 
-void StarterKit::TFTLCD_Display(BYTE DISPLAY, BYTE DE, BYTE VSYNC, BYTE HSYNC, DWORD dwRGB)
+void StarterKit::TFTLCD_Display(BYTE EN, BYTE DE, BYTE VSYNC, BYTE HSYNC, DWORD dwRGB)
 {
+	static int	x = 0, y = 0;
+	static BYTE	vsync_pre = 0, hsync_pre = 0;
+	static DWORD	dwOffset	= 0;
+
+	if(EN) {
+		if(VSYNC) {
+			if(HSYNC) {
+				if(DE) {
+					m_pReg->tft_lcd_display.buffer.back[dwOffset + x]	= dwRGB;
+					x++;
+
+					if(x >= TFT_LCD_DISPLAY_WIDTH) x = 0;
+				}
+			} else if(hsync_pre) {
+				x = 0;
+				y++;
+				dwOffset	+= TFT_LCD_DISPLAY_WIDTH;
+
+				if(y >= TFT_LCD_DISPLAY_HEIGHT) {
+					y			= 0;
+					dwOffset	= 0;
+				}
+			}
+		} else if(vsync_pre) {
+			y	= 0;
+			x	= 0;
+			dwOffset	= 0;
+			memcpy(m_pReg->tft_lcd_display.buffer.front, m_pReg->tft_lcd_display.buffer.back, sizeof(m_pReg->tft_lcd_display.buffer.front));
+			m_pReg->tft_lcd_display.bUpdate	= true;
+		}
+
+		hsync_pre	= HSYNC;
+		vsync_pre	= VSYNC;
+	} else {
+		x	= 0;
+		y	= 0;
+		vsync_pre	= 0;
+		hsync_pre	= 0;
+	}
 }
 
 void StarterKit::Eval(void)

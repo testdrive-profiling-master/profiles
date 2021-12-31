@@ -31,28 +31,36 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Template design
-// Rev.  : 12/29/2021 Wed (clonextop@gmail.com)
+// Rev.  : 12/31/2021 Fri (clonextop@gmail.com)
 //================================================================================
-#include "dpi_common.h"
-#ifndef __LED_PIN_H__
-#define __LED_PIN_H__
+#include "Power_Accumulate.h"
 
-#define LED_PIN_BUFFER_SIZE		4096
+PowerAccumulate::PowerAccumulate(void)
+{
+	m_dwIndex		= 0;
+	m_dwAccumulate	= 0;
+	memset(m_Buffer, 0, LED_PIN_BUFFER_SIZE);
+}
 
-class LED_PIN {
-public:
-	LED_PIN(void);
-	~LED_PIN(void);
+PowerAccumulate::~PowerAccumulate(void)
+{
+}
 
-	void Eval(DWORD bOn);
-	float Level(void) {
-		return (m_dwAccumulate / (float)LED_PIN_BUFFER_SIZE);
-	}
+void PowerAccumulate::Eval(DWORD bOn)
+{
+	// modify power level for LED.
+	DWORD	dwAccumulate	= m_dwAccumulate;
+	bOn	&= 1;
 
-private:
-	DWORD		m_dwAccumulate;
-	BYTE		m_Buffer[LED_PIN_BUFFER_SIZE];
-	DWORD		m_dwIndex;
-};
+	if(m_Buffer[m_dwIndex]) dwAccumulate--;
 
-#endif//__LED_PIN_H__
+	m_Buffer[m_dwIndex]	= bOn;
+
+	if(bOn) dwAccumulate++;
+
+	m_dwIndex++;
+
+	if(m_dwIndex >= LED_PIN_BUFFER_SIZE) m_dwIndex = 0;
+
+	m_dwAccumulate	= dwAccumulate;
+}

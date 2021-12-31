@@ -30,51 +30,44 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Template design
+// Title : Starter Kit document
 // Rev.  : 12/31/2021 Fri (clonextop@gmail.com)
 //================================================================================
-#ifndef __VIRTUAL_FPGA_STARTER_KIT_H__
-#define __VIRTUAL_FPGA_STARTER_KIT_H__
-#include "dpi_common.h"
-#include "SystemConfigStarterKit.h"
+#include "RegmapMotor.h"
 
-#include "Power_Accumulate.h"
+RegmapMotor::RegmapMotor(void) : Regmap(_T("MOT"))
+{
+	m_pMotor		= &m_pReg->motor;
+}
 
-class StarterKit {
-public:
-	StarterKit(void);
-	~StarterKit(void);
+RegmapMotor::~RegmapMotor(void)
+{
+}
 
-	void Initialize(void);
-	void LED(DWORD pins);
-	void NumericDisplay(DWORD pins);
-	void Motor(BYTE PWM, BYTE DIR, BYTE& SENSOR);
-	void TFTLCD_Display(BYTE EN, BYTE HSYNC, BYTE VSYNC, BYTE DE, DWORD dwRGB);
-	void Eval(void);
-	void GetButtons(DWORD& dwButtons);
-	void GetSwitches(DWORD& dwSwitches);
+BOOL RegmapMotor::OnUpdate(void)
+{
+	if(m_pMotor->bUpdate) {
+		m_pMotor->bUpdate	= false;
+		UpdateData();
+		return true;
+	}
 
-private:
-	STARTERKIT_REGMAP*	m_pReg;
-	PowerAccumulate				m_LEDs[8];
-	struct {
-		struct {
-			PowerAccumulate		segment[8];		// A~G, DP
-		} num[4];
-		PowerAccumulate		mid;
-	} m_NumericDisplay;
-	struct {
-		PowerAccumulate		cw, ccw;
-	} m_Motor;
-};
+	return FALSE;
+}
 
-DPI_FUNCTION void StarterKit_Initialize(void);
-DPI_FUNCTION void StarterKit_LED(const svBitVecVal* pins);
-DPI_FUNCTION void StarterKit_NumericDisplay(const svBitVecVal* pins);
-DPI_FUNCTION void StarterKit_Eval(void);
-DPI_FUNCTION void StarterKit_GetButtons(svBitVecVal* pins);
-DPI_FUNCTION void StarterKit_GetSwitches(svBitVecVal* pins);
-DPI_FUNCTION void StarterKit_Motor(svBit PWM, svBit DIR, svBit* SENSOR);
-DPI_FUNCTION void StarterKit_TFT_LCD(svBit DISP, svBit HSYNC, svBit VSYNC, svBit DE, const svBitVecVal* RGB);
+void RegmapMotor::OnBroadcast(LPVOID pData)
+{
+	if(!pData) {
+		UpdateData();
+	}
+}
 
-#endif//__VIRTUAL_FPGA_STARTER_KIT_H__
+BOOL RegmapMotor::OnCommand(LPCTSTR lpszURL)
+{
+	return FALSE;
+}
+
+void RegmapMotor::UpdateData(void)
+{
+	g_pHtml->CallJScript(_T("SetMotor(%.3f)"), m_pMotor->rad);
+}
