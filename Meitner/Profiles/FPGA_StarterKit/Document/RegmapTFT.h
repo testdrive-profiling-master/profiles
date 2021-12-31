@@ -30,44 +30,27 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Global system configuration
+// Title : Starter Kit document
 // Rev.  : 12/31/2021 Fri (clonextop@gmail.com)
 //================================================================================
-#ifndef __SYSTEM_CONFIG_VIRTUAL_FPGA_STARTER_KIT_H__
-#define __SYSTEM_CONFIG_VIRTUAL_FPGA_STARTER_KIT_H__
-#include "SystemConfig.h"
+#ifndef __REGMAP_TFT_DISPLAY_H__
+#define __REGMAP_TFT_DISPLAY_H__
+#include "Regmap.h"
 
-#define	SYSTEM_MAGIC_CODE					0x54494B53	// System magic code : "SKIT"
+class RegmapTFT :
+	public Regmap {
+public:
+	RegmapTFT(void);
+	virtual ~RegmapTFT(void);
 
-typedef struct REGMAP_LED {
-	bool	bUpdate;
-	float	val[9];		// 0 ~ 1.0 (max)
+private:
+	virtual BOOL OnUpdate(void);
+	virtual BOOL OnCommand(LPCTSTR lpszURL);
+	virtual void OnBroadcast(LPVOID pData = NULL);
+
+	void UpdateData(void);
+
+	REGMAP_TFT_LCD_DISPLAY*		m_pTFT;
+	ITDBuffer*					m_pBuffer;
 };
-
-typedef struct REGMAP_NUMERIC_DISPLAY {
-	bool	bUpdate;
-	struct {
-		float	segment[8];		// A~G, DP
-	} num[4];
-	float	mid;
-};
-
-#define	TFT_LCD_DISPLAY_WIDTH		480
-#define	TFT_LCD_DISPLAY_HEIGHT		272
-typedef struct REGMAP_TFT_LCD_DISPLAY {
-	bool	bUpdate;
-	struct {
-		DWORD	front[TFT_LCD_DISPLAY_WIDTH * TFT_LCD_DISPLAY_HEIGHT];
-		DWORD	back[TFT_LCD_DISPLAY_WIDTH * TFT_LCD_DISPLAY_HEIGHT];
-	} buffer;
-};
-
-typedef struct : public SYSTEM_REGMAP {
-	REGMAP_LED					led;
-	REGMAP_NUMERIC_DISPLAY		numeric_display;
-	DWORD						buttons;			// active low button
-	DWORD						switches;
-	REGMAP_TFT_LCD_DISPLAY		tft_lcd_display;
-} STARTERKIT_REGMAP;
-
-#endif//__SYSTEM_CONFIG_VIRTUAL_FPGA_STARTER_KIT_H__
+#endif//__REGMAP_TFT_DISPLAY_H__

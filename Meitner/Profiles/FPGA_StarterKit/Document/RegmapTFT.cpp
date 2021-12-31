@@ -30,44 +30,69 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Global system configuration
+// Title : Starter Kit document
 // Rev.  : 12/31/2021 Fri (clonextop@gmail.com)
 //================================================================================
-#ifndef __SYSTEM_CONFIG_VIRTUAL_FPGA_STARTER_KIT_H__
-#define __SYSTEM_CONFIG_VIRTUAL_FPGA_STARTER_KIT_H__
-#include "SystemConfig.h"
+#include "RegmapTFT.h"
 
-#define	SYSTEM_MAGIC_CODE					0x54494B53	// System magic code : "SKIT"
+RegmapTFT::RegmapTFT(void) : Regmap(_T("TFT"))
+{
+	m_pTFT		= &m_pReg->tft_lcd_display;
+	m_pBuffer	= g_pDoc->CreateBuffer(_T("TFT"), 0, 0, 200, 200);
+	m_pBuffer->Create(TFT_LCD_DISPLAY_WIDTH, TFT_LCD_DISPLAY_HEIGHT, COLORTYPE_ARGB_8888);
+	m_pBuffer->SetEnable(BUFFER_INTERFACE_ZOOM, FALSE);
+	m_pBuffer->SetEnable(BUFFER_INTERFACE_ANTIALIASING, TRUE);
+	m_pBuffer->SetEnable(BUFFER_INTERFACE_LINK, FALSE);
+	m_pBuffer->SetEnable(BUFFER_INTERFACE_LOAD_FROM_FILE, FALSE);
+	m_pBuffer->SetEnable(BUFFER_INTERFACE_AUTOFIT, FALSE);
+}
 
-typedef struct REGMAP_LED {
-	bool	bUpdate;
-	float	val[9];		// 0 ~ 1.0 (max)
-};
+RegmapTFT::~RegmapTFT(void)
+{
+}
 
-typedef struct REGMAP_NUMERIC_DISPLAY {
-	bool	bUpdate;
-	struct {
-		float	segment[8];		// A~G, DP
-	} num[4];
-	float	mid;
-};
+BOOL RegmapTFT::OnUpdate(void)
+{
+	if(m_pTFT->bUpdate) {
+		m_pTFT->bUpdate	= false;
+		UpdateData();
+		return true;
+	}
 
-#define	TFT_LCD_DISPLAY_WIDTH		480
-#define	TFT_LCD_DISPLAY_HEIGHT		272
-typedef struct REGMAP_TFT_LCD_DISPLAY {
-	bool	bUpdate;
-	struct {
-		DWORD	front[TFT_LCD_DISPLAY_WIDTH * TFT_LCD_DISPLAY_HEIGHT];
-		DWORD	back[TFT_LCD_DISPLAY_WIDTH * TFT_LCD_DISPLAY_HEIGHT];
-	} buffer;
-};
+	return FALSE;
+}
 
-typedef struct : public SYSTEM_REGMAP {
-	REGMAP_LED					led;
-	REGMAP_NUMERIC_DISPLAY		numeric_display;
-	DWORD						buttons;			// active low button
-	DWORD						switches;
-	REGMAP_TFT_LCD_DISPLAY		tft_lcd_display;
-} STARTERKIT_REGMAP;
+void RegmapTFT::OnBroadcast(LPVOID pData)
+{
+	if(!pData) {
+		UpdateData();
+	}
+}
 
-#endif//__SYSTEM_CONFIG_VIRTUAL_FPGA_STARTER_KIT_H__
+BOOL RegmapTFT::OnCommand(LPCTSTR lpszURL)
+{
+	int		sx, sy, width, height;
+	ITDLayout*	pBufferLayout	= m_pBuffer->GetObject()->GetLayout();
+	{
+		// parsing
+		LPCTSTR	sDelim	= _T(".");
+		int		iPos	= 0;
+		CString	sTok(lpszURL);
+		sx		= _ttoi(sTok.Tokenize(sDelim, iPos));
+		sy		= _ttoi(sTok.Tokenize(sDelim, iPos));
+		width	= _ttoi(sTok.Tokenize(sDelim, iPos));
+		height	= _ttoi(sTok.Tokenize(sDelim, iPos));
+	}
+	//m_pBuffer->SetDrawRect(&rc);
+	pBufferLayout->SetPosition(sx, sy);
+	pBufferLayout->SetSize(width, height);
+	m_pBuffer->GetObject()->UpdateLayout();
+	g_pSystem->LogInfo(_T("Got : %s (%d,%d)"), lpszURL, sx, sy);
+	return FALSE;
+}
+
+void RegmapTFT::UpdateData(void)
+{
+	m_pBuffer->CopyFromMemory((const BYTE*)m_pTFT->buffer.front, TFT_LCD_DISPLAY_WIDTH * sizeof(DWORD), FALSE);
+	m_pBuffer->Present();
+}

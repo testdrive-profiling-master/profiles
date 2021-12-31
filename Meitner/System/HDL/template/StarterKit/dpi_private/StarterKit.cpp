@@ -54,7 +54,14 @@ void StarterKit::Initialize(void)
 	m_pReg->led.val[8]	= 32;
 	m_pReg->buttons		= 0xFFFFFFFF;
 	m_pReg->led.bUpdate	= true;
-	memset(m_pReg->tft_lcd_display.buff, 0, sizeof(m_pReg->tft_lcd_display.buff));
+	memset(m_pReg->tft_lcd_display.buffer.front, 0, sizeof(m_pReg->tft_lcd_display.buffer.front));
+
+	// randomize screen
+	for(int y = 0; y < TFT_LCD_DISPLAY_HEIGHT; y++)
+		for(int x = 0; x < TFT_LCD_DISPLAY_WIDTH; x++) {
+			m_pReg->tft_lcd_display.buffer.front[x + y * TFT_LCD_DISPLAY_WIDTH]	= (rand() & 0xFF) | ((rand() & 0xFF)) << 8 | ((rand() & 0xFF) << 16);
+		}
+
 	m_pReg->tft_lcd_display.bUpdate	= true;
 }
 

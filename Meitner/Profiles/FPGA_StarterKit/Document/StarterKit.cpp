@@ -31,13 +31,14 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Starter Kit document
-// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
+// Rev.  : 12/31/2021 Fri (clonextop@gmail.com)
 //================================================================================
 #include "testdrive_document.inl"
 #include "StarterKit.h"
 #include "RegmapLED.h"
 #include "RegmapButton.h"
 #include "RegmapNumericDisplay.h"
+#include "RegmapTFT.h"
 
 ITDDocument*	g_pDoc				= NULL;
 ITDHtml*		g_pHtml				= NULL;
@@ -61,6 +62,7 @@ StarterKit::StarterKit(ITDDocument* pDoc)
 		new RegmapLED;
 		new RegmapButton;
 		new RegmapNumericDisplay;
+		new RegmapTFT;
 	}
 	g_sMediaPath	= g_pSystem->RetrieveFullPath(_T("./media/"));
 	g_pHtml->SetManager(this);
