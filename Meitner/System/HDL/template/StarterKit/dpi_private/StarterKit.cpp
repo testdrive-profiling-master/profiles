@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Template design
-// Rev.  : 12/31/2021 Fri (clonextop@gmail.com)
+// Rev.  : 1/2/2022 Sun (clonextop@gmail.com)
 //================================================================================
 #include "StarterKit.h"
 
@@ -48,6 +48,7 @@ StarterKit::~StarterKit(void)
 
 void StarterKit::Initialize(void)
 {
+	srand(time(NULL));			// randomize seed
 	m_pReg				= (STARTERKIT_REGMAP*)GET_SYSTEM_REGMAP;
 	m_pReg->magic_code	= SYSTEM_MAGIC_CODE;
 	memset(&m_pReg->led, 0, sizeof(m_pReg->led));
@@ -59,7 +60,9 @@ void StarterKit::Initialize(void)
 	// randomize screen
 	for(int y = 0; y < TFT_LCD_DISPLAY_HEIGHT; y++)
 		for(int x = 0; x < TFT_LCD_DISPLAY_WIDTH; x++) {
-			m_pReg->tft_lcd_display.buffer.front[x + y * TFT_LCD_DISPLAY_WIDTH]	= (rand() & 0xFF) | ((rand() & 0xFF)) << 8 | ((rand() & 0xFF) << 16);
+			DWORD	dwColor	= (rand() & 0xFF) | ((rand() & 0xFF)) << 8 | ((rand() & 0xFF) << 16);
+			m_pReg->tft_lcd_display.buffer.front[x + y * TFT_LCD_DISPLAY_WIDTH]	= dwColor;
+			m_pReg->tft_lcd_display.buffer.back[x + y * TFT_LCD_DISPLAY_WIDTH]	= dwColor;
 		}
 
 	m_pReg->tft_lcd_display.bUpdate	= true;
