@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Virtual FPGA Starter Kit
-// Rev.  : 12/31/2021 Fri (clonextop@gmail.com)
+// Rev.  : 1/2/2022 Sun (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 `include "template/StarterKit/includes.vh"
@@ -41,7 +41,7 @@ module dut_top (
 	input						nRST,					// reset (active low)
 	output						INTR,					// interrupt signal (active high, edged mode)
 
-	//// APB slave bus (base address : 0x20000000, search keywords on google : "APB protocol filetype:pdf")
+	//// APB slave bus (base address : 0x00020000 ~ 0x0002FFFF, search keywords on google : "APB protocol filetype:pdf")
 	output						S_PCLK,					// slave clock output
 	output						S_PRESETn,				// slave reset (active low)
 	input						S_PSEL,					// select
