@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Template design
-// Rev.  : 1/2/2022 Sun (clonextop@gmail.com)
+// Rev.  : 1/4/2022 Tue (clonextop@gmail.com)
 //================================================================================
 #include "StarterKit.h"
 
@@ -52,9 +52,7 @@ void StarterKit::Initialize(void)
 	m_pReg				= (STARTERKIT_REGMAP*)GET_SYSTEM_REGMAP;
 	m_pReg->magic_code	= SYSTEM_MAGIC_CODE;
 	memset(&m_pReg->led, 0, sizeof(m_pReg->led));
-	m_pReg->led.val[8]	= 32;
 	m_pReg->buttons		= 0xFFFFFFFF;
-	m_pReg->led.bUpdate	= true;
 	memset(m_pReg->tft_lcd_display.buffer.front, 0, sizeof(m_pReg->tft_lcd_display.buffer.front));
 
 	// randomize screen
@@ -70,12 +68,14 @@ void StarterKit::Initialize(void)
 
 void StarterKit::LED(DWORD pins)
 {
-	// power LED
-	m_pReg->led.val[8]	= (pins & 0x100) ? 32 : 0;
+	for(int i = 0; i < 9; i++) {
+		ACCUMULATE_DATA		acc;
+		acc.m	= m_pReg->led.power[i].post.m;
+		acc.clk++;
 
-	// LED array
-	for(int i = 0; i < 8; i++) {
-		m_LEDs[i].Eval(pins);
+		if(pins & 1) acc.acc++;
+
+		m_pReg->led.power[i].post.m	= acc.m;
 		pins	>>= 1;
 	}
 }
@@ -109,19 +109,46 @@ void StarterKit::NumericDisplay(DWORD pins)
 		~nd.COM4,
 		~nd.COM5
 	};
+	DWORD	pin_en[8] = {
+		nd.A,
+		nd.B,
+		nd.C,
+		nd.D,
+		nd.E,
+		nd.F,
+		nd.G,
+		nd.DP
+	};
 
 	for(int i = 0; i < 4; i++) {
-		m_NumericDisplay.num[i].segment[0].Eval(nd.A & num_en[i]);
+		for(int t = 0; t < 8; t++) {
+			ACCUMULATE_DATA		acc;
+			acc.m	= m_pReg->numeric_display.num[i].segment[t].post.m;
+			acc.clk++;
+
+			if(pin_en[t] & num_en[i]) acc.acc++;
+
+			m_pReg->numeric_display.num[i].segment[t].post.m	= acc.m;
+		}
+
+		/*m_NumericDisplay.num[i].segment[0].Eval(nd.A & num_en[i]);
 		m_NumericDisplay.num[i].segment[1].Eval(nd.B & num_en[i]);
 		m_NumericDisplay.num[i].segment[2].Eval(nd.C & num_en[i]);
 		m_NumericDisplay.num[i].segment[3].Eval(nd.D & num_en[i]);
 		m_NumericDisplay.num[i].segment[4].Eval(nd.E & num_en[i]);
 		m_NumericDisplay.num[i].segment[5].Eval(nd.F & num_en[i]);
 		m_NumericDisplay.num[i].segment[6].Eval(nd.G & num_en[i]);
-		m_NumericDisplay.num[i].segment[7].Eval(nd.DP & num_en[i]);
+		m_NumericDisplay.num[i].segment[7].Eval(nd.DP & num_en[i]);*/
 	}
 
-	m_NumericDisplay.mid.Eval(nd.MID & ~nd.COM3);
+	{
+		ACCUMULATE_DATA		acc;
+		acc.m	= m_pReg->numeric_display.mid.post.m;
+		acc.clk++;
+
+		if(nd.MID & ~nd.COM3)
+			acc.acc++;
+	}
 }
 
 void StarterKit::Motor(BYTE PWM, BYTE DIR, BYTE& SENSOR)
@@ -189,43 +216,6 @@ void StarterKit::TFTLCD_Display(BYTE EN, BYTE DE, BYTE VSYNC, BYTE HSYNC, DWORD 
 	}
 }
 
-void StarterKit::Eval(void)
-{
-	if(!m_pReg) return;
-
-	// power LED
-	// LED array
-	for(int i = 0; i < 8; i++) {
-		float	fVal	= m_LEDs[i].Level();
-
-		if(m_pReg->led.val[i] != fVal) {
-			m_pReg->led.val[i]		= fVal;
-			m_pReg->led.bUpdate		= true;
-		}
-	}
-
-	// numeric display
-	for(int i = 0; i < 4; i++) {
-		for(int t = 0; t < 8; t++) {
-			float	fVal	= m_NumericDisplay.num[i].segment[t].Level();
-
-			if(m_pReg->numeric_display.num[i].segment[t] != fVal) {
-				m_pReg->numeric_display.num[i].segment[t]	= fVal;
-				m_pReg->numeric_display.bUpdate	= true;
-			}
-		}
-	}
-
-	{
-		float	fVal	= m_NumericDisplay.mid.Level();
-
-		if(m_pReg->numeric_display.mid != fVal) {
-			m_pReg->numeric_display.mid		= fVal;
-			m_pReg->numeric_display.bUpdate	= true;
-		}
-	}
-}
-
 void StarterKit::GetButtons(DWORD& dwButtons)
 {
 	dwButtons	= m_pReg->buttons;
@@ -252,11 +242,6 @@ void StarterKit_LED(const svBitVecVal* pins)
 void StarterKit_NumericDisplay(const svBitVecVal* pins)
 {
 	__starter_kit.NumericDisplay(*(DWORD*)pins);
-}
-
-void StarterKit_Eval(void)
-{
-	__starter_kit.Eval();
 }
 
 void StarterKit_GetButtons(svBitVecVal* pins)

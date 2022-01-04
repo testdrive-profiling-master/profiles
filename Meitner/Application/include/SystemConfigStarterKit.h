@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Global system configuration
-// Rev.  : 12/31/2021 Fri (clonextop@gmail.com)
+// Rev.  : 1/4/2022 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_CONFIG_VIRTUAL_FPGA_STARTER_KIT_H__
 #define __SYSTEM_CONFIG_VIRTUAL_FPGA_STARTER_KIT_H__
@@ -39,17 +39,28 @@
 
 #define	SYSTEM_MAGIC_CODE					0x54494B53	// System magic code : "SKIT"
 
+typedef union ACCUMULATE_DATA {
+	uint64_t	m;
+	struct {
+		DWORD		clk;		// clock counter
+		DWORD		acc;		// accumulate counter
+	};
+};
+
+typedef struct ACCUMULATE_POWER {
+	ACCUMULATE_DATA		post;
+	ACCUMULATE_DATA		recv;
+};
+
 typedef struct REGMAP_LED {
-	bool	bUpdate;
-	float	val[9];		// 0 ~ 1.0 (max)
+	ACCUMULATE_POWER	power[9];
 };
 
 typedef struct REGMAP_NUMERIC_DISPLAY {
-	bool	bUpdate;
 	struct {
-		float	segment[8];		// A~G, DP
+		ACCUMULATE_POWER	segment[8];		// A~G, DP
 	} num[4];
-	float	mid;
+	ACCUMULATE_POWER	mid;
 };
 
 typedef struct REGMAP_MOTOR {

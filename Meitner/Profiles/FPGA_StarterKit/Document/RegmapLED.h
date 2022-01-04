@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Starter Kit document
-// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
+// Rev.  : 1/4/2022 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __REGMAP_LED_H__
 #define __REGMAP_LED_H__
@@ -48,8 +48,9 @@ private:
 	virtual BOOL OnCommand(LPCTSTR lpszURL);
 	virtual void OnBroadcast(LPVOID pData = NULL);
 
-	void UpdateLED(void);
+	bool UpdateData(void);
 
 	REGMAP_LED*		m_pLED;
+	float			m_fVal[9];
 };
 #endif//__REGMAP_LED_H__

@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,13 +31,15 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Starter Kit document
-// Rev.  : 12/29/2021 Wed (clonextop@gmail.com)
+// Rev.  : 1/4/2022 Tue (clonextop@gmail.com)
 //================================================================================
 #include "RegmapNumericDisplay.h"
 
 RegmapNumericDisplay::RegmapNumericDisplay(void) : Regmap(_T("NUM"))
 {
 	m_pNum		= &m_pReg->numeric_display;
+	memset(m_fSegments, 0, sizeof(m_fSegments));
+	m_fMid		= 0;
 }
 
 RegmapNumericDisplay::~RegmapNumericDisplay(void)
@@ -46,13 +48,7 @@ RegmapNumericDisplay::~RegmapNumericDisplay(void)
 
 BOOL RegmapNumericDisplay::OnUpdate(void)
 {
-	if(m_pNum->bUpdate) {
-		m_pNum->bUpdate	= false;
-		UpdateData();
-		return true;
-	}
-
-	return FALSE;
+	return UpdateData();
 }
 
 void RegmapNumericDisplay::OnBroadcast(LPVOID pData)
@@ -67,27 +63,66 @@ BOOL RegmapNumericDisplay::OnCommand(LPCTSTR lpszURL)
 	return FALSE;
 }
 
-void RegmapNumericDisplay::UpdateData(void)
+bool RegmapNumericDisplay::UpdateData(void)
 {
+	bool	bRet	= false;
+
 	// seven segments
-	for(int t = 0; t < 4; t++) {
-		float*	segment_val	= m_pNum->num[t].segment;
-		g_pHtml->CallJScript(_T("SetNumericDisplay(%d,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f)"),
-							 t,
-							 segment_val[0],
-							 segment_val[1],
-							 segment_val[2],
-							 segment_val[3],
-							 segment_val[4],
-							 segment_val[5],
-							 segment_val[6],
-							 segment_val[7]);
+	for(int i = 0; i < 4; i++) {
+		bool	bUpdate	= false;
+
+		for(int t = 0; t < 8; t++) {
+			ACCUMULATE_DATA	post, recv;
+			post.m	= m_pNum->num[i].segment[t].post.m;
+			recv.m	= m_pNum->num[i].segment[t].recv.m;
+			DWORD	dwClock	= post.clk - recv.clk;
+			DWORD	dwAcc	= post.acc - recv.acc;
+			m_pNum->num[i].segment[t].recv.m	= post.m;
+
+			if(!dwClock) return false;
+
+			float	val	= (double)dwAcc	/ dwClock;
+
+			if(m_fSegments[i][t] != val) {
+				m_fSegments[i][t] = val;
+				bUpdate	= true;
+			}
+		}
+
+		if(bUpdate) {
+			g_pHtml->CallJScript(_T("SetNumericDisplay(%d,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f)"),
+								 i,
+								 m_fSegments[i][0],
+								 m_fSegments[i][1],
+								 m_fSegments[i][2],
+								 m_fSegments[i][3],
+								 m_fSegments[i][4],
+								 m_fSegments[i][5],
+								 m_fSegments[i][6],
+								 m_fSegments[i][7]);
+			bRet	= true;
+		}
 	}
 
 	// mid
 	{
-		float	segment_val		= m_pNum->num[4].segment[7];
-		g_pHtml->CallJScript(_T("SetNumericDisplay(4,0,0,0,0,0,0,0,%.2f)"), segment_val);
+		ACCUMULATE_DATA	post, recv;
+		post.m	= m_pNum->mid.post.m;
+		recv.m	= m_pNum->mid.recv.m;
+		DWORD	dwClock	= post.clk - recv.clk;
+		DWORD	dwAcc	= post.acc - recv.acc;
+		m_pNum->mid.recv.m	= post.m;
+
+		if(!dwClock) return false;
+
+		float	val	= (double)dwAcc	/ dwClock;
+
+		if(val != m_fMid) {
+			g_pHtml->CallJScript(_T("SetNumericDisplay(4,0,0,0,0,0,0,0,%.2f)"), val);
+			m_fMid	= val;
+			bRet	= true;
+		}
 	}
+	return bRet;
 }
 

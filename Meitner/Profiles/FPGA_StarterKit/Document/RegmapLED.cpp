@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,13 +31,14 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Starter Kit document
-// Rev.  : 12/29/2021 Wed (clonextop@gmail.com)
+// Rev.  : 1/4/2022 Tue (clonextop@gmail.com)
 //================================================================================
 #include "RegmapLED.h"
 
 RegmapLED::RegmapLED(void) : Regmap(_T("LED"))
 {
 	m_pLED		= &m_pReg->led;
+	memset(m_fVal, 0, sizeof(m_fVal));
 }
 
 RegmapLED::~RegmapLED(void)
@@ -46,19 +47,13 @@ RegmapLED::~RegmapLED(void)
 
 BOOL RegmapLED::OnUpdate(void)
 {
-	if(m_pLED->bUpdate) {
-		m_pLED->bUpdate	= false;
-		UpdateLED();
-		return true;
-	}
-
-	return FALSE;
+	return UpdateData();
 }
 
 void RegmapLED::OnBroadcast(LPVOID pData)
 {
 	if(!pData) {
-		UpdateLED();
+		UpdateData();
 	}
 }
 
@@ -67,16 +62,41 @@ BOOL RegmapLED::OnCommand(LPCTSTR lpszURL)
 	return FALSE;
 }
 
-void RegmapLED::UpdateLED(void)
+bool RegmapLED::UpdateData(void)
 {
-	g_pHtml->CallJScript(_T("SetLED(%.1f, %.1f, %.1f, %.1f, %.1f, %.1f, %.1f, %.1f, %.1f);"),
-						 m_pLED->val[0],
-						 m_pLED->val[1],
-						 m_pLED->val[2],
-						 m_pLED->val[3],
-						 m_pLED->val[4],
-						 m_pLED->val[5],
-						 m_pLED->val[6],
-						 m_pLED->val[7],
-						 m_pLED->val[8]);
+	bool	bRet	= false;
+	float	val[9];
+
+	for(int i = 0; i < 9; i++) {
+		ACCUMULATE_DATA	post, recv;
+		post.m	= m_pLED->power[i].post.m;
+		recv.m	= m_pLED->power[i].recv.m;
+		DWORD	dwClock	= post.clk - recv.clk;
+		DWORD	dwAcc	= post.acc - recv.acc;
+		m_pLED->power[i].recv.m	= post.m;
+
+		if(!dwClock) return false;
+
+		float	val	= (double)dwAcc	/ dwClock;
+
+		if(m_fVal[i] != val) {
+			m_fVal[i] = val;
+			bRet	= true;
+		}
+	}
+
+	if(bRet) {
+		g_pHtml->CallJScript(_T("SetLED(%.1f, %.1f, %.1f, %.1f, %.1f, %.1f, %.1f, %.1f, %.1f);"),
+							 m_fVal[0],
+							 m_fVal[1],
+							 m_fVal[2],
+							 m_fVal[3],
+							 m_fVal[4],
+							 m_fVal[5],
+							 m_fVal[6],
+							 m_fVal[7],
+							 m_fVal[8]);
+	}
+
+	return bRet;
 }

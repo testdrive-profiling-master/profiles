@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Template design
-// Rev.  : 12/31/2021 Fri (clonextop@gmail.com)
+// Rev.  : 1/4/2022 Tue (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 
@@ -48,7 +48,6 @@ module top ();
 `DPI_FUNCTION void StarterKit_Initialize();
 `DPI_FUNCTION void StarterKit_LED(input bit [8:0] LED_pins);
 `DPI_FUNCTION void StarterKit_NumericDisplay(input bit [13:0] pins);
-`DPI_FUNCTION void StarterKit_Eval();
 `DPI_FUNCTION void StarterKit_GetButtons(output bit [31:0] pins);
 `DPI_FUNCTION void StarterKit_GetSwitches(output bit [31:0] pins);
 `DPI_FUNCTION void StarterKit_Motor(input bit PWM, input bit DIR, output bit SENSOR);
@@ -96,7 +95,6 @@ testdrive_interrupt_bfm intr_inst (
 always@(posedge CLK) begin
 	StarterKit_LED({RSTn_Board, LED});
 	StarterKit_NumericDisplay(RSTn_Board ? KW4_56NCWB_P_Y : 14'b00_0000_0000_0000);
-	StarterKit_Eval();
 	StarterKit_GetButtons(r_button);
 	BUTTONS			<= r_button[8:0];
 	StarterKit_GetSwitches(r_switch);
