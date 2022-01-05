@@ -10,3 +10,6 @@ profile.tree "System" {
 	screen ("View wave-form",				"view_sim_wave.bat");
 	profile ("View system memory",			"view_system_memory.sp");
 }
+
+// extra tool check
+system.call ".\\extra_tool_check.bat", "", "."
