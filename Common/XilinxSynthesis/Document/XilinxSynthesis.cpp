@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 3/30/2021 Tue (clonextop@gmail.com)
+// Rev.  : 1/8/2022 Sat (clonextop@gmail.com)
 //================================================================================
 #include "testdrive_document.inl"
 #include "XilinxSynthesis.h"
@@ -45,9 +44,6 @@ XilinxSynthesis::XilinxSynthesis(ITDDocument* pDoc)
 	m_pSourceList		= NULL;
 	m_pDoc				= pDoc;
 	m_Config.sDocPath	= g_pSystem->RetrieveFullPath(_T("%CURRENT%"));
-	m_pBtnRefresh		= pDoc->CreateButton(NULL, 0, 0, 160, 22);
-	m_pBtnRefresh->SetText(_L(REFRESH_TABLE));
-	m_pBtnRefresh->SetManager(this, BTN_ID_REFRESH_TABLE);
 	m_pTable			= &m_Table;
 	{
 		ITDPropertyData*	pProperty;
@@ -79,7 +75,7 @@ XilinxSynthesis::XilinxSynthesis(ITDDocument* pDoc)
 		pProperty	= pDoc->AddPropertyData(PROPERTY_TYPE_INT, PROPERTY_ID_MAX_PATHS, _L(MAX_PATHS), (DWORD_PTR)(&m_Config.iMaxPaths), _L(DESC_MAX_PATHS));
 		m_pProperty[PROPERTY_ID_MAX_PATHS]		= pProperty;
 	}
-	m_Table.Create(pDoc, _T("../media/tables.html"), 0, 22, 10, 10, this);
+	m_Table.Create(pDoc, _T("../media/tables.html"), 0, 0, 10, 10, this);
 	XilinxToolCheck();
 	ResetProject();
 }
@@ -219,7 +215,7 @@ BOOL XilinxSynthesis::OnPropertyUpdate(ITDPropertyData* pProperty)
 	switch(pProperty->GetID()) {
 	case PROPERTY_ID_PATH_FILTER:
 		pProperty->UpdateConfigFile(FALSE);
-		OnButtonClick(BTN_ID_REFRESH_TABLE);
+		RefreshButtonClick();
 		break;
 
 	case PROPERTY_ID_INSTALL_PATH:
@@ -282,7 +278,7 @@ void XilinxSynthesis::OnSize(int width, int height)
 	if((ITDHtml*)m_Table) {
 		ITDLayout* pLayout;
 		pLayout = ((ITDHtml*)m_Table)->GetObject()->GetLayout();
-		pLayout->SetSize(width, height - 4 - 22);
+		pLayout->SetSize(width, height - 4);
 	}
 }
 
@@ -303,6 +299,8 @@ LPCTSTR XilinxSynthesis::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 			SourceGroup*	pGroup	= m_pSourceList->FindGroup(&lpszURL[5]);
 
 			if(pGroup) pGroup->SetMark();
+		} else if(_tcsstr(lpszURL, _T("updatetable:")) == lpszURL) {
+			RefreshButtonClick();
 		}
 
 		return NULL;
@@ -311,30 +309,23 @@ LPCTSTR XilinxSynthesis::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 	return lpszURL;
 }
 
-void XilinxSynthesis::OnHtmlDocumentComplete(DWORD dwID, LPCTSTR lpszURL)
+void XilinxSynthesis::RefreshButtonClick(void)
 {
-	if(!m_bInitialized) {
-		RefreshTable();
-		m_bInitialized	= TRUE;
-	}
-}
-
-void XilinxSynthesis::OnButtonClick(DWORD dwID)
-{
-	switch(dwID) {
-	case BTN_ID_REFRESH_TABLE:
-		if(m_pDoc->IsLocked()) {
-			g_pSystem->LogInfo(_L(SYNTHESIS_IS_BUSY));
-			break;
-		}
-
+	if(m_pDoc->IsLocked()) {
+		g_pSystem->LogInfo(_L(SYNTHESIS_IS_BUSY));
+	} else {
 		m_pSourceList->RemoveScoreFile();
 		m_pSourceList->FlushScoreFile();
 		RefreshTable();
-		break;
+	}
+}
 
-	default:
-		break;
+void XilinxSynthesis::OnHtmlDocumentComplete(DWORD dwID, LPCTSTR lpszURL)
+{
+	if(!m_bInitialized) {
+		m_Table.JScript(_T("SetTitle(\"<table  class='null0'><tbody><td><a href='updatetable:'><button class='ShadowButton'>%s</button></a></td><td style='text-align:right'></td></tbody></table>\");"), _L(REFRESH_TABLE));
+		RefreshTable();
+		m_bInitialized	= TRUE;
 	}
 }
 

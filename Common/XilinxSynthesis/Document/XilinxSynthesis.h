@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 3/22/2021 Mon (clonextop@gmail.com)
+// Rev.  : 1/8/2022 Sat (clonextop@gmail.com)
 //================================================================================
 #ifndef __XILINX_SYNTHESIS_H__
 #define __XILINX_SYNTHESIS_H__
@@ -41,7 +40,7 @@
 #include "ProjectConfig.h"
 #include "SourceList.h"
 
-typedef enum{
+typedef enum {
 	PROPERTY_ID_PATH_FILTER,
 	PROPERTY_ID_INSTALL_PATH,
 	PROPERTY_ID_PROJECT_PATH,
@@ -54,22 +53,20 @@ typedef enum{
 	PROPERTY_ID_RESETS,
 	PROPERTY_ID_MAX_PATHS,
 	PROPERTY_ID_SIZE
-}PROPERTY_ID;
+} PROPERTY_ID;
 
-typedef enum{
+typedef enum {
 	BTN_ID_REFRESH_TABLE,
-}BTN_ID;
+} BTN_ID;
 
-typedef enum{
+typedef enum {
 	COMMAND_ID_SYNTHESIS
-}COMMAND_ID;
+} COMMAND_ID;
 
 class XilinxSynthesis :
 	public TDImplDocumentBase,
 	public ITDHtmlManager,
-	public ITDButtonManager,
-	public ProjectConfig
-{
+	public ProjectConfig {
 public:
 	XilinxSynthesis(ITDDocument* pDoc);
 	virtual ~XilinxSynthesis(void);
@@ -82,10 +79,9 @@ public:
 	STDMETHOD_(LPCTSTR, OnHtmlBeforeNavigate)(DWORD dwID, LPCTSTR lpszURL);
 	STDMETHOD_(void, OnHtmlDocumentComplete)(DWORD dwID, LPCTSTR lpszURL);
 
-	// button
-	STDMETHOD_(void, OnButtonClick)(DWORD dwID);
-
-	inline ITDDocument* Document(void)		{return m_pDoc;}
+	inline ITDDocument* Document(void)		{
+		return m_pDoc;
+	}
 
 	void UpdateProperty(PROPERTY_ID id, BOOL bClear = FALSE);
 	void RefreshTable(void);
@@ -93,6 +89,7 @@ public:
 	void XilinxToolCheck(void);
 	void CheckProjectEmpty(void);
 	void XilinxReport(LPCTSTR sPath);
+	void RefreshButtonClick(void);
 
 protected:
 	void StartSynthesis(LPCTSTR sPath, BOOL bGroup);
@@ -104,7 +101,6 @@ private:
 	BOOL				m_bInitialized;
 
 	HtmlTable			m_Table;
-	ITDButton*			m_pBtnRefresh;
 
 	ITDPropertyData*	m_pProperty[PROPERTY_ID_SIZE];
 

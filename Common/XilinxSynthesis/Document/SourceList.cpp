@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,12 +31,13 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
+// Rev.  : 1/8/2022 Sat (clonextop@gmail.com)
+//================================================================================
 // Rev.  : 3/30/2021 Tue (clonextop@gmail.com)
 //================================================================================
 #include "SourceList.h"
 #include <tchar.h>
 
-//------------------------------------------------------------------------------------------------------------
 SourceVector::SourceVector(LPCTSTR sName, SourceGroup* pGroup)
 {
 	m_sName			= sName;
@@ -534,16 +534,15 @@ BOOL SourceVector::Synthesis_Vivado(void)
 		sArg.Format(_T("\"%s\\settings64.bat\" %s"),
 					(LPCTSTR)m_Config.sXilinxPath,
 					(LPCTSTR)sName);
-
 		{
 			CString sEnvPath;
 			sEnvPath.Format(_T("%s\\settings64.bat"), (LPCTSTR)m_Config.sXilinxPath);
+
 			if(!IsFileExist(sEnvPath)) {
 				g_pSystem->LogError(_L(NO_XILINX_ENVIRONMENT));
 				return FALSE;
 			}
 		}
-
 		int iRet = g_pSystem->ExecuteFile(sBatch, sArg, TRUE, NULL, m_Config.sProjectPath,
 										  _T("failed:"), -1,
 										  _T("ERROR:"), -1,
