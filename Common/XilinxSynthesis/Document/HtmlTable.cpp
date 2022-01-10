@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 10/26/2021 Tue (clonextop@gmail.com)
+// Rev.  : 1/10/2022 Mon (clonextop@gmail.com)
 //================================================================================
 #include "HtmlTable.h"
 
@@ -59,6 +59,10 @@ ITDHtml* HtmlTable::Create(ITDDocument* pDoc, LPCTSTR sFileName, int sx, int sy,
 void HtmlTable::Clear(void)
 {
 	m_pHtml->CallJScript(_T("ClearTable();"));
+}
+void HtmlTable::NewHead(void)
+{
+	m_pHtml->CallJScript(_T("NewHead();"));
 }
 void HtmlTable::NewRow(void)
 {

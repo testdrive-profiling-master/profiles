@@ -46,6 +46,13 @@ th {
 	text-align:center;
 }
 
+table > thead > tr > th {
+	font-weight:normal;
+	color: #369;
+	background: #e0e7f3;
+	border-bottom: 1px solid #ccc;
+}
+
 caption {
 	background:#E0E0E0;
 	margin:0;

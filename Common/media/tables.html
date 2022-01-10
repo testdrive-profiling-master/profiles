@@ -80,6 +80,7 @@
 	var row;
 	var cell;
 	
+	function NewHead()						{row = document.createElement("TR");document.getElementById("t_heads").appendChild(row);}
 	function NewRow()						{row = document.createElement("TR");document.getElementById("entries").appendChild(row);}
 	function NewElement(ele)				{cell = document.createElement("TD");row.appendChild(cell);}
 	function NewTD()						{cell = document.createElement("TD");row.appendChild(cell);}
@@ -148,8 +149,8 @@
 	</SCRIPT>
 	<DIV ID="title_bar"></DIV>
 	<table class="default0">
-		<tbody id="entries">
-		</tbody>
+		<thead id="t_heads"></thead>
+		<tbody id="entries"></tbody>
 	</table>
 </body>
 </html>

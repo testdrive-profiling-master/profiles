@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,38 +31,38 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/10/2022 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __HTML_TABLE_H__
 #define __HTML_TABLE_H__
 #include "common.h"
 
-typedef enum{
+typedef enum {
 	CELL_TD,
 	CELL_TH
-}TABLE_CELL;
+} TABLE_CELL;
 
-typedef enum{
+typedef enum {
 	TABLE_ALIGN_LEFT,
 	TABLE_ALIGN_RIGHT,
 	TABLE_ALIGN_CENTER
-}TABLE_ALIGN;
+} TABLE_ALIGN;
 
-typedef enum{
+typedef enum {
 	TABLE_BOARDER_LEFT,
 	TABLE_BOARDER_RIGHT,
 	TABLE_BOARDER_TOP,
 	TABLE_BOARDER_BOTTOM
-}TABLE_BOARDER;
+} TABLE_BOARDER;
 
-typedef enum{
+typedef enum {
 	TABLE_SPAN_COL,
 	TABLE_SPAN_ROW
-}TABLE_SPAN;
+} TABLE_SPAN;
 
 extern LPCTSTR		sBLANK_FILED;
 
-class HtmlTable{
+class HtmlTable {
 public:
 	HtmlTable(void);
 	virtual ~HtmlTable(void);
@@ -71,6 +70,7 @@ public:
 	ITDHtml* Create(ITDDocument* pDoc, LPCTSTR sFileName, int sx, int sy, int width, int height, ITDHtmlManager* pManager = NULL);
 
 	void Clear(void);
+	void NewHead(void);
 	void NewRow(void);
 	void NewCell(TABLE_CELL type, LPCTSTR sFormat = NULL, ...);
 	void NewTH(void);
@@ -82,7 +82,9 @@ public:
 	void SetSpan(TABLE_SPAN span, int iSize);
 	void JScript(LPCTSTR sFormat, ...);
 
-	operator ITDHtml* () const	{return m_pHtml;}
+	operator ITDHtml* () const	{
+		return m_pHtml;
+	}
 
 private:
 	ITDHtml*			m_pHtml;

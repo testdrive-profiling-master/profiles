@@ -31,9 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 1/8/2022 Sat (clonextop@gmail.com)
-//================================================================================
-// Rev.  : 3/30/2021 Tue (clonextop@gmail.com)
+// Rev.  : 1/10/2022 Mon (clonextop@gmail.com)
 //================================================================================
 #include "SourceList.h"
 #include <tchar.h>
@@ -1108,7 +1106,7 @@ BOOL SourceGroup::CheckHidden(LPCTSTR sFilePath)
 void SourceGroup::MakeTable(void)
 {
 	if(IsRoot()) {
-		m_pTable->NewRow();
+		m_pTable->NewHead();
 		m_pTable->NewCell(CELL_TH);
 		m_pTable->SetBoarderWidth(TABLE_BOARDER_RIGHT, 0);
 		m_pTable->SetSpan(TABLE_SPAN_COL, 2);
