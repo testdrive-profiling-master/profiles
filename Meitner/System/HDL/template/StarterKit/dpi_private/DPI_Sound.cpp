@@ -36,6 +36,8 @@
 #include "DPI_Sound.h"
 #include <math.h>
 
+DPI_Sound		g_Sound;
+
 DPI_Sound::DPI_Sound(void)
 {
 	m_pDevice	= NULL;
@@ -74,6 +76,8 @@ bool DPI_Sound::Initialize(void)
 
 void DPI_Sound::ReleaseAll(void)
 {
+	while(DPI_SoundSource::Head()) delete DPI_SoundSource::Head();
+
 	if(m_pDevice) {
 		if(m_pContext) {
 			alcMakeContextCurrent(NULL);

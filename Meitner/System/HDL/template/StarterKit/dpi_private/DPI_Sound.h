@@ -95,4 +95,6 @@ private:
 	ALuint			m_iSource;
 };
 
+extern DPI_Sound		g_Sound;
+
 #endif//__X_SOUND_H___

@@ -42,12 +42,17 @@ static Buzzer			__Buzzer;
 static bool __Initialize(void)
 {
 	SetSystemDescription("FPGA Starter Kit");
+
+	if(!g_Sound.Initialize())
+		return false;
+
 	__starter_kit.Initialize();
 	return true;
 }
 
 static void __Finalize(void)
 {
+	g_Sound.ReleaseAll();
 }
 
 StarterKit::StarterKit(void)
@@ -243,7 +248,7 @@ void StarterKit::GetSwitches(DWORD& dwSwitches)
 //-------------------------------------------------------------------------
 // DPI functions
 //-------------------------------------------------------------------------
-void StarterKit_Main(void)
+void StarterKit_MainLoop(void)
 {
 	{
 		DWORD	dwFrequency;

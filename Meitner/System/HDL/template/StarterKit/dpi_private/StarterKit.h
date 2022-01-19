@@ -38,7 +38,7 @@
 #include "dpi_common.h"
 #include "SystemConfigStarterKit.h"
 #include "Power_Accumulate.h"
-
+#include "DPI_Sound.h"
 
 class StarterKit {
 public:
@@ -60,7 +60,7 @@ private:
 	} m_Motor;
 };
 
-DPI_FUNCTION void StarterKit_Main(void);
+DPI_FUNCTION void StarterKit_MainLoop(void);
 DPI_FUNCTION void StarterKit_LED(const svBitVecVal* pins);
 DPI_FUNCTION void StarterKit_NumericDisplay(const svBitVecVal* pins);
 DPI_FUNCTION void StarterKit_GetButtons(svBitVecVal* pins);

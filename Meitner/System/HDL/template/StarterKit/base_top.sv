@@ -45,7 +45,7 @@
 module top ();
 
 // definition & assignment ---------------------------------------------------
-`DPI_FUNCTION void StarterKit_Main();
+`DPI_FUNCTION void StarterKit_MainLoop();
 `DPI_FUNCTION void StarterKit_LED(input bit [8:0] LED_pins);
 `DPI_FUNCTION void StarterKit_NumericDisplay(input bit [13:0] pins);
 `DPI_FUNCTION void StarterKit_GetButtons(output bit [31:0] pins);
@@ -98,7 +98,7 @@ always@(posedge CLK) begin
 	SWITCHES		<= r_switch[7:0];
 	StarterKit_Motor(MOTOR_PWM, MOTOR_DIR, r_motor_sensor);
 	MOTOR_SENSOR	<= r_motor_sensor;
-	StarterKit_Main();
+	StarterKit_MainLoop();
 end
 
 always@(negedge tft_pclk) begin
