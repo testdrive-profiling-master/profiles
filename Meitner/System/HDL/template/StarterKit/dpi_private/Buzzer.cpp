@@ -33,40 +33,63 @@
 // Title : Template design
 // Rev.  : 1/19/2022 Wed (clonextop@gmail.com)
 //================================================================================
-#ifndef __VIRTUAL_FPGA_STARTER_KIT_H__
-#define __VIRTUAL_FPGA_STARTER_KIT_H__
-#include "dpi_common.h"
-#include "SystemConfigStarterKit.h"
-#include "Power_Accumulate.h"
+#include "Buzzer.h"
 
+Buzzer::Buzzer(void)
+{
+	m_PrevTime		= 0;
+	m_High			= 0;
+	m_Low			= 0;
+	m_ToggleCount	= 0;
+	m_PrevPin		= 0;
+}
 
-class StarterKit {
-public:
-	StarterKit(void);
-	~StarterKit(void);
+Buzzer::~Buzzer(void)
+{
+}
 
-	void Initialize(void);
-	void LED(DWORD pins);
-	void NumericDisplay(DWORD pins);
-	void Motor(BYTE PWM, BYTE DIR, BYTE& SENSOR);
-	void TFTLCD_Display(BYTE EN, BYTE HSYNC, BYTE VSYNC, BYTE DE, DWORD dwRGB);
-	void GetButtons(DWORD& dwButtons);
-	void GetSwitches(DWORD& dwSwitches);
+void Buzzer::Eval(BYTE pin)
+{
+	UINT64	CurTime	= SimulationTime();
+	DWORD	dwDuty	= (CurTime - m_PrevTime);
 
-private:
-	STARTERKIT_REGMAP*	m_pReg;
-	struct {
-		PowerAccumulate		cw, ccw;
-	} m_Motor;
-};
+	if(pin) {
+		m_Low	+= dwDuty;
+	} else {
+		m_High	+= dwDuty;
+	}
 
-DPI_FUNCTION void StarterKit_Main(void);
-DPI_FUNCTION void StarterKit_LED(const svBitVecVal* pins);
-DPI_FUNCTION void StarterKit_NumericDisplay(const svBitVecVal* pins);
-DPI_FUNCTION void StarterKit_GetButtons(svBitVecVal* pins);
-DPI_FUNCTION void StarterKit_GetSwitches(svBitVecVal* pins);
-DPI_FUNCTION void StarterKit_Motor(svBit PWM, svBit DIR, svBit* SENSOR);
-DPI_FUNCTION void StarterKit_TFT_LCD(svBit DISP, svBit HSYNC, svBit VSYNC, svBit DE, const svBitVecVal* RGB);
-DPI_FUNCTION void StarterKit_Buzzer(svBit pin);
+	m_ToggleCount++;
+	m_PrevTime	= CurTime;
+	m_PrevPin	= pin;
+}
 
-#endif//__VIRTUAL_FPGA_STARTER_KIT_H__
+void Buzzer::Get(DWORD& dwFrequency, float& fVolume)
+{
+	{
+		// last duty
+		UINT64	CurTime	= SimulationTime();
+		DWORD	dwDuty	= (CurTime - m_PrevTime);
+
+		if(m_PrevPin) {
+			m_High	+= dwDuty;
+		} else {
+			m_Low	+= dwDuty;
+		}
+
+		m_PrevTime	= CurTime;
+	}
+
+	if(m_ToggleCount > 2) {
+		dwFrequency	= m_ToggleCount >> 1;
+		fVolume		= ((float)(((m_Low > m_High) ? m_High : m_Low) * 2)) / (m_High + m_Low);
+	} else {
+		dwFrequency	= 0;
+		fVolume		= 0;
+	}
+
+	m_High			= 0;
+	m_Low			= 0;
+	m_ToggleCount	= 0;
+}
+

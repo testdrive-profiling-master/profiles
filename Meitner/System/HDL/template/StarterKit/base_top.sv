@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Template design
-// Rev.  : 1/4/2022 Tue (clonextop@gmail.com)
+// Rev.  : 1/19/2022 Wed (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 
@@ -45,18 +45,20 @@
 module top ();
 
 // definition & assignment ---------------------------------------------------
-`DPI_FUNCTION void StarterKit_Initialize();
+`DPI_FUNCTION void StarterKit_Main();
 `DPI_FUNCTION void StarterKit_LED(input bit [8:0] LED_pins);
 `DPI_FUNCTION void StarterKit_NumericDisplay(input bit [13:0] pins);
 `DPI_FUNCTION void StarterKit_GetButtons(output bit [31:0] pins);
 `DPI_FUNCTION void StarterKit_GetSwitches(output bit [31:0] pins);
 `DPI_FUNCTION void StarterKit_Motor(input bit PWM, input bit DIR, output bit SENSOR);
 `DPI_FUNCTION void StarterKit_TFT_LCD(input bit DISP, input bit HSYNC, input bit VSYNC, input bit DE, input bit [23:0] RGB);
+`DPI_FUNCTION void StarterKit_Buzzer(input bit pin);
 
 wire					CLK, nRST, INTR;
 wire					RSTn_Board;
 wire	[13:0]			KW4_56NCWB_P_Y;
 wire	[7:0]			LED;
+wire					BUZZER;
 wire					MOTOR_PWM, MOTOR_DIR;
 reg						MOTOR_SENSOR, r_motor_sensor;
 reg		[31:0]			r_button;
@@ -69,11 +71,6 @@ wire					tft_pclk, tft_disp, tft_hsync, tft_vsync, tft_de;
 wire	[23:0]			tft_rgb;
 
 assign	RSTn_Board		= r_button[31] & nRST;
-
-initial	begin
-	SetSystemDescription("FPGA Starter Kit");
-	StarterKit_Initialize();
-end
 
 testdrive_clock_bfm #(
 	.C_CLOCK_ID				(0),		// clock ID#
@@ -101,10 +98,15 @@ always@(posedge CLK) begin
 	SWITCHES		<= r_switch[7:0];
 	StarterKit_Motor(MOTOR_PWM, MOTOR_DIR, r_motor_sensor);
 	MOTOR_SENSOR	<= r_motor_sensor;
+	StarterKit_Main();
 end
 
 always@(negedge tft_pclk) begin
 	StarterKit_TFT_LCD(tft_disp, tft_hsync, tft_vsync, tft_de, tft_rgb);
+end
+
+always@(BUZZER) begin
+	StarterKit_Buzzer(BUZZER);
 end
 
 // slave APB

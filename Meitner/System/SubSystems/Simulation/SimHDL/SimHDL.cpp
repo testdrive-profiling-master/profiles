@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 12/30/2021 Thu (clonextop@gmail.com)
+// Rev.  : 1/19/2022 Wed (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
 #include "TestDriver.inl"
@@ -43,6 +43,8 @@ static UINT64	g_lSimulationTime		= 0;		// global simulation timestamp
 SimHDL*			g_pSimHDL				= NULL;
 SimControl*		g_pSimControl			= NULL;
 SimTop*			g_pSimTop				= NULL;
+bool (*DPI_Initialize)(void)			= NULL;
+void (*DPI_Finalize)(void)				= NULL;
 #ifndef SIMULATION_TOP_EX
 static BOOL		__PreINTR				= TRUE;
 #endif
@@ -158,6 +160,9 @@ public:
 			g_pSimControl->SimulationAddBusy(&g_pSimTop->BUSY);
 		}
 #endif
+
+		if(DPI_Initialize) return DPI_Initialize();
+
 		return TRUE;
 	}
 
@@ -192,6 +197,8 @@ public:
 	}
 
 	virtual void Release(void) {
+		if(DPI_Finalize) DPI_Finalize();
+
 		delete this;
 	}
 };

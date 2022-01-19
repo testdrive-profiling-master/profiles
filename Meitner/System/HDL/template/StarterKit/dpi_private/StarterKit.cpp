@@ -31,14 +31,29 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Template design
-// Rev.  : 1/4/2022 Tue (clonextop@gmail.com)
+// Rev.  : 1/19/2022 Wed (clonextop@gmail.com)
 //================================================================================
 #include "StarterKit.h"
+#include "Buzzer.h"
 
 static StarterKit		__starter_kit;
+static Buzzer			__Buzzer;
+
+static bool __Initialize(void)
+{
+	SetSystemDescription("FPGA Starter Kit");
+	__starter_kit.Initialize();
+	return true;
+}
+
+static void __Finalize(void)
+{
+}
 
 StarterKit::StarterKit(void)
 {
+	DPI_Initialize		= __Initialize;
+	DPI_Finalize		= __Finalize;
 	m_pReg				= NULL;
 }
 
@@ -48,7 +63,6 @@ StarterKit::~StarterKit(void)
 
 void StarterKit::Initialize(void)
 {
-	srand(time(NULL));			// randomize seed
 	m_pReg				= (STARTERKIT_REGMAP*)GET_SYSTEM_REGMAP;
 	m_pReg->magic_code	= SYSTEM_MAGIC_CODE;
 	memset(&m_pReg->led, 0, sizeof(m_pReg->led));
@@ -229,9 +243,16 @@ void StarterKit::GetSwitches(DWORD& dwSwitches)
 //-------------------------------------------------------------------------
 // DPI functions
 //-------------------------------------------------------------------------
-void StarterKit_Initialize(void)
+void StarterKit_Main(void)
 {
-	__starter_kit.Initialize();
+	{
+		DWORD	dwFrequency;
+		float	fVolume;
+		__Buzzer.Get(dwFrequency, fVolume);
+
+		if(dwFrequency && fVolume) {
+		}
+	}
 }
 
 void StarterKit_LED(const svBitVecVal* pins)
@@ -262,4 +283,9 @@ void StarterKit_Motor(svBit PWM, svBit DIR, svBit* SENSOR)
 void StarterKit_TFT_LCD(svBit DISP, svBit HSYNC, svBit VSYNC, svBit DE, const svBitVecVal* RGB)
 {
 	__starter_kit.TFTLCD_Display(DISP, HSYNC, VSYNC, DE, *RGB);
+}
+
+void StarterKit_Buzzer(svBit pin)
+{
+	__Buzzer.Eval(pin);
 }

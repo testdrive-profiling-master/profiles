@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 12/30/2021 Thu (clonextop@gmail.com)
+// Rev.  : 1/19/2022 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIMHDL_COMMON_H__
 #define __SIMHDL_COMMON_H__
@@ -56,6 +56,8 @@ DisplayConfig* GetDisplayConfig(void);
 BYTE* GetMemoryPointer(DWORD dwAddress, DWORD dwSize = 0, BOOL bDisplay = FALSE);
 DWORD GetMemoryBaseAddress(void);
 BOOL GetMemory(const char* sName, void*& pConfig, void*& pMemory);
+extern bool (*DPI_Initialize)(void);
+extern void (*DPI_Finalize)(void);
 
 // DPI functions
 DPI_FUNCTION void SimulationLock(int iDelayTicks = 0);

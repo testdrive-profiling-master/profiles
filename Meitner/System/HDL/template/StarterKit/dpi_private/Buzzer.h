@@ -33,40 +33,23 @@
 // Title : Template design
 // Rev.  : 1/19/2022 Wed (clonextop@gmail.com)
 //================================================================================
-#ifndef __VIRTUAL_FPGA_STARTER_KIT_H__
-#define __VIRTUAL_FPGA_STARTER_KIT_H__
+#ifndef __BUZZER_H__
+#define __BUZZER_H__
 #include "dpi_common.h"
-#include "SystemConfigStarterKit.h"
-#include "Power_Accumulate.h"
 
-
-class StarterKit {
+class Buzzer {
 public:
-	StarterKit(void);
-	~StarterKit(void);
+	Buzzer(void);
+	~Buzzer(void);
 
-	void Initialize(void);
-	void LED(DWORD pins);
-	void NumericDisplay(DWORD pins);
-	void Motor(BYTE PWM, BYTE DIR, BYTE& SENSOR);
-	void TFTLCD_Display(BYTE EN, BYTE HSYNC, BYTE VSYNC, BYTE DE, DWORD dwRGB);
-	void GetButtons(DWORD& dwButtons);
-	void GetSwitches(DWORD& dwSwitches);
+	void Eval(BYTE pin);
+	void Get(DWORD& dwFrequency, float& fVolume);
 
 private:
-	STARTERKIT_REGMAP*	m_pReg;
-	struct {
-		PowerAccumulate		cw, ccw;
-	} m_Motor;
+	UINT64		m_PrevTime;
+	BYTE		m_PrevPin;
+	DWORD		m_High, m_Low, m_ToggleCount;
 };
 
-DPI_FUNCTION void StarterKit_Main(void);
-DPI_FUNCTION void StarterKit_LED(const svBitVecVal* pins);
-DPI_FUNCTION void StarterKit_NumericDisplay(const svBitVecVal* pins);
-DPI_FUNCTION void StarterKit_GetButtons(svBitVecVal* pins);
-DPI_FUNCTION void StarterKit_GetSwitches(svBitVecVal* pins);
-DPI_FUNCTION void StarterKit_Motor(svBit PWM, svBit DIR, svBit* SENSOR);
-DPI_FUNCTION void StarterKit_TFT_LCD(svBit DISP, svBit HSYNC, svBit VSYNC, svBit DE, const svBitVecVal* RGB);
-DPI_FUNCTION void StarterKit_Buzzer(svBit pin);
 
-#endif//__VIRTUAL_FPGA_STARTER_KIT_H__
+#endif//__BUZZER_H__
