@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 11/19/2021 Fri (clonextop@gmail.com)
+// Rev.  : 2/23/2022 Wed (clonextop@gmail.com)
 //================================================================================
 #include "DocWord.h"
 
@@ -54,6 +54,7 @@ bool DocWord::OnOpen(void)
 	m_Body			= GetXML("word/document.xml")->child("w:document").child("w:body");
 	m_Relationships	= GetXML("word/_rels/document.xml.rels")->child("Relationships");
 	m_ContentsType	= GetXML("[Content_Types].xml")->child("Types");
+	m_Properties	= GetXML("docProps/custom.xml")->child("Properties");
 	// open header and footers
 	{
 		typedef struct {
@@ -265,6 +266,20 @@ bool DocWord::ReplaceSubDocument(const char* sPrevName, const char* sFileName)
 		return true;
 	});
 	return true;
+}
+
+bool DocWord::SetProperty(const char* sID, const char* sValue)
+{
+	DocXML node = m_Properties.find_child_by_attribute("name", sID);
+
+	if(!node.empty()) {
+		node.child("vt:lpwstr").text().set(sValue);
+		return true;
+	} else {
+		LOGW("Property '%s' is not existed.", sID);
+	}
+
+	return false;
 }
 
 void DocWord::Modify(map<string, string>* pMod)

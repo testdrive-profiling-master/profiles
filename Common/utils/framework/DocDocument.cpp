@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 12/8/2021 Wed (clonextop@gmail.com)
+// Rev.  : 2/23/2022 Wed (clonextop@gmail.com)
 //================================================================================
 #include "DocDocument.h"
 
@@ -330,9 +330,13 @@ static bool __EnumerateNode(cstring& sPath, int iPos, DocXML node, void* pPrivat
 		if(!func(node, pPrivate))
 			return false;
 	} else {
-		for(DocXML child_node = node.child(sChild); !child_node.empty(); child_node = child_node.next_sibling(sChild)) {
+		for(DocXML child_node = node.child(sChild); !child_node.empty();) {
+			DocXML next_node = child_node.next_sibling(sChild);
+
 			if(!__EnumerateNode(sPath, iPos, child_node, pPrivate, func))
 				return false;
+
+			child_node	= next_node;
 		}
 	}
 

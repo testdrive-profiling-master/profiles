@@ -298,7 +298,7 @@ double DocExcelSheet::GetDouble(int fDefault)
 
 string DocExcelSheet::GetValue(void)
 {
-	string	sValue;
+	cstring	sValue;
 
 	if(!IsEmpty()) {
 		bool	bString	= !strcmp(m_Column.attribute("t").value(), "s");
@@ -307,9 +307,11 @@ string DocExcelSheet::GetValue(void)
 		if(bString) {
 			sValue	= m_pExcel->GetString(atoi(sValue.c_str()));
 		}
+
+		sValue.ChangeCharsetToANSI();
 	}
 
-	return sValue;
+	return sValue.c_str();
 }
 
 struct tm* DocExcelSheet::GetDate(int iDateOverride)
@@ -366,6 +368,9 @@ bool DocExcelSheet::SetString(const char* sValue)
 
 		attr.set_value("s");
 	}
+
+	if(!m_Column.child("v")) m_Column.append_child("v");
+
 	m_Column.child("v").text().set(m_pExcel->GetStringIndex(sValue));
 	m_Column.remove_child("f");
 	m_bRecompute	= true;

@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 11/19/2021 Fri (clonextop@gmail.com)
+// Rev.  : 2/23/2022 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __DOC_WORD_H__
 #define __DOC_WORD_H__
@@ -45,6 +45,7 @@ public:
 	void Modify(map<string, string>* pMod);
 	bool ReplaceImage(const char* sDesc, const char* sFileName);
 	bool ReplaceSubDocument(const char* sPrevName, const char* sFileName);
+	bool SetProperty(const char* sID, const char* sValue);
 
 protected:
 	virtual bool OnOpen(void);
@@ -56,6 +57,7 @@ private:
 	DocXML					m_Body;
 	DocXML					m_Relationships;
 	DocXML					m_ContentsType;
+	DocXML					m_Properties;
 	list<DocXML>			m_HeaderFooters;
 	map<string, string>		m_ImageMap;
 	map<string, string>		m_OLEObjectMap;
