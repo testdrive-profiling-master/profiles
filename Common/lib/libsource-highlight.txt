@@ -1,0 +1,11 @@
+reference :
+	https://www.gnu.org/software/src-highlite
+
+build command :
+	git clone git://git.savannah.gnu.org/src-highlite.git
+	cd src-highlite
+	autoreconf -i
+	mkdir build
+	cd build
+	../configure --with-boost-regex=boost_regex-mt.dll
+	make -j 12
