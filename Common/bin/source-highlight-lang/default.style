@@ -2,12 +2,12 @@ bgcolor "white"; // the background color for documents
 context gray; // the color for context lines (when specified with line ranges)
 
 keyword blue b ; // for language keywords
-type darkgreen ; // for basic types
+type blue ; // for basic types
 usertype teal ; // for user defined types
 string red f ; // for strings and chars
 regexp orange f ; // for strings and chars
 specialchar pink f ; // for special chars, e.g., \n, \t, \\
-comment brown i, noref; // for comments
+comment darkgreen i, noref; // for comments
 number purple ;	// for literal numbers
 preproc darkblue b ; // for preproc directives (e.g. #include, import)
 symbol darkred ; // for simbols (e.g. <, >, +)

@@ -1,0 +1,2 @@
+number = 
+'\<[+-]?(([[:digit:]]*)?\'(h|d|b|o))?((0x[[:xdigit:]xXzZ]+)|(([[:digit:]xXzZ]*\.)?[[:digit:]]+([eE][+-]?[[:digit:]]+)?))u?((int(?:8|16|32|64))|L)?\>'
