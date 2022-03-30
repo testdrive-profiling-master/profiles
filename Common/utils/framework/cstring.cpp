@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 3/7/2022 Mon (clonextop@gmail.com)
+// Rev.  : 3/30/2022 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "cstring.h"
@@ -169,7 +169,11 @@ bool cstring::CompareBack(const char* s) const
 {
 	if(!s) return false;
 
-	return (m_sStr.rfind(s) == Length() - strlen(s));
+	int iPos	= m_sStr.rfind(s);
+
+	if(iPos < 0) return false;
+
+	return (iPos == Length() - strlen(s));
 }
 
 bool cstring::CutFront(const char* s, bool bRecursive)

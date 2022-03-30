@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 2/23/2022 Wed (clonextop@gmail.com)
+// Rev.  : 3/30/2022 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __CSTRING_H__
 #define __CSTRING_H__
@@ -90,7 +90,9 @@ public:
 	bool ChangeCharset(const char* szSrcCharset, const char* szDstCharset);
 	bool ChangeCharsetToUTF8(void);
 	bool ChangeCharsetToANSI(void);
-
+	inline bool IsEmpty(void)									{
+		return Length() == 0;
+	}
 	inline const char* c_str(void) const						{
 		return m_sStr.c_str();
 	}
