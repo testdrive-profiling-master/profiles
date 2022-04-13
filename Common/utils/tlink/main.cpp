@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive link
-// Rev.  : 6/22/2021 Tue (clonextop@gmail.com)
+// Rev.  : 4/13/2022 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "testdrive_ssh_interface.h"
@@ -141,8 +140,14 @@ int main(int argc, const char* argv[])
 			arg_list.push_back(argv[i]);
 		}
 
-		arg_list.push_back(NULL);
-		execvp("plink", (char* const*)(&arg_list[0]));
+		{
+			cstring	sCommand;
+
+			for(auto& i : arg_list) sCommand.AppendFormat(" %s", i);
+
+			system(sCommand);
+		}
+
 		fflush(stdout);
 		ssh.Release();
 	}
