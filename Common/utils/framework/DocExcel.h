@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 12/8/2021 Wed (clonextop@gmail.com)
+// Rev.  : 4/29/2022 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __DOC_EXCEL_H__
 #define __DOC_EXCEL_H__
@@ -89,6 +89,7 @@ public:
 	}
 	bool GetRow(bool bAutoCreate = false);
 	bool GetColumn(bool bAutoCreate = false);
+	double GetColumnWidth(void);
 
 	bool IsEmpty(void);
 	int GetInt(int iDefault = -1);
@@ -105,7 +106,9 @@ public:
 	bool SetColumnWidth(double fWidth, bool bBestFit = true);
 	void SetTabColor(unsigned int dwColorRGB);
 	bool SetConditionalFormatting(const char* sFomula, int iStyleFormat);
+	void Hide(bool bHide = true);
 	bool MergeCells(const char* sBegin, const char* sEnd);
+	bool GetMergeCellPos(int& tx, int& ty, int& width, int& height);
 	bool HideColumn(bool bHide = true);
 	void SetProtection(const char* sHash, const char* sSalt, const char* sExceptionRangeList);
 
@@ -154,10 +157,13 @@ public:
 	int StyleFont(const char* sFontName, int iFontSize, bool bBold = false, bool bItalic = false, unsigned int dwARGB = 0);
 	int StyleFill(unsigned int dwColorARGB);
 	int StyleBorder(const char* sBorderStyle);
-	int StyleNumberFormat(const char* sFormat);
+	int StyleNumberFormat(const char* sFormat = NULL);
 	int StyleCell(int iStyleFont, int iStyleFill, int iStyleBorder, int iStyleNumberFormat, const char* sAlignment);
 	int StyleFormat(const char* sFormat);
 	bool ReplaceSheetName(DocExcelSheet* pSheet, const char* sName);
+	inline DocXML& Workbook(void) {
+		return m_Workbook;
+	}
 
 protected:
 	virtual bool OnOpen(void);

@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 12/8/2021 Wed (clonextop@gmail.com)
+// Rev.  : 4/29/2022 Fri (clonextop@gmail.com)
 //================================================================================
 #include "DocExcel.h"
 
@@ -251,6 +251,30 @@ bool DocExcelSheet::GetColumn(bool bAutoCreate)
 	}
 
 	return !m_Column.empty();
+}
+
+double DocExcelSheet::GetColumnWidth(void)
+{
+	typedef struct {
+		int		iCol;
+		double	fWidth;
+	} __private_data;
+	__private_data	p = {m_CurPos.x, 8.5};
+	DocXML	cols	= child("cols");
+	cols.Enumerate("col", &p, [](DocXML node, void* pPrivate) -> bool{
+		__private_data&	p	= *((__private_data*)pPrivate);
+		int	iMin	= node.attribute("min").as_int(0);
+		int	iMax	= node.attribute("max").as_int(0);
+
+		if(p.iCol >= iMin && p.iCol <= iMax)
+		{
+			p.fWidth	= node.attribute("width").as_double(8.5);
+			return false;
+		}
+
+		return true;
+	});
+	return p.fWidth;
 }
 
 bool DocExcelSheet::IsEmpty(void)
@@ -503,6 +527,48 @@ bool DocExcelSheet::MergeCells(const char* sBegin, const char* sEnd)
 	return true;
 }
 
+bool DocExcelSheet::GetMergeCellPos(int& tx, int& ty, int& width, int& height)
+{
+	typedef struct {
+		bool	bMerge;
+		int		x, y;
+		int		tx, ty;
+		int		width, height;
+	} __private_data;
+	__private_data	p = {false, m_CurPos.x - 1, m_CurPos.y, 0, 0, 1, 1};
+	DocXML node = child("mergeCells");
+	node.Enumerate("mergeCell", &p, [](DocXML node, void* pPrivate) -> bool{
+		__private_data& p = *((__private_data*)pPrivate);
+		int	sx, sy, ex, ey;
+		{
+			// get range position
+			cstring	sRef(node.attribute("ref").as_string());
+			int		iPos	= 0;
+			cstring	sStart	= sRef.Tokenize(iPos, ":");
+			cstring	sEnd	= sRef.Tokenize(iPos, ":");
+			Excel_PosDecode(sStart, sx, sy);
+			Excel_PosDecode(sEnd, ex, ey);
+		}
+
+		if(p.x >= sx && p.x <= ex && p.y >= sy && p.y <= ey)
+		{
+			p.bMerge	= true;
+			p.width		= ex - sx + 1;
+			p.height	= ey - sy + 1;
+			p.tx		= p.x - sx;
+			p.ty		= p.y - sy;
+			return false;
+		}
+
+		return true;
+	});
+	tx		= p.tx;
+	ty		= p.ty;
+	width	= p.width;
+	height	= p.height;
+	return p.bMerge;
+}
+
 bool DocExcelSheet::HideColumn(bool bHide)
 {
 	if(m_Column.empty()) return false;
@@ -607,6 +673,16 @@ bool DocExcelSheet::SetConditionalFormatting(const char* sFomula, int iStyleForm
 
 	node.text()	= sFomula;
 	return false;
+}
+
+void DocExcelSheet::Hide(bool bHide)
+{
+	DocXML	node	= m_pExcel->Workbook().find_child_by_attribute("name", GetName());
+	node.remove_attribute("state");
+
+	if(bHide) {
+		node.append_attribute("state").set_value("hidden");
+	}
 }
 
 void DocExcelSheet::SetName(const char* sName)
@@ -1102,45 +1178,39 @@ int DocExcel::StyleNumberFormat(const char* sFormat)
 {
 	if(sFormat && *sFormat) {
 		DocXML	node	= m_Styles.child("numFmts");
-		typedef struct {
-			int			iMaxID;
-			int			iRet;
-			const char*	sFormat;
-		} private_data;
-		private_data	p;
-		p.iMaxID		= 175;
-		p.iRet			= -1;
-		p.sFormat		= sFormat;
 
-		if(!node) {
-			node	= m_Styles.insert_child_after("numFmts", m_Styles.child("fonts").previous_sibling());
-			node.append_attribute("count")	= 0;
+		if(!node) {	// add top child node
+			node		= m_Styles.insert_child_before("numFmts", m_Styles.first_child());
+			node.append_attribute("count").set_value(0);
 		}
 
-		// find matched format
-		node.Enumerate("numFmt", &p, [](DocXML node, void* pPrivate) -> bool{
-			private_data* p	= (private_data*)pPrivate;
-			int iID = node.attribute("numFmtId").as_int(-1);
+		DocXML	child	= node.find_child_by_attribute("formatCode", sFormat);
 
-			if(iID > p->iMaxID) p->iMaxID = iID;
-			cstring sCode(node.attribute("formatCode").as_string());
-			if(sCode == p->sFormat)
-			{
-				p->iRet	= iID;
-				return false;
+		if(!child) {
+			// add new one
+			int iID	= 180;
+			cstring sID;
+
+			// find unused ID
+			while(1) {
+				sID.Format("%d", iID);
+
+				if(!(node.find_child_by_attribute("numFmtId", sID.c_str()))) break;
+
+				iID++;
 			}
-			return true;
-		});
 
-		if(p.iRet < 0) {	// no matched format, must be created
-			p.iRet	= p.iMaxID + 1;
-			DocXML	fmt	= node.append_child("numFmt");
-			fmt.append_attribute("numFmtId")	= p.iRet;
-			fmt.append_attribute("formatCode")	= sFormat;
-			node.attribute("count")				= node.Size("numFmt");
+			// add
+			child									= node.append_child("numFmt");
+			child.append_attribute("numFmtId")		= iID;
+			child.append_attribute("formatCode")	= sFormat;
+			// fix count
+			node.attribute("count")					= node.Size("numFmt");
+			return iID;
+		} else {
+			// found
+			return child.attribute("numFmtId").as_int();
 		}
-
-		return p.iRet;
 	}
 
 	return 0;
@@ -1221,7 +1291,7 @@ int DocExcel::StyleCell(int iStyleFont, int iStyleFill, int iStyleBorder, int iS
 		   (p->iFont != 0) == node.attribute("applyFont").as_int() &&
 		   (p->iFill != 0) == node.attribute("applyFill").as_int() &&
 		   (p->iBorder != 0) == node.attribute("applyBorder").as_int() &&
-		   (p->iNumberFormat != 0) == node.attribute("applyNumberFormat").as_int() &&
+		   ((p->iNumberFormat != 0) ? 1 : 0) == node.attribute("applyNumberFormat").as_int() &&
 		   (p->alignment.bEnable) == node.attribute("applyAlignment").as_int())
 		{
 			bool	bMatched	= true;
@@ -1476,12 +1546,12 @@ DocExcelSheet* DocExcel::CreateSheet(const char* sName)
 		xml.append_attribute("xmlns:r")			= "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
 		xml.append_attribute("xmlns:mc")		= "http://schemas.openxmlformats.org/markup-compatibility/2006";
 		xml.append_attribute("xmlns:x14ac")		= "http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac";
-		xml.append_attribute("mc:Ignorable")	= "x14ac";
+		//xml.append_attribute("mc:Ignorable")	= "x14ac";
 		xml.append_child("dimension").append_attribute("ref")	= "A1:A1";
 		{
 			DocXML node;
 			node	= xml.append_child("sheetViews").append_child("sheetView");
-			node.append_attribute("tabSelected")		= "1";
+			//node.append_attribute("tabSelected")		= "0";
 			node.append_attribute("workbookViewId")		= "0";
 			node	= xml.append_child("sheetFormatPr");
 			node.append_attribute("defaultRowHeight")	= "15";
@@ -1516,8 +1586,22 @@ void DocExcel::DeleteSheet(DocExcelSheet* pSheet)	//@FIXME : not working
 {
 	if(pSheet) {
 		{
-			DocXML	child	= m_Workbook.find_child_by_attribute("name", pSheet->GetName());
+			LOGI("pSheet->GetName : '%s'", pSheet->GetName());
+			DocXML	child		= m_Workbook.find_child_by_attribute("name", pSheet->GetName());
+			int		iSheetID	= child.attribute("sheetId").as_int();
+			cstring	sID			= child.attribute("r:id").as_string();
 			m_Workbook.remove_child(child);
+			m_Workbook.Enumerate("sheet", &iSheetID, [](DocXML node, void* pPrivate) -> bool {
+				int	iSheetID	= *(int*)pPrivate;
+
+				if(node.attribute("sheetId").as_int() > iSheetID)
+				{
+					node.attribute("sheetId").set_value(node.attribute("sheetId").as_int() - 1);
+				}
+				return true;
+			});
+			child	= m_Relationships.find_child_by_attribute("Id", sID.c_str());
+			m_Relationships.remove_child(child);
 		}
 		DeleteFile(pSheet->EntryPath());
 		m_SheetMap.erase(pSheet->GetName());
