@@ -109,4 +109,5 @@ int main(int argc, char** argv)
 	} else {
 		printf("Initialization is failed.\n");
 	}
+	tb.Release();
 }
