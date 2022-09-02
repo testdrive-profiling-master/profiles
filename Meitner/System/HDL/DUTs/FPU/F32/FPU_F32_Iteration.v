@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : FPU 32bit(IEEE-754) unit
-// Rev.  : 8/31/2022 Wed (clonextop@gmail.com)
+// Rev.  : 9/2/2022 Fri (clonextop@gmail.com)
 //================================================================================
 
 module FPU_F32_Iteration(
@@ -42,11 +42,11 @@ module FPU_F32_Iteration(
 
 wire [31:0] Intermediate_Value1,Intermediate_Value2;
 
-Multiplication M1(operand_1,operand_2,,,,Intermediate_Value1);
+FPU_F32_Multiply M1(operand_1,operand_2,,,,Intermediate_Value1);
 
 //32'h4000_0000 -> 2.
-Addition_Subtraction A1(32'h4000_0000,{1'b1,Intermediate_Value1[30:0]},1'b0,,Intermediate_Value2);
+FPU_F32_AddSub A1(32'h4000_0000,{1'b1,Intermediate_Value1[30:0]},1'b0,,Intermediate_Value2);
 
-Multiplication M2(operand_1,Intermediate_Value2,,,,solution);
+FPU_F32_Multiply M2(operand_1,Intermediate_Value2,,,,solution);
 
 endmodule

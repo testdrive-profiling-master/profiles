@@ -33,58 +33,56 @@
 // Title : FPU 32bit(IEEE-754) unit
 // Rev.  : 9/2/2022 Fri (clonextop@gmail.com)
 //================================================================================
+`include "../system_defines.vh"
 
-module FPU_F32_Divide(
-	input [31:0]		a_operand,
-	input [31:0]		b_operand,
-	output				Exception,
-	output [31:0]		result
+module FPU_F32_fully_stage_Divide_3 #(
+	parameter				CYCLE	= 3
+) (
+	input					CLK,		// clock
+	input					nRST,		// reset (active low)
+	input					IE,			// input enable
+	input	[31:0]			A,			// A
+	input	[31:0]			B,			// B
+	output					OE,			// output enable
+	output					EXCEPTION,	// EXCEPTION
+	output	[31:0]			O			// output
 );
 
-wire sign;
-wire [7:0] shift;
-wire [7:0] exponent_a;
-wire [31:0] divisor;
-wire [31:0] operand_a;
-wire [31:0] Intermediate_X0;
-wire [31:0] Iteration_X0;
-wire [31:0] Iteration_X1;
-wire [31:0] Iteration_X2;
-wire [31:0] Iteration_X3;
-wire [31:0] solution;
+// definition & assignment ---------------------------------------------------
+genvar i;
 
-wire [31:0] denominator;
-wire [31:0] operand_a_change;
+wire	[(CYCLE*(32*2))-1:0]	pipe_i;
+wire	[(CYCLE*(32+1))-1:0]	pipe_o;
 
-assign Exception = (&a_operand[30:23]) | (&b_operand[30:23]);
+// implementation ------------------------------------------------------------
+MultiCyclePath #(
+	.IWIDTH		(32*2),
+	.OWIDTH		(32 + 1),
+	.CYCLE		(CYCLE)
+) multi_pipe (
+	.CLK		(CLK),
+	.nRST		(nRST),
+	.IE			(IE),
+	.IDATA		({A, B}),
+	.PIPE_I		(pipe_i),
+	.PIPE_O		(pipe_o),
+	.OE			(OE),
+	.ODATA		({EXCEPTION, O})
+);
 
-assign sign = a_operand[31] ^ b_operand[31];
+generate
+for(i=0;i<CYCLE;i=i+1) begin : divide_gen
+	wire	[32-1:0]	a,b,o;
+	wire				e;	// exception
+	assign	{a,b}		= pipe_i[`BUS_RANGE((32*2), i)];
+	assign	pipe_o[`BUS_RANGE((32+1), i)]	= {e, o};
+	FPU_F32_Divide	divide_inst(
+		.a_operand	(a),
+		.b_operand	(b),
+		.Exception	(e),
+		.result		(o)
+	);
+end
+endgenerate
 
-assign shift = 8'd126 - b_operand[30:23];
-
-assign divisor = {1'b0,8'd126,b_operand[22:0]};
-
-assign denominator = divisor;
-
-assign exponent_a = a_operand[30:23] + shift;
-
-assign operand_a = {a_operand[31],exponent_a,a_operand[22:0]};
-
-assign operand_a_change = operand_a;
-
-//32'hC00B_4B4B = (-37)/17
-FPU_F32_Multiply x0(32'hC00B_4B4B,divisor,,,,Intermediate_X0);
-
-//32'h4034_B4B5 = 48/17
-FPU_F32_AddSub X0(Intermediate_X0,32'h4034_B4B5,1'b0,,Iteration_X0);
-
-FPU_F32_Iteration X1(Iteration_X0,divisor,Iteration_X1);
-
-FPU_F32_Iteration X2(Iteration_X1,divisor,Iteration_X2);
-
-FPU_F32_Iteration X3(Iteration_X2,divisor,Iteration_X3);
-
-FPU_F32_Multiply END(Iteration_X3,operand_a,,,,solution);
-
-assign result = {sign,solution[30:0]};
 endmodule
