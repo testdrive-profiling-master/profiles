@@ -59,7 +59,7 @@ MAD_multicycled #(
 	.B			(B),
 	.C			(C),
 	.OE			(OE),
-	.ODATA		(O)
+	.O			(O)
 );
 
 endmodule

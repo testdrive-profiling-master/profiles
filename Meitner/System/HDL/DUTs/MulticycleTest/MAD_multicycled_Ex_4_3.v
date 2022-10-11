@@ -54,15 +54,15 @@ MAD_multicycled_Ex #(
 	.CYCLE		(4),
 	.COUNT		(3)
 ) multi_pipe (
-	.CLK		(),
-	.nRST		(),
-	.IE			(),
-	.IREADY		(),
-	.A			(),
-	.B			(),
-	.C			(),
-	.OE			(),
-	.O			()
+	.CLK		(CLK),
+	.nRST		(nRST),
+	.IE			(IE),
+	.IREADY		(IREADY),
+	.A			(A),
+	.B			(B),
+	.C			(C),
+	.OE			(OE),
+	.O			(O)
 );
 
 endmodule

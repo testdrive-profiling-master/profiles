@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,6 +31,8 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common verilog library
+// Rev.  : 9/2/2022 Fri (clonextop@gmail.com)
+//================================================================================
 // Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
 //================================================================================
 `ifndef __TESTDRIVE_MULTICYCLE_SLICE_V__
@@ -39,7 +40,7 @@
 `include "system_defines.vh"
 
 `define __GEN_MULTIPATH_PIPE(name) \
-	(* keep="true"*) reg		[WIDTH-1:0]		name; \
+	(* dont_touch = "yes" *) reg		[WIDTH-1:0]		name; \
 	assign ODATA	= name; \
 	always@(posedge CLK, negedge nRST) begin \
 		if(!nRST) begin \

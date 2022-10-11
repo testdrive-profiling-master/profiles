@@ -30,39 +30,60 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Processor
-// Rev.  : 10/11/2022 Tue (clonextop@gmail.com)
+// Title : FPU 32bit(IEEE-754) unit
+// Rev.  : 9/2/2022 Fri (clonextop@gmail.com)
 //================================================================================
-`include "system_defines.vh"
+`include "../system_defines.vh"
 
-module MAD_multicycled_Ex_4_2 (
-	input					CLK,	// clock
-	input					nRST,	// reset (active low)
-	input					IE,		// input enable
-	output					IREADY,	// input ready
-	input	[31:0]			A,		// A
-	input	[31:0]			B,		// B
-	input	[31:0]			C,		// C
-	output					OE,		// output enable
-	output	[31:0]			O		// output
+module FPU_F32_fully_stage_Divide_3 #(
+	parameter				CYCLE	= 4
+) (
+	input					CLK,		// clock
+	input					nRST,		// reset (active low)
+	input					IE,			// input enable
+	input	[31:0]			A,			// A
+	input	[31:0]			B,			// B
+	output					OE,			// output enable
+	output					EXCEPTION,	// EXCEPTION
+	output	[31:0]			O			// output
 );
 
 // definition & assignment ---------------------------------------------------
+genvar i;
+
+wire	[(CYCLE*(32*2))-1:0]	pipe_i;
+wire	[(CYCLE*(32+1))-1:0]	pipe_o;
 
 // implementation ------------------------------------------------------------
-MAD_multicycled_Ex #(
-	.CYCLE		(4),
-	.COUNT		(2)
+(* dont_touch = "yes" *) MultiCyclePath #(
+	.IWIDTH		(32*2),
+	.OWIDTH		(32 + 1),
+	.CYCLE		(CYCLE)
 ) multi_pipe (
 	.CLK		(CLK),
 	.nRST		(nRST),
 	.IE			(IE),
-	.IREADY		(IREADY),
-	.A			(A),
-	.B			(B),
-	.C			(C),
+	.IDATA		({A, B}),
+	.PIPE_I		(pipe_i),
+	.PIPE_O		(pipe_o),
 	.OE			(OE),
-	.O			(O)
+	.ODATA		({EXCEPTION, O})
 );
+
+generate
+for(i=0;i<CYCLE;i=i+1) begin : divide_gen
+	wire	[32-1:0]	a,b,o;
+	wire				e;	// exception
+	assign	{a,b}		= pipe_i[`BUS_RANGE((32*2), i)];
+	assign	{e, o}		= pipe_o[`BUS_RANGE((32+1), i)];
+	//assign	pipe_o[`BUS_RANGE((32+1), i)]	= {e, o};
+	FPU_F32_Divide	divide_inst(
+		.a_operand	(a),
+		.b_operand	(b),
+		.Exception	(e),
+		.result		(o)
+	);
+end
+endgenerate
 
 endmodule
