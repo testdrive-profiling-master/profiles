@@ -35,16 +35,35 @@
 //================================================================================
 `include "system_defines.vh"
 
-module MAD (
-	input	[31:0]			A,		// A
-	input	[31:0]			B,		// B
-	input	[31:0]			C,		// C
-	output	[31:0]			O		// output
+module SRAM_Single_multicycled_3 (
+	input					CLK,	// clock
+	input					nRST,	// reset (active low)
+	input					nCE,	// chip enable (active low)
+	input					nWE,	// write enable (active low)
+	output					READY,	// input ready
+	input	[6:0]			ADDR,	// address
+	input	[31:0]			DIN,	// data input
+	output					OE,		// output enable
+	output	[31:0]			DOUT	// data output
 );
 
 // definition & assignment ---------------------------------------------------
 
 // implementation ------------------------------------------------------------
-assign	O	= (A * B) + C;
+SRAM_Single_Multicycle #(
+	.ADDR_WIDTH		(7),
+	.DATA_WIDTH		(32),
+	.CYCLE			(3)
+) sram (
+	.CLK			(CLK),
+	.nRST			(nRST),
+	.nCE			(nCE),
+	.nWE			(nWE),
+	.READY			(READY),
+	.ADDR			(ADDR),
+	.DIN			(DIN),
+	.OE				(OE),
+	.DOUT			(DOUT)
+);
 
 endmodule

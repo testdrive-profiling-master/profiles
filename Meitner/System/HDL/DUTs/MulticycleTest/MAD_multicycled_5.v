@@ -35,16 +35,31 @@
 //================================================================================
 `include "system_defines.vh"
 
-module MAD (
+module MAD_multicycled_5 (
+	input					CLK,	// clock
+	input					nRST,	// reset (active low)
+	input					IE,		// input enable
 	input	[31:0]			A,		// A
 	input	[31:0]			B,		// B
 	input	[31:0]			C,		// C
+	output					OE,		// output enable
 	output	[31:0]			O		// output
 );
 
 // definition & assignment ---------------------------------------------------
 
 // implementation ------------------------------------------------------------
-assign	O	= (A * B) + C;
+MAD_multicycled #(
+	.CYCLE		(5)
+) multi_pipe (
+	.CLK		(CLK),
+	.nRST		(nRST),
+	.IE			(IE),
+	.A			(A),
+	.B			(B),
+	.C			(C),
+	.OE			(OE),
+	.ODATA		(O)
+);
 
 endmodule
