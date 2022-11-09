@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,25 +31,26 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
+// Rev.  : 11/9/2022 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __DDK_CONTEXT_H__
 #define __DDK_CONTEXT_H__
 #include "DDK_Common.h"
 
-class DDKContext : public DDK
-{
+class DDKContext : public DDK {
 	virtual ~DDKContext(void);
 public:
 	DDKContext(void);
 
-	inline BOOL IsInitialized(void)		{return m_pSystem != NULL;}
+	inline bool IsInitialized(void)		{
+		return m_pSystem != NULL;
+	}
 
 	// Identify
 	virtual const char* GetSystemDescription(void);
 
 	// life cycle
-	virtual void Release(void);		// Release display object
+	virtual void Release(void);		// Release DDK object
 
 	// memory
 	virtual DWORD GetMemoryBase(void);

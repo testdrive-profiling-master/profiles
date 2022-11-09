@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,17 +31,18 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
+// Rev.  : 11/9/2022 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "Display.h"
 #include "hw/hdmi_controller.h"
 
-class Testbench : public TestbenchFramework {
+TESTBENCH_DESIGN {
 	HDMI_Controller*	m_pHDMI;
 	DDKMemory*			m_pImg;
 
-	virtual bool OnInitialize(int argc, char** argv) {
+	virtual bool OnInitialize(int argc, char** argv)
+	{
 		m_pHDMI	= NULL;
 		m_pImg	= NULL;
 
@@ -71,27 +72,15 @@ class Testbench : public TestbenchFramework {
 		return true;
 	}
 
-	virtual void OnRelease(void) {
+	virtual void OnRelease(void)
+	{
 		SAFE_RELEASE(m_pImg);
 		SAFE_DELETE(m_pHDMI);
 	}
 
-	virtual bool OnTestBench(void) {
+	virtual bool OnTestBench(void)
+	{
 		printf("process is done!\n");
 		return true;
 	}
-};
-
-int main(int argc, char** argv)
-{
-	Testbench	tb;
-
-	if(tb.Initialize(argc, argv)) {
-		if(!tb.DoTestbench())
-			printf("Testbench is failed.\n");
-	} else {
-		printf("Initialization is failed.\n");
-	}
-
-	tb.Release();
-}
+} END;

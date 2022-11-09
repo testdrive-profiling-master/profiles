@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,18 +31,19 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
+// Rev.  : 11/9/2022 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "hw/DUT.h"
 #include "hw/hdmi_controller.h"
 
-class Testbench : public TestbenchFramework {
+TESTBENCH_DESIGN {
 	DDKMemory*			m_pFrame;
 	DUT*				m_pDUT;
 	HDMI_Controller*	m_pHDMI;
 
-	virtual bool OnInitialize(int argc, char** argv) {
+	virtual bool OnInitialize(int argc, char** argv)
+	{
 		m_pHDMI		= NULL;
 		m_pDUT		= NULL;
 
@@ -71,14 +72,16 @@ class Testbench : public TestbenchFramework {
 		return true;
 	}
 
-	virtual void OnRelease(void) {
+	virtual void OnRelease(void)
+	{
 		if(m_pDUT) m_pDUT->SetClock(50.f);		// set processor clock to 50MHz (Low speed.) for IDLE status
 
 		SAFE_DELETE(m_pDUT);
 		SAFE_RELEASE(m_pFrame);
 	}
 
-	virtual bool OnTestBench(void) {
+	virtual bool OnTestBench(void)
+	{
 		{
 			// slave read test
 			printf("Slave Write test.\n");
@@ -97,17 +100,4 @@ class Testbench : public TestbenchFramework {
 		}
 		return true;
 	}
-};
-
-int main(int argc, char** argv)
-{
-	Testbench	tb;
-
-	if(tb.Initialize(argc, argv)) {
-		if(!tb.DoTestbench())
-			printf("Testbench is failed.\n");
-	} else {
-		printf("Initialization is failed.\n");
-	}
-	tb.Release();
-}
+} END;

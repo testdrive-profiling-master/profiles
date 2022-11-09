@@ -31,16 +31,17 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 8/25/2022 Thu (clonextop@gmail.com)
+// Rev.  : 11/9/2022 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "hw/DUT.h"
 
-class Testbench : public TestbenchFramework {
+TESTBENCH_DESIGN {
 	DUT*			m_pDUT;		// Processor (Design Under Testing)
 	DDKMemory*		m_pBuff;
 
-	virtual bool OnInitialize(int argc, char** argv) {
+	virtual bool OnInitialize(int argc, char** argv)
+	{
 		m_pDUT	= NULL;
 		m_pBuff	= NULL;
 
@@ -55,14 +56,16 @@ class Testbench : public TestbenchFramework {
 		return true;
 	}
 
-	virtual void OnRelease(void) {
+	virtual void OnRelease(void)
+	{
 		if(m_pDUT) m_pDUT->SetClock(50.f);	// set processor clock to 50MHz (Low speed.) for IDLE status
 
 		SAFE_RELEASE(m_pBuff);
 		SAFE_DELETE(m_pDUT);
 	}
 
-	virtual bool OnTestBench(void) {
+	virtual bool OnTestBench(void)
+	{
 		//-----------------------------------------------------
 		// slave R/W test
 		//-----------------------------------------------------
@@ -156,19 +159,4 @@ class Testbench : public TestbenchFramework {
 		printf("process is done!\n");
 		return true;
 	}
-};
-
-int main(int argc, char** argv)
-{
-	Testbench	tb;
-
-	if(tb.Initialize(argc, argv)) {
-		if(!tb.DoTestbench())
-			printf("Testbench is failed.\n");
-	} else {
-		printf("Initialization is failed.\n");
-	}
-
-	tb.Release();
-}
-
+} END;

@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 11/9/2022 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "STDInterface.h"
@@ -43,6 +42,7 @@
 #include "BusSlave.h"
 #include "SystemMemory.h"
 #include "NativeMemory.h"
+#include <exception>	// for std::terminate
 
 SystemSim::SystemSim(void)
 {
@@ -98,6 +98,11 @@ void SystemSim::Release(void)
 	}
 
 	delete this;
+	// terminate all process
+	std::set_terminate([]() {
+		std::abort();
+	});
+	std::terminate();
 }
 
 DWORD SystemSim::RegRead(DWORD dwAddress)

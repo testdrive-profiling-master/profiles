@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
+// Rev.  : 11/9/2022 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 
@@ -112,5 +112,20 @@ void TestbenchFramework::Release(void)
 		m_pDDK->Release();					// release DDK
 		m_pDDK	= NULL;
 		_flushall();
+	}
+}
+
+// default main function
+int main(int argc, char** argv)
+{
+	if(__pTestbench) {
+		if(__pTestbench->Initialize(argc, argv)) {
+			if(!__pTestbench->DoTestbench())
+				printf("Testbench is failed.\n");
+		} else {
+			printf("Initialization is failed.\n");
+		}
+
+		__pTestbench->Release();
 	}
 }

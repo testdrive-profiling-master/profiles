@@ -31,17 +31,18 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 8/25/2022 Thu (clonextop@gmail.com)
+// Rev.  : 11/9/2022 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "hw/MTSP.h"
 
-class Testbench : public TestbenchFramework {
+TESTBENCH_DESIGN {
 	DDKMemory*			m_pFrame;
 	MTSP*				m_pMTSP;
 	DDKMemory*			m_pProgram;
 
-	virtual bool OnInitialize(int argc, char** argv) {
+	virtual bool OnInitialize(int argc, char** argv)
+	{
 		m_pMTSP		= NULL;
 		m_pProgram	= NULL;
 
@@ -76,7 +77,8 @@ class Testbench : public TestbenchFramework {
 		return true;
 	}
 
-	virtual void OnRelease(void) {
+	virtual void OnRelease(void)
+	{
 		if(m_pMTSP) m_pMTSP->SetClock(50.f);		// set processor clock to 50MHz (Low speed.) for IDLE status
 
 		SAFE_DELETE(m_pMTSP);
@@ -84,7 +86,8 @@ class Testbench : public TestbenchFramework {
 		SAFE_RELEASE(m_pProgram);
 	}
 
-	virtual bool OnTestBench(void) {
+	virtual bool OnTestBench(void)
+	{
 		m_pProgram	= m_pMTSP->Compile("GPASM/sample/simple_program.gpp");
 
 		if(m_pProgram) {
@@ -108,18 +111,4 @@ class Testbench : public TestbenchFramework {
 
 		return true;
 	}
-};
-
-int main(int argc, char** argv)
-{
-	Testbench	tb;
-
-	if(tb.Initialize(argc, argv)) {
-		if(!tb.DoTestbench())
-			printf("Testbench is failed.\n");
-	} else {
-		printf("Initialization is failed.\n");
-	}
-
-	tb.Release();
-}
+} END;

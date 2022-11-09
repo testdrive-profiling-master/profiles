@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 12/30/2021 Thu (clonextop@gmail.com)
+// Rev.  : 11/9/2022 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "ThreadManager.h"
@@ -39,14 +39,13 @@
 
 ThreadManager::ThreadManager(void)
 {
-	m_pThread			= NULL;
 	m_bBreakable		= true;
 	m_bThreadRunning	= false;
 }
 
 ThreadManager::~ThreadManager(void)
 {
-	assert(m_pThread == NULL);
+	assert(!m_Thread.joinable());
 }
 
 void ThreadManager::SetThreadBreakable(bool bBreakable)
@@ -62,36 +61,40 @@ void ThreadManager::ThreadMain(void)
 
 bool ThreadManager::RunThread(void)
 {
-	if(m_pThread) return false;
+	if(m_bThreadRunning) return false;
 
 	m_bThreadRunning	= true;
-	m_pThread	= new thread{&ThreadManager::ThreadMain, this};
-	return m_pThread != NULL;
+	m_Thread			= thread{&ThreadManager::ThreadMain, this};
+	return m_Thread.joinable();
 }
 
 void ThreadManager::KillThread(void)
 {
-	if(!m_pThread) return;
+	if(!m_Thread.joinable()) return;
 
-	OnThreadKill(false);
-RETRY_WAIT:
+	if(IsRunning()) {
+		OnThreadKill(false);
+		this_thread::yield();
 
-	for(int i = 0; i < 600; i++) {	// wait for 5 seconds
-		if(!IsRunning()) break;
+		for(int i = 0; i < 600; i++) {	// wait for 5 seconds
+			if(!IsRunning()) break;
 
-		if(GetKeyState(VK_ESCAPE) < 0) break;
+			if(GetKeyState(VK_ESCAPE) < 0) break;
 
-		this_thread::sleep_for(chrono::milliseconds(10));
+			this_thread::sleep_for(chrono::milliseconds(10));
 
-		if(!((i + 1) % 100) && (i / 100) != 5) {
-			LOGI("S/W is down, but Simulation is still busy. Automatically shutdown in %d sec. or press 'ESC' key to exit.\n", 5 - (i / 100));
+			if(!((i + 1) % 100) && (i / 100) != 5) {
+				LOGI("S/W is down, but Simulation is still busy. Automatically shutdown in %d sec. or press 'ESC' key to exit.\n", 5 - (i / 100));
+			}
+		}
+
+		if(IsRunning()) {
+			OnThreadKill(true);
+			this_thread::yield();
 		}
 	}
 
-	if(IsRunning()) OnThreadKill(true);
-
-	m_pThread->join();
-	SAFE_DELETE(m_pThread);
+	m_Thread.join();
 }
 
 bool ThreadManager::IsRunning(void)

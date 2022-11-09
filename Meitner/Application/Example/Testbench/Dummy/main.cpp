@@ -31,35 +31,24 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 8/25/2022 Thu (clonextop@gmail.com)
+// Rev.  : 11/9/2022 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 
-class Testbench : public TestbenchFramework {
-	virtual bool OnInitialize(int argc, char** argv) {
+TESTBENCH_DESIGN {
+	virtual bool OnInitialize(int argc, char** argv)
+	{
 		printf("Current system : %s\n", m_pDDK->GetSystemDescription());
 		return true;
 	}
 
-	virtual void OnRelease(void) {
+	virtual void OnRelease(void)
+	{
 	}
 
-	virtual bool OnTestBench(void) {
+	virtual bool OnTestBench(void)
+	{
 		printf("Dummy process is done!\n");
 		return true;
 	}
-};
-
-int main(int argc, char** argv)
-{
-	Testbench	tb;
-
-	if(tb.Initialize(argc, argv)) {
-		if(!tb.DoTestbench())
-			printf("Testbench is failed.\n");
-	} else {
-		printf("Initialization is failed.\n");
-	}
-
-	tb.Release();
-}
+} END;
