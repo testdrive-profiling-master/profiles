@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 1/19/2022 Wed (clonextop@gmail.com)
+// Rev.  : 12/30/2022 Fri (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
 #include "TestDriver.inl"
@@ -39,14 +39,15 @@
 #include "SimTop.h"
 #include <time.h>		// for rand/srand
 
-static UINT64	g_lSimulationTime		= 0;		// global simulation timestamp
-SimHDL*			g_pSimHDL				= NULL;
-SimControl*		g_pSimControl			= NULL;
-SimTop*			g_pSimTop				= NULL;
-bool (*DPI_Initialize)(void)			= NULL;
-void (*DPI_Finalize)(void)				= NULL;
+static UINT64				__lSimulationTime		= 0;		// global simulation timestamp
+static SimHDL*				__pSimHDL				= NULL;
+static SimControl*			__pSimControl			= NULL;
+static VerilatedContext*	__pContext				= NULL;
+static SimTop*				__pSimTop				= NULL;
+bool (*DPI_Initialize)(void)						= NULL;
+void (*DPI_Finalize)(void)							= NULL;
 #ifndef SIMULATION_TOP_EX
-static BOOL		__PreINTR				= TRUE;
+static BOOL				__PreINTR					= TRUE;
 #endif
 #ifdef SIM_TRACE
 #ifdef SIM_TRACE_FILE_OUTPUT
@@ -79,31 +80,34 @@ public:
 #endif
 #endif
 
-		if(g_pSimHDL == this) {
-			g_pSimTop->final();
-			delete g_pSimTop;
-			g_pSimTop		= NULL;
-			g_pSimHDL		= NULL;
+		if(__pSimHDL == this) {
+			__pSimTop->final();
+			delete __pSimTop;
+			delete __pContext;
+			__pSimTop		= NULL;
+			__pSimHDL		= NULL;
+			__pContext		= NULL;
 		}
 	}
 
-	virtual BOOL Initialize(void) {	// cppcheck-suppress internalAstError
-		if(!g_pSimHDL) {
+	virtual bool Initialize(void) {	// cppcheck-suppress internalAstError
+		if(!__pSimHDL) {
 			srand(time(NULL));			// randomize seed
 			Verilated::randReset(2);	// randomize all bits
-			g_pSimHDL		= this;
-			g_pSimTop		= new SimTop;
+			__pSimHDL		= this;
+			__pContext		= new VerilatedContext;
+			__pSimTop		= new SimTop(__pContext);
 		} else {
 			LOGI("'SimProcessor' At least one more instances has been created.\n");
-			return FALSE;
+			return false;
 		}
 
 #ifdef SYSTEM_MEMORY_BASE_ADDRESS
 		SetMemoryBaseAddress(SYSTEM_MEMORY_BASE_ADDRESS);
 #endif
 #ifndef SIMULATION_TOP_EX
-		g_pSimTop->nRST		= 0;
-		g_pSimTop->MCLK		= 0;
+		__pSimTop->nRST		= 0;
+		__pSimTop->MCLK		= 0;
 #endif
 #ifdef SIM_TRACE
 		{
@@ -142,7 +146,7 @@ public:
 					// Do simulation
 					g_pWaveDump->set_time_unit("1ps");
 					g_pWaveDump->set_time_resolution("1ps");
-					g_pSimTop->trace(g_pWaveDump, 99);
+					__pSimTop->trace(g_pWaveDump, 99);
 
 					if(*sFile) g_pWaveDump->open(sFile);
 				}
@@ -154,46 +158,50 @@ public:
 #ifndef SIMULATION_TOP_EX
 		{
 			// make default clock, reset & busy
-			CLOCK_INTERFACE*	pClock	= g_pSimControl->CreateClock(&g_pSimTop->MCLK, &g_pSimTop->nRST);
+			CLOCK_INTERFACE*	pClock	= __pSimControl->CreateClock(&__pSimTop->MCLK, &__pSimTop->nRST);
 			pClock->SetParameters(0, DEFAULT_HALF_CLOCK_PERIOD);	// set half clock period
 			pClock->DoReset();
-			g_pSimControl->SimulationAddBusy(&g_pSimTop->BUSY);
+			__pSimControl->SimulationAddBusy(&__pSimTop->BUSY);
 		}
 #endif
 
 		if(DPI_Initialize) return DPI_Initialize();
 
-		return TRUE;
+		return true;
 	}
 
-	virtual BOOL IsTrace(void) {
+	virtual bool IsTrace(void) {
 #ifdef SIM_TRACE
 		return (g_pWaveDump != NULL);
 #else
-		return FALSE;
+		return false;
 #endif
 	}
 
-	virtual BOOL Eval(void) {
+	virtual bool Eval(void) {
 		// simulation evaluation
-		g_pSimTop->eval();
+		if(__pContext) {
+			__pSimTop->eval();
 #ifndef SIMULATION_TOP_EX
-		{
-			if(!__PreINTR && g_pSimTop->INTR)
-				g_pSimControl->AwakeInterrupt();
+			{
+				if(!__PreINTR && __pSimTop->INTR)
+					__pSimControl->AwakeInterrupt();
 
-			__PreINTR	= g_pSimTop->INTR;
-		}
+				__PreINTR	= __pSimTop->INTR;
+			}
 #endif
 #ifdef SIM_TRACE
 
-		if(g_pWaveDump) {
-			if(!g_lSimulationTime || (g_lSimulationTime > g_lTraceStartTime))
-				g_pWaveDump->dump((vluint64_t)g_lSimulationTime);
-		}
+			if(g_pWaveDump) {
+				if(!__lSimulationTime || (__lSimulationTime > g_lTraceStartTime))
+					g_pWaveDump->dump((vluint64_t)__lSimulationTime);
+			}
 
 #endif
-		return !Verilated::gotFinish();
+			return !__pContext->gotFinish();
+		}
+
+		return false;
 	}
 
 	virtual void Release(void) {
@@ -205,7 +213,7 @@ public:
 
 SimHDL* CreateSimHDL(SimControl* pControl)
 {
-	g_pSimControl	= pControl;
+	__pSimControl	= pControl;
 	return new SimHDL_imp();
 }
 
@@ -239,87 +247,87 @@ double sc_time_stamp()          // Called by $time in Verilog
 // bypass command
 BUS_SLAVE_INTERFACE* CreateSlave(DWORD dwAddrBase, DWORD dwAddrHigh)
 {
-	return g_pSimControl->CreateSlave(dwAddrBase, dwAddrHigh);
+	return __pSimControl->CreateSlave(dwAddrBase, dwAddrHigh);
 }
 
 BUS_SLAVE_INTERFACE* FindSlave(DWORD dwAddress)
 {
-	return g_pSimControl->FindSlave(dwAddress);
+	return __pSimControl->FindSlave(dwAddress);
 }
 
 CLOCK_INTERFACE* FindClock(BYTE* pCLK)
 {
-	return g_pSimControl->FindClock(pCLK);
+	return __pSimControl->FindClock(pCLK);
 }
 
 void MemoryRead32(int ID, unsigned int ADDR, unsigned int* DATA)
 {
-	g_pSimControl->MemoryRead32(ID, ADDR, *(DWORD*)DATA);
+	__pSimControl->MemoryRead32(ID, ADDR, *(DWORD*)DATA);
 }
 
 void MemoryWrite32(int ID, unsigned int ADDR, unsigned int DATA)
 {
-	g_pSimControl->MemoryWrite32(ID, ADDR, DATA);
+	__pSimControl->MemoryWrite32(ID, ADDR, DATA);
 }
 
 void MemoryRead16(int ID, unsigned int ADDR, unsigned short int* DATA)
 {
-	g_pSimControl->MemoryRead16(ID, ADDR, *(WORD*)DATA);
+	__pSimControl->MemoryRead16(ID, ADDR, *(WORD*)DATA);
 }
 
 void MemoryWrite16(int ID, unsigned int ADDR, unsigned short int DATA)
 {
-	g_pSimControl->MemoryWrite16(ID, ADDR, DATA);
+	__pSimControl->MemoryWrite16(ID, ADDR, DATA);
 }
 
 void MemoryRead8(int ID, unsigned int ADDR, unsigned char* DATA)
 {
-	g_pSimControl->MemoryRead8(ID, ADDR, *(BYTE*)DATA);
+	__pSimControl->MemoryRead8(ID, ADDR, *(BYTE*)DATA);
 }
 
 void MemoryWrite8(int ID, unsigned int ADDR, unsigned char DATA)
 {
-	g_pSimControl->MemoryWrite8(ID, ADDR, DATA);
+	__pSimControl->MemoryWrite8(ID, ADDR, DATA);
 }
 
 SYSTEM_CONFIG* GetSystemConfig(void)
 {
-	if(!g_pSimControl) return NULL;
+	if(!__pSimControl) return NULL;
 
-	return g_pSimControl->GetSystemConfig();
+	return __pSimControl->GetSystemConfig();
 }
 
 DisplayConfig* GetDisplayConfig(void)
 {
-	if(!g_pSimControl) return NULL;
+	if(!__pSimControl) return NULL;
 
-	return g_pSimControl->GetDisplayConfig();
+	return __pSimControl->GetDisplayConfig();
 }
 
 BYTE* GetMemoryPointer(DWORD dwAddress, DWORD dwSize, BOOL bDisplay)
 {
-	if(!g_pSimControl) return NULL;
+	if(!__pSimControl) return NULL;
 
-	return g_pSimControl->GetMemoryPointer(dwAddress, dwSize, bDisplay);
+	return __pSimControl->GetMemoryPointer(dwAddress, dwSize, bDisplay);
 }
 
 DWORD GetMemoryBaseAddress(void)
 {
-	if(!g_pSimControl) return 0;
+	if(!__pSimControl) return 0;
 
-	return g_pSimControl->GetMemoryBaseAddress();
+	return __pSimControl->GetMemoryBaseAddress();
 }
 
 BOOL GetMemory(const char* sName, void*& pConfig, void*& pMemory)
 {
-	if(!g_pSimControl) return NULL;
+	if(!__pSimControl) return NULL;
 
-	return g_pSimControl->GetMemory(sName, pConfig, pMemory);
+	return __pSimControl->GetMemory(sName, pConfig, pMemory);
 }
 
 void SimulationQuit(bool bError)
 {
-	if(g_pSimControl) g_pSimControl->SetError();
+	if(__pSimControl) __pSimControl->SetError();
 
 	Verilated::gotFinish(true);
 }
@@ -341,55 +349,55 @@ void SimulationFlush(void)
 
 UINT64 SimulationTime(void)
 {
-	return g_lSimulationTime;
+	return __lSimulationTime;
 }
 
 void AdvenceSimulationTime(DWORD dwTime)
 {
-	g_lSimulationTime	+= dwTime;
+	__lSimulationTime	+= dwTime;
 }
 
 void SimulationDebugMode(BOOL bDebug)
 {
-	if(!g_pSimControl) return;
+	if(!__pSimControl) return;
 
-	g_pSimControl->SimulationDebugMode(bDebug);
+	__pSimControl->SimulationDebugMode(bDebug);
 }
 
 void SimulationLock(int iDelayTicks)
 {
-	if(!g_pSimControl) return;
+	if(!__pSimControl) return;
 
-	g_pSimControl->SimulationLock(iDelayTicks);
+	__pSimControl->SimulationLock(iDelayTicks);
 }
 
 void SimulationUnLock(void)
 {
-	if(!g_pSimControl) return;
+	if(!__pSimControl) return;
 
-	g_pSimControl->SimulationUnLock();
+	__pSimControl->SimulationUnLock();
 }
 
 void SetSystemDescription(const char* sDesc)
 {
-	if(!g_pSimControl) return;
+	if(!__pSimControl) return;
 
-	return g_pSimControl->SetSystemDescription(sDesc);
+	return __pSimControl->SetSystemDescription(sDesc);
 }
 
 void* SimulationClockCreate(BYTE* pCLK, BYTE* pRST)
 {
-	return (void*)g_pSimControl->CreateClock(pCLK, pRST);
+	return (void*)__pSimControl->CreateClock(pCLK, pRST);
 }
 
 void SimulationCreateBusy(BYTE* pBUSY)
 {
-	g_pSimControl->SimulationAddBusy(pBUSY);
+	__pSimControl->SimulationAddBusy(pBUSY);
 }
 
 DPI_FUNCTION int SimulationAwakeInterrupt(void)
 {
-	return g_pSimControl->AwakeInterrupt();
+	return __pSimControl->AwakeInterrupt();
 }
 
 DPI_FUNCTION void SimulationSetClock(void* hHandle, unsigned int dwID, unsigned int dwPeriod, unsigned char InitValue, unsigned int dwPhase, unsigned char ClockPolarity, unsigned char ResetPolarity)

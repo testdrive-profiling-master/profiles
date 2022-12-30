@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 11/9/2022 Wed (clonextop@gmail.com)
+// Rev.  : 12/30/2022 Fri (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "STDInterface.h"
@@ -98,11 +98,6 @@ void SystemSim::Release(void)
 	}
 
 	delete this;
-	// terminate all process
-	std::set_terminate([]() {
-		std::abort();
-	});
-	std::terminate();
 }
 
 DWORD SystemSim::RegRead(DWORD dwAddress)

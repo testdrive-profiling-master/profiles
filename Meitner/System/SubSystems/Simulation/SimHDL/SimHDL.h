@@ -71,9 +71,9 @@ struct SimControl {
 };
 
 struct SimHDL {
-	virtual BOOL Initialize(void) = 0;
-	virtual BOOL IsTrace(void) = 0;
-	virtual BOOL Eval(void) = 0;
+	virtual bool Initialize(void) = 0;
+	virtual bool IsTrace(void) = 0;
+	virtual bool Eval(void) = 0;
 	virtual void Release(void) = 0;
 };
 
