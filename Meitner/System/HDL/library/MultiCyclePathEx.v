@@ -33,8 +33,6 @@
 // Title : Common verilog library
 // Rev.  : 9/2/2022 Fri (clonextop@gmail.com)
 //================================================================================
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
-//================================================================================
 `ifndef __TESTDRIVE_MULTICYCLE_PIPE_EX_V__
 `define __TESTDRIVE_MULTICYCLE_PIPE_EX_V__
 `include "system_defines.vh"
