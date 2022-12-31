@@ -47,14 +47,14 @@ static SimTop*				__pSimTop				= NULL;
 bool (*DPI_Initialize)(void)						= NULL;
 void (*DPI_Finalize)(void)							= NULL;
 #ifndef SIMULATION_TOP_EX
-static BOOL				__PreINTR					= TRUE;
+static bool					__PreINTR				= true;
 #endif
 #ifdef SIM_TRACE
 #ifdef SIM_TRACE_FILE_OUTPUT
-VerilatedFstC*	g_pWaveDump				= NULL;
+static VerilatedFstC*		__pWaveDump				= NULL;
 #elif defined(SIM_TRACE_INTERACTIVE)
-VerilatedVcdC*	g_pWaveDump				= NULL;
-VerilatedVcdGTKWave*	g_pGtkWave		= NULL;
+static VerilatedVcdC*		__pWaveDump				= NULL;
+static VerilatedVcdGTKWave*	__pGtkWave				= NULL;
 #endif
 UINT64			g_lTraceStartTime		= 0;
 #endif
@@ -71,12 +71,12 @@ public:
 	virtual ~SimHDL_imp(void) {
 #ifdef SIM_TRACE
 
-		if(g_pWaveDump)
-			g_pWaveDump->close();
+		if(__pWaveDump)
+			__pWaveDump->close();
 
-		SAFE_DELETE(g_pWaveDump);
+		SAFE_DELETE(__pWaveDump);
 #ifdef SIM_TRACE_INTERACTIVE
-		SAFE_DELETE(g_pGtkWave);
+		SAFE_DELETE(__pGtkWave);
 #endif
 #endif
 
@@ -111,7 +111,7 @@ public:
 #endif
 #ifdef SIM_TRACE
 		{
-			g_pWaveDump			= NULL;
+			__pWaveDump			= NULL;
 			g_lTraceStartTime	= 0;
 			{
 				// set simulation start time
@@ -133,22 +133,22 @@ public:
 				// VCD output file
 				GetEnvironmentVariable("SIM_OUTPUT_FILE", sFile, MAX_PATH);
 				__pContext->traceEverOn(true);
-				g_pWaveDump		= new VerilatedFstC();
+				__pWaveDump		= new VerilatedFstC();
 #elif defined(SIM_TRACE_INTERACTIVE)
 				// interactive GTKWave mode
 				GetEnvironmentVariable("SIM_DO_FILE", sFile, MAX_PATH);
 				__pContext->traceEverOn(true);
-				g_pGtkWave	= new VerilatedVcdGTKWave;
-				g_pWaveDump	= new VerilatedVcdC(g_pGtkWave);
+				__pGtkWave	= new VerilatedVcdGTKWave;
+				__pWaveDump	= new VerilatedVcdC(__pGtkWave);
 #endif
 
-				if(g_pWaveDump) {
+				if(__pWaveDump) {
 					// Do simulation
-					g_pWaveDump->set_time_unit("1ps");
-					g_pWaveDump->set_time_resolution("1ps");
-					__pSimTop->trace(g_pWaveDump, 99);
+					__pWaveDump->set_time_unit("1ps");
+					__pWaveDump->set_time_resolution("1ps");
+					__pSimTop->trace(__pWaveDump, 99);
 
-					if(*sFile) g_pWaveDump->open(sFile);
+					if(*sFile) __pWaveDump->open(sFile);
 				}
 			}
 		}
@@ -172,7 +172,7 @@ public:
 
 	virtual bool IsTrace(void) {
 #ifdef SIM_TRACE
-		return (g_pWaveDump != NULL);
+		return (__pWaveDump != NULL);
 #else
 		return false;
 #endif
@@ -192,9 +192,9 @@ public:
 #endif
 #ifdef SIM_TRACE
 
-			if(g_pWaveDump) {
+			if(__pWaveDump) {
 				if(!__lSimulationTime || (__lSimulationTime > g_lTraceStartTime))
-					g_pWaveDump->dump((vluint64_t)__lSimulationTime);
+					__pWaveDump->dump((vluint64_t)__lSimulationTime);
 			}
 
 #endif
