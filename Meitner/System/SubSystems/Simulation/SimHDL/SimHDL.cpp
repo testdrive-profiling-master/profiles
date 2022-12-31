@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 12/30/2022 Fri (clonextop@gmail.com)
+// Rev.  : 12/31/2022 Sat (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
 #include "TestDriver.inl"
@@ -93,9 +93,9 @@ public:
 	virtual bool Initialize(void) {	// cppcheck-suppress internalAstError
 		if(!__pSimHDL) {
 			srand(time(NULL));			// randomize seed
-			Verilated::randReset(2);	// randomize all bits
 			__pSimHDL		= this;
 			__pContext		= new VerilatedContext;
+			__pContext->randReset(2);	// randomize all bits
 			__pSimTop		= new SimTop(__pContext);
 		} else {
 			LOGI("'SimProcessor' At least one more instances has been created.\n");
@@ -132,12 +132,12 @@ public:
 #ifdef SIM_TRACE_FILE_OUTPUT
 				// VCD output file
 				GetEnvironmentVariable("SIM_OUTPUT_FILE", sFile, MAX_PATH);
-				Verilated::traceEverOn(true);
+				__pContext->traceEverOn(true);
 				g_pWaveDump		= new VerilatedFstC();
 #elif defined(SIM_TRACE_INTERACTIVE)
 				// interactive GTKWave mode
 				GetEnvironmentVariable("SIM_DO_FILE", sFile, MAX_PATH);
-				Verilated::traceEverOn(true);
+				__pContext->traceEverOn(true);
 				g_pGtkWave	= new VerilatedVcdGTKWave;
 				g_pWaveDump	= new VerilatedVcdC(g_pGtkWave);
 #endif
@@ -153,7 +153,7 @@ public:
 			}
 		}
 #else
-		Verilated::traceEverOn(false);	// no tracing
+		__pContext->traceEverOn(false);	// no tracing
 #endif
 #ifndef SIMULATION_TOP_EX
 		{
@@ -329,7 +329,7 @@ void SimulationQuit(bool bError)
 {
 	if(__pSimControl) __pSimControl->SetError();
 
-	Verilated::gotFinish(true);
+	__pContext->gotFinish(true);
 }
 
 void SimulationStop(void)
