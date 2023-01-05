@@ -1,4 +1,4 @@
-// (c) Copyright 1995-2021 Xilinx, Inc. All rights reserved.
+// (c) Copyright 1995-2023 Xilinx, Inc. All rights reserved.
 // 
 // This file contains confidential and proprietary information
 // of Xilinx, Inc. and is protected under U.S. and
@@ -48,7 +48,7 @@
 
 
 // IP VLNV: xilinx.com:ip:axi_register_slice:2.1
-// IP Revision: 24
+// IP Revision: 27
 
 `timescale 1ns/1ps
 
@@ -183,7 +183,7 @@ HREADS 1, RUSER_BITS_PER_BYTE 0, WUSER_BITS_PER_BYTE 0, INSERT_VIP 0" *)
 (* X_INTERFACE_INFO = "xilinx.com:interface:aximm:1.0 M_AXI RREADY" *)
 output wire m_axi_rready;
 
-  axi_register_slice_v2_1_24_axi_register_slice #(
+  axi_register_slice_v2_1_27_axi_register_slice #(
     .C_FAMILY("virtex7"),
     .C_AXI_PROTOCOL(2),
     .C_AXI_ID_WIDTH(1),
@@ -224,7 +224,7 @@ output wire m_axi_rready;
     .s_axi_awid(1'B0),
     .s_axi_awaddr(s_axi_awaddr),
     .s_axi_awlen(8'B0),
-    .s_axi_awsize(3'H00000002),
+    .s_axi_awsize(2),
     .s_axi_awburst(2'B1),
     .s_axi_awlock(1'B0),
     .s_axi_awcache(4'B0),
@@ -249,7 +249,7 @@ output wire m_axi_rready;
     .s_axi_arid(1'B0),
     .s_axi_araddr(s_axi_araddr),
     .s_axi_arlen(8'B0),
-    .s_axi_arsize(3'H00000002),
+    .s_axi_arsize(2),
     .s_axi_arburst(2'B1),
     .s_axi_arlock(1'B0),
     .s_axi_arcache(4'B0),

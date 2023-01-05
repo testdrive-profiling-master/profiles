@@ -1,4 +1,4 @@
-// (c) Copyright 1995-2021 Xilinx, Inc. All rights reserved.
+// (c) Copyright 1995-2023 Xilinx, Inc. All rights reserved.
 // 
 // This file contains confidential and proprietary information
 // of Xilinx, Inc. and is protected under U.S. and
@@ -48,11 +48,11 @@
 
 
 // IP VLNV: xilinx.com:ip:axi_clock_converter:2.1
-// IP Revision: 23
+// IP Revision: 26
 
-(* X_CORE_INFO = "axi_clock_converter_v2_1_23_axi_clock_converter,Vivado 2021.1" *)
-(* CHECK_LICENSE_TYPE = "System_auto_cc_3,axi_clock_converter_v2_1_23_axi_clock_converter,{}" *)
-(* CORE_GENERATION_INFO = "System_auto_cc_3,axi_clock_converter_v2_1_23_axi_clock_converter,{x_ipProduct=Vivado 2021.1,x_ipVendor=xilinx.com,x_ipLibrary=ip,x_ipName=axi_clock_converter,x_ipVersion=2.1,x_ipCoreRevision=23,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,C_FAMILY=virtex7,C_AXI_ID_WIDTH=3,C_AXI_ADDR_WIDTH=32,C_AXI_DATA_WIDTH=512,C_S_AXI_ACLK_RATIO=1,C_M_AXI_ACLK_RATIO=2,C_AXI_IS_ACLK_ASYNC=1,C_AXI_PROTOCOL=0,C_AXI_SUPPORTS_USER_SIGNALS=0,C_AXI_AWUSER_WIDTH=1,C_AXI_ARUSER_WIDTH=1,C_AXI_WUSER_WIDTH=1,C_AXI_RUSER_W\
+(* X_CORE_INFO = "axi_clock_converter_v2_1_26_axi_clock_converter,Vivado 2022.2" *)
+(* CHECK_LICENSE_TYPE = "System_auto_cc_3,axi_clock_converter_v2_1_26_axi_clock_converter,{}" *)
+(* CORE_GENERATION_INFO = "System_auto_cc_3,axi_clock_converter_v2_1_26_axi_clock_converter,{x_ipProduct=Vivado 2022.2,x_ipVendor=xilinx.com,x_ipLibrary=ip,x_ipName=axi_clock_converter,x_ipVersion=2.1,x_ipCoreRevision=26,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,C_FAMILY=virtex7,C_AXI_ID_WIDTH=3,C_AXI_ADDR_WIDTH=32,C_AXI_DATA_WIDTH=512,C_S_AXI_ACLK_RATIO=1,C_M_AXI_ACLK_RATIO=2,C_AXI_IS_ACLK_ASYNC=1,C_AXI_PROTOCOL=0,C_AXI_SUPPORTS_USER_SIGNALS=0,C_AXI_AWUSER_WIDTH=1,C_AXI_ARUSER_WIDTH=1,C_AXI_WUSER_WIDTH=1,C_AXI_RUSER_W\
 IDTH=1,C_AXI_BUSER_WIDTH=1,C_AXI_SUPPORTS_WRITE=1,C_AXI_SUPPORTS_READ=1,C_SYNCHRONIZER_STAGE=3}" *)
 (* DowngradeIPIdentifiedWarnings = "yes" *)
 module System_auto_cc_3 (
@@ -313,7 +313,7 @@ TE_THREADS 1, RUSER_BITS_PER_BYTE 0, WUSER_BITS_PER_BYTE 0, INSERT_VIP 0" *)
 (* X_INTERFACE_INFO = "xilinx.com:interface:aximm:1.0 M_AXI RREADY" *)
 output wire m_axi_rready;
 
-  axi_clock_converter_v2_1_23_axi_clock_converter #(
+  axi_clock_converter_v2_1_26_axi_clock_converter #(
     .C_FAMILY("virtex7"),
     .C_AXI_ID_WIDTH(3),
     .C_AXI_ADDR_WIDTH(32),

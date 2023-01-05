@@ -1,4 +1,4 @@
-// (c) Copyright 1995-2021 Xilinx, Inc. All rights reserved.
+// (c) Copyright 1995-2023 Xilinx, Inc. All rights reserved.
 // 
 // This file contains confidential and proprietary information
 // of Xilinx, Inc. and is protected under U.S. and
@@ -48,11 +48,11 @@
 
 
 // IP VLNV: xilinx.com:ip:axi_register_slice:2.1
-// IP Revision: 24
+// IP Revision: 27
 
-(* X_CORE_INFO = "axi_register_slice_v2_1_24_axi_register_slice,Vivado 2021.1" *)
-(* CHECK_LICENSE_TYPE = "System_m01_regslice_0,axi_register_slice_v2_1_24_axi_register_slice,{}" *)
-(* CORE_GENERATION_INFO = "System_m01_regslice_0,axi_register_slice_v2_1_24_axi_register_slice,{x_ipProduct=Vivado 2021.1,x_ipVendor=xilinx.com,x_ipLibrary=ip,x_ipName=axi_register_slice,x_ipVersion=2.1,x_ipCoreRevision=24,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,C_FAMILY=virtex7,C_AXI_PROTOCOL=2,C_AXI_ID_WIDTH=1,C_AXI_ADDR_WIDTH=32,C_AXI_DATA_WIDTH=32,C_AXI_SUPPORTS_USER_SIGNALS=0,C_AXI_AWUSER_WIDTH=1,C_AXI_ARUSER_WIDTH=1,C_AXI_WUSER_WIDTH=1,C_AXI_RUSER_WIDTH=1,C_AXI_BUSER_WIDTH=1,C_REG_CONFIG_AW=7,C_REG_CONFIG_W=7,C\
+(* X_CORE_INFO = "axi_register_slice_v2_1_27_axi_register_slice,Vivado 2022.2" *)
+(* CHECK_LICENSE_TYPE = "System_m01_regslice_0,axi_register_slice_v2_1_27_axi_register_slice,{}" *)
+(* CORE_GENERATION_INFO = "System_m01_regslice_0,axi_register_slice_v2_1_27_axi_register_slice,{x_ipProduct=Vivado 2022.2,x_ipVendor=xilinx.com,x_ipLibrary=ip,x_ipName=axi_register_slice,x_ipVersion=2.1,x_ipCoreRevision=27,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,C_FAMILY=virtex7,C_AXI_PROTOCOL=2,C_AXI_ID_WIDTH=1,C_AXI_ADDR_WIDTH=32,C_AXI_DATA_WIDTH=32,C_AXI_SUPPORTS_USER_SIGNALS=0,C_AXI_AWUSER_WIDTH=1,C_AXI_ARUSER_WIDTH=1,C_AXI_WUSER_WIDTH=1,C_AXI_RUSER_WIDTH=1,C_AXI_BUSER_WIDTH=1,C_REG_CONFIG_AW=7,C_REG_CONFIG_W=7,C\
 _REG_CONFIG_B=7,C_REG_CONFIG_AR=7,C_REG_CONFIG_R=7,C_RESERVE_MODE=0,C_NUM_SLR_CROSSINGS=0,C_PIPELINES_MASTER_AW=0,C_PIPELINES_MASTER_W=0,C_PIPELINES_MASTER_B=0,C_PIPELINES_MASTER_AR=0,C_PIPELINES_MASTER_R=0,C_PIPELINES_SLAVE_AW=0,C_PIPELINES_SLAVE_W=0,C_PIPELINES_SLAVE_B=0,C_PIPELINES_SLAVE_AR=0,C_PIPELINES_SLAVE_R=0,C_PIPELINES_MIDDLE_AW=0,C_PIPELINES_MIDDLE_W=0,C_PIPELINES_MIDDLE_B=0,C_PIPELINES_MIDDLE_AR=0,C_PIPELINES_MIDDLE_R=0}" *)
 (* DowngradeIPIdentifiedWarnings = "yes" *)
 module System_m01_regslice_0 (
@@ -185,7 +185,7 @@ HREADS 1, RUSER_BITS_PER_BYTE 0, WUSER_BITS_PER_BYTE 0, INSERT_VIP 0" *)
 (* X_INTERFACE_INFO = "xilinx.com:interface:aximm:1.0 M_AXI RREADY" *)
 output wire m_axi_rready;
 
-  axi_register_slice_v2_1_24_axi_register_slice #(
+  axi_register_slice_v2_1_27_axi_register_slice #(
     .C_FAMILY("virtex7"),
     .C_AXI_PROTOCOL(2),
     .C_AXI_ID_WIDTH(1),
@@ -226,7 +226,7 @@ output wire m_axi_rready;
     .s_axi_awid(1'B0),
     .s_axi_awaddr(s_axi_awaddr),
     .s_axi_awlen(8'B0),
-    .s_axi_awsize(3'H00000002),
+    .s_axi_awsize(2),
     .s_axi_awburst(2'B1),
     .s_axi_awlock(1'B0),
     .s_axi_awcache(4'B0),
@@ -251,7 +251,7 @@ output wire m_axi_rready;
     .s_axi_arid(1'B0),
     .s_axi_araddr(s_axi_araddr),
     .s_axi_arlen(8'B0),
-    .s_axi_arsize(3'H00000002),
+    .s_axi_arsize(2),
     .s_axi_arburst(2'B1),
     .s_axi_arlock(1'B0),
     .s_axi_arcache(4'B0),

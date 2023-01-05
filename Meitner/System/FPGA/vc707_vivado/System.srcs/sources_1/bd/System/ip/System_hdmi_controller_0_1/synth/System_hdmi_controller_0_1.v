@@ -1,4 +1,4 @@
-// (c) Copyright 1995-2021 Xilinx, Inc. All rights reserved.
+// (c) Copyright 1995-2023 Xilinx, Inc. All rights reserved.
 // 
 // This file contains confidential and proprietary information
 // of Xilinx, Inc. and is protected under U.S. and
@@ -50,9 +50,9 @@
 // IP VLNV: xilinx.com:user:hdmi_controller:1.0
 // IP Revision: 17
 
-(* X_CORE_INFO = "hdmi_controller_v1_0,Vivado 2021.1" *)
+(* X_CORE_INFO = "hdmi_controller_v1_0,Vivado 2022.2" *)
 (* CHECK_LICENSE_TYPE = "System_hdmi_controller_0_1,hdmi_controller_v1_0,{}" *)
-(* CORE_GENERATION_INFO = "System_hdmi_controller_0_1,hdmi_controller_v1_0,{x_ipProduct=Vivado 2021.1,x_ipVendor=xilinx.com,x_ipLibrary=user,x_ipName=hdmi_controller,x_ipVersion=1.0,x_ipCoreRevision=17,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,C_M_AXI_ID_WIDTH=1,C_M_AXI_ADDR_WIDTH=32,C_M_AXI_DATA_WIDTH=512,C_S_AXI_DATA_WIDTH=32,C_S_AXI_ADDR_WIDTH=16}" *)
+(* CORE_GENERATION_INFO = "System_hdmi_controller_0_1,hdmi_controller_v1_0,{x_ipProduct=Vivado 2022.2,x_ipVendor=xilinx.com,x_ipLibrary=user,x_ipName=hdmi_controller,x_ipVersion=1.0,x_ipCoreRevision=17,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,C_M_AXI_ID_WIDTH=1,C_M_AXI_ADDR_WIDTH=32,C_M_AXI_DATA_WIDTH=512,C_S_AXI_DATA_WIDTH=32,C_S_AXI_ADDR_WIDTH=16}" *)
 (* DowngradeIPIdentifiedWarnings = "yes" *)
 module System_hdmi_controller_0_1 (
   ACLK,

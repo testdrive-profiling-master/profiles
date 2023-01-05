@@ -370,9 +370,20 @@ void axi_dwidth_converter::wr_upsizing() {
 	t_trans->acquire();
 	t_trans->deep_copy_from(*m_wr_trans);
 	t_trans->set_address(si_addr);
-	t_trans->set_data_ptr(data, mi_len * MI_DATA_WIDTH );
-	if (strb != nullptr)
-		t_trans->set_byte_enable_ptr(strb, mi_len * MI_DATA_WIDTH);
+    auto data_new = t_trans->create_and_get_data_ptr(mi_len * MI_DATA_WIDTH);
+    memcpy(data_new,data,m_wr_trans->get_data_length());
+    memset(data_new+m_wr_trans->get_data_length(),0,((mi_len * MI_DATA_WIDTH)-m_wr_trans->get_data_length()));
+    auto str_new = t_trans->create_and_get_byte_enable_ptr(mi_len * MI_DATA_WIDTH);
+    if(strb ) 
+    {
+        memcpy(str_new,strb, m_wr_trans->get_byte_enable_length());
+        memset(str_new+m_wr_trans->get_byte_enable_length(),0,((mi_len * MI_DATA_WIDTH)-m_wr_trans->get_byte_enable_length()));
+    }
+    else 
+    {
+           memset(str_new, 0xFF, m_wr_trans->get_data_length());
+           memset(str_new, 0x00, mi_len * MI_DATA_WIDTH - m_wr_trans->get_data_length());
+    }
 	t_trans->set_burst_size(MI_DATA_WIDTH );
 	t_trans->set_burst_length(mi_len);
 	m_upsize_wr_payld_queue.push(t_trans);
@@ -408,9 +419,7 @@ void axi_dwidth_converter::rd_upsizing() {
 	t_trans->acquire();
 	t_trans->deep_copy_from(*m_rd_trans);
 	t_trans->set_address(si_addr);
-	t_trans->set_data_ptr(data, mi_len * MI_DATA_WIDTH );
-	if (strb != nullptr)
-		t_trans->set_byte_enable_ptr(strb, mi_len * MI_DATA_WIDTH);
+    auto data_new = t_trans->create_and_get_data_ptr(mi_len * MI_DATA_WIDTH);
 	t_trans->set_burst_size(MI_DATA_WIDTH);
 	t_trans->set_burst_length(mi_len);
 	m_upsize_rd_payld_queue.push(t_trans);
@@ -503,8 +512,11 @@ void axi_dwidth_converter::m_upsize_interface_response_sender() {
             m_log_msg = "Sending Response for Read : " + 
                 std::to_string(m_response_mapper_upsize[response_payld]->get_address());
             XSC_REPORT_INFO_VERB(m_logger, "DWIDTH::006",m_log_msg.c_str(), DEBUG);
+        
+            xtlm::aximm_payload *org_payload = m_response_mapper_upsize[response_payld];
+            memcpy(org_payload->get_data_ptr(),response_payld->get_data_ptr(),org_payload->get_data_length());
 
-			rd_target_util->send_data(*m_response_mapper_upsize[response_payld],
+			rd_target_util->send_data(*org_payload,
 					zero_delay);
             
 			response_payld->release();
@@ -524,6 +536,4 @@ axi_dwidth_converter::~axi_dwidth_converter() {
 	delete wr_target_util;
 	delete wr_initiator_util;
 	delete rd_initiator_util;
-	delete m_rd_trans;
-	delete m_wr_trans;
 }

@@ -1,4 +1,4 @@
-// (c) Copyright 1995-2021 Xilinx, Inc. All rights reserved.
+// (c) Copyright 1995-2023 Xilinx, Inc. All rights reserved.
 // 
 // This file contains confidential and proprietary information
 // of Xilinx, Inc. and is protected under U.S. and
@@ -94,6 +94,7 @@ System_m01_regslice_0_sc::System_m01_regslice_0_sc(const sc_core::sc_module_name
     model_param_props.addLong("C_PIPELINES_MIDDLE_AR", "0");
     model_param_props.addLong("C_PIPELINES_MIDDLE_R", "0");
     model_param_props.addString("C_FAMILY", "virtex7");
+    model_param_props.addString("COMPONENT_NAME", "System_m01_regslice_0");
 
   mp_impl = new axi_register_slice("inst", model_param_props);
 

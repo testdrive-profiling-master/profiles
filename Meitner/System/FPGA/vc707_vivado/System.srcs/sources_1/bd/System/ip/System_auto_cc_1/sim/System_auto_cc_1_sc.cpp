@@ -1,4 +1,4 @@
-// (c) Copyright 1995-2021 Xilinx, Inc. All rights reserved.
+// (c) Copyright 1995-2023 Xilinx, Inc. All rights reserved.
 // 
 // This file contains confidential and proprietary information
 // of Xilinx, Inc. and is protected under U.S. and
@@ -78,6 +78,7 @@ System_auto_cc_1_sc::System_auto_cc_1_sc(const sc_core::sc_module_name& nm) : sc
     model_param_props.addLong("C_AXI_SUPPORTS_READ", "1");
     model_param_props.addLong("C_SYNCHRONIZER_STAGE", "2");
     model_param_props.addString("C_FAMILY", "virtex7");
+    model_param_props.addString("COMPONENT_NAME", "System_auto_cc_1");
 
   mp_impl = new axi_clock_converter("inst", model_param_props);
 

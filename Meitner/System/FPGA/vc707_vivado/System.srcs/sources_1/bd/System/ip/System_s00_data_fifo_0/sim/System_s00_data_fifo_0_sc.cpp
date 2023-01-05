@@ -1,4 +1,4 @@
-// (c) Copyright 1995-2021 Xilinx, Inc. All rights reserved.
+// (c) Copyright 1995-2023 Xilinx, Inc. All rights reserved.
 // 
 // This file contains confidential and proprietary information
 // of Xilinx, Inc. and is protected under U.S. and
@@ -78,6 +78,7 @@ System_s00_data_fifo_0_sc::System_s00_data_fifo_0_sc(const sc_core::sc_module_na
     model_param_props.addString("C_FAMILY", "virtex7");
     model_param_props.addString("C_AXI_WRITE_FIFO_TYPE", "lut");
     model_param_props.addString("C_AXI_READ_FIFO_TYPE", "lut");
+    model_param_props.addString("COMPONENT_NAME", "System_s00_data_fifo_0");
 
   mp_impl = new axi_data_fifo("inst", model_param_props);
 

@@ -1,4 +1,4 @@
-// (c) Copyright 1995-2021 Xilinx, Inc. All rights reserved.
+// (c) Copyright 1995-2023 Xilinx, Inc. All rights reserved.
 // 
 // This file contains confidential and proprietary information
 // of Xilinx, Inc. and is protected under U.S. and
@@ -48,7 +48,7 @@
 
 
 // IP VLNV: xilinx.com:ip:axi_data_fifo:2.1
-// IP Revision: 23
+// IP Revision: 26
 
 `timescale 1ns/1ps
 
@@ -279,7 +279,7 @@ READS 1, RUSER_BITS_PER_BYTE 0, WUSER_BITS_PER_BYTE 0, INSERT_VIP 0" *)
 (* X_INTERFACE_INFO = "xilinx.com:interface:aximm:1.0 M_AXI RREADY" *)
 output wire m_axi_rready;
 
-  axi_data_fifo_v2_1_23_axi_data_fifo #(
+  axi_data_fifo_v2_1_26_axi_data_fifo #(
     .C_FAMILY("virtex7"),
     .C_AXI_PROTOCOL(0),
     .C_AXI_ID_WIDTH(1),

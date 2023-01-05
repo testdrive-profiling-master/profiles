@@ -1,4 +1,4 @@
-// (c) Copyright 1995-2021 Xilinx, Inc. All rights reserved.
+// (c) Copyright 1995-2023 Xilinx, Inc. All rights reserved.
 // 
 // This file contains confidential and proprietary information
 // of Xilinx, Inc. and is protected under U.S. and
@@ -48,7 +48,7 @@
 
 
 // IP VLNV: xilinx.com:ip:axi_pcie:2.9
-// IP Revision: 5
+// IP Revision: 8
 
 `timescale 1ns/1ps
 
@@ -375,7 +375,7 @@ input wire s_axi_ctl_rready;
     .C_S_AXI_SUPPORTS_NARROW_BURST(1),
     .C_INCLUDE_BAROFFSET_REG(1),
     .C_BASEADDR(32'H00000000),
-    .C_HIGHADDR(32'H0000FFFF),
+    .C_HIGHADDR(32'H00000FFF),
     .C_AXIBAR_NUM(2),
     .C_AXIBAR2PCIEBAR_0(32'HD0000000),
     .C_AXIBAR2PCIEBAR_1(32'HD2000000),

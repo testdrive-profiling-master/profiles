@@ -1,4 +1,4 @@
-// (c) Copyright 1995-2021 Xilinx, Inc. All rights reserved.
+// (c) Copyright 1995-2023 Xilinx, Inc. All rights reserved.
 // 
 // This file contains confidential and proprietary information
 // of Xilinx, Inc. and is protected under U.S. and
@@ -50,9 +50,9 @@
 // IP VLNV: xilinx.com:user:MSI_Generator:1.0
 // IP Revision: 17
 
-(* X_CORE_INFO = "MSI_Generator_v1_0,Vivado 2021.1" *)
+(* X_CORE_INFO = "MSI_Generator_v1_0,Vivado 2022.2" *)
 (* CHECK_LICENSE_TYPE = "System_MSI_Generator_0_0,MSI_Generator_v1_0,{}" *)
-(* CORE_GENERATION_INFO = "System_MSI_Generator_0_0,MSI_Generator_v1_0,{x_ipProduct=Vivado 2021.1,x_ipVendor=xilinx.com,x_ipLibrary=user,x_ipName=MSI_Generator,x_ipVersion=1.0,x_ipCoreRevision=17,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,INTERRUPT_SIZE=2}" *)
+(* CORE_GENERATION_INFO = "System_MSI_Generator_0_0,MSI_Generator_v1_0,{x_ipProduct=Vivado 2022.2,x_ipVendor=xilinx.com,x_ipLibrary=user,x_ipName=MSI_Generator,x_ipVersion=1.0,x_ipCoreRevision=17,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,INTERRUPT_SIZE=2}" *)
 (* DowngradeIPIdentifiedWarnings = "yes" *)
 module System_MSI_Generator_0_0 (
   CLK,

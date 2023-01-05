@@ -232,7 +232,15 @@ entity util_ds_buf is
            MBUFG_GT_O1              : out   std_logic_vector(C_SIZE-1 downto 0);
            MBUFG_GT_O2              : out   std_logic_vector(C_SIZE-1 downto 0) ;
            MBUFG_GT_O3              : out   std_logic_vector(C_SIZE-1 downto 0) ;
-           MBUFG_GT_O4              : out   std_logic_vector(C_SIZE-1 downto 0)
+           MBUFG_GT_O4              : out   std_logic_vector(C_SIZE-1 downto 0) ;
+
+ --ports for MBUFG_PS
+           MBUFG_PS_I             : in    std_logic_vector(C_SIZE-1 downto 0);
+           MBUFG_PS_CLRB_LEAF     : in    std_logic_vector(C_SIZE-1 downto 0);
+           MBUFG_PS_O1              : out   std_logic_vector(C_SIZE-1 downto 0);
+           MBUFG_PS_O2              : out   std_logic_vector(C_SIZE-1 downto 0) ;
+           MBUFG_PS_O3              : out   std_logic_vector(C_SIZE-1 downto 0) ;
+           MBUFG_PS_O4              : out   std_logic_vector(C_SIZE-1 downto 0) 
 
 
      );
@@ -560,6 +568,8 @@ begin
 
         end generate GEN_BUFG_GT;
    end generate USE_BUFG_GT;
+-- Instantiate BUFG_GT_SYNC for MBUFG_GT
+
 
 
 
@@ -793,8 +803,8 @@ begin
          OBUFDS_GTME5_U :  OBUFDS_GTME5
 
         generic map (
-          REFCLK_EN_TX_PATH  => BIT1, --'0',
-          REFCLK_EN_DRV     => BIT1 
+          REFCLK_EN_TX_PATH  => BIT1_1, --'0',
+          REFCLK_EN_DRV     => BIT1_1 
         )
         port map (
           O            => OBUFDS_GTME5_O(i), 
@@ -820,8 +830,8 @@ begin
          OBUFDS_GTME5_ADV_U : OBUFDS_GTME5_ADV
 
         generic map (
-          REFCLK_EN_TX_PATH  => BIT1, --'0',
-          REFCLK_EN_DRV       => BIT1
+          REFCLK_EN_TX_PATH  => BIT1_1, --'0',
+          REFCLK_EN_DRV       => BIT1_1
         )
         port map (
           O            => OBUFDS_GTME5_ADV_O(i), 

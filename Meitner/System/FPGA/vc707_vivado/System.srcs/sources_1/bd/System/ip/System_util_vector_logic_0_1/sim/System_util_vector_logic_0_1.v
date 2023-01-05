@@ -1,4 +1,4 @@
-// (c) Copyright 1995-2021 Xilinx, Inc. All rights reserved.
+// (c) Copyright 1995-2023 Xilinx, Inc. All rights reserved.
 // 
 // This file contains confidential and proprietary information
 // of Xilinx, Inc. and is protected under U.S. and
@@ -48,7 +48,7 @@
 
 
 // IP VLNV: xilinx.com:ip:util_vector_logic:2.0
-// IP Revision: 1
+// IP Revision: 2
 
 `timescale 1ns/1ps
 
@@ -63,7 +63,7 @@ input wire [0 : 0] Op1;
 input wire [0 : 0] Op2;
 output wire [0 : 0] Res;
 
-  util_vector_logic_v2_0_1_util_vector_logic #(
+  util_vector_logic_v2_0_2_util_vector_logic #(
     .C_OPERATION("and"),
     .C_SIZE(1)
   ) inst (
