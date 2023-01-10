@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : processor AXI wrapper
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/10/2023 Tue (clonextop@gmail.com)
 //================================================================================
 `include "system_defines.vh"
 
@@ -130,7 +129,7 @@ always@(posedge CLK, negedge nRST) begin
 	else begin
 		INTR		<= P_EN & P_WE & (P_ADDR == 'd4) & P_WDATA[0];	// Invoke interrupt
 
-		if(P_EN & ~P_WE & MR_READY)	begin // slave read test
+		if(P_EN & ~P_WE)	begin // slave read test
 			P_RDATA		<= P_RDATA + 1'b1;
 		end
 
