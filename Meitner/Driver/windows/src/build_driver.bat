@@ -21,7 +21,8 @@ build
 
 copy %4\testdrive.sys ..\bin\%2\
 
-SignTool sign /v /ac VeriSign.cer /s my /n CloneX /t http://timestamp.verisign.com/scripts/timstamp.dll ..\bin\%2\testdrive.sys
+@rem SignTool sign /v /ac VeriSign.cer /s my /n CloneX /t http://timestamp.verisign.com/scripts/timstamp.dll ..\bin\%2\testdrive.sys
+SignTool sign /v /s PrivateCertStore /n TestDrive(Test) /t http://timestamp.verisign.com/scripts/timstamp.dll ..\bin\%2\testdrive.sys
 
 if "%2"== "x86" goto CODESIGN_X86
 if "%2"== "x64" goto CODESIGN_X64
@@ -35,7 +36,8 @@ inf2cat /driver:..\bin /os:7_X86
 goto CODESIGN_END
 
 :CODESIGN_END
-SignTool sign /v /ac VeriSign.cer /s my /n CloneX /t http://timestamp.verisign.com/scripts/timstamp.dll ..\bin\testdrive_pcie_%2.cat
+@rem SignTool sign /v /ac VeriSign.cer /s my /n CloneX /t http://timestamp.verisign.com/scripts/timstamp.dll ..\bin\testdrive_pcie_%2.cat
+signtool sign /v /s PrivateCertStore /n TestDrive(Test) /t http://timestamp.verisign.com/scripts/timestamp.dll ..\bin\testdrive_pcie_%2.cat
 
 :END
 ENDLOCAL

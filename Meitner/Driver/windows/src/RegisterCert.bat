@@ -9,5 +9,5 @@ cd %~dp0
 
 bcdedit -set TESTSIGNING ON
 
-CertMgr /add VeriSign.cer /s /r localMachine root
+CertMgr /add TestDrive.cer /s /r localMachine root
 

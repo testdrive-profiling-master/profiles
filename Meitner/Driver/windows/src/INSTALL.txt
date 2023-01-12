@@ -1,0 +1,4 @@
+빌드 순서
+
+1. 적어도 1회 RegisterCert.bat 를 실행하여 test sign 을 컴퓨터에 등록
+2. build_driver 를 사용하여 디버깅 (build_auto_chk,bat 참조)
