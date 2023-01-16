@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : WDM PCIe Driver for TestDrive
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/16/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __DRIVER_H__
 #define __DRIVER_H__
@@ -48,7 +47,6 @@
 #define DRIVER_CLASS_ID			0x0380
 
 #define DEVICE_NAME			L"\\Device\\testdrive"
-#define SYMBOLIC_NAME		L"\\DosDevices\\testdrive"
 #define MAX_DMA_LENGTH		1024*1024*16				// 최대 1MB 단위로 전송됨.
 
 #if DBG
@@ -59,14 +57,14 @@
 #define LOGE(...)
 #endif
 
-typedef struct PCI_BAR_t{
+typedef struct PCI_BAR_t {
 	PVOID				pVirtual;
 	PHYSICAL_ADDRESS	PhyAddress;
 	unsigned int		dwByteLength;
 	unsigned int		bMemory;		// memory or i/o port
-}PCI_BAR, *PPCI_BAR;
+} PCI_BAR, *PPCI_BAR;
 
-typedef struct DMA_MEMORY_t{
+typedef struct DMA_MEMORY_t {
 	PMDL					pMDL;
 	ULONG					Length;
 	PVOID					pUserVirtual;
@@ -75,9 +73,9 @@ typedef struct DMA_MEMORY_t{
 	PDMA_ADAPTER	  		pAdapter;
 	PEPROCESS				pCurProcess;
 	struct DMA_MEMORY_t*	pNext;
-}DMA_MEMORY, *PDMA_MEMORY;
+} DMA_MEMORY, *PDMA_MEMORY;
 
-typedef struct DEVICE_EXTENSION_t{
+typedef struct DEVICE_EXTENSION_t {
 	PDEVICE_OBJECT		pDevice;
 	PDEVICE_OBJECT		pPhyDevice;
 	PDEVICE_OBJECT		pLowerDevice;
@@ -85,26 +83,26 @@ typedef struct DEVICE_EXTENSION_t{
 	int					iIndex;							// current PCIe-card index
 	PKSEMAPHORE			pIrqSema;
 	int					bar_count;
-	PCI_BAR				bar[2];
-	struct{
+	PCI_BAR				bar[6];
+	struct {
 		PDMA_ADAPTER	  	pAdapter;
 		ULONG				CommonBufferRegisterCount;		// Number of mapped DMA registers
-	}dma;
-}DEVICE_EXTENSION, *PDEVICE_EXTENSION;
+	} dma;
+} DEVICE_EXTENSION, *PDEVICE_EXTENSION;
 
-typedef struct DRIVER_INFO_t{
+typedef struct DRIVER_INFO_t {
 	PDEVICE_OBJECT		pDevice;
 
 	TD_DRIVER_INFO		info;
 
-	struct{
+	struct {
 		KSPIN_LOCK			lock;
 		PIRP				Irp;
 		int					iCount;
-	}intr;
+	} intr;
 	PDEVICE_EXTENSION	pDevExt[TD_MAX_DEVICE_COUNT];
 	PDMA_MEMORY			pDMALink;
-}DRIVER_INFO, *PDRIVER_INFO;
+} DRIVER_INFO, *PDRIVER_INFO;
 
 extern DRIVER_INFO		g_Driver;
 
@@ -137,8 +135,8 @@ VOID SetInterruptEvent(BOOLEAN bLock, PIRP Irp, ULONG MessageID);
 IO_DPC_ROUTINE				DpcForIsr;
 KMESSAGE_SERVICE_ROUTINE	ISR_Messaged;
 KSERVICE_ROUTINE			ISR_FallBack;
-BOOLEAN ISR_Messaged(IN struct _KINTERRUPT *Interrupt, IN PVOID ServiceContext, IN ULONG MessageID);
-BOOLEAN ISR_FallBack(IN struct _KINTERRUPT *Interrupt, IN PVOID ServiceContext);
+BOOLEAN ISR_Messaged(IN struct _KINTERRUPT* Interrupt, IN PVOID ServiceContext, IN ULONG MessageID);
+BOOLEAN ISR_FallBack(IN struct _KINTERRUPT* Interrupt, IN PVOID ServiceContext);
 
 #ifdef ALLOC_PRAGMA
 #pragma alloc_text(INIT, DriverEntry)

@@ -71,10 +71,9 @@ NTSTATUS DriverInitialize(IN PDRIVER_OBJECT pDriverObject, IN PDEVICE_EXTENSION	
 
 	// 전역 naming 제어 드라이버 생성
 	if(!g_Driver.pDevice) {
-		UNICODE_STRING		sDeviceName, sDevLinkName;
+		UNICODE_STRING		sDeviceName;
 		LOGI("Initializing driver...\n");
 		RtlInitUnicodeString(&sDeviceName, DEVICE_NAME);
-		RtlInitUnicodeString(&sDevLinkName, SYMBOLIC_NAME);
 		// 드라이버 초기화
 		status = IoCreateDevice(
 					 pDriverObject,					// Our Driver Object
@@ -93,15 +92,7 @@ NTSTATUS DriverInitialize(IN PDRIVER_OBJECT pDriverObject, IN PDEVICE_EXTENSION	
 
 		g_Driver.pDevice->Flags |= DO_BUFFERED_IO | DO_DIRECT_IO;	// buffered I/O 설정
 		g_Driver.pDevice->Flags &= ~DO_DEVICE_INITIALIZING;
-		// 심볼릭 링크 생성
-		status = IoCreateSymbolicLink(&sDevLinkName, &sDeviceName);
 		KeInitializeSpinLock(&g_Driver.intr.lock);
-
-		if(!NT_SUCCESS(status)) {
-			LOGE("Couldn't create symbolic link\n");
-			IoDeleteDevice(g_Driver.pDevice);		// 다비이스 지움
-			g_Driver.pDevice	= NULL;
-		}
 	}
 
 	if(pDevExt) {
@@ -183,10 +174,6 @@ void DriverRelease(IN PDEVICE_EXTENSION	pDevExt)
 
 	// 전역 제어 드라이버 제거
 	if(g_Driver.pDevice && !g_Driver.info.card_count) {
-		UNICODE_STRING	uniWin32NameString;
-		// 심볼릭 링크 지우기
-		RtlInitUnicodeString(&uniWin32NameString, SYMBOLIC_NAME);
-		IoDeleteSymbolicLink(&uniWin32NameString);
 		// 드라이버 지우기
 		IoDeleteDevice(g_Driver.pDevice);
 		g_Driver.pDevice	= NULL;
