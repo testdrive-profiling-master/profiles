@@ -28,7 +28,7 @@ LIBDIR			:= $(LIBDIR) -lshell32 -lz -lm
 INC				:= $(INC) -I. -I../../../../Application/include -I../../../HDL -I../../../HDL/dpi -I../../../HDL/$(SIM_TOP_PATH)/dpi_private -I../verilator -I$(TESTDRIVE_DIR)include/verilator -I$(TESTDRIVE_DIR)bin/msys64/ucrt64/share/verilator/include -I$(TESTDRIVE_DIR)bin/msys64/ucrt64/share/verilator/include/vltstd -I$(TESTDRIVE_DIR)bin/msys64/ucrt64/share/verilator/include/gtkwave
 
 CDEFS			:= $(CDEFS) $(SIM_CDEFS) -D__STDC_FORMAT_MACROS -DSIM_HDL_EXPORTS -DUSE_VERILATOR -DUSE_TESTDRIVE -DVL_USER_FINISH -DVL_USER_STOP -DVL_USER_FATAL -DVL_THREADED
-EXTRA_CFLAGS	:= -Os -std=c++17 -DNDEBUG
+EXTRA_CFLAGS	:= -Os -std=c++14 -DNDEBUG
 
 BUILD_TARGET	= $(TARGET_SO_A)
 
