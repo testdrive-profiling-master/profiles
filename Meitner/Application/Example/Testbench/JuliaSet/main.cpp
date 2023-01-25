@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 11/9/2022 Wed (clonextop@gmail.com)
+// Rev.  : 1/25/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "Display.h"
@@ -47,13 +47,12 @@ typedef enum {
 	FRAMEBUFFER_SIZE
 };
 
-TESTBENCH_DESIGN, public JuliaSet {
+class Testbench : public TestbenchFramework, public JuliaSet {
 	Display			m_Display;
 	DDKMemory*		m_pFrame[FRAMEBUFFER_SIZE];
 	DWORD*			m_pScreen;
 
-	virtual bool OnInitialize(int argc, char** argv)
-	{
+	virtual bool OnInitialize(int argc, char** argv) {
 		// create memory
 		m_pFrame[FRAMEBUFFER_FRONT]	= CreateDDKMemory(SCREEN_BUFFER_SIZE, 16);
 		m_pFrame[FRAMEBUFFER_BACK]	= CreateDDKMemory(SCREEN_BUFFER_SIZE, 16);
@@ -65,8 +64,7 @@ TESTBENCH_DESIGN, public JuliaSet {
 		SetMatrix(SCREEN_WIDTH, SCREEN_HEIGHT);
 		return true;
 	}
-	virtual void OnRelease(void)
-	{
+	virtual void OnRelease(void) {
 		// release memory
 		for(int i = 0; i < FRAMEBUFFER_SIZE; i++)
 			SAFE_RELEASE(m_pFrame[i]);
@@ -74,8 +72,7 @@ TESTBENCH_DESIGN, public JuliaSet {
 		m_Display.Release();
 	}
 
-	void ExchangeFramebuffer(void)
-	{
+	void ExchangeFramebuffer(void) {
 		DDKMemory* pTemp			= m_pFrame[FRAMEBUFFER_BACK];
 		m_pFrame[FRAMEBUFFER_BACK]	= m_pFrame[FRAMEBUFFER_FRONT];
 		m_pFrame[FRAMEBUFFER_FRONT]	= pTemp;
@@ -86,14 +83,12 @@ TESTBENCH_DESIGN, public JuliaSet {
 		m_pScreen	= (DWORD*)m_pFrame[FRAMEBUFFER_BACK]->Virtual();
 	}
 
-	virtual void OnPresent(int x, int y, DWORD color)
-	{
+	virtual void OnPresent(int x, int y, DWORD color) {
 		m_pScreen[x + y * SCREEN_WIDTH]	= color;
 		m_Display.Invalidate(false);
 	}
 
-	virtual bool OnTestBench(void)
-	{
+	virtual bool OnTestBench(void) {
 		printf("Press 'ESC' key to stop the process...\n");
 		_flushall();
 		DWORD mode	= 0;
@@ -130,4 +125,18 @@ TESTBENCH_DESIGN, public JuliaSet {
 
 		return true;
 	}
-} END;
+};
+
+int main(int argc, char** argv)
+{
+	Testbench	tb;
+
+	if(tb.Initialize()) {
+		if(!tb.DoTestbench())
+			printf("Testbench is failed.\n");
+	} else {
+		printf("Initialization is failed.\n");
+	}
+
+	tb.Release();
+}

@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 11/9/2022 Wed (clonextop@gmail.com)
+// Rev.  : 1/25/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "common.h"
 
@@ -42,7 +42,7 @@ class TestbenchFramework {
 public:
 	TestbenchFramework(void);
 	virtual ~TestbenchFramework(void);
-	bool Initialize(int argc, char** argv);
+	bool Initialize(void);
 	void Release(void);
 
 	inline bool IsInitialized(void)		{
@@ -56,7 +56,7 @@ public:
 	}
 
 protected:
-	virtual bool OnInitialize(int argc, char** argv)	{
+	virtual bool OnInitialize(void)	{
 		return true;
 	}
 	virtual bool OnTestBench(void) = 0;
@@ -69,7 +69,5 @@ protected:
 private:
 	static void __ISR__(DDK* pDDK);
 };
-
-#define TESTBENCH_DESIGN		class Testbench : public TestbenchFramework
 
 #endif//__TESTBENCH_H__

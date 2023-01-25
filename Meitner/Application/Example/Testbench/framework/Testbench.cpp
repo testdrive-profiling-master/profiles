@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 11/9/2022 Wed (clonextop@gmail.com)
+// Rev.  : 1/25/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 
@@ -56,7 +56,7 @@ TestbenchFramework::~TestbenchFramework(void)
 	Release();
 }
 
-bool TestbenchFramework::Initialize(int argc, char** argv)
+bool TestbenchFramework::Initialize(void)
 {
 	// create DDK
 	if(!m_pDDK) {
@@ -70,7 +70,7 @@ bool TestbenchFramework::Initialize(int argc, char** argv)
 			m_pDDK->ClearInterruptPending();				// clear interrupt pending
 			m_pDDK->EnableInterrupt();						// enable interrupt
 			g_mmapview.Initialize(m_pDDK->GetMemoryBase());
-			return OnInitialize(argc, argv);
+			return OnInitialize();
 		}
 	}
 
@@ -112,20 +112,5 @@ void TestbenchFramework::Release(void)
 		m_pDDK->Release();					// release DDK
 		m_pDDK	= NULL;
 		_flushall();
-	}
-}
-
-// default main function
-int main(int argc, char** argv)
-{
-	if(__pTestbench) {
-		if(__pTestbench->Initialize(argc, argv)) {
-			if(!__pTestbench->DoTestbench())
-				printf("Testbench is failed.\n");
-		} else {
-			printf("Initialization is failed.\n");
-		}
-
-		__pTestbench->Release();
 	}
 }

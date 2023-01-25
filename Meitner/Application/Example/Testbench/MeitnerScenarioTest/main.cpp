@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,20 +31,19 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 11/9/2022 Wed (clonextop@gmail.com)
+// Rev.  : 1/25/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "ScenarioTest.inl"
 #include "Conformance.h"
 #include "hw/MTSP.h"
 
-TESTBENCH_DESIGN, public TestDriveResource {
+class Testbench : public TestbenchFramework, public TestDriveResource {
 	MTSP*					m_pMTSP;		// Processor (Design Under Testing)
 	ConformanceTestItem*	m_pItem;		// test item
 	char					m_sTitle[MAX_PATH], m_sItem[MAX_PATH];
 
-	bool GetArgName(const char* sArg, char* sTitle, char* sItem)
-	{
+	bool GetArgName(const char* sArg, char* sTitle, char* sItem) {
 		char	sCom[1024], *sTok;
 
 		if(!sArg) return false;
@@ -53,10 +52,10 @@ TESTBENCH_DESIGN, public TestDriveResource {
 			// get name only
 			strcpy(sCom, sArg);
 
-			while(char* sTarget = strstr(sCom, "/")) * sTarget = '\\';	// '\' ·Î ÅëÀÏ
+			while(char* sTarget = strstr(sCom, "/")) * sTarget = '\\';	// '\' ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 			{
-				// title + '\' + item + .ext ÇüÅÂ·Î º¯°æ
+				// title + '\' + item + .ext ï¿½ï¿½ï¿½Â·ï¿½ ï¿½ï¿½ï¿½ï¿½
 				char* sTarget	= sCom;
 
 				while(sTarget) {
@@ -79,12 +78,12 @@ TESTBENCH_DESIGN, public TestDriveResource {
 		{
 			const char*	sDelim	= ".\\";
 
-			// Å¸ÀÌÆ² ÀÌ¸§ ¾ò±â
+			// Å¸ï¿½ï¿½Æ² ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½
 			if(!(sTok = strtok(sCom, sDelim))) return false;
 
 			strcpy(sTitle, sTok);
 
-			// ¾ÆÀÌÅÛ ÀÌ¸§ ¾ò±â
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½
 			if(!(sTok = strtok(NULL, sDelim))) return false;
 
 			strcpy(sItem, sTok);
@@ -92,8 +91,7 @@ TESTBENCH_DESIGN, public TestDriveResource {
 		return true;
 	}
 
-	virtual bool OnInitialize(int argc, char** argv)
-	{
+	virtual bool OnInitialize(int argc, char** argv) {
 		m_pItem	= NULL;
 
 		if(!(m_pMTSP = new MTSP(m_pDDK))) {
@@ -159,17 +157,29 @@ TESTBENCH_DESIGN, public TestDriveResource {
 		return true;
 	}
 
-	virtual void OnRelease(void)
-	{
+	virtual void OnRelease(void) {
 		m_pMTSP->SetClock(50);	// set minimum operation speed
 		SAFE_DELETE(m_pMTSP);
 	}
 
-	virtual bool OnTestBench(void)
-	{
-		// Å×½ºÆ® ½ÃÀÛ
+	virtual bool OnTestBench(void) {
+		// ï¿½×½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
 		m_pItem->Function()(m_pMTSP, (MTSP_REGMAP*)m_TestDrive.Memory.pDisplay->GetPointer(0, 0));
 		printf("Conformance test is done!\n");
 		return true;
 	}
-} END;
+};
+
+int main(int argc, char** argv)
+{
+	Testbench	tb;
+
+	if(tb.Initialize()) {
+		if(!tb.DoTestbench())
+			printf("Testbench is failed.\n");
+	} else {
+		printf("Initialization is failed.\n");
+	}
+
+	tb.Release();
+}

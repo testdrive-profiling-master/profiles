@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 11/9/2022 Wed (clonextop@gmail.com)
+// Rev.  : 1/25/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "Display.h"
@@ -47,13 +47,12 @@ typedef enum {
 	FRAMEBUFFER_SIZE
 };
 
-TESTBENCH_DESIGN, public BruteForce {
+class Testbench : public TestbenchFramework, public BruteForce {
 	Display			m_Display;
 	DDKMemory*		m_pFrame[FRAMEBUFFER_SIZE];
 	DWORD*			m_pScreen;
 
-	virtual bool OnInitialize(int argc, char** argv)
-	{
+	virtual bool OnInitialize(int argc, char** argv) {
 		// create memory
 		m_pFrame[FRAMEBUFFER_FRONT]	= CreateDDKMemory(SCREEN_BUFFER_SIZE, 16);
 		m_pFrame[FRAMEBUFFER_BACK]	= CreateDDKMemory(SCREEN_BUFFER_SIZE, 16);
@@ -65,16 +64,14 @@ TESTBENCH_DESIGN, public BruteForce {
 		InitializeBruteForce(1000);	// 1000 bodies
 		return true;
 	}
-	virtual void OnRelease(void)
-	{
+	virtual void OnRelease(void) {
 		// release memory
 		for(int i = 0; i < FRAMEBUFFER_SIZE; i++)
 			SAFE_RELEASE(m_pFrame[i]);
 
 		m_Display.Release();
 	}
-	void ExchangeFramebuffer(void)
-	{
+	void ExchangeFramebuffer(void) {
 		DDKMemory* pTemp			= m_pFrame[FRAMEBUFFER_BACK];
 		m_pFrame[FRAMEBUFFER_BACK]	= m_pFrame[FRAMEBUFFER_FRONT];
 		m_pFrame[FRAMEBUFFER_FRONT]	= pTemp;
@@ -84,8 +81,7 @@ TESTBENCH_DESIGN, public BruteForce {
 		m_Display.Invalidate(true);
 		m_pScreen	= (DWORD*)m_pFrame[FRAMEBUFFER_BACK]->Virtual();
 	}
-	virtual void OnPresent(Body * pBody)
-	{
+	virtual void OnPresent(Body* pBody) {
 		int x = (int)(pBody->Position().x / (1e16)) + (SCREEN_WIDTH / 2);
 		int y = (int)(pBody->Position().y / (1e16)) + (SCREEN_HEIGHT / 2);
 
@@ -110,8 +106,7 @@ TESTBENCH_DESIGN, public BruteForce {
 
 		m_Display.Invalidate(false);
 	}
-	virtual bool OnTestBench(void)
-	{
+	virtual bool OnTestBench(void) {
 		printf("Press 'ESC' key to stop the process...\n");
 		_flushall();
 
@@ -123,4 +118,18 @@ TESTBENCH_DESIGN, public BruteForce {
 
 		return true;
 	}
-} END;
+};
+
+int main(int argc, char** argv)
+{
+	Testbench	tb;
+
+	if(tb.Initialize()) {
+		if(!tb.DoTestbench())
+			printf("Testbench is failed.\n");
+	} else {
+		printf("Initialization is failed.\n");
+	}
+
+	tb.Release();
+}

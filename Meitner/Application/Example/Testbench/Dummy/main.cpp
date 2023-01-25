@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,24 +31,35 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 11/9/2022 Wed (clonextop@gmail.com)
+// Rev.  : 1/25/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 
-TESTBENCH_DESIGN {
-	virtual bool OnInitialize(int argc, char** argv)
-	{
+class Testbench : public TestbenchFramework {
+	virtual bool OnInitialize(void) {
 		printf("Current system : %s\n", m_pDDK->GetSystemDescription());
 		return true;
 	}
 
-	virtual void OnRelease(void)
-	{
+	virtual void OnRelease(void) {
 	}
 
-	virtual bool OnTestBench(void)
-	{
+	virtual bool OnTestBench(void) {
 		printf("Dummy process is done!\n");
 		return true;
 	}
-} END;
+};
+
+int main(int argc, char** argv)
+{
+	Testbench	tb;
+
+	if(tb.Initialize()) {
+		if(!tb.DoTestbench())
+			printf("Testbench is failed.\n");
+	} else {
+		printf("Initialization is failed.\n");
+	}
+
+	tb.Release();
+}
