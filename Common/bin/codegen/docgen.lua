@@ -19,7 +19,7 @@ sTemplatePath:GetEnvironment("TESTDRIVE_PROFILE")
 if sDocTemplate.s == "" then
 	sTemplatePath:Append("Common/bin/codegen/docgen_template.docx")
 elseif sDocTemplate:CompareBack(".docx") then
-	sTemplatePath:Append(sDocTemplate.s)
+	sTemplatePath.s	= sDocTemplate.s
 else
 	sTemplatePath:Append("Common/bin/codegen/docgen_template_" .. sDocTemplate.s .. ".docx")
 end
