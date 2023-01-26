@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 2/23/2022 Wed (clonextop@gmail.com)
+// Rev.  : 1/26/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "DocWord.h"
 
@@ -121,6 +121,33 @@ bool DocWord::OnOpen(void)
 
 		return true;
 	});
+	// default contents type
+	{
+		typedef struct {
+			const char* sExt;
+			const char* sType;
+		} __content_types;
+		static const __content_types	content_types[] = {
+			{"jpeg", "image/jpeg"},
+			{"jpg", "image/jpeg"},
+			{"png", "image/png"},
+			{"gif", "image/gif"},
+			{"tif", "image/tiff"},
+			{"bmp", "image/bmp"},
+			{"svg", "image/svg+xml"},
+			{"wmf", "image/x-wmf"},
+			{"odttf", "application/vnd.openxmlformats-officedocument.obfuscatedFont"},
+			{NULL, NULL},
+		};
+
+		for(int i = 0; content_types[i].sExt; i++) {
+			if(!m_ContentsType.find_child_by_attribute("Default", "Extension", content_types[i].sExt)) {
+				DocXML	node	= m_ContentsType.append_child("Default");
+				node.append_attribute("Extension").set_value(content_types[i].sExt);
+				node.append_attribute("ContentType").set_value(content_types[i].sType);
+			}
+		}
+	}
 	return true;
 }
 
@@ -280,6 +307,81 @@ bool DocWord::SetProperty(const char* sID, const char* sValue)
 	}
 
 	return false;
+}
+
+bool DocWord::AddFile(const char* sFileName, DOC_WORD_RELATIONSHIP RelationShip, cstring& sRelationID)
+{
+	// get new file Id
+	for(int i = 1;; i++) {
+		sRelationID.Format("rId%d", i);
+
+		if(!m_Relationships.find_child_by_attribute("Id", sRelationID)) break;
+	}
+
+	// make all path/entry name
+	cstring	sTarget(sFileName), sEntryPath, sRelationShipType;
+	bool	bExternal	= false;
+	{
+		typedef struct {
+			const char* sType;
+			const char* sTargetPath;
+			const char* sEntryPath;
+		} __REL_PATH;
+		static const __REL_PATH	__rel_path[] = {
+			{"header",		"",					"word/"},
+			{"footer",		"",					"word/"},
+			{"image",		"media/",			"word/media/"},
+			{"styles",		"",					"word/"},
+			{"fontTable",	"",					"word/"},
+			{"customXml",	"../customXml/",	"customXml/"},
+			{"webSettings",	"",					"word/"},
+			{"subDocument",	NULL,				NULL},
+			{"hyperlink",	NULL,				NULL},
+		};
+		// make others
+		sRelationShipType.Format("http://schemas.openxmlformats.org/officeDocument/2006/relationships/%s", __rel_path[(int)RelationShip].sType);
+
+		if(__rel_path[(int)RelationShip].sTargetPath) {
+			sTarget.CutFront("\\", true);
+			sTarget.CutFront("/", true);
+			sTarget.insert(0, "_");
+			sTarget.insert(0, sRelationID);
+			sEntryPath.Format("%s%s", __rel_path[(int)RelationShip].sEntryPath, sTarget.c_str());
+			sTarget.insert(0, __rel_path[(int)RelationShip].sTargetPath);
+		} else {
+			bExternal	= true;
+		}
+	}
+	// append new relationship
+	DocXML	node	= m_Relationships.append_child("Relationship");
+	node.append_attribute("Id").set_value(sRelationID);
+	node.append_attribute("Type").set_value(sRelationShipType);
+	node.append_attribute("Target").set_value(sTarget);
+
+	if(bExternal) node.append_attribute("TargetMode").set_value("External");
+
+	return bExternal ? true : ReplaceFile(sEntryPath, sFileName);
+}
+
+string DocWord::AddMedia(const char* sFileName)
+{
+	cstring	sID;
+	AddFile(sFileName, DOC_WORD_RELATIONSHIP_IMAGE, sID);
+	return sID.c_str();
+}
+
+string DocWord::AddSubDocument(const char* sFileName)
+{
+	cstring	sID;
+	AddFile(sFileName, DOC_WORD_RELATIONSHIP_SUB_DOCUMENT, sID);
+	return sID.c_str();
+}
+
+string DocWord::AddHyperlink(const char* sHyperlink)
+{
+	cstring	sID;
+	AddFile(sHyperlink, DOC_WORD_RELATIONSHIP_HIPERLINK, sID);
+	return sID.c_str();
 }
 
 void DocWord::Modify(map<string, string>* pMod)

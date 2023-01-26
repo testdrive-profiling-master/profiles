@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,11 +31,23 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 2/23/2022 Wed (clonextop@gmail.com)
+// Rev.  : 1/26/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __DOC_WORD_H__
 #define __DOC_WORD_H__
 #include "DocDocument.h"
+
+typedef enum {
+	DOC_WORD_RELATIONSHIP_HEADER,
+	DOC_WORD_RELATIONSHIP_FOOTER,
+	DOC_WORD_RELATIONSHIP_IMAGE,
+	DOC_WORD_RELATIONSHIP_STYLES,
+	DOC_WORD_RELATIONSHIP_FONTTABLE,
+	DOC_WORD_RELATIONSHIP_CUSTOM_XML,
+	DOC_WORD_RELATIONSHIP_WEB_SETTINGS,
+	DOC_WORD_RELATIONSHIP_SUB_DOCUMENT,
+	DOC_WORD_RELATIONSHIP_HIPERLINK,
+} DOC_WORD_RELATIONSHIP;
 
 class DocWord : public DocFile {
 public:
@@ -46,8 +58,12 @@ public:
 	bool ReplaceImage(const char* sDesc, const char* sFileName);
 	bool ReplaceSubDocument(const char* sPrevName, const char* sFileName);
 	bool SetProperty(const char* sID, const char* sValue);
+	string AddMedia(const char* sFileName);
+	string AddSubDocument(const char* sFileName);
+	string AddHyperlink(const char* sHyperlink);
 
 protected:
+	bool AddFile(const char* sFileName, DOC_WORD_RELATIONSHIP RelationShip, cstring& sRelationID);
 	virtual bool OnOpen(void);
 	virtual void OnClose(void);
 	virtual bool OnSave(void);

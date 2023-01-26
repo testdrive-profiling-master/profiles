@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 4/29/2022 Fri (clonextop@gmail.com)
+// Rev.  : 1/26/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "DocExcel.h"
 
@@ -253,6 +253,19 @@ bool DocExcelSheet::GetColumn(bool bAutoCreate)
 	return !m_Column.empty();
 }
 
+bool DocExcelSheet::ValidateColumn(void)
+{
+	if(m_Row.empty()) {
+		if(!GetRow()) return false;
+	}
+
+	if(m_Column.empty()) {
+		if(!GetColumn()) return false;
+	}
+
+	return true;
+}
+
 double DocExcelSheet::GetColumnWidth(void)
 {
 	typedef struct {
@@ -360,9 +373,12 @@ bool DocExcelSheet::SetDate(int iYear, int iMonth, int iDay)
 
 bool DocExcelSheet::SetInt(int iValue)
 {
-	if(m_Column.empty()) return false;
+	if(!ValidateColumn()) return false;
 
 	m_Column.remove_attribute("t");
+
+	if(!m_Column.child("v")) m_Column.append_child("v");
+
 	m_Column.child("v").text().set(iValue);
 	m_Column.remove_child("f");
 	m_bRecompute	= true;
@@ -371,9 +387,12 @@ bool DocExcelSheet::SetInt(int iValue)
 
 bool DocExcelSheet::SetDouble(double fValue)
 {
-	if(m_Column.empty()) return false;
+	if(!ValidateColumn()) return false;
 
 	m_Column.remove_attribute("t");
+
+	if(!m_Column.child("v")) m_Column.append_child("v");
+
 	m_Column.child("v").text().set(fValue);
 	m_Column.remove_child("f");
 	m_bRecompute	= true;
@@ -382,7 +401,7 @@ bool DocExcelSheet::SetDouble(double fValue)
 
 bool DocExcelSheet::SetString(const char* sValue)
 {
-	if(!sValue || m_Column.empty()) return false;
+	if(!sValue || !ValidateColumn()) return false;
 
 	{
 		// set string type
@@ -403,7 +422,7 @@ bool DocExcelSheet::SetString(const char* sValue)
 
 bool DocExcelSheet::SetFunction(const char* sFunction)
 {
-	if(!sFunction || m_Column.empty()) return false;
+	if(!sFunction || !ValidateColumn()) return false;
 
 	{
 		DocXML	node	= m_Column.child("f");
@@ -444,7 +463,7 @@ void DocExcelSheet::SetPane(const char* sPos)
 
 bool DocExcelSheet::SetStyle(int iCellStyle)
 {
-	if(m_Column.empty()) return false;
+	if(!ValidateColumn()) return false;
 
 	if(m_Column.attribute("s").as_int(-1) == -1) {
 		// no style existed
@@ -458,7 +477,7 @@ bool DocExcelSheet::SetStyle(int iCellStyle)
 
 bool DocExcelSheet::SetColumnWidth(double fWidth, bool bBestFit)
 {
-	if(m_Column.empty()) return false;
+	if(!ValidateColumn()) return false;
 
 	cstring	sPos;
 	sPos.Format("%d", m_CurPos.x);
@@ -571,7 +590,7 @@ bool DocExcelSheet::GetMergeCellPos(int& tx, int& ty, int& width, int& height)
 
 bool DocExcelSheet::HideColumn(bool bHide)
 {
-	if(m_Column.empty()) return false;
+	if(!ValidateColumn()) return false;
 
 	cstring	sPos;
 	sPos.Format("%d", m_CurPos.x);
@@ -641,7 +660,7 @@ void DocExcelSheet::SetProtection(const char* sHash, const char* sSalt, const ch
 
 bool DocExcelSheet::SetConditionalFormatting(const char* sFomula, int iStyleFormat)
 {
-	if(m_Column.empty()) return false;
+	if(!ValidateColumn()) return false;
 
 	cstring sPos = GetPosition();
 	DocXML	node = this->find_child_by_attribute("conditionalFormatting", "sqref", sPos);
@@ -1110,13 +1129,13 @@ int DocExcel::StyleBorder(const char* sBorderStyle)
 		private_data* p = (private_data*)pPrivate;
 		p->iIndex++;
 
-		if(p->sLeft == node.child("left").attribute("style").value() &&
-		   p->sRight == node.child("right").attribute("style").value() &&
-		   p->sTop == node.child("top").attribute("style").value() &&
-		   p->sBottom == node.child("bottom").attribute("style").value() &&
-		   p->bDiagonalUp == node.attribute("diagonalUp").as_bool() &&
-		   p->bDiagonalDown == node.attribute("diagonalDown").as_bool() &&
-		   p->sDiagonal == node.child("diagonal").attribute("style").as_string())
+		if((p->sLeft == node.child("left").attribute("style").value() && !node.child("left").first_child()) &&
+		   (p->sRight == node.child("right").attribute("style").value() && !node.child("right").first_child()) &&
+		   (p->sTop == node.child("top").attribute("style").value() && !node.child("top").first_child()) &&
+		   (p->sBottom == node.child("bottom").attribute("style").value() && !node.child("bottom").first_child()) &&
+		   (p->bDiagonalUp == node.attribute("diagonalUp").as_bool() && !node.child("diagonalUp").first_child()) &&
+		   (p->bDiagonalDown == node.attribute("diagonalDown").as_bool() && !node.child("diagonalDown").first_child()) &&
+		   (p->sDiagonal == node.child("diagonal").attribute("style").as_string() && !node.child("diagonal").first_child()))
 		{
 			p->iRet	= p->iIndex;
 			return false;

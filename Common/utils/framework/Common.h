@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 11/19/2021 Fri (clonextop@gmail.com)
+// Rev.  : 1/26/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __COMMON_H__
 #define __COMMON_H__
@@ -89,6 +89,8 @@ void LOG(LOG_MODE id, const char* sFormat, ...);
 #define LOGI(...)		LOG(LOG_MODE_INFO, __VA_ARGS__)
 #define LOGW(...)		LOG(LOG_MODE_WARNING, __VA_ARGS__)
 #define LOGE(...)		LOG(LOG_MODE_ERROR, __VA_ARGS__)
+extern int	g_log_warning_count;
+extern int	g_log_error_count;
 
 class Reference {
 public:

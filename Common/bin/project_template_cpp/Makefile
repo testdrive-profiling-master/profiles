@@ -12,7 +12,7 @@ SRCS			:= \
 INC				:= -I.
 LIBDIR			:=
 CDEFS			:=
-EXTRA_CFLAGS	:= -O0 -std=c++17 -DDEBUG -g
+EXTRA_CFLAGS	:= -O0 -std=c++14 -DDEBUG -g
 #MAIN_COMPILER	:= clang		# uncomment this code to using clang compiler
 
 #-------------------------------------------------

@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,11 +31,10 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 11/19/2021 Fri (clonextop@gmail.com)
+// Rev.  : 1/26/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include <stdarg.h>
-#include "TestDrive_LM.h"
 #include "TestDriver.inl"
 
 string GetCommonToolPath(void)
@@ -44,7 +43,12 @@ string GetCommonToolPath(void)
 #ifdef WIN32
 	sEnv	= getenv("TESTDRIVE_PROFILE");
 	sEnv	+= "Common/";
+#else // linux server
+	sEnv	= getenv("TESTDRIVE_PROFILE");
 #endif
+
+	if(sEnv == "") sEnv = "./";
+
 	return sEnv;
 }
 
@@ -79,6 +83,9 @@ bool isVarChar(char ch)
 	return isalpha(ch) || isdigit(ch) || (ch == '_');
 }
 
+int	g_log_warning_count		= 0;
+int	g_log_error_count		= 0;
+
 void LOG(LOG_MODE id, const char* sFormat, ...)
 {
 	static const char* __sID[] = {
@@ -88,6 +95,16 @@ void LOG(LOG_MODE id, const char* sFormat, ...)
 	};
 	int		color_id	= (int)id;
 	bool	bCustom		= false;
+
+	switch(id) {
+	case LOG_MODE_WARNING:
+		g_log_warning_count++;
+		break;
+
+	case LOG_MODE_ERROR:
+		g_log_error_count++;
+		break;
+	}
 
 	if(!sFormat) return;
 
@@ -111,7 +128,9 @@ void LOG(LOG_MODE id, const char* sFormat, ...)
 		13,		// 5: purple
 		11,		// 6: aqua
 	};
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), __iColor[color_id]);
+
+	if(color_id) SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), __iColor[color_id]);
+
 #else
 	static const char* __sColor[] = {
 		"\x1b[38;2;255;255;255m",	// 0: white
@@ -122,7 +141,9 @@ void LOG(LOG_MODE id, const char* sFormat, ...)
 		"\x1b[1;35m",				// 5: purple
 		"\x1b[1;36m",				// 6: aqua
 	};
-	printf(__sColor[color_id]);
+
+	if(color_id || bCustom) printf(__sColor[color_id]);
+
 #endif
 	{
 		int iLen		= 0;
@@ -151,10 +172,12 @@ void LOG(LOG_MODE id, const char* sFormat, ...)
 	}
 #ifdef WIN32
 
-	if(id != LOG_MODE_INFO) SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), __iColor[0]);
+	if(color_id) SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 7);
 
 #else
-	printf("\x1b[0m");
+
+	if(color_id || bCustom) printf("\x1b[0m");
+
 #endif
 	fflush(stdout);
 }

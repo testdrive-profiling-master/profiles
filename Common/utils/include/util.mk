@@ -11,7 +11,7 @@ ifndef BUILD_TARGET
 BUILD_TARGET	= $(TARGET_EXE)
 endif
 
-INC				:= $(INC) -I../framework -I../include
+INC				:= $(INC) -I../framework -I../include -I../lib_src
 LIBDIR			:= -L../lib -lframework -liconv $(LIBDIR)
 
 include $(TESTDRIVE_PROFILE)Common/include/config.mk
