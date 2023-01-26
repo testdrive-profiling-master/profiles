@@ -7,7 +7,8 @@ property["Business_Unit"]			= "foundry"
 property["IP_Name_Header"]			= "Header_blabla~"
 property["Ownership"]				= "TESTDRIVE"
 property["Document_Name_Header"]	= "User guide"
-property["Water_Mark"]				= "TESTDRIVE CONFIDENTIAL"
+property["Security_Level"]			= "BSD License."
+property["Water_Mark"]				= "TESTDRIVE OPENSOURCED"
 
 
 -- Revision history (버전, 연도, 월, 일, 설명) : 마지막 버전/날짜가 도큐먼트의 버전/날짜가 됩니다. 날짜 순으로 나열할 것!!!
@@ -30,13 +31,6 @@ AddParagraph(
 몇 년 후, 왕은 재혼을 했다. 새 왕비는 아름다웠으나 오만했고, 인격이 바르지 못했다. 게다가 자신보다 미모가 더 뛰어난 사람이 있는 것을 참을 수 없어했다. 왕비는 진실만을 말하는 마법 거울에게 물으면서, 매일매일 자신이 이 세상에서 가장 아름답다는 사실을 확인하곤 했다. \"왕비마마보다 아름다운 사람은 없습니다.\"라는 답변을 받으면 만족해했다.\
 어느덧 백설공주는 나이를 먹고 하루하루 예뻐져, 7살이 되어서는 왕비의 미모를 능가했다. 어느 날, 왕비는 평소처럼 거울에게 질문을 했는데, 거울이 \"백설공주가 더 아름답습니다.\"라고 답했다. 그 말을 듣자 질투심이 일어 화가 난 왕비는 사냥꾼을 불러 백설공주를 숲에 데리고 가서 죽이도록 명령했으나, 하지만 백설공주를 불쌍히 여긴 사냥꾼은 차마 백설공주를 죽이지 못하고, 숲 속으로 도망치게 했다."
 )
-
-AddParagraph("## 그림 표현")
-AddParagraph(" ")
-AddParagraph(" ")
-AddParagraph(" ")
-
-AddParagraph("이미지 이름에 '#' 를 넣으면 외곽선이 추가되다.")
 
 AddPageBreak()
 

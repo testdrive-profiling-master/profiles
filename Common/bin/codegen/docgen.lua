@@ -1,4 +1,4 @@
-local Arg = ArgTable("Document Generator. v1.0")
+local Arg = ArgTable("Document Generator for TestDrive Profiling Master. v1.0")
 
 Arg:AddOptionFile	("in_file", nil, nil, nil, "input_file", "input Lua file")
 Arg:AddOptionString	("template", "", "t", nil, "template", "Document template.")
@@ -36,7 +36,7 @@ local	sDate = String(nil)
 
 property = {}
 sDate:FormatDate("%Y", 0)
-property["year"]					= sDate.s		-- 라이센스 연도 반영
+property["Year"]					= sDate.s		-- 라이센스 연도 반영
 property["Document_Name"]			= "-"
 sDate:FormatDate("%B %d, %Y", 0)
 property["Revision_Date"]			= sDate.s
@@ -1481,17 +1481,12 @@ if RunScript(sInFilename) == false then
 end
 
 -- 속성 갱신
-doc:SetProperty("Year",						property["year"])
-doc:SetProperty("Document_Name",			property["Document_Name"])
-doc:SetProperty("Revision_Date",			property["Revision_Date"])
-doc:SetProperty("IP_Version",				property["IP_Version"])
-doc:SetProperty("Doc_Version",				property["Doc_Version"])
-doc:SetProperty("Comprehensive_IP_Title",	property["Comprehensive_IP_Title"])
-doc:SetProperty("IP_Name_First_Page",		property["IP_Name_First_Page"])
-doc:SetProperty("Business_Unit",			property["Business_Unit"])
-doc:SetProperty("IP_Name_Header",			property["IP_Name_Header"])
-doc:SetProperty("Ownership",				property["Ownership"])
-doc:SetProperty("Document_Name_Header",		property["Document_Name_Header"])
+for key, value in pairs(property) do
+	if key ~= "Water_Mark" then
+		doc:SetProperty(key, value)
+	end
+end
+
 
 -- 테이블/그림 목차 없을시 제거
 if table_count == 0 then

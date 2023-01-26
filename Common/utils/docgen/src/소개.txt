@@ -30,20 +30,20 @@ docgen 은 Template 워드(.docx) 파일을 참조하여 새로운 WORD 문서(.
 
 docgen 을 실행하기 위해서는 아래와 같이 실행합니다.
 
-```bash
+```txt
 > docgen
 
-TestDrive code generator. v1.0 (build #1 date : Jan 26 2023)
-Usage: codegen  [--help] [-e|--encrypt] [-d|--decrypt] [-k|--key=key_code] lua_file ...
+Document Generator for TestDrive Profiling Master. v1.0
+Usage: docgen  [--help] input_file [-t template] [output_file]
 
       --help                display this help and exit
-  -e, --encrypt             Encrypt Lua script file
-  -d, --decrypt             Decrypt Lua script file
-  -k, --key=key_code        Set key code for Encrypt/Decrypt
-  lua_file                  Lua script file
+  input_file                input Lua file
+  -t template               Document template.
+  output_file               output Microsoft Word(.docx) file
+
 ```
 
-실행 명령 : @<fixed>codegen docgen @<color:FF0000>INPUT_LUA_FILE@</color>  @<color:FF0000>OUTPUT_DOCX_FILE@</color>@</fixed>
+실행 명령 : @<fixed>docgen @<color:FF0000>INPUT_LUA_FILE@</color>  @<color:FF0000>OUTPUT_DOCX_FILE@</color>@</fixed>
 
 @<color:FF0000>INPUT_LUA_FILE@</color>에 해당하는 Lua 스크립트를 작성하여 실행하게 되며, @<color:FF0000>OUTPUT_DOCX_FILE@</color>을 지정하지 않을 경우 주어진 property를 참조하여 자동으로 알맞게 생성합니다. '-t' 옵션은 기본 바탕이 될 템플릿 문서를 지정하게 되는데, 템플릿 문서를 지정하지 않을 경우 기본 docgen_template.docx로 지정하도록 되어 있으나 이를 참조/변경하여 다양한 문서 형태를 만들 수 있습니다.
 
