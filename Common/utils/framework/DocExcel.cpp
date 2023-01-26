@@ -755,7 +755,7 @@ DocExcel::~DocExcel(void)
 bool DocExcel::Open(const char* sFileName)
 {
 	if(!sFileName || !*sFileName) {
-		string	sTemplateFileName	= GetCommonToolPath() + "/bin/lua/DocExcel_template.xlsx";
+		string	sTemplateFileName	= GetCommonToolPath() + "/bin/codegen/DocExcel_template.xlsx";
 		return DocFile::Open(sTemplateFileName.c_str());
 	}
 

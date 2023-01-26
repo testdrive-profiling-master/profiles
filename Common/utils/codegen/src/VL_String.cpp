@@ -229,9 +229,7 @@ bool VL_String::CreateToXLSX(const char* sFileName, VL* pVL)
 		} __private;
 		__private	p = {false, NULL, 0, 0};
 		{
-			string	sPath	= GetCommonToolPath() + "bin/lua/DocExcel_template.xlsx";
-
-			if(!xls.Open(sPath.c_str())) return false;
+			if(!xls.Open()) return false;
 
 			p.pSheet		= xls.GetSheetByIndex(0);
 			p.iStyleColumn	= xls.StyleCell(xls.StyleFont(NULL, 0, true, false, 0), xls.StyleFill(0xBFBFFF), 0, 0, "horizontal=center");

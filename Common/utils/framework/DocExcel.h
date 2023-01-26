@@ -146,7 +146,7 @@ public:
 	DocExcel(void);
 	virtual ~DocExcel(void);
 
-	virtual bool Open(const char* sFileName);
+	virtual bool Open(const char* sFileName = NULL);
 
 	const char* GetString(int iIndex);
 	int GetStringIndex(const char* sStr, bool bAutoAppend = true);
