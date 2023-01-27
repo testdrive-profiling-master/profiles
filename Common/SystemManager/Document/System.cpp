@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System manager
-// Rev.  : 7/22/2021 Thu (clonextop@gmail.com)
+// Rev.  : 1/27/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "System.h"
 #include "Utils.h"
@@ -285,6 +285,9 @@ System::System(ITDDocument* pDoc) :
 		if(m_SubSystemList.Size() && !IsFileExisted(_T("%PROJECT%\\Program\\SimSystem.dll"))) {
 			g_pSystem->LogInfo(_L(INFO_BUILD_ALL));
 		}
+
+		// install custom tool resources
+		g_pSystem->ExecuteFile(_T("%TESTDRIVE_PROFILE%common\\bin\\codegen.exe"), _T("update_common_tools"), TRUE, NULL, _T("%TESTDRIVE_PROFILE%common\\bin"), NULL);
 	}
 }
 
