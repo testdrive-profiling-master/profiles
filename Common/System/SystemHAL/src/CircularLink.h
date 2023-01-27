@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,59 +31,68 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/27/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __CIRCULAR_LINK_H__
 #define __CIRCULAR_LINK_H__
 
 template <typename T, int idx>
-class CircularLink
-{
+class CircularLink {
 public:
-	CircularLink(void){
+	CircularLink(T Obj) {
 		pPrev	= NULL;
 		pNext	= NULL;
+		Object	= Obj;
 	}
 
-	virtual ~CircularLink(void){
+	virtual ~CircularLink(void) {
 		UnLink();
 	}
 
-	void SetObject(T object){
-		Object	= object;
-	}
-
-	void Link(CircularLink<T, idx>* pPrevLink = NULL){
+	void Link(CircularLink<T, idx>* pPrevLink = NULL) {
 		UnLink();
-		if(pPrevLink){
+
+		if(pPrevLink) {
 			pPrev				= pPrevLink;
 			pNext				= pPrevLink->pNext;
 			pPrevLink->pNext	= this;
+
 			if(pNext)
 				pNext->pPrev	= this;
-		}else{
+		} else {
 			if(pHead) pHead->pPrev	= this;
+
 			pNext			= pHead;
 			pHead			= this;
 		}
 	}
 
-	void UnLink(void){
+	void UnLink(void) {
 		if(pHead == this)
 			pHead			= pNext;
+
 		if(pPrev)
 			pPrev->pNext	= pNext;
+
 		if(pNext)
 			pNext->pPrev	= pPrev;
-		
+
 		pPrev			= NULL;
 		pNext			= NULL;
 	}
 
-	static inline CircularLink<T, idx>* Head(void)	{return pHead;}
-	inline CircularLink<T, idx>* Prev(void)	{return pPrev;}
-	inline CircularLink<T, idx>* Next(void)	{return pNext;}
-	inline T Item(void)						{return Object;}
+	static inline CircularLink<T, idx>* Head(void)	{
+		return pHead;
+	}
+	inline CircularLink<T, idx>* Prev(void)	{
+		return pPrev;
+	}
+	inline CircularLink<T, idx>* Next(void)	{
+		return pNext;
+	}
+	inline T Item(void)						{
+		return Object;
+	}
 
 private:
 	static CircularLink<T, idx>*	pHead;

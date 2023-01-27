@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
+// Rev.  : 1/27/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_HAL_H__
 #define __SYSTEM_HAL_H__
@@ -65,48 +64,47 @@ struct ISystem {
 };
 
 #if defined(SYSTEM_IMPLEMENTATION) || defined(SYSTEM_EXPORTS)
-	struct IMemoryNative {
-		virtual void Release(void) = 0;
-		virtual BYTE* Virtual(void) = 0;
-		virtual BOOL Flush(DWORD dwOffset, DWORD dwPhyAddress, DWORD dwByteSize, BOOL bWrite) = 0;
-	};
+struct IMemoryNative {
+	virtual void Release(void) = 0;
+	virtual BYTE* Virtual(void) = 0;
+	virtual BOOL Flush(DWORD dwOffset, DWORD dwPhyAddress, DWORD dwByteSize, BOOL bWrite) = 0;
+};
 
-	struct IMemoryManager {
-		virtual IMemoryNative* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, BOOL bDMA = FALSE) = 0;
-	};
+struct IMemoryManager {
+	virtual IMemoryNative* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, BOOL bDMA = FALSE) = 0;
+};
 
-	struct IMemoryImp {
-		virtual BOOL Initialize(BYTE* pVirtual, DWORD dwPhysical, DWORD dwByteSize, IMemoryManager* pMemoryManager) = 0;
-		virtual void Release(void) = 0;
-	};
+struct IMemoryImp {
+	virtual bool Initialize(BYTE* pVirtual, DWORD dwPhysical, DWORD dwByteSize, IMemoryManager* pMemoryManager) = 0;
+	virtual void Release(void) = 0;
+};
 
-	struct ISystemImp : public ISystem
-	{
-		virtual BOOL Initialize(IMemoryImp* pMem) = 0;					// create memory implementation
-	};
+struct ISystemImp : public ISystem {
+	virtual BOOL Initialize(IMemoryImp* pMem) = 0;					// create memory implementation
+};
 #endif
 
 #ifndef SYSTEM_IMPLEMENTATION
-	#define SYSTEM_API		extern "C"
-	#ifdef SYSTEM_EXPORTS
-		typedef ISystemImp* (*CreateSystemImplementationFunction)(void);
-	#endif
+#define SYSTEM_API		extern "C"
+#ifdef SYSTEM_EXPORTS
+typedef ISystemImp* (*CreateSystemImplementationFunction)(void);
+#endif
 
-	SYSTEM_API ISystem* CreateSystem(void);		// 시스템 생성
+SYSTEM_API ISystem* CreateSystem(void);		// System creation
 
-	struct IMemory {
-		virtual void AddRef(void) = 0;			// add reference
-		virtual void Release(void) = 0;			// release memory object
-		virtual void* Virtual(void) = 0;		// virtual memory pointer
-		virtual DWORD Physical(void) = 0;		// physical memory address
-		virtual DWORD ByteSize(void) = 0;		// byte allocation size
-		virtual BOOL Flush(BOOL bWrite = TRUE, DWORD dwOffset = 0, DWORD dwByteSize = 0) = 0;	// flush memory
-	};
+struct IMemory {
+	virtual void AddRef(void) = 0;			// add reference
+	virtual void Release(void) = 0;			// release memory object
+	virtual void* Virtual(void) = 0;		// virtual memory pointer
+	virtual DWORD Physical(void) = 0;		// physical memory address
+	virtual DWORD ByteSize(void) = 0;		// byte allocation size
+	virtual BOOL Flush(BOOL bWrite = TRUE, DWORD dwOffset = 0, DWORD dwByteSize = 0) = 0;	// flush memory
+};
 
-	typedef void (*ENUMERATE_MEMORY_FUNCTION)(IMemory* pMemory, void* pPrivate);
+typedef void (*ENUMERATE_MEMORY_FUNCTION)(IMemory* pMemory, void* pPrivate);
 
-	SYSTEM_API IMemory* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, BOOL bDMA = FALSE);
-	SYSTEM_API void EnumerateMemory(ENUMERATE_MEMORY_FUNCTION func, void* pPrivate = NULL);
+SYSTEM_API IMemory* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress = (DWORD) -1, BOOL bDMA = FALSE);
+SYSTEM_API void EnumerateMemory(ENUMERATE_MEMORY_FUNCTION func, void* pPrivate = NULL);
 
 #endif
 

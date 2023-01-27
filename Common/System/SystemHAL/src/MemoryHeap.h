@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
+// Rev.  : 1/27/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __MEMORY_HEAP_H__
 #define __MEMORY_HEAP_H__
@@ -45,10 +44,9 @@ class MemoryImplementation;
 typedef	CircularLink<MemoryHeap*, 0>	HeapLink;
 typedef	CircularLink<MemoryHeap*, 1>	FreeLink;
 
-class MemoryHeap : public IMemory
-{
+class MemoryHeap : public IMemory {
 public:
-	MemoryHeap(DWORD dwReqBytes, DWORD dwByteAlignment = 4, BOOL bDMA = FALSE);
+	MemoryHeap(DWORD dwByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, BOOL bDMA);
 	virtual void AddRef(void);
 	virtual void Release(void);
 
@@ -57,41 +55,43 @@ public:
 	virtual DWORD ByteSize(void);
 	virtual BOOL Flush(BOOL bWrite = TRUE, DWORD dwOffset = 0, DWORD dwByteSize = 0);
 
-	inline BOOL IsFree(void)			{return m_bFree;}
+	inline bool IsFree(void) {
+		return m_bFree;
+	}
 
-	BOOL Alloc(MemoryHeap* pHeap, DWORD dwAllocByteSize, DWORD dwByteAlignment = 4, BOOL bDMA = FALSE);
-	void Free(void);
+	bool Alloc(MemoryHeap* pHeap, DWORD dwAllocByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, BOOL bDMA);
 
 protected:
+	MemoryHeap(MemoryHeap* pPrev = NULL);
 	virtual ~MemoryHeap(void);
-	MemoryHeap(BYTE* pVirtual, DWORD dwPhysical, DWORD dwByteSize);
+	MemoryHeap(DWORD dwPhysical, DWORD dwByteSize);
+
+	MemoryHeap* Prev(void);
+	MemoryHeap* Next(void);
 
 	friend class MemoryImplementation;
 
 private:
-	void Initialize(BOOL bFree);
-
 	// life-cycle management
-	DWORD						m_dwRefCount;		// reference count
+	int							m_iRefCount;		// reference count
 
 	// resource link management
 	HeapLink					m_Link;				// all heap link
 	FreeLink					m_Free;				// free heap link for free heap fast search
 
 	// memory allocation information
-	BOOL						m_bFree;			// is free heap?
+	bool						m_bFree;			// is free heap?
 	DWORD						m_dwPhysical;		// physical memory address
 	DWORD						m_dwByteSize;		// heap size (byte, block aligned)
 	IMemoryNative*				m_pNative;			// native system memory manager
 };
 
-class MemoryImplementation : public IMemoryImp
-{
+class MemoryImplementation : public IMemoryImp {
 public:
 	MemoryImplementation(void);
 	virtual ~MemoryImplementation(void);
 
-	virtual BOOL Initialize(BYTE* pVirtual, DWORD dwPhysical, DWORD dwByteSize, IMemoryManager* pMemoryManager);
+	virtual bool Initialize(BYTE* pVirtual, DWORD dwPhysical, DWORD dwByteSize, IMemoryManager* pMemoryManager);	//@FIXME : pVirtual is unused
 	virtual void Release(void);
 
 	void Report(void);

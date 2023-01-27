@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,15 +31,14 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/27/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_HAL_CONFIG_H__
 #define __SYSTEM_HAL_CONFIG_H__
 #include "ddk/SystemHAL.h"
 #define LOGI(...)	printf("[SystemHAL] " __VA_ARGS__)
 
-class SystemHALConfig
-{
+class SystemHALConfig {
 public:
 	SystemHALConfig(void);
 	~SystemHALConfig(void);

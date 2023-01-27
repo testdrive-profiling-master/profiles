@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/27/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "SystemHALConfig.h"
 #include "MemoryHeap.h"
@@ -103,7 +102,7 @@ ISystem* SystemHALConfig::CreateSystem(void)
 	}
 
 	{
-		// 하위 시스템 생성
+		// Create sub-system
 		CreateSystemImplementationFunction	CreateSystemImplementation		= (CreateSystemImplementationFunction)GetProcAddress(m_hSystemImpModule, "CreateSystemImplementation");
 
 		if(CreateSystemImplementation) {
@@ -111,7 +110,7 @@ ISystem* SystemHALConfig::CreateSystem(void)
 			pImp = CreateSystemImplementation();
 
 			if(pImp) {
-				// 하위 시스템 초기화
+				// Initialize sub-system
 				if(!pImp->Initialize(&g_MemoryImplementation)) {
 					pImp->Release();
 					pImp	= NULL;

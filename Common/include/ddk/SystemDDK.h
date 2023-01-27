@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
+// Rev.  : 1/27/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_DDK_H__
 #define __SYSTEM_DDK_H__
@@ -40,10 +39,10 @@
 
 #define DDK_API		extern "C"
 
-typedef enum{
+typedef enum {
 	COLOR_FORMAT_R5G6B5,
 	COLOR_FORMAT_A8B8G8R8,
-}COLOR_FORMAT;
+} COLOR_FORMAT;
 
 typedef void (*DDK_INTRRUPT_SERVICE)(void* pPrivate);	// user interrupt service routine template
 
@@ -71,7 +70,7 @@ struct DDK {
 	virtual void WaitInterruptDone(void) = 0;
 };
 
-struct DDKMemory{
+struct DDKMemory {
 	virtual void AddRef(void) = 0;			// add reference
 	virtual void Release(void) = 0;			// release memory object
 	virtual void* Virtual(void) = 0;		// virtual memory pointer
@@ -85,6 +84,7 @@ typedef void (*ENUMERATE_DDK_MEMORY_FUNCTION)(DDKMemory* pMemory, void* pPrivate
 
 DDK_API DDK* CreateDDK(void);
 DDK_API DDKMemory* CreateDDKMemory(DWORD dwByteSize, DWORD dwByteAlignment, BOOL bDMA = FALSE);
+DDK_API DDKMemory* CreateDDKMemoryEx(DWORD dwByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, BOOL bDMA = FALSE);
 DDK_API void EnumerateDDKMemory(ENUMERATE_DDK_MEMORY_FUNCTION func, void* pPrivate = NULL);
 
 #endif//__SYSTEM_DDK_H__

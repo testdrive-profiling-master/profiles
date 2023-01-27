@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,116 +31,17 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/27/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include <assert.h>
 #include <stdio.h>
 #include "MemoryHeap.h"
 
-static IMemoryManager*		g_pMemoryManager	= NULL;
+static IMemoryManager*		__pMemoryManager	= NULL;
+static DWORD				__HEAP_PHY_BASE		= 0;
+static DWORD				__HEAP_BYTE_SIZE	= 0;
 
-void MemoryHeap::Initialize(BOOL bFree)
-{
-	m_dwRefCount		= 0;
-	m_bFree				= bFree;
-	m_pNative			= NULL;
-	m_dwPhysical		= 0;
-	m_dwByteSize		= 0;
-	m_Link.SetObject(this);
-	m_Free.SetObject(this);
-
-	if(bFree) {
-		m_Link.Link();
-		m_Free.Link();
-	}
-}
-
-void ShowByteSize(DWORD dwSize);
-MemoryHeap::MemoryHeap(DWORD dwReqBytes, DWORD dwByteAlignment, BOOL bDMA)
-{
-	Initialize(FALSE);
-	AddRef();
-	assert(dwReqBytes != 0);
-	assert(dwByteAlignment != 0);
-	{
-		// find empty heap area
-		FreeLink*		pFree	= m_Free.Head();
-
-		while(pFree) {
-			if(pFree->Item()->Alloc(this, dwReqBytes, dwByteAlignment, bDMA)) return;
-
-			pFree	= pFree->Next();
-		}
-	}
-	printf("*E: Sorry! No more linear physical heap memory : ");
-	ShowByteSize(dwReqBytes);
-	printf("\n");
-}
-
-MemoryHeap::~MemoryHeap(void)
-{
-	SAFE_RELEASE(m_pNative);
-	//assert(m_bFree==TRUE);
-}
-
-MemoryHeap::MemoryHeap(BYTE* pVirtual, DWORD dwPhysical, DWORD dwByteSize)
-{
-	Initialize(TRUE);
-	AddRef();
-	m_dwPhysical		= dwPhysical;
-	m_dwByteSize		= dwByteSize;
-}
-
-void MemoryHeap::Free(void)
-{
-	assert(m_bFree == FALSE);
-
-	if(m_bFree) return;
-
-	m_bFree	= TRUE;
-	{
-		MemoryHeap* pCurHeap	= this;
-		MemoryHeap*	pPrev		= m_Link.Prev() ? m_Link.Prev()->Item() : NULL;
-		MemoryHeap*	pNext		= m_Link.Next() ? m_Link.Next()->Item() : NULL;
-
-		if(pPrev && pPrev->IsFree()) {
-			pPrev->m_dwByteSize	+= m_dwByteSize;
-			m_dwByteSize		= 0;
-			pCurHeap			= pPrev;
-		}
-
-		if(pNext && pNext->IsFree()) {
-			pCurHeap->m_dwByteSize	+= pNext->m_dwByteSize;
-			delete pNext;
-		}
-
-		if(!m_dwByteSize) delete this;
-		else m_Free.Link();	// set to free link stack
-	}
-}
-
-BOOL MemoryHeap::Alloc(MemoryHeap* pHeap, DWORD dwAllocByteSize, DWORD dwByteAlignment, BOOL bDMA)
-{
-	// adjust align size
-	dwAllocByteSize			+= (m_dwPhysical + m_dwByteSize - dwAllocByteSize) & (dwByteAlignment - 1);
-
-	if(!m_bFree || m_dwByteSize < dwAllocByteSize) return FALSE;
-
-	// set link (this >> pHeap(alloc) >> m_Link.pNext)
-	pHeap->m_Link.Link(&m_Link);
-	// set size
-	pHeap->m_dwByteSize		= dwAllocByteSize;
-	m_dwByteSize			-= dwAllocByteSize;
-	// set virtual
-	pHeap->m_pNative		= g_pMemoryManager->CreateMemory(dwAllocByteSize, dwByteAlignment, bDMA);
-	// set physical
-	pHeap->m_dwPhysical		= m_dwPhysical + m_dwByteSize;
-	// set not free heap to new heap
-	pHeap->m_bFree			= FALSE;
-	return pHeap->m_pNative != NULL;
-}
-
-void ShowByteSize(DWORD dwSize)
+static void __ShowByteSize(DWORD dwSize)
 {
 	BOOL bShow = FALSE;
 
@@ -179,16 +79,147 @@ void ShowByteSize(DWORD dwSize)
 	}
 }
 
+MemoryHeap::MemoryHeap(DWORD dwByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, BOOL bDMA) : MemoryHeap()
+{
+	assert(dwByteSize != 0);
+	assert(dwByteAlignment != 0);
+	{
+		// find empty heap area
+		FreeLink*		pFree	= m_Free.Head();
+
+		while(pFree) {
+			if(pFree->Item()->Alloc(this, dwByteSize, dwByteAlignment, dwPhyAddress, bDMA)) return;
+
+			pFree	= pFree->Next();
+		}
+	}
+	printf("*E: Sorry! No more linear physical heap memory : ");
+	__ShowByteSize(dwByteSize);
+	printf("\n");
+}
+
+MemoryHeap::MemoryHeap(MemoryHeap* pPrev) : m_Link(this), m_Free(this)
+{
+	m_iRefCount			= 1;	// referenced start
+	m_dwPhysical		= 0;
+	m_dwByteSize		= 0;
+	m_pNative			= NULL;
+	m_bFree				= false;
+}
+
+MemoryHeap::~MemoryHeap(void)
+{
+	SAFE_RELEASE(m_pNative);
+}
+
+MemoryHeap::MemoryHeap(DWORD dwPhysical, DWORD dwByteSize) : MemoryHeap()
+{
+	m_bFree				= true;
+	m_Link.Link();
+	m_Free.Link();
+	m_dwPhysical		= dwPhysical;
+	m_dwByteSize		= dwByteSize;
+}
+
+bool MemoryHeap::Alloc(MemoryHeap* pHeap, DWORD dwAllocByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, BOOL bDMA)
+{
+	// adjust align size
+	dwAllocByteSize			+= (m_dwPhysical + m_dwByteSize - dwAllocByteSize) & (dwByteAlignment - 1);
+
+	// not freed memory or size is not fit to.
+	if(!m_bFree || m_dwByteSize < dwAllocByteSize) return false;
+
+	// physical address is not fit to.
+	if((dwPhyAddress != (DWORD) -1) && (dwPhyAddress < m_dwPhysical || (dwPhyAddress + dwAllocByteSize) > (m_dwPhysical + m_dwByteSize))) return false;
+
+	// create native first
+	pHeap->m_pNative		= __pMemoryManager->CreateMemory(dwAllocByteSize, dwByteAlignment, bDMA);
+
+	if(!pHeap->m_pNative) return false;
+
+	// set not free heap to new heap
+	pHeap->m_bFree			= FALSE;
+	// set size
+	pHeap->m_dwByteSize		= dwAllocByteSize;
+	m_dwByteSize			-= dwAllocByteSize;
+	// set link : this >> pHeap >> m_Link.pNext
+	pHeap->m_Link.Link(&m_Link);
+
+	// set physical
+	if(dwPhyAddress == (DWORD) -1) {
+		pHeap->m_dwPhysical		= dwPhyAddress;
+		// check tail freed size
+		DWORD	dwExtraFreeSize	= m_dwByteSize - (dwPhyAddress - m_dwPhysical);
+
+		if(dwExtraFreeSize) {
+			m_dwByteSize	-= dwExtraFreeSize;
+			auto pNext		= pHeap->Next();
+
+			if(pNext && pNext->IsFree()) {
+				pNext->m_dwPhysical		-= dwExtraFreeSize;
+				pNext->m_dwByteSize		+= dwExtraFreeSize;
+			} else {
+				//@FIXME : should add new free memory block to tail between pHeap and pHeap->next
+			}
+		}
+	} else {
+		pHeap->m_dwPhysical		= m_dwPhysical + m_dwByteSize;
+	}
+
+	return true;
+}
+
+MemoryHeap* MemoryHeap::Prev(void)
+{
+	auto pLink	= m_Link.Prev();
+
+	if(pLink) return pLink->Item();
+
+	return NULL;
+}
+
+MemoryHeap* MemoryHeap::Next(void)
+{
+	auto pLink	= m_Link.Next();
+
+	if(pLink) return pLink->Item();
+
+	return NULL;
+}
+
 void MemoryHeap::AddRef(void)
 {
-	m_dwRefCount++;
+	m_iRefCount++;
 }
 
 void MemoryHeap::Release(void)
 {
-	m_dwRefCount--;
+	m_iRefCount--;
+	assert(m_iRefCount >= 0);
 
-	if(!m_dwRefCount) Free();
+	if(!m_iRefCount) {	// free this
+		assert(m_bFree == FALSE);
+		m_bFree	= TRUE;
+		{
+			MemoryHeap* pCurHeap	= this;
+			MemoryHeap*	pPrev		= m_Link.Prev() ? m_Link.Prev()->Item() : NULL;
+			MemoryHeap*	pNext		= m_Link.Next() ? m_Link.Next()->Item() : NULL;
+
+			if(pPrev && pPrev->IsFree()) {
+				pPrev->m_dwByteSize	+= m_dwByteSize;
+				m_dwByteSize		= 0;
+				pCurHeap			= pPrev;
+			}
+
+			if(pNext && pNext->IsFree()) {
+				pCurHeap->m_dwByteSize	+= pNext->m_dwByteSize;
+				delete pNext;
+			}
+
+			if(!m_dwByteSize) delete this;
+			else m_Free.Link();	// set to free link stack
+		}
+	}
 }
 
 void* MemoryHeap::Virtual(void)
@@ -219,9 +250,9 @@ BOOL MemoryHeap::Flush(BOOL bWrite, DWORD dwOffset, DWORD dwByteSize)
 	return FALSE;
 }
 
-IMemory* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, BOOL bDMA)
+IMemory* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, BOOL bDMA)
 {
-	return new MemoryHeap(dwByteSize, dwByteAlignment, bDMA);
+	return new MemoryHeap(dwByteSize, dwByteAlignment, dwPhyAddress, bDMA);
 }
 
 void EnumerateMemory(ENUMERATE_MEMORY_FUNCTION func, void* pPrivate)
@@ -246,12 +277,14 @@ MemoryImplementation	g_MemoryImplementation;
 MemoryImplementation::MemoryImplementation(void) {}
 MemoryImplementation::~MemoryImplementation(void) {}
 
-BOOL MemoryImplementation::Initialize(BYTE* pVirtual, DWORD dwPhysical, DWORD dwByteSize, IMemoryManager* pMemoryManager)
+bool MemoryImplementation::Initialize(BYTE* pVirtual, DWORD dwPhysical, DWORD dwByteSize, IMemoryManager* pMemoryManager)
 {
 	Release();
-	g_pMemoryManager	= pMemoryManager;
-	new MemoryHeap(pVirtual, dwPhysical, dwByteSize);
-	return TRUE;
+	__pMemoryManager	= pMemoryManager;
+	__HEAP_PHY_BASE		= dwPhysical;
+	__HEAP_BYTE_SIZE	= dwByteSize;
+	new MemoryHeap(dwPhysical, dwByteSize);
+	return true;
 }
 
 void MemoryImplementation::Release(void)
@@ -267,7 +300,7 @@ void MemoryImplementation::Report(void)
 	if(!HeapLink::Head()) return;
 
 	if(HeapLink::Head()->Next()) {
-		// 2개 이상의 heap 이 존재하면 해제되지 않은 메모리가 존재하는 것이므로 자세히 출력한다.
+		// Report detail un-freed heap memories
 		int i_not_free_count	= 0;
 		HeapLink*	pLink		= HeapLink::Head();
 		printf("\n------------------------------------------------------------------\nSystem heap memory stack status\n"\
@@ -277,7 +310,7 @@ void MemoryImplementation::Report(void)
 			MemoryHeap* pHeap = pLink->Item();
 			printf(
 				"    %-4d %c         0x%08X    %12u (", i, pHeap->IsFree() ? 'O' : 'X', pHeap->Physical(), pHeap->ByteSize());
-			ShowByteSize(pHeap->ByteSize());
+			__ShowByteSize(pHeap->ByteSize());
 			printf(")\n");
 
 			if(!pHeap->IsFree()) i_not_free_count++;
