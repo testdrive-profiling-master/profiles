@@ -1,9 +1,9 @@
-local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.0")
+local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.01")
 local	sTemplatePath	= String(nil)
 
 sTemplatePath:GetEnvironment("TESTDRIVE_PROFILE")
 
-Arg:AddOptionString	("template", "", "t", nil, "template", "Document template.")
+Arg:AddOptionString	("template", "", "t", nil, "template", "Document template name/file.")
 
 do	-- list-up customized document template list
 	local	bCustomTemplateIsExisted	= false
@@ -49,7 +49,7 @@ local	sOutFilename	= Arg:GetOptionFile("out_file", 0)
 doc 					= DocWord()
 
 if sDocTemplate.s == "" then
-	sTemplatePath:Append("Common/bin/codegen/docgen_template.docx")
+	sTemplatePath:Append("Common/bin/codegen/docgen_template_testdrive.docx")
 elseif sDocTemplate:CompareBack(".docx") then
 	sTemplatePath.s	= sDocTemplate.s
 else

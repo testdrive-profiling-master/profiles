@@ -33,14 +33,15 @@ docgen 을 실행하기 위해서는 아래와 같이 실행합니다.
 ```txt
 > docgen
 
-Document Generator for TestDrive Profiling Master. v1.0
-Usage: docgen  [--help] input_file [-t template] [output_file]
+Document Generator for TestDrive Profiling Master. v1.01
+Usage: docgen  [--help] [-t template] input_file [output_file]
 
       --help                display this help and exit
+  -t template               Document template name/file.
+                            *** Installed docgen template list ***
+                            testdrive      : ** system default template **
   input_file                input Lua file
-  -t template               Document template.
   output_file               output Microsoft Word(.docx) file
-
 ```
 
 실행 명령 : @<fixed>docgen @<color:FF0000>INPUT_LUA_FILE@</color>  @<color:FF0000>OUTPUT_DOCX_FILE@</color>@</fixed>
