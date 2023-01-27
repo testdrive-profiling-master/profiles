@@ -1,1 +1,2 @@
-@codegen docgen %*
+@echo off
+codegen docgen %*

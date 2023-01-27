@@ -1,8 +1,43 @@
-local Arg = ArgTable("Document Generator for TestDrive Profiling Master. v1.0")
+local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.0")
+local	sTemplatePath	= String(nil)
+
+sTemplatePath:GetEnvironment("TESTDRIVE_PROFILE")
+
+Arg:AddOptionString	("template", "", "t", nil, "template", "Document template.")
+
+do	-- list-up customized document template list
+	local	bCustomTemplateIsExisted	= false
+	for src_path in lfs.dir(sTemplatePath.s .. "common/bin/codegen") do
+		local sName		= String(src_path)
+		local sExt		= String(src_path)
+		sExt:CutFront(".", true)
+		
+		if sName:CompareFront("docgen_template_") and (sExt.s == "docx") then
+			if bCustomTemplateIsExisted == false then
+				Arg:AddRemark(nil, "*** Installed docgen template list ***")
+				bCustomTemplateIsExisted	= true
+			end
+
+			sName:CutFront("docgen_template_")
+			sName:CutBack(".")
+		
+			local sDesc = ""
+			local f = TextFile()
+			if f:Open(sTemplatePath.s .. "common/bin/codegen/docgen_template_" .. sName.s .. ".txt") then
+				sDesc	= String(f:Get())
+				sDesc:CutBack("\r\n", true)
+				sDesc:Trim(" \t")
+				sDesc	= sDesc.s
+			end
+		
+			Arg:AddRemark(nil, string.format("%-14s : %s", sName.s, sDesc))
+		end
+	end
+end
 
 Arg:AddOptionFile	("in_file", nil, nil, nil, "input_file", "input Lua file")
-Arg:AddOptionString	("template", "", "t", nil, "template", "Document template.")
 Arg:AddOptionFile	("out_file", "", nil, nil, "output_file", "output Microsoft Word(.docx) file")
+
 
 if (Arg:DoParse() == false) then
 	return
@@ -11,10 +46,7 @@ end
 local	sInFilename		= Arg:GetOptionFile("in_file", 0)
 local	sDocTemplate	= String(Arg:GetOptionString("template", 0))
 local	sOutFilename	= Arg:GetOptionFile("out_file", 0)
-local	sTemplatePath	= String(nil)
 doc 					= DocWord()
-
-sTemplatePath:GetEnvironment("TESTDRIVE_PROFILE")
 
 if sDocTemplate.s == "" then
 	sTemplatePath:Append("Common/bin/codegen/docgen_template.docx")
@@ -27,8 +59,7 @@ end
 
 -- 문서 템플릿 열기
 if doc:Open(sTemplatePath.s) == false then
-	LOGE("Can't open template document : " .. sTemplatePath.s)
-	os.exit()
+	os.exit()		-- template document is not existed
 end
 
 local	sDate = String(nil)
