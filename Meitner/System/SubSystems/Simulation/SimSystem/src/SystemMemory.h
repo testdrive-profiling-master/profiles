@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_MEMORY_H__
 #define __SYSTEM_MEMORY_H__
@@ -41,21 +40,34 @@
 #include "VirtualDisplayConfig.h"
 #include "dpi_interfaces.h"
 
-class SystemMemory
-{
+class SystemMemory {
 public:
 	SystemMemory(void);
 	virtual ~SystemMemory(void);
-	void SetBaseAddress(DWORD dwAddress)				{m_dwBaseAddress	= dwAddress;}
+	void SetBaseAddress(DWORD dwAddress)				{
+		m_dwBaseAddress	= dwAddress;
+	}
 	DWORD ByteSize(void);
-	BYTE* GetPointer(DWORD dwAddress, DWORD dwSize = 0, BOOL bDisplay = FALSE);
-	void Flush(DWORD dwAddress, DWORD dwSize)			{if(m_pSystemMemory) m_pSystemMemory->Flush(dwAddress, dwSize);}
+	BYTE* GetPointer(DWORD dwAddress, DWORD dwSize = 0, bool bDisplay = false);
+	void Flush(DWORD dwAddress, DWORD dwSize)			{
+		if(m_pSystemMemory) m_pSystemMemory->Flush(dwAddress, dwSize);
+	}
 
-	inline BOOL IsInitialized(void)					{return (m_pSystemMemory!=NULL) && (m_pDisplayMemory!=NULL);}
-	inline DWORD BaseAddress(void)					{return m_dwBaseAddress;}
-	inline ITestDriverMemory* Handle(void)			{return m_pSystemMemory;}
-	inline SYSTEM_CONFIG* GetSystemConfig(void)		{return m_pSystemConfig;}
-	inline DisplayConfig* GetDisplayConfig(void)		{return m_pDisplayConfig;}
+	inline bool IsInitialized(void)					{
+		return (m_pSystemMemory != NULL) && (m_pDisplayMemory != NULL);
+	}
+	inline DWORD BaseAddress(void)					{
+		return m_dwBaseAddress;
+	}
+	inline ITestDriverMemory* Handle(void)			{
+		return m_pSystemMemory;
+	}
+	inline SYSTEM_CONFIG* GetSystemConfig(void)		{
+		return m_pSystemConfig;
+	}
+	inline DisplayConfig* GetDisplayConfig(void)		{
+		return m_pDisplayConfig;
+	}
 
 private:
 	ITestDriverMemory*		m_pSystemMemory;

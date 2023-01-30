@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,14 +31,14 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 6/30/2021 Wed (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "AXI_common.h"
 #include "AXI_Master.h"
 
 #define DEBUG_LEVEL(n)	if(m_iDebugLevel>=n)
 
-MAXI::MAXI(const char* sTitle, int iDataWidth, BOOL bUseAXI4, int iDebugLevel)
+MAXI::MAXI(const char* sTitle, int iDataWidth, bool bUseAXI4, int iDebugLevel)
 {
 	Log.SetTitle(*sTitle ? "MAXI('%s')" : "MAXI", sTitle);
 	m_bUseAXI4		= bUseAXI4;
@@ -105,7 +104,7 @@ void MAXI::TouchAddress(MAXI_DESC* pDesc)
 	}
 }
 
-BOOL MAXI::Read(MAXI_DESC* pDesc, BYTE* pData)
+bool MAXI::Read(MAXI_DESC* pDesc, BYTE* pData)
 {
 	BYTE* pMem = (BYTE*)GetMemoryPointer(pDesc->ADDR, pDesc->SIZE, FALSE);
 	pData	+= (pDesc->ADDR & (pDesc->SIZE - 1));
@@ -156,10 +155,10 @@ BOOL MAXI::Read(MAXI_DESC* pDesc, BYTE* pData)
 	}
 
 	TouchAddress(pDesc);
-	return TRUE;
+	return true;
 }
 
-BOOL MAXI::Write(MAXI_DESC* pDesc, const BYTE* pData, const DWORD* pByteStrob)
+bool MAXI::Write(MAXI_DESC* pDesc, const BYTE* pData, const DWORD* pByteStrob)
 {
 	BYTE*	pMem	= (BYTE*)GetMemoryPointer(pDesc->ADDR & m_dwAddressMask, m_dwDataBytes, FALSE);
 
@@ -249,7 +248,7 @@ BOOL MAXI::Write(MAXI_DESC* pDesc, const BYTE* pData, const DWORD* pByteStrob)
 	}
 
 	TouchAddress(pDesc);
-	return TRUE;
+	return true;
 }
 static const char* __sBURST_MODE[] = {
 	"FIXED",
@@ -349,7 +348,7 @@ void MAXI::BusReadData(
 
 				for(int i = 0; i < (m_dwDataBytes >> 2); i++) m_Read.RDATA[i] = 0xDEADC0DE;
 			} else {
-				BOOL bNewTransaction	= !m_Read.RVALID || (m_Read.RVALID && RREADY);
+				bool bNewTransaction	= !m_Read.RVALID || (m_Read.RVALID && RREADY);
 
 				if(m_Read.pDesc->BEAT && bNewTransaction) {	// new transaction is requested...
 					if(Read(m_Read.pDesc, (BYTE*)m_Read.RDATA)) {		// next transaction data
@@ -481,7 +480,7 @@ void MAXI::BusWriteData(
 						m_Write.WREADY				= 1;
 				}
 			} else {
-				BOOL bTransaction	= (m_Write.WREADY && WVALID);
+				bool bTransaction	= (m_Write.WREADY && WVALID);
 
 				if(bTransaction) {
 					if(Write(m_Write.pDesc, (const BYTE*)WDATA, WSTRB)) {

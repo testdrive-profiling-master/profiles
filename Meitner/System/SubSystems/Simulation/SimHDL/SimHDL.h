@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 12/30/2021 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_HDL_H__
 #define __SIM_HDL_H__
@@ -49,7 +49,7 @@ struct SimControl {
 	virtual BUS_SLAVE_INTERFACE* FindSlave(DWORD dwAddress) = 0;
 	virtual CLOCK_INTERFACE* CreateClock(BYTE* pCLK, BYTE* pRST) = 0;
 	virtual CLOCK_INTERFACE* FindClock(BYTE* pCLK) = 0;
-	virtual BOOL AwakeInterrupt(void) = 0;	// TRUE(Awaked), FALSE(Pending)
+	virtual bool AwakeInterrupt(void) = 0;	// true(Awaked), false(Pending)
 	virtual void SetMemoryBaseAddress(DWORD dwAddress) = 0;
 	virtual void MemoryRead32(int iID, DWORD dwAddress, DWORD& dwData) = 0;
 	virtual void MemoryWrite32(int iID, DWORD dwAddress, DWORD dwData) = 0;
@@ -59,13 +59,13 @@ struct SimControl {
 	virtual void MemoryWrite8(int iID, DWORD dwAddress, BYTE dwData) = 0;
 	virtual SYSTEM_CONFIG* GetSystemConfig(void) = 0;
 	virtual DisplayConfig* GetDisplayConfig(void) = 0;
-	virtual BYTE* GetMemoryPointer(DWORD dwAddress, DWORD dwSize = 0, BOOL bDisplay = FALSE) = 0;
+	virtual BYTE* GetMemoryPointer(DWORD dwAddress, DWORD dwSize = 0, bool bDisplay = false) = 0;
 	virtual DWORD GetMemoryBaseAddress(void) = 0;
-	virtual BOOL GetMemory(const char* sName, void*& pConfig, void*& pMemory) = 0;
+	virtual bool GetMemory(const char* sName, void*& pConfig, void*& pMemory) = 0;
 	virtual void SimulationLock(int iDelayTicks = 0) = 0;
 	virtual void SimulationUnLock(void) = 0;
 	virtual void SimulationAddBusy(BYTE* pBusy) = 0;
-	virtual void SimulationDebugMode(BOOL bDebug = TRUE) = 0;
+	virtual void SimulationDebugMode(bool bDebug = true) = 0;
 	virtual void SetSystemDescription(const char* sDesc) = 0;
 	virtual void SetError(bool bError = true) = 0;
 };

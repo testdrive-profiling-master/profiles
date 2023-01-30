@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Driver(PCIe) sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "ThreadManager.h"
 #include <process.h>
@@ -42,7 +41,7 @@
 ThreadManager::ThreadManager(void)
 {
 	m_Thread			= NULL;
-	m_bThreadRunning	= FALSE;
+	m_bThreadRunning	= false;
 }
 
 ThreadManager::~ThreadManager(void)
@@ -52,15 +51,15 @@ ThreadManager::~ThreadManager(void)
 
 DWORD WINAPI ThreadManager::thBootStrap(ThreadManager* pManager)
 {
-	pManager->m_bThreadRunning = TRUE;
+	pManager->m_bThreadRunning = true;
 	pManager->MonitorThread();
-	pManager->m_bThreadRunning = FALSE;
+	pManager->m_bThreadRunning = false;
 	return 0;
 }
 
-BOOL ThreadManager::RunThread(void)
+bool ThreadManager::RunThread(void)
 {
-	if(m_bThreadRunning) return FALSE;
+	if(m_bThreadRunning) return false;
 
 	m_Thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)thBootStrap, this, 0, NULL);
 	return m_Thread != NULL;

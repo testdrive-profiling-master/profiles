@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,30 +31,29 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 11/5/2019 Tue (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __VIRTUAL_SLAVE_H__
 #define __VIRTUAL_SLAVE_H__
 #include "dpi_common.h"
 #include "RoundQueue.h"
 
-class VirtualSlave : public SelfDestory
-{
+class VirtualSlave : public SelfDestory {
 public:
 	VirtualSlave(const char* sTitle, DWORD dwAddrBase, DWORD dwAddrHigh);
 	virtual ~VirtualSlave(void);
 
 	void BusWrite(
-			BYTE nRST,
-			BYTE& EN, DWORD& ADDR, DWORD& DATA);
+		BYTE nRST,
+		BYTE& EN, DWORD& ADDR, DWORD& DATA);
 	void BusRead(
-			BYTE nRST,
-			BYTE& EN, DWORD& ADDR, DWORD DATA);
+		BYTE nRST,
+		BYTE& EN, DWORD& ADDR, DWORD DATA);
 
 private:
 	BUS_SLAVE_INTERFACE*	m_pSlave;
 	BUS_SALVE_PACKET*		m_pReadPacket;
-	BOOL					m_bReadWait;
+	bool					m_bReadWait;
 	SystemLog				Log;
 };
 

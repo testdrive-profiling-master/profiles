@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 9/19/2020 Sat (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Chart.h"
 
@@ -46,7 +45,7 @@ Chart::~Chart(void)
 {
 }
 
-BOOL Chart::Initialize(void)
+bool Chart::Initialize(void)
 {
 	if(!m_hWnd) {
 		char sName[MAX_PATH];
@@ -63,7 +62,7 @@ BOOL Chart::Initialize(void)
 	return CheckValidate();
 }
 
-void Chart::CreateSerie(DWORD dwID, const char* sName, CHART_STYLE style, BOOL bSecondaryHorizAxis, BOOL bSecondaryVertAxis)
+void Chart::CreateSerie(DWORD dwID, const char* sName, CHART_STYLE style, bool bSecondaryHorizAxis, bool bSecondaryVertAxis)
 {
 	if(!CheckValidate()) return;
 
@@ -131,7 +130,7 @@ void Chart::SetWidth(DWORD dwID, int iWidth)
 	SendMessage(m_hWnd, WM_USER, CHART_CMD_SET_WIDTH | (dwID << 16), (LPARAM)iWidth);
 }
 
-void Chart::SetSmooth(DWORD dwID, BOOL bSmooth)
+void Chart::SetSmooth(DWORD dwID, bool bSmooth)
 {
 	if(!CheckValidate()) return;
 

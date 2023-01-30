@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 11/5/2019 Tue (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __DPI_CHART_H__
 #define __DPI_CHART_H__
@@ -52,20 +51,20 @@ public:
 	Chart(void);
 	~Chart(void);
 
-	BOOL Initialize(void);
+	bool Initialize(void);
 
-	void CreateSerie(DWORD dwID, const char* sName = NULL, CHART_STYLE style = CHART_STYLE_LINE, BOOL bSecondaryHorizAxis = FALSE, BOOL bSecondaryVertAxis = FALSE);
+	void CreateSerie(DWORD dwID, const char* sName = NULL, CHART_STYLE style = CHART_STYLE_LINE, bool bSecondaryHorizAxis = FALSE, bool bSecondaryVertAxis = FALSE);
 	void RemoveSerie(DWORD dwIndex = (DWORD) - 1);
 	void SetName(DWORD dwID, const char* sName);
 	void AddPoint(DWORD dwID, double Xvalue, double Yvalue);
 	void AddPointArray(DWORD dwID, DWORD dwCount, double* pXvalues, double* pYvalues);
 	void SetLabel(DWORD dwID, DWORD dwIndex, const char* sLabel);
 	void SetWidth(DWORD dwID, int iWidth);
-	void SetSmooth(DWORD dwID, BOOL bSmooth);
+	void SetSmooth(DWORD dwID, bool bSmooth);
 	void SetForeground(void);
 
 protected:
-	inline	BOOL CheckValidate(void) {
+	inline	bool CheckValidate(void) {
 		if(m_hWnd) {
 			if(!IsWindow(m_hWnd)) m_hWnd = NULL;
 		}

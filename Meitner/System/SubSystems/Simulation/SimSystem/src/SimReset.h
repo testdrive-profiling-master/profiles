@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,14 +31,13 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_RESET_H__
 #define __SIM_RESET_H__
 #include "SimEngine.h"
 
-class SimReset : public SimInstance
-{
+class SimReset : public SimInstance {
 	DWORD		m_dwResetCycles;
 	DWORD		m_dwLifeCycle;
 	BYTE*		m_pRST;
@@ -49,9 +47,9 @@ public:
 	~SimReset(void);
 
 
-	virtual BOOL OnRun(void);
+	virtual bool OnRun(void);
 
 	void Set(DWORD dwCycles = 8, BYTE Polarity = 0);
-	BOOL DoCycle(void);
+	bool DoCycle(void);
 };
 #endif//__SIM_RESET_H__

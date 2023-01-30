@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_SIM_H__
 #define __SYSTEM_SIM_H__
@@ -43,9 +42,8 @@
 #include "NativeMemory.h"
 
 class SystemSim :
-		public ISystemImp,
-		public IMemoryManager
-{
+	public ISystemImp,
+	public IMemoryManager {
 public:
 	SystemSim(void);
 	virtual ~SystemSim(void);
@@ -54,9 +52,9 @@ public:
 	virtual const char* GetDescription(void);								// get system description
 
 	// life cycle
-	virtual BOOL Initialize(IMemoryImp* pMem);								// system initialize
+	virtual bool Initialize(IMemoryImp* pMem);								// system initialize
 	virtual void Release(void);												// release all system resources
-	
+
 	// memory
 	virtual DWORD GetMemoryBase(void);										// get memory start address
 	virtual void* GetMemoryPointer(DWORD dwPhyAddress, DWORD dwByteSize = 0);		// get virtual pointer from physical address
@@ -67,11 +65,11 @@ public:
 
 	// system
 	virtual void RegisterInterruptService(INTRRUPT_SERVICE routine);		// 인터럽트 서비스 루틴 등록
-	virtual void EnableInterrupt(BOOL bEnable = TRUE);						// 인터럽트 서비스 루틴 활성화
+	virtual void EnableInterrupt(bool bEnable = true);						// 인터럽트 서비스 루틴 활성화
 	virtual void ClearInterruptPending(void);								// 인터럽트 서비스 팬딩 클리어
 
 	// memory manager
-	virtual IMemoryNative* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, BOOL bDMA = FALSE);
+	virtual IMemoryNative* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, bool bDMA = false);
 
 private:
 	SimEngine*				m_pSim;

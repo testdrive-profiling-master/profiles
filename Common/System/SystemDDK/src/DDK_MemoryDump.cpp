@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "DDK_Context.h"
 #include <zlib.h>
@@ -77,7 +76,7 @@ static void __EnumMemory(DDKMemory* pMemory, MEMORY_DUMP* pDump)
 	}
 }
 
-BOOL DDKContext::MakeMemoryDump(const char* sFileName)
+bool DDKContext::MakeMemoryDump(const char* sFileName)
 {
 	MEMORY_DUMP	dump;
 	memset(&dump, 0, sizeof(MEMORY_DUMP));
@@ -87,18 +86,18 @@ BOOL DDKContext::MakeMemoryDump(const char* sFileName)
 	if(!sFileName) sFileName = __sDefaultDumpMemoryFileName;
 
 	if((dump.fp	= fopen(sFileName, "wb"))) {
-		fwrite(&dump.header, sizeof(dump.header), 1 , dump.fp);
+		fwrite(&dump.header, sizeof(dump.header), 1, dump.fp);
 		EnumerateDDKMemory((ENUMERATE_DDK_MEMORY_FUNCTION)__EnumMemory, (void*)&dump);
 		fseek(dump.fp, 0, SEEK_SET);
-		fwrite(&dump.header, sizeof(dump.header), 1 , dump.fp);
+		fwrite(&dump.header, sizeof(dump.header), 1, dump.fp);
 		fclose(dump.fp);
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
-BOOL DDKContext::LoadMemoryDump(const char* sFileName)
+bool DDKContext::LoadMemoryDump(const char* sFileName)
 {
 	MEMORY_DUMP	dump;
 	memset(&dump, 0, sizeof(MEMORY_DUMP));
@@ -112,7 +111,7 @@ BOOL DDKContext::LoadMemoryDump(const char* sFileName)
 		// check magic code
 		if(dump.header.dwMagicCode != DUMP_MEMORY_MAGIC_CODE) {
 			fclose(dump.fp);
-			return FALSE;
+			return false;
 		}
 
 		printf("iSize = %d\n", dump.header.iSize);
@@ -126,7 +125,7 @@ BOOL DDKContext::LoadMemoryDump(const char* sFileName)
 			if(!pMem) {
 				fclose(dump.fp);
 				printf("*Can't find memory space : 0x%08(%d bytes)\n", desc.dwPhyAddress, desc.dwByteSize);
-				return FALSE;
+				return false;
 			}
 
 			if(!desc.dwCompressedSize) {
@@ -141,11 +140,11 @@ BOOL DDKContext::LoadMemoryDump(const char* sFileName)
 		}
 
 		fclose(dump.fp);
-		return TRUE;
+		return true;
 	}
 
 	if(dump.fp)
 		fclose(dump.fp);
 
-	return FALSE;
+	return false;
 }

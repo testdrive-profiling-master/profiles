@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 12/30/2021 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_ENGINE_H__
 #define __SIM_ENGINE_H__
@@ -64,7 +64,7 @@ protected:
 public:
 	SimInstance(void);
 	virtual ~SimInstance(void);
-	virtual BOOL OnRun(void) = 0;
+	virtual bool OnRun(void) = 0;
 };
 
 //#define ERROR_OCCURED(s)	SetError(__FILE__, __LINE__, __FUNCDNAME__, s);
@@ -73,7 +73,7 @@ class SimEngine :
 	protected ThreadManager,	// 시뮬레이션 단일 엔진
 	public SimControl,
 	public SimResource {
-	BOOL				m_bUpdate;
+	bool				m_bUpdate;
 
 	SimInstance*		m_pInstance;
 	DelayLock			m_Lock;
@@ -89,7 +89,7 @@ protected:
 	virtual BUS_SLAVE_INTERFACE* FindSlave(DWORD dwAddress);
 	virtual CLOCK_INTERFACE* CreateClock(BYTE* pCLK, BYTE* pRST);
 	virtual CLOCK_INTERFACE* FindClock(BYTE* pCLK);
-	virtual BOOL AwakeInterrupt(void);	// TRUE(Awaked), FALSE(Pending)
+	virtual bool AwakeInterrupt(void);	// true(Awaked), false(Pending)
 	virtual void SetMemoryBaseAddress(DWORD dwAddress);
 	virtual void MemoryRead32(int iID, DWORD dwAddress, DWORD& dwData);
 	virtual void MemoryWrite32(int iID, DWORD dwAddress, DWORD dwData);
@@ -99,13 +99,13 @@ protected:
 	virtual void MemoryWrite8(int iID, DWORD dwAddress, BYTE dwData);
 	virtual SYSTEM_CONFIG* GetSystemConfig(void);
 	virtual DisplayConfig* GetDisplayConfig(void);
-	virtual BYTE* GetMemoryPointer(DWORD dwAddress, DWORD dwSize = 0, BOOL bDisplay = FALSE);
+	virtual BYTE* GetMemoryPointer(DWORD dwAddress, DWORD dwSize = 0, bool bDisplay = false);
 	virtual DWORD GetMemoryBaseAddress(void);
-	virtual BOOL GetMemory(const char* sName, void*& pConfig, void*& pMemory);
+	virtual bool GetMemory(const char* sName, void*& pConfig, void*& pMemory);
 	virtual void SimulationLock(int iDelayTicks = 0);
 	virtual void SimulationUnLock(void);
 	virtual void SimulationAddBusy(BYTE* pBusy);
-	virtual void SimulationDebugMode(BOOL bDebug = TRUE);
+	virtual void SimulationDebugMode(bool bDebug = true);
 	virtual void SetSystemDescription(const char* sDesc);
 	virtual void SetError(bool bError = true);
 
@@ -113,13 +113,13 @@ public:
 	SimEngine(void);
 	virtual ~SimEngine(void);
 
-	BOOL Initialize(void);
-	BOOL Clocking(void);
+	bool Initialize(void);
+	bool Clocking(void);
 
 	void Lock(int iDelayTime = 0);
 	void Unlock(void);
 
-	BOOL Start(void);
+	bool Start(void);
 	void Terminate(void);
 
 	inline InterruptService& Interrupt(void)	{

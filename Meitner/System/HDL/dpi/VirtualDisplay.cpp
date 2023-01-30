@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 11/5/2019 Tue (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "VirtualDisplay.h"
 #include "SelfDestory.h"
@@ -51,18 +50,18 @@ VirtualDisplay::~VirtualDisplay(void)
 	__VirtualDisplay	= NULL;
 }
 
-void VirtualDisplay::Initialize(BOOL bReverse)
+void VirtualDisplay::Initialize(bool bReverse)
 {
 	m_pConfig			= GetDisplayConfig();
 	m_pConfig->bReverse	= bReverse;
 }
-void VirtualDisplay::SetBaseAddress(DWORD dwBaseAddress, BOOL bFront)
+void VirtualDisplay::SetBaseAddress(DWORD dwBaseAddress, bool bFront)
 {
 	if(!m_pConfig) return;
 
 	DisplayBuffer* pBuffer	= bFront ? &m_pConfig->Front : &m_pConfig->Back;
 	pBuffer->dwAddress	= dwBaseAddress - GetMemoryBaseAddress();
-	pBuffer->bUpdate	= TRUE;
+	pBuffer->bUpdate	= true;
 	UpdateMemoryRange();
 }
 void VirtualDisplay::SetFormat(int iWidth, int iHeight, DWORD dwByteStride, DISPLAY_FORMAT Format)
@@ -88,18 +87,18 @@ void VirtualDisplay::SetFormat(int iWidth, int iHeight, DWORD dwByteStride, DISP
 	m_pConfig->iWidth			= iWidth;
 	m_pConfig->iHeight			= iHeight;
 	m_pConfig->ColorFormat		= Format;
-	m_pConfig->Front.bUpdate	= TRUE;
-	m_pConfig->Back.bUpdate		= TRUE;
+	m_pConfig->Front.bUpdate	= true;
+	m_pConfig->Back.bUpdate		= true;
 	m_pConfig->dwByteStride		= dwByteStride;
 	UpdateMemoryRange();
 }
 
-void VirtualDisplay::Update(BOOL bFront)
+void VirtualDisplay::Update(bool bFront)
 {
 	if(!m_pConfig) return;
 
 	DisplayBuffer* pBuffer	= bFront ? &m_pConfig->Front : &m_pConfig->Back;
-	pBuffer->bUpdate		= TRUE;
+	pBuffer->bUpdate		= true;
 }
 
 void VirtualDisplay::OnDoFilter(DWORD dwAddress, DWORD dwByteSize)
@@ -108,7 +107,7 @@ void VirtualDisplay::OnDoFilter(DWORD dwAddress, DWORD dwByteSize)
 
 	if(!m_pConfig) return;
 
-	m_pConfig->Back.bUpdate		= TRUE;
+	m_pConfig->Back.bUpdate		= true;
 }
 
 

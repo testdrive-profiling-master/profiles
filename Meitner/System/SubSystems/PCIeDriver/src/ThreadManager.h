@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,17 +31,16 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Driver(PCIe) sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __THREAD_MANAGER_H__
 #define __THREAD_MANAGER_H__
 #include "Util.h"
 
-class ThreadManager
-{
+class ThreadManager {
 	HANDLE				m_Thread;
 
-	volatile BOOL		m_bThreadRunning;
+	volatile bool		m_bThreadRunning;
 
 	static DWORD WINAPI thBootStrap(ThreadManager* pManager);
 
@@ -54,7 +52,7 @@ public:
 	ThreadManager(void);
 	virtual ~ThreadManager(void);
 
-	BOOL RunThread(void);										// 스레드 실행
+	bool RunThread(void);										// 스레드 실행
 	void KillThread(void);										// 스레드 종료
 };
 #endif//__THREAD_MANAGER_H__

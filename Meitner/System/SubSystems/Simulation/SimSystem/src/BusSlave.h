@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __BUS_SLAVE_H__
 #define __BUS_SLAVE_H__
@@ -40,23 +39,22 @@
 #include "dpi_interfaces.h"
 
 class BusSlave :
-		public SimInstance,
-		public BUS_SLAVE_INTERFACE
-{
+	public SimInstance,
+	public BUS_SLAVE_INTERFACE {
 public:
 	BusSlave(DWORD dwAddrBase, DWORD dwAddrHigh);
 	virtual ~BusSlave(void);
 
 	//// S/W master interface
-	virtual BOOL OnRun(void);
+	virtual bool OnRun(void);
 	void Write(DWORD dwAddress, DWORD dwData);
 	DWORD Read(DWORD dwAddress);
 
 	//// H/W master interface
-	virtual BOOL RequestWrite(DWORD dwAddr, DWORD dwData);
-	virtual BOOL WaitWrite(void);
-	virtual BOOL RequestRead(DWORD dwAddr);
-	virtual BOOL WaitRead(DWORD& dwData);
+	virtual bool RequestWrite(DWORD dwAddr, DWORD dwData);
+	virtual bool WaitWrite(void);
+	virtual bool RequestRead(DWORD dwAddr);
+	virtual bool WaitRead(DWORD& dwData);
 
 	// H/W slave interface
 	virtual BUS_SALVE_PACKET* GetWrite(void);		// get write
@@ -64,7 +62,7 @@ public:
 	virtual BUS_SALVE_PACKET* GetRead(void);		// get read
 	virtual void ReadAck(void);						// read ack to S/W
 
-	BOOL IsValidAddress(DWORD dwAddress);
+	bool IsValidAddress(DWORD dwAddress);
 
 	static BusSlave* FindSlave(DWORD dwAddress);
 
@@ -80,10 +78,10 @@ private:
 	DWORD				m_dwAddrBase;
 	DWORD				m_dwAddrHigh;
 
-	struct{
-		BOOL				bEnable;
-		BOOL				bWait;
+	struct {
+		bool				bEnable;
+		bool				bWait;
 		BUS_SALVE_PACKET	packet;
-	}m_Read, m_Write;
+	} m_Read, m_Write;
 };
 #endif//__BUS_SLAVE_H__

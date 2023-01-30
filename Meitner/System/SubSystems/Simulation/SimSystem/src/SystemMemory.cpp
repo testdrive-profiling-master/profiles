@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "STDInterface.h"
@@ -40,7 +39,7 @@
 
 SystemMemory			g_SystemMemory;
 
-BOOL GetConfiguration(LPCTSTR sKeyName, LPTSTR sValue)
+bool GetConfiguration(LPCTSTR sKeyName, LPTSTR sValue)
 {
 	if(!GetEnvironmentVariable(sKeyName, sValue, MAX_PATH)) {
 		char	sConfigFIlePath[4096];
@@ -74,7 +73,7 @@ DWORD SystemMemory::ByteSize(void)
 	return m_pSystemMemory->GetSize();
 }
 
-BYTE* SystemMemory::GetPointer(DWORD dwAddress, DWORD dwSize, BOOL bDisplay)
+BYTE* SystemMemory::GetPointer(DWORD dwAddress, DWORD dwSize, bool bDisplay)
 {
 	if(bDisplay) return m_pDisplayMemory->GetPointer(dwAddress, dwSize);
 

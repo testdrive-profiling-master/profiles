@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Driver(PCIe) sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __INTERRUPT_SERVICE_H__
 #define __INTERRUPT_SERVICE_H__
@@ -41,24 +40,23 @@
 #include "Util.h"
 
 class InterruptService :
-	public ThreadManager
-{
+	public ThreadManager {
 public:
 	InterruptService(void);
 	~InterruptService(void);
-	
+
 	void RegisterService(INTRRUPT_SERVICE service);
 	void Awake(void);
-	void Enable(BOOL bEnable = TRUE);
+	void Enable(bool bEnable = TRUE);
 	void ClearPending(void);
 
 private:
 	virtual void MonitorThread(void);					// 모니터 스레드
 	virtual void OnThreadKill(void);					// 스레드 킬 전 이벤트
-	
+
 	INTRRUPT_SERVICE	m_ISR;
-	volatile BOOL		m_bRun;
-	volatile BOOL		m_bEnable;
-	volatile BOOL		m_bPending;
+	volatile bool		m_bRun;
+	volatile bool		m_bEnable;
+	volatile bool		m_bPending;
 };
 #endif//__INTERRUPT_SERVICE_H__

@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 12/30/2022 Fri (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "STDInterface.h"
@@ -61,19 +61,19 @@ const char* SystemSim::GetDescription(void)
 	return m_pSim->GetSystemDescription();
 }
 
-BOOL SystemSim::Initialize(IMemoryImp* pMem)
+bool SystemSim::Initialize(IMemoryImp* pMem)
 {
-	if(!g_SystemMemory.IsInitialized()) return FALSE;
+	if(!g_SystemMemory.IsInitialized()) return false;
 
 	m_pSim	= new SimEngine();
 
-	if(!m_pSim->Initialize()) return FALSE;
+	if(!m_pSim->Initialize()) return false;
 
 	// memory heap initialization
 	m_pMemImp	= pMem;
 	pMem->Initialize(g_SystemMemory.GetPointer(g_SystemMemory.BaseAddress()), g_SystemMemory.BaseAddress(), g_SystemMemory.ByteSize(), this);
 	// run simulation thread
-	BOOL bRet = m_pSim->Start();
+	bool bRet = m_pSim->Start();
 
 	// wait until for start-up and release the reset.
 	if(bRet) while(!SimulationTime() || SimClock::IsReset())Sleep(0);
@@ -129,7 +129,7 @@ void SystemSim::RegisterInterruptService(INTRRUPT_SERVICE routine)
 	m_pSim->Interrupt().RegisterService(routine);
 }
 
-void SystemSim::EnableInterrupt(BOOL bEnable)
+void SystemSim::EnableInterrupt(bool bEnable)
 {
 	m_pSim->Interrupt().Enable(bEnable);
 }
@@ -150,7 +150,7 @@ void* SystemSim::GetMemoryPointer(DWORD dwPhyAddress, DWORD dwByteSize)
 	return g_SystemMemory.GetPointer(dwPhyAddress, dwByteSize);
 }
 
-IMemoryNative* SystemSim::CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, BOOL bDMA)
+IMemoryNative* SystemSim::CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, bool bDMA)
 {
 	return new NativeSystemMemory(dwByteSize);
 }

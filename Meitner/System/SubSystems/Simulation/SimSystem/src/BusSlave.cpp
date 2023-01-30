@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "BusSlave.h"
@@ -75,7 +74,7 @@ BusSlave::~BusSlave(void)
 	}
 }
 
-BOOL BusSlave::OnRun(void)
+bool BusSlave::OnRun(void)
 {
 	return m_Read.bEnable | m_Write.bEnable;
 }
@@ -94,8 +93,8 @@ void BusSlave::Write(DWORD dwAddress, DWORD dwData)
 
 		m_Write.packet.dwAddr	= dwAddress;
 		m_Write.packet.dwData	= dwData;
-		m_Write.bEnable			= TRUE;
-		m_Write.bWait			= FALSE;
+		m_Write.bEnable			= true;
+		m_Write.bWait			= false;
 		m_LockBus.Up();
 		TRACE_UNLOCK
 		m_pSim->Unlock();
@@ -118,8 +117,8 @@ DWORD BusSlave::Read(DWORD dwAddress)
 		}
 
 		m_Read.packet.dwAddr	= dwAddress;
-		m_Read.bEnable			= TRUE;
-		m_Read.bWait			= FALSE;
+		m_Read.bEnable			= true;
+		m_Read.bWait			= false;
 		m_LockBus.Up();
 		TRACE_UNLOCK
 		m_pSim->Unlock();
@@ -130,15 +129,15 @@ DWORD BusSlave::Read(DWORD dwAddress)
 	return dwData;
 }
 
-BOOL BusSlave::RequestWrite(DWORD dwAddr, DWORD dwData)
+bool BusSlave::RequestWrite(DWORD dwAddr, DWORD dwData)
 {
-	BOOL bRet	= FALSE;
+	bool bRet	= false;
 	m_LockBus.Down();
 
 	if(!m_Write.bEnable && !m_Write.bWait) {
-		bRet					= TRUE;
-		m_Write.bEnable			= TRUE;
-		m_Write.bWait			= TRUE;
+		bRet					= true;
+		m_Write.bEnable			= true;
+		m_Write.bWait			= true;
 		m_Write.packet.dwAddr	= dwAddr;
 		m_Write.packet.dwData	= dwData;
 		m_pSim->Unlock();
@@ -148,29 +147,29 @@ BOOL BusSlave::RequestWrite(DWORD dwAddr, DWORD dwData)
 	return bRet;
 }
 
-BOOL BusSlave::WaitWrite(void)
+bool BusSlave::WaitWrite(void)
 {
-	BOOL bRet	= FALSE;
+	bool bRet	= false;
 	m_LockBus.Down();
 
 	if(!m_Write.bEnable && m_Write.bWait) {
-		bRet					= TRUE;
-		m_Write.bWait			= FALSE;
+		bRet					= true;
+		m_Write.bWait			= false;
 	}
 
 	m_LockBus.Up();
 	return bRet;
 }
 
-BOOL BusSlave::RequestRead(DWORD dwAddr)
+bool BusSlave::RequestRead(DWORD dwAddr)
 {
-	BOOL bRet	= FALSE;
+	bool bRet	= false;
 	m_LockBus.Down();
 
 	if(!m_Read.bEnable && !m_Read.bWait) {
-		bRet					= TRUE;
-		m_Read.bEnable			= TRUE;
-		m_Read.bWait			= TRUE;
+		bRet					= true;
+		m_Read.bEnable			= true;
+		m_Read.bWait			= true;
 		m_Read.packet.dwAddr	= dwAddr;
 		m_pSim->Unlock();
 	}
@@ -179,14 +178,14 @@ BOOL BusSlave::RequestRead(DWORD dwAddr)
 	return bRet;
 }
 
-BOOL BusSlave::WaitRead(DWORD& dwData)
+bool BusSlave::WaitRead(DWORD& dwData)
 {
-	BOOL bRet	= FALSE;
+	bool bRet	= false;
 	m_LockBus.Down();
 
 	if(!m_Read.bEnable && m_Read.bWait) {
-		bRet					= TRUE;
-		m_Read.bWait			= FALSE;
+		bRet					= true;
+		m_Read.bWait			= false;
 		dwData					= m_Read.packet.dwData;
 	}
 
@@ -202,7 +201,7 @@ BUS_SALVE_PACKET* BusSlave::GetWrite(void)
 void BusSlave::WriteAck(void)
 {
 	m_LockBus.Down();
-	m_Write.bEnable		= FALSE;
+	m_Write.bEnable		= false;
 
 	if(!m_Write.bWait) m_LockBusAck.Up();
 
@@ -218,7 +217,7 @@ BUS_SALVE_PACKET* BusSlave::GetRead(void)
 void BusSlave::ReadAck(void)
 {
 	m_LockBus.Down();
-	m_Read.bEnable		= FALSE;
+	m_Read.bEnable		= false;
 
 	if(!m_Read.bWait) m_LockBusAck.Up();
 
@@ -227,7 +226,7 @@ void BusSlave::ReadAck(void)
 	m_pSim->Lock(32);
 }
 
-BOOL BusSlave::IsValidAddress(DWORD dwAddress)
+bool BusSlave::IsValidAddress(DWORD dwAddress)
 {
 	return (dwAddress >= m_dwAddrBase) && (dwAddress <= m_dwAddrHigh);
 }

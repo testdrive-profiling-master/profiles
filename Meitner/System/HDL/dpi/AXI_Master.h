@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 6/30/2021 Wed (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __AXI_MASTER_H__
 #define __AXI_MASTER_H__
@@ -59,11 +58,11 @@ public:
 	MAXI_Observer(void) : ChainList<MAXI_Observer>(this) {}
 	virtual ~MAXI_Observer(void) {}
 
-	virtual BOOL OnRead(MAXI_DESC* pDesc, BYTE* pData) {
-		return TRUE;
+	virtual bool OnRead(MAXI_DESC* pDesc, BYTE* pData) {
+		return true;
 	}
-	virtual BOOL OnWrite(MAXI_DESC* pDesc, BYTE* pData) {
-		return TRUE;
+	virtual bool OnWrite(MAXI_DESC* pDesc, BYTE* pData) {
+		return true;
 	}
 };
 
@@ -72,11 +71,11 @@ class MAXI : public SelfDestory {
 	MAXI_QUEUE	m_WriteQ;
 	MAXI_QUEUE	m_ReadQ;
 public:
-	MAXI(const char* sTitle, int iDataWidth, BOOL bUseAXI4 = TRUE, int iDebugLevel = 0);
+	MAXI(const char* sTitle, int iDataWidth, bool bUseAXI4 = true, int iDebugLevel = 0);
 	virtual ~MAXI(void);
 
-	BOOL Read(MAXI_DESC* pDesc, BYTE* pData);
-	BOOL Write(MAXI_DESC* pDesc, const BYTE* pData, const DWORD* pByteStrob);
+	bool Read(MAXI_DESC* pDesc, BYTE* pData);
+	bool Write(MAXI_DESC* pDesc, const BYTE* pData, const DWORD* pByteStrob);
 
 	inline MAXI_QUEUE& ReadQ(void)	{
 		return m_ReadQ;
@@ -114,7 +113,7 @@ private:
 	DWORD		m_dwDataBytes;
 	DWORD		m_dwAddressMask;
 	DWORD		m_dwMaxASIZE;
-	BOOL		m_bUseAXI4;
+	bool		m_bUseAXI4;
 	int			m_iDebugLevel;
 	BUS_SLAVE_INTERFACE*	m_pWriteSlave;
 	BUS_SLAVE_INTERFACE*	m_pReadSlave;

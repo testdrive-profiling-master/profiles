@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,23 +31,22 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Driver(PCIe) sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __PCIE_DRIVER_H__
 #define __PCIE_DRIVER_H__
 #include "Util.h"
 #include "common.h"
 
-class PCIeDriver : public SystemDescription
-{
+class PCIeDriver : public SystemDescription {
 public:
 	PCIeDriver(void);
 	virtual ~PCIeDriver(void);
 
-	BOOL Initialize(void);
+	bool Initialize(void);
 	void Release(void);
 
-	BOOL IsInitialized(void);
+	bool IsInitialized(void);
 	void SetCurrentCard(DWORD dwIndex);
 	void RegWrite(DWORD dwAddress, DWORD dwData);
 	DWORD RegRead(DWORD dwAddress);
@@ -57,7 +55,9 @@ public:
 	void InterruptLock(void);
 	void InterruptFree(void);
 
-	inline DWORD CardCount(void)	{return m_dwCardCount;}
+	inline DWORD CardCount(void)	{
+		return m_dwCardCount;
+	}
 
 private:
 	HANDLE				m_hDriver;

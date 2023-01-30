@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,14 +31,13 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __NATIVE_MEMORY_H__
 #define __NATIVE_MEMORY_H__
 #include "ddk/SystemHAL.h"
 
-class NativeSystemMemory : public IMemoryNative
-{
+class NativeSystemMemory : public IMemoryNative {
 	BYTE*	m_pMem;
 public:
 	NativeSystemMemory(DWORD dwByteSize);
@@ -47,6 +45,6 @@ public:
 
 	virtual void Release(void);
 	virtual BYTE* Virtual(void);
-	virtual BOOL Flush(DWORD dwOffset, DWORD dwPhyAddress, DWORD dwByteSize, BOOL bWrite);
+	virtual bool Flush(DWORD dwOffset, DWORD dwPhyAddress, DWORD dwByteSize, bool bWrite);
 };
 #endif//__NATIVE_MEMORY_H__

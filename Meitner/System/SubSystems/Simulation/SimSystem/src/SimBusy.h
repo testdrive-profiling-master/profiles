@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,22 +31,21 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_BUSY_H__
 #define __SIM_BUSY_H__
 #include "SimEngine.h"
 
-class SimBusy : public SimInstance
-{
+class SimBusy : public SimInstance {
 public:
 	SimBusy(BYTE* pBusy);
 	~SimBusy(void);
 
-	virtual BOOL OnRun(void);
+	virtual bool OnRun(void);
 
 private:
-	BOOL		m_bBusy;
+	bool		m_bBusy;
 	BYTE*		m_pBusy;
 };
 #endif//__SIM_BUSY_H__

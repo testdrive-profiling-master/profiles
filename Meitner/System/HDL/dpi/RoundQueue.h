@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,15 +31,14 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 11/5/2019 Tue (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __ROUND_QUEUE_H__
 #define __ROUND_QUEUE_H__
 #include "STDInterface.h"
 
 template<typename T, int queue_size>
-class RoundQueue
-{
+class RoundQueue {
 	T*		m_pQ;
 	T		m_Pop;
 	DWORD	m_dwTotalCount;
@@ -48,40 +46,46 @@ class RoundQueue
 	DWORD	m_dwTail;
 	DWORD	m_dwRestCount;
 public:
-	RoundQueue(void){
-		assert(queue_size>0);
+	RoundQueue(void) {
+		assert(queue_size > 0);
 		m_pQ			= new T[queue_size];
 		m_dwTotalCount	=
-		m_dwRestCount	= queue_size;
+			m_dwRestCount	= queue_size;
 		m_dwHead		=
-		m_dwTail		= 0;
+			m_dwTail		= 0;
 	}
 
-	~RoundQueue(void){
-		if(m_pQ){
+	~RoundQueue(void) {
+		if(m_pQ) {
 			delete [] m_pQ;
 			m_pQ	= NULL;
 		}
 	}
 
-	T* Push(void){
+	T* Push(void) {
 		if(IsFull()) return NULL;
+
 		T*	pData = &m_pQ[m_dwHead];
 		m_dwRestCount--;
 		m_dwHead = (m_dwHead + 1) % m_dwTotalCount;
 		return pData;
 	}
 
-	T* Pop(void){
+	T* Pop(void) {
 		if(IsEmpty()) return NULL;
+
 		memcpy(&m_Pop, &m_pQ[m_dwTail], sizeof(T));
 		m_dwRestCount++;
 		m_dwTail = (m_dwTail + 1) % m_dwTotalCount;
 		return &m_Pop;
 	}
 
-	inline BOOL IsEmpty(void)	{return m_dwRestCount == m_dwTotalCount;}
-	inline BOOL IsFull(void)	{return !m_dwRestCount;}
+	inline bool IsEmpty(void)	{
+		return m_dwRestCount == m_dwTotalCount;
+	}
+	inline bool IsFull(void)	{
+		return !m_dwRestCount;
+	}
 };
 
 #endif//__ROUND_QUEUE_H__

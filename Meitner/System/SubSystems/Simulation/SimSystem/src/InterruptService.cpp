@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 11/9/2022 Wed (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "InterruptService.h"
@@ -44,9 +44,9 @@ static void __interrupt_service_routine_default(void)
 
 InterruptService::InterruptService(void) :
 	m_SemaInterrupt(0),
-	m_bRun(TRUE),
-	m_bEnable(FALSE),
-	m_bPending(FALSE),
+	m_bRun(true),
+	m_bEnable(false),
+	m_bPending(false),
 	m_ISR(__interrupt_service_routine_default)
 {
 }
@@ -66,26 +66,26 @@ void InterruptService::MonitorThread(void)
 
 void InterruptService::OnThreadKill(bool bForced)
 {
-	m_bRun		= FALSE;
-	Enable(FALSE);
+	m_bRun		= false;
+	Enable(false);
 	m_SemaInterrupt.Up();
 }
 
-BOOL InterruptService::Awake(void)
+bool InterruptService::Awake(void)
 {
 	if(m_bEnable && !m_bPending) {
-		m_bPending	= TRUE;
+		m_bPending	= true;
 		m_SemaInterrupt.Up();
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
 void InterruptService::RegisterService(INTRRUPT_SERVICE service)
 {
-	BOOL	bEnable	= m_bEnable;
-	Enable(FALSE);
+	bool	bEnable	= m_bEnable;
+	Enable(false);
 	m_ISR	= service ? service : __interrupt_service_routine_default;
 	ClearPending();
 	Enable(bEnable);

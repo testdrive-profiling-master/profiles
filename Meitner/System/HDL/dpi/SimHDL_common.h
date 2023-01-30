@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 1/19/2022 Wed (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIMHDL_COMMON_H__
 #define __SIMHDL_COMMON_H__
@@ -48,14 +48,14 @@
 #define LOGI(...)			printf("*I: [SimHDL] " __VA_ARGS__)
 #define LOGE(...)			printf("*E: [SimHDL] " __VA_ARGS__)
 #define DPI_FUNCTION		extern "C"
-#define GET_SYSTEM_REGMAP	((SYSTEM_REGMAP*)GetMemoryPointer(0, 0, TRUE))
+#define GET_SYSTEM_REGMAP	((SYSTEM_REGMAP*)GetMemoryPointer(0, 0, true))
 
 // Non-DPI
 SYSTEM_CONFIG* GetSystemConfig(void);
 DisplayConfig* GetDisplayConfig(void);
-BYTE* GetMemoryPointer(DWORD dwAddress, DWORD dwSize = 0, BOOL bDisplay = FALSE);
+BYTE* GetMemoryPointer(DWORD dwAddress, DWORD dwSize = 0, bool bDisplay = FALSE);
 DWORD GetMemoryBaseAddress(void);
-BOOL GetMemory(const char* sName, void*& pConfig, void*& pMemory);
+bool GetMemory(const char* sName, void*& pConfig, void*& pMemory);
 extern bool (*DPI_Initialize)(void);
 extern void (*DPI_Finalize)(void);
 
@@ -65,7 +65,7 @@ DPI_FUNCTION void SimulationUnLock(void);
 DPI_FUNCTION void SimulationQuit(bool bError = false);
 DPI_FUNCTION void SimulationStop(void);
 DPI_FUNCTION void SimulationFlush(void);
-DPI_FUNCTION void SimulationDebugMode(BOOL bDebug = TRUE);
+DPI_FUNCTION void SimulationDebugMode(bool bDebug = true);
 DPI_FUNCTION UINT64 SimulationTime(void);
 DPI_FUNCTION void SetSystemDescription(const char* sDesc);
 

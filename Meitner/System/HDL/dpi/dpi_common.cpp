@@ -99,7 +99,7 @@ void SystemLog::Log(LOG_ID id, const char* fmt, ...)
 			}
 
 			for(int i = iMaxTimeScale; i >= 0; i--) {
-				BOOL bFirst	= (i == iMaxTimeScale);
+				bool bFirst	= (i == iMaxTimeScale);
 
 				if(dwTimeBuff[i] || bFirst) {
 					if(!bFirst) printf(" ");

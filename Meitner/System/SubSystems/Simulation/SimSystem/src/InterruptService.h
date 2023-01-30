@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __INTERRUPT_SERVICE_H__
 #define __INTERRUPT_SERVICE_H__
@@ -46,12 +45,12 @@ public:
 	~InterruptService(void);
 
 	void RegisterService(INTRRUPT_SERVICE service);
-	BOOL Awake(void);
-	inline void Enable(BOOL bEnable = TRUE)	{
+	bool Awake(void);
+	inline void Enable(bool bEnable = true)	{
 		m_bEnable	= bEnable;
 	}
 	inline void ClearPending(void)			{
-		m_bPending	= FALSE;
+		m_bPending	= false;
 	}
 
 private:
@@ -60,8 +59,8 @@ private:
 
 	INTRRUPT_SERVICE	m_ISR;
 	Semaphore			m_SemaInterrupt;
-	volatile BOOL		m_bRun;
-	volatile BOOL		m_bEnable;
-	volatile BOOL		m_bPending;
+	volatile bool		m_bRun;
+	volatile bool		m_bEnable;
+	volatile bool		m_bPending;
 };
 #endif//__INTERRUPT_SERVICE_H__

@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 12/31/2022 Sat (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
 #include "TestDriver.inl"
@@ -304,7 +304,7 @@ DisplayConfig* GetDisplayConfig(void)
 	return __pSimControl->GetDisplayConfig();
 }
 
-BYTE* GetMemoryPointer(DWORD dwAddress, DWORD dwSize, BOOL bDisplay)
+BYTE* GetMemoryPointer(DWORD dwAddress, DWORD dwSize, bool bDisplay)
 {
 	if(!__pSimControl) return NULL;
 
@@ -318,9 +318,9 @@ DWORD GetMemoryBaseAddress(void)
 	return __pSimControl->GetMemoryBaseAddress();
 }
 
-BOOL GetMemory(const char* sName, void*& pConfig, void*& pMemory)
+bool GetMemory(const char* sName, void*& pConfig, void*& pMemory)
 {
-	if(!__pSimControl) return NULL;
+	if(!__pSimControl) return false;
 
 	return __pSimControl->GetMemory(sName, pConfig, pMemory);
 }
@@ -357,7 +357,7 @@ void AdvenceSimulationTime(DWORD dwTime)
 	__lSimulationTime	+= dwTime;
 }
 
-void SimulationDebugMode(BOOL bDebug)
+void SimulationDebugMode(bool bDebug)
 {
 	if(!__pSimControl) return;
 

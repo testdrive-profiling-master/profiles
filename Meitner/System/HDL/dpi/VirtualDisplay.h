@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,22 +31,21 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 11/5/2019 Tue (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __VIRTUAL_DISPLAY_H__
 #define __VIRTUAL_DISPLAY_H__
 #include "dpi_common.h"
 
-class VirtualDisplay : public MemoryWriteFilter
-{
+class VirtualDisplay : public MemoryWriteFilter {
 public:
 	VirtualDisplay(void);
 	virtual ~VirtualDisplay(void);
 
-	void Initialize(BOOL bReverse = FALSE);
-	void SetBaseAddress(DWORD dwBaseAddress, BOOL bFront = FALSE);
+	void Initialize(bool bReverse = FALSE);
+	void SetBaseAddress(DWORD dwBaseAddress, bool bFront = FALSE);
 	void SetFormat(int iWidth, int iHeight, DWORD dwByteStride = 0, DISPLAY_FORMAT Format = DISPLAY_FORMAT_ARGB_8888);
-	void Update(BOOL bFront = FALSE);
+	void Update(bool bFront = FALSE);
 
 protected:
 	virtual void OnDoFilter(DWORD dwAddress, DWORD dwByteSize);

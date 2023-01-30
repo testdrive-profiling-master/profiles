@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 11/9/2022 Wed (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __DDK_CONTEXT_H__
 #define __DDK_CONTEXT_H__
@@ -55,8 +55,8 @@ public:
 	// memory
 	virtual DWORD GetMemoryBase(void);
 	virtual void* GetMemoryPointer(DWORD dwPhyAddress, DWORD dwByteSize = 0);
-	virtual BOOL MakeMemoryDump(const char* sFileName = NULL);
-	virtual BOOL LoadMemoryDump(const char* sFileName = NULL);
+	virtual bool MakeMemoryDump(const char* sFileName = NULL);
+	virtual bool LoadMemoryDump(const char* sFileName = NULL);
 
 	// register
 	virtual DWORD RegRead(DWORD dwAddress);
@@ -64,8 +64,8 @@ public:
 
 	// system
 	virtual void RegisterInterruptService(DDK_INTRRUPT_SERVICE routine, void* pPrivate = NULL);
-	virtual void EnableInterrupt(BOOL bEnable = TRUE);
-	virtual void ClearInterruptPending(BOOL bReleaseWait = FALSE);
+	virtual void EnableInterrupt(bool bEnable = true);
+	virtual void ClearInterruptPending(bool bReleaseWait = false);
 	virtual void WaitInterruptDone(void);
 
 private:

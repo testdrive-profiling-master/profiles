@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Driver(PCIe) sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "PCIeDriver.h"
 #include "driver_testdrive.h"
@@ -60,11 +59,11 @@ PCIeDriver::~PCIeDriver(void)
 	Release();
 }
 
-BOOL PCIeDriver::Initialize(void)
+bool PCIeDriver::Initialize(void)
 {
 	Release();
 	m_hDriver	= CreateFile(DEV_PATH, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
-	m_OverlappedIO.hEvent	= CreateEvent(NULL, TRUE, TRUE, "");
+	m_OverlappedIO.hEvent	= CreateEvent(NULL, true, true, "");
 
 	if(m_hDriver != INVALID_HANDLE_VALUE) {
 		TD_DRIVER_INFO	info;
@@ -115,7 +114,7 @@ void PCIeDriver::Release(void)
 	}
 }
 
-BOOL PCIeDriver::IsInitialized(void)
+bool PCIeDriver::IsInitialized(void)
 {
 	return (m_hDriver != NULL);
 }

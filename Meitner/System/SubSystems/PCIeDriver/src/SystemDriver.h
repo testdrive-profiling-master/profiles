@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Driver(PCIe) sub-system
-// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_DRIVER_H__
 #define __SYSTEM_DRIVER_H__
@@ -43,10 +42,9 @@
 #include <string>
 
 class SystemDriver :
-		public ISystemImp,
-		public IMemoryManager,
-		public SystemDescription
-{
+	public ISystemImp,
+	public IMemoryManager,
+	public SystemDescription {
 public:
 	SystemDriver(void);
 	virtual ~SystemDriver(void);
@@ -55,9 +53,9 @@ public:
 	virtual const char* GetDescription(void);								// get system description
 
 	// life cycle
-	virtual BOOL Initialize(IMemoryImp* pMem);								// system create
+	virtual bool Initialize(IMemoryImp* pMem);								// system create
 	virtual void Release(void);												// system release
-	
+
 	// memory
 	virtual DWORD GetMemoryBase(void);										// get memory start address
 	virtual void* GetMemoryPointer(DWORD dwPhyAddress, DWORD dwByteSize = 0);	// get virtual pointer from physical address
@@ -68,11 +66,11 @@ public:
 
 	// system
 	virtual void RegisterInterruptService(INTRRUPT_SERVICE routine);		// register ISR
-	virtual void EnableInterrupt(BOOL bEnable = TRUE);						// enable interrupt
+	virtual void EnableInterrupt(bool bEnable = true);						// enable interrupt
 	virtual void ClearInterruptPending(void);								// clear interrupt pending bit
 
 	// memory manager
-	virtual IMemoryNative* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, BOOL bDMA = FALSE);
+	virtual IMemoryNative* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, bool bDMA = false);
 
 protected:
 	virtual void InvokeISR(void);
@@ -81,7 +79,7 @@ private:
 	PCIeDriver			m_Driver;
 	IMemoryImp*			m_pMemImp;
 	InterruptService	m_ISR;
-	BOOL				m_bMustExit;
+	bool				m_bMustExit;
 	std::string			m_sSystemDesc;
 };
 #endif//__SYSTEM_DRIVER_H__

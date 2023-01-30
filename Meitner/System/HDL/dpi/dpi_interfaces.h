@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 8/12/2021 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __DPI_INTERFACES_H__
 #define __DPI_INTERFACES_H__
@@ -46,10 +46,10 @@ typedef struct {
 } BUS_SALVE_PACKET;
 
 struct BUS_SLAVE_INTERFACE {
-	virtual BOOL RequestWrite(DWORD dwAddr, DWORD dwData) = 0;
-	virtual BOOL WaitWrite(void) = 0;
-	virtual BOOL RequestRead(DWORD dwAddr) = 0;
-	virtual BOOL WaitRead(DWORD& dwData) = 0;
+	virtual bool RequestWrite(DWORD dwAddr, DWORD dwData) = 0;
+	virtual bool WaitWrite(void) = 0;
+	virtual bool RequestRead(DWORD dwAddr) = 0;
+	virtual bool WaitRead(DWORD& dwData) = 0;
 
 	virtual BUS_SALVE_PACKET* GetWrite(void) = 0;
 	virtual void WriteAck(void) = 0;

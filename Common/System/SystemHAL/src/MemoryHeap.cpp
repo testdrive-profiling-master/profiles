@@ -43,13 +43,13 @@ static DWORD				__HEAP_BYTE_SIZE	= 0;
 
 static void __ShowByteSize(DWORD dwSize)
 {
-	BOOL bShow = FALSE;
+	bool bShow = false;
 
 	if(dwSize > 1024 * 1024 * 1024) {
 		DWORD	b_size	= dwSize / (1024 * 1024 * 1024);
 		dwSize	-= b_size * (1024 * 1024 * 1024);
 		printf("%dGB", b_size);
-		bShow	= TRUE;
+		bShow	= true;
 	}
 
 	if(dwSize > 1024 * 1024) {
@@ -59,7 +59,7 @@ static void __ShowByteSize(DWORD dwSize)
 		if(bShow) printf(" ");
 
 		printf("%dMB", b_size);
-		bShow	= TRUE;
+		bShow	= true;
 	}
 
 	if(dwSize > 1024) {
@@ -69,7 +69,7 @@ static void __ShowByteSize(DWORD dwSize)
 		if(bShow) printf(" ");
 
 		printf("%dKB", b_size);
-		bShow	= TRUE;
+		bShow	= true;
 	}
 
 	if(dwSize) {
@@ -79,7 +79,7 @@ static void __ShowByteSize(DWORD dwSize)
 	}
 }
 
-MemoryHeap::MemoryHeap(DWORD dwByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, BOOL bDMA) : MemoryHeap()
+MemoryHeap::MemoryHeap(DWORD dwByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, bool bDMA) : MemoryHeap()
 {
 	assert(dwByteSize != 0);
 	assert(dwByteAlignment != 0);
@@ -121,7 +121,7 @@ MemoryHeap::MemoryHeap(DWORD dwPhysical, DWORD dwByteSize) : MemoryHeap()
 	m_dwByteSize		= dwByteSize;
 }
 
-bool MemoryHeap::Alloc(MemoryHeap* pHeap, DWORD dwAllocByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, BOOL bDMA)
+bool MemoryHeap::Alloc(MemoryHeap* pHeap, DWORD dwAllocByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, bool bDMA)
 {
 	// adjust align size
 	dwAllocByteSize			+= (m_dwPhysical + m_dwByteSize - dwAllocByteSize) & (dwByteAlignment - 1);
@@ -138,7 +138,7 @@ bool MemoryHeap::Alloc(MemoryHeap* pHeap, DWORD dwAllocByteSize, DWORD dwByteAli
 	if(!pHeap->m_pNative) return false;
 
 	// set not free heap to new heap
-	pHeap->m_bFree			= FALSE;
+	pHeap->m_bFree			= false;
 	// set size
 	pHeap->m_dwByteSize		= dwAllocByteSize;
 	m_dwByteSize			-= dwAllocByteSize;
@@ -198,8 +198,8 @@ void MemoryHeap::Release(void)
 	assert(m_iRefCount >= 0);
 
 	if(!m_iRefCount) {	// free this
-		assert(m_bFree == FALSE);
-		m_bFree	= TRUE;
+		assert(m_bFree == false);
+		m_bFree	= true;
 		{
 			MemoryHeap* pCurHeap	= this;
 			MemoryHeap*	pPrev		= m_Link.Prev() ? m_Link.Prev()->Item() : NULL;
@@ -239,7 +239,7 @@ DWORD MemoryHeap::ByteSize(void)
 	return m_dwByteSize;
 }
 
-BOOL MemoryHeap::Flush(BOOL bWrite, DWORD dwOffset, DWORD dwByteSize)
+bool MemoryHeap::Flush(bool bWrite, DWORD dwOffset, DWORD dwByteSize)
 {
 	assert((dwOffset + dwByteSize) <= m_dwByteSize);
 
@@ -247,10 +247,10 @@ BOOL MemoryHeap::Flush(BOOL bWrite, DWORD dwOffset, DWORD dwByteSize)
 
 	if(m_pNative) return m_pNative->Flush(dwOffset, m_dwPhysical + dwOffset, dwByteSize, bWrite);
 
-	return FALSE;
+	return false;
 }
 
-IMemory* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, BOOL bDMA)
+IMemory* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, bool bDMA)
 {
 	return new MemoryHeap(dwByteSize, dwByteAlignment, dwPhyAddress, bDMA);
 }

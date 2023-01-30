@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Driver(PCIe) sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "InterruptService.h"
 #include "PCIeDriver.h"
@@ -43,9 +42,9 @@ static void __interrupt_service_routine_default(void)
 }
 
 InterruptService::InterruptService(void) :
-	m_bRun(TRUE),
-	m_bEnable(FALSE),
-	m_bPending(FALSE),
+	m_bRun(true),
+	m_bEnable(false),
+	m_bPending(false),
 	m_ISR(__interrupt_service_routine_default)
 {
 }
@@ -65,12 +64,12 @@ void InterruptService::MonitorThread(void)
 
 void InterruptService::OnThreadKill(void)
 {
-	m_bRun		= FALSE;
-	m_bEnable	= FALSE;
+	m_bRun		= false;
+	m_bEnable	= false;
 	g_pDriver->InterruptFree();
 }
 
-void InterruptService::Enable(BOOL bEnable)
+void InterruptService::Enable(bool bEnable)
 {
 	if(bEnable && (m_ISR == __interrupt_service_routine_default)) {
 		LOGI("You must register ISR, fist!\n");
@@ -82,13 +81,13 @@ void InterruptService::Enable(BOOL bEnable)
 
 void InterruptService::ClearPending(void)
 {
-	m_bPending	= FALSE;
+	m_bPending	= false;
 }
 
 void InterruptService::Awake(void)
 {
 	if(m_bEnable && !m_bPending) {
-		m_bPending	= TRUE;
+		m_bPending	= true;
 		g_pDriver->InterruptFree();
 	}
 }

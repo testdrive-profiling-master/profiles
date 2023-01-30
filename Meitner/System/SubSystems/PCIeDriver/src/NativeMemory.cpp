@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Driver(PCIe) sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "STDInterface.h"
 #include "NativeMemory.h"
@@ -57,13 +56,13 @@ BYTE* NativeSystemMemory::Virtual(void)
 	return m_pMem;
 }
 
-BOOL NativeSystemMemory::Flush(DWORD dwOffset, DWORD dwPhyAddress, DWORD dwByteSize, BOOL bWrite)
+bool NativeSystemMemory::Flush(DWORD dwOffset, DWORD dwPhyAddress, DWORD dwByteSize, bool bWrite)
 {
-	if(!m_pMem) return FALSE;
+	if(!m_pMem) return false;
 
 	if((dwPhyAddress & 7) || (dwOffset & 7)) {
 		LOGE("Flushing physical address(0x%08X) or offset(%d) must keep memory alignment(64bit).", dwPhyAddress, dwOffset);
-		return FALSE;
+		return false;
 	}
 
 	dwPhyAddress	-= SYSTEM_MEMORY_BASE;
@@ -74,5 +73,5 @@ BOOL NativeSystemMemory::Flush(DWORD dwOffset, DWORD dwPhyAddress, DWORD dwByteS
 	else
 		g_pDriver->MemoryRead(dwPhyAddress, pData, dwByteSize >> 3);
 
-	return TRUE;
+	return true;
 }

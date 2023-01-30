@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 1/27/2023 Fri (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_HAL_H__
 #define __SYSTEM_HAL_H__
@@ -59,7 +59,7 @@ struct ISystem {
 
 	// System control
 	virtual void RegisterInterruptService(INTRRUPT_SERVICE routine) = 0;	// register ISR(interrrupt service routine)
-	virtual void EnableInterrupt(BOOL bEnable = TRUE) = 0;					// enable ISR
+	virtual void EnableInterrupt(bool bEnable = true) = 0;					// enable ISR
 	virtual void ClearInterruptPending(void) = 0;							// clear interrupt pending bit
 };
 
@@ -67,11 +67,11 @@ struct ISystem {
 struct IMemoryNative {
 	virtual void Release(void) = 0;
 	virtual BYTE* Virtual(void) = 0;
-	virtual BOOL Flush(DWORD dwOffset, DWORD dwPhyAddress, DWORD dwByteSize, BOOL bWrite) = 0;
+	virtual bool Flush(DWORD dwOffset, DWORD dwPhyAddress, DWORD dwByteSize, bool bWrite) = 0;
 };
 
 struct IMemoryManager {
-	virtual IMemoryNative* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, BOOL bDMA = FALSE) = 0;
+	virtual IMemoryNative* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, bool bDMA = false) = 0;
 };
 
 struct IMemoryImp {
@@ -80,7 +80,7 @@ struct IMemoryImp {
 };
 
 struct ISystemImp : public ISystem {
-	virtual BOOL Initialize(IMemoryImp* pMem) = 0;					// create memory implementation
+	virtual bool Initialize(IMemoryImp* pMem) = 0;					// create memory implementation
 };
 #endif
 
@@ -98,12 +98,12 @@ struct IMemory {
 	virtual void* Virtual(void) = 0;		// virtual memory pointer
 	virtual DWORD Physical(void) = 0;		// physical memory address
 	virtual DWORD ByteSize(void) = 0;		// byte allocation size
-	virtual BOOL Flush(BOOL bWrite = TRUE, DWORD dwOffset = 0, DWORD dwByteSize = 0) = 0;	// flush memory
+	virtual bool Flush(bool bWrite = true, DWORD dwOffset = 0, DWORD dwByteSize = 0) = 0;	// flush memory
 };
 
 typedef void (*ENUMERATE_MEMORY_FUNCTION)(IMemory* pMemory, void* pPrivate);
 
-SYSTEM_API IMemory* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress = (DWORD) -1, BOOL bDMA = FALSE);
+SYSTEM_API IMemory* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress = (DWORD) -1, bool bDMA = false);
 SYSTEM_API void EnumerateMemory(ENUMERATE_MEMORY_FUNCTION func, void* pPrivate = NULL);
 
 #endif

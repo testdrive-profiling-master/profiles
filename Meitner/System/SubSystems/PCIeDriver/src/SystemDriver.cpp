@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Driver(PCIe) sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "SystemDriver.h"
 #include "SystemMemory.h"
@@ -43,7 +42,7 @@ const char* __SYSTEM_DESCRIPTION	= "DUT";
 SystemDriver::SystemDriver(void)
 {
 	m_pMemImp			= NULL;
-	m_bMustExit			= FALSE;
+	m_bMustExit			= false;
 	SetSystemDescription("System driver");
 	SetSystemDescription(__SYSTEM_DESCRIPTION);
 }
@@ -61,19 +60,19 @@ const char* SystemDriver::GetDescription(void)
 	return GetSystemDescription();
 }
 
-BOOL SystemDriver::Initialize(IMemoryImp* pMem)
+bool SystemDriver::Initialize(IMemoryImp* pMem)
 {
-	if(!g_SystemMemory.IsInitialized()) return FALSE;
+	if(!g_SystemMemory.IsInitialized()) return false;
 
-	if(!m_Driver.Initialize()) return FALSE;
+	if(!m_Driver.Initialize()) return false;
 
 	// memory heap initialization
 	m_pMemImp	= pMem;
 	pMem->Initialize(g_SystemMemory.GetPointer(SYSTEM_MEMORY_BASE), SYSTEM_MEMORY_BASE, g_SystemMemory.ByteSize(), this);
 	// run simulation thread
 	m_ISR.RunThread();
-	EnableInterrupt(FALSE);
-	return TRUE;
+	EnableInterrupt(false);
+	return true;
 }
 
 void SystemDriver::Release(void)
@@ -96,7 +95,7 @@ void SystemDriver::RegisterInterruptService(INTRRUPT_SERVICE routine)
 	m_ISR.RegisterService(routine);
 }
 
-void SystemDriver::EnableInterrupt(BOOL bEnable)
+void SystemDriver::EnableInterrupt(bool bEnable)
 {
 	m_ISR.Enable(bEnable);
 }
@@ -122,7 +121,7 @@ void SystemDriver::InvokeISR(void)
 	m_ISR.Awake();
 }
 
-IMemoryNative* SystemDriver::CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, BOOL bDMA)
+IMemoryNative* SystemDriver::CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, bool bDMA)
 {
 	return new NativeSystemMemory(dwByteSize);
 }

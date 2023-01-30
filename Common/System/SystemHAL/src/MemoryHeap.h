@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 1/27/2023 Fri (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __MEMORY_HEAP_H__
 #define __MEMORY_HEAP_H__
@@ -46,20 +46,20 @@ typedef	CircularLink<MemoryHeap*, 1>	FreeLink;
 
 class MemoryHeap : public IMemory {
 public:
-	MemoryHeap(DWORD dwByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, BOOL bDMA);
+	MemoryHeap(DWORD dwByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, bool bDMA);
 	virtual void AddRef(void);
 	virtual void Release(void);
 
 	virtual void* Virtual(void);
 	virtual DWORD Physical(void);
 	virtual DWORD ByteSize(void);
-	virtual BOOL Flush(BOOL bWrite = TRUE, DWORD dwOffset = 0, DWORD dwByteSize = 0);
+	virtual bool Flush(bool bWrite = true, DWORD dwOffset = 0, DWORD dwByteSize = 0);
 
 	inline bool IsFree(void) {
 		return m_bFree;
 	}
 
-	bool Alloc(MemoryHeap* pHeap, DWORD dwAllocByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, BOOL bDMA);
+	bool Alloc(MemoryHeap* pHeap, DWORD dwAllocByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, bool bDMA);
 
 protected:
 	MemoryHeap(MemoryHeap* pPrev = NULL);

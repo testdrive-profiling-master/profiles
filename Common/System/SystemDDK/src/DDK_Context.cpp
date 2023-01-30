@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 1/27/2023 Fri (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "DDK_Context.h"
 
@@ -46,12 +46,12 @@ DDK_API DDK* CreateDDK(void)
 	return pContext;
 }
 
-DDK_API DDKMemory* CreateDDKMemory(DWORD dwByteSize, DWORD dwByteAlignment, BOOL bDMA)
+DDK_API DDKMemory* CreateDDKMemory(DWORD dwByteSize, DWORD dwByteAlignment, bool bDMA)
 {
 	return (DDKMemory*)CreateMemory(dwByteSize, dwByteAlignment, (DWORD) -1, bDMA);
 }
 
-DDK_API DDKMemory* CreateDDKMemoryEx(DWORD dwByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, BOOL bDMA)
+DDK_API DDKMemory* CreateDDKMemoryEx(DWORD dwByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, bool bDMA)
 {
 	return (DDKMemory*)CreateMemory(dwByteSize, dwByteAlignment, dwPhyAddress, bDMA);
 }
@@ -132,12 +132,12 @@ void DDKContext::WaitInterruptDone(void)
 	if(__ISR_routine) m_Semaphore.Down();
 }
 
-void DDKContext::EnableInterrupt(BOOL bEnable)
+void DDKContext::EnableInterrupt(bool bEnable)
 {
 	m_pSystem->EnableInterrupt(bEnable);
 }
 
-void DDKContext::ClearInterruptPending(BOOL bReleaseWait)
+void DDKContext::ClearInterruptPending(bool bReleaseWait)
 {
 	m_pSystem->ClearInterruptPending();
 

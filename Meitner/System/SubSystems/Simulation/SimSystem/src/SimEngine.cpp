@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 11/9/2022 Wed (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "SimEngine.h"
@@ -78,7 +78,7 @@ SimInstance::~SimInstance(void)
 SimEngine::SimEngine(void) :
 	m_bErrorOccured(false)
 {
-	m_bUpdate			= TRUE;
+	m_bUpdate			= true;
 	m_pInstance			= NULL;
 	m_pSim	  			= this;
 	m_pSimHDL			= NULL;
@@ -88,7 +88,7 @@ SimEngine::SimEngine(void) :
 
 SimEngine::~SimEngine(void)
 {
-	m_Interrupt.Enable(FALSE);
+	m_Interrupt.Enable(false);
 	m_Interrupt.KillThread();
 	KillThread();
 	{
@@ -106,7 +106,7 @@ SimEngine::~SimEngine(void)
 	m_pSim	 = NULL;
 }
 
-BOOL SimEngine::Initialize(void)
+bool SimEngine::Initialize(void)
 {
 	if(!m_pSimHDL) {
 		m_pSimHDL	= CreateSimHDL(this);
@@ -120,10 +120,10 @@ BOOL SimEngine::Initialize(void)
 	return (m_pSimHDL != NULL);
 }
 
-BOOL SimEngine::Clocking(void)
+bool SimEngine::Clocking(void)
 {
-	BOOL	bBusy		= FALSE;
-	BOOL	bSuccess	= FALSE;
+	bool	bBusy		= false;
+	bool	bSuccess	= false;
 	// clock tik
 	SimClock::Tik();
 
@@ -131,7 +131,7 @@ BOOL SimEngine::Clocking(void)
 	if(m_bForceToExit || !m_pSimHDL->Eval()) {
 		// finish operation
 		LOGI("Simulation will be forced to shutdown.\n");
-		return FALSE;
+		return false;
 	}
 
 	// clock tok :calculate & get next clocking
@@ -151,9 +151,9 @@ BOOL SimEngine::Clocking(void)
 	return bBusy;
 }
 
-BOOL SimEngine::AwakeInterrupt(void)
+bool SimEngine::AwakeInterrupt(void)
 {
-	BOOL bAwake = m_Interrupt.Awake();
+	bool bAwake = m_Interrupt.Awake();
 
 	if(bAwake) m_Lock.SetDelay(64);
 
@@ -196,9 +196,9 @@ void SimEngine::Unlock(void)
 	m_Lock.UnLock();
 }
 
-BOOL SimEngine::Start(void)
+bool SimEngine::Start(void)
 {
-	if(!m_Interrupt.RunThread()) return FALSE;
+	if(!m_Interrupt.RunThread()) return false;
 
 	return RunThread();
 }
@@ -290,7 +290,7 @@ DisplayConfig* SimEngine::GetDisplayConfig(void)
 	return g_SystemMemory.GetDisplayConfig();
 }
 
-BYTE* SimEngine::GetMemoryPointer(DWORD dwAddress, DWORD dwSize, BOOL bDisplay)
+BYTE* SimEngine::GetMemoryPointer(DWORD dwAddress, DWORD dwSize, bool bDisplay)
 {
 	return g_SystemMemory.GetPointer(dwAddress, dwSize, bDisplay);
 }
@@ -300,19 +300,19 @@ DWORD SimEngine::GetMemoryBaseAddress(void)
 	return g_SystemMemory.BaseAddress();
 }
 
-BOOL SimEngine::GetMemory(const char* sName, void*& pConfig, void*& pMemory)
+bool SimEngine::GetMemory(const char* sName, void*& pConfig, void*& pMemory)
 {
 	ITestDriverMemory* pMem	= TestDriver_GetMemory(sName);
 
 	if(!pMem) {
 		pConfig	= NULL;
 		pMemory	= NULL;
-		return FALSE;
+		return false;
 	}
 
 	pConfig	= (void*)pMem->GetConfig();
 	pMemory	= (void*)pMem->GetPointer();
-	return TRUE;
+	return true;
 }
 
 void SimEngine::SimulationLock(int iDelayTicks)
@@ -332,7 +332,7 @@ void SimEngine::SimulationAddBusy(BYTE* pBusy)
 	new SimBusy(pBusy);
 }
 
-void SimEngine::SimulationDebugMode(BOOL bDebug)
+void SimEngine::SimulationDebugMode(bool bDebug)
 {
 	SetThreadBreakable(!bDebug);
 

@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "SimReset.h"
@@ -51,9 +50,9 @@ SimReset::~SimReset(void)
 {
 }
 
-BOOL SimReset::OnRun(void)
+bool SimReset::OnRun(void)
 {
-	return TRUE;
+	return true;
 }
 
 void SimReset::Set(DWORD dwCycles, BYTE Polarity)
@@ -63,7 +62,7 @@ void SimReset::Set(DWORD dwCycles, BYTE Polarity)
 	m_dwLifeCycle	= 30;
 }
 
-BOOL SimReset::DoCycle(void)
+bool SimReset::DoCycle(void)
 {
 	if(m_dwResetCycles) {
 		m_dwResetCycles--;
@@ -75,10 +74,10 @@ BOOL SimReset::DoCycle(void)
 			TRACE_LOCK
 			m_pSim->Lock(2);
 			delete this;
-			return FALSE;
+			return false;
 		} else
 			m_dwLifeCycle--;
 	}
 
-	return TRUE;
+	return true;
 }

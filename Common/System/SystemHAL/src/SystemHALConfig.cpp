@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 1/27/2023 Fri (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "SystemHALConfig.h"
 #include "MemoryHeap.h"
@@ -39,7 +39,7 @@
 #include <assert.h>
 
 #ifdef WIN32
-BOOL GetConfiguration(LPCTSTR sKeyName, LPTSTR sValue)
+bool GetConfiguration(LPCTSTR sKeyName, LPTSTR sValue)
 {
 	if(!GetEnvironmentVariable(sKeyName, sValue, MAX_PATH)) {
 		char	sConfigFIlePath[4096];

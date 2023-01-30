@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 11/5/2019 Tue (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __DPI_FiFo_H__
 #define __DPI_FiFo_H__
@@ -40,47 +39,49 @@
 #include <assert.h>
 
 template <typename T, const int fifo_size, const int minimum_pushable_size = 1>
-class FiFo{
+class FiFo {
 public:
-	FiFo(void){
+	FiFo(void) {
 		Reset();
 		m_pArchive	= new T[fifo_size];
 	}
 
-	virtual ~FiFo(void){
-		assert(fifo_size>0);
-		assert(minimum_pushable_size<fifo_size);
+	virtual ~FiFo(void) {
+		assert(fifo_size > 0);
+		assert(minimum_pushable_size < fifo_size);
 		SAFE_DELETE_ARRAY(m_pArchive);
 	}
-	
-	void Reset(void){
+
+	void Reset(void) {
 		m_iUsed		= 0;
 		m_iPush		= 0;
 		m_iPop		= 0;
 	}
 
-	inline BOOL IsFull(void){
-		return (m_iUsed >= (fifo_size-minimum_pushable_size));
+	inline bool IsFull(void) {
+		return (m_iUsed >= (fifo_size - minimum_pushable_size));
 	}
 
-	inline BOOL IsEmpty(void){
+	inline bool IsEmpty(void) {
 		return (!m_iUsed);
 	}
 
-	BOOL Push(const T* pData){
+	bool Push(const T* pData) {
 		if(IsFull()) return FALSE;
+
 		memcpy(&m_pArchive[m_iPush], pData, sizeof(T));
-		m_iPush = (m_iPush+1) % fifo_size;
+		m_iPush = (m_iPush + 1) % fifo_size;
 		m_iUsed++;
-		return TRUE;
+		return true;
 	}
 
-	BOOL Pop(T* pData){
+	bool Pop(T* pData) {
 		if(IsEmpty()) return FALSE;
+
 		memcpy(pData, &m_pArchive[m_iPop], sizeof(T));
-		m_iPop = (m_iPop+1) % fifo_size;
+		m_iPop = (m_iPop + 1) % fifo_size;
 		m_iUsed--;
-		return TRUE;
+		return true;
 	}
 
 private:

@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,14 +31,14 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 8/12/2021 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "SimClock.h"
 #include <assert.h>
 
 DWORD			SimClock::m_dwElapsedTime		= 0;
-BOOL			SimClock::m_bReset				= TRUE;
+bool			SimClock::m_bReset				= true;
 
 SimClock::SimClock(BYTE* pCLK, BYTE* pRST)
 {
@@ -78,7 +78,7 @@ DWORD SimClock::Tok(void)
 	SimClock*	pNode			= Head();
 	DWORD		dwMinTIme		= 0xFFFFFFFF;
 	DWORD		dwCurElpaseTime	= m_dwElapsedTime;
-	BOOL		bReset			= FALSE;
+	bool		bReset			= false;
 
 	if(pNode) {
 		while(pNode) {
@@ -100,9 +100,9 @@ void SimClock::ProcessTik(void)
 	*m_pCLK		= m_NextClock;
 }
 
-BOOL SimClock::ProcessTok(DWORD dwElapsedTime, DWORD& dwMinTime)
+bool SimClock::ProcessTok(DWORD dwElapsedTime, DWORD& dwMinTime)
 {
-	BOOL	bReset	= (m_pReset != NULL);
+	bool	bReset	= (m_pReset != NULL);
 	m_dwLeftTime	-= dwElapsedTime;
 
 	if(!m_dwLeftTime) {
@@ -140,7 +140,7 @@ void SimClock::DoReset(DWORD dwCycles)
 	if(!m_pReset) m_pReset	= new SimReset(m_pRST);
 
 	m_pReset->Set(dwCycles, m_reset_polarity);
-	m_bReset	= TRUE;
+	m_bReset	= true;
 }
 
 void SimClock::Release(void)

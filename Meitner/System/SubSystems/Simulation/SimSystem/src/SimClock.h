@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 8/12/2021 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_CLOCK_H__
 #define __SIM_CLOCK_H__
@@ -46,7 +46,7 @@ public:
 	SimClock(BYTE* pCLK, BYTE* pRST);
 	virtual ~SimClock(void);
 
-	static BOOL IsReset(void) {
+	static bool IsReset(void) {
 		return m_bReset;
 	}
 
@@ -67,7 +67,7 @@ public:
 protected:
 	static void Refresh(void);	// refresh clock list
 	void ProcessTik(void);
-	BOOL ProcessTok(DWORD dwElapsedTime, DWORD& dwMinTime);
+	bool ProcessTok(DWORD dwElapsedTime, DWORD& dwMinTime);
 
 private:
 	DWORD				m_dwID;				// clock ID#
@@ -81,7 +81,7 @@ private:
 	DWORD				m_dwPeriod;			// clock period (ps)
 	DWORD				m_dwLeftTime;		// next toggle left time
 	static DWORD		m_dwElapsedTime;
-	static BOOL			m_bReset;
+	static bool			m_bReset;
 	SimReset*			m_pReset;
 };
 #endif//__SIM_CLOCK_H__

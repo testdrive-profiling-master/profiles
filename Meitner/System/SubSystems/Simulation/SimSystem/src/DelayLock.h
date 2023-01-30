@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __DELAY_LOCK_H__
 #define __DELAY_LOCK_H__
@@ -41,8 +40,7 @@
 #define TRACE_LOCK			TRACE_LOG("Lock   ")
 #define TRACE_UNLOCK		TRACE_LOG("UnLock ")
 
-class DelayLock
-{
+class DelayLock {
 public:
 	DelayLock(void);
 	virtual ~DelayLock(void);
@@ -51,11 +49,14 @@ public:
 	void UnLock(void);
 	void SetDelay(int iDelayTime);
 
-	void Rlease(void)	{m_bRun	= FALSE;UnLock();}
-	BOOL Check(void);
+	void Rlease(void)	{
+		m_bRun	= false;
+		UnLock();
+	}
+	bool Check(void);
 
 private:
-	BOOL				m_bRun;
+	bool				m_bRun;
 	int					m_iLock;
 	int					m_iDelayTime;
 	int					m_iDelayLock;

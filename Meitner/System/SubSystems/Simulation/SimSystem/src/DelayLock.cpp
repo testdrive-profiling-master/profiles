@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "STDInterface.h"
 #include "DelayLock.h"
@@ -40,7 +39,7 @@
 
 DelayLock::DelayLock(void) : m_Lock(0), m_DelaySemaphore(1)
 {
-	m_bRun			= TRUE;
+	m_bRun			= true;
 	m_iLock			= 0;
 	m_iDelayTime	= 0;
 	m_iDelayLock	= 0;
@@ -53,7 +52,7 @@ DelayLock::~DelayLock(void)
 void DelayLock::Lock(int iDelayTime)
 {
 	if(iDelayTime) {
-		BOOL bLock;
+		bool bLock;
 		m_DelaySemaphore.Down();
 		SetDelay(iDelayTime);
 		bLock	= (m_iLock > 1);
@@ -84,7 +83,7 @@ void DelayLock::UnLock(void)
 	m_Lock.Up();
 }
 
-BOOL DelayLock::Check(void)
+bool DelayLock::Check(void)
 {
 	if(m_iDelayTime) {
 		m_DelaySemaphore.Down();
