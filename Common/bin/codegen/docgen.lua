@@ -1521,15 +1521,15 @@ end
 
 -- 테이블/그림 목차 없을시 제거
 if table_count == 0 then
-	doc_node:child_in_depth("w:t", "List of Tables"):parent("w:p"):Destroy(6)
+	doc_node:child_in_depth("w:t", "List of Tables"):parent("w:p"):Destroy(5)
 end
 
 if figure_count == 0 then
-	doc_node:child_in_depth("w:t", "List of Figures"):parent("w:p"):Destroy(6)
+	doc_node:child_in_depth("w:t", "List of Figures"):parent("w:p"):Destroy(5)
 end
 
 if term_count == 0 then
-	doc_node:child_in_depth("w:t", "List of Terms"):parent("w:p"):Destroy(3)
+	doc_node:child_in_depth("w:t", "List of Terms"):parent("w:p"):Destroy(4)
 end
 
 -- 북마크 갱신
