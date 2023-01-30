@@ -105,6 +105,7 @@ MemoryHeap::MemoryHeap(MemoryHeap* pPrev) : m_Link(this), m_Free(this)
 	m_dwByteSize		= 0;
 	m_pNative			= NULL;
 	m_bFree				= false;
+	if(pPrev) m_Link.Link(&pPrev->m_Link);
 }
 
 MemoryHeap::~MemoryHeap(void)
@@ -159,7 +160,12 @@ bool MemoryHeap::Alloc(MemoryHeap* pHeap, DWORD dwAllocByteSize, DWORD dwByteAli
 				pNext->m_dwPhysical		-= dwExtraFreeSize;
 				pNext->m_dwByteSize		+= dwExtraFreeSize;
 			} else {
-				//@FIXME : should add new free memory block to tail between pHeap and pHeap->next
+				// add extra free memory block
+				MemoryHeap*	pExtraHeap		= new MemoryHeap(pHeap);
+				pExtraHeap->m_dwPhysical	= pHeap->m_dwPhysical + pHeap->m_dwByteSize;
+				pExtraHeap->m_dwByteSize	= dwExtraFreeSize;
+				pExtraHeap->m_bFree			= true;
+				pExtraHeap->m_Free.Link();
 			}
 		}
 	} else {	// managed allocation
