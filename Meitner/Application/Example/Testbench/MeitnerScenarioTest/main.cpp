@@ -31,67 +31,69 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 1/25/2023 Wed (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "ScenarioTest.inl"
 #include "Conformance.h"
 #include "hw/MTSP.h"
 
+char					g_sTitle[MAX_PATH], g_sItem[MAX_PATH];
+
+bool GetArgName(const char* sArg, char* sTitle, char* sItem)
+{
+	char	sCom[1024], *sTok;
+
+	if(!sArg) return false;
+
+	{
+		// get name only
+		strcpy(sCom, sArg);
+
+		while(char* sTarget = strstr(sCom, "/")) * sTarget = '\\';	// convert windows style '\'
+
+		{
+			// change to "title + '\' + item + .ext" type
+			char* sTarget	= sCom;
+
+			while(sTarget) {
+				char* sNext	= strstr(sTarget, "\\");
+
+				if(!sNext) return false;
+
+				sNext++;
+
+				if(!strstr(sNext, "\\")) {
+					break;
+				}
+
+				sTarget	= sNext;
+			}
+
+			strcpy(sCom, sTarget);
+		}
+	}
+	{
+		const char*	sDelim	= ".\\";
+
+		// get title name
+		if(!(sTok = strtok(sCom, sDelim))) return false;
+
+		strcpy(sTitle, sTok);
+
+		// get item name
+		if(!(sTok = strtok(NULL, sDelim))) return false;
+
+		strcpy(sItem, sTok);
+	}
+	return true;
+}
+
 class Testbench : public TestbenchFramework, public TestDriveResource {
 	MTSP*					m_pMTSP;		// Processor (Design Under Testing)
 	ConformanceTestItem*	m_pItem;		// test item
-	char					m_sTitle[MAX_PATH], m_sItem[MAX_PATH];
 
-	bool GetArgName(const char* sArg, char* sTitle, char* sItem) {
-		char	sCom[1024], *sTok;
-
-		if(!sArg) return false;
-
-		{
-			// get name only
-			strcpy(sCom, sArg);
-
-			while(char* sTarget = strstr(sCom, "/")) * sTarget = '\\';	// '\' �� ����
-
-			{
-				// title + '\' + item + .ext ���·� ����
-				char* sTarget	= sCom;
-
-				while(sTarget) {
-					char* sNext	= strstr(sTarget, "\\");
-
-					if(!sNext) return false;
-
-					sNext++;
-
-					if(!strstr(sNext, "\\")) {
-						break;
-					}
-
-					sTarget	= sNext;
-				}
-
-				strcpy(sCom, sTarget);
-			}
-		}
-		{
-			const char*	sDelim	= ".\\";
-
-			// Ÿ��Ʋ �̸� ���
-			if(!(sTok = strtok(sCom, sDelim))) return false;
-
-			strcpy(sTitle, sTok);
-
-			// ������ �̸� ���
-			if(!(sTok = strtok(NULL, sDelim))) return false;
-
-			strcpy(sItem, sTok);
-		}
-		return true;
-	}
-
-	virtual bool OnInitialize(int argc, char** argv) {
+	virtual bool OnInitialize(void) {
 		m_pItem	= NULL;
 
 		if(!(m_pMTSP = new MTSP(m_pDDK))) {
@@ -116,28 +118,11 @@ class Testbench : public TestbenchFramework, public TestDriveResource {
 		}
 
 		{
-			if(argc != 2) {
-				printf("*E: No argument...\n");
-				return false;
-			}
-
-			if((_access(argv[1], 0)) == -1) {
-				printf("*E: File is not existed...\n");
-				return false;
-			}
-		}
-
-		{
-			if(!GetArgName(argv[1], m_sTitle, m_sItem)) {
-				printf("*E: Invalid argument...\n");
-				return false;
-			}
-
 			// Get test item
-			ConformanceTest* 		pRoot	= ConformanceTest::Find(m_sTitle);
+			ConformanceTest* 		pRoot	= ConformanceTest::Find(g_sTitle);
 
 			if(!pRoot) {
-				printf("*I: This test root title is not exist yet. : \"%s\"\n", m_sTitle);
+				printf("*I: This test root title is not exist yet. : \"%s\"\n", g_sTitle);
 				return false;
 			}
 
@@ -146,12 +131,12 @@ class Testbench : public TestbenchFramework, public TestDriveResource {
 				return false;
 			}
 
-			if(!(m_pItem = pRoot->Item(m_sItem))) {
-				printf("*I: This test item is not exist yet. : \"%s (%s)\"\n", m_sTitle, m_sItem);
+			if(!(m_pItem = pRoot->Item(g_sItem))) {
+				printf("*I: This test item is not exist yet. : \"%s (%s)\"\n", g_sTitle, g_sItem);
 				return false;
 			}
 
-			printf("Target Conformance Test : \"%s (%s)\"\n", m_sTitle, m_sItem);
+			printf("Target Conformance Test : \"%s (%s)\"\n", g_sTitle, g_sItem);
 		}
 
 		return true;
@@ -163,7 +148,7 @@ class Testbench : public TestbenchFramework, public TestDriveResource {
 	}
 
 	virtual bool OnTestBench(void) {
-		// �׽�Ʈ ����
+		// start test
 		m_pItem->Function()(m_pMTSP, (MTSP_REGMAP*)m_TestDrive.Memory.pDisplay->GetPointer(0, 0));
 		printf("Conformance test is done!\n");
 		return true;
@@ -173,6 +158,23 @@ class Testbench : public TestbenchFramework, public TestDriveResource {
 int main(int argc, char** argv)
 {
 	Testbench	tb;
+	{
+		// arguments check
+		if(argc != 2) {
+			printf("*E: No argument...\n");
+			return false;
+		}
+
+		if((_access(argv[1], 0)) == -1) {
+			printf("*E: File is not existed...\n");
+			return false;
+		}
+	}
+
+	if(!GetArgName(argv[1], g_sTitle, g_sItem)) {
+		printf("*E: Invalid argument...\n");
+		return false;
+	}
 
 	if(tb.Initialize()) {
 		if(!tb.DoTestbench())

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 1/25/2023 Wed (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "hw/DUT.h"
@@ -40,7 +40,7 @@ class Testbench : public TestbenchFramework {
 	DUT*			m_pDUT;		// Processor (Design Under Testing)
 	DDKMemory*		m_pBuff;
 
-	virtual bool OnInitialize(int argc, char** argv) {
+	virtual bool OnInitialize(void) {
 		m_pDUT	= NULL;
 		m_pBuff	= NULL;
 

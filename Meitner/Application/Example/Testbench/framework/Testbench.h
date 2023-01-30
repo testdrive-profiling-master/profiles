@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 1/25/2023 Wed (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "common.h"
 
@@ -56,9 +56,7 @@ public:
 	}
 
 protected:
-	virtual bool OnInitialize(void)	{
-		return true;
-	}
+	virtual bool OnInitialize(void)	= 0;
 	virtual bool OnTestBench(void) = 0;
 	virtual void OnRelease(void)	{}
 	virtual void OnInterrupt(void);

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 1/25/2023 Wed (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "Display.h"
@@ -52,7 +52,7 @@ class Testbench : public TestbenchFramework, public JuliaSet {
 	DDKMemory*		m_pFrame[FRAMEBUFFER_SIZE];
 	DWORD*			m_pScreen;
 
-	virtual bool OnInitialize(int argc, char** argv) {
+	virtual bool OnInitialize(void) {
 		// create memory
 		m_pFrame[FRAMEBUFFER_FRONT]	= CreateDDKMemory(SCREEN_BUFFER_SIZE, 16);
 		m_pFrame[FRAMEBUFFER_BACK]	= CreateDDKMemory(SCREEN_BUFFER_SIZE, 16);

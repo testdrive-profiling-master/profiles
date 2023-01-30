@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 1/25/2023 Wed (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "hw/MTSP.h"
@@ -41,7 +41,7 @@ class Testbench : public TestbenchFramework {
 	MTSP*				m_pMTSP;
 	DDKMemory*			m_pProgram;
 
-	virtual bool OnInitialize(int argc, char** argv) {
+	virtual bool OnInitialize(void) {
 		m_pMTSP		= NULL;
 		m_pProgram	= NULL;
 

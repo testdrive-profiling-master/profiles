@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 1/27/2023 Fri (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include <assert.h>
 #include <stdio.h>
@@ -146,7 +146,7 @@ bool MemoryHeap::Alloc(MemoryHeap* pHeap, DWORD dwAllocByteSize, DWORD dwByteAli
 	pHeap->m_Link.Link(&m_Link);
 
 	// set physical
-	if(dwPhyAddress == (DWORD) -1) {
+	if(dwPhyAddress != (DWORD) -1) {	// address specification allocation
 		pHeap->m_dwPhysical		= dwPhyAddress;
 		// check tail freed size
 		DWORD	dwExtraFreeSize	= m_dwByteSize - (dwPhyAddress - m_dwPhysical);
@@ -162,7 +162,7 @@ bool MemoryHeap::Alloc(MemoryHeap* pHeap, DWORD dwAllocByteSize, DWORD dwByteAli
 				//@FIXME : should add new free memory block to tail between pHeap and pHeap->next
 			}
 		}
-	} else {
+	} else {	// managed allocation
 		pHeap->m_dwPhysical		= m_dwPhysical + m_dwByteSize;
 	}
 
