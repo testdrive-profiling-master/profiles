@@ -99,12 +99,53 @@ int main(int argc, const char* argv[])
 	}
 	sToolPath	+= "bin/msys64/ucrt64/bin/";
 
-	// copy libraries
+	// copy libraries to release directory
 	for(auto& i : g_LibrariesMap) {
 		cstring sCmd;
 		printf("Updating '%s'...\n", i.first.c_str());
 		sCmd.Format("cp -r \"%s%s\" release", sToolPath.c_str(), i.first.c_str());
 		__exec(sCmd.c_str());
+	}
+
+	// add extra files
+	g_LibrariesMap["licenses.txt"]				= 1;
+	g_LibrariesMap["TestDrive_Installer.exe"]	= 1;
+
+	{
+		TextFile f;
+
+		if(!f.Open("TestDriveInstaller.sed.default")) {
+			printf("*E: No installer SED.\n");
+			exit(1);
+		}
+
+		cstring sSED;
+		f.GetAll(sSED);
+		f.Close();
+
+		if(!f.Create("TestDriveInstaller.sed")) {
+			printf("*E: Can't create installer SED.\n");
+			exit(1);
+		}
+
+		// fill file description
+		{
+			cstring sFileList;
+			cstring sSourceFiles;
+			int index	= 0;
+			for(auto& i : g_LibrariesMap) {
+				sFileList.AppendFormat("FILE%d=\"%s\"\n", index, i.first.c_str());
+				sSourceFiles.AppendFormat("%%FILE%d%%==\n", index);
+				index++;
+			}
+			sFileList.Trim("\n");
+			sSourceFiles.Trim("\n");
+			sSED.Replace("@FILE_LIST@", sFileList);
+			sSED.Replace("@SOURCE_LIST@", sSourceFiles);
+		}
+
+		f.Puts(sSED);
+		f.Close();
 	}
 
 	return 0;
