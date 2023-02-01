@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "BusSlave.h"
@@ -244,12 +244,12 @@ BusSlave* BusSlave::FindSlave(DWORD dwAddress)
 	return pSlave;
 }
 
-BUS_SLAVE_INTERFACE* SimEngine::CreateSlave(DWORD dwAddrBase, DWORD dwAddrHigh)
+BUS_SLAVE_INTERFACE* SimEngine::CreateSlave(UINT64 dwAddrBase, UINT64 dwAddrHigh)
 {
 	return new BusSlave(dwAddrBase, dwAddrHigh);
 }
 
-BUS_SLAVE_INTERFACE* SimEngine::FindSlave(DWORD dwAddress)
+BUS_SLAVE_INTERFACE* SimEngine::FindSlave(UINT64 dwAddress)
 {
 	return BusSlave::FindSlave(dwAddress);
 }

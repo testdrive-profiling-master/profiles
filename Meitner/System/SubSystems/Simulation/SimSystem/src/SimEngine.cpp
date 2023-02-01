@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "SimEngine.h"
@@ -92,7 +92,7 @@ SimEngine::~SimEngine(void)
 	m_Interrupt.KillThread();
 	KillThread();
 	{
-		// 모든 인스턴스 제거
+		// delete all instances
 		SimInstance* pInstance = m_pInstance;
 
 		while(pInstance) {
@@ -146,7 +146,7 @@ bool SimEngine::Clocking(void)
 			pInstance = pNext;
 		}
 	}
-	// delayed lock 구현
+	// delayed lock implementation
 	bBusy	|= m_Lock.Check();
 	return bBusy;
 }
@@ -209,12 +209,12 @@ void SimEngine::Terminate(void)
 	m_Interrupt.KillThread();
 }
 
-void SimEngine::SetMemoryBaseAddress(DWORD dwAddress)
+void SimEngine::SetMemoryBaseAddress(UINT64 dwAddress)
 {
 	g_SystemMemory.SetBaseAddress(dwAddress);
 }
 
-void SimEngine::MemoryRead32(int iID, DWORD dwAddress, DWORD& dwData)
+void SimEngine::MemoryRead32(int iID, UINT64 dwAddress, DWORD& dwData)
 {
 	DWORD* pData = (DWORD*)g_SystemMemory.GetPointer(dwAddress, sizeof(DWORD), iID);
 
@@ -225,7 +225,7 @@ void SimEngine::MemoryRead32(int iID, DWORD dwAddress, DWORD& dwData)
 	}
 }
 
-void SimEngine::MemoryWrite32(int iID, DWORD dwAddress, DWORD dwData)
+void SimEngine::MemoryWrite32(int iID, UINT64 dwAddress, DWORD dwData)
 {
 	DWORD* pData = (DWORD*)g_SystemMemory.GetPointer(dwAddress, sizeof(DWORD), iID);
 
@@ -236,7 +236,7 @@ void SimEngine::MemoryWrite32(int iID, DWORD dwAddress, DWORD dwData)
 	}
 }
 
-void SimEngine::MemoryRead16(int iID, DWORD dwAddress, WORD& dwData)
+void SimEngine::MemoryRead16(int iID, UINT64 dwAddress, WORD& dwData)
 {
 	WORD* pData = (WORD*)g_SystemMemory.GetPointer(dwAddress, sizeof(WORD), iID);
 
@@ -247,7 +247,7 @@ void SimEngine::MemoryRead16(int iID, DWORD dwAddress, WORD& dwData)
 	}
 }
 
-void SimEngine::MemoryWrite16(int iID, DWORD dwAddress, WORD dwData)
+void SimEngine::MemoryWrite16(int iID, UINT64 dwAddress, WORD dwData)
 {
 	WORD* pData = (WORD*)g_SystemMemory.GetPointer(dwAddress, sizeof(WORD), iID);
 
@@ -258,7 +258,7 @@ void SimEngine::MemoryWrite16(int iID, DWORD dwAddress, WORD dwData)
 	}
 }
 
-void SimEngine::MemoryRead8(int iID, DWORD dwAddress, BYTE& dwData)
+void SimEngine::MemoryRead8(int iID, UINT64 dwAddress, BYTE& dwData)
 {
 	BYTE* pData = (BYTE*)g_SystemMemory.GetPointer(dwAddress, sizeof(BYTE), iID);
 
@@ -269,7 +269,7 @@ void SimEngine::MemoryRead8(int iID, DWORD dwAddress, BYTE& dwData)
 	}
 }
 
-void SimEngine::MemoryWrite8(int iID, DWORD dwAddress, BYTE dwData)
+void SimEngine::MemoryWrite8(int iID, UINT64 dwAddress, BYTE dwData)
 {
 	BYTE* pData = (BYTE*)g_SystemMemory.GetPointer(dwAddress, sizeof(BYTE), iID);
 
@@ -290,12 +290,12 @@ DisplayConfig* SimEngine::GetDisplayConfig(void)
 	return g_SystemMemory.GetDisplayConfig();
 }
 
-BYTE* SimEngine::GetMemoryPointer(DWORD dwAddress, DWORD dwSize, bool bDisplay)
+BYTE* SimEngine::GetMemoryPointer(UINT64 dwAddress, UINT64 dwSize, bool bDisplay)
 {
 	return g_SystemMemory.GetPointer(dwAddress, dwSize, bDisplay);
 }
 
-DWORD SimEngine::GetMemoryBaseAddress(void)
+UINT64 SimEngine::GetMemoryBaseAddress(void)
 {
 	return g_SystemMemory.BaseAddress();
 }

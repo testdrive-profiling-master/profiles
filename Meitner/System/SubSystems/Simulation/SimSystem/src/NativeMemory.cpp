@@ -31,14 +31,14 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "STDInterface.h"
 #include "NativeMemory.h"
 #include "SystemMemory.h"
 
-NativeSystemMemory::NativeSystemMemory(DWORD dwByteSize)
+NativeSystemMemory::NativeSystemMemory(UINT64 dwByteSize)
 {
 	m_pMem	= new BYTE[dwByteSize];
 }
@@ -57,7 +57,7 @@ BYTE* NativeSystemMemory::Virtual(void)
 	return m_pMem;
 }
 
-bool NativeSystemMemory::Flush(DWORD dwOffset, DWORD dwPhyAddress, DWORD dwByteSize, bool bWrite)
+bool NativeSystemMemory::Flush(UINT64 dwOffset, UINT64 dwPhyAddress, UINT64 dwByteSize, bool bWrite)
 {
 	BYTE* pDest	= g_SystemMemory.GetPointer(dwPhyAddress, dwByteSize);
 

@@ -31,10 +31,11 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "DDK_Context.h"
 #include <zlib.h>
+#include <assert.h>
 
 #define DUMP_MEMORY_MAGIC_CODE		0x504D5544
 
@@ -63,7 +64,7 @@ static void __EnumMemory(DDKMemory* pMemory, MEMORY_DUMP* pDump)
 	desc.dwPhyAddress		= pMemory->Physical();
 	desc.dwByteSize			= pMemory->ByteSize();
 	desc.dwCompressedSize	= 0;
-	{
+	/*{
 		unsigned long int	zipSize = desc.dwByteSize + 16;
 		unsigned char* pSrc	= (unsigned char*)pDump->pDDK->GetMemoryPointer(desc.dwPhyAddress, desc.dwByteSize);
 		BYTE* pData			= new BYTE[zipSize];
@@ -73,7 +74,8 @@ static void __EnumMemory(DDKMemory* pMemory, MEMORY_DUMP* pDump)
 		fwrite(pData, desc.dwCompressedSize, 1, pDump->fp);
 		delete [] pData;
 		pDump->header.iSize++;
-	}
+	}*/
+	assert("This function is deprecated.\n" == 0);
 }
 
 bool DDKContext::MakeMemoryDump(const char* sFileName)
@@ -99,7 +101,7 @@ bool DDKContext::MakeMemoryDump(const char* sFileName)
 
 bool DDKContext::LoadMemoryDump(const char* sFileName)
 {
-	MEMORY_DUMP	dump;
+	/*MEMORY_DUMP	dump;
 	memset(&dump, 0, sizeof(MEMORY_DUMP));
 	dump.pDDK		= this;
 
@@ -145,6 +147,7 @@ bool DDKContext::LoadMemoryDump(const char* sFileName)
 
 	if(dump.fp)
 		fclose(dump.fp);
-
+	*/
+	assert("This function is deprecated.\n" == 0);
 	return false;
 }

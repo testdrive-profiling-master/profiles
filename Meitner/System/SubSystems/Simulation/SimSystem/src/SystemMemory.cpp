@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "STDInterface.h"
@@ -68,12 +68,12 @@ SystemMemory::~SystemMemory(void)
 	TestDriver_Cleanup();
 }
 
-DWORD SystemMemory::ByteSize(void)
+UINT64 SystemMemory::ByteSize(void)
 {
 	return m_pSystemMemory->GetSize();
 }
 
-BYTE* SystemMemory::GetPointer(DWORD dwAddress, DWORD dwSize, bool bDisplay)
+BYTE* SystemMemory::GetPointer(UINT64 dwAddress, UINT64 dwSize, bool bDisplay)
 {
 	if(bDisplay) return m_pDisplayMemory->GetPointer(dwAddress, dwSize);
 

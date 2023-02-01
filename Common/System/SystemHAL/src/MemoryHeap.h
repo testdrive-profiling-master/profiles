@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __MEMORY_HEAP_H__
 #define __MEMORY_HEAP_H__
@@ -46,25 +46,25 @@ typedef	CircularLink<MemoryHeap*, 1>	FreeLink;
 
 class MemoryHeap : public IMemory {
 public:
-	MemoryHeap(DWORD dwByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, bool bDMA);
+	MemoryHeap(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress, bool bDMA);
 	virtual void AddRef(void);
 	virtual void Release(void);
 
 	virtual void* Virtual(void);
-	virtual DWORD Physical(void);
-	virtual DWORD ByteSize(void);
-	virtual bool Flush(bool bWrite = true, DWORD dwOffset = 0, DWORD dwByteSize = 0);
+	virtual UINT64 Physical(void);
+	virtual UINT64 ByteSize(void);
+	virtual bool Flush(bool bWrite = true, UINT64 dwOffset = 0, UINT64 dwByteSize = 0);
 
 	inline bool IsFree(void) {
 		return m_bFree;
 	}
 
-	bool Alloc(MemoryHeap* pHeap, DWORD dwAllocByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, bool bDMA);
+	bool Alloc(MemoryHeap* pHeap, UINT64 dwAllocByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress, bool bDMA);
 
 protected:
 	MemoryHeap(MemoryHeap* pPrev = NULL);
 	virtual ~MemoryHeap(void);
-	MemoryHeap(DWORD dwPhysical, DWORD dwByteSize);
+	MemoryHeap(UINT64 dwPhysical, UINT64 dwByteSize);
 
 	MemoryHeap* Prev(void);
 	MemoryHeap* Next(void);
@@ -81,8 +81,8 @@ private:
 
 	// memory allocation information
 	bool						m_bFree;			// is free heap?
-	DWORD						m_dwPhysical;		// physical memory address
-	DWORD						m_dwByteSize;		// heap size (byte, block aligned)
+	UINT64						m_dwPhysical;		// physical memory address
+	UINT64						m_dwByteSize;		// heap size (byte, block aligned)
 	IMemoryNative*				m_pNative;			// native system memory manager
 };
 
@@ -91,7 +91,7 @@ public:
 	MemoryImplementation(void);
 	virtual ~MemoryImplementation(void);
 
-	virtual bool Initialize(BYTE* pVirtual, DWORD dwPhysical, DWORD dwByteSize, IMemoryManager* pMemoryManager);	//@FIXME : pVirtual is unused
+	virtual bool Initialize(BYTE* pVirtual, UINT64 dwPhysical, UINT64 dwByteSize, IMemoryManager* pMemoryManager);	//@FIXME : pVirtual is unused
 	virtual void Release(void);
 
 	void Report(void);

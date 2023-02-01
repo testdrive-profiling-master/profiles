@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
 #include "TestDriver.inl"
@@ -245,12 +245,12 @@ double sc_time_stamp()          // Called by $time in Verilog
 
 //-----------------------------------------------------------------------------------------------
 // bypass command
-BUS_SLAVE_INTERFACE* CreateSlave(DWORD dwAddrBase, DWORD dwAddrHigh)
+BUS_SLAVE_INTERFACE* CreateSlave(UINT64 dwAddrBase, UINT64 dwAddrHigh)
 {
 	return __pSimControl->CreateSlave(dwAddrBase, dwAddrHigh);
 }
 
-BUS_SLAVE_INTERFACE* FindSlave(DWORD dwAddress)
+BUS_SLAVE_INTERFACE* FindSlave(UINT64 dwAddress)
 {
 	return __pSimControl->FindSlave(dwAddress);
 }

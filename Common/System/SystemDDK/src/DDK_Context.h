@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __DDK_CONTEXT_H__
 #define __DDK_CONTEXT_H__
@@ -53,14 +53,14 @@ public:
 	virtual void Release(void);		// Release DDK object
 
 	// memory
-	virtual DWORD GetMemoryBase(void);
-	virtual void* GetMemoryPointer(DWORD dwPhyAddress, DWORD dwByteSize = 0);
+	virtual UINT64 GetMemoryBase(void);
+	virtual UINT64 GetMemorySize(void);
 	virtual bool MakeMemoryDump(const char* sFileName = NULL);
 	virtual bool LoadMemoryDump(const char* sFileName = NULL);
 
 	// register
-	virtual DWORD RegRead(DWORD dwAddress);
-	virtual void RegWrite(DWORD dwAddress, DWORD dwData);
+	virtual DWORD RegRead(UINT64 dwAddress);
+	virtual void RegWrite(UINT64 dwAddress, DWORD dwData);
 
 	// system
 	virtual void RegisterInterruptService(DDK_INTRRUPT_SERVICE routine, void* pPrivate = NULL);

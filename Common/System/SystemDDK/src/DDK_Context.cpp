@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "DDK_Context.h"
 
@@ -46,12 +46,12 @@ DDK_API DDK* CreateDDK(void)
 	return pContext;
 }
 
-DDK_API DDKMemory* CreateDDKMemory(DWORD dwByteSize, DWORD dwByteAlignment, bool bDMA)
+DDK_API DDKMemory* CreateDDKMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, bool bDMA)
 {
-	return (DDKMemory*)CreateMemory(dwByteSize, dwByteAlignment, (DWORD) -1, bDMA);
+	return (DDKMemory*)CreateMemory(dwByteSize, dwByteAlignment, (UINT64) - 1, bDMA);
 }
 
-DDK_API DDKMemory* CreateDDKMemoryEx(DWORD dwByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, bool bDMA)
+DDK_API DDKMemory* CreateDDKMemoryEx(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress, bool bDMA)
 {
 	return (DDKMemory*)CreateMemory(dwByteSize, dwByteAlignment, dwPhyAddress, bDMA);
 }
@@ -100,22 +100,22 @@ void DDKContext::Release(void)
 	delete this;
 }
 
-DWORD DDKContext::GetMemoryBase(void)
+UINT64 DDKContext::GetMemoryBase(void)
 {
 	return m_pSystem->GetMemoryBase();
 }
 
-void* DDKContext::GetMemoryPointer(DWORD dwPhyAddress, DWORD dwByteSize)
+UINT64 DDKContext::GetMemorySize(void)
 {
-	return m_pSystem->GetMemoryPointer(dwPhyAddress, dwByteSize);
+	return m_pSystem->GetMemorySize();
 }
 
-DWORD DDKContext::RegRead(DWORD dwAddress)
+DWORD DDKContext::RegRead(UINT64 dwAddress)
 {
 	return m_pSystem->RegRead(dwAddress);
 }
 
-void DDKContext::RegWrite(DWORD dwAddress, DWORD dwData)
+void DDKContext::RegWrite(UINT64 dwAddress, DWORD dwData)
 {
 	m_pSystem->RegWrite(dwAddress, dwData);
 }

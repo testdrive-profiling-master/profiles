@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_MEMORY_H__
 #define __SYSTEM_MEMORY_H__
@@ -44,19 +44,19 @@ class SystemMemory {
 public:
 	SystemMemory(void);
 	virtual ~SystemMemory(void);
-	void SetBaseAddress(DWORD dwAddress)				{
+	void SetBaseAddress(UINT64 dwAddress)				{
 		m_dwBaseAddress	= dwAddress;
 	}
-	DWORD ByteSize(void);
-	BYTE* GetPointer(DWORD dwAddress, DWORD dwSize = 0, bool bDisplay = false);
-	void Flush(DWORD dwAddress, DWORD dwSize)			{
+	UINT64 ByteSize(void);
+	BYTE* GetPointer(UINT64 dwAddress, UINT64 dwSize = 0, bool bDisplay = false);
+	void Flush(UINT64 dwAddress, UINT64 dwSize)			{
 		if(m_pSystemMemory) m_pSystemMemory->Flush(dwAddress, dwSize);
 	}
 
 	inline bool IsInitialized(void)					{
 		return (m_pSystemMemory != NULL) && (m_pDisplayMemory != NULL);
 	}
-	inline DWORD BaseAddress(void)					{
+	inline UINT64 BaseAddress(void)					{
 		return m_dwBaseAddress;
 	}
 	inline ITestDriverMemory* Handle(void)			{
@@ -74,7 +74,7 @@ private:
 	ITestDriverMemory*		m_pDisplayMemory;
 	SYSTEM_CONFIG*			m_pSystemConfig;
 	DisplayConfig*			m_pDisplayConfig;
-	DWORD					m_dwBaseAddress;
+	UINT64					m_dwBaseAddress;
 };
 
 extern SystemMemory			g_SystemMemory;

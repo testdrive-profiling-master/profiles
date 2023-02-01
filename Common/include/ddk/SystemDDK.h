@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_DDK_H__
 #define __SYSTEM_DDK_H__
@@ -54,14 +54,14 @@ struct DDK {
 	virtual void Release(void) = 0;		// Release display object
 
 	// memory
-	virtual DWORD GetMemoryBase(void) = 0;
-	virtual void* GetMemoryPointer(DWORD dwPhyAddress, DWORD dwByteSize = 0) = 0;
+	virtual UINT64 GetMemoryBase(void) = 0;
+	virtual UINT64 GetMemorySize(void) = 0;
 	virtual bool MakeMemoryDump(const char* sFileName = NULL) = 0;
 	virtual bool LoadMemoryDump(const char* sFileName = NULL) = 0;
 
 	// register
-	virtual DWORD RegRead(DWORD dwAddress) = 0;
-	virtual void RegWrite(DWORD dwAddress, DWORD dwData) = 0;
+	virtual DWORD RegRead(UINT64 dwAddress) = 0;
+	virtual void RegWrite(UINT64 dwAddress, DWORD dwData) = 0;
 
 	// system
 	virtual void RegisterInterruptService(DDK_INTRRUPT_SERVICE routine, void* pPrivate = NULL) = 0;
@@ -74,17 +74,17 @@ struct DDKMemory {
 	virtual void AddRef(void) = 0;			// add reference
 	virtual void Release(void) = 0;			// release memory object
 	virtual void* Virtual(void) = 0;		// virtual memory pointer
-	virtual DWORD Physical(void) = 0;		// physical memory address
-	virtual DWORD ByteSize(void) = 0;		// byte allocation size
-	virtual bool Flush(bool bWrite = true, DWORD dwOffset = 0, DWORD dwByteSize = 0) = 0;	// flush memory
+	virtual UINT64 Physical(void) = 0;		// physical memory address
+	virtual UINT64 ByteSize(void) = 0;		// byte allocation size
+	virtual bool Flush(bool bWrite = true, UINT64 dwOffset = 0, UINT64 dwByteSize = 0) = 0;	// flush memory
 };
 
 // DDK
 typedef void (*ENUMERATE_DDK_MEMORY_FUNCTION)(DDKMemory* pMemory, void* pPrivate);
 
 DDK_API DDK* CreateDDK(void);
-DDK_API DDKMemory* CreateDDKMemory(DWORD dwByteSize, DWORD dwByteAlignment, bool bDMA = false);
-DDK_API DDKMemory* CreateDDKMemoryEx(DWORD dwByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, bool bDMA = false);
+DDK_API DDKMemory* CreateDDKMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, bool bDMA = false);
+DDK_API DDKMemory* CreateDDKMemoryEx(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress, bool bDMA = false);
 DDK_API void EnumerateDDKMemory(ENUMERATE_DDK_MEMORY_FUNCTION func, void* pPrivate = NULL);
 
 #endif//__SYSTEM_DDK_H__

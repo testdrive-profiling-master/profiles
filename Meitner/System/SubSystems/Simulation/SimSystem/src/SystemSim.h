@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_SIM_H__
 #define __SYSTEM_SIM_H__
@@ -56,20 +56,21 @@ public:
 	virtual void Release(void);												// release all system resources
 
 	// memory
-	virtual DWORD GetMemoryBase(void);										// get memory start address
-	virtual void* GetMemoryPointer(DWORD dwPhyAddress, DWORD dwByteSize = 0);		// get virtual pointer from physical address
+	virtual UINT64 GetMemoryBase(void);										// get memory start address
+	virtual UINT64 GetMemorySize(void);										// get memory byte size
+	virtual void* GetMemoryPointer(UINT64 dwPhyAddress, UINT64 dwByteSize = 0);		// get virtual pointer from physical address
 
 	// register
-	virtual DWORD RegRead(DWORD dwAddress);									// register read
-	virtual void RegWrite(DWORD dwAddress, DWORD dwData);					// register write
+	virtual DWORD RegRead(UINT64 dwAddress);								// register read
+	virtual void RegWrite(UINT64 dwAddress, DWORD dwData);					// register write
 
 	// system
-	virtual void RegisterInterruptService(INTRRUPT_SERVICE routine);		// 인터럽트 서비스 루틴 등록
-	virtual void EnableInterrupt(bool bEnable = true);						// 인터럽트 서비스 루틴 활성화
-	virtual void ClearInterruptPending(void);								// 인터럽트 서비스 팬딩 클리어
+	virtual void RegisterInterruptService(INTRRUPT_SERVICE routine);		// register interrupt service routine
+	virtual void EnableInterrupt(bool bEnable = true);						// enable interrupt service
+	virtual void ClearInterruptPending(void);								// clear interrupt service pending bit
 
 	// memory manager
-	virtual IMemoryNative* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, bool bDMA = false);
+	virtual IMemoryNative* CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, bool bDMA = false);
 
 private:
 	SimEngine*				m_pSim;

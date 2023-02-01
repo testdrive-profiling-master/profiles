@@ -31,55 +31,55 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include <assert.h>
 #include <stdio.h>
 #include "MemoryHeap.h"
 
 static IMemoryManager*		__pMemoryManager	= NULL;
-static DWORD				__HEAP_PHY_BASE		= 0;
-static DWORD				__HEAP_BYTE_SIZE	= 0;
+static UINT64				__HEAP_PHY_BASE		= 0;
+static UINT64				__HEAP_BYTE_SIZE	= 0;
 
-static void __ShowByteSize(DWORD dwSize)
+static void __ShowByteSize(UINT64 dwSize)
 {
 	bool bShow = false;
 
 	if(dwSize > 1024 * 1024 * 1024) {
-		DWORD	b_size	= dwSize / (1024 * 1024 * 1024);
+		UINT64	b_size	= dwSize / (1024 * 1024 * 1024);
 		dwSize	-= b_size * (1024 * 1024 * 1024);
-		printf("%dGB", b_size);
+		printf("%lldGB", b_size);
 		bShow	= true;
 	}
 
 	if(dwSize > 1024 * 1024) {
-		DWORD	b_size	= dwSize / (1024 * 1024);
+		UINT64	b_size	= dwSize / (1024 * 1024);
 		dwSize	-= b_size * (1024 * 1024);
 
 		if(bShow) printf(" ");
 
-		printf("%dMB", b_size);
+		printf("%lldMB", b_size);
 		bShow	= true;
 	}
 
 	if(dwSize > 1024) {
-		DWORD	b_size	= dwSize / (1024);
+		UINT64	b_size	= dwSize / (1024);
 		dwSize	-= b_size * (1024);
 
 		if(bShow) printf(" ");
 
-		printf("%dKB", b_size);
+		printf("%lldKB", b_size);
 		bShow	= true;
 	}
 
 	if(dwSize) {
 		if(bShow) printf(" ");
 
-		printf("%d Byte", dwSize);
+		printf("%lld Byte", dwSize);
 	}
 }
 
-MemoryHeap::MemoryHeap(DWORD dwByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, bool bDMA) : MemoryHeap()
+MemoryHeap::MemoryHeap(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress, bool bDMA) : MemoryHeap()
 {
 	assert(dwByteSize != 0);
 	assert(dwByteAlignment != 0);
@@ -105,6 +105,7 @@ MemoryHeap::MemoryHeap(MemoryHeap* pPrev) : m_Link(this), m_Free(this)
 	m_dwByteSize		= 0;
 	m_pNative			= NULL;
 	m_bFree				= false;
+
 	if(pPrev) m_Link.Link(&pPrev->m_Link);
 }
 
@@ -113,7 +114,7 @@ MemoryHeap::~MemoryHeap(void)
 	SAFE_RELEASE(m_pNative);
 }
 
-MemoryHeap::MemoryHeap(DWORD dwPhysical, DWORD dwByteSize) : MemoryHeap()
+MemoryHeap::MemoryHeap(UINT64 dwPhysical, UINT64 dwByteSize) : MemoryHeap()
 {
 	m_bFree				= true;
 	m_Link.Link();
@@ -122,7 +123,7 @@ MemoryHeap::MemoryHeap(DWORD dwPhysical, DWORD dwByteSize) : MemoryHeap()
 	m_dwByteSize		= dwByteSize;
 }
 
-bool MemoryHeap::Alloc(MemoryHeap* pHeap, DWORD dwAllocByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, bool bDMA)
+bool MemoryHeap::Alloc(MemoryHeap* pHeap, UINT64 dwAllocByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress, bool bDMA)
 {
 	// adjust align size
 	dwAllocByteSize			+= (m_dwPhysical + m_dwByteSize - dwAllocByteSize) & (dwByteAlignment - 1);
@@ -131,7 +132,7 @@ bool MemoryHeap::Alloc(MemoryHeap* pHeap, DWORD dwAllocByteSize, DWORD dwByteAli
 	if(!m_bFree || m_dwByteSize < dwAllocByteSize) return false;
 
 	// physical address is not fit to.
-	if((dwPhyAddress != (DWORD) -1) && (dwPhyAddress < m_dwPhysical || (dwPhyAddress + dwAllocByteSize) > (m_dwPhysical + m_dwByteSize))) return false;
+	if((dwPhyAddress != (UINT64) - 1) && (dwPhyAddress < m_dwPhysical || (dwPhyAddress + dwAllocByteSize) > (m_dwPhysical + m_dwByteSize))) return false;
 
 	// create native first
 	pHeap->m_pNative		= __pMemoryManager->CreateMemory(dwAllocByteSize, dwByteAlignment, bDMA);
@@ -147,10 +148,10 @@ bool MemoryHeap::Alloc(MemoryHeap* pHeap, DWORD dwAllocByteSize, DWORD dwByteAli
 	pHeap->m_Link.Link(&m_Link);
 
 	// set physical
-	if(dwPhyAddress != (DWORD) -1) {	// address specification allocation
+	if(dwPhyAddress != (UINT64) - 1) {	// address specification allocation
 		pHeap->m_dwPhysical		= dwPhyAddress;
 		// check tail freed size
-		DWORD	dwExtraFreeSize	= m_dwByteSize - (dwPhyAddress - m_dwPhysical);
+		UINT64	dwExtraFreeSize	= m_dwByteSize - (dwPhyAddress - m_dwPhysical);
 
 		if(dwExtraFreeSize) {
 			m_dwByteSize	-= dwExtraFreeSize;
@@ -235,17 +236,17 @@ void* MemoryHeap::Virtual(void)
 	return m_pNative->Virtual();
 }
 
-DWORD MemoryHeap::Physical(void)
+UINT64 MemoryHeap::Physical(void)
 {
 	return m_dwPhysical;
 }
 
-DWORD MemoryHeap::ByteSize(void)
+UINT64 MemoryHeap::ByteSize(void)
 {
 	return m_dwByteSize;
 }
 
-bool MemoryHeap::Flush(bool bWrite, DWORD dwOffset, DWORD dwByteSize)
+bool MemoryHeap::Flush(bool bWrite, UINT64 dwOffset, UINT64 dwByteSize)
 {
 	assert((dwOffset + dwByteSize) <= m_dwByteSize);
 
@@ -256,7 +257,7 @@ bool MemoryHeap::Flush(bool bWrite, DWORD dwOffset, DWORD dwByteSize)
 	return false;
 }
 
-IMemory* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress, bool bDMA)
+IMemory* CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress, bool bDMA)
 {
 	return new MemoryHeap(dwByteSize, dwByteAlignment, dwPhyAddress, bDMA);
 }
@@ -283,7 +284,7 @@ MemoryImplementation	g_MemoryImplementation;
 MemoryImplementation::MemoryImplementation(void) {}
 MemoryImplementation::~MemoryImplementation(void) {}
 
-bool MemoryImplementation::Initialize(BYTE* pVirtual, DWORD dwPhysical, DWORD dwByteSize, IMemoryManager* pMemoryManager)
+bool MemoryImplementation::Initialize(BYTE* pVirtual, UINT64 dwPhysical, UINT64 dwByteSize, IMemoryManager* pMemoryManager)
 {
 	Release();
 	__pMemoryManager	= pMemoryManager;

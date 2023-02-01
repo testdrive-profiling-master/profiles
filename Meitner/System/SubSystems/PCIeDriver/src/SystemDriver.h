@@ -57,12 +57,12 @@ public:
 	virtual void Release(void);												// system release
 
 	// memory
-	virtual DWORD GetMemoryBase(void);										// get memory start address
-	virtual void* GetMemoryPointer(DWORD dwPhyAddress, DWORD dwByteSize = 0);	// get virtual pointer from physical address
+	virtual UINT64 GetMemoryBase(void);										// get memory start address
+	virtual UINT64 GetMemorySize(void);										// get memory byte size
 
 	// register
-	virtual DWORD RegRead(DWORD dwAddress);									// register read
-	virtual void RegWrite(DWORD dwAddress, DWORD dwData);					// register write
+	virtual DWORD RegRead(UINT64 dwAddress);									// register read
+	virtual void RegWrite(UINT64 dwAddress, DWORD dwData);					// register write
 
 	// system
 	virtual void RegisterInterruptService(INTRRUPT_SERVICE routine);		// register ISR
@@ -70,7 +70,7 @@ public:
 	virtual void ClearInterruptPending(void);								// clear interrupt pending bit
 
 	// memory manager
-	virtual IMemoryNative* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, bool bDMA = false);
+	virtual IMemoryNative* CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, bool bDMA = false);
 
 protected:
 	virtual void InvokeISR(void);

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_HAL_H__
 #define __SYSTEM_HAL_H__
@@ -50,12 +50,12 @@ struct ISystem {
 	virtual void Release(void) = 0;											// system release
 
 	// memory
-	virtual DWORD GetMemoryBase(void) = 0;									// get memory start address
-	virtual void* GetMemoryPointer(DWORD dwPhyAddress, DWORD dwByteSize = 0) = 0;		// get virtual pointer from physical address
+	virtual UINT64 GetMemoryBase(void) = 0;									// get physical memory start address
+	virtual UINT64 GetMemorySize(void) = 0;									// get physical memory byte size
 
 	// register
-	virtual DWORD RegRead(DWORD dwAddress) = 0;								// read register
-	virtual void RegWrite(DWORD dwAddress, DWORD dwData) = 0;				// write register
+	virtual DWORD RegRead(UINT64 dwAddress) = 0;							// read register
+	virtual void RegWrite(UINT64 dwAddress, DWORD dwData) = 0;				// write register
 
 	// System control
 	virtual void RegisterInterruptService(INTRRUPT_SERVICE routine) = 0;	// register ISR(interrrupt service routine)
@@ -67,15 +67,15 @@ struct ISystem {
 struct IMemoryNative {
 	virtual void Release(void) = 0;
 	virtual BYTE* Virtual(void) = 0;
-	virtual bool Flush(DWORD dwOffset, DWORD dwPhyAddress, DWORD dwByteSize, bool bWrite) = 0;
+	virtual bool Flush(UINT64 dwOffset, UINT64 dwPhyAddress, UINT64 dwByteSize, bool bWrite) = 0;
 };
 
 struct IMemoryManager {
-	virtual IMemoryNative* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, bool bDMA = false) = 0;
+	virtual IMemoryNative* CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, bool bDMA = false) = 0;
 };
 
 struct IMemoryImp {
-	virtual bool Initialize(BYTE* pVirtual, DWORD dwPhysical, DWORD dwByteSize, IMemoryManager* pMemoryManager) = 0;
+	virtual bool Initialize(BYTE* pVirtual, UINT64 dwPhysical, UINT64 dwByteSize, IMemoryManager* pMemoryManager) = 0;
 	virtual void Release(void) = 0;
 };
 
@@ -96,14 +96,14 @@ struct IMemory {
 	virtual void AddRef(void) = 0;			// add reference
 	virtual void Release(void) = 0;			// release memory object
 	virtual void* Virtual(void) = 0;		// virtual memory pointer
-	virtual DWORD Physical(void) = 0;		// physical memory address
-	virtual DWORD ByteSize(void) = 0;		// byte allocation size
-	virtual bool Flush(bool bWrite = true, DWORD dwOffset = 0, DWORD dwByteSize = 0) = 0;	// flush memory
+	virtual UINT64 Physical(void) = 0;		// physical memory address
+	virtual UINT64 ByteSize(void) = 0;		// byte allocation size
+	virtual bool Flush(bool bWrite = true, UINT64 dwOffset = 0, UINT64 dwByteSize = 0) = 0;	// flush memory
 };
 
 typedef void (*ENUMERATE_MEMORY_FUNCTION)(IMemory* pMemory, void* pPrivate);
 
-SYSTEM_API IMemory* CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, DWORD dwPhyAddress = (DWORD) -1, bool bDMA = false);
+SYSTEM_API IMemory* CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress = (UINT64) - 1, bool bDMA = false);
 SYSTEM_API void EnumerateMemory(ENUMERATE_MEMORY_FUNCTION func, void* pPrivate = NULL);
 
 #endif

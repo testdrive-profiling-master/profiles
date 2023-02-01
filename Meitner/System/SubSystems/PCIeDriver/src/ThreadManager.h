@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Driver(PCIe) sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __THREAD_MANAGER_H__
 #define __THREAD_MANAGER_H__
@@ -45,14 +45,14 @@ class ThreadManager {
 	static DWORD WINAPI thBootStrap(ThreadManager* pManager);
 
 protected:
-	virtual void MonitorThread(void)	= 0;					// 모니터 스레드
-	virtual void OnThreadKill(void)		= 0;					// 스레드 킬 전 이벤트
+	virtual void MonitorThread(void)	= 0;					// monitor thread
+	virtual void OnThreadKill(void)		= 0;					// thread kill event when before killed
 
 public:
 	ThreadManager(void);
 	virtual ~ThreadManager(void);
 
-	bool RunThread(void);										// 스레드 실행
-	void KillThread(void);										// 스레드 종료
+	bool RunThread(void);										// run thread
+	void KillThread(void);										// kill thread
 };
 #endif//__THREAD_MANAGER_H__

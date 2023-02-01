@@ -48,10 +48,10 @@ public:
 
 	bool IsInitialized(void);
 	void SetCurrentCard(DWORD dwIndex);
-	void RegWrite(DWORD dwAddress, DWORD dwData);
-	DWORD RegRead(DWORD dwAddress);
-	void MemoryWrite(DWORD dwAddress, BYTE* pData, DWORD dwCount);	// 64bit write operation
-	void MemoryRead(DWORD dwAddress, BYTE* pData, DWORD dwCount);	// 64bit read operation
+	void RegWrite(UINT64 dwAddress, DWORD dwData);
+	DWORD RegRead(UINT64 dwAddress);
+	void MemoryWrite(UINT64 dwAddress, BYTE* pData, DWORD dwCount);	// 64bit write operation
+	void MemoryRead(UINT64 dwAddress, BYTE* pData, DWORD dwCount);	// 64bit read operation
 	void InterruptLock(void);
 	void InterruptFree(void);
 
@@ -59,9 +59,19 @@ public:
 		return m_dwCardCount;
 	}
 
+	inline UINT64 BaseAddress(void) {
+		return m_PhyBaseAddress;
+	}
+
+	inline UINT64 ByteSize(void) {
+		return m_PhyBaseAddress;
+	}
+
 private:
 	HANDLE				m_hDriver;
 	DWORD				m_dwCardCount;
+	UINT64				m_PhyBaseAddress;
+	UINT64				m_PhyByteSize;
 	OVERLAPPED			m_OverlappedIO;
 };
 

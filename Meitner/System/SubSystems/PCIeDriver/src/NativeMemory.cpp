@@ -37,7 +37,7 @@
 #include "NativeMemory.h"
 #include "SystemMemory.h"
 
-NativeSystemMemory::NativeSystemMemory(DWORD dwByteSize)
+NativeSystemMemory::NativeSystemMemory(UINT64 dwByteSize)
 {
 	m_pMem	= new BYTE[dwByteSize];
 }
@@ -56,7 +56,7 @@ BYTE* NativeSystemMemory::Virtual(void)
 	return m_pMem;
 }
 
-bool NativeSystemMemory::Flush(DWORD dwOffset, DWORD dwPhyAddress, DWORD dwByteSize, bool bWrite)
+bool NativeSystemMemory::Flush(UINT64 dwOffset, UINT64 dwPhyAddress, UINT64 dwByteSize, bool bWrite)
 {
 	if(!m_pMem) return false;
 

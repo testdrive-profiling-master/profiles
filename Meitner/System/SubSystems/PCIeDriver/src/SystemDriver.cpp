@@ -80,12 +80,12 @@ void SystemDriver::Release(void)
 	delete this;
 }
 
-DWORD SystemDriver::RegRead(DWORD dwAddress)
+DWORD SystemDriver::RegRead(UINT64 dwAddress)
 {
 	return m_Driver.RegRead(dwAddress);;
 }
 
-void SystemDriver::RegWrite(DWORD dwAddress, DWORD dwData)
+void SystemDriver::RegWrite(UINT64 dwAddress, DWORD dwData)
 {
 	m_Driver.RegWrite(dwAddress, dwData);
 }
@@ -106,14 +106,14 @@ void SystemDriver::ClearInterruptPending(void)
 }
 
 // Memory interface
-DWORD SystemDriver::GetMemoryBase(void)
+UINT64 SystemDriver::GetMemoryBase(void)
 {
-	return SYSTEM_MEMORY_BASE;
+	return m_Driver.BaseAddress();
 }
 
-void* SystemDriver::GetMemoryPointer(DWORD dwPhyAddress, DWORD dwByteSize)
+UINT64 SystemDriver::GetMemorySize(void)
 {
-	return g_SystemMemory.GetPointer(dwPhyAddress, dwByteSize);
+	return m_Driver.ByteSize();
 }
 
 void SystemDriver::InvokeISR(void)
@@ -121,7 +121,7 @@ void SystemDriver::InvokeISR(void)
 	m_ISR.Awake();
 }
 
-IMemoryNative* SystemDriver::CreateMemory(DWORD dwByteSize, DWORD dwByteAlignment, bool bDMA)
+IMemoryNative* SystemDriver::CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, bool bDMA)
 {
 	return new NativeSystemMemory(dwByteSize);
 }

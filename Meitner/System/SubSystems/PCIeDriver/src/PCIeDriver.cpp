@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Driver(PCIe) sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "PCIeDriver.h"
 #include "driver_testdrive.h"
@@ -43,13 +43,15 @@ PCIeDriver*	g_pDriver	= NULL;
 
 PCIeDriver::PCIeDriver(void)
 {
-	m_hDriver		= NULL;
-	m_dwCardCount	= 0;
+	m_hDriver			= NULL;
+	m_dwCardCount		= 0;
+	m_PhyBaseAddress	= 0x80000000;			//@FIXME : temporary setting
+	m_PhyByteSize		= 1024 * 1024 * 128;	//@FIXME : temporary setting
 	memset(&__TranReg, 0, sizeof(TD_TRANSACTION_REG));
 	memset(&__TranMem, 0, sizeof(TD_TRANSACTION_MEM));
 	memset(&m_OverlappedIO, 0, sizeof(OVERLAPPED));
-	__TranReg.count	= 1;
-	g_pDriver		= this;
+	__TranReg.count		= 1;
+	g_pDriver			= this;
 	SetSystemDescription("PCIe(WDM) driver");
 }
 
@@ -125,7 +127,7 @@ void PCIeDriver::SetCurrentCard(DWORD dwIndex)
 	__TranMem.dev_id	= dwIndex;
 }
 
-void PCIeDriver::RegWrite(DWORD dwAddress, DWORD dwData)
+void PCIeDriver::RegWrite(UINT64 dwAddress, DWORD dwData)
 {
 	DWORD dwReadSize;
 	__TranReg.is_write		= 1;
@@ -133,7 +135,7 @@ void PCIeDriver::RegWrite(DWORD dwAddress, DWORD dwData)
 	DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_REG, &__TranReg, sizeof(TD_TRANSACTION_REG), &dwData, sizeof(DWORD), &dwReadSize, NULL);
 }
 
-DWORD PCIeDriver::RegRead(DWORD dwAddress)
+DWORD PCIeDriver::RegRead(UINT64 dwAddress)
 {
 	DWORD dwReadSize, dwData;
 	__TranReg.is_write		= 0;
@@ -142,7 +144,7 @@ DWORD PCIeDriver::RegRead(DWORD dwAddress)
 	return dwData;
 }
 
-void PCIeDriver::MemoryWrite(DWORD dwAddress, BYTE* pData, DWORD dwCount)
+void PCIeDriver::MemoryWrite(UINT64 dwAddress, BYTE* pData, DWORD dwCount)
 {
 	DWORD dwReadSize;
 	__TranMem.is_write		= 1;
@@ -151,7 +153,7 @@ void PCIeDriver::MemoryWrite(DWORD dwAddress, BYTE* pData, DWORD dwCount)
 	DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_MEM, &__TranMem, sizeof(TD_TRANSACTION_MEM), pData, sizeof(DWORD) * 2 * dwCount, &dwReadSize, NULL);
 }
 
-void PCIeDriver::MemoryRead(DWORD dwAddress, BYTE* pData, DWORD dwCount)
+void PCIeDriver::MemoryRead(UINT64 dwAddress, BYTE* pData, DWORD dwCount)
 {
 	DWORD dwReadSize;
 	__TranMem.is_write		= 0;

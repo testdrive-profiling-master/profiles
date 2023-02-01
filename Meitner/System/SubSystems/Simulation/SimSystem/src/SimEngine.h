@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_ENGINE_H__
 #define __SIM_ENGINE_H__
@@ -55,7 +55,7 @@ protected:
 	static SimEngine*	m_pSim;
 };
 
-class SimInstance : public SimResource {	// 시뮬레이션 인스턴스 템플릿
+class SimInstance : public SimResource {	// simulation instance template
 	SimInstance*	m_pNext;
 
 protected:
@@ -69,8 +69,8 @@ public:
 
 //#define ERROR_OCCURED(s)	SetError(__FILE__, __LINE__, __FUNCDNAME__, s);
 
-class SimEngine :
-	protected ThreadManager,	// 시뮬레이션 단일 엔진
+class SimEngine :	// single-turn simulation engine
+	protected ThreadManager,
 	public SimControl,
 	public SimResource {
 	bool				m_bUpdate;
@@ -85,22 +85,22 @@ protected:
 	virtual void OnThreadKill(bool bForced);
 
 	// SimControl interface
-	virtual BUS_SLAVE_INTERFACE* CreateSlave(DWORD dwAddrBase, DWORD dwAddrHigh);
-	virtual BUS_SLAVE_INTERFACE* FindSlave(DWORD dwAddress);
+	virtual BUS_SLAVE_INTERFACE* CreateSlave(UINT64 dwAddrBase, UINT64 dwAddrHigh);
+	virtual BUS_SLAVE_INTERFACE* FindSlave(UINT64 dwAddress);
 	virtual CLOCK_INTERFACE* CreateClock(BYTE* pCLK, BYTE* pRST);
 	virtual CLOCK_INTERFACE* FindClock(BYTE* pCLK);
 	virtual bool AwakeInterrupt(void);	// true(Awaked), false(Pending)
-	virtual void SetMemoryBaseAddress(DWORD dwAddress);
-	virtual void MemoryRead32(int iID, DWORD dwAddress, DWORD& dwData);
-	virtual void MemoryWrite32(int iID, DWORD dwAddress, DWORD dwData);
-	virtual void MemoryRead16(int iID, DWORD dwAddress, WORD& dwData);
-	virtual void MemoryWrite16(int iID, DWORD dwAddress, WORD dwData);
-	virtual void MemoryRead8(int iID, DWORD dwAddress, BYTE& dwData);
-	virtual void MemoryWrite8(int iID, DWORD dwAddress, BYTE dwData);
+	virtual void SetMemoryBaseAddress(UINT64 dwAddress);
+	virtual void MemoryRead32(int iID, UINT64 dwAddress, DWORD& dwData);
+	virtual void MemoryWrite32(int iID, UINT64 dwAddress, DWORD dwData);
+	virtual void MemoryRead16(int iID, UINT64 dwAddress, WORD& dwData);
+	virtual void MemoryWrite16(int iID, UINT64 dwAddress, WORD dwData);
+	virtual void MemoryRead8(int iID, UINT64 dwAddress, BYTE& dwData);
+	virtual void MemoryWrite8(int iID, UINT64 dwAddress, BYTE dwData);
 	virtual SYSTEM_CONFIG* GetSystemConfig(void);
 	virtual DisplayConfig* GetDisplayConfig(void);
-	virtual BYTE* GetMemoryPointer(DWORD dwAddress, DWORD dwSize = 0, bool bDisplay = false);
-	virtual DWORD GetMemoryBaseAddress(void);
+	virtual BYTE* GetMemoryPointer(UINT64 dwAddress, UINT64 dwSize = 0, bool bDisplay = false);
+	virtual UINT64 GetMemoryBaseAddress(void);
 	virtual bool GetMemory(const char* sName, void*& pConfig, void*& pMemory);
 	virtual void SimulationLock(int iDelayTicks = 0);
 	virtual void SimulationUnLock(void);

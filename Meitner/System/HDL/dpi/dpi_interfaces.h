@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __DPI_INTERFACES_H__
 #define __DPI_INTERFACES_H__
@@ -58,8 +58,8 @@ struct BUS_SLAVE_INTERFACE {
 	virtual void ReadAck(void) = 0;
 };
 
-BUS_SLAVE_INTERFACE* CreateSlave(DWORD dwAddrBase, DWORD dwAddrHigh);
-BUS_SLAVE_INTERFACE* FindSlave(DWORD dwAddress);
+BUS_SLAVE_INTERFACE* CreateSlave(UINT64 dwAddrBase, UINT64 dwAddrHigh);
+BUS_SLAVE_INTERFACE* FindSlave(UINT64 dwAddress);
 
 //-----------------------------------------------------------------------
 // clocking interface
