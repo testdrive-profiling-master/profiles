@@ -30,13 +30,92 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Driver(PCIe) sub-system
+// Title : TestDrive System Driver wrapper
 // Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
-#include <SystemDriver.h>
-#include "TestDriver.inl"
+#include "SystemDriver.h"
+#include "NativeMemory.h"
 
-extern "C" ISystemImp* CreateSystemImplementation(void)
+SystemDriver::SystemDriver(void)
 {
-	return new SystemDriver();
+	m_pMemImp			= NULL;
+	m_bMustExit			= false;
+	SetSystemDescription("System driver");
+}
+
+SystemDriver::~SystemDriver(void)
+{
+	m_ISR.KillThread();
+	m_Driver.Release();
+	// release memory implementation
+	SAFE_RELEASE(m_pMemImp);
+}
+
+const char* SystemDriver::GetDescription(void)
+{
+	return GetSystemDescription();
+}
+
+bool SystemDriver::Initialize(IMemoryImp* pMem)
+{
+	if(!m_Driver.Initialize()) return false;
+
+	// memory heap initialization
+	m_pMemImp	= pMem;
+	pMem->Initialize(m_Driver.MemBaseAddress(), m_Driver.MemByteSize(), this);
+	// run simulation thread
+	m_ISR.RunThread();
+	EnableInterrupt(false);
+	return true;
+}
+
+void SystemDriver::Release(void)
+{
+	delete this;
+}
+
+DWORD SystemDriver::RegRead(UINT64 dwAddress)
+{
+	return m_Driver.RegRead(dwAddress);;
+}
+
+void SystemDriver::RegWrite(UINT64 dwAddress, DWORD dwData)
+{
+	m_Driver.RegWrite(dwAddress, dwData);
+}
+
+void SystemDriver::RegisterInterruptService(INTRRUPT_SERVICE routine)
+{
+	m_ISR.RegisterService(routine);
+}
+
+void SystemDriver::EnableInterrupt(bool bEnable)
+{
+	m_ISR.Enable(bEnable);
+}
+
+void SystemDriver::ClearInterruptPending(void)
+{
+	m_ISR.ClearPending();
+}
+
+// Memory interface
+UINT64 SystemDriver::GetMemoryBase(void)
+{
+	return m_Driver.MemBaseAddress();
+}
+
+UINT64 SystemDriver::GetMemorySize(void)
+{
+	return m_Driver.MemByteSize();
+}
+
+void SystemDriver::InvokeISR(void)
+{
+	m_ISR.Awake();
+}
+
+IMemoryNative* SystemDriver::CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, bool bDMA)
+{
+	return new NativeSystemMemory(dwByteSize, dwByteAlignment, bDMA);
 }

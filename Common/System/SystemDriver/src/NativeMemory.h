@@ -30,69 +30,23 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Driver(PCIe) sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Title : TestDrive System Driver wrapper
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
-#include "InterruptService.h"
+#ifndef __NATIVE_MEMORY_H__
+#define __NATIVE_MEMORY_H__
+#include "ddk/SystemHAL.h"
 #include "PCIeDriver.h"
-#include <assert.h>
 
-static void __interrupt_service_routine_default(void)
-{
-}
+class NativeSystemMemory : public IMemoryNative {
+	BYTE*	m_pMem;
+	bool	m_bDMA;
+public:
+	NativeSystemMemory(UINT64 dwByteSize, UINT64 dwAlignment, bool bDMA);
+	virtual ~NativeSystemMemory(void);
 
-InterruptService::InterruptService(void) :
-	m_bRun(true),
-	m_bEnable(false),
-	m_bPending(false),
-	m_ISR(__interrupt_service_routine_default)
-{
-}
-
-InterruptService::~InterruptService(void)
-{
-}
-
-void InterruptService::MonitorThread(void)
-{
-	for(; m_bRun;) {
-		g_pDriver->InterruptLock();
-
-		if(m_bEnable) m_ISR();
-	}
-}
-
-void InterruptService::OnThreadKill(void)
-{
-	m_bRun		= false;
-	m_bEnable	= false;
-	g_pDriver->InterruptFree();
-}
-
-void InterruptService::Enable(bool bEnable)
-{
-	if(bEnable && (m_ISR == __interrupt_service_routine_default)) {
-		LOGI("You must register ISR, fist!\n");
-		return;
-	}
-
-	m_bEnable	= bEnable;
-}
-
-void InterruptService::ClearPending(void)
-{
-	m_bPending	= false;
-}
-
-void InterruptService::Awake(void)
-{
-	if(m_bEnable && !m_bPending) {
-		m_bPending	= true;
-		g_pDriver->InterruptFree();
-	}
-}
-
-void InterruptService::RegisterService(INTRRUPT_SERVICE service)
-{
-	m_ISR	= service ? service : __interrupt_service_routine_default;
-}
+	virtual void Release(void);
+	virtual BYTE* Virtual(void);
+	virtual bool Flush(UINT64 dwOffset, UINT64 dwPhyAddress, UINT64 dwByteSize, bool bWrite);
+};
+#endif//__NATIVE_MEMORY_H__

@@ -30,56 +30,79 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Driver(PCIe) sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Title : TestDrive System Driver wrapper
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
-#ifndef __SYSTEM_DRIVER_H__
-#define __SYSTEM_DRIVER_H__
-#include "common.h"
-#include "InterruptService.h"
-#include "ThreadManager.h"
-#include "PCIeDriver.h"
+#ifndef __SYSTEM_DRIVER_INTERFACE_H__
+#define __SYSTEM_DRIVER_INTERFACE_H__
+#include "STDInterface.h"
+#include "VirtualDisplayConfig.h"
+#include "ddk/SystemHAL.h"
 #include <string>
 
-class SystemDriver :
-	public ISystemImp,
-	public IMemoryManager,
-	public SystemDescription {
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+void LOGI(char* fmt, ...);
+void LOGE(char* fmt, ...);
+
+//#define USE_TRACE_LOG
+#ifdef USE_TRACE_LOG
+#define	TRACE_LOG(s)	printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);fflush(stdout);
+#else
+#define	TRACE_LOG(s)
+#endif
+
+class DriverCommon {
 public:
-	SystemDriver(void);
-	virtual ~SystemDriver(void);
-
-	// Identify
-	virtual const char* GetDescription(void);								// get system description
-
-	// life cycle
-	virtual bool Initialize(IMemoryImp* pMem);								// system create
-	virtual void Release(void);												// system release
-
-	// memory
-	virtual UINT64 GetMemoryBase(void);										// get memory start address
-	virtual UINT64 GetMemorySize(void);										// get memory byte size
-
-	// register
-	virtual DWORD RegRead(UINT64 dwAddress);									// register read
-	virtual void RegWrite(UINT64 dwAddress, DWORD dwData);					// register write
-
-	// system
-	virtual void RegisterInterruptService(INTRRUPT_SERVICE routine);		// register ISR
-	virtual void EnableInterrupt(bool bEnable = true);						// enable interrupt
-	virtual void ClearInterruptPending(void);								// clear interrupt pending bit
-
-	// memory manager
-	virtual IMemoryNative* CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, bool bDMA = false);
-
-protected:
-	virtual void InvokeISR(void);
+	void SetSystemDescription(const char* sDesc);
+	inline const char* GetSystemDescription(void) {
+		return m_sSystemDesc.c_str();
+	}
 
 private:
-	PCIeDriver			m_Driver;
-	IMemoryImp*			m_pMemImp;
-	InterruptService	m_ISR;
-	bool				m_bMustExit;
-	std::string			m_sSystemDesc;
+	static std::string		m_sSystemDesc;
 };
-#endif//__SYSTEM_DRIVER_H__
+
+class SystemDriverInterface : public DriverCommon {
+public:
+	SystemDriverInterface(void);
+	virtual ~SystemDriverInterface(void);
+
+	// life cycle
+	virtual bool Initialize(const char* sDeviceName = NULL);
+	virtual void Release(void);
+
+	// register & memory interface
+	virtual void SetCurrentCard(DWORD dwIndex);
+	virtual void RegWrite(UINT64 dwAddress, DWORD dwData) = 0;
+	virtual DWORD RegRead(UINT64 dwAddress) = 0;
+	virtual void MemoryWrite(UINT64 dwAddress, BYTE* pData, DWORD dwCount) = 0;	// 64bit write operation
+	virtual void MemoryRead(UINT64 dwAddress, BYTE* pData, DWORD dwCount) = 0;	// 64bit read operation
+	virtual BYTE* MemoryAllocDMA(UINT64 dwByteSize, UINT64 dwAlignment) = 0;
+	virtual void InterruptLock(void) = 0;
+	virtual void InterruptFree(void) = 0;
+
+	// inlines
+	inline DWORD CardCount(void)	{
+		return m_dwCardCount;
+	}
+
+	inline UINT64 MemBaseAddress(void) {
+		return m_MemBaseAddress;
+	}
+
+	inline UINT64 MemByteSize(void) {
+		return m_MemByteSize;
+	}
+
+protected:
+	HANDLE				m_hDriver;
+	DWORD				m_dwCardCount;
+	UINT64				m_MemBaseAddress;
+	UINT64				m_MemByteSize;
+};
+
+extern SystemDriverInterface*	g_pDriver;
+
+#endif//__SYSTEM_DRIVER_INTERFACE_H__

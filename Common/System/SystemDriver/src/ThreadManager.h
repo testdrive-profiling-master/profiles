@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,20 +30,29 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Driver(PCIe) sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Title : TestDrive System Driver wrapper
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
-#ifndef __COMMON_H__
-#define __COMMON_H__
-#include "STDInterface.h"
-#include "SystemConfig.h"
-#include "VirtualDisplayConfig.h"
-#include "ddk/SystemHAL.h"
-#include "TestDriver.h"
+#ifndef __THREAD_MANAGER_H__
+#define __THREAD_MANAGER_H__
+#include "SystemDriverInterface.h"
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+class ThreadManager {
+	HANDLE				m_Thread;
 
-#define SYSTEM_MEMORY_BASE		0x80000000		//TODO : Set system memory's base address
+	volatile bool		m_bThreadRunning;
 
-#endif//__COMMON_H__
+	static DWORD WINAPI thBootStrap(ThreadManager* pManager);
+
+protected:
+	virtual void MonitorThread(void)	= 0;					// monitor thread
+	virtual void OnThreadKill(void)		= 0;					// thread kill event when before killed
+
+public:
+	ThreadManager(void);
+	virtual ~ThreadManager(void);
+
+	bool RunThread(void);										// run thread
+	void KillThread(void);										// kill thread
+};
+#endif//__THREAD_MANAGER_H__

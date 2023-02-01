@@ -30,29 +30,92 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Driver(PCIe) sub-system
+// Title : TestDrive System Driver wrapper
 // Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
-#ifndef __THREAD_MANAGER_H__
-#define __THREAD_MANAGER_H__
-#include "Util.h"
+#include "SystemDriverInterface.h"
 
-class ThreadManager {
-	HANDLE				m_Thread;
+SystemDriverInterface*	g_pDriver	= NULL;
 
-	volatile bool		m_bThreadRunning;
+void LOGI(char* fmt, ...)
+{
+	printf("*I: [SystemDriver] ");
+	{
+		va_list ap;
+		va_start(ap, fmt);
+		vprintf(fmt, ap);
+		va_end(ap);
+	}
+	fflush(stdout);
+}
 
-	static DWORD WINAPI thBootStrap(ThreadManager* pManager);
+void LOGE(char* fmt, ...)
+{
+	printf("*E: [SystemDriver] ");
+	{
+		va_list ap;
+		va_start(ap, fmt);
+		vprintf(fmt, ap);
+		va_end(ap);
+	}
+	fflush(stdout);
+}
 
-protected:
-	virtual void MonitorThread(void)	= 0;					// monitor thread
-	virtual void OnThreadKill(void)		= 0;					// thread kill event when before killed
+std::string		DriverCommon::m_sSystemDesc;
+void DriverCommon::SetSystemDescription(const char* sDesc)
+{
+	if(sDesc) {
+		if(m_sSystemDesc.size()) {
+			if(strstr(m_sSystemDesc.c_str(), sDesc))
+				return;
 
-public:
-	ThreadManager(void);
-	virtual ~ThreadManager(void);
+			m_sSystemDesc.insert(0, ",");
+		}
 
-	bool RunThread(void);										// run thread
-	void KillThread(void);										// kill thread
-};
-#endif//__THREAD_MANAGER_H__
+		m_sSystemDesc.insert(0, sDesc);
+	}
+}
+
+SystemDriverInterface::SystemDriverInterface(void)
+{
+	m_hDriver			= NULL;
+	m_dwCardCount		= 0;
+	m_MemBaseAddress	= 0;
+	m_MemByteSize		= 0;
+	g_pDriver			= this;
+}
+
+SystemDriverInterface::~SystemDriverInterface(void)
+{
+	SystemDriverInterface::Release();
+	g_pDriver			= NULL;
+}
+
+bool SystemDriverInterface::Initialize(const char* sDeviceName)
+{
+	Release();
+
+	if(sDeviceName) {
+		if((m_hDriver = CreateFile(sDeviceName, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL)) != INVALID_HANDLE_VALUE) {
+			return true;
+		}
+
+		// faild to create device driver
+		m_hDriver	= NULL;
+	}
+
+	return false;
+}
+
+void SystemDriverInterface::Release(void)
+{
+	if(m_hDriver) {
+		CloseHandle(m_hDriver);
+		m_hDriver	= NULL;
+	}
+}
+
+void SystemDriverInterface::SetCurrentCard(DWORD dwIndex)
+{
+	// None implementation
+}

@@ -30,22 +30,31 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Driver(PCIe) sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Title : TestDrive System Driver wrapper
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
-#ifndef __NATIVE_MEMORY_H__
-#define __NATIVE_MEMORY_H__
-#include "ddk/SystemHAL.h"
-#include "PCIeDriver.h"
+#ifndef __INTERRUPT_SERVICE_H__
+#define __INTERRUPT_SERVICE_H__
+#include "ThreadManager.h"
 
-class NativeSystemMemory : public IMemoryNative {
-	BYTE*	m_pMem;
+class InterruptService :
+	public ThreadManager {
 public:
-	NativeSystemMemory(UINT64 dwByteSize);
-	virtual ~NativeSystemMemory(void);
+	InterruptService(void);
+	~InterruptService(void);
 
-	virtual void Release(void);
-	virtual BYTE* Virtual(void);
-	virtual bool Flush(UINT64 dwOffset, UINT64 dwPhyAddress, UINT64 dwByteSize, bool bWrite);
+	void RegisterService(INTRRUPT_SERVICE service);
+	void Awake(void);
+	void Enable(bool bEnable = TRUE);
+	void ClearPending(void);
+
+private:
+	virtual void MonitorThread(void);					// thread monitor routine
+	virtual void OnThreadKill(void);					// will be called before kill the thread
+
+	INTRRUPT_SERVICE	m_ISR;
+	volatile bool		m_bRun;
+	volatile bool		m_bEnable;
+	volatile bool		m_bPending;
 };
-#endif//__NATIVE_MEMORY_H__
+#endif//__INTERRUPT_SERVICE_H__

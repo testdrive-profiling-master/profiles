@@ -31,49 +31,31 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Driver(PCIe) sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __PCIE_DRIVER_H__
 #define __PCIE_DRIVER_H__
-#include "Util.h"
-#include "common.h"
+#include "SystemDriverInterface.h"
 
-class PCIeDriver : public SystemDescription {
+class PCIeDriver : public SystemDriverInterface {
 public:
 	PCIeDriver(void);
 	virtual ~PCIeDriver(void);
 
-	bool Initialize(void);
-	void Release(void);
-
-	bool IsInitialized(void);
-	void SetCurrentCard(DWORD dwIndex);
-	void RegWrite(UINT64 dwAddress, DWORD dwData);
-	DWORD RegRead(UINT64 dwAddress);
-	void MemoryWrite(UINT64 dwAddress, BYTE* pData, DWORD dwCount);	// 64bit write operation
-	void MemoryRead(UINT64 dwAddress, BYTE* pData, DWORD dwCount);	// 64bit read operation
-	void InterruptLock(void);
-	void InterruptFree(void);
-
-	inline DWORD CardCount(void)	{
-		return m_dwCardCount;
-	}
-
-	inline UINT64 BaseAddress(void) {
-		return m_PhyBaseAddress;
-	}
-
-	inline UINT64 ByteSize(void) {
-		return m_PhyBaseAddress;
-	}
+	// native driver interfaces
+	virtual bool Initialize(const char* sDeviceName = NULL);
+	virtual void Release(void);
+	virtual void SetCurrentCard(DWORD dwIndex);
+	virtual void RegWrite(UINT64 dwAddress, DWORD dwData);
+	virtual DWORD RegRead(UINT64 dwAddress);
+	virtual void MemoryWrite(UINT64 dwAddress, BYTE* pData, DWORD dwCount);	// 64bit write operation
+	virtual void MemoryRead(UINT64 dwAddress, BYTE* pData, DWORD dwCount);	// 64bit read operation
+	virtual BYTE* MemoryAllocDMA(UINT64 dwByteSize, UINT64 dwAlignment);
+	virtual void InterruptLock(void);
+	virtual void InterruptFree(void);
 
 private:
-	HANDLE				m_hDriver;
-	DWORD				m_dwCardCount;
-	UINT64				m_PhyBaseAddress;
-	UINT64				m_PhyByteSize;
 	OVERLAPPED			m_OverlappedIO;
 };
 
-extern PCIeDriver*	g_pDriver;
 #endif//__PCIE_DRIVER_H__

@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Dependency prepare
-// Rev.  : 10/28/2021 Thu (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 
@@ -78,7 +78,7 @@ int main(int argc, const char* argv[])
 	ArgTable	arg_table("TestDrive's dependency preparation check.");
 	arg_table.AddOption("silence", "s", "silence", "Force to no logging.");
 	arg_table.AddOptionFile("dep_file", NULL, NULL, NULL, "dep_file", "dependency file.");
-	arg_table.AddRemark(NULL, "file extension must be .d or .dd");
+	arg_table.AddRemark(NULL, "file extension must be .d");
 
 	if(!arg_table.DoParse(argc, argv))
 		return 0;
@@ -89,7 +89,7 @@ int main(int argc, const char* argv[])
 	cExt.CutFront(".", true);
 	cExt.MakeLower();
 
-	if(cExt != "d" && cExt != "dd") {
+	if(cExt != "d") {
 		if(!bSilence) LOGE("Unknown file extension : %s", sDepFileName.c_str());
 
 		return 0;
@@ -99,7 +99,9 @@ int main(int argc, const char* argv[])
 		if(!CheckDepency(sDepFileName)) {
 			cstring sCC(arg_table.GetOptionString("CC"));
 			cstring sCXX(arg_table.GetOptionString("CXX"));
-			LOGI("Dependency file is broken, it will be deleted. : %s", sDepFileName.c_str());
+
+			if(!bSilence) LOGI("Dependency file is broken, it will be deleted. : %s", sDepFileName.c_str());
+
 			remove(sDepFileName.c_str());
 		}
 	}

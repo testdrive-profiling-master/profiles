@@ -30,47 +30,56 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Driver(PCIe) sub-system
+// Title : TestDrive System Driver wrapper
 // Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
-#include "STDInterface.h"
-#include "NativeMemory.h"
+#ifndef __SYSTEM_DRIVER_H__
+#define __SYSTEM_DRIVER_H__
+#include "SystemDriverInterface.h"
+#include "InterruptService.h"
+#include "ThreadManager.h"
+#include "PCIeDriver.h"
+#include <string>
 
-NativeSystemMemory::NativeSystemMemory(UINT64 dwByteSize)
-{
-	m_pMem	= new BYTE[dwByteSize];
-}
-NativeSystemMemory::~NativeSystemMemory(void)
-{
-	SAFE_DELETE_ARRAY(m_pMem);
-}
+class SystemDriver :
+	public ISystemImp,
+	public IMemoryManager,
+	public DriverCommon {
+public:
+	SystemDriver(void);
+	virtual ~SystemDriver(void);
 
-void NativeSystemMemory::Release(void)
-{
-	delete this;
-}
+	// Identify
+	virtual const char* GetDescription(void);								// get system description
 
-BYTE* NativeSystemMemory::Virtual(void)
-{
-	return m_pMem;
-}
+	// life cycle
+	virtual bool Initialize(IMemoryImp* pMem);								// system create
+	virtual void Release(void);												// system release
 
-bool NativeSystemMemory::Flush(UINT64 dwOffset, UINT64 dwPhyAddress, UINT64 dwByteSize, bool bWrite)
-{
-	if(!m_pMem) return false;
+	// memory
+	virtual UINT64 GetMemoryBase(void);										// get memory start address
+	virtual UINT64 GetMemorySize(void);										// get memory byte size
 
-	if((dwPhyAddress & 7) || (dwOffset & 7)) {
-		LOGE("Flushing physical address(0x%08X) or offset(%d) must keep memory alignment(64bit).", dwPhyAddress, dwOffset);
-		return false;
-	}
+	// register
+	virtual DWORD RegRead(UINT64 dwAddress);								// register read
+	virtual void RegWrite(UINT64 dwAddress, DWORD dwData);					// register write
 
-	dwPhyAddress	-= SYSTEM_MEMORY_BASE;
-	BYTE*	pData	= m_pMem + dwOffset;
+	// system
+	virtual void RegisterInterruptService(INTRRUPT_SERVICE routine);		// register ISR
+	virtual void EnableInterrupt(bool bEnable = true);						// enable interrupt
+	virtual void ClearInterruptPending(void);								// clear interrupt pending bit
 
-	if(bWrite)
-		g_pDriver->MemoryWrite(dwPhyAddress, pData, dwByteSize >> 3);
-	else
-		g_pDriver->MemoryRead(dwPhyAddress, pData, dwByteSize >> 3);
+	// memory manager
+	virtual IMemoryNative* CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, bool bDMA = false);
 
-	return true;
-}
+protected:
+	virtual void InvokeISR(void);
+
+private:
+	PCIeDriver			m_Driver;
+	IMemoryImp*			m_pMemImp;
+	InterruptService	m_ISR;
+	bool				m_bMustExit;
+	std::string			m_sSystemDesc;
+};
+#endif//__SYSTEM_DRIVER_H__

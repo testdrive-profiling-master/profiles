@@ -129,23 +129,6 @@ dep:
 	done
 
 #########################################################################
-
-# Dependency
-%.d: %.c
-	@echo '- Dependency... : $<'
-	@$(CC) -M $(CDEFS) $(CFLAGS) $(INC) $< > $@; \
-	sed -e 's,[^.]*.o:,$*.o:,g' -i $@
-
-%.d: %.cpp
-	@echo '- Dependency... : $<'
-	@$(CXX) -M $(CDEFS) $(CPPFLAGS) -Weffc++ $(INC) $< > $@; \
-	sed -e 's,[^.]*.o:,$*.o:,g' -i $@
-
-%.d: %.cc
-	@echo '- Dependency... : $<'
-	@$(CXX) -M $(CDEFS) $(CPPFLAGS) -Weffc++ $(INC) $< > $@; \
-	sed -e 's,[^.]*.o:,$*.o:,g' -i $@
-
 ifneq ($(MAKECMDGOALS), clean)
 -include $(DEPS) $(OBJS_RES:.o=.dep)
 endif

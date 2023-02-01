@@ -39,45 +39,36 @@
 static TD_TRANSACTION_REG	__TranReg;
 static TD_TRANSACTION_MEM	__TranMem;
 
-PCIeDriver*	g_pDriver	= NULL;
-
 PCIeDriver::PCIeDriver(void)
 {
-	m_hDriver			= NULL;
-	m_dwCardCount		= 0;
-	m_PhyBaseAddress	= 0x80000000;			//@FIXME : temporary setting
-	m_PhyByteSize		= 1024 * 1024 * 128;	//@FIXME : temporary setting
 	memset(&__TranReg, 0, sizeof(TD_TRANSACTION_REG));
 	memset(&__TranMem, 0, sizeof(TD_TRANSACTION_MEM));
 	memset(&m_OverlappedIO, 0, sizeof(OVERLAPPED));
 	__TranReg.count		= 1;
-	g_pDriver			= this;
 	SetSystemDescription("PCIe(WDM) driver");
 }
 
 PCIeDriver::~PCIeDriver(void)
 {
-	g_pDriver		= NULL;
 	Release();
 }
 
-bool PCIeDriver::Initialize(void)
+bool PCIeDriver::Initialize(const char* sDeviceName)
 {
-	Release();
-	m_hDriver	= CreateFile(DEV_PATH, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL);
-	m_OverlappedIO.hEvent	= CreateEvent(NULL, true, true, "");
-
-	if(m_hDriver != INVALID_HANDLE_VALUE) {
+	if(SystemDriverInterface::Initialize(DEV_PATH)) {
 		TD_DRIVER_INFO	info;
 		DWORD dwReadSize;
+		m_MemBaseAddress		= 0x80000000;			// base address
+		m_MemByteSize			= 1024 * 1024 * 128;	// 128MB
+		m_OverlappedIO.hEvent	= CreateEvent(NULL, true, true, "");
 
 		if(DeviceIoControl(m_hDriver, IOCTL_COMMAND_INFOMATION, NULL, 0, &info, sizeof(TD_DRIVER_INFO), &dwReadSize, NULL)) {
-			printf("¦®¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¯\n" \
-				   "¦­                          ¢Â Device information. ¢Â                         ¦­\n" \
-				   "¦Ë¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦Ï\n" \
-				   "¦¢1. System information                                                       ¦¢\n" \
-				   "¦¢    PCI-Express Evaluation board ID : VID(0x%04X), DID(0x%04X)              ¦¢\n" \
-				   "¦¢2. Card connection info.                                                    ¦¢\n",
+			printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n" \
+				   "ï¿½ï¿½                          ï¿½ï¿½ Device information. ï¿½ï¿½                         ï¿½ï¿½\n" \
+				   "ï¿½Ë¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n" \
+				   "ï¿½ï¿½1. System information                                                       ï¿½ï¿½\n" \
+				   "ï¿½ï¿½    PCI-Express Evaluation board ID : VID(0x%04X), DID(0x%04X)              ï¿½ï¿½\n" \
+				   "ï¿½ï¿½2. Card connection info.                                                    ï¿½ï¿½\n",
 				   info.system.id.vendor, info.system.id.device);
 
 			for(int i = 0; i < info.card_count; i++) {
@@ -88,7 +79,7 @@ bool PCIeDriver::Initialize(void)
 						(LinkStatus & 1) + 1,
 						1 << ((LinkStatus >> 1) & 3),
 						info.device[i].pcie.msi_count);
-				printf("¦¢    %d/%d Sub-System : VID(0x%04X), DID(0x%04X), %-25s   ¦¢\n",
+				printf("ï¿½ï¿½    %d/%d Sub-System : VID(0x%04X), DID(0x%04X), %-25s   ï¿½ï¿½\n",
 					   i + 1,
 					   info.card_count,
 					   info.device[i].sub_system.id.vendor,
@@ -97,28 +88,27 @@ bool PCIeDriver::Initialize(void)
 			}
 
 			SetCurrentCard(0);
-			printf("¦¦¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¥\n\n");
+			printf("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n\n");
 			m_dwCardCount	= info.card_count;
 		}
+
+		return true;
 	} else {
 		printf("*E: Device driver is not found.\n");
 		m_hDriver	= NULL;
 	}
 
-	return IsInitialized();
+	return false;
 }
 
 void PCIeDriver::Release(void)
 {
-	if(m_hDriver) {
-		CloseHandle(m_hDriver);
-		m_hDriver	= NULL;
+	if(m_OverlappedIO.hEvent) {
+		CloseHandle(m_OverlappedIO.hEvent);
+		m_OverlappedIO.hEvent	= NULL;
 	}
-}
 
-bool PCIeDriver::IsInitialized(void)
-{
-	return (m_hDriver != NULL);
+	SystemDriverInterface::Release();
 }
 
 void PCIeDriver::SetCurrentCard(DWORD dwIndex)
@@ -148,7 +138,7 @@ void PCIeDriver::MemoryWrite(UINT64 dwAddress, BYTE* pData, DWORD dwCount)
 {
 	DWORD dwReadSize;
 	__TranMem.is_write		= 1;
-	__TranMem.phy_address	= dwAddress;
+	__TranMem.phy_address	= dwAddress - m_MemBaseAddress;
 	__TranMem.count			= dwCount;
 	DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_MEM, &__TranMem, sizeof(TD_TRANSACTION_MEM), pData, sizeof(DWORD) * 2 * dwCount, &dwReadSize, NULL);
 }
@@ -157,9 +147,15 @@ void PCIeDriver::MemoryRead(UINT64 dwAddress, BYTE* pData, DWORD dwCount)
 {
 	DWORD dwReadSize;
 	__TranMem.is_write		= 0;
-	__TranMem.phy_address	= dwAddress;
+	__TranMem.phy_address	= dwAddress - m_MemBaseAddress;
 	__TranMem.count			= dwCount;
 	DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_MEM, &__TranMem, sizeof(TD_TRANSACTION_MEM), pData, sizeof(DWORD) * 2 * dwCount, &dwReadSize, NULL);
+}
+
+BYTE* PCIeDriver::MemoryAllocDMA(UINT64 dwByteSize, UINT64 dwAlignment)
+{
+	//@TODO : do something!
+	return NULL;
 }
 
 void PCIeDriver::InterruptLock(void)

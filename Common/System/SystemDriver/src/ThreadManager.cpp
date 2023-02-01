@@ -30,95 +30,53 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Driver(PCIe) sub-system
+// Title : TestDrive System Driver wrapper
 // Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
-#include "SystemDriver.h"
-#include "NativeMemory.h"
+#include "ThreadManager.h"
+#include <process.h>
+#include <stdio.h>
+#include <assert.h>
 
-const char* __SYSTEM_DESCRIPTION	= "DUT";
-
-SystemDriver::SystemDriver(void)
+ThreadManager::ThreadManager(void)
 {
-	m_pMemImp			= NULL;
-	m_bMustExit			= false;
-	SetSystemDescription("System driver");
-	SetSystemDescription(__SYSTEM_DESCRIPTION);
+	m_Thread			= NULL;
+	m_bThreadRunning	= false;
 }
 
-SystemDriver::~SystemDriver(void)
+ThreadManager::~ThreadManager(void)
 {
-	m_ISR.KillThread();
-	m_Driver.Release();
-	// release memory implementation
-	SAFE_RELEASE(m_pMemImp);
+	assert(m_Thread == NULL);
 }
 
-const char* SystemDriver::GetDescription(void)
+DWORD WINAPI ThreadManager::thBootStrap(ThreadManager* pManager)
 {
-	return GetSystemDescription();
+	pManager->m_bThreadRunning = true;
+	pManager->MonitorThread();
+	pManager->m_bThreadRunning = false;
+	return 0;
 }
 
-bool SystemDriver::Initialize(IMemoryImp* pMem)
+bool ThreadManager::RunThread(void)
 {
-	if(!m_Driver.Initialize()) return false;
+	if(m_bThreadRunning) return false;
 
-	// memory heap initialization
-	m_pMemImp	= pMem;
-	pMem->Initialize(m_Driver.BaseAddress(), m_Driver.ByteSize(), this);
-	// run simulation thread
-	m_ISR.RunThread();
-	EnableInterrupt(false);
-	return true;
+	m_Thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)thBootStrap, this, 0, NULL);
+	return m_Thread != NULL;
 }
 
-void SystemDriver::Release(void)
+void ThreadManager::KillThread(void)
 {
-	delete this;
-}
+	if(!m_Thread) return;
 
-DWORD SystemDriver::RegRead(UINT64 dwAddress)
-{
-	return m_Driver.RegRead(dwAddress);;
-}
+	OnThreadKill();
 
-void SystemDriver::RegWrite(UINT64 dwAddress, DWORD dwData)
-{
-	m_Driver.RegWrite(dwAddress, dwData);
-}
+	if(WaitForSingleObject(m_Thread, 10000) == WAIT_TIMEOUT) {	// 10 �� ���
+		if(MessageBox(NULL, "Processor is in busy status for too long time with unknown reason.\nWould you continue to wait?", "Warning", MB_ICONQUESTION | MB_YESNO) == IDYES) {
+			WaitForSingleObject(m_Thread, INFINITE);
+		}
+	}
 
-void SystemDriver::RegisterInterruptService(INTRRUPT_SERVICE routine)
-{
-	m_ISR.RegisterService(routine);
-}
-
-void SystemDriver::EnableInterrupt(bool bEnable)
-{
-	m_ISR.Enable(bEnable);
-}
-
-void SystemDriver::ClearInterruptPending(void)
-{
-	m_ISR.ClearPending();
-}
-
-// Memory interface
-UINT64 SystemDriver::GetMemoryBase(void)
-{
-	return m_Driver.BaseAddress();
-}
-
-UINT64 SystemDriver::GetMemorySize(void)
-{
-	return m_Driver.ByteSize();
-}
-
-void SystemDriver::InvokeISR(void)
-{
-	m_ISR.Awake();
-}
-
-IMemoryNative* SystemDriver::CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, bool bDMA)
-{
-	return new NativeSystemMemory(dwByteSize);
+	CloseHandle(m_Thread);
+	m_Thread = NULL;
 }

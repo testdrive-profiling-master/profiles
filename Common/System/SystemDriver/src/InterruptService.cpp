@@ -30,33 +30,67 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Driver(PCIe) sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Title : TestDrive System Driver wrapper
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
-#ifndef __INTERRUPT_SERVICE_H__
-#define __INTERRUPT_SERVICE_H__
-#include "common.h"
-#include "ThreadManager.h"
-#include "Util.h"
+#include "InterruptService.h"
 
-class InterruptService :
-	public ThreadManager {
-public:
-	InterruptService(void);
-	~InterruptService(void);
+static void __interrupt_service_routine_default(void)
+{
+}
 
-	void RegisterService(INTRRUPT_SERVICE service);
-	void Awake(void);
-	void Enable(bool bEnable = TRUE);
-	void ClearPending(void);
+InterruptService::InterruptService(void) :
+	m_bRun(true),
+	m_bEnable(false),
+	m_bPending(false),
+	m_ISR(__interrupt_service_routine_default)
+{
+}
 
-private:
-	virtual void MonitorThread(void);					// 모니터 스레드
-	virtual void OnThreadKill(void);					// 스레드 킬 전 이벤트
+InterruptService::~InterruptService(void)
+{
+}
 
-	INTRRUPT_SERVICE	m_ISR;
-	volatile bool		m_bRun;
-	volatile bool		m_bEnable;
-	volatile bool		m_bPending;
-};
-#endif//__INTERRUPT_SERVICE_H__
+void InterruptService::MonitorThread(void)
+{
+	for(; m_bRun;) {
+		g_pDriver->InterruptLock();
+
+		if(m_bEnable) m_ISR();
+	}
+}
+
+void InterruptService::OnThreadKill(void)
+{
+	m_bRun		= false;
+	m_bEnable	= false;
+	g_pDriver->InterruptFree();
+}
+
+void InterruptService::Enable(bool bEnable)
+{
+	if(bEnable && (m_ISR == __interrupt_service_routine_default)) {
+		LOGI("You must register ISR, fist!\n");
+		return;
+	}
+
+	m_bEnable	= bEnable;
+}
+
+void InterruptService::ClearPending(void)
+{
+	m_bPending	= false;
+}
+
+void InterruptService::Awake(void)
+{
+	if(m_bEnable && !m_bPending) {
+		m_bPending	= true;
+		g_pDriver->InterruptFree();
+	}
+}
+
+void InterruptService::RegisterService(INTRRUPT_SERVICE service)
+{
+	m_ISR	= service ? service : __interrupt_service_routine_default;
+}
