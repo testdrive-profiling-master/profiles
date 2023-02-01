@@ -38,7 +38,6 @@
 #include "SystemDriverInterface.h"
 #include "InterruptService.h"
 #include "ThreadManager.h"
-#include "PCIeDriver.h"
 #include <string>
 
 class SystemDriver :
@@ -76,10 +75,10 @@ protected:
 	virtual void InvokeISR(void);
 
 private:
-	PCIeDriver			m_Driver;
-	IMemoryImp*			m_pMemImp;
-	InterruptService	m_ISR;
-	bool				m_bMustExit;
-	std::string			m_sSystemDesc;
+	SystemDriverInterface*	m_pNativeDriver;
+	IMemoryImp*				m_pMemImp;
+	InterruptService		m_ISR;
+	bool					m_bMustExit;
+	std::string				m_sSystemDesc;
 };
 #endif//__SYSTEM_DRIVER_H__

@@ -105,4 +105,7 @@ protected:
 
 extern SystemDriverInterface*	g_pDriver;
 
+#define DECLARE_NATIVE_DRIVER(T)	SystemDriverInterface* CreateNativeDriver(void) {return new T;}
+SystemDriverInterface* CreateNativeDriver(void);
+
 #endif//__SYSTEM_DRIVER_INTERFACE_H__

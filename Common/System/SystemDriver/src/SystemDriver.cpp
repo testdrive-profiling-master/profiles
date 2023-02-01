@@ -38,6 +38,7 @@
 
 SystemDriver::SystemDriver(void)
 {
+	m_pNativeDriver		= NULL;
 	m_pMemImp			= NULL;
 	m_bMustExit			= false;
 	SetSystemDescription("System driver");
@@ -46,9 +47,9 @@ SystemDriver::SystemDriver(void)
 SystemDriver::~SystemDriver(void)
 {
 	m_ISR.KillThread();
-	m_Driver.Release();
 	// release memory implementation
 	SAFE_RELEASE(m_pMemImp);
+	SAFE_DELETE(m_pNativeDriver);
 }
 
 const char* SystemDriver::GetDescription(void)
@@ -58,11 +59,14 @@ const char* SystemDriver::GetDescription(void)
 
 bool SystemDriver::Initialize(IMemoryImp* pMem)
 {
-	if(!m_Driver.Initialize()) return false;
+	SAFE_DELETE(m_pNativeDriver);
+	m_pNativeDriver = CreateNativeDriver();
+
+	if(!m_pNativeDriver->Initialize()) return false;
 
 	// memory heap initialization
 	m_pMemImp	= pMem;
-	pMem->Initialize(m_Driver.MemBaseAddress(), m_Driver.MemByteSize(), this);
+	pMem->Initialize(m_pNativeDriver->MemBaseAddress(), m_pNativeDriver->MemByteSize(), this);
 	// run simulation thread
 	m_ISR.RunThread();
 	EnableInterrupt(false);
@@ -76,12 +80,12 @@ void SystemDriver::Release(void)
 
 DWORD SystemDriver::RegRead(UINT64 dwAddress)
 {
-	return m_Driver.RegRead(dwAddress);;
+	return m_pNativeDriver->RegRead(dwAddress);;
 }
 
 void SystemDriver::RegWrite(UINT64 dwAddress, DWORD dwData)
 {
-	m_Driver.RegWrite(dwAddress, dwData);
+	m_pNativeDriver->RegWrite(dwAddress, dwData);
 }
 
 void SystemDriver::RegisterInterruptService(INTRRUPT_SERVICE routine)
@@ -102,12 +106,12 @@ void SystemDriver::ClearInterruptPending(void)
 // Memory interface
 UINT64 SystemDriver::GetMemoryBase(void)
 {
-	return m_Driver.MemBaseAddress();
+	return m_pNativeDriver->MemBaseAddress();
 }
 
 UINT64 SystemDriver::GetMemorySize(void)
 {
-	return m_Driver.MemByteSize();
+	return m_pNativeDriver->MemByteSize();
 }
 
 void SystemDriver::InvokeISR(void)

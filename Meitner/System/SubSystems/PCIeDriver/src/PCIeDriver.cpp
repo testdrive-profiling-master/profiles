@@ -36,6 +36,8 @@
 #include "PCIeDriver.h"
 #include "driver_testdrive.h"
 
+DECLARE_NATIVE_DRIVER(PCIeDriver)
+
 static TD_TRANSACTION_REG	__TranReg;
 static TD_TRANSACTION_MEM	__TranMem;
 
