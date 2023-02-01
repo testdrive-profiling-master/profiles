@@ -154,12 +154,6 @@ void PCIeDriver::MemoryRead(UINT64 dwAddress, BYTE* pData, DWORD dwCount)
 	DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_MEM, &__TranMem, sizeof(TD_TRANSACTION_MEM), pData, sizeof(DWORD) * 2 * dwCount, &dwReadSize, NULL);
 }
 
-BYTE* PCIeDriver::MemoryAllocDMA(UINT64 dwByteSize, UINT64 dwAlignment)
-{
-	//@TODO : do something!
-	return NULL;
-}
-
 void PCIeDriver::InterruptLock(void)
 {
 	DWORD	dwReadSize;

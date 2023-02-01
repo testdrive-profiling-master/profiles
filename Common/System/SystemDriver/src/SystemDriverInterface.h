@@ -38,6 +38,7 @@
 #include "STDInterface.h"
 #include "VirtualDisplayConfig.h"
 #include "ddk/SystemHAL.h"
+#include "driver_testdrive.h"
 #include <string>
 
 #define _USE_MATH_DEFINES
@@ -79,9 +80,10 @@ public:
 	virtual DWORD RegRead(UINT64 dwAddress) = 0;
 	virtual void MemoryWrite(UINT64 dwAddress, BYTE* pData, DWORD dwCount) = 0;	// 64bit write operation
 	virtual void MemoryRead(UINT64 dwAddress, BYTE* pData, DWORD dwCount) = 0;	// 64bit read operation
-	virtual BYTE* MemoryAllocDMA(UINT64 dwByteSize, UINT64 dwAlignment) = 0;
 	virtual void InterruptLock(void) = 0;
 	virtual void InterruptFree(void) = 0;
+	virtual TD_DMA_MEMORY* DMAAlloc(UINT64 dwByteSize, UINT64 dwAlignment);
+	virtual void DMAFree(TD_DMA_MEMORY* pMem);
 
 	// inlines
 	inline DWORD CardCount(void)	{

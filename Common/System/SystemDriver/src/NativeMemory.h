@@ -35,12 +35,12 @@
 //================================================================================
 #ifndef __NATIVE_MEMORY_H__
 #define __NATIVE_MEMORY_H__
-#include "ddk/SystemHAL.h"
-#include "PCIeDriver.h"
+#include "SystemDriverInterface.h"
 
 class NativeSystemMemory : public IMemoryNative {
-	BYTE*	m_pMem;
-	bool	m_bDMA;
+	BYTE*			m_pMem;
+	TD_DMA_MEMORY*	m_pDMA;
+
 public:
 	NativeSystemMemory(UINT64 dwByteSize, UINT64 dwAlignment, bool bDMA);
 	virtual ~NativeSystemMemory(void);

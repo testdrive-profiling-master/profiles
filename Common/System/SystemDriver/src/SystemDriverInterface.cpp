@@ -46,6 +46,7 @@ void LOGI(char* fmt, ...)
 		vprintf(fmt, ap);
 		va_end(ap);
 	}
+	printf("\n");
 	fflush(stdout);
 }
 
@@ -58,6 +59,7 @@ void LOGE(char* fmt, ...)
 		vprintf(fmt, ap);
 		va_end(ap);
 	}
+	printf("\n");
 	fflush(stdout);
 }
 
@@ -117,5 +119,13 @@ void SystemDriverInterface::Release(void)
 
 void SystemDriverInterface::SetCurrentCard(DWORD dwIndex)
 {
+	// None implementation
+}
+
+TD_DMA_MEMORY* SystemDriverInterface::DMAAlloc(UINT64 dwByteSize, UINT64 dwAlignment) {
+	// None implementation
+}
+
+void SystemDriverInterface::DMAFree(TD_DMA_MEMORY* pMem) {
 	// None implementation
 }

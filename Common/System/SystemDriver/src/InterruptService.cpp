@@ -70,7 +70,7 @@ void InterruptService::OnThreadKill(void)
 void InterruptService::Enable(bool bEnable)
 {
 	if(bEnable && (m_ISR == __interrupt_service_routine_default)) {
-		LOGI("You must register ISR, fist!\n");
+		LOGI("You must register ISR, fist!");
 		return;
 	}
 

@@ -50,7 +50,6 @@ public:
 	virtual DWORD RegRead(UINT64 dwAddress);
 	virtual void MemoryWrite(UINT64 dwAddress, BYTE* pData, DWORD dwCount);	// 64bit write operation
 	virtual void MemoryRead(UINT64 dwAddress, BYTE* pData, DWORD dwCount);	// 64bit read operation
-	virtual BYTE* MemoryAllocDMA(UINT64 dwByteSize, UINT64 dwAlignment);
 	virtual void InterruptLock(void);
 	virtual void InterruptFree(void);
 
