@@ -91,7 +91,7 @@ public:
 	MemoryImplementation(void);
 	virtual ~MemoryImplementation(void);
 
-	virtual bool Initialize(BYTE* pVirtual, UINT64 dwPhysical, UINT64 dwByteSize, IMemoryManager* pMemoryManager);	//@FIXME : pVirtual is unused
+	virtual bool Initialize(UINT64 dwPhysical, UINT64 dwByteSize, IMemoryManager* pMemoryManager);	//@FIXME : pVirtual is unused
 	virtual void Release(void);
 
 	void Report(void);

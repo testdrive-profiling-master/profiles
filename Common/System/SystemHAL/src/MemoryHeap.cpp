@@ -284,7 +284,7 @@ MemoryImplementation	g_MemoryImplementation;
 MemoryImplementation::MemoryImplementation(void) {}
 MemoryImplementation::~MemoryImplementation(void) {}
 
-bool MemoryImplementation::Initialize(BYTE* pVirtual, UINT64 dwPhysical, UINT64 dwByteSize, IMemoryManager* pMemoryManager)
+bool MemoryImplementation::Initialize(UINT64 dwPhysical, UINT64 dwByteSize, IMemoryManager* pMemoryManager)
 {
 	Release();
 	__pMemoryManager	= pMemoryManager;

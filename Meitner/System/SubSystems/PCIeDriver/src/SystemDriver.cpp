@@ -31,10 +31,9 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Driver(PCIe) sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "SystemDriver.h"
-#include "SystemMemory.h"
 #include "NativeMemory.h"
 
 const char* __SYSTEM_DESCRIPTION	= "DUT";
@@ -62,13 +61,11 @@ const char* SystemDriver::GetDescription(void)
 
 bool SystemDriver::Initialize(IMemoryImp* pMem)
 {
-	if(!g_SystemMemory.IsInitialized()) return false;
-
 	if(!m_Driver.Initialize()) return false;
 
 	// memory heap initialization
 	m_pMemImp	= pMem;
-	pMem->Initialize(g_SystemMemory.GetPointer(SYSTEM_MEMORY_BASE), SYSTEM_MEMORY_BASE, g_SystemMemory.ByteSize(), this);
+	pMem->Initialize(m_Driver.BaseAddress(), m_Driver.ByteSize(), this);
 	// run simulation thread
 	m_ISR.RunThread();
 	EnableInterrupt(false);

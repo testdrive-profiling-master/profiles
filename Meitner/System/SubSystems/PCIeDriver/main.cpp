@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,17 +31,12 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Driver(PCIe) sub-system
-// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include <SystemDriver.h>
-#include "SystemMemory.h"
 #include "TestDriver.inl"
 
 extern "C" ISystemImp* CreateSystemImplementation(void)
 {
-	if(g_SystemMemory.IsInitialized()) {
-		return new SystemDriver();
-	}
-
-	return NULL;
+	return new SystemDriver();
 }

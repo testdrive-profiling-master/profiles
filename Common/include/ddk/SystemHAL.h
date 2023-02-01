@@ -75,7 +75,7 @@ struct IMemoryManager {
 };
 
 struct IMemoryImp {
-	virtual bool Initialize(BYTE* pVirtual, UINT64 dwPhysical, UINT64 dwByteSize, IMemoryManager* pMemoryManager) = 0;
+	virtual bool Initialize(UINT64 dwPhysical, UINT64 dwByteSize, IMemoryManager* pMemoryManager) = 0;
 	virtual void Release(void) = 0;
 };
 

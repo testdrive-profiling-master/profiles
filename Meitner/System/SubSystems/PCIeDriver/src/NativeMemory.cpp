@@ -31,11 +31,10 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Driver(PCIe) sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "STDInterface.h"
 #include "NativeMemory.h"
-#include "SystemMemory.h"
 
 NativeSystemMemory::NativeSystemMemory(UINT64 dwByteSize)
 {

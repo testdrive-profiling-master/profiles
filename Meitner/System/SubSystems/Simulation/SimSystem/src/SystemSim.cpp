@@ -71,7 +71,7 @@ bool SystemSim::Initialize(IMemoryImp* pMem)
 
 	// memory heap initialization
 	m_pMemImp	= pMem;
-	pMem->Initialize(g_SystemMemory.GetPointer(g_SystemMemory.BaseAddress()), g_SystemMemory.BaseAddress(), g_SystemMemory.ByteSize(), this);
+	pMem->Initialize(g_SystemMemory.BaseAddress(), g_SystemMemory.ByteSize(), this);
 	// run simulation thread
 	bool bRet = m_pSim->Start();
 
