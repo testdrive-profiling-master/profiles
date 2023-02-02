@@ -38,12 +38,11 @@
 
 NativeSystemMemory::NativeSystemMemory(UINT64 dwByteSize, UINT64 dwAlignment, bool bDMA)
 {
-	m_pMem	= NULL;
-	m_pDMA	= NULL;
-
 	if(bDMA) {
-		m_pDMA	= g_pDriver->DMAAlloc(dwByteSize, dwAlignment);
+		m_pDMA	= g_pDriver->DMAAlloc(dwByteSize);
+		m_pMem	= m_pDMA ? (BYTE*)m_pDMA->vir_addr.pointer : NULL;
 	} else {
+		m_pDMA	= NULL;
 		m_pMem	= new BYTE[dwByteSize];
 	}
 }
@@ -52,9 +51,10 @@ NativeSystemMemory::~NativeSystemMemory(void)
 	if(m_pDMA) {
 		g_pDriver->DMAFree(m_pDMA);
 		m_pDMA	= NULL;
+		m_pMem	= NULL;
+	} else {
+		SAFE_DELETE_ARRAY(m_pMem);
 	}
-
-	SAFE_DELETE_ARRAY(m_pMem);
 }
 
 void NativeSystemMemory::Release(void)
@@ -64,7 +64,7 @@ void NativeSystemMemory::Release(void)
 
 BYTE* NativeSystemMemory::Virtual(void)
 {
-	return m_pDMA ? ((BYTE*)m_pDMA->vir_addr.pointer) : m_pMem;
+	return m_pMem;
 }
 
 bool NativeSystemMemory::Flush(UINT64 dwOffset, UINT64 dwPhyAddress, UINT64 dwByteSize, bool bWrite)
@@ -72,17 +72,12 @@ bool NativeSystemMemory::Flush(UINT64 dwOffset, UINT64 dwPhyAddress, UINT64 dwBy
 	if(m_pDMA) {
 		//@FIXME
 	} else if(m_pMem) {
-		if((dwPhyAddress & 7) || (dwOffset & 7)) {
-			LOGE("Flushing physical address(0x%08X) or offset(%d) must keep memory alignment(64bit).", dwPhyAddress, dwOffset);
-			return false;
-		}
-
 		BYTE*	pData	= m_pMem + dwOffset;
 
 		if(bWrite)
-			g_pDriver->MemoryWrite(dwPhyAddress, pData, dwByteSize >> 3);
+			g_pDriver->MemoryWrite(dwPhyAddress, pData, dwByteSize);
 		else
-			g_pDriver->MemoryRead(dwPhyAddress, pData, dwByteSize >> 3);
+			g_pDriver->MemoryRead(dwPhyAddress, pData, dwByteSize);
 
 		return true;
 	}

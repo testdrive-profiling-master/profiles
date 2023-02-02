@@ -78,11 +78,11 @@ public:
 	virtual void SetCurrentCard(DWORD dwIndex);
 	virtual void RegWrite(UINT64 dwAddress, DWORD dwData) = 0;
 	virtual DWORD RegRead(UINT64 dwAddress) = 0;
-	virtual void MemoryWrite(UINT64 dwAddress, BYTE* pData, DWORD dwCount) = 0;	// 64bit write operation
-	virtual void MemoryRead(UINT64 dwAddress, BYTE* pData, DWORD dwCount) = 0;	// 64bit read operation
+	virtual void MemoryWrite(UINT64 dwAddress, BYTE* pData, DWORD dwByteSize) = 0;
+	virtual void MemoryRead(UINT64 dwAddress, BYTE* pData, DWORD dwByteSize) = 0;
 	virtual void InterruptLock(void) = 0;
 	virtual void InterruptFree(void) = 0;
-	virtual TD_DMA_MEMORY* DMAAlloc(UINT64 dwByteSize, UINT64 dwAlignment);
+	virtual TD_DMA_MEMORY* DMAAlloc(UINT64 dwByteSize);
 	virtual void DMAFree(TD_DMA_MEMORY* pMem);
 
 	// inlines

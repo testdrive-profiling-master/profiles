@@ -122,7 +122,7 @@ void SystemDriverInterface::SetCurrentCard(DWORD dwIndex)
 	// None implementation
 }
 
-TD_DMA_MEMORY* SystemDriverInterface::DMAAlloc(UINT64 dwByteSize, UINT64 dwAlignment) {
+TD_DMA_MEMORY* SystemDriverInterface::DMAAlloc(UINT64 dwByteSize) {
 	// None implementation
 }
 
