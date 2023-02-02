@@ -121,5 +121,5 @@ void SystemDriver::InvokeISR(void)
 
 IMemoryNative* SystemDriver::CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, bool bDMA)
 {
-	return new NativeSystemMemory(dwByteSize, dwByteAlignment, bDMA);
+	return new NativeMemory(dwByteSize, dwByteAlignment, bDMA);
 }

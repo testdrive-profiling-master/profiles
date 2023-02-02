@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 1/26/2023 Thu (clonextop@gmail.com)
+// Rev.  : 2/2/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __COMMON_H__
 #define __COMMON_H__

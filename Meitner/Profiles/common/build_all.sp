@@ -9,9 +9,6 @@ system.call	"mingw32-make", "-j 12", "..\\..\\System\\SubSystems\\Simulation\\Si
 system.msg "¢Â Simulation Sub-system build\n"
 system.call	"mingw32-make", "-j 12", "..\\..\\System\\SubSystems\\Simulation\\SimSystem\\", "error:", "] Error", "undefined reference to " "Build succeeded.":0
 
-system.msg "¢Â Emulation Sub-system build\n"
-system.call	"mingw32-make", "-j 12", "..\\..\\System\\SubSystems\\Emulation\\", "error:", "] Error", "undefined reference to " "Build succeeded.":0
-
 system.msg "¢Â Driver(PCIe) Sub-system build\n"
 system.call	"mingw32-make", "-j 12", "..\\..\\System\\SubSystems\\PCIeDriver\\", "error:", "] Error", "undefined reference to " "Build succeeded.":0
 

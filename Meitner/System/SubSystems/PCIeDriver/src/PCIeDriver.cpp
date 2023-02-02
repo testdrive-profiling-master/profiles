@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Driver(PCIe) sub-system
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/2/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "PCIeDriver.h"
 #include "driver_testdrive.h"
@@ -136,22 +136,24 @@ DWORD PCIeDriver::RegRead(UINT64 dwAddress)
 	return dwData;
 }
 
-void PCIeDriver::MemoryWrite(UINT64 dwAddress, BYTE* pData, DWORD dwCount)
+void PCIeDriver::MemoryWrite(NativeMemory* pMem, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize)
 {
 	DWORD dwReadSize;
+	BYTE*	pData			= (pMem->Virtual() + dwOffset);
 	__TranMem.is_write		= 1;
-	__TranMem.phy_address	= dwAddress - m_MemBaseAddress;
-	__TranMem.count			= dwCount;
-	DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_MEM, &__TranMem, sizeof(TD_TRANSACTION_MEM), pData, sizeof(DWORD) * 2 * dwCount, &dwReadSize, NULL);
+	__TranMem.phy_address	= dwAddress - m_MemBaseAddress + dwOffset;
+	__TranMem.count			= dwByteSize >> 3;
+	DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_MEM, &__TranMem, sizeof(TD_TRANSACTION_MEM), pData, dwByteSize, &dwReadSize, NULL);
 }
 
-void PCIeDriver::MemoryRead(UINT64 dwAddress, BYTE* pData, DWORD dwCount)
+void PCIeDriver::MemoryRead(NativeMemory* pMem, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize)
 {
 	DWORD dwReadSize;
+	BYTE*	pData			= (pMem->Virtual() + dwOffset);
 	__TranMem.is_write		= 0;
-	__TranMem.phy_address	= dwAddress - m_MemBaseAddress;
-	__TranMem.count			= dwCount;
-	DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_MEM, &__TranMem, sizeof(TD_TRANSACTION_MEM), pData, sizeof(DWORD) * 2 * dwCount, &dwReadSize, NULL);
+	__TranMem.phy_address	= dwAddress - m_MemBaseAddress + dwOffset;
+	__TranMem.count			= dwByteSize >> 3;
+	DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_MEM, &__TranMem, sizeof(TD_TRANSACTION_MEM), pData, dwByteSize, &dwReadSize, NULL);
 }
 
 void PCIeDriver::InterruptLock(void)

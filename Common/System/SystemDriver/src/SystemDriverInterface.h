@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive System Driver wrapper
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/2/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_DRIVER_INTERFACE_H__
 #define __SYSTEM_DRIVER_INTERFACE_H__
@@ -39,6 +39,7 @@
 #include "VirtualDisplayConfig.h"
 #include "ddk/SystemHAL.h"
 #include "driver_testdrive.h"
+#include "NativeMemory.h"
 #include <string>
 
 #define _USE_MATH_DEFINES
@@ -53,6 +54,8 @@ void LOGE(char* fmt, ...);
 #else
 #define	TRACE_LOG(s)
 #endif
+
+class NativeMemory;
 
 class DriverCommon {
 public:
@@ -78,8 +81,8 @@ public:
 	virtual void SetCurrentCard(DWORD dwIndex);
 	virtual void RegWrite(UINT64 dwAddress, DWORD dwData) = 0;
 	virtual DWORD RegRead(UINT64 dwAddress) = 0;
-	virtual void MemoryWrite(UINT64 dwAddress, BYTE* pData, DWORD dwByteSize) = 0;
-	virtual void MemoryRead(UINT64 dwAddress, BYTE* pData, DWORD dwByteSize) = 0;
+	virtual void MemoryWrite(NativeMemory* pMem, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize) = 0;
+	virtual void MemoryRead(NativeMemory* pMem, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize) = 0;
 	virtual void InterruptLock(void) = 0;
 	virtual void InterruptFree(void) = 0;
 	virtual TD_DMA_MEMORY* DMAAlloc(UINT64 dwByteSize);

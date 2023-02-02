@@ -68,9 +68,9 @@ endif
 
 ifeq ($(EXTRA_CFLAGS),)
 ifdef USE_DEBUG
-	EXTRA_CFLAGS	:= -O0 -std=c++14 -DDEBUG -g
+	EXTRA_CFLAGS	:= -O0 -std=c++20 -DDEBUG -g
 else
-	EXTRA_CFLAGS	:= -O3 -std=c++14 -DNDEBUG
+	EXTRA_CFLAGS	:= -O3 -std=c++20 -DNDEBUG
 endif
 endif
 

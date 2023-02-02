@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Driver(PCIe) sub-system
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/2/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __PCIE_DRIVER_H__
 #define __PCIE_DRIVER_H__
@@ -48,8 +48,8 @@ public:
 	virtual void SetCurrentCard(DWORD dwIndex);
 	virtual void RegWrite(UINT64 dwAddress, DWORD dwData);
 	virtual DWORD RegRead(UINT64 dwAddress);
-	virtual void MemoryWrite(UINT64 dwAddress, BYTE* pData, DWORD dwCount);	// 64bit write operation
-	virtual void MemoryRead(UINT64 dwAddress, BYTE* pData, DWORD dwCount);	// 64bit read operation
+	virtual void MemoryWrite(NativeMemory* pMem, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize);
+	virtual void MemoryRead(NativeMemory* pMem, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize);
 	virtual void InterruptLock(void);
 	virtual void InterruptFree(void);
 

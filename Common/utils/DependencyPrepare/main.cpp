@@ -31,9 +31,10 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Dependency prepare
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/2/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
+#include <filesystem>
 
 bool CheckDepency(const char* sDepFileName)
 {
@@ -42,6 +43,7 @@ bool CheckDepency(const char* sDepFileName)
 	if(f.Open(sDepFileName)) {
 		bool	bFirstLine	= true;
 		cstring sLine;
+		auto		dep_time	= filesystem::last_write_time(sDepFileName);
 
 		while(f.GetLine(sLine)) {
 			if(bFirstLine) {
@@ -61,8 +63,16 @@ bool CheckDepency(const char* sDepFileName)
 
 					if(iPos < 0) break;
 
+					// access check, if can't access this file, dependency is broken.
 					if(access(sFileName.c_str(), F_OK)) {
-						return false;	// can't access this file, dependency file is broken.
+						return false;
+					}
+
+					// check dependency file time
+					auto		cmp_time	= filesystem::last_write_time(sFileName.c_str());
+
+					if(cmp_time > dep_time) {
+						return false;
 					}
 				}
 			}
@@ -100,7 +110,7 @@ int main(int argc, const char* argv[])
 			cstring sCC(arg_table.GetOptionString("CC"));
 			cstring sCXX(arg_table.GetOptionString("CXX"));
 
-			if(!bSilence) LOGI("Dependency file is broken, it will be deleted. : %s", sDepFileName.c_str());
+			if(!bSilence) LOGI("Dependency is broken, it will be deleted. : %s", sDepFileName.c_str());
 
 			remove(sDepFileName.c_str());
 		}

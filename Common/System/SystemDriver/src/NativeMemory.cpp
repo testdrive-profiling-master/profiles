@@ -31,12 +31,12 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive System Driver wrapper
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/2/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "STDInterface.h"
 #include "NativeMemory.h"
 
-NativeSystemMemory::NativeSystemMemory(UINT64 dwByteSize, UINT64 dwAlignment, bool bDMA)
+NativeMemory::NativeMemory(UINT64 dwByteSize, UINT64 dwAlignment, bool bDMA)
 {
 	if(bDMA) {
 		m_pDMA	= g_pDriver->DMAAlloc(dwByteSize);
@@ -46,7 +46,7 @@ NativeSystemMemory::NativeSystemMemory(UINT64 dwByteSize, UINT64 dwAlignment, bo
 		m_pMem	= new BYTE[dwByteSize];
 	}
 }
-NativeSystemMemory::~NativeSystemMemory(void)
+NativeMemory::~NativeMemory(void)
 {
 	if(m_pDMA) {
 		g_pDriver->DMAFree(m_pDMA);
@@ -57,30 +57,24 @@ NativeSystemMemory::~NativeSystemMemory(void)
 	}
 }
 
-void NativeSystemMemory::Release(void)
+void NativeMemory::Release(void)
 {
 	delete this;
 }
 
-BYTE* NativeSystemMemory::Virtual(void)
+BYTE* NativeMemory::Virtual(void)
 {
 	return m_pMem;
 }
 
-bool NativeSystemMemory::Flush(UINT64 dwOffset, UINT64 dwPhyAddress, UINT64 dwByteSize, bool bWrite)
+bool NativeMemory::Flush(UINT64 dwOffset, UINT64 dwPhyAddress, UINT64 dwByteSize, bool bWrite)
 {
-	if(m_pDMA) {
-		//@FIXME
-	} else if(m_pMem) {
-		BYTE*	pData	= m_pMem + dwOffset;
-
+	if(m_pMem) {
 		if(bWrite)
-			g_pDriver->MemoryWrite(dwPhyAddress, pData, dwByteSize);
+			g_pDriver->MemoryWrite(this, dwPhyAddress, dwOffset, dwByteSize);
 		else
-			g_pDriver->MemoryRead(dwPhyAddress, pData, dwByteSize);
-
-		return true;
+			g_pDriver->MemoryRead(this, dwPhyAddress, dwOffset, dwByteSize);
 	}
 
-	return false;
+	return true;
 }
