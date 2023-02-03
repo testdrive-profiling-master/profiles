@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
+// Rev.  : 2/3/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __STD_INTERFACE_H__
 #define __STD_INTERFACE_H__
@@ -40,47 +39,49 @@
 #include <limits.h>
 
 #ifdef WIN32
-	#include <windows.h>
-	#include <ObjBase.h>
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
+#include <windows.h>
 #else
-	#ifndef PVOID
-		typedef void *PVOID;
-	#endif
-	#if !defined(INT64)
-		#define INT64		long long
-	#endif
-	#if !defined(UINT64)
-		#define UINT64		unsigned INT64
-	#endif
-	#if !defined(LONGLONG)
-		#define LONGLONG	long long
-	#endif
-	#if !defined(LONG)
-		#define LONG		long
-	#endif
-	#if !defined(DWORD)
-		#define DWORD		unsigned int
-	#endif
-	#if !defined(WORD)
-		#define WORD		unsigned short
-	#endif
-	#if !defined(BYTE)
-		#define BYTE		unsigned char
-	#endif
-	#if !defined(BOOL)
-		#define BOOL		DWORD
-		#define TRUE		1
-		#define FALSE		0
-	#endif
-	#if !defined(NULL)
-		#define	NULL		0
-	#endif
-	
-	#if defined(KERNEL_64BIT)
-		typedef INT64 KPTR;
-	#else
-		typedef DWORD KPTR;
-	#endif
+#ifndef PVOID
+typedef void* PVOID;
+#endif
+#if !defined(INT64)
+#define INT64		long long
+#endif
+#if !defined(UINT64)
+#define UINT64		unsigned INT64
+#endif
+#if !defined(LONGLONG)
+#define LONGLONG	long long
+#endif
+#if !defined(LONG)
+#define LONG		long
+#endif
+#if !defined(DWORD)
+#define DWORD		unsigned int
+#endif
+#if !defined(WORD)
+#define WORD		unsigned short
+#endif
+#if !defined(BYTE)
+#define BYTE		unsigned char
+#endif
+#if !defined(BOOL)
+#define BOOL		DWORD
+#define TRUE		1
+#define FALSE		0
+#endif
+#if !defined(NULL)
+#define	NULL		0
+#endif
+
+#if defined(KERNEL_64BIT)
+typedef INT64 KPTR;
+#else
+typedef DWORD KPTR;
+#endif
 #endif
 
 // Safe memory deletion
