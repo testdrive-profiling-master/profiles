@@ -13,7 +13,7 @@ SRCS			:= \
 
 INC				:= -I../common -I./src
 LIBDIR			:= -llua -lTestDrive_LM -lz -lminizip
-CDEFS			:=
+CDEFS			:= -DLUABRIDGE_CXX17=1
 
 #-------------------------------------------------
 # common document config

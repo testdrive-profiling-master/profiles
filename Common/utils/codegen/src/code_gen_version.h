@@ -35,4 +35,4 @@
 //================================================================================
 #define		CODE_GEN_VERSION_MAJOR		1
 #define		CODE_GEN_VERSION_MINOR		0
-#define		CODE_GEN_BUILD_COUNT		3
+#define		CODE_GEN_BUILD_COUNT		4
