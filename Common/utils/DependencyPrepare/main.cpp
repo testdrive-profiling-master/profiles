@@ -31,14 +31,18 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Dependency prepare
-// Rev.  : 2/2/2023 Thu (clonextop@gmail.com)
+// Rev.  : 2/4/2023 Sat (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include <filesystem>
 
+bool	g_bVerbose	= false;
+
 bool CheckDepency(const char* sDepFileName)
 {
 	TextFile	f;
+
+	if(g_bVerbose) printf("- %s\n", sDepFileName);
 
 	if(f.Open(sDepFileName)) {
 		bool	bFirstLine	= true;
@@ -56,64 +60,64 @@ bool CheckDepency(const char* sDepFileName)
 			}
 
 			sLine.Trim(" \\\r\n");
-			{
-				// dependency file existence check
-				for(int iPos = 0;;) {
-					cstring sFileName	= sLine.Tokenize(iPos, " ");
 
-					if(iPos < 0) break;
+			// dependency file existence check
+			for(int iPos = 0;;) {
+				cstring sFileName	= sLine.Tokenize(iPos, " ");
 
-					// access check, if can't access this file, dependency is broken.
-					if(access(sFileName.c_str(), F_OK)) {
-						return false;
-					}
+				if(iPos < 0) break;
 
-					// check dependency file time
-					auto		cmp_time	= filesystem::last_write_time(sFileName.c_str());
+				// access check, if can't access this file, dependency is broken.
+				if(access(sFileName.c_str(), F_OK)) {
+					return false;
+				}
 
-					if(cmp_time > dep_time) {
-						return false;
-					}
+				// check dependency file time
+				auto		cmp_time	= filesystem::last_write_time(sFileName.c_str());
+
+				if(cmp_time > dep_time) {
+					return false;
 				}
 			}
 		}
+
+		return true;
 	}
 
-	return true;
+	return false;
 }
 
 int main(int argc, const char* argv[])
 {
 	int			arg_size;
 	ArgTable	arg_table("TestDrive's dependency preparation check.");
-	arg_table.AddOption("silence", "s", "silence", "Force to no logging.");
+	arg_table.AddOption("verbose", "v", NULL, "Force to show verbose.");
 	arg_table.AddOptionFile("dep_file", NULL, NULL, NULL, "dep_file", "dependency file.");
 	arg_table.AddRemark(NULL, "file extension must be .d");
 
 	if(!arg_table.DoParse(argc, argv))
 		return 0;
 
-	bool bSilence	= arg_table.GetOption("silence");
+	g_bVerbose	= arg_table.GetOption("verbose");
 	cstring sDepFileName(arg_table.GetOptionFile("dep_file"));
 	cstring cExt(sDepFileName);
 	cExt.CutFront(".", true);
 	cExt.MakeLower();
 
 	if(cExt != "d") {
-		if(!bSilence) LOGE("Unknown file extension : %s", sDepFileName.c_str());
+		if(g_bVerbose) LOGE("Unknown file extension : %s", sDepFileName.c_str());
 
 		return 0;
 	}
 
-	{
-		if(!CheckDepency(sDepFileName)) {
-			cstring sCC(arg_table.GetOptionString("CC"));
-			cstring sCXX(arg_table.GetOptionString("CXX"));
+	if(!CheckDepency(sDepFileName)) {
+		if(g_bVerbose) LOGW("Dependency is broken, it will be deleted.");
 
-			if(!bSilence) LOGI("Dependency is broken, it will be deleted. : %s", sDepFileName.c_str());
-
-			remove(sDepFileName.c_str());
-		}
+		cstring	sObjectFile	= sDepFileName;
+		sObjectFile.DeleteBack(".d");
+		sObjectFile	+= ".o";
+		remove(sDepFileName.c_str());	// delete dependency file
+		remove(sObjectFile.c_str());	// delete object file
 	}
 
 	return 0;

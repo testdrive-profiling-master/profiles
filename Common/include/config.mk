@@ -93,7 +93,7 @@ CDEFS			:= $(CDEFS) -D__int64="long long" -DWIN32 -D_WIN32 -DWIN64 -D_WIN64
 #-------------------------------------------------
 # Build commands
 #-------------------------------------------------
-all: $(BUILD_TARGET)
+all: dep | $(BUILD_TARGET)
 	@echo Compilation is done!
 
 $(TARGET_EXE): $(OBJS) $(OBJS_RES)
@@ -125,7 +125,7 @@ static:
 
 dep:
 	@for def_file in $(DEPS); do \
-		DependencyPrepare -s "$$def_file";  \
+		DependencyPrepare "$$def_file";  \
 	done
 
 #########################################################################
