@@ -56,10 +56,12 @@ bool CheckDepency(const char* sDepFileName)
 				if(iPos > 0) {
 					sLine.erase(0, iPos + 3);
 					bFirstLine		= false;
-				}
+				} else break;	// not a dependency file.
 			}
 
-			sLine.Trim(" \\\r\n");
+			sLine.Trim(" \r\n");
+			bool bContinue	= sLine.CompareBack("\\");
+			if(bContinue) sLine.Trim(" \\");
 
 			// dependency file existence check
 			for(int iPos = 0;;) {
@@ -79,6 +81,8 @@ bool CheckDepency(const char* sDepFileName)
 					return false;
 				}
 			}
+
+			if(!bContinue) break;	// no more dependency list
 		}
 
 		return true;

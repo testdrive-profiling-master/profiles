@@ -93,7 +93,8 @@ CDEFS			:= $(CDEFS) -D__int64="long long" -DWIN32 -D_WIN32 -DWIN64 -D_WIN64
 #-------------------------------------------------
 # Build commands
 #-------------------------------------------------
-all: dep | $(BUILD_TARGET)
+
+all: $(BUILD_TARGET)
 	@echo Compilation is done!
 
 $(TARGET_EXE): $(OBJS) $(OBJS_RES)
@@ -128,7 +129,9 @@ dep:
 		DependencyPrepare "$$def_file";  \
 	done
 
-#########################################################################
+#-------------------------------------------------
+# dependencies
+#-------------------------------------------------
 ifneq ($(MAKECMDGOALS), clean)
 -include $(DEPS) $(OBJS_RES:.o=.dep)
 endif

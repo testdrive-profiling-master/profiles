@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Hierarchical Make
-// Rev.  : 8/10/2021 Tue (clonextop@gmail.com)
+// Rev.  : 2/5/2023 Sun (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 
@@ -143,8 +143,10 @@ bool LoopSearchPath(const char* sPath)
 			cstring	sCommand;
 			sCommand.Format(_T("mingw32-make %s"), __env.sArg);
 
-			if(sCommand.find(" clean") >=0) {	// "make clean"
+			if(sCommand.find(" clean") >= 0) {	// "make clean"
 				sCommand.insert(0, "start /B ");
+			} else {
+				system("mingw32-make dep");		// "make dep" first
 			}
 
 			fflush(stdout);

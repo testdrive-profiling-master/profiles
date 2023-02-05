@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System manager
-// Rev.  : 10/27/2021 Wed (clonextop@gmail.com)
+// Rev.  : 2/5/2023 Sun (clonextop@gmail.com)
 //================================================================================
 #include "BuildAutomation.h"
 #include "Utils.h"
@@ -194,7 +194,9 @@ int DoMake(BOOL bClean, LPCTSTR sArg, LPCTSTR sWorkPath)
 
 	// cleaning
 	if(bClean)
-		g_pSystem->ExecuteFile(_T("mingw32-make"), _T("-j clean"), TRUE, NULL, sWorkPath, NULL);
+		g_pSystem->ExecuteFile(_T("mingw32-make"), _T("clean"), TRUE, NULL, sWorkPath, NULL);
+	else
+		g_pSystem->ExecuteFile(_T("mingw32-make"), _T("dep"), TRUE, NULL, sWorkPath, NULL);
 
 	// build
 	return g_pSystem->ExecuteFile(_T("mingw32-make"), sArg, TRUE, NULL, sWorkPath,
