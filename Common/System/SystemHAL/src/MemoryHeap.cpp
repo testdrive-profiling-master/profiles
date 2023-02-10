@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/10/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include <assert.h>
 #include <stdio.h>
@@ -259,7 +259,14 @@ bool MemoryHeap::Flush(bool bWrite, UINT64 dwOffset, UINT64 dwByteSize)
 
 IMemory* CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress, bool bDMA)
 {
-	return new MemoryHeap(dwByteSize, dwByteAlignment, dwPhyAddress, bDMA);
+	IMemory* pMem = new MemoryHeap(dwByteSize, dwByteAlignment, dwPhyAddress, bDMA);
+
+	if(!pMem->Virtual()) {
+		pMem->Release();
+		pMem	= NULL;	// cppcheck-suppress memleak
+	}
+
+	return pMem;
 }
 
 void EnumerateMemory(ENUMERATE_MEMORY_FUNCTION func, void* pPrivate)
