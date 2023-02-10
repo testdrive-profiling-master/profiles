@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/10/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __INTERRUPT_SERVICE_H__
 #define __INTERRUPT_SERVICE_H__
@@ -54,8 +54,8 @@ public:
 	}
 
 private:
-	virtual void MonitorThread(void);					// 모니터 스레드
-	virtual void OnThreadKill(bool bForced);			// 스레드 킬 전 이벤트
+	virtual void MonitorThread(void);					// monitor thread
+	virtual void OnThreadKill(bool bForced);			// it will call before kill thread
 
 	INTRRUPT_SERVICE	m_ISR;
 	Semaphore			m_SemaInterrupt;

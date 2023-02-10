@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/10/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
 #include "TestDriver.inl"
@@ -47,7 +47,6 @@ static SimTop*				__pSimTop				= NULL;
 bool (*DPI_Initialize)(void)						= NULL;
 void (*DPI_Finalize)(void)							= NULL;
 #ifndef SIMULATION_TOP_EX
-static bool					__PreINTR				= true;
 #endif
 #ifdef SIM_TRACE
 #ifdef SIM_TRACE_FILE_OUTPUT
@@ -106,6 +105,7 @@ public:
 		SetMemoryBaseAddress(SYSTEM_MEMORY_BASE_ADDRESS);
 #endif
 #ifndef SIMULATION_TOP_EX
+		__pSimTop->INTR		= 0;
 		__pSimTop->nRST		= 0;
 		__pSimTop->MCLK		= 0;
 #endif
@@ -184,10 +184,8 @@ public:
 			__pSimTop->eval();
 #ifndef SIMULATION_TOP_EX
 			{
-				if(!__PreINTR && __pSimTop->INTR)
+				if(__pSimTop->INTR)
 					__pSimControl->AwakeInterrupt();
-
-				__PreINTR	= __pSimTop->INTR;
 			}
 #endif
 #ifdef SIM_TRACE
