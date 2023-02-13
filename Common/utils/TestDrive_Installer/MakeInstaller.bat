@@ -36,5 +36,5 @@ MakeRelease\MakeRelease.exe
 iexpress TestDriveInstaller.sed
 
 if exist %TESTDRIVE_PROFILE%../testdrive-profiling-master.github.io/ (
-	cp -f TestDrive_Profiling_Master.exe %TESTDRIVE_PROFILE%../testdrive-profiling-master.github.io/
+	cp -f TestDrive_Profiling_Master.exe %TESTDRIVE_PROFILE%../testdrive-profiling-master.github.io/download/
 )
