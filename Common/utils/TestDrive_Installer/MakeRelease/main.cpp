@@ -82,6 +82,7 @@ int main(int argc, const char* argv[])
 
 	// clear previous library dependencies
 	__exec("rm -f release/*.dll");
+	__exec("cp -f Install_TestDrive.bat release/");
 	// collect new library dependencies
 	cstring	sOut = __exec("ldd release/TestDrive_Installer.exe | grep ucrt64");
 	{
@@ -110,6 +111,7 @@ int main(int argc, const char* argv[])
 	// add extra files
 	g_LibrariesMap["licenses.txt"]				= 1;
 	g_LibrariesMap["TestDrive_Installer.exe"]	= 1;
+	g_LibrariesMap["Install_TestDrive.bat"]		= 1;
 
 	{
 		TextFile f;

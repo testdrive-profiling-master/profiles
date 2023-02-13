@@ -38,6 +38,11 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <io.h>
+#include <dirent.h>
+#include <string>
+#include <iostream>
+
+using namespace std;
 
 typedef struct {
 	int data;
@@ -57,15 +62,14 @@ int fetch_progress(const git_indexer_progress* stats, void* payload)
 void checkout_progress(const char* path, size_t cur, size_t tot, void* payload)
 {
 	progress_data* pd = (progress_data*)payload;
-	printf("PROGRESS: %d/%d\n", cur, tot);
+	printf("\rPROGRESS: %d/%d", cur, tot);
 }
 
 progress_data d = {0};
 git_clone_options clone_opts = GIT_CLONE_OPTIONS_INIT;
 
-int main(int argc, const char* argv[])
-{
-	printf("TestDrive Automatic Installer.\n");
+bool DoInstall(void) {
+	bool	bRet	= true;
 	git_repository* repo;
 	const git_config_entry* entry = NULL;
 	int error;
@@ -76,21 +80,55 @@ int main(int argc, const char* argv[])
 	clone_opts.fetch_opts.callbacks.transfer_progress = fetch_progress;
 	clone_opts.fetch_opts.callbacks.certificate_check = git_certificate_check_cb;
 	clone_opts.fetch_opts.callbacks.payload = &d;
+
+	printf("\n\n*** Install TestDrive Profiling Master release...\n");
 	error = git_clone(&repo, "http://github.com/testdrive-profiling-master/release.git", "TestDrive", &clone_opts);
 
 	if(error < 0) {
 		const git_error* e = git_error_last();
-		printf("Error %d/%d: %s\n", error, e->klass, e->message);
-		exit(error);
+		printf("\nError %d/%d: %s\n", error, e->klass, e->message);
+		bRet	= false;
 	}
 
-	/*{	// test
-		char path[1024];
-		getcwd(path, 1024);
-		printf("patjh : %s\n", path);
-		getchar();
-	}*/
+	if(bRet) {
+		printf("\n\n*** Install TestDrive Profiling Master profiles...\n");
+		error = git_clone(&repo, "https://github.com/testdrive-profiling-master/profiles.git", "Profiles", &clone_opts);
+
+		if(error < 0) {
+			const git_error* e = git_error_last();
+			printf("\nError %d/%d: %s\n", error, e->klass, e->message);
+			bRet	= false;
+		}
+	}
+	printf("\n");
+
 	git_repository_free(repo);
 	git_libgit2_shutdown();
+	return bRet;
+}
+
+int main(int argc, const char* argv[])
+{
+	string sInstallPath;
+	if(argc != 2) return 0;
+	sInstallPath	= argv[1];
+	printf("Installing Target : %s\n", sInstallPath.c_str());
+
+	DIR* dir = opendir(sInstallPath.c_str());
+
+	if(dir) {
+		closedir(dir);
+		chdir(sInstallPath.c_str());
+		if(!DoInstall()) {
+			printf("*E: Installation is failed...\n");
+		} else {
+			printf("Done!\n");
+		}
+	} else {
+		printf("*E: Directory is not exist : %s\n", sInstallPath.c_str());
+	}
+	printf("\n* Press any key to exit.\n");
+	getchar();
+
 	return 0;
 }
