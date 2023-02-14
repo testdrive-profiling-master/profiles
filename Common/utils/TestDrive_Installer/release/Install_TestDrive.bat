@@ -16,4 +16,6 @@ mkdir %install_path%
 
 TestDrive_Installer.exe %install_path%
 
+start explorer %install_path%
+
 endlocal
