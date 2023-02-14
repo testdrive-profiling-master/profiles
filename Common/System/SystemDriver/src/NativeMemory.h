@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive System Driver wrapper
-// Rev.  : 2/2/2023 Thu (clonextop@gmail.com)
+// Rev.  : 2/14/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __NATIVE_MEMORY_H__
 #define __NATIVE_MEMORY_H__
@@ -52,5 +52,7 @@ public:
 	inline TD_DMA_MEMORY* DMA(void)	{
 		return m_pDMA;
 	}
+
+	static bool		bAlwaysUseDMA;
 };
 #endif//__NATIVE_MEMORY_H__

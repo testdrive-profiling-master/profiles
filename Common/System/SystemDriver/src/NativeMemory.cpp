@@ -31,14 +31,16 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive System Driver wrapper
-// Rev.  : 2/2/2023 Thu (clonextop@gmail.com)
+// Rev.  : 2/14/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include "STDInterface.h"
 #include "NativeMemory.h"
 
+bool	NativeMemory::bAlwaysUseDMA	= false;
+
 NativeMemory::NativeMemory(UINT64 dwByteSize, UINT64 dwAlignment, bool bDMA)
 {
-	if(bDMA) {
+	if(bDMA || bAlwaysUseDMA) {
 		m_pDMA	= g_pDriver->DMAAlloc(dwByteSize);
 		m_pMem	= m_pDMA ? (BYTE*)m_pDMA->vir_addr.pointer : NULL;
 	} else {
