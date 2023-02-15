@@ -31,27 +31,25 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/15/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "DDK_Context.h"
 #include <zlib.h>
-#include <assert.h>
 
-#define DUMP_MEMORY_MAGIC_CODE		0x504D5544
+#define DUMP_MEMORY_MAGIC_CODE		'TDMP'
 
 typedef struct {
-	DWORD	dwMagicCode;	// "DUMP" (0x504D5544)
-	int		iSize;
+	DWORD	dwMagicCode;	// must be DUMP_MEMORY_MAGIC_CODE
+	int		dwSize;
 } MEMORY_DUMP_HEADER;
 
 typedef struct {
 	FILE*	fp;
-	DDK*	pDDK;
 	MEMORY_DUMP_HEADER	header;
 } MEMORY_DUMP;
 
 typedef struct {
-	DWORD	dwPhyAddress;
+	UINT64	dwPhyAddress;
 	DWORD	dwByteSize;
 	DWORD	dwCompressedSize;
 } MEMORY_DUMP_DESC;
@@ -64,25 +62,24 @@ static void __EnumMemory(DDKMemory* pMemory, MEMORY_DUMP* pDump)
 	desc.dwPhyAddress		= pMemory->Physical();
 	desc.dwByteSize			= pMemory->ByteSize();
 	desc.dwCompressedSize	= 0;
-	/*{
+	pMemory->Flush(false);	// read from system
+	{
 		unsigned long int	zipSize = desc.dwByteSize + 16;
-		unsigned char* pSrc	= (unsigned char*)pDump->pDDK->GetMemoryPointer(desc.dwPhyAddress, desc.dwByteSize);
+		unsigned char* pSrc	= (unsigned char*)pMemory->Virtual();
 		BYTE* pData			= new BYTE[zipSize];
 		compress((unsigned char*)pData, &zipSize, pSrc, pMemory->ByteSize());
 		desc.dwCompressedSize	= zipSize;
 		fwrite(&desc, sizeof(desc), 1, pDump->fp);
 		fwrite(pData, desc.dwCompressedSize, 1, pDump->fp);
 		delete [] pData;
-		pDump->header.iSize++;
-	}*/
-	assert("This function is deprecated.\n" == 0);
+		pDump->header.dwSize++;
+	}
 }
 
 bool DDKContext::MakeMemoryDump(const char* sFileName)
 {
 	MEMORY_DUMP	dump;
 	memset(&dump, 0, sizeof(MEMORY_DUMP));
-	dump.pDDK				= this;
 	dump.header.dwMagicCode	= DUMP_MEMORY_MAGIC_CODE;
 
 	if(!sFileName) sFileName = __sDefaultDumpMemoryFileName;
@@ -101,9 +98,8 @@ bool DDKContext::MakeMemoryDump(const char* sFileName)
 
 bool DDKContext::LoadMemoryDump(const char* sFileName)
 {
-	/*MEMORY_DUMP	dump;
+	MEMORY_DUMP	dump;
 	memset(&dump, 0, sizeof(MEMORY_DUMP));
-	dump.pDDK		= this;
 
 	if(!sFileName) sFileName = __sDefaultDumpMemoryFileName;
 
@@ -116,38 +112,35 @@ bool DDKContext::LoadMemoryDump(const char* sFileName)
 			return false;
 		}
 
-		printf("iSize = %d\n", dump.header.iSize);
-
 		// store to memory
-		for(int i = 0; i < dump.header.iSize; i++) {
+		for(int i = 0; i < dump.header.dwSize; i++) {
 			MEMORY_DUMP_DESC	desc;
 			fread(&desc, sizeof(desc), 1, dump.fp);
-			void* pMem = GetMemoryPointer(desc.dwPhyAddress, desc.dwByteSize);
+			IMemory* pMem = CreateMemory(desc.dwByteSize, 1, desc.dwPhyAddress);
 
 			if(!pMem) {
 				fclose(dump.fp);
-				printf("*Can't find memory space : 0x%08(%d bytes)\n", desc.dwPhyAddress, desc.dwByteSize);
+				printf("*Can't create memory space : 0x%08llX(%d bytes)\n", desc.dwPhyAddress, desc.dwByteSize);
 				return false;
 			}
 
 			if(!desc.dwCompressedSize) {
-				fread(pMem, desc.dwByteSize, 1, dump.fp);
+				fread(pMem->Virtual(), desc.dwByteSize, 1, dump.fp);
 			} else {
 				unsigned long int	zipSize = desc.dwByteSize;
 				BYTE* pData = new BYTE[desc.dwCompressedSize];
 				fread(pData, desc.dwCompressedSize, 1, dump.fp);
-				uncompress((unsigned char*)pMem, &zipSize, pData, desc.dwCompressedSize);
+				uncompress((unsigned char*)pMem->Virtual(), &zipSize, pData, desc.dwCompressedSize);
 				delete [] pData;
 			}
+
+			pMem->Flush(true);
+			SAFE_RELEASE(pMem);
 		}
 
 		fclose(dump.fp);
 		return true;
 	}
 
-	if(dump.fp)
-		fclose(dump.fp);
-	*/
-	assert("This function is deprecated.\n" == 0);
 	return false;
 }

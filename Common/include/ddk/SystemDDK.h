@@ -31,18 +31,13 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/15/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_DDK_H__
 #define __SYSTEM_DDK_H__
 #include "STDInterface.h"
 
 #define DDK_API		extern "C"
-
-typedef enum {
-	COLOR_FORMAT_R5G6B5,
-	COLOR_FORMAT_A8B8G8R8,
-} COLOR_FORMAT;
 
 typedef void (*DDK_INTRRUPT_SERVICE)(void* pPrivate);	// user interrupt service routine template
 
