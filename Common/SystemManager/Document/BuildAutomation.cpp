@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System manager
-// Rev.  : 2/5/2023 Sun (clonextop@gmail.com)
+// Rev.  : 2/17/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "BuildAutomation.h"
 #include "Utils.h"
@@ -114,6 +114,18 @@ void BuildAutomation::DoCheck(DWORD command, LPCTSTR sFileName)
 {
 	DWORD id	= command - m_dwCheckCommandStart;
 	BuildAutomationItem*	pItem	= m_BuildList.Item(id);
+	{
+		// bypass 'nosearch' directive
+		CString	sNosearchPath(sFileName);
+		int iPos	= sNosearchPath.find_last_of(_T('\\'));
+
+		if(iPos > 0) {
+			sNosearchPath.Delete(iPos + 1, -1);
+			sNosearchPath	+= _T(".TestDrive.nosearch");
+
+			if(IsFileExisted(sNosearchPath)) return;
+		}
+	}
 
 	if(id < m_BuildList.Size() && CheckBuild(sFileName, pItem)) {
 		if(m_bAutoBuild && !pItem->sExecuteFile.IsEmpty())
@@ -330,7 +342,7 @@ RETRY_BUILD:
 
 			if(sArgument) sArg.Append(sArgument);
 
-			if(!sFilePath.empty()) {	// 파일경로가 존재할 경우 현재 폰더 포함 하위 폴더에서 makefile 검색 후 빌드
+			if(!sFilePath.empty()) {	// if a path is existed, search current & sub directories' "makefile" and do build
 				CString sWorkPath(sFilePath);
 
 				if(SearchMakefile(sProjectPath, sWorkPath)) {
