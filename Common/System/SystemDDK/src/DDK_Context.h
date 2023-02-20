@@ -65,13 +65,11 @@ public:
 	// system
 	virtual void RegisterInterruptService(DDK_INTRRUPT_SERVICE routine, void* pPrivate = NULL);
 	virtual void EnableInterrupt(bool bEnable = true);
-	virtual void ClearInterruptPending(bool bReleaseWait = false);
-	virtual void WaitInterruptDone(void);
+	virtual void ClearInterruptPending(void);
 	virtual DWORD DriverCommand(void* pCommand);
 
 private:
 	ISystem*	m_pSystem;
-	Semaphore	m_Semaphore;
 };
 
 #endif//__DDK_CONTEXT_H__

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 1/25/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 
@@ -41,7 +41,7 @@ static TestbenchFramework*	__pTestbench	= NULL;
 void TestbenchFramework::__ISR__(DDK* pDDK)
 {
 	if(__pTestbench) __pTestbench->OnInterrupt();
-	else pDDK->ClearInterruptPending(TRUE);
+	else pDDK->ClearInterruptPending();
 }
 
 TestbenchFramework::TestbenchFramework(void)
@@ -80,7 +80,7 @@ bool TestbenchFramework::Initialize(void)
 void TestbenchFramework::OnInterrupt(void)
 {
 	printf("ISR done.\n");
-	m_pDDK->ClearInterruptPending(TRUE);
+	m_pDDK->ClearInterruptPending();
 }
 
 bool TestbenchFramework::CheckSimulation(const char* sRequired, bool bLogOut)

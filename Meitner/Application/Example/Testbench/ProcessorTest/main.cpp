@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "hw/DUT.h"
@@ -39,11 +39,16 @@
 class Testbench : public TestbenchFramework {
 	DUT*			m_pDUT;		// Processor (Design Under Testing)
 	DDKMemory*		m_pBuff;
+	Semaphore		m_IntrSema;
+
+public:
+	Testbench(void) : m_IntrSema(0) {
+		m_pBuff	= NULL;
+		m_pDUT	= NULL;
+	}
+
 
 	virtual bool OnInitialize(void) {
-		m_pDUT	= NULL;
-		m_pBuff	= NULL;
-
 		// H/W system equality check
 		if(!CheckSimulation("Processor axi wrapper"))
 			return false;
@@ -60,6 +65,13 @@ class Testbench : public TestbenchFramework {
 
 		SAFE_RELEASE(m_pBuff);
 		SAFE_DELETE(m_pDUT);
+	}
+
+	virtual void OnInterrupt(void) {
+		printf("*** INTERRUPT is occurred. ***\n");
+		m_pDDK->RegWrite((DUT_BASE | (4 << 2)), 0);		// clear interrupt flag
+		m_IntrSema.Up();								// release waiting for interrupt
+		m_pDDK->ClearInterruptPending();
 	}
 
 	virtual bool OnTestBench(void) {
@@ -151,7 +163,7 @@ class Testbench : public TestbenchFramework {
 		//// ***** interrupt test *****
 		printf("\nInterrupt test...\n");
 		m_pDDK->RegWrite((DUT_BASE | (4 << 2)), 1);
-		m_pDDK->WaitInterruptDone();
+		m_IntrSema.Down();			// wait for interrupt
 		printf("\tInterrupt Counted = 0x%X\n", (m_pDDK->RegRead((DUT_CLOCKGEN_BASE | (4 << 2))) >> 18) & 0x3FF);	// clear & get interrupt counter
 		printf("process is done!\n");
 		return true;

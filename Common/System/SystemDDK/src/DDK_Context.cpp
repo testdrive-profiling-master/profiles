@@ -72,7 +72,7 @@ void EnumerateDDKMemory(ENUMERATE_DDK_MEMORY_FUNCTION func, void* pPrivate)
 
 //-----------------------------------------------------------------
 
-DDKContext::DDKContext(void) : m_Semaphore(0)
+DDKContext::DDKContext(void)
 {
 	m_pSystem		= CreateSystem();
 	__ISR_pPrivate	= this;
@@ -127,21 +127,14 @@ void DDKContext::RegisterInterruptService(DDK_INTRRUPT_SERVICE routine, void* pP
 	__ISR_routine	= routine;	// attach to ISR
 }
 
-void DDKContext::WaitInterruptDone(void)
-{
-	if(__ISR_routine) m_Semaphore.Down();
-}
-
 void DDKContext::EnableInterrupt(bool bEnable)
 {
 	m_pSystem->EnableInterrupt(bEnable);
 }
 
-void DDKContext::ClearInterruptPending(bool bReleaseWait)
+void DDKContext::ClearInterruptPending(void)
 {
 	m_pSystem->ClearInterruptPending();
-
-	if(bReleaseWait) m_Semaphore.Up();
 }
 
 DWORD DDKContext::DriverCommand(void* pCommand)

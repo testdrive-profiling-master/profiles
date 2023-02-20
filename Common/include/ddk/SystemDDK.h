@@ -61,8 +61,7 @@ struct DDK {
 	// system
 	virtual void RegisterInterruptService(DDK_INTRRUPT_SERVICE routine, void* pPrivate = NULL) = 0;		// register ISR(interrrupt service routine)
 	virtual void EnableInterrupt(bool bEnable = true) = 0;												// enable ISR
-	virtual void ClearInterruptPending(bool bReleaseWait = false) = 0;									// clear interrupt pending bit
-	virtual void WaitInterruptDone(void) = 0;															// wait for interrupt done
+	virtual void ClearInterruptPending(void) = 0;									// clear interrupt pending bit
 	virtual DWORD DriverCommand(void* pCommand) = 0;													// post driver specific command
 };
 

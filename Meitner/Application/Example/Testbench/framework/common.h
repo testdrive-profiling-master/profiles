@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __COMMON_H__
 #define __COMMON_H__
@@ -42,23 +41,24 @@
 #include "SystemConfig.h"
 #include "VirtualDisplayConfig.h"
 #include "MmapViewLog.h"
+#include "TD_Semaphore.h"
 
-class TestDriveResource{
+class TestDriveResource {
 public:
 	TestDriveResource(void);
 	virtual ~TestDriveResource(void);
 
 protected:
-	typedef struct{
-		struct{
+	typedef struct {
+		struct {
 			SYSTEM_CONFIG*			pSystem;
 			DisplayConfig*			pDisplay;
-		}Config;
-		struct{
+		} Config;
+		struct {
 			ITestDriverMemory*		pSystem;
 			ITestDriverMemory*		pDisplay;
-		}Memory;
-	}__RESOURCE;
+		} Memory;
+	} __RESOURCE;
 
 	static	__RESOURCE		m_TestDrive;
 

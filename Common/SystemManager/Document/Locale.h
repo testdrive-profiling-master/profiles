@@ -33,8 +33,6 @@
 // Title : System manager
 // Rev.  : 4/29/2022 Fri (clonextop@gmail.com)
 //================================================================================
-// Rev.  : 5/4/2021 Tue (clonextop@gmail.com)
-//================================================================================
 #include "LocaleString.h"
 
 LOCALE_DEFINE(4, LANG_KOREAN, LANG_JAPANESE, LANG_SPANISH, LANG_ENGLISH)
