@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_ENGINE_H__
 #define __SIM_ENGINE_H__
@@ -108,6 +108,7 @@ protected:
 	virtual void SimulationDebugMode(bool bDebug = true);
 	virtual void SetSystemDescription(const char* sDesc);
 	virtual void SetError(bool bError = true);
+	virtual void RegisterDriverCommand(DRIVER_COMMAND func);
 
 public:
 	SimEngine(void);
@@ -126,6 +127,8 @@ public:
 		return m_Interrupt;
 	}
 
+	DWORD DriverCommand(void* pCommand);
+
 	const char* GetSystemDescription(void);
 	inline bool IsGotError(void) {
 		return m_bErrorOccured;
@@ -137,5 +140,6 @@ private:
 	volatile bool		m_bForceToExit;
 	InterruptService	m_Interrupt;
 	SimHDL*				m_pSimHDL;
+	DRIVER_COMMAND		m_DriverCommand;
 };
 #endif//__SIM_ENGINE_H__

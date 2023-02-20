@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "STDInterface.h"
@@ -137,6 +137,11 @@ void SystemSim::EnableInterrupt(bool bEnable)
 void SystemSim::ClearInterruptPending(void)
 {
 	m_pSim->Interrupt().ClearPending();
+}
+
+DWORD SystemSim::DriverCommand(void* pCommand)
+{
+	return m_pSim->DriverCommand(pCommand);
 }
 
 // Memory interface

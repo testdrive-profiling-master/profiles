@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive System Driver wrapper
-// Rev.  : 2/2/2023 Thu (clonextop@gmail.com)
+// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_DRIVER_INTERFACE_H__
 #define __SYSTEM_DRIVER_INTERFACE_H__
@@ -85,6 +85,7 @@ public:
 	virtual void MemoryRead(NativeMemory* pMem, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize) = 0;
 	virtual void InterruptLock(void) = 0;
 	virtual void InterruptFree(void) = 0;
+	virtual DWORD Command(void* pCommand);
 	virtual TD_DMA_MEMORY* DMAAlloc(UINT64 dwByteSize);
 	virtual void DMAFree(TD_DMA_MEMORY* pMem);
 

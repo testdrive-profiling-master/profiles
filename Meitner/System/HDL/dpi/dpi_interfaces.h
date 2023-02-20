@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __DPI_INTERFACES_H__
 #define __DPI_INTERFACES_H__
@@ -71,5 +71,11 @@ struct CLOCK_INTERFACE {
 };
 
 CLOCK_INTERFACE* FindClock(BYTE* pCLK);
+
+//-----------------------------------------------------------------------
+// Driver command interface
+//-----------------------------------------------------------------------
+typedef DWORD(*DRIVER_COMMAND)(void* pCommand);
+void RegisterDriverCommand(DRIVER_COMMAND func);
 
 #endif//__DPI_INTERFACES_H__

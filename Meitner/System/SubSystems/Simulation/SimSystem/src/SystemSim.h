@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_SIM_H__
 #define __SYSTEM_SIM_H__
@@ -68,6 +68,7 @@ public:
 	virtual void RegisterInterruptService(INTRRUPT_SERVICE routine);		// register interrupt service routine
 	virtual void EnableInterrupt(bool bEnable = true);						// enable interrupt service
 	virtual void ClearInterruptPending(void);								// clear interrupt service pending bit
+	virtual DWORD DriverCommand(void* pCommand);							// post driver specific command
 
 	// memory manager
 	virtual IMemoryNative* CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, bool bDMA = false);

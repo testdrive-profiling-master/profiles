@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive System Driver wrapper
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_DRIVER_H__
 #define __SYSTEM_DRIVER_H__
@@ -67,6 +67,7 @@ public:
 	virtual void RegisterInterruptService(INTRRUPT_SERVICE routine);		// register ISR
 	virtual void EnableInterrupt(bool bEnable = true);						// enable interrupt
 	virtual void ClearInterruptPending(void);								// clear interrupt pending bit
+	virtual DWORD DriverCommand(void* pCommand);							// post driver specific command
 
 	// memory manager
 	virtual IMemoryNative* CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, bool bDMA = false);

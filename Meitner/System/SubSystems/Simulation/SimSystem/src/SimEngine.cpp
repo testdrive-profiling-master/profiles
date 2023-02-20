@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "SimEngine.h"
@@ -83,6 +83,7 @@ SimEngine::SimEngine(void) :
 	m_pSim	  			= this;
 	m_pSimHDL			= NULL;
 	m_bForceToExit		= false;
+	m_DriverCommand		= NULL;
 	SetSystemDescription("Simulation Simplified");
 }
 
@@ -356,6 +357,18 @@ void SimEngine::SetSystemDescription(const char* sDesc)
 void SimEngine::SetError(bool bError)
 {
 	m_bErrorOccured	= bError;
+}
+
+void SimEngine::RegisterDriverCommand(DRIVER_COMMAND func)
+{
+	m_DriverCommand	= func;
+}
+
+DWORD SimEngine::DriverCommand(void* pCommand)
+{
+	if(m_DriverCommand) return m_DriverCommand(pCommand);
+
+	return (DWORD) -1;
 }
 
 const char* SimEngine::GetSystemDescription(void)

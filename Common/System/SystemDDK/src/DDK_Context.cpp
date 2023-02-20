@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "DDK_Context.h"
 
@@ -142,4 +142,9 @@ void DDKContext::ClearInterruptPending(bool bReleaseWait)
 	m_pSystem->ClearInterruptPending();
 
 	if(bReleaseWait) m_Semaphore.Up();
+}
+
+DWORD DDKContext::DriverCommand(void* pCommand)
+{
+	return m_pSystem->DriverCommand(pCommand);
 }

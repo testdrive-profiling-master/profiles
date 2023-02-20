@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_HDL_H__
 #define __SIM_HDL_H__
@@ -68,6 +68,7 @@ struct SimControl {
 	virtual void SimulationDebugMode(bool bDebug = true) = 0;
 	virtual void SetSystemDescription(const char* sDesc) = 0;
 	virtual void SetError(bool bError = true) = 0;
+	virtual void RegisterDriverCommand(DRIVER_COMMAND func) = 0;
 };
 
 struct SimHDL {

@@ -122,6 +122,12 @@ void SystemDriverInterface::SetCurrentCard(DWORD dwIndex)
 	// None implementation
 }
 
+DWORD SystemDriverInterface::Command(void* pCommand)
+{
+	// None implementation
+	return (DWORD) -1;
+}
+
 TD_DMA_MEMORY* SystemDriverInterface::DMAAlloc(UINT64 dwByteSize)
 {
 	// None implementation

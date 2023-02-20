@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_HAL_H__
 #define __SYSTEM_HAL_H__
@@ -61,6 +61,7 @@ struct ISystem {
 	virtual void RegisterInterruptService(INTRRUPT_SERVICE routine) = 0;	// register ISR(interrrupt service routine)
 	virtual void EnableInterrupt(bool bEnable = true) = 0;					// enable ISR
 	virtual void ClearInterruptPending(void) = 0;							// clear interrupt pending bit
+	virtual DWORD DriverCommand(void* pCommand) = 0;						// post driver specific command
 };
 
 #if defined(SYSTEM_IMPLEMENTATION) || defined(SYSTEM_EXPORTS)

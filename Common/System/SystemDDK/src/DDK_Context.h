@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __DDK_CONTEXT_H__
 #define __DDK_CONTEXT_H__
@@ -67,6 +67,7 @@ public:
 	virtual void EnableInterrupt(bool bEnable = true);
 	virtual void ClearInterruptPending(bool bReleaseWait = false);
 	virtual void WaitInterruptDone(void);
+	virtual DWORD DriverCommand(void* pCommand);
 
 private:
 	ISystem*	m_pSystem;

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 2/10/2023 Fri (clonextop@gmail.com)
+// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
 #include "TestDriver.inl"
@@ -256,6 +256,11 @@ BUS_SLAVE_INTERFACE* FindSlave(UINT64 dwAddress)
 CLOCK_INTERFACE* FindClock(BYTE* pCLK)
 {
 	return __pSimControl->FindClock(pCLK);
+}
+
+void RegisterDriverCommand(DRIVER_COMMAND func)
+{
+	__pSimControl->RegisterDriverCommand(func);
 }
 
 void MemoryRead32(int ID, unsigned int ADDR, unsigned int* DATA)

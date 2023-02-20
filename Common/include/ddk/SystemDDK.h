@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 2/15/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_DDK_H__
 #define __SYSTEM_DDK_H__
@@ -59,10 +59,11 @@ struct DDK {
 	virtual void RegWrite(UINT64 dwAddress, DWORD dwData) = 0;
 
 	// system
-	virtual void RegisterInterruptService(DDK_INTRRUPT_SERVICE routine, void* pPrivate = NULL) = 0;
-	virtual void EnableInterrupt(bool bEnable = true) = 0;
-	virtual void ClearInterruptPending(bool bReleaseWait = false) = 0;
-	virtual void WaitInterruptDone(void) = 0;
+	virtual void RegisterInterruptService(DDK_INTRRUPT_SERVICE routine, void* pPrivate = NULL) = 0;		// register ISR(interrrupt service routine)
+	virtual void EnableInterrupt(bool bEnable = true) = 0;												// enable ISR
+	virtual void ClearInterruptPending(bool bReleaseWait = false) = 0;									// clear interrupt pending bit
+	virtual void WaitInterruptDone(void) = 0;															// wait for interrupt done
+	virtual DWORD DriverCommand(void* pCommand) = 0;													// post driver specific command
 };
 
 struct DDKMemory {

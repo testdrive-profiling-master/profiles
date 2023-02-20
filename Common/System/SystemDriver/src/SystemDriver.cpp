@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive System Driver wrapper
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "SystemDriver.h"
 #include "NativeMemory.h"
@@ -101,6 +101,11 @@ void SystemDriver::EnableInterrupt(bool bEnable)
 void SystemDriver::ClearInterruptPending(void)
 {
 	m_ISR.ClearPending();
+}
+
+DWORD SystemDriver::DriverCommand(void* pCommand)
+{
+	return m_pNativeDriver->Command(pCommand);
 }
 
 // Memory interface
