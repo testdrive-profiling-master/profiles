@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive System Driver wrapper
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "SystemDriverInterface.h"
 
@@ -122,10 +122,13 @@ void SystemDriverInterface::SetCurrentCard(DWORD dwIndex)
 	// None implementation
 }
 
-TD_DMA_MEMORY* SystemDriverInterface::DMAAlloc(UINT64 dwByteSize) {
+TD_DMA_MEMORY* SystemDriverInterface::DMAAlloc(UINT64 dwByteSize)
+{
 	// None implementation
+	return NULL;
 }
 
-void SystemDriverInterface::DMAFree(TD_DMA_MEMORY* pMem) {
+void SystemDriverInterface::DMAFree(TD_DMA_MEMORY* pMem)
+{
 	// None implementation
 }

@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Code Analysis
-// Rev.  : 10/15/2021 Fri (clonextop@gmail.com)
+// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "CodeAnalysis.h"
 #include "testdrive_document.inl"
@@ -216,9 +216,19 @@ const char* Log_StaticAnalysis(LPCTSTR lpszLog, int iID)
 				LPTSTR sLast = (LPTSTR)_tcsstr((LPCTSTR)str, sCppcheckToken);
 
 				if(sLast) {
+					if((sLast - (LPCTSTR)str) > 2) {
+						LPCTSTR	sLinePos	= _tcsstr((LPCTSTR)str + 2, _T(":"));
+
+						if(sLinePos) {
+							LPCTSTR	sLinePos2	= _tcsstr(sLinePos + 1, _T(":"));
+
+							if(sLinePos2) sLast = (LPTSTR)sLinePos2;
+						}
+					}
+
 					CString	strLast(sLast);
 					*sLast	= _T('\0');
-					CString sLink(str);
+					CString sLink((LPCTSTR)str);
 					{
 						int iPos = str.Find(':');
 
@@ -231,12 +241,15 @@ const char* Log_StaticAnalysis(LPCTSTR lpszLog, int iID)
 						// separate argument
 						iPos = sLink.ReverseFind(_T(':'));
 
-						if(iPos != -1) {
-							iPos = sLink.ReverseFind(_T(":"), iPos - 1);
+						if(iPos > 0) {
+							int iPos2 = sLink.ReverseFind(_T(":"), iPos - 1);
 
-							if(iPos != -1) sLink[iPos]	= _T('@');
+							if(iPos2 > 2) iPos = iPos2;
+
+							if(iPos > 2) sLink.SetAt(iPos, _T('@'));
 						}
 					}
+					sLink.Replace(_T('\\'), _T('/'));
 					sLink.Insert(0, _T("edit:"));
 					pReport->AppendText(_T("\t"));
 					pReport->SetLink(sLink);
@@ -421,6 +434,7 @@ BOOL CodeAnalysis::StaticCodeAnalysis(LPCTSTR lpszTitle, LPCTSTR lpszPath, LPCTS
 		int	iPos = 0;
 		CString sSuppressToken(m_sErrorSuppress);
 		CString sArgs(lpszArg);
+		sArgs.Insert(0, _T("--platform=win64 "));	// for cppcheck v2.13
 
 		while(iPos >= 0) {
 			CString sToken	= sSuppressToken.Tokenize(sDelim, iPos);
@@ -442,7 +456,7 @@ void CodeAnalysis::DoStaticCodeAnalysis(void)
 	BOOL bRet		= TRUE;
 	m_pDoc->Lock();
 	m_pReport->Clear();
-	m_pReport->SetFont(_T("Arrial"));
+	m_pReport->SetFont(_T("Arial"));
 	m_pReport->SetColor(RGB(0, 0, 0));
 	m_pReport->SetText(_L(STATIC_CODE_ANALYSIS));
 	g_pSystem->LogInfo(_L(STATIC_CODE_ANALYSIS_PLEASE_WAIT));

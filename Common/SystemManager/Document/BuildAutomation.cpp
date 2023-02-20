@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System manager
-// Rev.  : 2/17/2023 Fri (clonextop@gmail.com)
+// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "BuildAutomation.h"
 #include "Utils.h"
@@ -437,7 +437,7 @@ BOOL BuildAutomation::CppCheck(LPCTSTR lpszPath)
 	CString sArg;
 	sIncCommonPath		= g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_PROFILE%Common/include"));
 	sIncTestDrivePath	= g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_DIR%include"));
-	sArg.Format(_T("-I %s -I %s -U_WIN32_WCE -U_MFC_VER -U_MSC_VER -U__BORLANDC__ -U__sgi -U__SGI_STL_PORT -DWIN32 --suppress=preprocessorErrorDirective --suppress=unknownMacro --inline-suppr --force %s"), (LPCTSTR)sIncCommonPath, (LPCTSTR)sIncTestDrivePath, lpszPath);
+	sArg.Format(_T("-I %s -I %s -U_WIN32_WCE -U_MFC_VER -U_MSC_VER -U__BORLANDC__ -U__sgi -U__SGI_STL_PORT --platform=win64 -DWIN32 --suppress=preprocessorErrorDirective --suppress=unknownMacro --inline-suppr --force %s"), (LPCTSTR)sIncCommonPath, (LPCTSTR)sIncTestDrivePath, lpszPath);
 
 	if(g_pSystem->ExecuteFile(_T("%TESTDRIVE_DIR%bin\\msys64\\ucrt64\\bin\\CppCheck.exe"), sArg.c_str(), TRUE, NULL, g_pSystem->GetProjectPath(),
 							  _T(": error:"), -1,
