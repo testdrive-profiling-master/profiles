@@ -48,14 +48,14 @@ static void __ShowByteSize(UINT64 dwSize)
 {
 	bool bShow = false;
 
-	if(dwSize > 1024 * 1024 * 1024) {
+	if(dwSize >= 1024 * 1024 * 1024) {
 		UINT64	b_size	= dwSize / (1024 * 1024 * 1024);
 		dwSize	-= b_size * (1024 * 1024 * 1024);
 		printf("%lldGB", b_size);
 		bShow	= true;
 	}
 
-	if(dwSize > 1024 * 1024) {
+	if(dwSize >= 1024 * 1024) {
 		UINT64	b_size	= dwSize / (1024 * 1024);
 		dwSize	-= b_size * (1024 * 1024);
 
@@ -65,7 +65,7 @@ static void __ShowByteSize(UINT64 dwSize)
 		bShow	= true;
 	}
 
-	if(dwSize > 1024) {
+	if(dwSize >= 1024) {
 		UINT64	b_size	= dwSize / (1024);
 		dwSize	-= b_size * (1024);
 
