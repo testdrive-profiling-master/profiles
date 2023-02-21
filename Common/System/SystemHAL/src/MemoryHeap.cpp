@@ -323,7 +323,10 @@ bool MemoryImplementation::Initialize(UINT64 dwPhysical, UINT64 dwByteSize, IMem
 
 void MemoryImplementation::Release(void)
 {
-	if(AllocatedMemoryCount()) Report();
+	if(AllocatedMemoryCount()) {
+		Report();
+		printf("*W: Unreleased memory is existed.\n");
+	}
 
 	// release all inaccessible memories
 	if(m_InaccessibleList.size()) {
