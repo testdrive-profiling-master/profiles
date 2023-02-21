@@ -374,14 +374,14 @@ void MemoryImplementation::Report(void)
 		int i_none_free_count	= 0;
 		HeapLink*	pLink		= HeapLink::Head();
 		printf("\n------------------------------------------------------------------\nSystem heap memory stack status\n"\
-			   "    ID   IsFree    Address(Physical)          ByteSize\n");
+			   "      ID   Free   Address (Physical)         ByteSize\n");
 
 		for(int i = 0; pLink; i++) {
 			MemoryHeap* pHeap = pLink->Item();
 
 			if(!pHeap->IsInaccessible()) {
 				printf(
-					"    %-4d %c         0x%08X_%08X    %12llu (", i, pHeap->IsFree() ? 'O' : 'X', (UINT32)(pHeap->Physical() >> 32), (UINT32)(pHeap->Physical() & 0xFFFFFFFF), pHeap->ByteSize());
+					"    %4d    %c     0x%08X_%08X    %12llu (", i, pHeap->IsFree() ? 'O' : 'X', (UINT32)(pHeap->Physical() >> 32), (UINT32)(pHeap->Physical() & 0xFFFFFFFF), pHeap->ByteSize());
 				__ShowByteSize(pHeap->ByteSize());
 				printf(")\n");
 
