@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,31 +31,20 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
-#ifndef __COMMON_H__
-#define __COMMON_H__
-#include "STDInterface.h"
-#include "TD_Semaphore.h"
-#include <ngspice/sharedspice.h>
-#include <assert.h>
-#include <thread>
+#ifndef __NATIVE_MEMORY_H__
+#define __NATIVE_MEMORY_H__
+#include "ddk/SystemHAL.h"
 
-using namespace std;
+class NativeSystemMemory : public IMemoryNative {
+	BYTE*	m_pMem;
+public:
+	NativeSystemMemory(UINT64 dwByteSize);
+	virtual ~NativeSystemMemory(void);
 
-#define _USE_MATH_DEFINES
-#include <math.h>
-
-#include "TestDriver.h"
-
-void LOGI(char* fmt, ...);
-void LOGE(char* fmt, ...);
-
-//#define USE_TRACE_LOG
-#ifdef USE_TRACE_LOG
-#define	TRACE_LOG(s)	printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);fflush(stdout);
-#else
-#define	TRACE_LOG(s)
-#endif
-
-#endif//__COMMON_H__
+	virtual void Release(void);
+	virtual BYTE* Virtual(void);
+	virtual bool Flush(UINT64 dwOffset, UINT64 dwPhyAddress, UINT64 dwByteSize, bool bWrite);
+};
+#endif//__NATIVE_MEMORY_H__

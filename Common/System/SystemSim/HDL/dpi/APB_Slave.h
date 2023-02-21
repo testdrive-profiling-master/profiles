@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,32 +30,37 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Simulation sub-system
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Title : Common DPI
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
-#ifndef __COMMON_H__
-#define __COMMON_H__
-#include "STDInterface.h"
-#include "TD_Semaphore.h"
-#include <ngspice/sharedspice.h>
-#include <assert.h>
-#include <thread>
+#ifndef __APB_SLAVE_H__
+#define __APB_SLAVE_H__
+#include "dpi_common.h"
 
-using namespace std;
+class APB_Slave : public SelfDestory {
+public:
+	APB_Slave(const char* sTitle, DWORD dwAddrBase, DWORD dwAddrHigh);
+	virtual ~APB_Slave(void);
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+	void BusSignal(
+		BYTE nRST,
+		BYTE& PSEL, BYTE& PENABLE, BYTE& PWRITE, DWORD& PADDR, DWORD& PWDATA, DWORD& PSTRB,
+		DWORD PRDATA, BYTE PREADY, BYTE PSLVERR);
 
-#include "TestDriver.h"
+protected:
+	typedef enum {
+		BUS_STATE_IDLE,
+		BUS_STATE_START,
+		BUS_STATE_DATA,
+	} BUS_STATE;
 
-void LOGI(char* fmt, ...);
-void LOGE(char* fmt, ...);
+private:
+	BUS_SLAVE_INTERFACE*	m_pSlave;
+	BUS_STATE				m_state;
+	BUS_SALVE_PACKET*		m_pPacket;
+	bool					m_bWrite;
+	DWORD					m_dwTime;
+	SystemLog				Log;
+};
 
-//#define USE_TRACE_LOG
-#ifdef USE_TRACE_LOG
-#define	TRACE_LOG(s)	printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);fflush(stdout);
-#else
-#define	TRACE_LOG(s)
-#endif
-
-#endif//__COMMON_H__
+#endif//__APB_SLAVE_H__

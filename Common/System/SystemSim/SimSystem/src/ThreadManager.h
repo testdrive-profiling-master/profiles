@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,31 +31,32 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Rev.  : 11/9/2022 Wed (clonextop@gmail.com)
 //================================================================================
-#ifndef __COMMON_H__
-#define __COMMON_H__
-#include "STDInterface.h"
-#include "TD_Semaphore.h"
-#include <ngspice/sharedspice.h>
-#include <assert.h>
-#include <thread>
+#ifndef __THREAD_MANAGER_H__
+#define __THREAD_MANAGER_H__
+#include "Common.h"
+#include <atomic>
 
-using namespace std;
+class ThreadManager {
+public:
+	ThreadManager(void);
+	virtual ~ThreadManager(void);
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+	void SetThreadBreakable(bool bBreakable = true);
+	bool RunThread(void);										// run thread
+	void KillThread(void);										// kill thread
+	bool IsRunning(void);
 
-#include "TestDriver.h"
+protected:
+	virtual void MonitorThread(void)			= 0;			// thread monitor
+	virtual void OnThreadKill(bool bForced)		= 0;			// thread kill pre-event
 
-void LOGI(char* fmt, ...);
-void LOGE(char* fmt, ...);
+private:
+	void ThreadMain(void);
 
-//#define USE_TRACE_LOG
-#ifdef USE_TRACE_LOG
-#define	TRACE_LOG(s)	printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);fflush(stdout);
-#else
-#define	TRACE_LOG(s)
-#endif
-
-#endif//__COMMON_H__
+	thread				m_Thread;
+	bool				m_bBreakable;
+	atomic<bool>		m_bThreadRunning;
+};
+#endif//__THREAD_MANAGER_H__

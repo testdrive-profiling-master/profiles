@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,31 +31,57 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
-#ifndef __COMMON_H__
-#define __COMMON_H__
-#include "STDInterface.h"
-#include "TD_Semaphore.h"
-#include <ngspice/sharedspice.h>
-#include <assert.h>
-#include <thread>
+#ifndef __SIM_CLOCK_H__
+#define __SIM_CLOCK_H__
+#include "SimEngine.h"
+#include "SimReset.h"
+#include "AutoList.h"
 
-using namespace std;
+class SimClock :
+	public CLOCK_INTERFACE,
+	public AutoList<SimClock> {
+public:
+	SimClock(BYTE* pCLK, BYTE* pRST);
+	virtual ~SimClock(void);
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+	static bool IsReset(void) {
+		return m_bReset;
+	}
 
-#include "TestDriver.h"
+	static void Tik(void);		// Tiking clock (before the evaluation)
+	static DWORD Tok(void);		// Toking clock (after the evaluation)
 
-void LOGI(char* fmt, ...);
-void LOGE(char* fmt, ...);
+	virtual void SetParameters(DWORD dwID, DWORD dwPeriod, BYTE bInitValue = 0, DWORD dwPhase = 0, BYTE ClockPolarity = 1, BYTE ResetPolarity = 0);
+	virtual void DoReset(DWORD dwCycles = 8);
+	virtual void Release(void);
 
-//#define USE_TRACE_LOG
-#ifdef USE_TRACE_LOG
-#define	TRACE_LOG(s)	printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);fflush(stdout);
-#else
-#define	TRACE_LOG(s)
-#endif
+	inline BYTE* CLK(void) {
+		return m_pCLK;
+	}
+	inline BYTE* RST(void) {
+		return m_pRST;
+	}
 
-#endif//__COMMON_H__
+protected:
+	static void Refresh(void);	// refresh clock list
+	void ProcessTik(void);
+	bool ProcessTok(DWORD dwElapsedTime, DWORD& dwMinTime);
+
+private:
+	DWORD				m_dwID;				// clock ID#
+	BYTE*				m_pCLK;				// current clock
+	BYTE*				m_pRST;				// current reset
+	BYTE				m_NextClock;		// next clock
+	BYTE				m_NextReset;		// next reset
+	BYTE				m_reset_cycles;		// reset cycles
+	BYTE				m_clock_polarity;	// clock polarity
+	BYTE				m_reset_polarity;	// reset polarity
+	DWORD				m_dwPeriod;			// clock period (ps)
+	DWORD				m_dwLeftTime;		// next toggle left time
+	static DWORD		m_dwElapsedTime;
+	static bool			m_bReset;
+	SimReset*			m_pReset;
+};
+#endif//__SIM_CLOCK_H__

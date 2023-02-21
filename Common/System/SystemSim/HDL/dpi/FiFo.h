@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,32 +30,64 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Simulation sub-system
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Title : Common DPI
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
-#ifndef __COMMON_H__
-#define __COMMON_H__
-#include "STDInterface.h"
-#include "TD_Semaphore.h"
-#include <ngspice/sharedspice.h>
+#ifndef __DPI_FiFo_H__
+#define __DPI_FiFo_H__
+#include "dpi_common.h"
 #include <assert.h>
-#include <thread>
 
-using namespace std;
+template <typename T, const int fifo_size, const int minimum_pushable_size = 1>
+class FiFo {
+public:
+	FiFo(void) {
+		Reset();
+		m_pArchive	= new T[fifo_size];
+	}
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+	virtual ~FiFo(void) {
+		assert(fifo_size > 0);
+		assert(minimum_pushable_size < fifo_size);
+		SAFE_DELETE_ARRAY(m_pArchive);
+	}
 
-#include "TestDriver.h"
+	void Reset(void) {
+		m_iUsed		= 0;
+		m_iPush		= 0;
+		m_iPop		= 0;
+	}
 
-void LOGI(char* fmt, ...);
-void LOGE(char* fmt, ...);
+	inline bool IsFull(void) {
+		return (m_iUsed >= (fifo_size - minimum_pushable_size));
+	}
 
-//#define USE_TRACE_LOG
-#ifdef USE_TRACE_LOG
-#define	TRACE_LOG(s)	printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);fflush(stdout);
-#else
-#define	TRACE_LOG(s)
-#endif
+	inline bool IsEmpty(void) {
+		return (!m_iUsed);
+	}
 
-#endif//__COMMON_H__
+	bool Push(const T* pData) {
+		if(IsFull()) return FALSE;
+
+		memcpy(&m_pArchive[m_iPush], pData, sizeof(T));
+		m_iPush = (m_iPush + 1) % fifo_size;
+		m_iUsed++;
+		return true;
+	}
+
+	bool Pop(T* pData) {
+		if(IsEmpty()) return FALSE;
+
+		memcpy(pData, &m_pArchive[m_iPop], sizeof(T));
+		m_iPop = (m_iPop + 1) % fifo_size;
+		m_iUsed--;
+		return true;
+	}
+
+private:
+	int		m_iUsed;
+	int		m_iPush, m_iPop;
+	T*		m_pArchive;
+};
+
+#endif//__DPI_FiFo_H__

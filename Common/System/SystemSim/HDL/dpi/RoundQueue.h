@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,32 +30,62 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Simulation sub-system
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Title : Common DPI
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
-#ifndef __COMMON_H__
-#define __COMMON_H__
+#ifndef __ROUND_QUEUE_H__
+#define __ROUND_QUEUE_H__
 #include "STDInterface.h"
-#include "TD_Semaphore.h"
-#include <ngspice/sharedspice.h>
-#include <assert.h>
-#include <thread>
 
-using namespace std;
+template<typename T, int queue_size>
+class RoundQueue {
+	T*		m_pQ;
+	T		m_Pop;
+	DWORD	m_dwTotalCount;
+	DWORD	m_dwHead;
+	DWORD	m_dwTail;
+	DWORD	m_dwRestCount;
+public:
+	RoundQueue(void) {
+		assert(queue_size > 0);
+		m_pQ			= new T[queue_size];
+		m_dwTotalCount	=
+			m_dwRestCount	= queue_size;
+		m_dwHead		=
+			m_dwTail		= 0;
+	}
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+	~RoundQueue(void) {
+		if(m_pQ) {
+			delete [] m_pQ;
+			m_pQ	= NULL;
+		}
+	}
 
-#include "TestDriver.h"
+	T* Push(void) {
+		if(IsFull()) return NULL;
 
-void LOGI(char* fmt, ...);
-void LOGE(char* fmt, ...);
+		T*	pData = &m_pQ[m_dwHead];
+		m_dwRestCount--;
+		m_dwHead = (m_dwHead + 1) % m_dwTotalCount;
+		return pData;
+	}
 
-//#define USE_TRACE_LOG
-#ifdef USE_TRACE_LOG
-#define	TRACE_LOG(s)	printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);fflush(stdout);
-#else
-#define	TRACE_LOG(s)
-#endif
+	T* Pop(void) {
+		if(IsEmpty()) return NULL;
 
-#endif//__COMMON_H__
+		memcpy(&m_Pop, &m_pQ[m_dwTail], sizeof(T));
+		m_dwRestCount++;
+		m_dwTail = (m_dwTail + 1) % m_dwTotalCount;
+		return &m_Pop;
+	}
+
+	inline bool IsEmpty(void)	{
+		return m_dwRestCount == m_dwTotalCount;
+	}
+	inline bool IsFull(void)	{
+		return !m_dwRestCount;
+	}
+};
+
+#endif//__ROUND_QUEUE_H__

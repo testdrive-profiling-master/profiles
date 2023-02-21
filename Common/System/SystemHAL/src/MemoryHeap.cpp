@@ -31,15 +31,18 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 2/10/2023 Fri (clonextop@gmail.com)
+// Rev.  : 2/21/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include <assert.h>
 #include <stdio.h>
 #include "MemoryHeap.h"
 
-static IMemoryManager*		__pMemoryManager	= NULL;
-static UINT64				__HEAP_PHY_BASE		= 0;
-static UINT64				__HEAP_BYTE_SIZE	= 0;
+using namespace std;
+
+static IMemoryManager*		__pMemoryManager		= NULL;
+static UINT64				__HEAP_PHY_BASE			= 0;
+static UINT64				__HEAP_BYTE_SIZE		= 0;
+static bool					__bInaccessibleMemory	= false;
 
 static void __ShowByteSize(UINT64 dwSize)
 {
@@ -105,6 +108,7 @@ MemoryHeap::MemoryHeap(MemoryHeap* pPrev) : m_Link(this), m_Free(this)
 	m_dwByteSize		= 0;
 	m_pNative			= NULL;
 	m_bFree				= false;
+	m_bInaccessible		= false;
 
 	if(pPrev) m_Link.Link(&pPrev->m_Link);
 }
@@ -134,10 +138,14 @@ bool MemoryHeap::Alloc(MemoryHeap* pHeap, UINT64 dwAllocByteSize, UINT64 dwByteA
 	// physical address is not fit to.
 	if((dwPhyAddress != (UINT64) - 1) && (dwPhyAddress < m_dwPhysical || (dwPhyAddress + dwAllocByteSize) > (m_dwPhysical + m_dwByteSize))) return false;
 
-	// create native first
-	pHeap->m_pNative		= __pMemoryManager->CreateMemory(dwAllocByteSize, dwByteAlignment, bDMA);
+	if(!__bInaccessibleMemory) {
+		// create native first
+		pHeap->m_pNative		= __pMemoryManager->CreateMemory(dwAllocByteSize, dwByteAlignment, bDMA);
 
-	if(!pHeap->m_pNative) return false;
+		if(!pHeap->m_pNative) return false;
+	} else {
+		pHeap->m_bInaccessible	= true;
+	}
 
 	// set not free heap to new heap
 	pHeap->m_bFree			= false;
@@ -166,8 +174,11 @@ bool MemoryHeap::Alloc(MemoryHeap* pHeap, UINT64 dwAllocByteSize, UINT64 dwByteA
 				pExtraHeap->m_dwPhysical	= pHeap->m_dwPhysical + pHeap->m_dwByteSize;
 				pExtraHeap->m_dwByteSize	= dwExtraFreeSize;
 				pExtraHeap->m_bFree			= true;
+				pExtraHeap->m_Link.Link(&pHeap->m_Link);
 				pExtraHeap->m_Free.Link();
 			}
+
+			if(!m_dwByteSize) Release();
 		}
 	} else {	// managed allocation
 		pHeap->m_dwPhysical		= m_dwPhysical + m_dwByteSize;
@@ -261,9 +272,13 @@ IMemory* CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAdd
 {
 	IMemory* pMem = new MemoryHeap(dwByteSize, dwByteAlignment, dwPhyAddress, bDMA);
 
-	if(!pMem->Virtual()) {
-		pMem->Release();
-		pMem	= NULL;	// cppcheck-suppress memleak
+	if(__bInaccessibleMemory) {
+		__bInaccessibleMemory	= false;
+	} else {
+		if(!pMem->Virtual()) {
+			pMem->Release();
+			pMem	= NULL;	// cppcheck-suppress memleak
+		}
 	}
 
 	return pMem;
@@ -282,6 +297,11 @@ void EnumerateMemory(ENUMERATE_MEMORY_FUNCTION func, void* pPrivate)
 			pLink = pLink->Next();
 		}
 	}
+}
+
+void ReportMemory(void)
+{
+	MemoryImplementation::Report();
 }
 
 //-----------------------------------------------------------
@@ -303,37 +323,76 @@ bool MemoryImplementation::Initialize(UINT64 dwPhysical, UINT64 dwByteSize, IMem
 
 void MemoryImplementation::Release(void)
 {
-	Report();
+	if(AllocatedMemoryCount()) Report();
+
+	// release all inaccessible memories
+	if(m_InaccessibleList.size()) {
+		for(auto& i : m_InaccessibleList) i->Release();
+
+		m_InaccessibleList.clear();
+	}
 
 	// Eliminate all heaps.
 	while(HeapLink::Head()) delete HeapLink::Head()->Item();
 }
 
+bool MemoryImplementation::SetInaccessible(UINT64 dwPhysical, UINT64 dwByteSize)
+{
+	__bInaccessibleMemory	= true;
+	IMemory*	pMem		= CreateMemory(dwByteSize, 1, dwPhysical);
+
+	if(pMem) {
+		m_InaccessibleList.push_back(pMem);
+		return true;
+	} else {
+		printf("*E: Can't define inaccessible memory area : physical_address(0x%llX), byte_size(0x%llX)\n", dwPhysical, dwByteSize);
+	}
+
+	return false;
+}
+
+int MemoryImplementation::AllocatedMemoryCount(void)
+{
+	int			iCount	= 0;
+	HeapLink*	pLink	= HeapLink::Head();
+
+	while(pLink) {
+		MemoryHeap* pHeap = pLink->Item();
+
+		if(!pHeap->IsInaccessible() && !pHeap->IsFree()) iCount++;
+
+		pLink	= pLink->Next();
+	}
+
+	return iCount;
+}
+
 void MemoryImplementation::Report(void)
 {
-	if(!HeapLink::Head()) return;
-
-	if(HeapLink::Head()->Next()) {
+	if(HeapLink::Head()) {
 		// Report detail un-freed heap memories
-		int i_not_free_count	= 0;
+		int i_none_free_count	= 0;
 		HeapLink*	pLink		= HeapLink::Head();
 		printf("\n------------------------------------------------------------------\nSystem heap memory stack status\n"\
-			   "    ID   IsFree    Address(Phy.)     ByteSize\n");
+			   "    ID   IsFree    Address(Physical)          ByteSize\n");
 
 		for(int i = 0; pLink; i++) {
 			MemoryHeap* pHeap = pLink->Item();
-			printf(
-				"    %-4d %c         0x%08X    %12u (", i, pHeap->IsFree() ? 'O' : 'X', pHeap->Physical(), pHeap->ByteSize());
-			__ShowByteSize(pHeap->ByteSize());
-			printf(")\n");
 
-			if(!pHeap->IsFree()) i_not_free_count++;
+			if(!pHeap->IsInaccessible()) {
+				printf(
+					"    %-4d %c         0x%08X_%08X    %12llu (", i, pHeap->IsFree() ? 'O' : 'X', (UINT32)(pHeap->Physical() >> 32), (UINT32)(pHeap->Physical() & 0xFFFFFFFF), pHeap->ByteSize());
+				__ShowByteSize(pHeap->ByteSize());
+				printf(")\n");
+
+				if(!pHeap->IsFree()) i_none_free_count++;
+			}
 
 			pLink = pLink->Next();
 		}
 
-		if(i_not_free_count)
-			printf("*E: Non-free heap count : %d\n", i_not_free_count);
+		if(i_none_free_count)
+			printf("*I: Non-free heap count : %d\n", i_none_free_count);
 
 		printf("------------------------------------------------------------------\n");
 	}

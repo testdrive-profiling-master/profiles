@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,32 +30,51 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Simulation sub-system
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Title : Common DPI
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
-#ifndef __COMMON_H__
-#define __COMMON_H__
-#include "STDInterface.h"
-#include "TD_Semaphore.h"
-#include <ngspice/sharedspice.h>
-#include <assert.h>
-#include <thread>
+#ifndef __DPI_CHART_H__
+#define __DPI_CHART_H__
+#include "dpi_common.h"
 
-using namespace std;
+typedef enum {
+	CHART_STYLE_POINT,
+	CHART_STYLE_LINE,
+	CHART_STYLE_SURFACE,
+	CHART_STYLE_BAR,
+	CHART_STYLE_CANDLESTICK,
+	CHART_STYLE_GANTT
+} CHART_STYLE;
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+class Chart {
+public:
+	Chart(void);
+	~Chart(void);
 
-#include "TestDriver.h"
+	bool Initialize(void);
 
-void LOGI(char* fmt, ...);
-void LOGE(char* fmt, ...);
+	void CreateSerie(DWORD dwID, const char* sName = NULL, CHART_STYLE style = CHART_STYLE_LINE, bool bSecondaryHorizAxis = FALSE, bool bSecondaryVertAxis = FALSE);
+	void RemoveSerie(DWORD dwIndex = (DWORD) - 1);
+	void SetName(DWORD dwID, const char* sName);
+	void AddPoint(DWORD dwID, double Xvalue, double Yvalue);
+	void AddPointArray(DWORD dwID, DWORD dwCount, double* pXvalues, double* pYvalues);
+	void SetLabel(DWORD dwID, DWORD dwIndex, const char* sLabel);
+	void SetWidth(DWORD dwID, int iWidth);
+	void SetSmooth(DWORD dwID, bool bSmooth);
+	void SetForeground(void);
 
-//#define USE_TRACE_LOG
-#ifdef USE_TRACE_LOG
-#define	TRACE_LOG(s)	printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);fflush(stdout);
-#else
-#define	TRACE_LOG(s)
-#endif
+protected:
+	inline	bool CheckValidate(void) {
+		if(m_hWnd) {
+			if(!IsWindow(m_hWnd)) m_hWnd = NULL;
+		}
 
-#endif//__COMMON_H__
+		return m_hWnd != NULL;
+	}
+
+private:
+	HWND				m_hWnd;
+	void*				m_pCommand;
+};
+
+#endif//__DPI_CHART_H__

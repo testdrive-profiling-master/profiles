@@ -31,10 +31,11 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 2/21/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __MEMORY_HEAP_H__
 #define __MEMORY_HEAP_H__
+#include <list>
 #include "ddk/SystemHAL.h"
 #include "CircularLink.h"
 
@@ -57,6 +58,10 @@ public:
 
 	inline bool IsFree(void) {
 		return m_bFree;
+	}
+
+	inline bool IsInaccessible(void) {
+		return m_bInaccessible;
 	}
 
 	bool Alloc(MemoryHeap* pHeap, UINT64 dwAllocByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress, bool bDMA);
@@ -84,6 +89,7 @@ private:
 	UINT64						m_dwPhysical;		// physical memory address
 	UINT64						m_dwByteSize;		// heap size (byte, block aligned)
 	IMemoryNative*				m_pNative;			// native system memory manager
+	bool						m_bInaccessible;	// inaccessible memory
 };
 
 class MemoryImplementation : public IMemoryImp {
@@ -91,12 +97,15 @@ public:
 	MemoryImplementation(void);
 	virtual ~MemoryImplementation(void);
 
-	virtual bool Initialize(UINT64 dwPhysical, UINT64 dwByteSize, IMemoryManager* pMemoryManager);	//@FIXME : pVirtual is unused
+	virtual bool Initialize(UINT64 dwPhysical, UINT64 dwByteSize, IMemoryManager* pMemoryManager);
 	virtual void Release(void);
+	virtual bool SetInaccessible(UINT64 dwPhysical, UINT64 dwByteSize);
 
-	void Report(void);
+	int AllocatedMemoryCount(void);
+	static void Report(void);
 
 private:
+	std::list<IMemory*>	m_InaccessibleList;
 };
 
 extern MemoryImplementation	g_MemoryImplementation;

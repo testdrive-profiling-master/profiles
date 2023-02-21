@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,31 +31,73 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Rev.  : 11/9/2022 Wed (clonextop@gmail.com)
 //================================================================================
-#ifndef __COMMON_H__
-#define __COMMON_H__
-#include "STDInterface.h"
-#include "TD_Semaphore.h"
-#include <ngspice/sharedspice.h>
-#include <assert.h>
-#include <thread>
+#include "Common.h"
+#include "ThreadManager.h"
+#include <chrono>
 
-using namespace std;
+ThreadManager::ThreadManager(void)
+{
+	m_bBreakable		= true;
+	m_bThreadRunning	= false;
+}
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+ThreadManager::~ThreadManager(void)
+{
+	assert(!m_Thread.joinable());
+}
 
-#include "TestDriver.h"
+void ThreadManager::SetThreadBreakable(bool bBreakable)
+{
+	m_bBreakable		= bBreakable;
+}
 
-void LOGI(char* fmt, ...);
-void LOGE(char* fmt, ...);
+void ThreadManager::ThreadMain(void)
+{
+	MonitorThread();
+	m_bThreadRunning	= false;
+}
 
-//#define USE_TRACE_LOG
-#ifdef USE_TRACE_LOG
-#define	TRACE_LOG(s)	printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);fflush(stdout);
-#else
-#define	TRACE_LOG(s)
-#endif
+bool ThreadManager::RunThread(void)
+{
+	if(m_bThreadRunning) return false;
 
-#endif//__COMMON_H__
+	m_bThreadRunning	= true;
+	m_Thread			= thread{&ThreadManager::ThreadMain, this};
+	return m_Thread.joinable();
+}
+
+void ThreadManager::KillThread(void)
+{
+	if(!m_Thread.joinable()) return;
+
+	if(IsRunning()) {
+		OnThreadKill(false);
+		this_thread::yield();
+
+		for(int i = 0; i < 600; i++) {	// wait for 5 seconds
+			if(!IsRunning()) break;
+
+			if(GetKeyState(VK_ESCAPE) < 0) break;
+
+			this_thread::sleep_for(chrono::milliseconds(10));
+
+			if(!((i + 1) % 100) && (i / 100) != 5) {
+				LOGI("S/W is down, but Simulation is still busy. Automatically shutdown in %d sec. or press 'ESC' key to exit.\n", 5 - (i / 100));
+			}
+		}
+
+		if(IsRunning()) {
+			OnThreadKill(true);
+			this_thread::yield();
+		}
+	}
+
+	m_Thread.join();
+}
+
+bool ThreadManager::IsRunning(void)
+{
+	return m_bThreadRunning;
+}

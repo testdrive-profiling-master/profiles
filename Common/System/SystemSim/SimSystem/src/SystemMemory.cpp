@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,31 +31,51 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
 //================================================================================
-#ifndef __COMMON_H__
-#define __COMMON_H__
+#include "Common.h"
 #include "STDInterface.h"
-#include "TD_Semaphore.h"
-#include <ngspice/sharedspice.h>
-#include <assert.h>
-#include <thread>
+#include "SystemMemory.h"
 
-using namespace std;
+SystemMemory			g_SystemMemory;
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+bool GetConfiguration(LPCTSTR sKeyName, LPTSTR sValue)
+{
+	if(!GetEnvironmentVariable(sKeyName, sValue, MAX_PATH)) {
+		char	sConfigFIlePath[4096];
+		GetFullPathName(".TestDrive", 4096, sConfigFIlePath, NULL);
+		GetPrivateProfileString("Configuration", sKeyName, "", sValue, MAX_PATH, sConfigFIlePath);
+	}
 
-#include "TestDriver.h"
+	return (*sValue) != NULL;
+}
 
-void LOGI(char* fmt, ...);
-void LOGE(char* fmt, ...);
+SystemMemory::SystemMemory(void)
+{
+	char	sMemoryNameSystem[MAX_PATH];
+	char	sMemoryNameDisplay[MAX_PATH];
+	GetConfiguration("SYSTEM_MEMORY_NAME", sMemoryNameSystem);
+	GetConfiguration("DISPLAY_MEMORY_NAME", sMemoryNameDisplay);
+	m_pSystemMemory		= TestDriver_GetMemory(sMemoryNameSystem);
+	m_pSystemConfig		= m_pSystemMemory ? (SYSTEM_CONFIG*)m_pSystemMemory->GetConfig() : NULL;
+	m_pDisplayMemory	= TestDriver_GetMemory(sMemoryNameDisplay);
+	m_pDisplayConfig	= m_pDisplayMemory ? (DisplayConfig*)m_pDisplayMemory->GetConfig() : NULL;
+	m_dwBaseAddress		= 0x80000000;	// default system memory's base address
+}
 
-//#define USE_TRACE_LOG
-#ifdef USE_TRACE_LOG
-#define	TRACE_LOG(s)	printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);fflush(stdout);
-#else
-#define	TRACE_LOG(s)
-#endif
+SystemMemory::~SystemMemory(void)
+{
+	TestDriver_Cleanup();
+}
 
-#endif//__COMMON_H__
+UINT64 SystemMemory::ByteSize(void)
+{
+	return m_pSystemMemory->GetSize();
+}
+
+BYTE* SystemMemory::GetPointer(UINT64 dwAddress, UINT64 dwSize, bool bDisplay)
+{
+	if(bDisplay) return m_pDisplayMemory->GetPointer(dwAddress, dwSize);
+
+	return m_pSystemMemory->GetPointer(dwAddress - m_dwBaseAddress, dwSize);
+}

@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,31 +31,53 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
-#ifndef __COMMON_H__
-#define __COMMON_H__
-#include "STDInterface.h"
-#include "TD_Semaphore.h"
-#include <ngspice/sharedspice.h>
+#include "Common.h"
+#include "SimReset.h"
+#include "SimClock.h"
 #include <assert.h>
-#include <thread>
 
-using namespace std;
+SimReset::SimReset(BYTE* pRST)
+{
+	m_pRST	= pRST;
+	Set(8, 0);
+	TRACE_UNLOCK
+	m_pSim->Unlock();
+}
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+SimReset::~SimReset(void)
+{
+}
 
-#include "TestDriver.h"
+bool SimReset::OnRun(void)
+{
+	return true;
+}
 
-void LOGI(char* fmt, ...);
-void LOGE(char* fmt, ...);
+void SimReset::Set(DWORD dwCycles, BYTE Polarity)
+{
+	*m_pRST			= Polarity;
+	m_dwResetCycles	= dwCycles ? dwCycles : 1;
+	m_dwLifeCycle	= 30;
+}
 
-//#define USE_TRACE_LOG
-#ifdef USE_TRACE_LOG
-#define	TRACE_LOG(s)	printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);fflush(stdout);
-#else
-#define	TRACE_LOG(s)
-#endif
+bool SimReset::DoCycle(void)
+{
+	if(m_dwResetCycles) {
+		m_dwResetCycles--;
 
-#endif//__COMMON_H__
+		if(!m_dwResetCycles)
+			*m_pRST	^= 1;
+	} else {
+		if(!m_dwLifeCycle) {
+			TRACE_LOCK
+			m_pSim->Lock(2);
+			delete this;
+			return false;
+		} else
+			m_dwLifeCycle--;
+	}
+
+	return true;
+}

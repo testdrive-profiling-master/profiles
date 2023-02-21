@@ -1,8 +1,7 @@
 //================================================================================
 // Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,31 +31,70 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Rev.  : 10/18/2021 Mon (clonextop@gmail.com)
 //================================================================================
-#ifndef __COMMON_H__
-#define __COMMON_H__
-#include "STDInterface.h"
-#include "TD_Semaphore.h"
-#include <ngspice/sharedspice.h>
-#include <assert.h>
-#include <thread>
+#include "Common.h"
+#include "SimCircuit.h"
 
-using namespace std;
+static int __ngspice_recieve_char(char* str, int id, void* p)
+{
+	LOGI("recieved %s", str);
+	return 0;
+}
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+static int __ngspice_recieve_stat(char* status, int id, void* p)
+{
+	LOGI("status: %s", status);
+	return 0;
+}
 
-#include "TestDriver.h"
+static int __ngspice_exit(int status, bool unload, bool exit, int id, void* p)
+{
+	LOGI("exit: %d", status);
+	return 0;
+}
 
-void LOGI(char* fmt, ...);
-void LOGE(char* fmt, ...);
+static int __ngspice_recieve_data(vecvaluesall* data, int numstructs, int id, void* p)
+{
+	LOGI("data recieved: %f", data->vecsa[0]->creal);
+	return 0;
+}
 
-//#define USE_TRACE_LOG
-#ifdef USE_TRACE_LOG
-#define	TRACE_LOG(s)	printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);fflush(stdout);
-#else
-#define	TRACE_LOG(s)
-#endif
+static int __ngspice_recieve_init_data(vecinfoall* data, int id, void* p)
+{
+	LOGI("init data recieved from: %d", id);
+	return 0;
+}
 
-#endif//__COMMON_H__
+static int __ngspice_running(bool running, int id, void* p)
+{
+	if(running) {
+		LOGI("ng is running\n");
+	} else {
+		LOGI("ng is not running\n");
+	}
+
+	return 0;
+}
+
+SimCircuit::SimCircuit(void)
+{
+	ngSpice_Init(&__ngspice_recieve_char, &__ngspice_recieve_stat, &__ngspice_exit, &__ngspice_recieve_data, &__ngspice_recieve_init_data, &__ngspice_running, (void*)NULL);
+}
+
+SimCircuit::~SimCircuit(void)
+{
+}
+
+bool SimCircuit::Initialize(char** sCircuit)
+{
+	ngSpice_Init(&__ngspice_recieve_char, &__ngspice_recieve_stat, &__ngspice_exit, &__ngspice_recieve_data, &__ngspice_recieve_init_data, &__ngspice_running, (void*)NULL);
+	/*char** sCircuit = (char**)malloc(sizeof(char*) * 3);
+	circarray[0] = strdup("some codes...");
+	circarray[1] = strdup(".end");
+	circarray[2] = NULL;*/
+	ngSpice_Circ(sCircuit);
+	ngSpice_Command("run");
+	//ngSpice_SetBkpt(double time);
+	return true;
+}

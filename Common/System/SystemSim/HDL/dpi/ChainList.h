@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -31,32 +31,45 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Simulation sub-system
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Title : Common DPI
+// Rev.  : 11/5/2019 Tue (clonextop@gmail.com)
 //================================================================================
-#ifndef __COMMON_H__
-#define __COMMON_H__
-#include "STDInterface.h"
-#include "TD_Semaphore.h"
-#include <ngspice/sharedspice.h>
-#include <assert.h>
-#include <thread>
+#ifndef __CHAIN_LIST_H__
+#define __CHAIN_LIST_H__
 
-using namespace std;
+template<typename T>
+class ChainList
+{
+	static ChainList<T>*	m_pHead;
+	ChainList<T>*			m_pNext;
+	T*						m_pItem;
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+public:
+	ChainList(T* pItem){
+		m_pItem	= pItem;
+		m_pNext	= m_pHead;
+		m_pHead	= this;
+	}
+	virtual ~ChainList(void){
+		if(m_pHead == this){
+			m_pHead	= m_pNext;
+		}else{
+			ChainList<T>*	pNode	= m_pHead;
+			for(ChainList<T>* pNode = m_pHead; pNode; pNode = pNode->Next()){
+				if(pNode->Next() == this){
+					pNode->m_pNext = m_pNext;
+					break;
+				}
+			}
+		}
+	}
+	
+	static ChainList<T>* Head(void)	{return m_pHead;}
+	inline ChainList<T>* Next(void)	{return m_pNext;}
+	inline T* Item(void)			{return m_pItem;}
+};
 
-#include "TestDriver.h"
+template<typename T>
+ChainList<T>* ChainList<T>::m_pHead	= NULL;
 
-void LOGI(char* fmt, ...);
-void LOGE(char* fmt, ...);
-
-//#define USE_TRACE_LOG
-#ifdef USE_TRACE_LOG
-#define	TRACE_LOG(s)	printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);fflush(stdout);
-#else
-#define	TRACE_LOG(s)
-#endif
-
-#endif//__COMMON_H__
+#endif//__CHAIN_LIST_H__

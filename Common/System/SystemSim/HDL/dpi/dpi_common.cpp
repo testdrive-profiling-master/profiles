@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -30,112 +30,112 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : TestDrive System Driver wrapper
-// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
+// Title : Common DPI
+// Rev.  : 12/30/2021 Thu (clonextop@gmail.com)
 //================================================================================
-#include "SystemDriverInterface.h"
+#include "dpi_common.h"
+#include <stdarg.h>
 
-SystemDriverInterface*	g_pDriver	= NULL;
-
-void LOGI(char* fmt, ...)
+SystemLog::SystemLog(const char* sTitle)
 {
-	printf("*I: [SystemDriver] ");
+	SetTitle(sTitle);
+}
+
+SystemLog::~SystemLog(void)
+{
+}
+
+static const char __cTag[] = {
+	'I',
+	'W',
+	'E'
+};
+
+void SystemLog::SetTitle(const char* fmt, ...)
+{
+	if(!fmt) return;
+
 	{
-		va_list ap;
+		char sTitle[1024];
+		va_list		ap;
+		va_start(ap, fmt);
+		vsprintf(sTitle, fmt, ap);
+		va_end(ap);
+		m_sTitle	= sTitle;
+	}
+}
+
+void SystemLog::Log(LOG_ID id, const char* fmt, ...)
+{
+	printf("*%c: %s[", __cTag[id], m_sTitle.c_str());
+	{
+		// present simulation time.
+		UINT64	llTime	= SimulationTime();
+		{
+			static const char*	_time_unit[] = {"ps", "ns", "us", "ms", "s", "m", "h"};
+			DWORD		dwTimeBuff[7];
+			int			iMaxTimeScale	= 0;
+
+			for(; iMaxTimeScale < 7; iMaxTimeScale++) {
+				switch(iMaxTimeScale) {
+				case 4:	// 's' second
+				case 5: // 'm' minute
+					dwTimeBuff[iMaxTimeScale]	= llTime % 60;
+					llTime /= 60;
+					break;
+
+				case 6:	// 'h' hour
+					dwTimeBuff[iMaxTimeScale]	= llTime % 24;
+					llTime /= 24;
+					break;
+
+				default:	// ps, ns, us, ms
+					dwTimeBuff[iMaxTimeScale]	= llTime % 1000;
+					llTime /= 1000;
+					break;
+				}
+
+				if(!llTime)	break;
+			}
+
+			for(int i = iMaxTimeScale; i >= 0; i--) {
+				bool bFirst	= (i == iMaxTimeScale);
+
+				if(dwTimeBuff[i] || bFirst) {
+					if(!bFirst) printf(" ");
+
+					printf((i == iMaxTimeScale) || (i > 3) ? "%d" : "%03d", dwTimeBuff[i]);
+					printf(_time_unit[i]);
+				}
+			}
+		}
+	}
+	printf("] - ");
+	{
+		va_list		ap;
 		va_start(ap, fmt);
 		vprintf(fmt, ap);
 		va_end(ap);
 	}
 	printf("\n");
 	fflush(stdout);
-}
 
-void LOGE(char* fmt, ...)
-{
-	printf("*E: [SystemDriver] ");
-	{
-		va_list ap;
-		va_start(ap, fmt);
-		vprintf(fmt, ap);
-		va_end(ap);
-	}
-	printf("\n");
-	fflush(stdout);
-}
-
-std::string		DriverCommon::m_sSystemDesc;
-MEMORY_DESC		DriverCommon::m_TotalMemory				= {0};		// total memory block
-MEMORY_DESC*	DriverCommon::m_pInaccessibleMemory		= NULL;		// unused memorys
-
-void DriverCommon::SetSystemDescription(const char* sDesc)
-{
-	if(sDesc) {
-		if(m_sSystemDesc.size()) {
-			if(strstr(m_sSystemDesc.c_str(), sDesc))
-				return;
-
-			m_sSystemDesc.insert(0, ",");
-		}
-
-		m_sSystemDesc.insert(0, sDesc);
+	if(id == LOG_ID_ERROR) {
+		SimulationQuit(true);
 	}
 }
 
-SystemDriverInterface::SystemDriverInterface(void)
+MemoryWriteFilter::MemoryWriteFilter(void) : m_pChain(this)
 {
-	m_hDriver			= NULL;
-	m_dwCardCount		= 0;
-	g_pDriver			= this;
 }
 
-SystemDriverInterface::~SystemDriverInterface(void)
+MemoryWriteFilter::~MemoryWriteFilter(void)
 {
-	SystemDriverInterface::Release();
-	g_pDriver			= NULL;
 }
 
-bool SystemDriverInterface::Initialize(const char* sDeviceName)
+void MemoryWriteFilter::DoFilter(DWORD dwAddress, DWORD dwByteSize)
 {
-	Release();
-
-	if(sDeviceName) {
-		if((m_hDriver = CreateFile(sDeviceName, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL)) != INVALID_HANDLE_VALUE) {
-			return true;
-		}
-
-		// faild to create device driver
-		m_hDriver	= NULL;
+	for(ChainList<MemoryWriteFilter>* pNode = ChainList<MemoryWriteFilter>::Head(); pNode; pNode = pNode->Next()) {
+		pNode->Item()->OnDoFilter(dwAddress, dwByteSize);
 	}
-
-	return false;
-}
-
-void SystemDriverInterface::Release(void)
-{
-	if(m_hDriver) {
-		CloseHandle(m_hDriver);
-		m_hDriver	= NULL;
-	}
-}
-
-void SystemDriverInterface::SetCurrentCard(DWORD dwIndex)
-{
-	// None implementation
-}
-
-DWORD SystemDriverInterface::Command(void* pCommand)
-{
-	// None implementation
-	return (DWORD) -1;
-}
-
-TD_DMA_MEMORY* SystemDriverInterface::DMAAlloc(UINT64 dwByteSize)
-{
-	// None implementation
-	return NULL;
-}
-
-void SystemDriverInterface::DMAFree(TD_DMA_MEMORY* pMem)
-{
-	// None implementation
 }

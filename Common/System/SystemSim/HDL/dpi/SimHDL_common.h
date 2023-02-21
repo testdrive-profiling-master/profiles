@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,32 +30,43 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Simulation sub-system
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Title : Common DPI
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
-#ifndef __COMMON_H__
-#define __COMMON_H__
-#include "STDInterface.h"
-#include "TD_Semaphore.h"
-#include <ngspice/sharedspice.h>
-#include <assert.h>
-#include <thread>
-
-using namespace std;
-
-#define _USE_MATH_DEFINES
+#ifndef __SIMHDL_COMMON_H__
+#define __SIMHDL_COMMON_H__
+#include <stdio.h>
 #include <math.h>
-
+#include <assert.h>
 #include "TestDriver.h"
+#include "SystemConfig.h"
+#include "vltstd/svdpi.h"
+#include "VirtualDisplayConfig.h"
+#include "dpi_interfaces.h"
+#include "../verilator/SimTop__Dpi.h"
 
-void LOGI(char* fmt, ...);
-void LOGE(char* fmt, ...);
+#define LOGI(...)			printf("*I: [SimHDL] " __VA_ARGS__)
+#define LOGE(...)			printf("*E: [SimHDL] " __VA_ARGS__)
+#define DPI_FUNCTION		extern "C"
+#define GET_SYSTEM_REGMAP	((SYSTEM_REGMAP*)GetMemoryPointer(0, 0, true))
 
-//#define USE_TRACE_LOG
-#ifdef USE_TRACE_LOG
-#define	TRACE_LOG(s)	printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);fflush(stdout);
-#else
-#define	TRACE_LOG(s)
-#endif
+// Non-DPI
+SYSTEM_CONFIG* GetSystemConfig(void);
+DisplayConfig* GetDisplayConfig(void);
+BYTE* GetMemoryPointer(DWORD dwAddress, DWORD dwSize = 0, bool bDisplay = FALSE);
+DWORD GetMemoryBaseAddress(void);
+bool GetMemory(const char* sName, void*& pConfig, void*& pMemory);
+extern bool (*DPI_Initialize)(void);
+extern void (*DPI_Finalize)(void);
 
-#endif//__COMMON_H__
+// DPI functions
+DPI_FUNCTION void SimulationLock(int iDelayTicks = 0);
+DPI_FUNCTION void SimulationUnLock(void);
+DPI_FUNCTION void SimulationQuit(bool bError = false);
+DPI_FUNCTION void SimulationStop(void);
+DPI_FUNCTION void SimulationFlush(void);
+DPI_FUNCTION void SimulationDebugMode(bool bDebug = true);
+DPI_FUNCTION UINT64 SimulationTime(void);
+DPI_FUNCTION void SetSystemDescription(const char* sDesc);
+
+#endif//__SIMHDL_COMMON_H__

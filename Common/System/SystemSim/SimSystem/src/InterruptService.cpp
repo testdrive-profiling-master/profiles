@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,31 +31,62 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
-#ifndef __COMMON_H__
-#define __COMMON_H__
-#include "STDInterface.h"
-#include "TD_Semaphore.h"
-#include <ngspice/sharedspice.h>
+#include "Common.h"
+#include "InterruptService.h"
 #include <assert.h>
-#include <thread>
 
-using namespace std;
+static void __interrupt_service_routine_default(void)
+{
+	LOGI("Interrupt signal invoked.");
+}
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+InterruptService::InterruptService(void) :
+	m_SemaInterrupt(0),
+	m_bRun(true),
+	m_bEnable(false),
+	m_bPending(false),
+	m_ISR(__interrupt_service_routine_default)
+{
+}
 
-#include "TestDriver.h"
+InterruptService::~InterruptService(void)
+{
+}
 
-void LOGI(char* fmt, ...);
-void LOGE(char* fmt, ...);
+void InterruptService::MonitorThread(void)
+{
+	for(; m_bRun;) {
+		m_SemaInterrupt.Down();
 
-//#define USE_TRACE_LOG
-#ifdef USE_TRACE_LOG
-#define	TRACE_LOG(s)	printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);fflush(stdout);
-#else
-#define	TRACE_LOG(s)
-#endif
+		if(m_bEnable) m_ISR();
+	}
+}
 
-#endif//__COMMON_H__
+void InterruptService::OnThreadKill(bool bForced)
+{
+	m_bRun		= false;
+	Enable(false);
+	m_SemaInterrupt.Up();
+}
+
+bool InterruptService::Awake(void)
+{
+	if(m_bEnable && !m_bPending) {
+		m_bPending	= true;
+		m_SemaInterrupt.Up();
+		return true;
+	}
+
+	return false;
+}
+
+void InterruptService::RegisterService(INTRRUPT_SERVICE service)
+{
+	bool	bEnable	= m_bEnable;
+	Enable(false);
+	m_ISR	= service ? service : __interrupt_service_routine_default;
+	ClearPending();
+	Enable(bEnable);
+}

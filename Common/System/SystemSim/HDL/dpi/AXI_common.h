@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -31,32 +31,28 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Simulation sub-system
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Title : Common DPI
+// Rev.  : 11/5/2019 Tue (clonextop@gmail.com)
 //================================================================================
-#ifndef __COMMON_H__
-#define __COMMON_H__
-#include "STDInterface.h"
-#include "TD_Semaphore.h"
-#include <ngspice/sharedspice.h>
-#include <assert.h>
-#include <thread>
+#ifndef __AXI_COMMON_H__
+#define __AXI_COMMON_H__
+#include "dpi_common.h"
 
-using namespace std;
+typedef enum {
+	RESP_OKAY,
+	RESP_EXOKAY,
+	RESP_SLVERR,
+	RESP_DECERR
+};
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+typedef enum {
+	BURST_FIXED,
+	BURST_INCR,
+	BURST_WRAP,
+	BURST_RESERVED
+};
 
-#include "TestDriver.h"
+extern const char* g_sBRESP[];
+extern const char* g_sBURST[];
 
-void LOGI(char* fmt, ...);
-void LOGE(char* fmt, ...);
-
-//#define USE_TRACE_LOG
-#ifdef USE_TRACE_LOG
-#define	TRACE_LOG(s)	printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);fflush(stdout);
-#else
-#define	TRACE_LOG(s)
-#endif
-
-#endif//__COMMON_H__
+#endif//__AXI_COMMON_H__

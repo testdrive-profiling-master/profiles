@@ -57,12 +57,21 @@ void LOGE(char* fmt, ...);
 
 class NativeMemory;
 
+typedef struct {
+	UINT64			base_address;
+	UINT64			byte_size;
+} MEMORY_DESC;
+
 class DriverCommon {
 public:
 	void SetSystemDescription(const char* sDesc);
 	inline const char* GetSystemDescription(void) {
 		return m_sSystemDesc.c_str();
 	}
+
+protected:
+	static MEMORY_DESC		m_TotalMemory;
+	static MEMORY_DESC*		m_pInaccessibleMemory;
 
 private:
 	static std::string		m_sSystemDesc;
@@ -94,19 +103,9 @@ public:
 		return m_dwCardCount;
 	}
 
-	inline UINT64 MemBaseAddress(void) {
-		return m_MemBaseAddress;
-	}
-
-	inline UINT64 MemByteSize(void) {
-		return m_MemByteSize;
-	}
-
 protected:
 	HANDLE				m_hDriver;
 	DWORD				m_dwCardCount;
-	UINT64				m_MemBaseAddress;
-	UINT64				m_MemByteSize;
 };
 
 extern SystemDriverInterface*	g_pDriver;

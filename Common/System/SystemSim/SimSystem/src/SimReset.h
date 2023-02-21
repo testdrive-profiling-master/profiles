@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,31 +31,25 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
-#ifndef __COMMON_H__
-#define __COMMON_H__
-#include "STDInterface.h"
-#include "TD_Semaphore.h"
-#include <ngspice/sharedspice.h>
-#include <assert.h>
-#include <thread>
+#ifndef __SIM_RESET_H__
+#define __SIM_RESET_H__
+#include "SimEngine.h"
 
-using namespace std;
+class SimReset : public SimInstance {
+	DWORD		m_dwResetCycles;
+	DWORD		m_dwLifeCycle;
+	BYTE*		m_pRST;
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+public:
+	SimReset(BYTE* pRST);
+	~SimReset(void);
 
-#include "TestDriver.h"
 
-void LOGI(char* fmt, ...);
-void LOGE(char* fmt, ...);
+	virtual bool OnRun(void);
 
-//#define USE_TRACE_LOG
-#ifdef USE_TRACE_LOG
-#define	TRACE_LOG(s)	printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);fflush(stdout);
-#else
-#define	TRACE_LOG(s)
-#endif
-
-#endif//__COMMON_H__
+	void Set(DWORD dwCycles = 8, BYTE Polarity = 0);
+	bool DoCycle(void);
+};
+#endif//__SIM_RESET_H__

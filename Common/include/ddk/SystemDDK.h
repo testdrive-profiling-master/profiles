@@ -81,5 +81,6 @@ DDK_API DDK* CreateDDK(void);
 DDK_API DDKMemory* CreateDDKMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, bool bDMA = false);
 DDK_API DDKMemory* CreateDDKMemoryEx(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress, bool bDMA = false);
 DDK_API void EnumerateDDKMemory(ENUMERATE_DDK_MEMORY_FUNCTION func, void* pPrivate = NULL);
+DDK_API void ReportDDKMemory(void);
 
 #endif//__SYSTEM_DDK_H__

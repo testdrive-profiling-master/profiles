@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
 // All rights reserved.
 // 
 // The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
@@ -31,32 +31,55 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Simulation sub-system
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Title : Common DPI
+// Rev.  : 11/5/2019 Tue (clonextop@gmail.com)
 //================================================================================
-#ifndef __COMMON_H__
-#define __COMMON_H__
-#include "STDInterface.h"
-#include "TD_Semaphore.h"
-#include <ngspice/sharedspice.h>
-#include <assert.h>
-#include <thread>
+#ifndef __AXI_SLAVE_LITE_H__
+#define __AXI_SLAVE_LITE_H__
+#include "dpi_common.h"
+#include "RoundQueue.h"
 
-using namespace std;
+class SAXI_Lite : public SelfDestory
+{
+public:
+	SAXI_Lite(const char* sTitle, DWORD dwAddrBase, DWORD dwAddrHigh);
+	virtual ~SAXI_Lite(void);
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+	void BusWrite(
+			BYTE nRST,
+			DWORD& AWADDR, BYTE& AWVALID, BYTE AWREADY,
+			DWORD& WDATA, DWORD& WSTRB, BYTE& WVALID, BYTE WREADY,
+			DWORD BRESP, BYTE BVALID, BYTE& BREADY);
+	void BusRead(
+			BYTE nRST,
+			DWORD& ARADDR, BYTE& ARVALID, BYTE ARREADY,
+			DWORD RDATA, DWORD RRESP, BYTE RVALID, BYTE& RREADY);
+			
+protected:
+	typedef enum {
+		BUS_STATE_RESET,
+		BUS_STATE_IDLE,
+		BUS_STATE_CONTROL,
+		BUS_STATE_DATA,
+		BUS_STATE_RESP,
+	} BUS_STATE;
 
-#include "TestDriver.h"
+private:
+	BUS_SLAVE_INTERFACE*	m_pSlave;
+	struct{
+		BUS_STATE			state;
+		BUS_SALVE_PACKET*	packet;
+		DWORD				dwTime;
+	}m_Read, m_Write;
+	union{
+		DWORD				all;
+		struct{
+			BYTE				control;
+			BYTE				data;
+		};
+	}m_WFlag;	// write flag
+	
+	SystemLog				Log;
+};
 
-void LOGI(char* fmt, ...);
-void LOGE(char* fmt, ...);
-
-//#define USE_TRACE_LOG
-#ifdef USE_TRACE_LOG
-#define	TRACE_LOG(s)	printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);fflush(stdout);
-#else
-#define	TRACE_LOG(s)
-#endif
-
-#endif//__COMMON_H__
+#endif//__AXI_SLAVE_LITE_H__

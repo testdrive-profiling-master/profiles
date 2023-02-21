@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,31 +31,57 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
-#ifndef __COMMON_H__
-#define __COMMON_H__
-#include "STDInterface.h"
-#include "TD_Semaphore.h"
-#include <ngspice/sharedspice.h>
-#include <assert.h>
-#include <thread>
+#ifndef __BUS_SLAVE_H__
+#define __BUS_SLAVE_H__
+#include "SimEngine.h"
+#include "dpi_interfaces.h"
 
-using namespace std;
+class BusSlave :
+	public SimInstance,
+	public BUS_SLAVE_INTERFACE {
+public:
+	BusSlave(DWORD dwAddrBase, DWORD dwAddrHigh);
+	virtual ~BusSlave(void);
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+	//// S/W master interface
+	virtual bool OnRun(void);
+	void Write(DWORD dwAddress, DWORD dwData);
+	DWORD Read(DWORD dwAddress);
 
-#include "TestDriver.h"
+	//// H/W master interface
+	virtual bool RequestWrite(DWORD dwAddr, DWORD dwData);
+	virtual bool WaitWrite(void);
+	virtual bool RequestRead(DWORD dwAddr);
+	virtual bool WaitRead(DWORD& dwData);
 
-void LOGI(char* fmt, ...);
-void LOGE(char* fmt, ...);
+	// H/W slave interface
+	virtual BUS_SALVE_PACKET* GetWrite(void);		// get write
+	virtual void WriteAck(void);					// write ack to S/W
+	virtual BUS_SALVE_PACKET* GetRead(void);		// get read
+	virtual void ReadAck(void);						// read ack to S/W
 
-//#define USE_TRACE_LOG
-#ifdef USE_TRACE_LOG
-#define	TRACE_LOG(s)	printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);fflush(stdout);
-#else
-#define	TRACE_LOG(s)
-#endif
+	bool IsValidAddress(DWORD dwAddress);
 
-#endif//__COMMON_H__
+	static BusSlave* FindSlave(DWORD dwAddress);
+
+private:
+	static BusSlave*	m_pHead;
+	BusSlave*			m_pNext;
+
+	static Semaphore	m_LockSW;
+	Semaphore			m_LockBus;
+	Semaphore			m_LockBusAck;
+
+	// address range
+	DWORD				m_dwAddrBase;
+	DWORD				m_dwAddrHigh;
+
+	struct {
+		bool				bEnable;
+		bool				bWait;
+		BUS_SALVE_PACKET	packet;
+	} m_Read, m_Write;
+};
+#endif//__BUS_SLAVE_H__

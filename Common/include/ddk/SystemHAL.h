@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/21/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_HAL_H__
 #define __SYSTEM_HAL_H__
@@ -78,6 +78,7 @@ struct IMemoryManager {
 struct IMemoryImp {
 	virtual bool Initialize(UINT64 dwPhysical, UINT64 dwByteSize, IMemoryManager* pMemoryManager) = 0;
 	virtual void Release(void) = 0;
+	virtual bool SetInaccessible(UINT64 dwPhysical, UINT64 dwByteSize) = 0;
 };
 
 struct ISystemImp : public ISystem {
@@ -106,6 +107,7 @@ typedef void (*ENUMERATE_MEMORY_FUNCTION)(IMemory* pMemory, void* pPrivate);
 
 SYSTEM_API IMemory* CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress = (UINT64) - 1, bool bDMA = false);
 SYSTEM_API void EnumerateMemory(ENUMERATE_MEMORY_FUNCTION func, void* pPrivate = NULL);
+SYSTEM_API void ReportMemory(void);
 
 #endif
 

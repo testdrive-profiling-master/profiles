@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/21/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include "DDK_Context.h"
 
@@ -68,6 +68,11 @@ static void _ISR_(void)
 void EnumerateDDKMemory(ENUMERATE_DDK_MEMORY_FUNCTION func, void* pPrivate)
 {
 	EnumerateMemory((ENUMERATE_MEMORY_FUNCTION)func, pPrivate);
+}
+
+void ReportDDKMemory(void)
+{
+	ReportMemory();
 }
 
 //-----------------------------------------------------------------

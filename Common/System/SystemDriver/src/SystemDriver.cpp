@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive System Driver wrapper
-// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/21/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include "SystemDriver.h"
 #include "NativeMemory.h"
@@ -66,7 +66,18 @@ bool SystemDriver::Initialize(IMemoryImp* pMem)
 
 	// memory heap initialization
 	m_pMemImp	= pMem;
-	pMem->Initialize(m_pNativeDriver->MemBaseAddress(), m_pNativeDriver->MemByteSize(), this);
+	pMem->Initialize(m_TotalMemory.base_address, m_TotalMemory.byte_size, this);
+
+	// apply inaccessible memory list
+	if(m_pInaccessibleMemory) {
+		MEMORY_DESC* pDesc	= m_pInaccessibleMemory;
+
+		while(pDesc->byte_size) {
+			pMem->SetInaccessible(pDesc->base_address, pDesc->byte_size);
+			pDesc++;
+		}
+	}
+
 	// run simulation thread
 	m_ISR.RunThread();
 	EnableInterrupt(false);
@@ -111,12 +122,12 @@ DWORD SystemDriver::DriverCommand(void* pCommand)
 // Memory interface
 UINT64 SystemDriver::GetMemoryBase(void)
 {
-	return m_pNativeDriver->MemBaseAddress();
+	return m_TotalMemory.base_address;
 }
 
 UINT64 SystemDriver::GetMemorySize(void)
 {
-	return m_pNativeDriver->MemByteSize();
+	return m_TotalMemory.byte_size;
 }
 
 void SystemDriver::InvokeISR(void)

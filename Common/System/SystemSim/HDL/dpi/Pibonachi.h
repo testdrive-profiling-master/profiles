@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,32 +30,29 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Simulation sub-system
-// Rev.  : 6/28/2021 Mon (clonextop@gmail.com)
+// Title : Common DPI
+// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
-#ifndef __COMMON_H__
-#define __COMMON_H__
-#include "STDInterface.h"
-#include "TD_Semaphore.h"
-#include <ngspice/sharedspice.h>
-#include <assert.h>
-#include <thread>
+#ifndef __DPI_PIBONACHI_H__
+#define __DPI_PIBONACHI_H__
+#include "dpi_common.h"
 
-using namespace std;
+class Pibonachi {
+public:
+	Pibonachi(void);
+	~Pibonachi(void);
 
-#define _USE_MATH_DEFINES
-#include <math.h>
+	void Reset(void);
+	bool CountUp(void);
+	void Generate(void);
 
-#include "TestDriver.h"
+	inline UINT64 GetTicks(void)	{
+		return  m_iTicks;
+	}
 
-void LOGI(char* fmt, ...);
-void LOGE(char* fmt, ...);
+private:
+	UINT64		m_iTicks;
+	UINT64		m_iPibonachi, m_iIncreasement;
+};
 
-//#define USE_TRACE_LOG
-#ifdef USE_TRACE_LOG
-#define	TRACE_LOG(s)	printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);fflush(stdout);
-#else
-#define	TRACE_LOG(s)
-#endif
-
-#endif//__COMMON_H__
+#endif//__DPI_PIBONACHI_H__
