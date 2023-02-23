@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/23/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __APB_SLAVE_H__
 #define __APB_SLAVE_H__
@@ -52,6 +52,7 @@ protected:
 		BUS_STATE_IDLE,
 		BUS_STATE_START,
 		BUS_STATE_DATA,
+		BUS_STATE_ACK,
 	} BUS_STATE;
 
 private:

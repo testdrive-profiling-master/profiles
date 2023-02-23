@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 2/10/2023 Fri (clonextop@gmail.com)
+// Rev.  : 2/23/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __INTERRUPT_SERVICE_H__
 #define __INTERRUPT_SERVICE_H__
@@ -46,11 +46,10 @@ public:
 
 	void RegisterService(INTRRUPT_SERVICE service);
 	bool Awake(void);
+	void ClearPending(void);
+
 	inline void Enable(bool bEnable = true)	{
 		m_bEnable	= bEnable;
-	}
-	inline void ClearPending(void)			{
-		m_bPending	= false;
 	}
 
 private:

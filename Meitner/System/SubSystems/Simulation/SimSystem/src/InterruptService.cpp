@@ -31,10 +31,11 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/23/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "InterruptService.h"
+#include "SimEngine.h"
 #include <assert.h>
 
 static void __interrupt_service_routine_default(void)
@@ -80,6 +81,12 @@ bool InterruptService::Awake(void)
 	}
 
 	return false;
+}
+
+void InterruptService::ClearPending(void)
+{
+	m_bPending				= false;
+	SimResource::Sim()->Unlock(1024);
 }
 
 void InterruptService::RegisterService(INTRRUPT_SERVICE service)

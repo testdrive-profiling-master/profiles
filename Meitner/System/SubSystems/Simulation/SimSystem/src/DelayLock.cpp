@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/23/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "STDInterface.h"
 #include "DelayLock.h"
@@ -75,12 +75,14 @@ void DelayLock::Lock(int iDelayTime)
 	}
 }
 
-void DelayLock::UnLock(void)
+void DelayLock::UnLock(int iDelayTime)
 {
 	m_DelaySemaphore.Down();
 	m_iLock++;
 	m_DelaySemaphore.Up();
 	m_Lock.Up();
+
+	if(iDelayTime) Lock(iDelayTime);
 }
 
 bool DelayLock::Check(void)

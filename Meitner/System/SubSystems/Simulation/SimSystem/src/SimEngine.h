@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/23/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_ENGINE_H__
 #define __SIM_ENGINE_H__
@@ -117,8 +117,13 @@ public:
 	bool Initialize(void);
 	bool Clocking(void);
 
-	void Lock(int iDelayTime = 0);
-	void Unlock(void);
+	inline void Lock(int iDelayTime = 0) {
+		m_Lock.Lock(iDelayTime);
+	}
+
+	inline void Unlock(int iDelayTime = 0) {
+		m_Lock.UnLock(iDelayTime);
+	}
 
 	bool Start(void);
 	void Terminate(void);
