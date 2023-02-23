@@ -112,6 +112,10 @@ clean:
 	@$(RM) -f $(OBJS) $(OBJS_RES) $(DEPS)
 ifndef PRESERVE_RESULT
 	@$(RM) -f $(BUILD_TARGET)
+
+ifeq ($(TARGETPATH)$(BUILD_TARGET), $(LIBPATH)$(TARGET_SO_A))
+		@$(RM) -f $(TARGET_A)
+endif
 endif
 	@echo Cleanup is done.
 
