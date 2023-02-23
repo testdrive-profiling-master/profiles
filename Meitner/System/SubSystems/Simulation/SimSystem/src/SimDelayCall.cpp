@@ -34,74 +34,26 @@
 // Rev.  : 2/23/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
-#include "InterruptService.h"
-#include "SimEngine.h"
 #include "SimDelayCall.h"
-#include <assert.h>
+#include "../SimHDL/SimHDL.h"
 
-static void __interrupt_service_routine_default(void)
+SimDelayCall::SimDelayCall(SIM_DELAY_CALL func, void* pPrivate, UINT64 uDelayTime_ps)
 {
-	LOGI("Interrupt signal invoked.");
+	m_Function	= func;
+	m_pPrivate	= pPrivate;
+	m_uEndTime	= SimulationTime() + uDelayTime_ps;
 }
 
-InterruptService::InterruptService(void) :
-	m_SemaInterrupt(0),
-	m_bRun(true),
-	m_bEnable(false),
-	m_bPending(false),
-	m_ISR(__interrupt_service_routine_default)
+SimDelayCall::~SimDelayCall(void)
 {
+	m_Function(m_pPrivate);
 }
 
-InterruptService::~InterruptService(void)
+bool SimDelayCall::OnRun(void)
 {
-}
-
-void InterruptService::MonitorThread(void)
-{
-	for(; m_bRun;) {
-		m_SemaInterrupt.Down();
-
-		if(m_bEnable) m_ISR();
-	}
-}
-
-void InterruptService::OnThreadKill(bool bForced)
-{
-	m_bRun		= false;
-	Enable(false);
-	m_SemaInterrupt.Up();
-}
-
-bool InterruptService::Awake(void)
-{
-	if(m_bEnable && !m_bPending) {
-		m_bPending	= true;
-		m_SemaInterrupt.Up();
-		return true;
+	if(SimulationTime() >= m_uEndTime) {
+		delete this;
 	}
 
-	return false;
-}
-
-static void __delayed_interrupt_pending(void* pPrivate)
-{
-	*((volatile bool*)pPrivate)	= false;
-}
-
-void InterruptService::ClearPending(bool bForced)
-{
-	if(bForced) m_bPending	= false;
-	else new SimDelayCall(__delayed_interrupt_pending, (void*)&m_bPending, 1000 * 100);	//100ns delayed pending clear
-
-	SimResource::Sim()->Unlock(2);
-}
-
-void InterruptService::RegisterService(INTRRUPT_SERVICE service)
-{
-	bool	bEnable	= m_bEnable;
-	Enable(false);
-	m_ISR	= service ? service : __interrupt_service_routine_default;
-	ClearPending(true);
-	Enable(bEnable);
+	return true;
 }

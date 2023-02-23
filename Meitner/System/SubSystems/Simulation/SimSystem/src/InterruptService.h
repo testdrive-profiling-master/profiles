@@ -46,7 +46,7 @@ public:
 
 	void RegisterService(INTRRUPT_SERVICE service);
 	bool Awake(void);
-	void ClearPending(void);
+	void ClearPending(bool bForced = false);
 
 	inline void Enable(bool bEnable = true)	{
 		m_bEnable	= bEnable;
