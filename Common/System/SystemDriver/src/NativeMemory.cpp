@@ -36,27 +36,17 @@
 #include "STDInterface.h"
 #include "NativeMemory.h"
 
-bool	NativeMemory::bAlwaysUseDMA	= false;
-
 NativeMemory::NativeMemory(UINT64 dwByteSize, UINT64 dwAlignment, bool bDMA)
 {
-	if(bDMA || bAlwaysUseDMA) {
-		m_pDMA	= g_pDriver->DMAAlloc(dwByteSize);
-		m_pMem	= m_pDMA ? (BYTE*)m_pDMA->vir_addr.pointer : NULL;
-	} else {
-		m_pDMA	= NULL;
-		m_pMem	= new BYTE[dwByteSize];
-	}
+	pMem		= NULL;
+	pDriver		= NULL;
+	g_pDriver->MemoryCreate(this, dwByteSize, dwAlignment, bDMA);
 }
 NativeMemory::~NativeMemory(void)
 {
-	if(m_pDMA) {
-		g_pDriver->DMAFree(m_pDMA);
-		m_pDMA	= NULL;
-		m_pMem	= NULL;
-	} else {
-		SAFE_DELETE_ARRAY(m_pMem);
-	}
+	g_pDriver->MemoryFree(this);
+	pDriver		= NULL;
+	pMem		= NULL;
 }
 
 void NativeMemory::Release(void)
@@ -66,12 +56,12 @@ void NativeMemory::Release(void)
 
 BYTE* NativeMemory::Virtual(void)
 {
-	return m_pMem;
+	return pMem;
 }
 
 bool NativeMemory::Flush(UINT64 dwOffset, UINT64 dwPhyAddress, UINT64 dwByteSize, bool bWrite)
 {
-	if(m_pMem) {
+	if(pMem) {
 		if(bWrite)
 			g_pDriver->MemoryWrite(this, dwPhyAddress, dwOffset, dwByteSize);
 		else

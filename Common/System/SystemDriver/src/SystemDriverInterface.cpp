@@ -129,13 +129,14 @@ DWORD SystemDriverInterface::Command(void* pCommand)
 	return (DWORD) -1;
 }
 
-TD_DMA_MEMORY* SystemDriverInterface::DMAAlloc(UINT64 dwByteSize)
+void SystemDriverInterface::MemoryCreate(NativeMemory* pNative, UINT64 dwByteSize, UINT64 dwAlignment, bool bDMA)
 {
-	// None implementation
-	return NULL;
+	// default implementation
+	pNative->pMem	= new BYTE[dwByteSize];
 }
 
-void SystemDriverInterface::DMAFree(TD_DMA_MEMORY* pMem)
+void SystemDriverInterface::MemoryFree(NativeMemory* pNative)
 {
-	// None implementation
+	// default implementation
+	SAFE_DELETE_ARRAY(pNative->pMem);
 }

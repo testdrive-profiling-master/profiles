@@ -38,21 +38,15 @@
 #include "SystemDriverInterface.h"
 
 class NativeMemory : public IMemoryNative {
-	BYTE*			m_pMem;
-	TD_DMA_MEMORY*	m_pDMA;
-
 public:
+	BYTE*			pMem;
+	void*			pDriver;
+
 	NativeMemory(UINT64 dwByteSize, UINT64 dwAlignment, bool bDMA);
 	virtual ~NativeMemory(void);
 
 	virtual void Release(void);
 	virtual BYTE* Virtual(void);
 	virtual bool Flush(UINT64 dwOffset, UINT64 dwPhyAddress, UINT64 dwByteSize, bool bWrite);
-
-	inline TD_DMA_MEMORY* DMA(void)	{
-		return m_pDMA;
-	}
-
-	static bool		bAlwaysUseDMA;
 };
 #endif//__NATIVE_MEMORY_H__

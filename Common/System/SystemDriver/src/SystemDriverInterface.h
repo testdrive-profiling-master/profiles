@@ -38,7 +38,6 @@
 #include "STDInterface.h"
 #include "VirtualDisplayConfig.h"
 #include "ddk/SystemHAL.h"
-#include "driver_testdrive.h"
 #include "NativeMemory.h"
 #include <string>
 
@@ -90,13 +89,13 @@ public:
 	virtual void SetCurrentCard(DWORD dwIndex);
 	virtual void RegWrite(UINT64 dwAddress, DWORD dwData) = 0;
 	virtual DWORD RegRead(UINT64 dwAddress) = 0;
-	virtual void MemoryWrite(NativeMemory* pMem, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize) = 0;
-	virtual void MemoryRead(NativeMemory* pMem, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize) = 0;
+	virtual void MemoryWrite(NativeMemory* pNative, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize) = 0;
+	virtual void MemoryRead(NativeMemory* pNative, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize) = 0;
 	virtual void InterruptLock(void) = 0;
 	virtual void InterruptFree(void) = 0;
 	virtual DWORD Command(void* pCommand);
-	virtual TD_DMA_MEMORY* DMAAlloc(UINT64 dwByteSize);
-	virtual void DMAFree(TD_DMA_MEMORY* pMem);
+	virtual void MemoryCreate(NativeMemory* pNative, UINT64 dwByteSize, UINT64 dwAlignment, bool bDMA);
+	virtual void MemoryFree(NativeMemory* pNative);
 
 	// inlines
 	inline DWORD CardCount(void)	{

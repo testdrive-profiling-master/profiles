@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Driver(PCIe) sub-system
-// Rev.  : 2/2/2023 Thu (clonextop@gmail.com)
+// Rev.  : 2/23/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "PCIeDriver.h"
 #include "driver_testdrive.h"
@@ -47,6 +47,10 @@ PCIeDriver::PCIeDriver(void)
 	memset(&__TranMem, 0, sizeof(TD_TRANSACTION_MEM));
 	memset(&m_OverlappedIO, 0, sizeof(OVERLAPPED));
 	__TranReg.count		= 1;
+	{
+		m_TotalMemory.base_address	= 0x80000000;			// base address
+		m_TotalMemory.byte_size		= 1024 * 1024 * 128;	// 128MB
+	}
 	SetSystemDescription("PCIe(WDM) driver");
 }
 
@@ -60,8 +64,6 @@ bool PCIeDriver::Initialize(const char* sDeviceName)
 	if(SystemDriverInterface::Initialize(DEV_PATH)) {
 		TD_DRIVER_INFO	info;
 		DWORD dwReadSize;
-		m_MemBaseAddress		= 0x80000000;			// base address
-		m_MemByteSize			= 1024 * 1024 * 128;	// 128MB
 		m_OverlappedIO.hEvent	= CreateEvent(NULL, true, true, "");
 
 		if(DeviceIoControl(m_hDriver, IOCTL_COMMAND_INFOMATION, NULL, 0, &info, sizeof(TD_DRIVER_INFO), &dwReadSize, NULL)) {
@@ -136,22 +138,22 @@ DWORD PCIeDriver::RegRead(UINT64 dwAddress)
 	return dwData;
 }
 
-void PCIeDriver::MemoryWrite(NativeMemory* pMem, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize)
+void PCIeDriver::MemoryWrite(NativeMemory* pNative, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize)
 {
 	DWORD dwReadSize;
-	BYTE*	pData			= (pMem->Virtual() + dwOffset);
+	BYTE*	pData			= (pNative->Virtual() + dwOffset);
 	__TranMem.is_write		= 1;
-	__TranMem.phy_address	= dwAddress - m_MemBaseAddress + dwOffset;
+	__TranMem.phy_address	= dwAddress - m_TotalMemory.base_address + dwOffset;
 	__TranMem.count			= dwByteSize >> 3;
 	DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_MEM, &__TranMem, sizeof(TD_TRANSACTION_MEM), pData, dwByteSize, &dwReadSize, NULL);
 }
 
-void PCIeDriver::MemoryRead(NativeMemory* pMem, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize)
+void PCIeDriver::MemoryRead(NativeMemory* pNative, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize)
 {
 	DWORD dwReadSize;
-	BYTE*	pData			= (pMem->Virtual() + dwOffset);
+	BYTE*	pData			= (pNative->Virtual() + dwOffset);
 	__TranMem.is_write		= 0;
-	__TranMem.phy_address	= dwAddress - m_MemBaseAddress + dwOffset;
+	__TranMem.phy_address	= dwAddress - m_TotalMemory.base_address + dwOffset;
 	__TranMem.count			= dwByteSize >> 3;
 	DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_MEM, &__TranMem, sizeof(TD_TRANSACTION_MEM), pData, dwByteSize, &dwReadSize, NULL);
 }
