@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/23/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __DELAY_LOCK_H__
 #define __DELAY_LOCK_H__
@@ -46,7 +46,7 @@ public:
 	virtual ~DelayLock(void);
 
 	void Lock(int iDelayTime = 0);
-	void UnLock(void);
+	void UnLock(int iDelayTime = 0);
 	void SetDelay(int iDelayTime);
 
 	void Rlease(void)	{

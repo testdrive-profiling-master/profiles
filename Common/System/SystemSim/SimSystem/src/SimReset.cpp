@@ -31,12 +31,11 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/23/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "SimReset.h"
 #include "SimClock.h"
-#include <assert.h>
 
 SimReset::SimReset(BYTE* pRST)
 {
@@ -48,6 +47,8 @@ SimReset::SimReset(BYTE* pRST)
 
 SimReset::~SimReset(void)
 {
+	TRACE_LOCK
+	m_pSim->Lock(2);
 }
 
 bool SimReset::OnRun(void)
@@ -71,8 +72,6 @@ bool SimReset::DoCycle(void)
 			*m_pRST	^= 1;
 	} else {
 		if(!m_dwLifeCycle) {
-			TRACE_LOCK
-			m_pSim->Lock(2);
 			delete this;
 			return false;
 		} else

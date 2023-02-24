@@ -31,10 +31,12 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/23/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "InterruptService.h"
+#include "SimEngine.h"
+#include "SimDelayCall.h"
 #include <assert.h>
 
 static void __interrupt_service_routine_default(void)
@@ -82,11 +84,24 @@ bool InterruptService::Awake(void)
 	return false;
 }
 
+static void __delayed_interrupt_pending(void* pPrivate)
+{
+	*((volatile bool*)pPrivate)	= false;
+}
+
+void InterruptService::ClearPending(bool bForced)
+{
+	if(bForced) m_bPending	= false;
+	else new SimDelayCall(__delayed_interrupt_pending, (void*)&m_bPending, 1000 * 100);	//100ns delayed pending clear
+
+	SimResource::Sim()->Unlock(2);
+}
+
 void InterruptService::RegisterService(INTRRUPT_SERVICE service)
 {
 	bool	bEnable	= m_bEnable;
 	Enable(false);
 	m_ISR	= service ? service : __interrupt_service_routine_default;
-	ClearPending();
+	ClearPending(true);
 	Enable(bEnable);
 }

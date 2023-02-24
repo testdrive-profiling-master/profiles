@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/23/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "SimEngine.h"
@@ -164,7 +164,7 @@ bool SimEngine::AwakeInterrupt(void)
 void SimEngine::MonitorThread(void)
 {
 	TRACE_LOCK
-	m_Lock.Lock(8);			// start lock
+	m_Lock.Lock(16);			// start lock
 	LOGI("Simulation H/W daemon is up.\n");
 
 	while(Clocking());			// Execute engine
@@ -185,16 +185,6 @@ void SimEngine::OnThreadKill(bool bForced)
 
 	m_Lock.Rlease();
 	m_Interrupt.KillThread();
-}
-
-void SimEngine::Lock(int iDelayTime)
-{
-	m_Lock.Lock(iDelayTime);
-}
-
-void SimEngine::Unlock(void)
-{
-	m_Lock.UnLock();
 }
 
 bool SimEngine::Start(void)

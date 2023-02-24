@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation sub-system
-// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/23/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "STDInterface.h"
@@ -118,7 +118,7 @@ void SystemSim::RegWrite(UINT64 dwAddress, DWORD dwData)
 	BusSlave* pSlave	= BusSlave::FindSlave(dwAddress);
 
 	if(pSlave) {
-		return pSlave->Write(dwAddress, dwData);
+		pSlave->Write(dwAddress, dwData);
 	} else {
 		LOGE("Invalid 'RegWrite' address : 0x%08X (data : 0x%llX)\n", dwAddress, dwData);
 	}
