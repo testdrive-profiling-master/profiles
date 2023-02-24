@@ -28,9 +28,10 @@
 									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_DIR}include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_PROFILE}common/include&quot;"/>
 									<listOptionValue builtIn="false" value="../../../../../../Application/include"/>
-									<listOptionValue builtIn="false" value="../../../../../SubSystems/Simulation/SimHDL"/>
 									<listOptionValue builtIn="false" value="../../../../dpi"/>
 									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_DIR}bin/msys64/ucrt64/share/verilator/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_PROFILE}Common/System/SystemSim/SimHDL&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_PROFILE}Common/System/SystemSim/HDL/dpi&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.preprocessor.def.702854114" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="WIN32"/>
@@ -84,9 +85,10 @@
 									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_DIR}include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_PROFILE}common/include&quot;"/>
 									<listOptionValue builtIn="false" value="../../../../../../Application/include"/>
-									<listOptionValue builtIn="false" value="../../../../../SubSystems/Simulation/SimHDL"/>
 									<listOptionValue builtIn="false" value="../../../../dpi"/>
 									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_DIR}bin/msys64/ucrt64/share/verilator/include&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_PROFILE}Common/System/SystemSim/SimHDL&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_PROFILE}Common/System/SystemSim/HDL/dpi&quot;"/>
 								</option>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="gnu.cpp.compiler.option.preprocessor.def.1778032860" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="WIN32"/>
