@@ -59,6 +59,12 @@ TARGET_A		:= $(LIBPATH)/lib$(TARGETNAME).a
 TARGET_SO		:= $(TARGETPATH)/$(TARGETNAME).dll
 TARGET_SO_A		:= $(TARGETPATH)/lib$(TARGETNAME).dll
 
+COMPILE_TARGET	:= $(BUILD_TARGET)
+
+ifeq ($(BUILD_TARGET), $(TARGET_SO_A))
+	COMPILE_TARGET	:= $(TARGET_SO)
+endif
+
 #-------------------------------------------------
 # 	Build flags.
 #-------------------------------------------------
@@ -94,7 +100,7 @@ CDEFS			:= $(CDEFS) -D__int64="long long" -DWIN32 -D_WIN32 -DWIN64 -D_WIN64
 # Build commands
 #-------------------------------------------------
 
-all: $(BUILD_TARGET)
+all: $(COMPILE_TARGET)
 	@echo Compilation is done!
 
 $(TARGET_EXE): $(OBJS) $(OBJS_RES)
@@ -187,14 +193,14 @@ $(TARGET_A):$(OBJS_LIB)
 
 $(TARGET_SO):$(OBJS_LIB)
 	@echo
+ifeq ($(BUILD_TARGET), $(TARGET_SO_A))
+	@echo '*** Build Shared (+implib) Library ***'
+	$(CXX) $(LDFLAGS) -shared -o $@ $(OBJS_LIB) $(OBJS_RES) $(LIBDIR) -Wl,--out-implib,$(LIBPATH)/lib$(TARGETNAME).a
+else
 	@echo '*** Build Shared Library ***'
 	$(CXX) $(LDFLAGS) -shared -o $@ $(OBJS_LIB) $(OBJS_RES) $(LIBDIR)
+endif
 ifdef INSTALL_PATH
 	@echo Install to : $(INSTALL_PATH)
 	@cp -f $(TARGET_SO) $(INSTALL_PATH)/
 endif
-	
-$(TARGET_SO_A):$(OBJS_LIB)
-	@echo
-	@echo '*** Build Shared Library ***'
-	$(CXX) $(LDFLAGS) -shared -o $@ $(OBJS_LIB) $(OBJS_RES) $(LIBDIR) -Wl,--out-implib,$(LIBPATH)/lib$(TARGETNAME).a
