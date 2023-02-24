@@ -180,8 +180,10 @@ $(TARGET_EXE):$(OBJS) $(OBJS_RES) $(TARGET_DEP)
 	@echo '*** Build execution file ***'
 	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(OBJS_RES) $(LIBDIR)
 ifdef INSTALL_PATH
+ifneq ($(INSTALL_PATH), $(TARGETPATH))
 	@echo Install to : $(INSTALL_PATH)
 	@cp -f $(TARGET_EXE) $(INSTALL_PATH)/
+endif
 endif
 
 $(TARGET_A):$(OBJS_LIB) $(OBJS_RES) $(TARGET_DEP)
@@ -200,6 +202,8 @@ else
 	$(CXX) $(LDFLAGS) -shared -o $@ $(OBJS_LIB) $(OBJS_RES) $(LIBDIR)
 endif
 ifdef INSTALL_PATH
+ifneq ($(INSTALL_PATH), $(TARGETPATH))
 	@echo Install to : $(INSTALL_PATH)
 	@cp -f $(TARGET_SO) $(INSTALL_PATH)/
+endif
 endif

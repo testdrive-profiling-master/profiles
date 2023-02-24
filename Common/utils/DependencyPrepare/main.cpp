@@ -115,7 +115,7 @@ int main(int argc, const char* argv[])
 	}
 
 	if(!CheckDepency(sDepFileName)) {
-		if(g_bVerbose) LOGW("Dependency is broken, it will be deleted.");
+		if(g_bVerbose) LOGW("Dependency(%s) is broken, it will be deleted.", sDepFileName.c_str());
 
 		cstring	sObjectFile	= sDepFileName;
 		sObjectFile.DeleteBack(".d");
