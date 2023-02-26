@@ -59,6 +59,12 @@ TARGET_A		:= $(LIBPATH)/lib$(TARGETNAME).a
 TARGET_SO		:= $(TARGETPATH)/$(TARGETNAME).dll
 TARGET_SO_A		:= $(TARGETPATH)/lib$(TARGETNAME).dll
 
+COMPILE_TARGET	:= $(BUILD_TARGET)
+
+ifeq ($(BUILD_TARGET), $(TARGET_SO_A))
+	COMPILE_TARGET	:= $(TARGET_SO)
+endif
+
 #-------------------------------------------------
 # 	Build flags.
 #-------------------------------------------------
@@ -94,13 +100,8 @@ CDEFS			:= $(CDEFS) -D__int64="long long" -DWIN32 -D_WIN32 -DWIN64 -D_WIN64
 # Build commands
 #-------------------------------------------------
 
-all: $(BUILD_TARGET)
+all: $(COMPILE_TARGET)
 	@echo Compilation is done!
-
-$(TARGET_EXE): $(OBJS) $(OBJS_RES)
-$(TARGET_SO): $(OBJS) $(OBJS_RES)
-$(TARGET_A): $(OBJS) $(OBJS_RES)
-$(TARGET_SO_A): $(OBJS) $(OBJS_RES)
 
 encrypt: $(ENCRYPT_EXTRA:=.encrypted) $(SRCS:=.encrypted) $(SRCS_RES:=.encrypted)
 	@echo Encryption is done!
@@ -126,7 +127,11 @@ endif
 	@echo Dist-Cleanup is done.
 
 static:
-	@cppcheck -j $(NUMBER_OF_PROCESSORS) --suppress=*:*/msys64/* --suppress=*:*/lib_src/* $(INC) $(CDEFS) $(CPPCHECK_ARG) -D__MINGW32__ --inline-suppr --force $(CPPCHECK_SRCS)
+ifeq ($(strip $(CPPCHECK_SRCS)),)
+	@echo *I: No sources to check static analysis.
+else
+	@cppcheck -j $(NUMBER_OF_PROCESSORS) --suppress=*:*/msys64/* --suppress=*:*/lib_src/* $(INC) $(CDEFS) $(CPPCHECK_ARG) -D__MINGW32__ --platform=win64 --inline-suppr --force $(CPPCHECK_SRCS)
+endif
 
 dep:
 	@for def_file in $(DEPS); do \
@@ -170,31 +175,35 @@ endif
 	@echo '- Compiling... : $<'
 	@windres $(INC) $< -o $@
 
-$(TARGET_EXE):$(OBJS)
+$(TARGET_EXE):$(OBJS) $(OBJS_RES) $(TARGET_DEP)
 	@echo
 	@echo '*** Build execution file ***'
 	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(OBJS_RES) $(LIBDIR)
 ifdef INSTALL_PATH
+ifneq ($(INSTALL_PATH), $(TARGETPATH))
 	@echo Install to : $(INSTALL_PATH)
 	@cp -f $(TARGET_EXE) $(INSTALL_PATH)/
 endif
+endif
 
-$(TARGET_A):$(OBJS_LIB)
+$(TARGET_A):$(OBJS_LIB) $(OBJS_RES) $(TARGET_DEP)
 	@echo
 	@echo '*** Build Static Library ***'
 	$(AR) $(ARFLAGS) $@ $(OBJS_LIB) $(OBJS_RES)
 	$(RANLIB) $@
 
-$(TARGET_SO):$(OBJS_LIB)
+$(TARGET_SO):$(OBJS_LIB) $(OBJS_RES) $(TARGET_DEP)
 	@echo
+ifeq ($(BUILD_TARGET), $(TARGET_SO_A))
+	@echo '*** Build Shared (+implib) Library ***'
+	$(CXX) $(LDFLAGS) -shared -o $@ $(OBJS_LIB) $(OBJS_RES) $(LIBDIR) -Wl,--out-implib,$(LIBPATH)/lib$(TARGETNAME).a
+else
 	@echo '*** Build Shared Library ***'
 	$(CXX) $(LDFLAGS) -shared -o $@ $(OBJS_LIB) $(OBJS_RES) $(LIBDIR)
+endif
 ifdef INSTALL_PATH
+ifneq ($(INSTALL_PATH), $(TARGETPATH))
 	@echo Install to : $(INSTALL_PATH)
 	@cp -f $(TARGET_SO) $(INSTALL_PATH)/
 endif
-	
-$(TARGET_SO_A):$(OBJS_LIB)
-	@echo
-	@echo '*** Build Shared Library ***'
-	$(CXX) $(LDFLAGS) -shared -o $@ $(OBJS_LIB) $(OBJS_RES) $(LIBDIR) -Wl,--out-implib,$(LIBPATH)/lib$(TARGETNAME).a
+endif

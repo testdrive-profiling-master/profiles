@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/23/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "APB_Slave.h"
 
@@ -109,17 +109,28 @@ void APB_Slave::BusSignal(
 				LOGE("Timeout is occurred.");
 
 			if(PREADY) {
-				m_state	= BUS_STATE_IDLE;
+				m_state	= BUS_STATE_ACK;
 
-				if(m_bWrite) {
-					m_pSlave->WriteAck();
+				if(!m_bWrite) {
 				} else {
 					m_pPacket->dwData	= PRDATA;
-					m_pSlave->ReadAck();
 				}
 
 				goto ON_RESET;
 			} else goto ON_DATA;
+
+			break;
+
+		case BUS_STATE_ACK:
+			m_state	= BUS_STATE_IDLE;
+			PSEL		= 0;
+			PENABLE		= 0;
+
+			if(m_bWrite) {
+				m_pSlave->WriteAck();
+			} else {
+				m_pSlave->ReadAck();
+			}
 
 			break;
 		}

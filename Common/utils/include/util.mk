@@ -4,7 +4,10 @@
 ifndef TARGETPATH
 TARGETPATH		:= .
 endif
+
+ifndef INSTALL_PATH
 INSTALL_PATH	:= $(TESTDRIVE_PROFILE)Common/bin
+endif
 
 # select build type (TARGET_EXE, TARGET_SO, TARGET_A, TARGET_SO_A)
 ifndef BUILD_TARGET
