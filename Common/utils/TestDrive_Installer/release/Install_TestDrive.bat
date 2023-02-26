@@ -12,10 +12,10 @@ set /p install_path=Set your install path (default[C:\Project]) :
 
 if "%install_path%" == "" set install_path="C:\Project"
 
-mkdir %install_path%
+if not exist %install_path% (
+	mkdir %install_path%
+)
 
 TestDrive_Installer.exe %install_path%
-
-start explorer %install_path%
 
 endlocal

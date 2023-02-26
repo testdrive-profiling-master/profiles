@@ -4,12 +4,13 @@
 SRC_PATH		:= .
 TARGETPATH		:= .
 TARGETNAME		:= MakeRelease
+INSTALL_PATH	:= $(TARGETPATH)
 
 SRCS			:= \
 	$(wildcard $(SRC_PATH)/*.cpp)
 	
-INC				:= -I../../framework
-LIBDIR			:= -L../../lib
+INC				:=
+LIBDIR			:=
 CDEFS			:=
 
 #-------------------------------------------------

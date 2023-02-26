@@ -4,17 +4,18 @@
 SRC_PATH		:= .
 TARGETPATH		:= ./release/
 TARGETNAME		:= TestDrive_Installer
+INSTALL_PATH	:= $(TARGETPATH)
 
 SRCS			:= \
+	$(wildcard $(SRC_PATH)/progressbar/*.c) \
 	$(wildcard $(SRC_PATH)/*.cpp) \
 	$(wildcard $(SRC_PATH)/*.c)
 	
 INC				:= -I.
-LIBDIR			:= -liconv -lssl -llibgit2
+LIBDIR			:= -lssl -llibgit2 -lncurses
 CDEFS			:=
 
 #-------------------------------------------------
 # common document config
 #-------------------------------------------------
-BUILD_TARGET	= $(TARGET_EXE)
-include $(TESTDRIVE_PROFILE)Common/include/config.mk
+include ../include/util.mk
