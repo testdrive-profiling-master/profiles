@@ -1,3 +1,4 @@
+tool_path		= os.getenv("TESTDRIVE_DIR") .. "bin/"
 profile_path	= os.getenv("TESTDRIVE_PROFILE")
 project_path	= os.getenv("PROJECT")
 
@@ -83,4 +84,14 @@ do	-- check deprecated tool resources
 		end
 		f:Close()
 	end
+end
+
+function CheckMsys64Package(dep_file, package_name)
+	if lfs.attributes(tool_path .. "msys64/ucrt64/" .. dep_file) == nil then
+		LOGI(package_name)
+	end
+end
+
+if lfs.attributes(project_path .. "bin/.uldate_extra_tools.lua") ~= nil then
+	RunScript(project_path .. "bin/.uldate_extra_tools.lua")
 end
