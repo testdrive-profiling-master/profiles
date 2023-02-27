@@ -35,7 +35,7 @@
 //================================================================================
 #ifndef __CODE_BASE_H__
 #define __CODE_BASE_H__
-#include "Common.h"
+#include "UtilFramework.h"
 #include "TextFile.h"
 
 typedef enum {

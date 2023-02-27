@@ -35,7 +35,7 @@
 //================================================================================
 #ifndef __DOCX_DOCUMENT_H__
 #define __DOCX_DOCUMENT_H__
-#include "Common.h"
+#include "UtilFramework.h"
 
 #include "pugixml/pugixml.hpp"
 #include "minizip/zip.h"

@@ -33,7 +33,7 @@
 // Title : TestDrive link
 // Rev.  : 4/13/2022 Wed (clonextop@gmail.com)
 //================================================================================
-#include "Common.h"
+#include "UtilFramework.h"
 #include "testdrive_ssh_interface.h"
 
 class TestDriveSSH {

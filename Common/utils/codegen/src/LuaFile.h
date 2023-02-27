@@ -35,7 +35,7 @@
 //================================================================================
 #ifndef __LUA_FILE_H__
 #define __LUA_FILE_H__
-#include "Common.h"
+#include "UtilFramework.h"
 #include "TestDrive_LM.h"
 
 class LuaFile {

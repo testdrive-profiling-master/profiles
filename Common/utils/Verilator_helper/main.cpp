@@ -33,7 +33,7 @@
 // Title : Verilator helper
 // Rev.  : 2/17/2023 Fri (clonextop@gmail.com)
 //================================================================================
-#include "Common.h"
+#include "UtilFramework.h"
 #include <filesystem>
 #include <fstream>
 #include <string>

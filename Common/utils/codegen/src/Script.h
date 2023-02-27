@@ -35,7 +35,7 @@
 //================================================================================
 #ifndef __SCRIPT_H__
 #define __SCRIPT_H__
-#include "Common.h"
+#include "UtilFramework.h"
 #include "VL.h"
 #include "Lua/LuaLibrary.h"
 #include "LuaBridge/LuaBridge.h"

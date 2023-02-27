@@ -33,7 +33,7 @@
 // Title : Hierarchical Make
 // Rev.  : 2/5/2023 Sun (clonextop@gmail.com)
 //================================================================================
-#include "Common.h"
+#include "UtilFramework.h"
 
 struct {
 	char		sRootPath[4096];

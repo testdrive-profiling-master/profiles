@@ -33,8 +33,7 @@
 // Title : utility framework
 // Rev.  : 3/30/2022 Wed (clonextop@gmail.com)
 //================================================================================
-#include "Common.h"
-#include "cstring.h"
+#include "UtilFramework.h"
 #include <stdarg.h>
 #include <vector>
 #include <iconv.h>

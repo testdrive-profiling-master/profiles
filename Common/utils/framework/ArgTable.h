@@ -35,7 +35,7 @@
 //================================================================================
 #ifndef __ARG_TABLE_H__
 #define __ARG_TABLE_H__
-#include "Common.h"
+#include "UtilFramework.h"
 
 typedef enum {
 	ARG_TYPE_NONE,

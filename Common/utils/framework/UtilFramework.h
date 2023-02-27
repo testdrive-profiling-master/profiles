@@ -33,8 +33,8 @@
 // Title : utility framework
 // Rev.  : 2/2/2023 Thu (clonextop@gmail.com)
 //================================================================================
-#ifndef __COMMON_H__
-#define __COMMON_H__
+#ifndef __UTIL_FRAMEWORK_H__
+#define __UTIL_FRAMEWORK_H__
 #include "STDInterface.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -61,19 +61,6 @@
 #include "TestDriver.h"
 
 using namespace std;
-
-#ifdef WIN32
-#include <windows.h>
-#else
-typedef unsigned char			BYTE;
-typedef unsigned short			WORD;
-typedef unsigned int			DWORD;
-#endif
-
-// Safe memory deletion
-#define SAFE_DELETE(x)			if(x){delete x;			(x) = NULL;}
-#define SAFE_DELETE_ARRAY(x)	if(x){delete [] x;		(x) = NULL;}
-#define SAFE_RELEASE(x)			if(x){(x)->Release();	(x) = NULL;}
 
 #ifdef __MINGW64__
 #define lstat	stat
@@ -257,4 +244,4 @@ int	ClassType<T>::m_ClassID		= 0;
 
 string GetCommonToolPath(void);
 
-#endif// __COMMON_H__
+#endif//__UTIL_FRAMEWORK_H__

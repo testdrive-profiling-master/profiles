@@ -35,7 +35,7 @@
 //================================================================================
 #ifndef __TEXT_FILE_H__
 #define __TEXT_FILE_H__
-#include "Common.h"
+#include "UtilFramework.h"
 
 class TextFile {
 public:

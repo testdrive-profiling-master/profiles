@@ -33,7 +33,7 @@
 // Title : TestDrive installer Release Build
 // Rev.  : 1/31/2023 Tue (clonextop@gmail.com)
 //================================================================================
-#include "Common.h"
+#include "UtilFramework.h"
 #include <unistd.h>
 #include <sstream>
 #include <filesystem>
@@ -84,7 +84,8 @@ map<string, int>	g_LibrariesMap;
 
 int main(int argc, const char* argv[])
 {
-	cstring sToolPath	= getenv("TESTDRIVE_DIR");
+	cstring sToolPath;
+	sToolPath.GetEnvironment("TESTDRIVE_DIR");
 
 	// get tool path
 	if(sToolPath.IsEmpty()) {

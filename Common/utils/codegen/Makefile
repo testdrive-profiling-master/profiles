@@ -11,7 +11,7 @@ SRCS			:= \
 	$(wildcard $(SRC_PATH)/src/*.cpp) \
 	$(wildcard $(SRC_PATH)/*.cpp)
 
-INC				:= -I../common -I./src
+INC				:= -I../common -I./src -I../lib_src
 LIBDIR			:= -llua -lTestDrive_LM -lz -lminizip
 CDEFS			:= -DLUABRIDGE_CXX17=1
 

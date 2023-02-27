@@ -34,7 +34,7 @@
 // Title : TestDrive SCP
 // Rev.  : 6/22/2021 Tue (clonextop@gmail.com)
 //================================================================================
-#include "Common.h"
+#include "UtilFramework.h"
 #include "testdrive_ssh_interface.h"
 
 class TestDriveSSH {

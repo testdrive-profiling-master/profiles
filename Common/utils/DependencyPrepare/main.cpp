@@ -33,7 +33,7 @@
 // Title : Dependency prepare
 // Rev.  : 2/4/2023 Sat (clonextop@gmail.com)
 //================================================================================
-#include "Common.h"
+#include "UtilFramework.h"
 #include <filesystem>
 
 bool	g_bVerbose	= false;
