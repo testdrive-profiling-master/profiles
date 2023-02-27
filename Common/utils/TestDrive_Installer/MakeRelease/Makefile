@@ -10,11 +10,10 @@ SRCS			:= \
 	$(wildcard $(SRC_PATH)/*.cpp)
 	
 INC				:=
-LIBDIR			:=
+LIBDIR			:= -lboost_filesystem-mt.dll
 CDEFS			:=
 
 #-------------------------------------------------
 # common document config
 #-------------------------------------------------
 include ../../include/util.mk
-

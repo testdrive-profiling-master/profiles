@@ -7,7 +7,6 @@ TARGETNAME		:= TestDrive_Installer
 INSTALL_PATH	:= $(TARGETPATH)
 
 SRCS			:= \
-	$(wildcard $(SRC_PATH)/progressbar/*.c) \
 	$(wildcard $(SRC_PATH)/*.cpp) \
 	$(wildcard $(SRC_PATH)/*.c)
 	

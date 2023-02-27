@@ -36,8 +36,13 @@
 #include "Common.h"
 #include <unistd.h>
 #include <sstream>
+#include <filesystem>
+#include <chrono>
 #include <string>
 #include <map>
+#include <boost/filesystem.hpp>
+
+//using std::filesystem;
 
 static string __exec(const char* cmd)
 {
@@ -62,6 +67,19 @@ static string __exec(const char* cmd)
 	return result;
 }
 
+bool IsFileExists(const char* path)
+{
+	struct stat info;
+
+	if(stat(path, &info) != 0)
+		return false;
+
+	if(info.st_mode & S_IFMT)
+		return true;
+
+	return false;
+}
+
 map<string, int>	g_LibrariesMap;
 
 int main(int argc, const char* argv[])
@@ -82,7 +100,6 @@ int main(int argc, const char* argv[])
 
 	// clear previous library dependencies
 	__exec("rm -f release/*.dll");
-	__exec("cp -f Install_TestDrive.bat release/");
 	// collect new library dependencies
 	cstring	sOut = __exec("ldd release/TestDrive_Installer.exe | grep ucrt64");
 	{
@@ -109,9 +126,11 @@ int main(int argc, const char* argv[])
 	}
 
 	// add extra files
-	g_LibrariesMap["licenses.txt"]				= 1;
-	g_LibrariesMap["TestDrive_Installer.exe"]	= 1;
-	g_LibrariesMap["Install_TestDrive.bat"]		= 1;
+    for (const auto & file : boost::filesystem::directory_iterator(boost::filesystem::path("release"))) {
+        g_LibrariesMap[file.path().filename().string().c_str()]	= 1;
+    }
+
+    string path = "/";
 
 	{
 		TextFile f;

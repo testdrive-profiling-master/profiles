@@ -36,22 +36,24 @@
 #include "Common.h"
 #include <ncurses/ncurses.h>
 #include "indicators/indicators.hpp"
+#include <filesystem>
 #include <git2.h>
 
 using namespace indicators;
 
 typedef struct {
-	const char*			sRepo;
-	const char*			sPath;
-	const char*			sDesc;
+	cstring		sRepo;
+	cstring		sPath;
+	cstring		sDesc;
 } REPO;
 
 REPO	__DefaultRepoList[] = {
 	{"http://github.com/testdrive-profiling-master/release.git", "TestDrive", "TestDrive Profiling Master release"},
 	{"https://github.com/testdrive-profiling-master/profiles.git", "Profiles", "TestDrive Profiling Master profiles"},
-	{NULL, NULL}
+	{NULL}
 };
 
+cstring			__sCurrentPath;
 string			__sInstallPath;
 list<REPO>		g_RepoList;
 
@@ -149,16 +151,18 @@ bool DoInstall(void)
 
 	for(auto& i : g_RepoList) {
 		iIndex++;
-		printf("\n\n[%d/%d] *** Install %s...\n", iIndex, g_RepoList.size(), i.sDesc);
+		printf("\n\n[%d/%d] *** Install %s...\n", iIndex, g_RepoList.size(), i.sDesc.c_str());
+		printf("     > GIT from   : %s\n", i.sRepo.c_str());
+		printf("     > Install to : %s\n", i.sPath.c_str());
 
-		if(IsDirectoryExists(i.sPath)) {
-			printf("*E: '%s' is already existed.\n", i.sPath);
+		if(IsDirectoryExists(i.sPath.c_str())) {
+			printf("*E: '%s' is already existed.\n", i.sPath.c_str());
 			bRet	= false;
 			break;
 		}
 
 		start_progress();
-		error = git_clone(&repo, i.sRepo, i.sPath, &clone_opts);
+		error = git_clone(&repo, i.sRepo.c_str(), i.sPath.c_str(), &clone_opts);
 		finish_progress();
 
 		if(error < 0) {
@@ -181,6 +185,14 @@ bool DoInstall(void)
 	return bRet;
 }
 
+string GetCustomRepoInfo(int iIndex, const char* sKey) {
+	char sData[4096];
+	cstring	sApp;
+	sApp.Format("REPO_%d", iIndex);
+	GetPrivateProfileString(sApp, sKey, "", sData, 4096, __sCurrentPath + "/testdrive_installer.ini");
+	return sData;
+}
+
 int main(int argc, const char* argv[])
 {
 	bool		bError	= false;
@@ -190,12 +202,23 @@ int main(int argc, const char* argv[])
 	if(!main_arg_table.DoParse(argc, argv))
 		return 1;
 
+	__sCurrentPath	= filesystem::current_path().string();
 	__sInstallPath	= main_arg_table.GetOptionFile("install_path");;
 	printf("Installing Target : %s\n", __sInstallPath.c_str());
 	DIR* dir = opendir(__sInstallPath.c_str());
 
-	for(int i = 0; __DefaultRepoList[i].sRepo != NULL; i++) {
+	// set default repo. path
+	for(int i = 0; !__DefaultRepoList[i].sRepo.IsEmpty(); i++) {
 		g_RepoList.push_back(__DefaultRepoList[i]);
+	}
+
+	// additional repo. path
+	for(int i=0;GetCustomRepoInfo(i, "URL").size();i++) {
+		REPO	repo;
+		repo.sDesc	= GetCustomRepoInfo(i, "DESC");
+		repo.sRepo	= GetCustomRepoInfo(i, "URL");
+		repo.sPath	= GetCustomRepoInfo(i, "PATH");
+		g_RepoList.push_back(repo);
 	}
 
 	if(dir) {
