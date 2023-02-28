@@ -74,6 +74,7 @@ typedef enum {
 
 bool isVarChar(char ch);
 void LOG(LOG_MODE id, const char* sFormat, ...);
+void LOG_Suppress(bool bSuppress = true);
 #define LOGI(...)		LOG(LOG_MODE_INFO, __VA_ARGS__)
 #define LOGW(...)		LOG(LOG_MODE_WARNING, __VA_ARGS__)
 #define LOGE(...)		LOG(LOG_MODE_ERROR, __VA_ARGS__)

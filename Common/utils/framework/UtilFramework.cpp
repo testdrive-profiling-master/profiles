@@ -85,6 +85,10 @@ bool isVarChar(char ch)
 
 int	g_log_warning_count		= 0;
 int	g_log_error_count		= 0;
+static bool	__log_supress	= false;
+void LOG_Suppress(bool bSuppress) {
+	__log_supress	= bSuppress;
+}
 
 void LOG(LOG_MODE id, const char* sFormat, ...)
 {
@@ -95,6 +99,8 @@ void LOG(LOG_MODE id, const char* sFormat, ...)
 	};
 	int		color_id	= (int)id;
 	bool	bCustom		= false;
+
+	if(__log_supress) return;
 
 	switch(id) {
 	case LOG_MODE_WARNING:

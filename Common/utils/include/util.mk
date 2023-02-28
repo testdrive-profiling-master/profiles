@@ -15,6 +15,6 @@ BUILD_TARGET	= $(TARGET_EXE)
 endif
 
 INC				:= $(INC) -I$(TESTDRIVE_PROFILE)Common/utils/framework -I-I$(TESTDRIVE_PROFILE)Common/utils/include -I-I$(TESTDRIVE_PROFILE)Common/utils/lib_src
-LIBDIR			:= -L$(TESTDRIVE_PROFILE)Common/utils/lib -lframework -liconv $(LIBDIR)
+LIBDIR			:= -L$(TESTDRIVE_PROFILE)Common/utils/lib -lUtilFramework -liconv $(LIBDIR)
 
 include $(TESTDRIVE_PROFILE)Common/include/config.mk

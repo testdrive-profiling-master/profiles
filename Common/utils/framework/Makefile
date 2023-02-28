@@ -3,7 +3,7 @@
 #-------------------------------------------------
 SRC_PATH		:= .
 TARGETPATH		:= ../lib
-TARGETNAME		:= framework
+TARGETNAME		:= UtilFramework
 PRESERVE_RESULT	:= 1
 
 SRCS			:= \
