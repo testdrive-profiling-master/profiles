@@ -1,5 +1,5 @@
 ﻿//================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System manager
-// Rev.  : 4/29/2022 Fri (clonextop@gmail.com)
+// Rev.  : 2/28/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include "LocaleString.h"
 
@@ -207,6 +207,11 @@ LOCALE_TEXT(DESC_DO_FILENAME,
 			_T("シミュレーション'DO'ファイルを指定します。\nこの設定は、サブシステムが'Simulation'に設定し、'波形出力'が 'Interactive'で設定する必要があります。\nファイル名は、トップデザインのパスから再構成されます。\n例) top_design = Test/top.v\n    sim.do => Test/top.sim.do"),
 			_T("Establecer forma de onda de simulación DO archivo.\nPara habilitar esta configuración, configure 'Subsistema' en 'Simulation' y se debe configurar en modo 'Interactive'.\nEl nombre del archivo se reconstruye a partir de la ruta del diseño superior.\nEj.) top_design = Test/top.v\n     sim.do => Test/top.sim.do"),
 			_T("Set simulation waveform DO file.\nTo enable this setting, set 'Subsystem' to 'Simulation' and should be set to 'Interactive' mode.\nFile name is reconstructed from the path of the top design.\nEx.) top_design = Test/top.v\n     sim.do => Test/top.sim.do"))
+LOCALE_TEXT(UPDATE_REQUIRED_TOOLS,
+			_T("요구된 툴 업데이트를 확인 중입니다..."),
+			_T("必要なツールの更新を確認しています..."),
+			_T("Actualizar las herramientas requeridas..."),
+			_T("Update required tools..."))
 LOCALE_TEXT(SYSTEM_IS_LOCKED,
 			_T("락 상태일 때에는 시스템 속성을 변경할 수 없습니다."),
 			_T("ロック状態のときにシステムのプロパティを変更することができません。"),

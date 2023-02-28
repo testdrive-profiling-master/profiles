@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System manager
-// Rev.  : 1/27/2023 Fri (clonextop@gmail.com)
+// Rev.  : 2/28/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include "System.h"
 #include "Utils.h"
@@ -277,7 +277,7 @@ System::System(ITDDocument* pDoc) :
 			// Do essential build
 			g_pSystem->LogInfo(_T("[%s] %s"), _L(DOCUMENT_TITLE), _L(DO_ESSENTIAL_BUILD));
 			g_pSystem->RunProfile(_T("../System/initialize.sp"), TRUE);
-			g_pSystem->LogInfo(_T("[%s] %s"), _L(DOCUMENT_TITLE), _L(DONE));
+			g_pSystem->LogInfo(_T("> %s"), _L(DONE));
 		}
 
 		// Check need to "Build All"
@@ -287,7 +287,13 @@ System::System(ITDDocument* pDoc) :
 		}
 
 		// install custom tool resources
-		g_pSystem->ExecuteFile(_T("%TESTDRIVE_PROFILE%common\\bin\\codegen.exe"), _T("update_common_tools"), TRUE, NULL, _T("%TESTDRIVE_PROFILE%common\\bin"), NULL);
+		g_pSystem->LogInfo(_T("[%s] %s"),  _L(DOCUMENT_TITLE), _L(UPDATE_REQUIRED_TOOLS));
+		g_pSystem->ExecuteFile(_T("%TESTDRIVE_PROFILE%common\\bin\\codegen.exe"), _T("update_common_tools"), TRUE, NULL, _T("%TESTDRIVE_PROFILE%common\\bin"),
+							   _T("*I:"), 0,
+							   _T("*E:"), 1,
+							   _T("*W:"), 2,
+							   NULL);
+		g_pSystem->LogInfo(_T("> %s"), _L(DONE));
 	}
 }
 
