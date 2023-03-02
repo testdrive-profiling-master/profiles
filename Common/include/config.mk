@@ -130,7 +130,7 @@ static:
 ifeq ($(strip $(CPPCHECK_SRCS)),)
 	@echo *I: No sources to check static analysis.
 else
-	@cppcheck -j $(NUMBER_OF_PROCESSORS) --suppress=*:*/msys64/* --suppress=*:*/lib_src/* $(INC) $(CDEFS) $(CPPCHECK_ARG) -D__MINGW32__ --platform=win64 --inline-suppr --force $(CPPCHECK_SRCS)
+	@cppcheck -j $(NUMBER_OF_PROCESSORS) --suppress=*:*/msys64/* --suppress=*:*/lib_src/* $(INC) $(CDEFS) $(CPPCHECK_ARG) -D__MINGW32__ -D__MINGW64__ -D__GNUC__ --platform=win64 --inline-suppr $(CPPCHECK_SRCS)
 endif
 
 dep:
