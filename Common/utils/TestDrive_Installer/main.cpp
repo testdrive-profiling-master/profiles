@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive installer Maker
-// Rev.  : 2/26/2023 Sun (clonextop@gmail.com)
+// Rev.  : 3/2/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "UtilFramework.h"
 #include <ncurses/ncurses.h>
@@ -156,28 +156,26 @@ bool DoInstall(void)
 		printf("     > Install to : %s\n", i.sPath.c_str());
 
 		if(IsDirectoryExists(i.sPath.c_str())) {
-			printf("*E: '%s' is already existed.\n", i.sPath.c_str());
-			bRet	= false;
-			break;
-		}
+			printf("*W: Git clone('%s') is already existed.\n", i.sPath.c_str());
+		} else {
+			start_progress();
+			error = git_clone(&repo, i.sRepo.c_str(), i.sPath.c_str(), &clone_opts);
+			finish_progress();
 
-		start_progress();
-		error = git_clone(&repo, i.sRepo.c_str(), i.sPath.c_str(), &clone_opts);
-		finish_progress();
-
-		if(error < 0) {
-			const git_error* e = git_error_last();
-			printf("\n*E: [%d/%d] %s\n", error, e->klass, e->message);
-			bRet	= false;
-			break;
+			if(error < 0) {
+				const git_error* e = git_error_last();
+				printf("\n*E: [%d/%d] %s\n", error, e->klass, e->message);
+				bRet	= false;
+				break;
+			}
 		}
 	}
 
 	git_repository_free(repo);
 	git_libgit2_shutdown();
-
 	system("start explorer .");
 	Sleep(3000);
+
 	if(bRet) {
 		system("start TestDrive/TestDrive.exe");
 	}
@@ -185,7 +183,8 @@ bool DoInstall(void)
 	return bRet;
 }
 
-string GetCustomRepoInfo(int iIndex, const char* sKey) {
+string GetCustomRepoInfo(int iIndex, const char* sKey)
+{
 	char sData[4096];
 	cstring	sApp;
 	sApp.Format("REPO_%d", iIndex);
@@ -213,7 +212,7 @@ int main(int argc, const char* argv[])
 	}
 
 	// additional repo. path
-	for(int i=0;GetCustomRepoInfo(i, "URL").size();i++) {
+	for(int i = 0; GetCustomRepoInfo(i, "URL").size(); i++) {
 		REPO	repo;
 		repo.sDesc	= GetCustomRepoInfo(i, "DESC");
 		repo.sRepo	= GetCustomRepoInfo(i, "URL");
@@ -240,5 +239,6 @@ int main(int argc, const char* argv[])
 		printf("\n* Press any key to exit.\n");
 		getchar();
 	}
+
 	return bError ? 1 : 0;
 }
