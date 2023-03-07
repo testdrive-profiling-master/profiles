@@ -23,7 +23,7 @@ PWD			:= $(shell pwd)
 #-------------------------------------------------
 #	Library & Include
 #-------------------------------------------------
-LIBDIR		:= $(LIBDIR) -L$(TESTDRIVE_PROFILE)Common/lib -L$(TESTDRIVE_DIR)bin/msys64/usr/lib -lstdc++ -lpthread -lm
+LIBDIR		:= $(LIBDIR) -L$(TESTDRIVE_PROFILE)Common/lib -L$(TESTDRIVE_DIR)bin/msys64/usr/lib -lpthread -lm
 OBJS_RES	:= $(SRCS_RES:.rc=.o)
 OBJS		:= $(SRCS:.c=.o)
 OBJS		:= $(OBJS:.cc=.o)
