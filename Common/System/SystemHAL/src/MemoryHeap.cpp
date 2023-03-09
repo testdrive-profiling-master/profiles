@@ -105,12 +105,13 @@ MemoryHeap::MemoryHeap(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAd
 
 MemoryHeap::MemoryHeap(MemoryHeap* pPrev) : m_Link(this), m_Free(this)
 {
-	m_iRefCount			= 1;	// referenced start
-	m_dwPhysical		= 0;
-	m_dwByteSize		= 0;
-	m_pNative			= NULL;
-	m_bFree				= false;
-	m_bInaccessible		= false;
+	m_iRefCount				= 1;	// referenced start
+	m_dwPhysical			= 0;
+	m_dwPhysicalOverride	= (UINT64) - 1;
+	m_dwByteSize			= 0;
+	m_pNative				= NULL;
+	m_bFree					= false;
+	m_bInaccessible			= false;
 
 	if(pPrev) m_Link.Link(&pPrev->m_Link);
 }
@@ -267,9 +268,16 @@ bool MemoryHeap::Flush(bool bWrite, UINT64 dwOffset, UINT64 dwByteSize)
 
 	if(!dwByteSize) dwByteSize	= m_dwByteSize - dwOffset;
 
-	if(m_pNative) return m_pNative->Flush(dwOffset, m_dwPhysical + dwOffset, dwByteSize, bWrite);
+	UINT64	dwPhysical	= (m_dwPhysicalOverride == (UINT64) - 1) ? m_dwPhysical : m_dwPhysicalOverride;
+
+	if(m_pNative) return m_pNative->Flush(dwOffset, dwPhysical + dwOffset, dwByteSize, bWrite);
 
 	return false;
+}
+
+void MemoryHeap::PhysicalOverride(UINT64 dwPhysical)
+{
+	m_dwPhysicalOverride	= dwPhysical;
 }
 
 IMemory* CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress, bool bDMA)

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 2/21/2023 Tue (clonextop@gmail.com)
+// Rev.  : 3/9/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __MEMORY_HEAP_H__
 #define __MEMORY_HEAP_H__
@@ -55,6 +55,7 @@ public:
 	virtual UINT64 Physical(void);
 	virtual UINT64 ByteSize(void);
 	virtual bool Flush(bool bWrite = true, UINT64 dwOffset = 0, UINT64 dwByteSize = 0);
+	virtual void PhysicalOverride(UINT64 dwPhysical = (UINT64) - 1);
 
 	inline bool IsFree(void) {
 		return m_bFree;
@@ -85,11 +86,12 @@ private:
 	FreeLink					m_Free;				// free heap link for free heap fast search
 
 	// memory allocation information
-	bool						m_bFree;			// is free heap?
-	UINT64						m_dwPhysical;		// physical memory address
-	UINT64						m_dwByteSize;		// heap size (byte, block aligned)
-	IMemoryNative*				m_pNative;			// native system memory manager
-	bool						m_bInaccessible;	// inaccessible memory
+	bool						m_bFree;				// is free heap?
+	UINT64						m_dwPhysical;			// physical memory address
+	UINT64						m_dwPhysicalOverride;	// physical memory address override
+	UINT64						m_dwByteSize;			// heap size (byte, block aligned)
+	IMemoryNative*				m_pNative;				// native system memory manager
+	bool						m_bInaccessible;		// inaccessible memory
 };
 
 class MemoryImplementation : public IMemoryImp {

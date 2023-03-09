@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 2/21/2023 Tue (clonextop@gmail.com)
+// Rev.  : 3/9/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_HAL_H__
 #define __SYSTEM_HAL_H__
@@ -101,6 +101,7 @@ struct IMemory {
 	virtual UINT64 Physical(void) = 0;		// physical memory address
 	virtual UINT64 ByteSize(void) = 0;		// byte allocation size
 	virtual bool Flush(bool bWrite = true, UINT64 dwOffset = 0, UINT64 dwByteSize = 0) = 0;	// flush memory
+	virtual void PhysicalOverride(UINT64 dwPhysical = (UINT64) - 1) = 0;
 };
 
 typedef void (*ENUMERATE_MEMORY_FUNCTION)(IMemory* pMemory, void* pPrivate);
