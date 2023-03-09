@@ -31,14 +31,16 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 2/21/2023 Tue (clonextop@gmail.com)
+// Rev.  : 3/9/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include <assert.h>
 #include <stdio.h>
 #include "MemoryHeap.h"
+#include "TD_Semaphore.h"
 
 using namespace std;
 
+static Semaphore			__SemaAlloc(1);
 static IMemoryManager*		__pMemoryManager		= NULL;
 static UINT64				__HEAP_PHY_BASE			= 0;
 static UINT64				__HEAP_BYTE_SIZE		= 0;
@@ -217,6 +219,7 @@ void MemoryHeap::Release(void)
 
 	if(!m_iRefCount) {	// free this
 		assert(m_bFree == false);
+		__SemaAlloc.Down();
 		m_bFree	= true;
 		{
 			MemoryHeap* pCurHeap	= this;
@@ -237,6 +240,7 @@ void MemoryHeap::Release(void)
 			if(!m_dwByteSize) delete this;
 			else m_Free.Link();	// set to free link stack
 		}
+		__SemaAlloc.Up();
 	}
 }
 
@@ -270,7 +274,9 @@ bool MemoryHeap::Flush(bool bWrite, UINT64 dwOffset, UINT64 dwByteSize)
 
 IMemory* CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress, bool bDMA)
 {
+	__SemaAlloc.Down();
 	IMemory* pMem = new MemoryHeap(dwByteSize, dwByteAlignment, dwPhyAddress, bDMA);
+	__SemaAlloc.Up();
 
 	if(__bInaccessibleMemory) {
 		__bInaccessibleMemory	= false;
