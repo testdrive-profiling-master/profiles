@@ -33,6 +33,16 @@
 // Title : TestDrive codegen project
 // Rev.  : 3/9/2023 Thu (clonextop@gmail.com)
 //================================================================================
-#define		CODE_GEN_VERSION_MAJOR		1
-#define		CODE_GEN_VERSION_MINOR		0
-#define		CODE_GEN_BUILD_COUNT		5
+#ifndef __MIN_GIT_H__
+#define __MIN_GIT_H__
+#include "UtilFramework.h"
+
+class minGit {
+public:
+	minGit(void);
+	virtual ~minGit(void);
+
+	bool Clone(const char* sGitURL, const char* sPath);
+};
+
+#endif//__MIN_GIT_H__

@@ -31,12 +31,13 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive codegen project
-// Rev.  : 1/26/2023 Thu (clonextop@gmail.com)
+// Rev.  : 3/9/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
 #include "DocWord.h"
 #include "DocExcel.h"
+#include "minGit.h"
 #include <tuple>
 
 static bool		__bPause_on_error	= false;
@@ -995,6 +996,13 @@ Script::Script(void)
 			.addProperty("error_count", &g_log_error_count)
 			.addProperty("warning_count", &g_log_warning_count)
 			.addProperty("pause_on_error", &__bPause_on_error)
+			.endNamespace()
+			.beginNamespace("git")
+			.addFunction("clone", std::function<bool(const char* sGitURL, const char* sPath)>([](const char* sGitURL, const char* sPath) -> bool {
+				if(!sGitURL || ! sPath) return false;
+				minGit	git;
+				return git.Clone(sGitURL, sPath);
+			}))
 			.endNamespace()
 			/*.addFunction("RegTemplate", std::function<RegTemplate*(const char* sName)>([](const char* sName) -> RegTemplate* {
 				return new RegTemplate(sName);

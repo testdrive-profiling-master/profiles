@@ -68,14 +68,12 @@ int git_certificate_check_cb(git_cert* cert, int valid, const char* host, void* 
 
 int fetch_progress(const git_indexer_progress* stats, void* payload)
 {
-	progress_data* pd = (progress_data*)payload;
 	return 0;
 }
 
 ProgressBar*	__pProgress	= NULL;
 void checkout_progress(const char* path, size_t cur, size_t tot, void* payload)
 {
-	progress_data* pd = (progress_data*)payload;
 	cstring	sProgress;
 
 	if(cur == tot) {
@@ -138,7 +136,6 @@ bool DoInstall(void)
 {
 	bool	bRet	= true;
 	git_repository* repo;
-	const git_config_entry* entry = NULL;
 	int error;
 	git_libgit2_init();
 	clone_opts.checkout_opts.checkout_strategy = GIT_CHECKOUT_SAFE;
