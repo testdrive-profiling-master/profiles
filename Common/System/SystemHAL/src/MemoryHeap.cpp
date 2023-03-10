@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 3/9/2023 Thu (clonextop@gmail.com)
+// Rev.  : 3/10/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include <assert.h>
 #include <stdio.h>
@@ -181,7 +181,7 @@ bool MemoryHeap::Alloc(MemoryHeap* pHeap, UINT64 dwAllocByteSize, UINT64 dwByteA
 				pExtraHeap->m_Free.Link();
 			}
 
-			if(!m_dwByteSize) Release();
+			if(!m_dwByteSize) ReleaseNoneThreadSafe();
 		}
 	} else {	// managed allocation
 		pHeap->m_dwPhysical		= m_dwPhysical + m_dwByteSize;
@@ -213,14 +213,13 @@ void MemoryHeap::AddRef(void)
 	m_iRefCount++;
 }
 
-void MemoryHeap::Release(void)
+void MemoryHeap::ReleaseNoneThreadSafe(void)
 {
 	m_iRefCount--;
 	assert(m_iRefCount >= 0);
 
 	if(!m_iRefCount) {	// free this
 		assert(m_bFree == false);
-		__SemaAlloc.Down();
 		m_bFree	= true;
 		{
 			MemoryHeap* pCurHeap	= this;
@@ -241,8 +240,14 @@ void MemoryHeap::Release(void)
 			if(!m_dwByteSize) delete this;
 			else m_Free.Link();	// set to free link stack
 		}
-		__SemaAlloc.Up();
 	}
+}
+
+void MemoryHeap::Release(void)
+{
+	__SemaAlloc.Down();
+	ReleaseNoneThreadSafe();
+	__SemaAlloc.Up();
 }
 
 void* MemoryHeap::Virtual(void)
@@ -282,19 +287,21 @@ void MemoryHeap::PhysicalOverride(UINT64 dwPhysical)
 
 IMemory* CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress, bool bDMA)
 {
+	IMemory* pMem	= NULL;
 	__SemaAlloc.Down();
-	IMemory* pMem = new MemoryHeap(dwByteSize, dwByteAlignment, dwPhyAddress, bDMA);
-	__SemaAlloc.Up();
+	{
+		pMem = new MemoryHeap(dwByteSize, dwByteAlignment, dwPhyAddress, bDMA);
 
-	if(__bInaccessibleMemory) {
-		__bInaccessibleMemory	= false;
-	} else {
-		if(!pMem->Virtual()) {
-			pMem->Release();
-			pMem	= NULL;	// cppcheck-suppress memleak
+		if(__bInaccessibleMemory) {
+			__bInaccessibleMemory	= false;
+		} else {
+			if(!pMem->Virtual()) {
+				((MemoryHeap*)pMem)->ReleaseNoneThreadSafe();
+				pMem	= NULL;	// cppcheck-suppress memleak
+			}
 		}
 	}
-
+	__SemaAlloc.Up();
 	return pMem;
 }
 

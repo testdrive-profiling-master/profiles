@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 3/9/2023 Thu (clonextop@gmail.com)
+// Rev.  : 3/10/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __MEMORY_HEAP_H__
 #define __MEMORY_HEAP_H__
@@ -49,7 +49,7 @@ class MemoryHeap : public IMemory {
 public:
 	MemoryHeap(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress, bool bDMA);
 	virtual void AddRef(void);
-	virtual void Release(void);
+	virtual void Release(void);		// for user
 
 	virtual void* Virtual(void);
 	virtual UINT64 Physical(void);
@@ -65,6 +65,7 @@ public:
 		return m_bInaccessible;
 	}
 
+	void ReleaseNoneThreadSafe(void);	// for this in thread safe function
 	bool Alloc(MemoryHeap* pHeap, UINT64 dwAllocByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress, bool bDMA);
 
 protected:
@@ -79,7 +80,7 @@ protected:
 
 private:
 	// life-cycle management
-	int							m_iRefCount;		// reference count
+	volatile int				m_iRefCount;		// reference count
 
 	// resource link management
 	HeapLink					m_Link;				// all heap link
