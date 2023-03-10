@@ -43,6 +43,8 @@ public:
 	virtual ~minGit(void);
 
 	bool Clone(const char* sGitURL, const char* sPath);
+	string		sUser;
+	string		sPassword;
 };
 
 #endif//__MIN_GIT_H__

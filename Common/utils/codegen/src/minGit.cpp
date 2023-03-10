@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive codegen project
-// Rev.  : 3/9/2023 Thu (clonextop@gmail.com)
+// Rev.  : 3/10/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "minGit.h"
 #include <git2.h>
@@ -63,6 +63,12 @@ static void __checkout_progress(const char* path, size_t cur, size_t tot, void* 
 		pProgress->set_option(option::PostfixText{sProgress.c_str()});
 		pProgress->set_progress((cur * 100.f) / tot);
 	}
+}
+
+static int __credentials_cb(git_cred** out, const char* url, const char* username_from_url, unsigned int allowed_types, void* payload)
+{
+	minGit*	pGit	= (minGit*)payload;
+	return git_cred_userpass_plaintext_new(out, pGit->sUser.c_str(), pGit->sPassword.c_str());
 }
 
 static bool __IsDirectoryExists(const char* path)
@@ -119,7 +125,8 @@ bool minGit::Clone(const char* sGitURL, const char* sPath)
 	clone_opts.checkout_opts.progress_payload			= pProgress;
 	clone_opts.fetch_opts.callbacks.transfer_progress	= __fetch_progress;
 	clone_opts.fetch_opts.callbacks.certificate_check	= __certificate_check_cb;
-	clone_opts.fetch_opts.callbacks.payload				= pProgress;
+	clone_opts.fetch_opts.callbacks.credentials			= __credentials_cb;
+	clone_opts.fetch_opts.callbacks.payload				= this;
 
 	if(__IsDirectoryExists(sPath)) {
 		LOGE("Git clone('%s') target path('%s') is already existed.", sGitURL, sPath);

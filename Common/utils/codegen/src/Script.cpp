@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive codegen project
-// Rev.  : 3/9/2023 Thu (clonextop@gmail.com)
+// Rev.  : 3/10/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -997,16 +997,12 @@ Script::Script(void)
 			.addProperty("warning_count", &g_log_warning_count)
 			.addProperty("pause_on_error", &__bPause_on_error)
 			.endNamespace()
-			.beginNamespace("git")
-			.addFunction("clone", std::function<bool(const char* sGitURL, const char* sPath)>([](const char* sGitURL, const char* sPath) -> bool {
-				if(!sGitURL || ! sPath) return false;
-				minGit	git;
-				return git.Clone(sGitURL, sPath);
-			}))
-			.endNamespace()
-			/*.addFunction("RegTemplate", std::function<RegTemplate*(const char* sName)>([](const char* sName) -> RegTemplate* {
-				return new RegTemplate(sName);
-			}))*/
+			.beginClass<minGit>("Git")
+			.addConstructor<void(*)(void)>()
+			.addFunction("Clone", &minGit::Clone)
+			.addData("User", &minGit::sUser)
+			.addData("Password", &minGit::sPassword)
+			.endClass()
 			.addFunction("AliasString", &VL_String::Alias)
 			.addFunction("AliasNumber", &VL_Number::Alias)
 			.addFunction("VL_String", &VL_String::Create)

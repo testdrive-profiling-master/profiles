@@ -31,12 +31,12 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive System Driver wrapper
-// Rev.  : 2/21/2023 Tue (clonextop@gmail.com)
+// Rev.  : 3/10/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "SystemDriver.h"
 #include "NativeMemory.h"
 
-SystemDriver::SystemDriver(void)
+SystemDriver::SystemDriver(void) : m_SemaReg(1)
 {
 	m_pNativeDriver		= NULL;
 	m_pMemImp			= NULL;
@@ -91,12 +91,17 @@ void SystemDriver::Release(void)
 
 DWORD SystemDriver::RegRead(UINT64 dwAddress)
 {
-	return m_pNativeDriver->RegRead(dwAddress);;
+	m_SemaReg.Down();
+	DWORD	dwData	= m_pNativeDriver->RegRead(dwAddress);
+	m_SemaReg.Up();
+	return dwData;
 }
 
 void SystemDriver::RegWrite(UINT64 dwAddress, DWORD dwData)
 {
+	m_SemaReg.Down();
 	m_pNativeDriver->RegWrite(dwAddress, dwData);
+	m_SemaReg.Up();
 }
 
 void SystemDriver::RegisterInterruptService(INTRRUPT_SERVICE routine)
