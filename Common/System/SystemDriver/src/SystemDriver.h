@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive System Driver wrapper
-// Rev.  : 3/10/2023 Fri (clonextop@gmail.com)
+// Rev.  : 3/14/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_DRIVER_H__
 #define __SYSTEM_DRIVER_H__
@@ -65,7 +65,7 @@ public:
 	virtual void RegWrite(UINT64 dwAddress, DWORD dwData);					// register write
 
 	// system
-	virtual void RegisterInterruptService(INTRRUPT_SERVICE routine);		// register ISR
+	virtual void RegisterInterruptService(INTRRUPT_SERVICE routine, void* pPrivate);		// register ISR
 	virtual void EnableInterrupt(bool bEnable = true);						// enable interrupt
 	virtual void ClearInterruptPending(void);								// clear interrupt pending bit
 	virtual DWORD DriverCommand(void* pCommand);							// post driver specific command

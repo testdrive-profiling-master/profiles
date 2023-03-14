@@ -30,8 +30,8 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Simulation sub-system
-// Rev.  : 2/23/2023 Thu (clonextop@gmail.com)
+// Title : Common profiles
+// Rev.  : 3/14/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __INTERRUPT_SERVICE_H__
 #define __INTERRUPT_SERVICE_H__
@@ -44,7 +44,7 @@ public:
 	InterruptService(void);
 	~InterruptService(void);
 
-	void RegisterService(INTRRUPT_SERVICE service);
+	void RegisterService(INTRRUPT_SERVICE service, void* pPrivate);
 	bool Awake(void);
 	void ClearPending(bool bForced = false);
 
@@ -57,6 +57,7 @@ private:
 	virtual void OnThreadKill(bool bForced);			// it will call before kill thread
 
 	INTRRUPT_SERVICE	m_ISR;
+	void*				m_pPrivate;
 	Semaphore			m_SemaInterrupt;
 	volatile bool		m_bRun;
 	volatile bool		m_bEnable;

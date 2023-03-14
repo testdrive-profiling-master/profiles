@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive System Driver wrapper
-// Rev.  : 3/10/2023 Fri (clonextop@gmail.com)
+// Rev.  : 3/14/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include "SystemDriver.h"
 #include "NativeMemory.h"
@@ -104,9 +104,9 @@ void SystemDriver::RegWrite(UINT64 dwAddress, DWORD dwData)
 	m_SemaReg.Up();
 }
 
-void SystemDriver::RegisterInterruptService(INTRRUPT_SERVICE routine)
+void SystemDriver::RegisterInterruptService(INTRRUPT_SERVICE routine, void* pPrivate)
 {
-	m_ISR.RegisterService(routine);
+	m_ISR.RegisterService(routine, pPrivate);
 }
 
 void SystemDriver::EnableInterrupt(bool bEnable)

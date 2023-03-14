@@ -30,8 +30,8 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Simulation sub-system
-// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
+// Title : Common profiles
+// Rev.  : 3/14/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_SIM_H__
 #define __SYSTEM_SIM_H__
@@ -65,7 +65,7 @@ public:
 	virtual void RegWrite(UINT64 dwAddress, DWORD dwData);					// register write
 
 	// system
-	virtual void RegisterInterruptService(INTRRUPT_SERVICE routine);		// register interrupt service routine
+	virtual void RegisterInterruptService(INTRRUPT_SERVICE routine, void* pPrivate);		// register interrupt service routine
 	virtual void EnableInterrupt(bool bEnable = true);						// enable interrupt service
 	virtual void ClearInterruptPending(void);								// clear interrupt service pending bit
 	virtual DWORD DriverCommand(void* pCommand);							// post driver specific command

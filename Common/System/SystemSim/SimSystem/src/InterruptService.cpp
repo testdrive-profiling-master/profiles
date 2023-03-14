@@ -30,8 +30,8 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Simulation sub-system
-// Rev.  : 2/23/2023 Thu (clonextop@gmail.com)
+// Title : Common profiles
+// Rev.  : 3/14/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "InterruptService.h"
@@ -39,7 +39,7 @@
 #include "SimDelayCall.h"
 #include <assert.h>
 
-static void __interrupt_service_routine_default(void)
+static void __interrupt_service_routine_default(void* pPrivate)
 {
 	LOGI("Interrupt signal invoked.");
 }
@@ -49,7 +49,8 @@ InterruptService::InterruptService(void) :
 	m_bRun(true),
 	m_bEnable(false),
 	m_bPending(false),
-	m_ISR(__interrupt_service_routine_default)
+	m_ISR(__interrupt_service_routine_default),
+	m_pPrivate(NULL)
 {
 }
 
@@ -62,7 +63,7 @@ void InterruptService::MonitorThread(void)
 	for(; m_bRun;) {
 		m_SemaInterrupt.Down();
 
-		if(m_bEnable) m_ISR();
+		if(m_bEnable) m_ISR(m_pPrivate);
 	}
 }
 
@@ -97,11 +98,12 @@ void InterruptService::ClearPending(bool bForced)
 	SimResource::Sim()->Unlock(2);
 }
 
-void InterruptService::RegisterService(INTRRUPT_SERVICE service)
+void InterruptService::RegisterService(INTRRUPT_SERVICE service, void* pPrivate)
 {
 	bool	bEnable	= m_bEnable;
 	Enable(false);
-	m_ISR	= service ? service : __interrupt_service_routine_default;
+	m_ISR		= service ? service : __interrupt_service_routine_default;
+	m_pPrivate	= pPrivate;
 	ClearPending(true);
 	Enable(bEnable);
 }

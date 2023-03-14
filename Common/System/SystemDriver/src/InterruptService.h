@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive System Driver wrapper
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 3/14/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __INTERRUPT_SERVICE_H__
 #define __INTERRUPT_SERVICE_H__
@@ -43,7 +43,7 @@ public:
 	InterruptService(void);
 	~InterruptService(void);
 
-	void RegisterService(INTRRUPT_SERVICE service);
+	void RegisterService(INTRRUPT_SERVICE service, void* pPrivate);
 	void Awake(void);
 	void Enable(bool bEnable = TRUE);
 	void ClearPending(void);
@@ -53,6 +53,7 @@ private:
 	virtual void OnThreadKill(void);					// will be called before kill the thread
 
 	INTRRUPT_SERVICE	m_ISR;
+	void*				m_pPrivate;
 	volatile bool		m_bRun;
 	volatile bool		m_bEnable;
 	volatile bool		m_bPending;
