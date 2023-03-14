@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 3/30/2022 Wed (clonextop@gmail.com)
+// Rev.  : 3/14/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __CSTRING_H__
 #define __CSTRING_H__
@@ -90,7 +90,7 @@ public:
 	bool ChangeCharset(const char* szSrcCharset, const char* szDstCharset);
 	bool ChangeCharsetToUTF8(void);
 	bool ChangeCharsetToANSI(void);
-	inline bool IsEmpty(void)									{
+	inline bool IsEmpty(void) const								{
 		return Length() == 0;
 	}
 	inline const char* c_str(void) const						{

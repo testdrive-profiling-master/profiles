@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive codegen project
-// Rev.  : 3/10/2023 Fri (clonextop@gmail.com)
+// Rev.  : 3/14/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -74,6 +74,9 @@ public:
 	}
 	bool CompareBack(const char* s) const {
 		return cstring::CompareBack(s);
+	}
+	bool IsEmpty(void) const {
+		return cstring::IsEmpty();
 	}
 	bool CutFront(const char* s, bool bRecursive = false) {
 		iTokenizePos	= 0;
@@ -899,6 +902,7 @@ Script::Script(void)
 			.addFunction("Compare", &lua_cstring::Compare)
 			.addFunction("CompareFront", &lua_cstring::CompareFront)
 			.addFunction("CompareBack", &lua_cstring::CompareBack)
+			.addFunction("IsEmpty", &lua_cstring::IsEmpty)
 			.addFunction("CutFront", &lua_cstring::CutFront)
 			.addFunction("CutBack", &lua_cstring::CutBack)
 			.addFunction("ReadFile", &lua_cstring::ReadFile)
