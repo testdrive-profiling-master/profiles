@@ -30,8 +30,8 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Simulation sub-system
-// Rev.  : 2/23/2023 Thu (clonextop@gmail.com)
+// Title : Common profiles
+// Rev.  : 3/14/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "STDInterface.h"
@@ -124,9 +124,9 @@ void SystemSim::RegWrite(UINT64 dwAddress, DWORD dwData)
 	}
 }
 
-void SystemSim::RegisterInterruptService(INTRRUPT_SERVICE routine)
+void SystemSim::RegisterInterruptService(INTRRUPT_SERVICE routine, void* pPrivate)
 {
-	m_pSim->Interrupt().RegisterService(routine);
+	m_pSim->Interrupt().RegisterService(routine, pPrivate);
 }
 
 void SystemSim::EnableInterrupt(bool bEnable)

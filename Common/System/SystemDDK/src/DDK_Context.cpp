@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 2/21/2023 Tue (clonextop@gmail.com)
+// Rev.  : 3/14/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include "DDK_Context.h"
 
@@ -56,13 +56,9 @@ DDK_API DDKMemory* CreateDDKMemoryEx(UINT64 dwByteSize, UINT64 dwByteAlignment, 
 	return (DDKMemory*)CreateMemory(dwByteSize, dwByteAlignment, dwPhyAddress, bDMA);
 }
 
-static DDK_INTRRUPT_SERVICE		__ISR_routine	= NULL;	// ISR routine
-static void*					__ISR_pPrivate	= NULL;	// ISR private data
-static void _ISR_(void)
+static void _ISR_(void* pPrivate)
 {
-	if(__ISR_routine) {
-		__ISR_routine(__ISR_pPrivate);
-	}
+	printf("*I: [DDK] Interrupt occurred.\n");
 }
 
 void EnumerateDDKMemory(ENUMERATE_DDK_MEMORY_FUNCTION func, void* pPrivate)
@@ -80,16 +76,14 @@ void ReportDDKMemory(void)
 DDKContext::DDKContext(void)
 {
 	m_pSystem		= CreateSystem();
-	__ISR_pPrivate	= this;
 
-	if(m_pSystem) m_pSystem->RegisterInterruptService(_ISR_);
+	if(m_pSystem) m_pSystem->RegisterInterruptService(_ISR_, this);
 }
 
 DDKContext::~DDKContext(void)
 {
-	if(m_pSystem) m_pSystem->RegisterInterruptService(NULL);
+	if(m_pSystem) m_pSystem->RegisterInterruptService(NULL, NULL);
 
-	__ISR_pPrivate	= NULL;
 	SAFE_RELEASE(m_pSystem);
 }
 
@@ -127,9 +121,7 @@ void DDKContext::RegWrite(UINT64 dwAddress, DWORD dwData)
 
 void DDKContext::RegisterInterruptService(DDK_INTRRUPT_SERVICE routine, void* pPrivate)
 {
-	__ISR_routine	= NULL;		// detach from ISR
-	__ISR_pPrivate	= pPrivate ? pPrivate : (DDK*)this;
-	__ISR_routine	= routine;	// attach to ISR
+	if(m_pSystem) m_pSystem->RegisterInterruptService(routine ? routine : _ISR_, pPrivate ? pPrivate : this);
 }
 
 void DDKContext::EnableInterrupt(bool bEnable)

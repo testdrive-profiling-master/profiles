@@ -31,19 +31,21 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive System Driver wrapper
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Rev.  : 3/14/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include "InterruptService.h"
 
-static void __interrupt_service_routine_default(void)
+static void __interrupt_service_routine_default(void* pPrivate)
 {
+	LOGI("Interrupt signal invoked.");
 }
 
 InterruptService::InterruptService(void) :
 	m_bRun(true),
 	m_bEnable(false),
 	m_bPending(false),
-	m_ISR(__interrupt_service_routine_default)
+	m_ISR(__interrupt_service_routine_default),
+	m_pPrivate(NULL)
 {
 }
 
@@ -56,7 +58,7 @@ void InterruptService::MonitorThread(void)
 	for(; m_bRun;) {
 		g_pDriver->InterruptLock();
 
-		if(m_bEnable) m_ISR();
+		if(m_bEnable) m_ISR(m_pPrivate);
 	}
 }
 
@@ -90,7 +92,8 @@ void InterruptService::Awake(void)
 	}
 }
 
-void InterruptService::RegisterService(INTRRUPT_SERVICE service)
+void InterruptService::RegisterService(INTRRUPT_SERVICE service, void* pPrivate)
 {
-	m_ISR	= service ? service : __interrupt_service_routine_default;
+	m_ISR		= service ? service : __interrupt_service_routine_default;
+	m_pPrivate	= pPrivate;
 }
