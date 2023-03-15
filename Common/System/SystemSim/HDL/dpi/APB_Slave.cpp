@@ -31,11 +31,11 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 2/23/2023 Thu (clonextop@gmail.com)
+// Rev.  : 3/15/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "APB_Slave.h"
 
-APB_Slave::APB_Slave(const char* sTitle, DWORD dwAddrBase, DWORD dwAddrHigh)
+APB_Slave::APB_Slave(const char* sTitle, DWORD dwAddrBase, DWORD dwAddrHigh, DWORD dwTimeout)
 {
 	Log.SetTitle(*sTitle ? "APB_Slave('%s')" : "APB_Slave", sTitle);
 	m_pSlave		= CreateSlave(dwAddrBase, dwAddrHigh);
@@ -43,6 +43,7 @@ APB_Slave::APB_Slave(const char* sTitle, DWORD dwAddrBase, DWORD dwAddrHigh)
 	m_pPacket		= NULL;
 	m_bWrite		= FALSE;
 	m_dwTime		= 0;
+	m_dwTimeout		= dwTimeout;
 	LOGI("Bus created - 0x%08X ~ 0x%08X", dwAddrBase, dwAddrHigh);
 }
 
@@ -105,7 +106,7 @@ void APB_Slave::BusSignal(
 			if(PSLVERR)
 				LOGE("PSLVERR is occurred.");
 
-			if(m_dwTime > 3000)
+			if(m_dwTimeout && (m_dwTime > m_dwTimeout))
 				LOGE("Timeout is occurred.");
 
 			if(PREADY) {
@@ -150,7 +151,7 @@ DPI_FUNCTION void APB_Slave_Interface(
 		*(DWORD*)PRDATA, PREADY, PSLVERR);
 }
 
-DPI_FUNCTION void* CreateAPBSlave(const char* sTitle, unsigned int dwAddrBase, unsigned int dwAddrBits)
+DPI_FUNCTION void* CreateAPBSlave(const char* sTitle, unsigned int dwAddrBase, unsigned int dwAddrBits, unsigned int dwTimeout)
 {
-	return (void*)(new APB_Slave(sTitle, dwAddrBase, dwAddrBase + (1 << dwAddrBits) - 1));
+	return (void*)(new APB_Slave(sTitle, dwAddrBase, dwAddrBase + (1 << dwAddrBits) - 1, dwTimeout));
 }

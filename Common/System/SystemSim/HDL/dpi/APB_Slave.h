@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 2/23/2023 Thu (clonextop@gmail.com)
+// Rev.  : 3/15/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __APB_SLAVE_H__
 #define __APB_SLAVE_H__
@@ -39,7 +39,7 @@
 
 class APB_Slave : public SelfDestory {
 public:
-	APB_Slave(const char* sTitle, DWORD dwAddrBase, DWORD dwAddrHigh);
+	APB_Slave(const char* sTitle, DWORD dwAddrBase, DWORD dwAddrHigh, DWORD dwTimeout);
 	virtual ~APB_Slave(void);
 
 	void BusSignal(
@@ -61,6 +61,7 @@ private:
 	BUS_SALVE_PACKET*		m_pPacket;
 	bool					m_bWrite;
 	DWORD					m_dwTime;
+	DWORD					m_dwTimeout;
 	SystemLog				Log;
 };
 
