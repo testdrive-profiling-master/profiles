@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Template design
-// Rev.  : 6/30/2021 Wed (clonextop@gmail.com)
+// Rev.  : 3/15/2023 Wed (clonextop@gmail.com)
 //================================================================================
 `include "system_defines.vh"
 /*verilator tracing_off*/
@@ -43,7 +42,8 @@
 module testdrive_apb_slave_bfm #(
 	parameter string	C_BUS_TITLE			= "",
 	parameter			C_BASE_ADDR			= 32'h0,
-	parameter integer	C_ADDR_BITS			= 10
+	parameter integer	C_ADDR_BITS			= 10,
+	parameter integer	C_TIME_OUT			= 3000		// if '0', not use timeout
 ) (
 	// system
 	input									CLK,
@@ -88,10 +88,11 @@ chandle sapb;
 `DPI_FUNCTION chandle CreateAPBSlave(
 	input	string							sTitle,
 	input	int unsigned					dwAddrBase,
-	input	int unsigned					dwAddrBits
+	input	int unsigned					dwAddrBits,
+	input	int unsigned					dwTimeOut
 );
 initial begin
-	sapb	= CreateAPBSlave(C_BUS_TITLE, C_BASE_ADDR, C_ADDR_BITS);
+	sapb	= CreateAPBSlave(C_BUS_TITLE, C_BASE_ADDR, C_ADDR_BITS, C_TIME_OUT);
 end
 
 always@(posedge CLK) begin
