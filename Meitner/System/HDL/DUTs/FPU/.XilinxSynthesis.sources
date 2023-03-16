@@ -1,9 +1,9 @@
 //----------------------------------------------------------------------
 // Sources
-../library/demux_by_enable.v
-../library/MultiCyclePath.v
-../library/MultiCyclePathEx.v
-../library/MultiCycleSlice.v
+library/demux_by_enable.v
+library/MultiCyclePath.v
+library/MultiCyclePathEx.v
+library/MultiCycleSlice.v
 
 FPU/F32/*.v
 FPU/fully_stage/*.v

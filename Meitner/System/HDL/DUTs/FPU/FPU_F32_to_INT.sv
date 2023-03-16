@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,11 +30,14 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : FPU
+// Title : FPU 32bit(IEEE-754) unit
+// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+//================================================================================
 // Rev.  : 3/30/2021 Tue (clonextop@gmail.com)
 //================================================================================
 `include "FPU.vh"
 
+/* HIDDEN */
 module FPU_F32_to_INT (
 	input	[31:0]				A,
 	output	[31:0]				O

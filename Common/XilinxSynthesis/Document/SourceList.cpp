@@ -328,7 +328,7 @@ BOOL SourceVector::Synthesis_Vivado(void)
 	BOOL bRet				= FALSE;
 	float	fClockLatency	= 0;
 	CString sWorkDir		= RetrievePath(WORK_DIR_NAME);
-	CString sIncludePaths	= _T("$env(TESTDRIVE_PROFILE)Common/System/SystemSim/HDL");
+	CString sIncludePaths	= _T("$env(TESTDRIVE_PROFILE)Common/System/SystemSim/HDL  $env(PROJECT)System\\HDL");
 	CString sName			= Name();
 	CString	sTopName;	// top module name
 	sName.Replace(_T('.'), _T('\0'));
@@ -407,6 +407,7 @@ BOOL SourceVector::Synthesis_Vivado(void)
 			}
 			{
 				CString sIncList, sSrcList;
+				sIncList	+= _T("  $env(TESTDRIVE_PROFILE)Common/System/SystemSim/HDL\n");
 				sIncList.AppendFormat(_T("  %s\n"), g_pSystem->RetrieveFullPath(_T("%PROJECT%System\\HDL")));
 				sSrcList.AppendFormat(_T("read_xdc default.xdc\n"));
 				{
@@ -426,6 +427,7 @@ BOOL SourceVector::Synthesis_Vivado(void)
 							sSourceListPath.Delete(iPos, sSourceListPath.GetLength());
 							sSourceListPath.Replace(_T('\\'), _T('/'));
 							sIncList.AppendFormat(_T("  %s\n"), (LPCTSTR)sSourceListPath);
+							sIncludePaths.AppendFormat(_T("  %s"), (LPCTSTR)sSourceListPath);
 						}
 
 						while(_fgetts(sLine, 8192, fp_src)) {
