@@ -54,33 +54,45 @@ static void SetEnvString(const char* sKey, const char* sStr)
 	WritePrivateProfileString("VERILATOR", sKey, sStr, g_sTestDrivePath + "/verilator_helper.ini");
 }
 
-int RepoCopy(const char* sTargetPath)
+int RepoCopy(const char* sTargetName)
 {
-	if(!sTargetPath) {
+	if(!sTargetName) {
 		printf("* Verilator's extra function *\n" \
-			   "  : Copy from latest build results to 'target' path.\n\n" \
-			   "  Usage : verilator repo TARGET_PATH\n\n");
+			   "  : Copy from latest build results to 'target' name.\n\n" \
+			   "  Usage : verilator bake TARGET_NAME\n\n");
 	}
 
 	cstring	sLatestMdir	= GetEnvString("LATEST_MDIR");
+	cstring sTargetPath	= "./.bake/";
 
 	if(sLatestMdir.IsEmpty()) {
 		LOGE("No recent build result.");
 		return 1;
 	}
 
+	if(*sTargetName == '.') {
+		sTargetPath	= sTargetName;
+	} else {
+		sTargetPath	+= sTargetName;
+	}
+
 	{
 		// target is a valid directory?
-		auto target_path	= fs::path(sTargetPath);
+		auto target_path	= fs::path(sTargetPath.c_str());
+
+		// not exist? then create
+		if(!fs::exists(target_path)) {
+			fs::create_directories(target_path);
+		}
 
 		if(!fs::exists(target_path) || !fs::is_directory(target_path)) {
-			LOGE("Target path is not exist or not a directory. : '%s'\n", target_path);
+			LOGE("Target path is not exist or not a directory. : '%s'\n", target_path.string().c_str());
 			return 1;
 		}
 
 		// add nosearch directive
 		{
-			cstring	sNosearchPath(sTargetPath);
+			cstring	sNosearchPath(sTargetPath.c_str());
 			sNosearchPath	+= "/.TestDrive.nosearch";
 			target_path	= fs::path(sNosearchPath.c_str());
 
@@ -94,18 +106,18 @@ int RepoCopy(const char* sTargetPath)
 	{
 		// remove all simulation results.
 		cstring sCmd;
-		sCmd.Format("rm -f %s/SimTop.* >nul 2>&1", sTargetPath);
+		sCmd.Format("rm -f %s/SimTop.* >nul 2>&1", sTargetPath.c_str());
 		system(sCmd);
-		sCmd.Format("rm -f %s/SimTop_* >nul 2>&1", sTargetPath);
+		sCmd.Format("rm -f %s/SimTop_* >nul 2>&1", sTargetPath.c_str());
 		// copy new simulation results.
 		system(sCmd);
-		sCmd.Format("cp -f %s/SimTop*.cpp %s >nul 2>&1", sLatestMdir.c_str(), sTargetPath);
+		sCmd.Format("cp -f %s/SimTop*.cpp %s >nul 2>&1", sLatestMdir.c_str(), sTargetPath.c_str());
 		system(sCmd);
-		sCmd.Format("cp -f %s/SimTop*.h %s >nul 2>&1", sLatestMdir.c_str(), sTargetPath);
+		sCmd.Format("cp -f %s/SimTop*.h %s >nul 2>&1", sLatestMdir.c_str(), sTargetPath.c_str());
 		system(sCmd);
-		sCmd.Format("cp -f %s/SimTop*.mk %s >nul 2>&1", sLatestMdir.c_str(), sTargetPath);
+		sCmd.Format("cp -f %s/SimTop*.mk %s >nul 2>&1", sLatestMdir.c_str(), sTargetPath.c_str());
 		system(sCmd);
-		sCmd.Format("cp -f %s/SimTop*.dat %s >nul 2>&1", sLatestMdir.c_str(), sTargetPath);
+		sCmd.Format("cp -f %s/SimTop*.dat %s >nul 2>&1", sLatestMdir.c_str(), sTargetPath.c_str());
 		LOGI("Done!");
 	}
 
@@ -123,33 +135,32 @@ int main(int argc, const char* argv[])
 		return 1;
 	}
 
-	if(argc >= 2 && !strcmp(argv[1], "repo")) {	// repo copy
+	if(argc >= 2 && !strcmp(argv[1], "bake")) {	// bake copy
 		return RepoCopy((argc == 3) ? argv[2] : NULL);
 	}
 
 	{
 		// check pre-compiled repo.
-		bool	bPreCompiled	= false;
+		bool	bBaked	= false;
 		cstring	sDst;
-		cstring sRepo;
+		cstring sBakeName;
+		cstring sBakePath;
 		{
-			cstring	sSrc;
-
 			for(int i = 1; i < argc; i++) {
 				cstring sArg = argv[i];
 
-				if(sRepo.IsEmpty() && !sArg.CompareFront("-")) {
-					sRepo	= argv[i];
-					sRepo.Replace("\\", "/", true);
-					sRepo.CutBack("/");
-					sRepo	+= "/repo/";
+				if(sBakePath.IsEmpty() && !sArg.CompareFront("-")) {
+					sBakePath	= argv[i];
+					sBakePath.Replace("\\", "/", true);
+					sBakePath.CutBack("/");
+					sBakePath	+= "/.bake/";
 				}
 
-				if(sArg.CompareFront("-Drepo=")) {
-					bPreCompiled	= true;
-					sSrc	= sArg;
-					sSrc.CutFront("-Drepo=");
-					sSrc.Trim(" \"");
+				if(sArg.CompareFront("-bake=")) {
+					bBaked	= true;
+					sBakeName	= sArg;
+					sBakeName.CutFront("-bake=");
+					sBakeName.Trim(" \"");
 				} else if(sArg == "-Mdir" && (i + 1) < argc) {
 					i++;
 					sDst	= argv[i];
@@ -159,17 +170,17 @@ int main(int argc, const char* argv[])
 				}
 			}
 
-			if(bPreCompiled) {	// source repo. path check
-				if(sRepo.IsEmpty()) {
-					LOGE("Can't find repo. path.", sRepo.c_str());
+			if(bBaked) {	// source .bake path check
+				if(sBakePath.IsEmpty()) {
+					LOGE("Can't find repo. path.", sBakePath.c_str());
 					return 1;
 				}
 
-				sRepo	+= sSrc;
-				auto repo_path	= fs::path(sRepo.c_str());
+				sBakePath	+= sBakeName;
+				auto repo_path	= fs::path(sBakePath.c_str());
 
 				if(!fs::exists(repo_path) || !fs::is_directory(repo_path)) {
-					LOGE("Can't access source repo. path : '%s'\n", sRepo.c_str());
+					LOGE("Can't access source repo. path : '%s'\n", sBakePath.c_str());
 					return 1;
 				}
 
@@ -180,10 +191,11 @@ int main(int argc, const char* argv[])
 			}
 		}
 
-		if(bPreCompiled) {
-			auto src_path = fs::absolute(fs::path(sRepo.c_str()));
+		if(bBaked) {
+			auto src_path = fs::absolute(fs::path(sBakePath.c_str()));
 			cstring sCmd;
-			sCmd.Format("cp -f -v %s/* %s", sRepo.c_str(), sDst.c_str());
+			LOGI("Copy from baked result '%s'", sBakeName.c_str());
+			sCmd.Format("cp -f -v %s/* %s", sBakePath.c_str(), sDst.c_str());
 			system(sCmd);
 			return 0;
 		}
