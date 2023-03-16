@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,9 +31,9 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 10/11/2022 Tue (clonextop@gmail.com)
+// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
-`include "system_defines.vh"
+`include "testdrive_system.vh"
 
 module MAD_multicycled_Ex_4_1 (
 	input					CLK,	// clock

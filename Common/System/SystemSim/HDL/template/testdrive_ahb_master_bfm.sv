@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -30,21 +30,20 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Template design
-// Rev.  : 12/31/2021 Fri (clonextop@gmail.com)
+// Title : TestDrive template design
+// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
-`include "system_defines.vh"
+`include "testdrive_system.vh"
 /*verilator tracing_off*/
 //-----------------------------------------------------------------------------
-// The AXI 4 Master BFM
+// The AHB Master BFM
 //-----------------------------------------------------------------------------
 
-module testdrive_axi4_master_bfm #(
+module testdrive_ahb_master_bfm #(
 	parameter string	C_BUS_TITLE			= "",
 	parameter integer	C_THREAD_ID_WIDTH	= 1,
 	parameter integer	C_ADDR_WIDTH		= 32,
-	parameter integer	C_DATA_WIDTH		= 128,
-	parameter integer	C_USE_AXI4			= 1,
+	parameter integer	C_DATA_WIDTH		= 32,
 	parameter integer	C_DEBUG_LEVEL		= 0
 ) (
 	input									CLK,			// clock
@@ -55,17 +54,17 @@ module testdrive_axi4_master_bfm #(
 	input	[(C_USE_AXI4==0 ? 4:8)-1:0]		AWLEN,			// Burst_Length = AxLEN + 1
 	input	[2:0]							AWSIZE,			// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	input	[1:0]							AWBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)
-	input									AWLOCK,			// b0(Normal), b1(Exclusive)
+	input	[1:0]							AWLOCK,			// b00(Normal), b01(Exclusive), b10(Locked), b11(Reserved)
 	input	[3:0]							AWCACHE,		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 	input	[2:0]							AWPROT,			// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
-	input	[3:0]							AWREGION,		// Write region identifier (not defined in this)
-	input	[3:0]							AWQOS,			// Write Quality of Service (not defined in this)
+	input	[3:0]							AWREGION,		//
+	input	[3:0]							AWQOS,			//
 	input									AWVALID,		// Write address valid
 	output reg								AWREADY,		// Write address ready (1 = slave ready, 0 = slave not ready)
 	// write data
-	input	[C_THREAD_ID_WIDTH-1:0]			WID,			// Write ID tag
-	input	[C_DATA_WIDTH-1:0]				WDATA,			// Write data
-	input	[(C_DATA_WIDTH/8)-1:0]			WSTRB,			// Write strobes (WSTRB[n] = WDATA[(8  n) + 7:(8  n)])
+	input [C_THREAD_ID_WIDTH-1:0]			WID,			//
+	input [C_DATA_WIDTH-1:0]				WDATA,			// Write data
+	input [(C_DATA_WIDTH/8)-1:0]			WSTRB,			// Write strobes (WSTRB[n] = WDATA[(8  n) + 7:(8  n)])
 	input									WLAST,			// Write last
 	input									WVALID,			// Write valid
 	output reg								WREADY,			// Write ready
@@ -80,16 +79,16 @@ module testdrive_axi4_master_bfm #(
 	input	[(C_USE_AXI4==0 ? 4:8)-1:0]		ARLEN,			// Burst_Length = AxLEN + 1
 	input	[2:0]							ARSIZE,			// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	input	[1:0]							ARBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)
-	input									ARLOCK,			// b0(Normal), b1(Exclusive)
+	input	[1:0]							ARLOCK,			// b00(Normal), b01(Exclusive), b10(Locked), b11(Reserved)
 	input	[3:0]							ARCACHE,		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 	input	[2:0]							ARPROT,			// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
-	output reg	[3:0]						ARREGION,		// Read region identifier (not defined in this)
-	output reg	[3:0]						ARQOS,			// Read Quality of Service (not defined in this)
+	output reg	[3:0]						ARREGION,		//
+	output reg	[3:0]						ARQOS,			//
 	input									ARVALID,		// Read address valid
 	output reg								ARREADY,		// Read address ready (1 = slave ready, 0 = slave not ready)
 	// read data
-	output reg	[C_THREAD_ID_WIDTH-1:0]		RID,			// Read ID tag
-	output reg	[C_DATA_WIDTH-1:0]			RDATA,			// Read data
+	output reg	[C_THREAD_ID_WIDTH-1:0]		RID,			// Read ID tag.
+	output reg	[C_DATA_WIDTH-1:0]			RDATA,			// Read data.
 	output reg	[1:0]						RRESP,			// Read response. b00(OKAY), b01(EXOKAY), b10(SLVERR), b11(DECERR)
 	output reg								RLAST,			// Read last. This signal indicates the last transfer in a read burst.
 	output reg								RVALID,			// Read valid (1 = read data available, 0 = read data not available)
@@ -98,9 +97,9 @@ module testdrive_axi4_master_bfm #(
 
 // definition & assignment ---------------------------------------------------
 // object
-chandle maxi;
+int maxi;
 // initialize
-`DPI_FUNCTION chandle CreateMAXI (
+`DPI_FUNCTION int CreateMAXI (
 	input	string							sTitle,
 	input	int								iDataWidth,
 	input	int								bUseAXI4,
@@ -113,15 +112,15 @@ end
 
 // write interface
 `DPI_FUNCTION void MAXIW_Interface (
-	input	chandle							hMAXI,			// handle
-	input	bit								nRST,			// reset (active low)
+	input	int								MAXI,
+	input	bit								nRST,
 	// write address
 	input	int								AWID,			// The ID tag for the write address group of signals
 	input	bit [C_ADDR_WIDTH-1:0]			AWADDR,			// Write address
 	input	bit [(C_USE_AXI4==0 ? 4:8)-1:0]	AWLEN,			// Burst_Length = AxLEN + 1
 	input	bit [2:0]						AWSIZE,			// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	input	bit [1:0]						AWBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)
-	input	bit 							AWLOCK,			// b0(Normal), b1(Exclusive)
+	input	bit [1:0]						AWLOCK,			// b00(Normal), b01(Exclusive), b10(Locked), b11(Reserved) : Locked/Reserved is removed in AXI4
 	input	bit [3:0]						AWCACHE,		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 	input	bit [2:0]						AWPROT,			// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
 	input	bit [3:0]						AWREGION,		//
@@ -150,15 +149,15 @@ reg								r_BVALID;
 
 // read interface
 `DPI_FUNCTION void MAXIR_Interface (
-	input	chandle							hMAXI,			// handle
-	input	bit								nRST,			// reset (active low)
+	input	int								MAXI,
+	input	bit								nRST,
 	// read address
 	input	int								ARID,			// Read address ID tag
 	input	bit [C_ADDR_WIDTH-1:0]			ARADDR,			// Read address
 	input	bit [(C_USE_AXI4==0 ? 4:8)-1:0]	ARLEN,			// Burst_Length = AxLEN + 1
 	input	bit [2:0]						ARSIZE,			// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	input	bit [1:0]						ARBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)
-	input	bit 							ARLOCK,			// b0(Normal), b1(Exclusive)
+	input	bit [1:0]						ARLOCK,			// b00(Normal), b01(Exclusive), b10(Locked), b11(Reserved)
 	input	bit [3:0]						ARCACHE,		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 	input	bit [2:0]						ARPROT,			// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
 	output	bit	[3:0]						ARREGION,		//

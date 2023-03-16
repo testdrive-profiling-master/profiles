@@ -31,11 +31,11 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Processor
+// Title : TestDrive base system definitions
 // Rev.  : 3/23/2021 Tue (clonextop@gmail.com)
 //================================================================================
-`ifndef __SYSTEM_DEFINE_VH__
-`define __SYSTEM_DEFINE_VH__
+`ifndef __TESTDRIVE_SYSTEM_VH__
+`define __TESTDRIVE_SYSTEM_VH__
 `timescale 1ns/1ns
 
 `ifdef VERILATOR
@@ -133,4 +133,4 @@
 `define	BREAK_POINT			// for non-testdrive system
 `endif//USE_TESTDRIVE
 
-`endif//__SYSTEM_DEFINE_VH__
+`endif//__TESTDRIVE_SYSTEM_VH__

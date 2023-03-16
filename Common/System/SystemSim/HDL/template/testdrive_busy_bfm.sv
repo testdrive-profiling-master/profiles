@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,68 +30,29 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Processor
-// Rev.  : 6/26/2021 Sat (clonextop@gmail.com)
+// Title : TestDrive template design
+// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
-`timescale 1ns/1ns
-`include "system_defines.vh"
-`include "template/testdrive_virtual_slave_bfm.sv"
+`include "testdrive_system.vh"
 
-`ifndef VIRTUAL_SLAVE_BASE_ADDR
-`define	VIRTUAL_SLAVE_BASE_ADDR		32'h0
-`endif
-`ifndef VIRTUAL_SLAVE_ADDR_BITS
-`define	VIRTUAL_SLAVE_ADDR_BITS		16
-`endif
-
-module top(
-	// system
-	input		MCLK,		// clock
-	input		nRST,		// reset (active low)
-	// control
-	output		BUSY,		// processor is busy
-	output		INTR		// interrupt signal
+/*verilator tracing_off*/
+//-----------------------------------------------------------------------------
+// simulation busy manager
+//-----------------------------------------------------------------------------
+module testdrive_busy_bfm (
+	input								BUSY /*verilator public*/
 );
 
 // definition & assignment ---------------------------------------------------
-// write
-wire									S_WE;
-wire	[`VIRTUAL_SLAVE_ADDR_BITS-1:0]	S_WADDR;
-wire	[`RANGE_DWORD]					S_WDATA;
-
-// read
-wire									S_RE;
-wire	[`VIRTUAL_SLAVE_ADDR_BITS-1:0]	S_RADDR;
-wire	[`RANGE_DWORD]					S_RDATA;
 
 // implementation ------------------------------------------------------------
-// virtual slave bus
-testdrive_virtual_slave_bfm #(
-	.C_BASE_ADDR		(`VIRTUAL_SLAVE_BASE_ADDR),
-	.C_ADDR_BITS		(`VIRTUAL_SLAVE_ADDR_BITS)
-)  virtual_slave (
-	MCLK, nRST,									// system
-	S_WE, S_WADDR, S_WDATA,						// write
-	S_RE, S_RADDR, S_RDATA						// read
-);
-
-//----------------------------------------------------------------------------
-// processor wrapper implementation
-dut_top  dut_top (
-	//// system
-	.CLK				(MCLK),
-	.nRST				(nRST),
-	.BUSY				(BUSY),
-	.INTR				(INTR),
-	//// slave bus
-	// write
-	.S_WE				(S_WE),
-	.S_WADDR			(S_WADDR),
-	.S_WDATA			(S_WDATA),
-	// read
-	.S_RE				(S_RE),
-	.S_RADDR			(S_RADDR),
-	.S_RDATA			(S_RDATA)
-);
+`ifdef VERILATOR
+`systemc_header
+void SimulationCreateBusy(unsigned char* pBUSY);
+`systemc_ctor
+SimulationCreateBusy(&BUSY);
+`verilog
+`endif
 
 endmodule
+/*verilator tracing_on*/

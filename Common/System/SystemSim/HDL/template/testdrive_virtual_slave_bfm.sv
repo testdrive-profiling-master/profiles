@@ -30,83 +30,85 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Template design
-// Rev.  : 3/15/2023 Wed (clonextop@gmail.com)
+// Title : TestDrive template design
+// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
-`include "system_defines.vh"
+`include "testdrive_system.vh"
 /*verilator tracing_off*/
 //-----------------------------------------------------------------------------
-// The APB Slave BFM
+// The Virtual slave BFM
 //-----------------------------------------------------------------------------
 
-module testdrive_apb_slave_bfm #(
-	parameter string	C_BUS_TITLE			= "",
-	parameter			C_BASE_ADDR			= 32'h0,
-	parameter integer	C_ADDR_BITS			= 10,
-	parameter integer	C_TIME_OUT			= 3000		// if '0', not use timeout
+module testdrive_virtual_slave_bfm #(
+	parameter string	C_BUS_TITLE		= "",
+	parameter			C_BASE_ADDR		= 32'h0,
+	parameter integer	C_ADDR_BITS		= 10
 ) (
 	// system
 	input									CLK,
 	input									nRST,
 	// Write
-	output	reg								PSEL,
-	output	reg								PENABLE,
-	output	reg								PWRITE,
-	output	reg [C_ADDR_BITS-1:0]			PADDR,
-	output	reg [`RANGE_DWORD]				PWDATA,
-	output	reg [3:0]						PSTRB,
-	input	[`RANGE_DWORD]					PRDATA,
-	input									PREADY,
-	input									PSLVERR
+	output	reg								WE,
+	output	reg [C_ADDR_BITS-1:0]			WADDR,
+	output	reg [`RANGE_DWORD]				WDATA,
+	// Read
+	output	reg								RE,
+	output	reg [C_ADDR_BITS-1:0]			RADDR,
+	input	[`RANGE_DWORD]					RDATA
 );
 
 // definition & assignment ---------------------------------------------------
-`DPI_FUNCTION void APB_Slave_Interface (
-	input	chandle							hSAPB,
+`DPI_FUNCTION void VirtualSlave_Write (
+	input	chandle							hSVirtual,
 	input	bit								nRST,
 	// write
-	output	bit 							PSEL,
-	output	bit 							PENABLE,
-	output	bit 							PWRITE,
-	output	bit	[`RANGE_DWORD] 				PADDR,
-	output	bit	[`RANGE_DWORD]				PWDATA,
-	output	bit	[3:0]						PSTRB,
-	input	bit	[`RANGE_DWORD]				PRDATA,
-	input	bit								PREADY,
-	input	bit								PSLVERR
+	output	bit 							EN,
+	output	bit	[`RANGE_DWORD]				ADDR,
+	output	bit	[`RANGE_DWORD]				DATA
+);
+
+`DPI_FUNCTION void VirtualSlave_Read (
+	input	chandle							hSVirtual,
+	input	bit								nRST,
+	// read
+	output	bit 							EN,
+	output	bit	[`RANGE_DWORD]				ADDR,
+	input	bit	[`RANGE_DWORD]				DATA
 );
 
 // register pipes
-reg											r_sel, r_enable, r_write;
-reg	[`RANGE_DWORD]							r_addr, r_wdata;
-reg	[3:0]									r_strb;
+reg											r_en, w_en;
+reg	[`RANGE_DWORD]							r_addr, w_addr;
+reg	[`RANGE_DWORD]							w_data;
 
 // implementation ------------------------------------------------------------
 // object
-chandle sapb;
+chandle svirtual;
 // initialize
-`DPI_FUNCTION chandle CreateAPBSlave(
+`DPI_FUNCTION chandle CreateVirtualSlave(
 	input	string							sTitle,
 	input	int unsigned					dwAddrBase,
-	input	int unsigned					dwAddrBits,
-	input	int unsigned					dwTimeOut
+	input	int unsigned					dwAddrBits
 );
 initial begin
-	sapb	= CreateAPBSlave(C_BUS_TITLE, C_BASE_ADDR, C_ADDR_BITS, C_TIME_OUT);
+	svirtual	= CreateVirtualSlave(C_BUS_TITLE, C_BASE_ADDR, C_ADDR_BITS);
 end
 
 always@(posedge CLK) begin
-	APB_Slave_Interface(
-		sapb, nRST,
-		r_sel, r_enable, r_write, r_addr, r_wdata, r_strb,
-		PRDATA, PREADY, PSLVERR
+	VirtualSlave_Write(
+		svirtual, nRST,
+		w_en, w_addr, w_data
 	);
-	PSEL		<= r_sel;
-	PENABLE		<= r_enable;
-	PWRITE		<= r_write;
-	PADDR		<= r_addr[C_ADDR_BITS-1:0];
-	PWDATA		<= r_wdata;
-	PSTRB		<= r_strb;
+	WE		<= w_en;
+	WADDR	<= w_addr[C_ADDR_BITS-1:0];
+	WDATA	<= w_data;
+
+	VirtualSlave_Read(
+		svirtual, nRST,
+		r_en, r_addr, RDATA
+	);
+	RE		<= r_en;
+	RADDR	<= r_addr[C_ADDR_BITS-1:0];
 end
 
 endmodule

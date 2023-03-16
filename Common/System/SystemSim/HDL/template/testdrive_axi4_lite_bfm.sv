@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,10 +30,10 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Template design
-// Rev.  : 6/30/2021 Wed (clonextop@gmail.com)
+// Title : TestDrive template design
+// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
-`include "system_defines.vh"
+`include "testdrive_system.vh"
 `timescale 1ns/1ns
 /*verilator tracing_off*/
 //-----------------------------------------------------------------------------

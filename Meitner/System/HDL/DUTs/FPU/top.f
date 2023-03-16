@@ -1,5 +1,4 @@
-+incdir+./
-+incdir+../../
++incdir+${TESTDRIVE_PROFILE}common/System/SystemSim/HDL/
 
 FPU_F32_ADD.sv
 FPU_F32_DIV.sv

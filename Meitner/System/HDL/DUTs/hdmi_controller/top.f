@@ -1,8 +1,5 @@
-+incdir+./
-+incdir+../../
++incdir+${TESTDRIVE_PROFILE}common/System/SystemSim/HDL/
 
-system_defines.vh
-dpi_defines.vh
 includes.vh
 
 HDMI_ClkGen.v

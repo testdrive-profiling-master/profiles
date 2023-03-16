@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,12 +31,12 @@
 // OF SUCH DAMAGE.
 // 
 // Title : MTSP(Multi-thread Stream Processor) 'Meitner' v1.1
-// Rev.  : 7/20/2021 Tue (clonextop@gmail.com)
+// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
 `ifndef __MTSP_DEFINES__				// rid of Warnning (Duplicated definition)
 //----------------------------------------------------------------------------
 `define __MTSP_DEFINES__
-`include "system_defines.vh"
+`include "testdrive_system.vh"
 	
 // Processor Configuration ---------------------------------------------------
 `ifndef MEITNER_GPRs_SIZE

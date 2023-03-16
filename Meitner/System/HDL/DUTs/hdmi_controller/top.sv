@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,12 +31,12 @@
 // OF SUCH DAMAGE.
 // 
 // Title : HDMI controller
-// Rev.  : 6/26/2021 Sat (clonextop@gmail.com)
+// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 `define	M_AXI_USE_AXI4			1
 
-`include "system_defines.vh"
+`include "testdrive_system.vh"
 `include "template/testdrive_apb_slave_bfm.sv"
 `include "template/testdrive_axi4_master_bfm.sv"
 `include "DUTs/hdmi_controller/includes.vh"
@@ -234,7 +233,7 @@ hdmi_controller #(
 	// system
 	.ACLK				(MCLK),
 	.nRST				(nRST),
-	.INTR				(INTR),
+	.INTR				(),
 	//// slave APB -------------------------
 	.S_PSEL				(S_PSEL),
 	.S_PENABLE			(S_PENABLE),

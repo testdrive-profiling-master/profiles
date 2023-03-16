@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,73 +31,115 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common verilog library
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 9/2/2022 Fri (clonextop@gmail.com)
 //================================================================================
-`ifndef __TESTDRIVE_SRAM_SINGLE_MULTICYCLE_V__
-`define __TESTDRIVE_SRAM_SINGLE_MULTICYCLE_V__
-`include "system_defines.vh"
+`ifndef __TESTDRIVE_MULTICYCLE_SLICE_V__
+`define __TESTDRIVE_MULTICYCLE_SLICE_V__
+`include "testdrive_system.vh"
 
 `define __GEN_MULTIPATH_PIPE(name) \
-	(* keep="true"*) reg		[DATA_WIDTH-1:0]		name; \
-	assign DOUT		= name; \
+	(* dont_touch = "yes" *) reg		[WIDTH-1:0]		name; \
+	assign ODATA	= name; \
 	always@(posedge CLK, negedge nRST) begin \
 		if(!nRST) begin \
-			name	<= {(DATA_WIDTH){1'b0}}; \
+			name	<= INITIAL; \
 		end \
-		else if(o_en) begin \
-			name	<= sram_out; \
+		else if(ie & IREADY) begin \
+			name	<= IDATA; \
 		end \
 	end
 
-module SRAM_Single_Multicycle #(
-	parameter	ADDR_WIDTH			= 7,
-	parameter	DATA_WIDTH			= 32,
-	parameter	CYCLE				= 2
+module MultiCycleSlice #(
+	parameter		WIDTH			= 4,				// control width
+	parameter		INITIAL			= {WIDTH{1'b0}},	// initial value
+	parameter		CYCLE			= 2,				// must >= 2
+	parameter		CHAINED			= 1					// chained control?
 ) (
-	input							CLK,	// clock
-	input							nRST,	// reset (active low)
-	input							nCE,	// chip enable (active low)
-	input							nWE,	// write enable (active low)
-	output	reg						READY,	// input ready
-	input	[ADDR_WIDTH-1:0]		ADDR,	// address
-	input	[DATA_WIDTH-1:0]		DIN,	// data input
-	output	reg						OE,		// output enable
-	output	[DATA_WIDTH-1:0]		DOUT	// data output
+	input							CLK,				// clock
+	input							nRST,				// reset (active low)
+	// control input
+	input							IE,					// input enable
+	input	[WIDTH-1:0]				IDATA,				// input data
+	output							IREADY,				// input ready
+	// control output
+	output							OE,					// output enable
+	output	[WIDTH-1:0]				ODATA,				// output data
+	input							OREADY				// output ready
 );
 // synopsys template
 
-// definition & assignment ---------------------------------------------------
-reg		[CYCLE-1:0]			oe_pipe;
-wire	[DATA_WIDTH-1:0]	sram_out;
+// register definition & assignment ------------------------------------------
+reg							occupied;		// occupied control
+reg		[CYCLE-2:0]			ie_pipe;		// output enable pipe
 
-wire	re					= (~nCE) & nWE;
-wire	o_en				= oe_pipe[CYCLE-1];
+wire	ie					= ie_pipe[CYCLE-2];
+assign	OE					= occupied;
 
 // implementation ------------------------------------------------------------
-SRAM_Single #(
-	.ADDR_WIDTH		(ADDR_WIDTH),
-	.DATA_WIDTH		(DATA_WIDTH)
-) sram (
-	.CLK			(CLK),
-	.nCE			(nCE),
-	.nWE			(nWE),
-	.ADDR			(ADDR),
-	.DIN			(DIN),
-	.DOUT			(sram_out)
-);
-
-always@(posedge CLK, negedge nRST) begin
-	if(!nRST) begin
-		oe_pipe		<= {(CYCLE){1'b0}};
-		READY		<= 1'b0;
-		OE			<= 1'b0;
-	end
-	else begin
-		oe_pipe		<= {oe_pipe[(CYCLE-2):0], re};
-		READY		<= |{re, oe_pipe};
-		OE			<= o_en;
+// input cycle management
+generate if(CYCLE==2) begin : gen_ie_2
+	always@(posedge CLK, negedge nRST) begin
+		if(!nRST) begin
+			ie_pipe		<= 1'b0;
+		end
+		else begin
+			ie_pipe		<= IE & (~IREADY);
+		end
 	end
 end
+else begin : gen_ie
+	always@(posedge CLK, negedge nRST) begin
+		if(!nRST) begin
+			ie_pipe		<= {(CYCLE-1){1'b0}};
+		end
+		else begin
+			ie_pipe		<= (IE & (~IREADY)) ? {ie_pipe[CYCLE-3:0], IE} : {(CYCLE-1){1'b0}};
+		end
+	end
+end
+endgenerate
+
+generate if(CHAINED) begin : chained_control
+	assign	IREADY				= ((~occupied) | OREADY) & ie;
+	always@(posedge CLK, negedge nRST) begin
+		if(!nRST) begin
+			occupied		<= 1'b0;
+		end
+		else begin
+			if(occupied) begin
+				if((~ie) & OREADY) begin
+					occupied	<= 1'b0;
+				end
+			end
+			else begin
+				if(ie) begin
+					occupied	<= 1'b1;
+				end
+			end
+		end
+	end
+end
+else begin : unchained_control
+	assign	IREADY				= (~occupied) & ie;
+	always@(posedge CLK, negedge nRST) begin
+		if(!nRST) begin
+			occupied		<= 1'b0;
+		end
+		else begin
+			if(occupied) begin
+				if(OREADY) begin
+					occupied	<= 1'b0;
+				end
+			end
+			else begin
+				if(ie) begin
+					occupied	<= 1'b1;
+				end
+			end
+		end
+	end
+end
+endgenerate
 
 generate begin : gen_multicycle
 	if(CYCLE==2) begin : path_2
@@ -144,4 +185,4 @@ endmodule
 
 `undef __GEN_MULTIPATH_PIPE
 
-`endif//__TESTDRIVE_SRAM_SINGLE_MULTICYCLE_V__
+`endif//__TESTDRIVE_MULTICYCLE_SLICE_V__

@@ -1,7 +1,8 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
-// Freely available under the terms of the 3-Clause BSD License
-// (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
+// All rights reserved.
+// 
+// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,91 +32,73 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common verilog library
-// Rev.  : 9/2/2022 Fri (clonextop@gmail.com)
+// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
 //================================================================================
-`ifndef __TESTDRIVE_MULTICYCLE_PIPE_V__
-`define __TESTDRIVE_MULTICYCLE_PIPE_V__
-`include "system_defines.vh"
+`ifndef __TESTDRIVE_SRAM_SINGLE_MULTICYCLE_V__
+`define __TESTDRIVE_SRAM_SINGLE_MULTICYCLE_V__
+`include "testdrive_system.vh"
 
 `define __GEN_MULTIPATH_PIPE(name) \
-	(* dont_touch = "yes" *) reg	[OWIDTH-1:0]	name; \
-	assign ODATA	= name; \
+	(* keep="true"*) reg		[DATA_WIDTH-1:0]		name; \
+	assign DOUT		= name; \
 	always@(posedge CLK, negedge nRST) begin \
 		if(!nRST) begin \
-			name	<= {(OWIDTH){1'b0}}; \
+			name	<= {(DATA_WIDTH){1'b0}}; \
 		end \
-		else if(oe_pipe[CYCLE-1]) begin \
-			name	<= demux_dout; \
+		else if(o_en) begin \
+			name	<= sram_out; \
 		end \
 	end
 
-module MultiCyclePath #(
-	parameter		IWIDTH				= 8,			// input total width
-	parameter		OWIDTH				= 8,			// output total width
-	parameter		CYCLE				= 2				// instance pipe cycles (must be >= 2)
+module SRAM_Single_Multicycle #(
+	parameter	ADDR_WIDTH			= 7,
+	parameter	DATA_WIDTH			= 32,
+	parameter	CYCLE				= 2
 ) (
-	input								CLK,			// clock
-	input								nRST,			// reset (active low)
-	// input
-	input								IE,				// input enable
-	input	[IWIDTH-1:0]				IDATA,			// input data or control
-	// i/o pipes
-	output	reg [(IWIDTH*CYCLE)-1:0]	PIPE_I,			// input bus
-	input	[(OWIDTH*CYCLE)-1:0]		PIPE_O,			// output bus
-	// output
-	output								OE,				// output enable
-	output	[OWIDTH-1:0]				ODATA			// output data
+	input							CLK,	// clock
+	input							nRST,	// reset (active low)
+	input							nCE,	// chip enable (active low)
+	input							nWE,	// write enable (active low)
+	output	reg						READY,	// input ready
+	input	[ADDR_WIDTH-1:0]		ADDR,	// address
+	input	[DATA_WIDTH-1:0]		DIN,	// data input
+	output	reg						OE,		// output enable
+	output	[DATA_WIDTH-1:0]		DOUT	// data output
 );
 // synopsys template
 
-// register definition & assignment ------------------------------------------
-genvar i;
+// definition & assignment ---------------------------------------------------
+reg		[CYCLE-1:0]			oe_pipe;
+wire	[DATA_WIDTH-1:0]	sram_out;
 
-reg		[CYCLE-1:0]			ie_pipe;		// input enable pipe
-reg		[CYCLE:0]			oe_pipe;		// output enable pipe
-wire	[OWIDTH-1:0]		demux_dout;		// demuxed data out
-
-assign	OE					= oe_pipe[CYCLE];
+wire	re					= (~nCE) & nWE;
+wire	o_en				= oe_pipe[CYCLE-1];
 
 // implementation ------------------------------------------------------------
-// in/out enable pipe
+SRAM_Single #(
+	.ADDR_WIDTH		(ADDR_WIDTH),
+	.DATA_WIDTH		(DATA_WIDTH)
+) sram (
+	.CLK			(CLK),
+	.nCE			(nCE),
+	.nWE			(nWE),
+	.ADDR			(ADDR),
+	.DIN			(DIN),
+	.DOUT			(sram_out)
+);
+
 always@(posedge CLK, negedge nRST) begin
 	if(!nRST) begin
-		ie_pipe		<= {{(CYCLE-1){1'b0}}, 1'b1};
-		oe_pipe		<= {(CYCLE+1){1'b0}};
+		oe_pipe		<= {(CYCLE){1'b0}};
+		READY		<= 1'b0;
+		OE			<= 1'b0;
 	end
 	else begin
-		if(IE || (|oe_pipe)) begin
-			ie_pipe		<= {ie_pipe[CYCLE-2:0], ie_pipe[CYCLE-1]};
-			oe_pipe		<= {oe_pipe[CYCLE-1:0], IE};
-		end
+		oe_pipe		<= {oe_pipe[(CYCLE-2):0], re};
+		READY		<= |{re, oe_pipe};
+		OE			<= o_en;
 	end
 end
-
-// input bus generation
-generate
-for(i=0;i<CYCLE;i=i+1) begin : level_gen
-	always@(posedge CLK, negedge nRST) begin
-		if(!nRST) begin
-			PIPE_I[`BUS_RANGE(IWIDTH, i)]	<= {(IWIDTH){1'b0}};
-		end
-		else begin
-			if(ie_pipe[i] & IE)
-				PIPE_I[`BUS_RANGE(IWIDTH, i)]	<= IDATA;
-		end
-	end
-end
-endgenerate
-
-// demuxing result output
-demux_by_enable #(
-	.WIDTH			(OWIDTH),
-	.CHANNELS		(CYCLE)
-) odata_demux (
-	.EN_BUS			(ie_pipe),
-	.DIN_BUS		(PIPE_O),
-	.DOUT			(demux_dout)
-);
 
 generate begin : gen_multicycle
 	if(CYCLE==2) begin : path_2
@@ -161,4 +144,4 @@ endmodule
 
 `undef __GEN_MULTIPATH_PIPE
 
-`endif//__TESTDRIVE_MULTICYCLE_PIPE_V__
+`endif//__TESTDRIVE_SRAM_SINGLE_MULTICYCLE_V__

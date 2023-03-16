@@ -33,111 +33,152 @@
 // Title : Common verilog library
 // Rev.  : 9/2/2022 Fri (clonextop@gmail.com)
 //================================================================================
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
-//================================================================================
-`ifndef __TESTDRIVE_MULTICYCLE_SLICE_V__
-`define __TESTDRIVE_MULTICYCLE_SLICE_V__
-`include "system_defines.vh"
+`ifndef __TESTDRIVE_MULTICYCLE_PIPE_EX_V__
+`define __TESTDRIVE_MULTICYCLE_PIPE_EX_V__
+`include "testdrive_system.vh"
 
 `define __GEN_MULTIPATH_PIPE(name) \
-	(* dont_touch = "yes" *) reg		[WIDTH-1:0]		name; \
+	(* dont_touch = "yes" *) reg		[OWIDTH-1:0]		name; \
 	assign ODATA	= name; \
 	always@(posedge CLK, negedge nRST) begin \
 		if(!nRST) begin \
-			name	<= INITIAL; \
+			name	<= {(OWIDTH){1'b0}}; \
 		end \
-		else if(ie & IREADY) begin \
-			name	<= IDATA; \
+		else if(o_en) begin \
+			name	<= demux_dout; \
 		end \
 	end
 
-module MultiCycleSlice #(
-	parameter		WIDTH			= 4,				// control width
-	parameter		INITIAL			= {WIDTH{1'b0}},	// initial value
-	parameter		CYCLE			= 2,				// must >= 2
-	parameter		CHAINED			= 1					// chained control?
+module MultiCyclePathEx #(
+	parameter		IWIDTH				= 8,			// input total width
+	parameter		OWIDTH				= 8,			// output total width
+	parameter		CYCLE				= 2,			// instance pipe cycles (must be >= 2)
+	parameter		COUNT				= 1				// instance count (must be < CYCLES)
 ) (
-	input							CLK,				// clock
-	input							nRST,				// reset (active low)
-	// control input
-	input							IE,					// input enable
-	input	[WIDTH-1:0]				IDATA,				// input data
-	output							IREADY,				// input ready
-	// control output
-	output							OE,					// output enable
-	output	[WIDTH-1:0]				ODATA,				// output data
-	input							OREADY				// output ready
+	input								CLK,			// clock
+	input								nRST,			// reset (active low)
+	// input
+	input								IE,				// enable
+	input	[IWIDTH-1:0]				IDATA,			// input data or control
+	output	reg							IREADY,			// input ready
+	// i/o pipes
+	output	reg [(IWIDTH*COUNT)-1:0]	PIPE_I,			// input bus
+	input	[(OWIDTH*COUNT)-1:0]		PIPE_O,			// output bus
+	// output
+	output								OE,				// output enable
+	output	[OWIDTH-1:0]				ODATA			// output data
 );
 // synopsys template
 
 // register definition & assignment ------------------------------------------
-reg							occupied;		// occupied control
-reg		[CYCLE-2:0]			ie_pipe;		// output enable pipe
+genvar i;
 
-wire	ie					= ie_pipe[CYCLE-2];
-assign	OE					= occupied;
+reg		[COUNT-1:0]			score;			// instanace usage score
+reg		[COUNT-1:0]			ie_pipe;		// input enable pipe
+reg		[COUNT-1:0]			oe_pipe;		// output enable pipe
+reg		[CYCLE:0]			ce_pipe;		// cycle enable pipe
+wire	[OWIDTH-1:0]		demux_dout;		// demuxed data out
+
+wire	i_en				= IE & IREADY;	// input validation
+
+wire	o_set				= ce_pipe[CYCLE-2];
+wire	o_en				= ce_pipe[CYCLE-1];
+assign	OE					= ce_pipe[CYCLE];
 
 // implementation ------------------------------------------------------------
-// input cycle management
-generate if(CYCLE==2) begin : gen_ie_2
+// in/out enable pipe
+generate if(COUNT==1) begin : COUNT_IS_ONE
+	// score calculation
 	always@(posedge CLK, negedge nRST) begin
 		if(!nRST) begin
-			ie_pipe		<= 1'b0;
+			score		<= 1'b0;
 		end
 		else begin
-			ie_pipe		<= IE & (~IREADY);
+			if(i_en & ~o_en) begin
+				score		<= 1'b1;
+			end
+			else if(~i_en & o_en) begin
+				score		<= 1'b0;
+			end
 		end
 	end
+
+	// control management
+	always@(posedge CLK, negedge nRST) begin
+		if(!nRST) begin
+			ie_pipe		<= 1'b1;
+			oe_pipe		<= 1'b1;
+			ce_pipe		<= {(CYCLE+1){1'b0}};
+			IREADY		<= `TRUE;
+		end
+		else begin
+			ie_pipe		<= 1'b1;
+			oe_pipe		<= 1'b1;
+			ce_pipe		<= {ce_pipe[CYCLE-1:0], i_en};
+			IREADY		<= o_set | (~i_en & o_en) | (IREADY & ((~score[0]) & (~IE)));
+		end
+	end
+
+	assign	demux_dout	= PIPE_O;
 end
-else begin : gen_ie
+else begin : COUNT_NOT_ONE
+	// score calculation
 	always@(posedge CLK, negedge nRST) begin
 		if(!nRST) begin
-			ie_pipe		<= {(CYCLE-1){1'b0}};
+			score		<= {(COUNT){1'b0}};
 		end
 		else begin
-			ie_pipe		<= (IE & (~IREADY)) ? {ie_pipe[CYCLE-3:0], IE} : {(CYCLE-1){1'b0}};
+			if(i_en & ~o_set) begin
+				score		<= {1'b1, score[COUNT-1:1]};
+			end
+			else if(~i_en & o_set) begin
+				score		<= {score[COUNT-2:0], 1'b0};
+			end
 		end
 	end
+
+	// control management
+	always@(posedge CLK, negedge nRST) begin
+		if(!nRST) begin
+			ie_pipe		<= {{(COUNT-1){1'b0}}, 1'b1};
+			oe_pipe		<= {{(COUNT-1){1'b0}}, 1'b1};
+			ce_pipe		<= {(CYCLE+1){1'b0}};
+			IREADY		<= `TRUE;
+		end
+		else begin
+			if(i_en) begin
+				ie_pipe		<= {ie_pipe[COUNT-2:0], ie_pipe[COUNT-1]};
+			end
+			if(o_en) begin
+				oe_pipe		<= {ie_pipe[COUNT-2:0], ie_pipe[COUNT-1]};
+			end
+			ce_pipe		<= {ce_pipe[CYCLE-1:0], i_en};
+			IREADY		<= o_set | (~score[1]) | (IREADY & ((~score[0]) & (~IE)));
+		end
+	end
+
+	// demuxing result output
+	demux_by_enable #(
+		.WIDTH			(OWIDTH),
+		.CHANNELS		(COUNT)
+	) odata_demux (
+		.EN_BUS			(oe_pipe),
+		.DIN_BUS		(PIPE_O),
+		.DOUT			(demux_dout)
+	);
 end
 endgenerate
 
-generate if(CHAINED) begin : chained_control
-	assign	IREADY				= ((~occupied) | OREADY) & ie;
+// input bus generation
+generate
+for(i=0;i<COUNT;i=i+1) begin : level_gen
 	always@(posedge CLK, negedge nRST) begin
 		if(!nRST) begin
-			occupied		<= 1'b0;
+			PIPE_I[`BUS_RANGE(IWIDTH, i)]	<= {(IWIDTH){1'b0}};
 		end
 		else begin
-			if(occupied) begin
-				if((~ie) & OREADY) begin
-					occupied	<= 1'b0;
-				end
-			end
-			else begin
-				if(ie) begin
-					occupied	<= 1'b1;
-				end
-			end
-		end
-	end
-end
-else begin : unchained_control
-	assign	IREADY				= (~occupied) & ie;
-	always@(posedge CLK, negedge nRST) begin
-		if(!nRST) begin
-			occupied		<= 1'b0;
-		end
-		else begin
-			if(occupied) begin
-				if(OREADY) begin
-					occupied	<= 1'b0;
-				end
-			end
-			else begin
-				if(ie) begin
-					occupied	<= 1'b1;
-				end
-			end
+			if(ie_pipe[i] & i_en)
+				PIPE_I[`BUS_RANGE(IWIDTH, i)]	<= IDATA;
 		end
 	end
 end
@@ -187,4 +228,4 @@ endmodule
 
 `undef __GEN_MULTIPATH_PIPE
 
-`endif//__TESTDRIVE_MULTICYCLE_SLICE_V__
+`endif//__TESTDRIVE_MULTICYCLE_PIPE_EX_V__

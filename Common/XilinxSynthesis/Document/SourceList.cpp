@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 1/10/2022 Mon (clonextop@gmail.com)
+// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "SourceList.h"
 #include <tchar.h>
@@ -328,6 +328,7 @@ BOOL SourceVector::Synthesis_Vivado(void)
 	BOOL bRet				= FALSE;
 	float	fClockLatency	= 0;
 	CString sWorkDir		= RetrievePath(WORK_DIR_NAME);
+	CString sIncludePaths	= _T("$env(TESTDRIVE_PROFILE)Common/System/SystemSim/HDL");
 	CString sName			= Name();
 	CString	sTopName;	// top module name
 	sName.Replace(_T('.'), _T('\0'));
@@ -418,7 +419,7 @@ BOOL SourceVector::Synthesis_Vivado(void)
 
 					if(RetrieveSourcePath(m_sFullName, sSourceListPath)) {
 						FILE* fp_src = _tfopen(sSourceListPath, _T("rt"));
-						TCHAR sLine[1024];
+						TCHAR sLine[8192];
 						{
 							// add source list path to include search path
 							int iPos	= sSourceListPath.ReverseFind(_T('\\'));
@@ -427,7 +428,7 @@ BOOL SourceVector::Synthesis_Vivado(void)
 							sIncList.AppendFormat(_T("  %s\n"), (LPCTSTR)sSourceListPath);
 						}
 
-						while(_fgetts(sLine, 1024, fp_src)) {
+						while(_fgetts(sLine, 8192, fp_src)) {
 							CString sSrc(sLine);
 							// eliminate comment
 							sSrc.Replace(_T("//"), _T(";"));
@@ -477,6 +478,17 @@ BOOL SourceVector::Synthesis_Vivado(void)
 											FindClose(hFind);
 										}
 									} else {
+										if(!IsFileExist(sFullPath)) {	// not actual exist
+											// search with testdrive common HDL path
+											sFullPath.Format(_T("%%TESTDRIVE_PROFILE%%Common/System/SystemSim/HDL/%s"), sSrc.c_str());
+											sFullPath	= g_pSystem->RetrieveFullPath(sFullPath);
+
+											if(!IsFileExist(sFullPath)) {
+												g_pSystem->LogError(_L(SOURCE_IS_NOT_FOUND), (LPCTSTR)sSrc);
+												bRet	= FALSE;
+											}
+										}
+
 										if(sFullPath.Find(_T(".xdc")) != -1)
 											sSrcList.AppendFormat(_T("read_xdc %s\n"), (LPCTSTR)sFullPath);
 										else
@@ -509,7 +521,8 @@ BOOL SourceVector::Synthesis_Vivado(void)
 							  (LPCTSTR)sSrcList);
 				}
 			}
-			FilePrint(fp, _T("synth_design -top %s -part %s -no_iobuf\n"),
+			FilePrint(fp, _T("synth_design -include_dirs \"%s\" -top %s -part %s -no_iobuf\n"),
+					  (LPCTSTR)sIncludePaths,
 					  (LPCTSTR)sTopName,
 					  (LPCTSTR)sDevice);
 			FilePrint(fp, _T("catch { report_utilization -file synthesis_%s.rpt }\n"), (LPCTSTR)sName);
@@ -662,7 +675,7 @@ BOOL SourceVector::Synthesis_Vivado(void)
 					CString st	= (sTok + 16);
 					int pos		= 0;
 					{
-						// 소수점 값이므로 반올림한다.
+						// round up.
 						float fCount	= 0;
 						_stscanf(st.Tokenize(sTokDlim, pos), _T("%f"), &fCount);
 						m_Info.area.brams.count	= (int)(fCount + 0.9999f);

@@ -34,47 +34,75 @@
 // Title : Common verilog library
 // Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
 //================================================================================
-`ifndef __TESTDRIVE_DEMUX_BY_ENABLE_V__
-`define __TESTDRIVE_DEMUX_BY_ENABLE_V__
-`include "system_defines.vh"
+`ifndef __TESTDRIVE_REGISTER_ELEMENT_V__
+`define __TESTDRIVE_REGISTER_ELEMENT_V__
+`include "testdrive_system.vh"
 
-module demux_by_enable  #(
-	parameter	WIDTH				= 32,
-	parameter	CHANNELS			= 2,
-	parameter	TRISTATE			= 0
-)(
-	// instruction input
-	input	[(CHANNELS-1):0]			EN_BUS,		// enable
-	input	[((WIDTH*CHANNELS)-1):0]	DIN_BUS,	// data in
-	output	[(WIDTH-1):0]				DOUT		// data output
+// register element
+module Register_element #(
+	parameter	WIDTH				= 32,			// data width
+	parameter	INITIAL				= 32'd0,		// initial value
+	parameter	FAST_VALID_RECOVERY	= 1,			// fast validation recovery when write operation
+	parameter	PRE_OCCUPY			= 0				// pre-write occupied
+)
+(
+	// system signals
+	input							CLK,			// clock
+	input							nRST,			// reset (active low)
+	// register read/write
+	input							R_EN,			// read enable
+	output	[(WIDTH-1):0]			R_DATA,			// read data
+	input							W_EN,			// write enable
+	input	[(WIDTH-1):0]			W_DATA,			// write data
+	output	[(WIDTH-1):0]			REGISTER,		// register data
+
+	// register control
+	input							OCCUPY,			// set write occupy
+	output							VALID,			// data validation
+	output	reg						nOCCUPIED		// register occupied
 );
 // synopsys template
 
 // definition & assignment ---------------------------------------------------
-genvar	i_d, i_c;
+reg [(WIDTH-1):0]			element;				// register element
 
-wire	[((WIDTH*CHANNELS)-1):0]		input_swizzle;
+// write/read first operation
+assign	R_DATA				= W_EN ? W_DATA : element;	// write first data output
+assign	REGISTER			= element;					// read first data output
 
-// implementation ------------------------------------------------------------
+// register validation
 generate
-if(TRISTATE) begin
-	for(i_c=0;i_c<CHANNELS;i_c=i_c+1) begin: channel_assignments
-		assign	DOUT	= EN_BUS[i_c] ? DIN_BUS[`BUS_RANGE(WIDTH, i_c)] : {(WIDTH){1'bZ}};
-	end
+if(FAST_VALID_RECOVERY) begin : on_fast_valid_recovery	// fast validation recovery
+	assign	VALID			= W_EN | nOCCUPIED | (~R_EN);
 end
-else begin
-	for(i_d=0;i_d<WIDTH;i_d=i_d+1) begin : width_assignment
-		for(i_c=0;i_c<CHANNELS;i_c=i_c+1) begin: channel_assignments
-			assign	input_swizzle[(i_d*CHANNELS)+i_c]	= DIN_BUS[(i_c*WIDTH)+i_d];
-		end
-	end
-
-	for(i_d=0;i_d<WIDTH;i_d=i_d+1) begin: array_dout_assignments
-		assign	DOUT[i_d]	= |(input_swizzle[(((i_d+1)*CHANNELS)-1):(i_d*CHANNELS)] & EN_BUS);
-	end
+else begin : on_not_fast_valid_recovery				// not fast validation recovery
+	assign	VALID			= nOCCUPIED | (~R_EN);
 end
 endgenerate
 
+// implementation ------------------------------------------------------------
+// write occupy control
+always@(posedge CLK, negedge nRST) begin
+	if(!nRST) begin
+		nOCCUPIED		<= (PRE_OCCUPY!=0) ? `FALSE : `TRUE;
+	end
+	else begin
+		nOCCUPIED		<= (~OCCUPY) & (W_EN | nOCCUPIED);
+	end
+end
+
+// register write
+always@(posedge CLK, negedge nRST) begin
+	if(!nRST) begin
+		element			<= INITIAL;
+	end
+	else begin
+		if(W_EN) begin
+			element		<= W_DATA;
+		end
+	end
+end
+
 endmodule
 
-`endif//__TESTDRIVE_DEMUX_BY_ENABLE_V__
+`endif//__TESTDRIVE_REGISTER_ELEMENT_V__

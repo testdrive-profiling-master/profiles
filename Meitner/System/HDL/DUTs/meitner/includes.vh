@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,11 +31,11 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
 `ifndef __MEITNER_COMMON_VH__
 `define __MEITNER_COMMON_VH__
-`include "system_defines.vh"
+`include "testdrive_system.vh"
 
 //-----------------------------------------------------------------------
 // @todo : Add additional verilog source codes in here...

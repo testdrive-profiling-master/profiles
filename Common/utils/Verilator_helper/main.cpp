@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Verilator helper
-// Rev.  : 2/17/2023 Fri (clonextop@gmail.com)
+// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "UtilFramework.h"
 #include <filesystem>
@@ -232,6 +232,8 @@ int main(int argc, const char* argv[])
 				}
 			}
 		}
+		// default arguments for Testdrive
+		sArg	+= " -I$(TESTDRIVE_PROFILE)Common/System/SystemSim/HDL";
 	}
 
 	{

@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 6/30/2021 Wed (clonextop@gmail.com)
+// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "ProjectConfig.h"
 #include "SourceList.h"
@@ -185,7 +184,7 @@ CString ProjectConfig::MakeDevicePartName(void)
 	CString sPartName;
 	BOOL	bSeperator	= FALSE;
 	{
-		// 디바이스명에 분리된 숫자가 2개 이상이 아니면 '-' 기호로 Package명과 분리해 준다.
+		// If there are more than 2 numbers in the device name, separate them from the package name with a '-' sign.
 		int		iDigitCount	= 0;
 		BOOL	bDigit	= 0;
 
@@ -267,7 +266,8 @@ BOOL ProjectConfig::RetrieveSourcePath(LPCTSTR sSrcFile, CString& sSrcPath)
 
 BOOL ProjectConfig::MakeProjectConfigFile(SourceVector* pSource) 	// for ISE only
 {
-	CString sWorkDir = RetrievePath(WORK_DIR_NAME);
+	BOOL	bRet		= TRUE;
+	CString sWorkDir	= RetrievePath(WORK_DIR_NAME);
 
 	if(!pSource) return FALSE;
 
@@ -276,7 +276,7 @@ BOOL ProjectConfig::MakeProjectConfigFile(SourceVector* pSource) 	// for ISE onl
 	}
 
 	{
-		// config 생성
+		// make config
 		CString sPath;
 		sPath.Format(_T("%s\\project_config.tcl"), sWorkDir);
 		FILE* fp = _tfopen(sPath, _T("wt"));
@@ -297,7 +297,7 @@ BOOL ProjectConfig::MakeProjectConfigFile(SourceVector* pSource) 	// for ISE onl
 	}
 
 	{
-		// source list 생성
+		// make source list
 		CString sPath, sIncPath;
 		sPath.Format(_T("%s\\project_sources.tcl"), sWorkDir);
 		FILE* fp = _tfopen(sPath, _T("wt"));
@@ -384,7 +384,7 @@ BOOL ProjectConfig::MakeProjectConfigFile(SourceVector* pSource) 	// for ISE onl
 			fclose(fp);
 		}
 
-		// top module name 생성
+		// make top module name
 		sPath.Format(_T("%s\\project_top_name.tcl"), sWorkDir);
 		fp = _tfopen(sPath, _T("wt"));
 
@@ -403,6 +403,6 @@ BOOL ProjectConfig::MakeProjectConfigFile(SourceVector* pSource) 	// for ISE onl
 		}
 	}
 
-	return TRUE;
+	return bRet;
 }
 

@@ -1,7 +1,6 @@
-+incdir+./
-+incdir+../../
++incdir+${TESTDRIVE_PROFILE}common/System/SystemSim/HDL/
 
-system_defines.vh
+testdrive_system.vh
 includes.vh
 
 library/SRAM_Single.v

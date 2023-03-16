@@ -33,5 +33,5 @@
 // Title : Template design
 // Rev.  : 12/31/2021 Fri (clonextop@gmail.com)
 //================================================================================
-`include "system_defines.vh"
+`include "testdrive_system.vh"
 `include "template/StarterKit/base_top.sv"

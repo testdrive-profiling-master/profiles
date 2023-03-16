@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,12 +30,12 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : FPU
-// Rev.  : 3/26/2021 Fri (clonextop@gmail.com)
+// Title : FPU 32bit(IEEE-754) unit
+// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
 `ifndef __FPU_VH__
 `define __FPU_VH__
-`include "system_defines.vh"
+`include "testdrive_system.vh"
 
 interface fp32;
 	union packed {

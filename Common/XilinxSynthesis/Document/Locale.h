@@ -1,5 +1,5 @@
 ﻿//================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 1/10/2022 Mon (clonextop@gmail.com)
+// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "LocaleString.h"
 
@@ -304,6 +304,11 @@ LOCALE_TEXT(MODULE_NAME_IS_NOT_FOUND,
 			_T("モジュールの名前を検索することができません。"),
 			_T("El nombre del módulo no se pudo encontrar."),
 			_T("The module name could not be found."))
+LOCALE_TEXT(SOURCE_IS_NOT_FOUND,
+			_T("소스에서 기술된 파일을 찾을 수 없습니다. : %s"),
+			_T("ソースに記載されているファイルが見つかりません。 : %s"),
+			_T("No se pudo encontrar el archivo descrito en la fuente. : %s"),
+			_T("The file described in the source could not be found. : %s"))
 LOCALE_TEXT(CURRENT_TOP_MODULE,
 			_T("TOP 모듈 이름 : %s"),
 			_T("TOPモジュール名 : %s"),

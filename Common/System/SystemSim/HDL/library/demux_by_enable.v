@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,7 +30,50 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Processor
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Title : Common verilog library
+// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
-`include "../../system_defines.vh"
+`ifndef __TESTDRIVE_DEMUX_BY_ENABLE_V__
+`define __TESTDRIVE_DEMUX_BY_ENABLE_V__
+`include "testdrive_system.vh"
+
+module demux_by_enable  #(
+	parameter	WIDTH				= 32,
+	parameter	CHANNELS			= 2,
+	parameter	TRISTATE			= 0
+)(
+	// instruction input
+	input	[(CHANNELS-1):0]			EN_BUS,		// enable
+	input	[((WIDTH*CHANNELS)-1):0]	DIN_BUS,	// data in
+	output	[(WIDTH-1):0]				DOUT		// data output
+);
+// synopsys template
+
+// definition & assignment ---------------------------------------------------
+genvar	i_d, i_c;
+
+wire	[((WIDTH*CHANNELS)-1):0]		input_swizzle;
+
+// implementation ------------------------------------------------------------
+generate
+if(TRISTATE) begin
+	for(i_c=0;i_c<CHANNELS;i_c=i_c+1) begin: channel_assignments
+		assign	DOUT	= EN_BUS[i_c] ? DIN_BUS[`BUS_RANGE(WIDTH, i_c)] : {(WIDTH){1'bZ}};
+	end
+end
+else begin
+	for(i_d=0;i_d<WIDTH;i_d=i_d+1) begin : width_assignment
+		for(i_c=0;i_c<CHANNELS;i_c=i_c+1) begin: channel_assignments
+			assign	input_swizzle[(i_d*CHANNELS)+i_c]	= DIN_BUS[(i_c*WIDTH)+i_d];
+		end
+	end
+
+	for(i_d=0;i_d<WIDTH;i_d=i_d+1) begin: array_dout_assignments
+		assign	DOUT[i_d]	= |(input_swizzle[(((i_d+1)*CHANNELS)-1):(i_d*CHANNELS)] & EN_BUS);
+	end
+end
+endgenerate
+
+endmodule
+
+`endif//__TESTDRIVE_DEMUX_BY_ENABLE_V__
