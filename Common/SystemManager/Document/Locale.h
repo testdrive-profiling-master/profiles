@@ -187,6 +187,18 @@ LOCALE_TEXT(DESC_SIMULATION_MULTITHREADING,
 			_T("シミュレーションのマルチスレッドレベルを指定します。\nDisable : を無効にする.\nEnable(HDL) : HDLのみ適用.\nEnable(HDL+DPI) : HDLとDPIの両方に適用.(DPI code実装はthread safeかどうかを確認する必要があります。また、HDL上「UNOPTFLAT」の警告をすべて削除しなければなら正常なマルチスレッド加速になります。)\nそして、このオプションは非常に大きなデザインでのみパフォーマンス向上を見ることができます。小さな設計では、効率が低く、むしろより遅く動作します。"),
 			_T("Especifica el nivel de simulación de subprocesos múltiples.\nDisable : No multihilo.\nEnable(HDL) : Aplicar solo a HDL.\nEnable(HDL+DPI) : Aplicar a HDL y DPI tanto.(El usuario debe considerar la seguridad de los hilos en los códigos DPI. Además, si tiene que eliminar todas las advertencias de 「UNOPTFLAT」 en el HDL, será una aceleración de subprocesos normal.)\nY esta opción solo verá ganancias de rendimiento en diseños muy grandes. Los diseños más pequeños son menos eficientes y funcionan más lentamente."),
 			_T("Specifies the simulation multithreading level.\nDisable : No multithreading.\nEnable(HDL) : Apply to HDL only.\nEnable(HDL+DPI) : Apply to HDL and DPI both.(User must consider about thread safe on DPI codes. And, if you have to delete all the warnings of「UNOPTFLAT」on the HDL, it will be normal multi-thread acceleration.)\nAlso, this option will only see performance gains on very large designs. Smaller designs are less efficient and run more slowly."))
+
+LOCALE_TEXT(BAKED_MODEL,
+			_T("Baked 모델 활성화"),
+			_T("Bakedモデルの有効化"),
+			_T("Activar el modelo horneado"),
+			_T("Activate the baked model"))
+LOCALE_TEXT(DESC_BAKED_MODEL,
+			_T("HDL로부터 이미 빌드된 C++ 모델을 사용합니다.\n(멀티스레딩 설정은 무시됩니다.)"),
+			_T("HDLからすでに構築されているC ++モデルを使用してください。\n(マルチスレッド設定は無視されます。)"),
+			_T("Utilice un modelo C++ ya creado a partir de HDL.\n(La configuración de subprocesos múltiples se ignora.)"),
+			_T("Use a C++ model already built from HDL.\n(Multithreading settings are ignored.)"))
+
 LOCALE_TEXT(WAVE_OUTPUT_FILENAME,
 			_T("출력 파일명;fst;fst 파일들 (*.fst)|*.fst|모든 파일들 (*.*)|*.*||"),
 			_T("出力ファイル名;fst;fst ファイル (*.fst)|*.fst|すべてのファイル (*.*)|*.*||"),

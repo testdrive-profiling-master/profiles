@@ -122,6 +122,7 @@ System::System(ITDDocument* pDoc) :
 	m_pDoc				= pDoc;
 	m_pSystemConfig		= (BASE_SYSTEM_CONFIG*)g_pSystem->GetMemory(NULL, TRUE)->GetConfig();
 	m_bAutoUpdate		= FALSE;
+	m_bBakedModel		= FALSE;
 	WriteConfiguration(_T("PROJECT_NAME"),	g_pSystem->GetMemory(NULL, TRUE)->GetName());
 	UpdateDefaultSystemConfigHeader();
 	m_pSystemConfig->hSystemManager	= pDoc->GetWindowHandle();
@@ -219,6 +220,11 @@ System::System(ITDDocument* pDoc) :
 		for(int i = 0; __sSimMultithreading[i]; i++) pProperty->AddOption(__sSimMultithreading[i]);
 
 		m_pPropertySim[SIM_PROPERTY_MULTITHREAD]	= pProperty;
+
+		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_BOOL, PROPERTY_ID_SIMULATION_BAKED_MODEL, _L(BAKED_MODEL), (DWORD_PTR) & (m_bBakedModel), _L(DESC_BAKED_MODEL));
+		pProperty->UpdateConfigFile();
+		m_pPropertySim[SIM_PROPERTY_BAKED_MODEL]	= pProperty;
+
 		m_sSimWaveOutputFile.GetBuffer(1024);
 		m_sSimWaveOutputFile	= _T("sim.fst");
 		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_FILE_PATH, PROPERTY_ID_SIMULATION_WAVE_OUTPUT_FILE, _L(WAVE_OUTPUT_FILENAME), (DWORD_PTR)m_sSimWaveOutputFile.GetBuffer(), _L(DESC_OUTPUT_FILENAME));
@@ -376,6 +382,11 @@ void System::UpdateEnvironments(void)
 	WriteConfiguration(_T("SIM_MULTITHREADING"), m_sSimMultithreading);
 	WriteConfiguration(_T("SIM_WAVE_MODE"), m_sSimWaveMode);
 	{
+		CString sEnableBakedModel;
+		sEnableBakedModel.Format(_T("%d"), m_bBakedModel);
+		WriteConfiguration(_T("SIM_BAKED_MODEL"), sEnableBakedModel);
+	}
+	{
 		// set trace start time (us)
 		CString sEnv;
 		sEnv.Format(_T("%d"), m_iTraceStartTime);
@@ -406,7 +417,11 @@ BOOL System::OnPropertyUpdate(ITDPropertyData* pProperty)
 	pProperty->UpdateConfigFile(FALSE);
 	UpdateEnvironments();
 
-	if(pProperty->GetID() == PROPERTY_ID_SIMULATION_TOP || pProperty->GetID() == PROPERTY_ID_SIMULATION_DEFINITION || pProperty->GetID() == PROPERTY_ID_SIMULATION_WAVE_MODE || pProperty->GetID() == PROPERTY_ID_SIMULATION_MULTITHREAD) {
+	if(pProperty->GetID() == PROPERTY_ID_SIMULATION_TOP ||
+			pProperty->GetID() == PROPERTY_ID_SIMULATION_DEFINITION ||
+			pProperty->GetID() == PROPERTY_ID_SIMULATION_WAVE_MODE ||
+			pProperty->GetID() == PROPERTY_ID_SIMULATION_MULTITHREAD ||
+			pProperty->GetID() == PROPERTY_ID_SIMULATION_BAKED_MODEL) {
 		m_BuildAutomation.SetDirtySystem();
 		m_pDoc->SetTimer(COMMAND_AUTOMATION_BUILD + 0, 50);
 	}

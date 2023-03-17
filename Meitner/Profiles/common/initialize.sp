@@ -3,6 +3,7 @@ profile.tree "System" {
 		profile ("Build All",					"build_all.sp");
 		profile ("Build S/W",					"build_sw.sp");
 		profile ("Build H/W",					"build_hw.sp");
+		profile ("Bake H/W model",				"bake_hw.sp");
 		profile ("View current DPI functions (Need to run 'build H/W')",	"view_dpi_functions.sp");
 		expand();
 	}

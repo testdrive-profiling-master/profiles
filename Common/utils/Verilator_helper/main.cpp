@@ -41,6 +41,7 @@
 namespace fs = std::filesystem;
 
 cstring		g_sTestDrivePath;
+bool		g_bUseBakedModel	= false;
 
 static string GetEnvString(const char* sKey)
 {
@@ -54,12 +55,50 @@ static void SetEnvString(const char* sKey, const char* sStr)
 	WritePrivateProfileString("VERILATOR", sKey, sStr, g_sTestDrivePath + "/verilator_helper.ini");
 }
 
-int RepoCopy(const char* sTargetName)
+uint64_t MakeHash(const char* s)
 {
-	if(!sTargetName) {
-		printf("* Verilator's extra function *\n" \
-			   "  : Copy from latest build results to 'target' name.\n\n" \
-			   "  Usage : verilator bake TARGET_NAME\n\n");
+	uint64_t hash = 2166136261;
+
+	for (; *s; s++)
+		hash = 16777619 * (hash ^ (*s));
+
+	return hash ^ (hash >> 32);
+}
+
+bool MakeTargetName(cstring& sTargetName) {
+	cstring		sTopFile;
+	cstring		sWaveMode;
+	cstring		sDefinition;
+
+	sTopFile.GetEnvironment("SIM_TOP_FILE");
+	if(sTopFile.IsEmpty()) return false;
+	sWaveMode.GetEnvironment("SIM_WAVE_MODE");
+	if(sWaveMode.IsEmpty()) return false;
+	sDefinition.GetEnvironment("SIM_DEFINITION");
+	if(sDefinition.IsEmpty()) return false;
+
+	cstring sTotal;
+	sTotal.Format("TopFile : %s, WaveModel : %s, Definition : %s", sTopFile.c_str(), sWaveMode.c_str(), sDefinition.c_str());
+	uint64_t	ulHashCode	= MakeHash(sTotal);
+
+	sTopFile.CutFront("\\", true);
+	sTopFile.CutFront("/", true);
+	sTopFile.CutBack(".", true);
+	sTopFile.Replace(" ", "_", true);
+
+	sTargetName.Format("%s_%c_%016llx", sTopFile.c_str(), sWaveMode[0], ulHashCode);
+
+	return true;
+}
+
+int BakeModel(const char* sName)
+{
+	cstring sTargetName;
+	if(sName) {
+		sTargetName		= sName;
+	} else if(!MakeTargetName(sTargetName)){
+		LOGE("Invalid operation.");
+		return 1;
 	}
 
 	cstring	sLatestMdir	= GetEnvString("LATEST_MDIR");
@@ -70,12 +109,6 @@ int RepoCopy(const char* sTargetName)
 		return 1;
 	}
 
-	if(*sTargetName == '.') {
-		sTargetPath	= sTargetName;
-	} else {
-		sTargetPath	+= sTargetName;
-	}
-
 	{
 		// target is a valid directory?
 		auto target_path	= fs::path(sTargetPath.c_str());
@@ -83,41 +116,33 @@ int RepoCopy(const char* sTargetName)
 		// not exist? then create
 		if(!fs::exists(target_path)) {
 			fs::create_directories(target_path);
+			{	// add nosearch directive
+				cstring	sNosearchPath(sTargetPath.c_str());
+				sNosearchPath	+= "/.TestDrive.nosearch";
+				target_path	= fs::path(sNosearchPath.c_str());
+
+				if(!fs::exists(target_path)) {
+					ofstream ofs(target_path);
+					ofs.close();
+				}
+			}
 		}
 
 		if(!fs::exists(target_path) || !fs::is_directory(target_path)) {
-			LOGE("Target path is not exist or not a directory. : '%s'\n", target_path.string().c_str());
+			LOGE("bake path is not a directory. : '%s'\n", target_path.string().c_str());
 			return 1;
-		}
-
-		// add nosearch directive
-		{
-			cstring	sNosearchPath(sTargetPath.c_str());
-			sNosearchPath	+= "/.TestDrive.nosearch";
-			target_path	= fs::path(sNosearchPath.c_str());
-
-			if(!fs::exists(target_path)) {
-				ofstream ofs(target_path);
-				ofs.close();
-			}
 		}
 	}
 
 	{
 		// remove all simulation results.
 		cstring sCmd;
-		sCmd.Format("rm -f %s/SimTop.* >nul 2>&1", sTargetPath.c_str());
+		sLatestMdir.Replace("\\", "/", true);
+		sCmd.Format("rm -f %s%s.tar.gz >nul 2>&1", sTargetPath.c_str(), sTargetName.c_str());
 		system(sCmd);
-		sCmd.Format("rm -f %s/SimTop_* >nul 2>&1", sTargetPath.c_str());
-		// copy new simulation results.
+		sCmd.Format("tar cvfz %s%s.tar.gz -C %s *.cpp *.h *.mk *.dat >nul 2>&1", sTargetPath.c_str(), sTargetName.c_str(), sLatestMdir.c_str());
 		system(sCmd);
-		sCmd.Format("cp -f %s/SimTop*.cpp %s >nul 2>&1", sLatestMdir.c_str(), sTargetPath.c_str());
-		system(sCmd);
-		sCmd.Format("cp -f %s/SimTop*.h %s >nul 2>&1", sLatestMdir.c_str(), sTargetPath.c_str());
-		system(sCmd);
-		sCmd.Format("cp -f %s/SimTop*.mk %s >nul 2>&1", sLatestMdir.c_str(), sTargetPath.c_str());
-		system(sCmd);
-		sCmd.Format("cp -f %s/SimTop*.dat %s >nul 2>&1", sLatestMdir.c_str(), sTargetPath.c_str());
+
 		LOGI("Done!");
 	}
 
@@ -135,15 +160,29 @@ int main(int argc, const char* argv[])
 		return 1;
 	}
 
+	{	// check baked model or not
+		cstring	sBakedModel;
+		if(sBakedModel.GetEnvironment("SIM_BAKED_MODEL")) {
+			g_bUseBakedModel	= atoi(sBakedModel.c_str());
+		}
+	}
+
+
 	if(argc >= 2 && !strcmp(argv[1], "bake")) {	// bake copy
-		return RepoCopy((argc == 3) ? argv[2] : NULL);
+		if(argc > 3) {
+			LOGE("Invalid arguments...");
+			return 1;
+		}
+		if(g_bUseBakedModel) {
+			LOGE("Already baked model is activated.");
+			return 1;
+		}
+		return BakeModel((argc == 3) ? argv[2] : NULL);
 	}
 
 	{
 		// check pre-compiled repo.
-		bool	bBaked	= false;
 		cstring	sDst;
-		cstring sBakeName;
 		cstring sBakePath;
 		{
 			for(int i = 1; i < argc; i++) {
@@ -156,12 +195,7 @@ int main(int argc, const char* argv[])
 					sBakePath	+= "/.bake/";
 				}
 
-				if(sArg.CompareFront("-bake=")) {
-					bBaked	= true;
-					sBakeName	= sArg;
-					sBakeName.CutFront("-bake=");
-					sBakeName.Trim(" \"");
-				} else if(sArg == "-Mdir" && (i + 1) < argc) {
+				if(sArg == "-Mdir" && (i + 1) < argc) {
 					i++;
 					sDst	= argv[i];
 					sDst.Trim(" \"");
@@ -170,16 +204,22 @@ int main(int argc, const char* argv[])
 				}
 			}
 
-			if(bBaked) {	// source .bake path check
+			if(g_bUseBakedModel){	// source .bake path check
+				cstring sBakeName;
+
 				if(sBakePath.IsEmpty()) {
 					LOGE("Can't find repo. path.", sBakePath.c_str());
 					return 1;
 				}
 
+				if(!MakeTargetName(sBakeName))
+					return 1;
+
 				sBakePath	+= sBakeName;
+				sBakePath	+= ".tar.gz";
 				auto repo_path	= fs::path(sBakePath.c_str());
 
-				if(!fs::exists(repo_path) || !fs::is_directory(repo_path)) {
+				if(!fs::exists(repo_path) || !fs::is_regular_file(repo_path)) {
 					LOGE("Can't access source repo. path : '%s'\n", sBakePath.c_str());
 					return 1;
 				}
@@ -188,17 +228,19 @@ int main(int argc, const char* argv[])
 				else {
 					sDst	+= '/';
 				}
+
+				// extract
+				{
+					auto src_path = fs::absolute(fs::path(sBakePath.c_str()));
+					cstring sCmd;
+					LOGI("Extract from baked model '%s'", sBakeName.c_str());
+					sCmd.Format("tar xvf %s -C %s >nul 2>&1", sBakePath.c_str(), sDst.c_str());
+					system(sCmd);
+				}
+				return 0;
 			}
 		}
 
-		if(bBaked) {
-			auto src_path = fs::absolute(fs::path(sBakePath.c_str()));
-			cstring sCmd;
-			LOGI("Copy from baked result '%s'", sBakeName.c_str());
-			sCmd.Format("cp -f -v %s/* %s", sBakePath.c_str(), sDst.c_str());
-			system(sCmd);
-			return 0;
-		}
 	}
 
 	// make arguments
