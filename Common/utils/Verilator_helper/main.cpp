@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Verilator helper
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 3/18/2023 Sat (clonextop@gmail.com)
 //================================================================================
 #include "UtilFramework.h"
 #include <filesystem>
@@ -59,44 +59,47 @@ uint64_t MakeHash(const char* s)
 {
 	uint64_t hash = 2166136261;
 
-	for (; *s; s++)
+	for(; *s; s++)
 		hash = 16777619 * (hash ^ (*s));
 
 	return hash ^ (hash >> 32);
 }
 
-bool MakeTargetName(cstring& sTargetName) {
+bool MakeTargetName(cstring& sTargetName)
+{
 	cstring		sTopFile;
 	cstring		sWaveMode;
 	cstring		sDefinition;
-
 	sTopFile.GetEnvironment("SIM_TOP_FILE");
+
 	if(sTopFile.IsEmpty()) return false;
+
 	sWaveMode.GetEnvironment("SIM_WAVE_MODE");
+
 	if(sWaveMode.IsEmpty()) return false;
+
 	sDefinition.GetEnvironment("SIM_DEFINITION");
+
 	if(sDefinition.IsEmpty()) return false;
 
 	cstring sTotal;
 	sTotal.Format("TopFile : %s, WaveModel : %s, Definition : %s", sTopFile.c_str(), sWaveMode.c_str(), sDefinition.c_str());
 	uint64_t	ulHashCode	= MakeHash(sTotal);
-
 	sTopFile.CutFront("\\", true);
 	sTopFile.CutFront("/", true);
 	sTopFile.CutBack(".", true);
 	sTopFile.Replace(" ", "_", true);
-
 	sTargetName.Format("%s_%c_%016llx", sTopFile.c_str(), sWaveMode[0], ulHashCode);
-
 	return true;
 }
 
 int BakeModel(const char* sName)
 {
 	cstring sTargetName;
+
 	if(sName) {
 		sTargetName		= sName;
-	} else if(!MakeTargetName(sTargetName)){
+	} else if(!MakeTargetName(sTargetName)) {
 		LOGE("Invalid operation.");
 		return 1;
 	}
@@ -116,7 +119,8 @@ int BakeModel(const char* sName)
 		// not exist? then create
 		if(!fs::exists(target_path)) {
 			fs::create_directories(target_path);
-			{	// add nosearch directive
+			{
+				// add nosearch directive
 				cstring	sNosearchPath(sTargetPath.c_str());
 				sNosearchPath	+= "/.TestDrive.nosearch";
 				target_path	= fs::path(sNosearchPath.c_str());
@@ -142,7 +146,6 @@ int BakeModel(const char* sName)
 		system(sCmd);
 		sCmd.Format("tar cvfz %s%s.tar.gz -C %s *.cpp *.h *.mk *.dat >nul 2>&1", sTargetPath.c_str(), sTargetName.c_str(), sLatestMdir.c_str());
 		system(sCmd);
-
 		LOGI("Done!");
 	}
 
@@ -160,23 +163,26 @@ int main(int argc, const char* argv[])
 		return 1;
 	}
 
-	{	// check baked model or not
+	{
+		// check baked model or not
 		cstring	sBakedModel;
+
 		if(sBakedModel.GetEnvironment("SIM_BAKED_MODEL")) {
 			g_bUseBakedModel	= atoi(sBakedModel.c_str());
 		}
 	}
-
 
 	if(argc >= 2 && !strcmp(argv[1], "bake")) {	// bake copy
 		if(argc > 3) {
 			LOGE("Invalid arguments...");
 			return 1;
 		}
+
 		if(g_bUseBakedModel) {
 			LOGE("Already baked model is activated.");
 			return 1;
 		}
+
 		return BakeModel((argc == 3) ? argv[2] : NULL);
 	}
 
@@ -204,7 +210,7 @@ int main(int argc, const char* argv[])
 				}
 			}
 
-			if(g_bUseBakedModel){	// source .bake path check
+			if(g_bUseBakedModel) {	// source .bake path check
 				cstring sBakeName;
 
 				if(sBakePath.IsEmpty()) {
@@ -240,7 +246,6 @@ int main(int argc, const char* argv[])
 				return 0;
 			}
 		}
-
 	}
 
 	// make arguments
