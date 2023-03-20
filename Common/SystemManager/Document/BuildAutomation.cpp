@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : System manager
-// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
+// Rev.  : 3/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "BuildAutomation.h"
 #include "Utils.h"
@@ -154,6 +154,17 @@ void BuildAutomation::DoCheck(DWORD command, LPCTSTR sFileName)
 				SetDirtySystem();
 			} else if(sName.Find(_T(".vh"), sName.GetAllocLength() - 3) > 0) {
 				SetDirtySystem();
+			} else if(sName.Find(_T(".do"), sName.GetAllocLength() - 3) > 0) {
+				CString sArg;
+				CString sProjectPath	= g_pSystem->RetrieveFullPath(_T("%PROJECT%"));
+				CString sProgramPath	= sProjectPath + _T("Program\\");
+				sProjectPath.Replace(_T("\\"), _T("\\\\\\"));
+				sProgramPath.Replace(_T("\\"), _T("\\\\\\"));
+				sArg.Format(_T("-i 's;%s;;' %s"), sProgramPath.c_str(), sFileName);
+				g_pSystem->ExecuteFile(_T("sed"), sArg, TRUE, NULL, NULL, NULL);
+				sArg.Format(_T("-i 's;%s;..\\\\\\;' %s"), sProjectPath.c_str(), sFileName);
+				g_pSystem->ExecuteFile(_T("sed"), sArg, TRUE, NULL, NULL, NULL);
+				return;
 			}
 		}
 
