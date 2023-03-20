@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Code Analysis
-// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
+// Rev.  : 3/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "CodeAnalysis.h"
 #include "testdrive_document.inl"
@@ -333,14 +333,16 @@ const char* Log_StaticAnalysis(LPCTSTR lpszLog, int iID)
 	return NULL;
 }
 
-static BOOL IsMakefileExist(LPCTSTR sPath)
+static BOOL IsNoSearch(LPCTSTR sPath)
 {
 	CString sFilePath;
 	sFilePath.Format(_T("%s/.TestDrive.nosearch"), sPath);
+	return (_taccess(g_pSystem->RetrieveFullPath(sFilePath), 0) != -1);
+}
 
-	if(_taccess(g_pSystem->RetrieveFullPath(sFilePath), 0) != -1)
-		return FALSE;
-
+static BOOL IsMakefileExist(LPCTSTR sPath)
+{
+	CString sFilePath;
 	sFilePath.Format(_T("%s/Makefile"), sPath);
 	return (_taccess(g_pSystem->RetrieveFullPath(sFilePath), 0) != -1);
 }
@@ -348,6 +350,8 @@ static BOOL IsMakefileExist(LPCTSTR sPath)
 BOOL CodeAnalysis::StaticCodeAnalysisPrivate(LPCTSTR lpszTitle, LPCTSTR lpszPath)
 {
 	BOOL bRet		= TRUE;
+
+	if(IsNoSearch(lpszPath)) return TRUE;
 
 	if(IsMakefileExist(lpszPath)) {
 		CString sPath(g_pSystem->RetrieveFullPath(lpszPath));
