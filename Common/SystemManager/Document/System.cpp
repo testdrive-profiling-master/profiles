@@ -36,6 +36,7 @@
 #include "System.h"
 #include "Utils.h"
 #include "testdrive_document.inl"
+#include <thread>
 
 REGISTER_LOCALED_DOCUMENT(System)
 
@@ -123,6 +124,7 @@ System::System(ITDDocument* pDoc) :
 	m_pSystemConfig		= (BASE_SYSTEM_CONFIG*)g_pSystem->GetMemory(NULL, TRUE)->GetConfig();
 	m_bAutoUpdate		= FALSE;
 	m_bBakedModel		= FALSE;
+	m_iSimBuildJobCount	= std::thread::hardware_concurrency();
 	WriteConfiguration(_T("PROJECT_NAME"),	g_pSystem->GetMemory(NULL, TRUE)->GetName());
 	UpdateDefaultSystemConfigHeader();
 	m_pSystemConfig->hSystemManager	= pDoc->GetWindowHandle();
@@ -224,6 +226,19 @@ System::System(ITDDocument* pDoc) :
 		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_BOOL, PROPERTY_ID_SIMULATION_BAKED_MODEL, _L(BAKED_MODEL), (DWORD_PTR) & (m_bBakedModel), _L(DESC_BAKED_MODEL));
 		pProperty->UpdateConfigFile();
 		m_pPropertySim[SIM_PROPERTY_BAKED_MODEL]	= pProperty;
+
+		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_INT, PROPERTY_ID_SIMULATION_BUILD_JOBS, _L(SIM_BUILD_JOBS), (DWORD_PTR) &m_iSimBuildJobCount, _L(DESC_SIM_BUILD_JOBS));
+		pProperty->AllowEdit(FALSE);
+		pProperty->UpdateConfigFile();
+		{
+			const int processor_count = std::thread::hardware_concurrency();
+			for(int i = 1; i<=processor_count; i++) {
+				CString sNum;
+				sNum.Format(_T("%d"), i);
+				pProperty->AddOption(sNum.c_str());
+			}
+		}
+		m_pPropertySim[SIM_PROPERTY_BUILD_JOBS]		= pProperty;
 
 		m_sSimWaveOutputFile.GetBuffer(1024);
 		m_sSimWaveOutputFile	= _T("sim.fst");
@@ -385,6 +400,11 @@ void System::UpdateEnvironments(void)
 		CString sEnableBakedModel;
 		sEnableBakedModel.Format(_T("%d"), m_bBakedModel);
 		WriteConfiguration(_T("SIM_BAKED_MODEL"), sEnableBakedModel);
+	}
+	{
+		CString sNum;
+		sNum.Format(_T("%d"), m_iSimBuildJobCount);
+		WriteConfiguration(_T("SIM_BUILD_JOBS"), sNum);
 	}
 	{
 		// set trace start time (us)

@@ -187,18 +187,26 @@ LOCALE_TEXT(DESC_SIMULATION_MULTITHREADING,
 			_T("シミュレーションのマルチスレッドレベルを指定します。\nDisable : を無効にする.\nEnable(HDL) : HDLのみ適用.\nEnable(HDL+DPI) : HDLとDPIの両方に適用.(DPI code実装はthread safeかどうかを確認する必要があります。また、HDL上「UNOPTFLAT」の警告をすべて削除しなければなら正常なマルチスレッド加速になります。)\nそして、このオプションは非常に大きなデザインでのみパフォーマンス向上を見ることができます。小さな設計では、効率が低く、むしろより遅く動作します。"),
 			_T("Especifica el nivel de simulación de subprocesos múltiples.\nDisable : No multihilo.\nEnable(HDL) : Aplicar solo a HDL.\nEnable(HDL+DPI) : Aplicar a HDL y DPI tanto.(El usuario debe considerar la seguridad de los hilos en los códigos DPI. Además, si tiene que eliminar todas las advertencias de 「UNOPTFLAT」 en el HDL, será una aceleración de subprocesos normal.)\nY esta opción solo verá ganancias de rendimiento en diseños muy grandes. Los diseños más pequeños son menos eficientes y funcionan más lentamente."),
 			_T("Specifies the simulation multithreading level.\nDisable : No multithreading.\nEnable(HDL) : Apply to HDL only.\nEnable(HDL+DPI) : Apply to HDL and DPI both.(User must consider about thread safe on DPI codes. And, if you have to delete all the warnings of「UNOPTFLAT」on the HDL, it will be normal multi-thread acceleration.)\nAlso, this option will only see performance gains on very large designs. Smaller designs are less efficient and run more slowly."))
-
 LOCALE_TEXT(BAKED_MODEL,
 			_T("Baked 모델 활성화"),
 			_T("Bakedモデルの有効化"),
 			_T("Activar el modelo horneado"),
 			_T("Activate the baked model"))
 LOCALE_TEXT(DESC_BAKED_MODEL,
-			_T("HDL로부터 이미 빌드된 C++ 모델을 사용합니다.\n(멀티스레딩 설정은 무시됩니다.)"),
-			_T("HDLからすでに構築されているC ++モデルを使用してください。\n(マルチスレッド設定は無視されます。)"),
-			_T("Utilice un modelo C++ ya creado a partir de HDL.\n(La configuración de subprocesos múltiples se ignora.)"),
-			_T("Use a C++ model already built from HDL.\n(Multithreading settings are ignored.)"))
-
+			_T("HDL로부터 이미 빌드된 C++ 모델을 재사용합니다.\nBaked model 사용은 H/W HDL 빌드 시간을 단축시켜 줍니다.\n(멀티스레딩 설정은 무시됩니다.)"),
+			_T("HDLからすでに構築されているC ++モデルを再利用します。\nBaked modelを使用すると、H / W HDLの構築時間を短縮できます。\n(マルチスレッド設定は無視されます。)"),
+			_T("Reutilice modelos C++ ya creados a partir de HDL.\nEl uso de un modelo horneado reduce el tiempo de construcción de H/W HDL.\n(La configuración de subprocesos múltiples se ignora.)"),
+			_T("Reuse C++ models already built from HDL.\nUsing a baked model reduces H/W HDL build time.\n(Multithreading settings are ignored.)"))
+LOCALE_TEXT(SIM_BUILD_JOBS,
+			_T("시뮬레이션 빌드 Job 수"),
+			_T("シミュレーションビルドのジョブ番号"),
+			_T("Número de trabajo de compilación de simulación"),
+			_T("Job number of simulation build"))
+LOCALE_TEXT(DESC_SIM_BUILD_JOBS,
+			_T("시뮬레이션 빌드 스레드 수를 결정합니다.\nH/W 디자인이 매우 커서 컴파일시 메모리가 부족할 경우, 이 숫자를 작게 하는 것이 좋습니다.\n(기본값으로 최대 물리 CPU 개수가 지정됩니다.)"),
+			_T("シミュレーションビルドスレッドの数を決定します。\nH / Wデザインが非常に大きく、コンパイル時にメモリが不足している場合は、この数を小さくすることをお勧めします。\n(デフォルトでは最大物理 CPU 数が指定されます。)"),
+			_T("Determina el número de subprocesos de compilación de simulación.\nSi su diseño H/W es muy grande y se queda sin memoria al compilar, se recomienda mantener este número pequeño.\n(De forma predeterminada, se especifica el número máximo de CPU físicas.)"),
+			_T("Determines the number of simulation build threads.\nIf your H/W design is very large and you run out of memory when compiling, it is recommended to keep this number small.\n(By default, the maximum number of physical CPUs is specified.)"))
 LOCALE_TEXT(WAVE_OUTPUT_FILENAME,
 			_T("출력 파일명;fst;fst 파일들 (*.fst)|*.fst|모든 파일들 (*.*)|*.*||"),
 			_T("出力ファイル名;fst;fst ファイル (*.fst)|*.fst|すべてのファイル (*.*)|*.*||"),

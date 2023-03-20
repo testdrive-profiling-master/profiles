@@ -1,3 +1,5 @@
+MAKEFLAGS += --jobs=$(SIM_BUILD_JOBS)
+
 all:
 ifeq (,$(wildcard ../verilator/SimTop__Dpi.h))
 	@echo // dummy > ../verilator/SimTop__Dpi.h
