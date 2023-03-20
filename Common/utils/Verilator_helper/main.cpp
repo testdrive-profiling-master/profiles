@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Verilator helper
-// Rev.  : 3/18/2023 Sat (clonextop@gmail.com)
+// Rev.  : 3/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "UtilFramework.h"
 #include <filesystem>
@@ -135,6 +135,13 @@ int BakeModel(const char* sName)
 		if(!fs::exists(target_path) || !fs::is_directory(target_path)) {
 			LOGE("bake path is not a directory. : '%s'\n", target_path.string().c_str());
 			return 1;
+		}
+
+		{
+			auto	target_full_path	= fs::absolute(target_path);
+			cstring	sFullPath			= target_full_path.string();
+			sFullPath.Replace("\\", "/", true);
+			LOGI("Current H/W model(%s%s.tar.gz) baking...", sFullPath.c_str(), sTargetName.c_str());
 		}
 	}
 
