@@ -53,7 +53,7 @@
 // Non-DPI
 SYSTEM_CONFIG* GetSystemConfig(void);
 DisplayConfig* GetDisplayConfig(void);
-BYTE* GetMemoryPointer(DWORD dwAddress, DWORD dwSize = 0, bool bDisplay = FALSE);
+BYTE* GetMemoryPointer(DWORD dwAddress, DWORD dwSize = 0, bool bDisplay = false);
 DWORD GetMemoryBaseAddress(void);
 bool GetMemory(const char* sName, void*& pConfig, void*& pMemory);
 extern bool (*DPI_Initialize)(void);
