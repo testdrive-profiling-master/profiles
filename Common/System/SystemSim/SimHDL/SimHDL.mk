@@ -1,4 +1,6 @@
+ifdef SIM_BUILD_JOBS
 MAKEFLAGS += --jobs=$(SIM_BUILD_JOBS)
+endif
 
 all:
 ifeq (,$(wildcard ../verilator/SimTop__Dpi.h))
