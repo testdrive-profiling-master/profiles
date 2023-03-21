@@ -996,6 +996,8 @@ function EncodeParagraph(sText, sExtra)
 			os.exit()
 		end
 		sPara	= String(txt:GetAll(false))
+		sPara:Replace(" \\\n", "", true);
+		sPara:Replace(" \\\r\n", "", true);
 		txt:Close()
 	end
 	
