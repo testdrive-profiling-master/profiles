@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,6 +31,8 @@
 // OF SUCH DAMAGE.
 // 
 // Title : HTML viewer
+// Rev.  : 3/21/2023 Tue (clonextop@gmail.com)
+//================================================================================
 // Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
 //================================================================================
 #include "HtmlViewer.h"
@@ -68,7 +69,7 @@ ITDImplDocument* __cdecl RegisterDocument(ITDDocument* pDoc)
 HtmlViewer::HtmlViewer(ITDDocument* pDoc)
 {
 	m_pDoc		= pDoc;
-	m_pHtml		= pDoc->CreateHtml(_T("html"), 0, 0, 100, 100);
+	m_pHtml		= pDoc->CreateHtml(_T("html"), 0, 0, 100, 100, TRUE);
 	m_ValidationCheck.bEnable	= FALSE;
 	m_pHtml->SetManager(this);
 	{
