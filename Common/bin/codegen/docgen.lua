@@ -174,6 +174,8 @@ function GenerateCaption(sType, content)
 	do	-- trim off space
 		local	sContent		= String(content)
 		sContent:Trim(" ")
+		sContent:Replace("<", "&lt;", true)
+		sContent:Replace(">", "&gt;", true)
 		sContent:ChangeCharsetToUTF8()
 		content	= sContent.s
 	end
