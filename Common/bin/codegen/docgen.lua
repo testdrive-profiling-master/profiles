@@ -124,6 +124,8 @@ function GenerateChapter(level, title)
 	do	-- trim off space
 		local	sTitle	= String(title)
 		sTitle:Trim(" \t")
+		sTitle:Replace("<", "&lt;", true)
+		sTitle:Replace(">", "&gt;", true)
 		sTitle:ChangeCharsetToUTF8()
 		title	= sTitle.s
 	end
