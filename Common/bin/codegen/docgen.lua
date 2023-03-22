@@ -1086,12 +1086,16 @@ function EncodeParagraph(sText, sExtra)
 				end
 				-- make contents
 				local	sContent	= String(sPara.s)
-				sContent:erase(iCodeLen, -1)
-				sContent:Replace("\r", "", true)
-				sContent:Replace("\n\n", "\n \n", true)
-				sContent:TrimLeft("\n")
-				sContent:TrimRight(" \n")
-				sContent:Replace("@```", "```", true)
+				if iCodeLen == 0 then	-- no contents
+					goto continue
+				else
+					sContent:erase(iCodeLen, -1)
+					sContent:Replace("\r", "", true)
+					sContent:Replace("\n\n", "\n \n", true)
+					sContent:TrimLeft("\n")
+					sContent:TrimRight(" \n")
+					sContent:Replace("@```", "```", true)
+				end
 				
 				do	-- make highlight contents
 					local txt = TextFile()
