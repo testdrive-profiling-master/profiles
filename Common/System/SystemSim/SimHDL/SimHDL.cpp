@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
+// Rev.  : 3/23/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
 #include "TestDriver.inl"
@@ -39,7 +39,7 @@
 #include "SimTop.h"
 #include <time.h>		// for rand/srand
 
-static UINT64				__lSimulationTime		= 0;		// global simulation timestamp
+UINT64						g_lSimulationTime		= 0;		// global simulation timestamp
 static SimHDL*				__pSimHDL				= NULL;
 static SimControl*			__pSimControl			= NULL;
 static VerilatedContext*	__pContext				= NULL;
@@ -191,8 +191,8 @@ public:
 #ifdef SIM_TRACE
 
 			if(__pWaveDump) {
-				if(!__lSimulationTime || (__lSimulationTime > g_lTraceStartTime))
-					__pWaveDump->dump((vluint64_t)__lSimulationTime);
+				if(!g_lSimulationTime || (g_lSimulationTime > g_lTraceStartTime))
+					__pWaveDump->dump((vluint64_t)g_lSimulationTime);
 			}
 
 #endif
@@ -352,12 +352,12 @@ void SimulationFlush(void)
 
 UINT64 SimulationTime(void)
 {
-	return __lSimulationTime;
+	return g_lSimulationTime;
 }
 
 void AdvenceSimulationTime(DWORD dwTime)
 {
-	__lSimulationTime	+= dwTime;
+	g_lSimulationTime	+= dwTime;
 }
 
 void SimulationDebugMode(bool bDebug)

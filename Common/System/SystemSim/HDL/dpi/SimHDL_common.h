@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 3/23/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIMHDL_COMMON_H__
 #define __SIMHDL_COMMON_H__
@@ -51,6 +51,7 @@
 #define GET_SYSTEM_REGMAP	((SYSTEM_REGMAP*)GetMemoryPointer(0, 0, true))
 
 // Non-DPI
+extern UINT64	g_lSimulationTime;
 SYSTEM_CONFIG* GetSystemConfig(void);
 DisplayConfig* GetDisplayConfig(void);
 BYTE* GetMemoryPointer(DWORD dwAddress, DWORD dwSize = 0, bool bDisplay = false);
