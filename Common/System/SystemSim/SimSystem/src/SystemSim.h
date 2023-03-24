@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 3/14/2023 Tue (clonextop@gmail.com)
+// Rev.  : 3/24/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_SIM_H__
 #define __SYSTEM_SIM_H__
@@ -58,7 +58,7 @@ public:
 	// memory
 	virtual UINT64 GetMemoryBase(void);										// get memory start address
 	virtual UINT64 GetMemorySize(void);										// get memory byte size
-	virtual void* GetMemoryPointer(UINT64 dwPhyAddress, UINT64 dwByteSize = 0);		// get virtual pointer from physical address
+	virtual void* GetMemoryPointer(UINT64 lAddress, UINT64 dwByteSize = 0);		// get virtual pointer from physical address
 
 	// register
 	virtual DWORD RegRead(UINT64 dwAddress);								// register read

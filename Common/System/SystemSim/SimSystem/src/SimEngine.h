@@ -30,8 +30,8 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Simulation sub-system
-// Rev.  : 2/23/2023 Thu (clonextop@gmail.com)
+// Title : Common profiles
+// Rev.  : 3/24/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_ENGINE_H__
 #define __SIM_ENGINE_H__
@@ -99,7 +99,7 @@ protected:
 	virtual void MemoryWrite8(int iID, UINT64 dwAddress, BYTE dwData);
 	virtual SYSTEM_CONFIG* GetSystemConfig(void);
 	virtual DisplayConfig* GetDisplayConfig(void);
-	virtual BYTE* GetMemoryPointer(UINT64 dwAddress, UINT64 dwSize = 0, bool bDisplay = false);
+	virtual BYTE* GetMemoryPointer(UINT64 lAddress, UINT64 dwSize = 0, bool bDisplay = false);
 	virtual UINT64 GetMemoryBaseAddress(void);
 	virtual bool GetMemory(const char* sName, void*& pConfig, void*& pMemory);
 	virtual void SimulationLock(int iDelayTicks = 0);

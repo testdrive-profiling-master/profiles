@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
+// Rev.  : 3/24/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_HDL_H__
 #define __SIM_HDL_H__
@@ -59,7 +59,7 @@ struct SimControl {
 	virtual void MemoryWrite8(int iID, UINT64 dwAddress, BYTE dwData) = 0;
 	virtual SYSTEM_CONFIG* GetSystemConfig(void) = 0;
 	virtual DisplayConfig* GetDisplayConfig(void) = 0;
-	virtual BYTE* GetMemoryPointer(UINT64 dwAddress, UINT64 dwSize = 0, bool bDisplay = false) = 0;
+	virtual BYTE* GetMemoryPointer(UINT64 lAddress, UINT64 dwSize = 0, bool bDisplay = false) = 0;
 	virtual UINT64 GetMemoryBaseAddress(void) = 0;
 	virtual bool GetMemory(const char* sName, void*& pConfig, void*& pMemory) = 0;
 	virtual void SimulationLock(int iDelayTicks = 0) = 0;

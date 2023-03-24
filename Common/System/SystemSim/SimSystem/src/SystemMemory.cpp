@@ -30,8 +30,8 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Simulation sub-system
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Title : Common profiles
+// Rev.  : 3/24/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "STDInterface.h"
@@ -73,9 +73,9 @@ UINT64 SystemMemory::ByteSize(void)
 	return m_pSystemMemory->GetSize();
 }
 
-BYTE* SystemMemory::GetPointer(UINT64 dwAddress, UINT64 dwSize, bool bDisplay)
+BYTE* SystemMemory::GetPointer(UINT64 lAddress, UINT64 dwSize, bool bDisplay)
 {
-	if(bDisplay) return m_pDisplayMemory->GetPointer(dwAddress, dwSize);
+	if(bDisplay) return m_pDisplayMemory->GetPointer(lAddress, dwSize);
 
-	return m_pSystemMemory->GetPointer(dwAddress - m_dwBaseAddress, dwSize);
+	return m_pSystemMemory->GetPointer(lAddress - m_dwBaseAddress, dwSize);
 }

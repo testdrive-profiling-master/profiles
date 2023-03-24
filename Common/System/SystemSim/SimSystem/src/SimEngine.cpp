@@ -30,8 +30,8 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Simulation sub-system
-// Rev.  : 2/23/2023 Thu (clonextop@gmail.com)
+// Title : Common profiles
+// Rev.  : 3/24/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "SimEngine.h"
@@ -281,9 +281,9 @@ DisplayConfig* SimEngine::GetDisplayConfig(void)
 	return g_SystemMemory.GetDisplayConfig();
 }
 
-BYTE* SimEngine::GetMemoryPointer(UINT64 dwAddress, UINT64 dwSize, bool bDisplay)
+BYTE* SimEngine::GetMemoryPointer(UINT64 lAddress, UINT64 dwSize, bool bDisplay)
 {
-	return g_SystemMemory.GetPointer(dwAddress, dwSize, bDisplay);
+	return g_SystemMemory.GetPointer(lAddress, dwSize, bDisplay);
 }
 
 UINT64 SimEngine::GetMemoryBaseAddress(void)

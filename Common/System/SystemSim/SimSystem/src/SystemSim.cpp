@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 3/14/2023 Tue (clonextop@gmail.com)
+// Rev.  : 3/24/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "STDInterface.h"
@@ -155,9 +155,9 @@ UINT64 SystemSim::GetMemorySize(void)
 	return g_SystemMemory.ByteSize();
 }
 
-void* SystemSim::GetMemoryPointer(UINT64 dwPhyAddress, UINT64 dwByteSize)
+void* SystemSim::GetMemoryPointer(UINT64 lAddress, UINT64 dwByteSize)
 {
-	return g_SystemMemory.GetPointer(dwPhyAddress, dwByteSize);
+	return g_SystemMemory.GetPointer(lAddress, dwByteSize);
 }
 
 IMemoryNative* SystemSim::CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, bool bDMA)

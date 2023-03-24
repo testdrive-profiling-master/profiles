@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 3/23/2023 Thu (clonextop@gmail.com)
+// Rev.  : 3/24/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
 #include "TestDriver.inl"
@@ -307,14 +307,14 @@ DisplayConfig* GetDisplayConfig(void)
 	return __pSimControl->GetDisplayConfig();
 }
 
-BYTE* GetMemoryPointer(DWORD dwAddress, DWORD dwSize, bool bDisplay)
+BYTE* GetMemoryPointer(UINT64 lAddress, DWORD dwSize, bool bDisplay)
 {
 	if(!__pSimControl) return NULL;
 
-	return __pSimControl->GetMemoryPointer(dwAddress, dwSize, bDisplay);
+	return __pSimControl->GetMemoryPointer(lAddress, dwSize, bDisplay);
 }
 
-DWORD GetMemoryBaseAddress(void)
+UINT64 GetMemoryBaseAddress(void)
 {
 	if(!__pSimControl) return 0;
 

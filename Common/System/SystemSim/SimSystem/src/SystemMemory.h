@@ -30,8 +30,8 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Simulation sub-system
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Title : Common profiles
+// Rev.  : 3/24/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_MEMORY_H__
 #define __SYSTEM_MEMORY_H__
@@ -48,7 +48,7 @@ public:
 		m_dwBaseAddress	= dwAddress;
 	}
 	UINT64 ByteSize(void);
-	BYTE* GetPointer(UINT64 dwAddress, UINT64 dwSize = 0, bool bDisplay = false);
+	BYTE* GetPointer(UINT64 lAddress, UINT64 dwSize = 0, bool bDisplay = false);
 	void Flush(UINT64 dwAddress, UINT64 dwSize)			{
 		if(m_pSystemMemory) m_pSystemMemory->Flush(dwAddress, dwSize);
 	}
