@@ -1326,7 +1326,7 @@ function EncodeParagraph(sText, sExtra)
 								sResult:Append(sContents.s)
 							end
 						else
-							LOGW("Invalid paragraph command : " .. sVar.s)
+							LOGW("Invalid paragraph command : " .. sVar.s .. "\n\t Line : " .. sLine.s)
 						end
 					else
 						local	sTag	= sVar:Tokenize(": ")
