@@ -6,3 +6,4 @@
 .tscp
 *.TestDrive*
 *.XilinxSynthesis*
+~*
