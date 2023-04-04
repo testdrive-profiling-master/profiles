@@ -3,7 +3,7 @@
 #-------------------------------------------------
 #TD_DESCRIPTION	= Chart test
 #TD_TYPE		= chart
-#TD_ERROR_TOKEN	= "*E: ", "*I: ":0, "*W: ":0
+#TD_ERROR_TOKEN	= "*E: ", "*I: ":0, "*W: ":W
 SRC_PATH		:= .
 #TD_WORK_FOLDER :=
 TARGETPATH		:= ../../../../Program

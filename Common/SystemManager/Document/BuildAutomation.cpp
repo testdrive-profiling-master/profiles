@@ -226,7 +226,7 @@ int DoMake(BOOL bClean, LPCTSTR sArg, LPCTSTR sWorkPath)
 								  _T("error:"), -1,
 								  _T("] Error"), -1,
 								  _T("*E: "), -1,
-								  _T("*W: "), 0,
+								  _T("*W: "), INT_MAX,
 								  _T("undefined reference to "), -1,
 								  NULL);
 }

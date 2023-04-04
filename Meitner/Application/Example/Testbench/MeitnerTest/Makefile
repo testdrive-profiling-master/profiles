@@ -3,7 +3,7 @@
 #-------------------------------------------------
 #TD_DESCRIPTION	= Meitner processor test
 #TD_TYPE		= profile
-#TD_ERROR_TOKEN	= "*E: ", "*I: ":0, "*W: ":0, "	Write":0, "	Read":0
+#TD_ERROR_TOKEN	= "*E: ", "*I: ":0, "*W: ":W, "	Write":0, "	Read":0
 SRC_PATH		:= .
 #TD_WORK_FOLDER :=
 TARGETPATH		:= ../../../../Program
