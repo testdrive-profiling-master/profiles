@@ -65,9 +65,48 @@ static void __checkout_progress(const char* path, size_t cur, size_t tot, void* 
 	}
 }
 
+static void __EnableStdinEcho(bool enable = true)
+{
+#ifdef WIN32
+	HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
+	DWORD mode;
+	GetConsoleMode(hStdin, &mode);
+
+	if(!enable)
+		mode &= ~ENABLE_ECHO_INPUT;
+	else
+		mode |= ENABLE_ECHO_INPUT;
+
+	SetConsoleMode(hStdin, mode);
+#else
+	struct termios tty;
+	tcgetattr(STDIN_FILENO, &tty);
+
+	if(!enable)
+		tty.c_lflag &= ~ECHO;
+	else
+		tty.c_lflag |= ECHO;
+
+	(void) tcsetattr(STDIN_FILENO, TCSANOW, &tty);
+#endif
+}
+
 static int __credentials_cb(git_cred** out, const char* url, const char* username_from_url, unsigned int allowed_types, void* payload)
 {
 	minGit*	pGit	= (minGit*)payload;
+
+	if(pGit->sUser.empty()) {
+		show_console_cursor(true);
+		printf("     > Credential login.\n");
+		printf("       * Enter ID       : ");
+		getline(cin, pGit->sUser);
+		printf("       * Enter password : ");
+		__EnableStdinEcho(false);
+		getline(cin, pGit->sPassword);
+		__EnableStdinEcho(true);
+		show_console_cursor(false);
+	}
+
 	return git_cred_userpass_plaintext_new(out, pGit->sUser.c_str(), pGit->sPassword.c_str());
 }
 

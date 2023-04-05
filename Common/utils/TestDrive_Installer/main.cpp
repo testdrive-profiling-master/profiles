@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive installer Maker
-// Rev.  : 3/2/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/5/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "UtilFramework.h"
 #include <ncurses/ncurses.h>
@@ -60,6 +60,53 @@ list<REPO>		g_RepoList;
 typedef struct {
 	int data;
 } progress_data;
+
+void EnableStdinEcho(bool enable = true)
+{
+#ifdef WIN32
+	HANDLE hStdin = GetStdHandle(STD_INPUT_HANDLE);
+	DWORD mode;
+	GetConsoleMode(hStdin, &mode);
+
+	if(!enable)
+		mode &= ~ENABLE_ECHO_INPUT;
+	else
+		mode |= ENABLE_ECHO_INPUT;
+
+	SetConsoleMode(hStdin, mode);
+#else
+	struct termios tty;
+	tcgetattr(STDIN_FILENO, &tty);
+
+	if(!enable)
+		tty.c_lflag &= ~ECHO;
+	else
+		tty.c_lflag |= ECHO;
+
+	(void) tcsetattr(STDIN_FILENO, TCSANOW, &tty);
+#endif
+}
+
+int git_credentials_cb(git_cred** out, const char* url, const char* username_from_url, unsigned int allowed_types, void* payload)
+{
+	string	sID, sPW;
+
+	// clear current line
+	for(int i = 0; i < 120; i++) printf(" ");
+
+	for(int i = 0; i < 120; i++) printf("\b");
+
+	show_console_cursor(true);
+	printf("     > Credential login.\n");
+	printf("       * Enter ID       : ");
+	getline(cin, sID);
+	printf("       * Enter password : ");
+	EnableStdinEcho(false);
+	getline(cin, sPW);
+	EnableStdinEcho(true);
+	show_console_cursor(false);
+	return git_cred_userpass_plaintext_new(out, sID.c_str(), sPW.c_str());
+}
 
 int git_certificate_check_cb(git_cert* cert, int valid, const char* host, void* payload)
 {
@@ -141,8 +188,9 @@ bool DoInstall(void)
 	clone_opts.checkout_opts.checkout_strategy = GIT_CHECKOUT_SAFE;
 	clone_opts.checkout_opts.progress_cb = checkout_progress;
 	clone_opts.checkout_opts.progress_payload = &d;
-	clone_opts.fetch_opts.callbacks.transfer_progress = fetch_progress;
-	clone_opts.fetch_opts.callbacks.certificate_check = git_certificate_check_cb;
+	clone_opts.fetch_opts.callbacks.transfer_progress	= fetch_progress;
+	clone_opts.fetch_opts.callbacks.certificate_check	= git_certificate_check_cb;
+	clone_opts.fetch_opts.callbacks.credentials			= git_credentials_cb;
 	clone_opts.fetch_opts.callbacks.payload = &d;
 	int iIndex	= 0;
 
