@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive codegen project
-// Rev.  : 3/10/2023 Fri (clonextop@gmail.com)
+// Rev.  : 4/5/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "minGit.h"
 #include <git2.h>
@@ -149,5 +149,107 @@ bool minGit::Clone(const char* sGitURL, const char* sPath)
 	}
 
 	SAFE_DELETE(pProgress);
+	return bRet;
+}
+
+bool Pull(const char* sPath)
+{
+	bool			bRet	= false;
+	git_repository* repo	= NULL;
+	git_remote*		remote	= NULL;
+	git_reference*	local_master		= nullptr;
+	git_reference*	origin_master		= nullptr;
+	git_index*		index				= nullptr;
+	git_commit*		their_commit		= nullptr;
+	git_commit*		our_commit			= nullptr;
+	git_oid			new_tree_id;
+	git_tree*		new_tree			= nullptr;
+	git_signature*	me					= nullptr;
+	git_oid			commit_id;
+	int				error;
+	git_repository_index(&index, repo);
+
+	// open git
+	if(git_repository_open(&repo, sPath) < 0) goto EXIT;
+
+	// get remote
+	if(git_remote_lookup(&remote, repo, "origin") < 0) goto EXIT;
+
+	// git fetch
+	{
+		git_fetch_options	fetch_opts		= GIT_FETCH_OPTIONS_INIT;
+		fetch_opts.callbacks.credentials	= __credentials_cb;
+
+		//fetch_opts.prune = GIT_FETCH_PRUNE;
+		if(git_remote_fetch(remote, NULL, &fetch_opts, NULL) < 0) goto EXIT;
+	}
+	// merge local from remote
+	{
+		git_merge_options merge_opt			= GIT_MERGE_OPTIONS_INIT;
+		git_checkout_options checkout_opt	= GIT_CHECKOUT_OPTIONS_INIT;
+		const git_annotated_commit* their_head[10];
+
+		if(git_branch_lookup(&local_master, repo, "master", GIT_BRANCH_LOCAL) < 0) goto EXIT;
+
+		if(git_branch_lookup(&origin_master, repo, "origin/master", GIT_BRANCH_REMOTE) < 0) goto EXIT;
+
+		// set local to head
+		if(git_repository_set_head(repo, git_reference_name(local_master)) < 0) goto EXIT;
+
+		// and merge
+		if(git_annotated_commit_from_ref((git_annotated_commit**)their_head, repo, origin_master) < 0) goto EXIT;
+
+		if(git_merge(repo, their_head, 1, &merge_opt, &checkout_opt)) goto EXIT;
+	}
+	// resolve conflicts
+
+	if(git_index_has_conflicts(index)) {
+		git_index_conflict_iterator* conflict_iterator	= nullptr;
+		const git_index_entry* ancestor_out				= nullptr;
+		const git_index_entry* our_out					= nullptr;
+		const git_index_entry* their_out				= nullptr;
+		git_index_conflict_iterator_new(&conflict_iterator, index);
+
+		while(git_index_conflict_next(&ancestor_out, &our_out, &their_out, conflict_iterator) != GIT_ITEROVER) {
+			if(ancestor_out) std::cout << "ancestor: " << ancestor_out->path << std::endl;
+
+			if(our_out) std::cout << "our: " << our_out->path << std::endl;
+
+			if(their_out) std::cout << "their: " << their_out->path << std::endl;
+		}
+
+		// git checkout --theirs <file>
+		{
+			git_checkout_options	opt	= GIT_CHECKOUT_OPTIONS_INIT;
+			opt.checkout_strategy		|= GIT_CHECKOUT_USE_THEIRS;
+			git_checkout_index(repo, index, &opt);
+			git_index_conflict_iterator_free(conflict_iterator);
+		}
+	}
+
+	// add & commit
+	git_commit_lookup(&their_commit, repo, git_reference_target(origin_master));
+	git_commit_lookup(&our_commit, repo, git_reference_target(local_master));
+	git_index_update_all(index, nullptr, nullptr, nullptr);
+	git_index_write(index);
+	git_index_write_tree(&new_tree_id, index);
+	git_tree_lookup(&new_tree, repo, &new_tree_id);
+	git_signature_now(&me, "name", "email@address");
+	git_commit_create_v(&commit_id, repo, git_reference_name(local_master), me, me, "UTF-8", "pull commit", new_tree, 2, our_commit, their_commit);
+	bRet	= true;
+EXIT:
+
+	if(!bRet) {
+		const git_error*	e	= giterr_last();
+		LOGE("GITERROR[%d] %s", e->klass, e->message);
+	}
+
+	if(repo) {
+		// cleanup
+		git_repository_state_cleanup(repo);
+		git_repository_free(repo);
+		repo	= NULL;
+	}
+
 	return bRet;
 }

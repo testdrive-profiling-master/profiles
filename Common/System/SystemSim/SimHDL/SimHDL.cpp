@@ -62,6 +62,10 @@ UINT64			g_lTraceStartTime		= 0;
 #define DEFAULT_HALF_CLOCK_PERIOD		5000		// 5000ps = 5ns = 10ns clock cycle = 100MHz
 #endif
 
+#ifndef DEFAULT_INITIAL_CLOCK_VALUE
+#define DEFAULT_INITIAL_CLOCK_VALUE		0			// start default clock width '0'
+#endif
+
 class SimHDL_imp : public SimHDL {
 public:
 	SimHDL_imp(void) {
@@ -159,7 +163,7 @@ public:
 		{
 			// make default clock, reset & busy
 			CLOCK_INTERFACE*	pClock	= __pSimControl->CreateClock(&__pSimTop->MCLK, &__pSimTop->nRST);
-			pClock->SetParameters(0, DEFAULT_HALF_CLOCK_PERIOD);	// set half clock period
+			pClock->SetParameters(0, DEFAULT_HALF_CLOCK_PERIOD, DEFAULT_INITIAL_CLOCK_VALUE);	// set half clock period
 			pClock->DoReset();
 			__pSimControl->SimulationAddBusy(&__pSimTop->BUSY);
 		}
