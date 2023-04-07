@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,12 +31,12 @@
 // OF SUCH DAMAGE.
 // 
 // Title : FPU 32bit(IEEE-754) unit
-// Rev.  : 8/31/2022 Wed (clonextop@gmail.com)
+// Rev.  : 4/7/2023 Fri (clonextop@gmail.com)
 //================================================================================
-`include "FPU_F32_PriorityEncoder.v"
 
 module FPU_F32_AddSub(
-	input	[31:0]		a_operand,b_operand, 	//Inputs in the format of IEEE-754 Representation.
+	input	[31:0]		a_operand,
+	input	[31:0]		b_operand,
 	input				AddBar_Sub,				//If Add_Sub is low then Addition else Subtraction.
 	output				Exception,
 	output	[31:0]		result              	//Outputs in the format of IEEE-754 Representation.
@@ -66,9 +66,6 @@ wire [7:0] exponent_sub;
 //for operations always operand_a must not be less than b_operand
 assign {Comp_enable,operand_a,operand_b} = (a_operand[30:0] < b_operand[30:0]) ? {1'b1,b_operand,a_operand} : {1'b0,a_operand,b_operand};
 
-assign exp_a = operand_a[30:23];
-assign exp_b = operand_b[30:23];
-
 //Exception flag sets 1 if either one of the exponent is 255.
 assign Exception = (&operand_a[30:23]) | (&operand_b[30:23]);
 
@@ -89,7 +86,7 @@ assign significand_b_add_sub = significand_b >> exponent_diff;
 assign exponent_b_add_sub = operand_b[30:23] + exponent_diff;
 
 //Checking exponents are same or not
-assign perform = (operand_a[30:23] == exponent_b_add_sub);
+wire perform = (operand_a[30:23] == exponent_b_add_sub);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------ADD BLOCK------------------------------------------//
@@ -109,7 +106,7 @@ assign significand_sub_complement = (perform & !operation_sub_addBar) ? ~(signif
 
 assign significand_sub = perform ? (significand_a + significand_sub_complement) : 25'd0;
 
-FPU_F32_PriorityEncoder pe(significand_sub,operand_a[30:23],subtraction_diff,exponent_sub);
+FPU_F32_PriorityEncoder pe(significand_sub, operand_a[30:23], subtraction_diff, exponent_sub);
 
 assign sub_diff[30:23] = exponent_sub;
 

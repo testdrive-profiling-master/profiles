@@ -31,9 +31,11 @@
 // OF SUCH DAMAGE.
 // 
 // Title : FPU 32bit(IEEE-754) unit
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/7/2023 Fri (clonextop@gmail.com)
 //================================================================================
 `include "FPU.vh"
+`include "F32/FPU_F32_PriorityEncoder.v"
+`include "F32/FPU_F32_AddSub.v"
 
 /* HIDDEN */
 module FPU_F32_ADD (
@@ -49,6 +51,7 @@ module FPU_F32_ADD (
 `DPI_FUNCTION void FPU_32f_Add(input bit [31:0] A, input bit [31:0] B, output bit [31:0] O);
 always@(A, B, SUBTRACT) FPU_32f_Add(A, {SUBTRACT^B[31], B[30:0]}, O);
 `else
+/*
 // hardware implimentation
 wire	[22:0]		a_m, b_m, o_m;
 wire	[7:0]		a_e, b_e, o_e;
@@ -70,6 +73,14 @@ wire	INF			= (a_ef & a_nz) | (b_ef & b_nz);		// Infinity number
 
 // result output
 assign	O			= NaN ? 32'b0_11111111_00000000000000000000000 : {o_s, o_e, o_m};
+*/
+FPU_F32_AddSub adder(
+	.a_operand		(A),
+	.b_operand		(B),
+	.AddBar_Sub		(1'b0),
+	.Exception		(),
+	.result			(O)
+);
 
 `endif
 

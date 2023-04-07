@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,149 +31,124 @@
 // OF SUCH DAMAGE.
 // 
 // Title : FPU 32bit(IEEE-754) unit
-// Rev.  : 8/31/2022 Wed (clonextop@gmail.com)
+// Rev.  : 4/7/2023 Fri (clonextop@gmail.com)
 //================================================================================
 
 module FPU_F32_PriorityEncoder(
-	input		[24:0]		significand,
-	input		[7:0]		Exponent_a,
-	output reg	[24:0]		Significand,
-	output		[7:0]		Exponent_sub
+	input		[24:0]		IN,
+	input		[7:0]		EXP_A,
+	output reg	[24:0]		OUT,
+	output		[7:0]		EXP_SUB
 );
 
 reg [4:0] shift;
 
-always @(significand) begin
-	casex (significand)
-		25'b1_1xxx_xxxx_xxxx_xxxx_xxxx_xxxx :	begin
-			Significand = significand;
-			shift = 5'd0;
-		end
-		25'b1_01xx_xxxx_xxxx_xxxx_xxxx_xxxx : 	begin
-			Significand = significand << 1;
-			shift = 5'd1;
-		end
-
-		25'b1_001x_xxxx_xxxx_xxxx_xxxx_xxxx : 	begin
-			Significand = significand << 2;
-			shift = 5'd2;
-		end
-
-		25'b1_0001_xxxx_xxxx_xxxx_xxxx_xxxx : 	begin
-			Significand = significand << 3;
-			shift = 5'd3;
-		end
-
-		25'b1_0000_1xxx_xxxx_xxxx_xxxx_xxxx : 	begin
-			Significand = significand << 4;
-			shift = 5'd4;
-		end
-
-		25'b1_0000_01xx_xxxx_xxxx_xxxx_xxxx : 	begin
-			Significand = significand << 5;
-			shift = 5'd5;
-		end
-
-		25'b1_0000_001x_xxxx_xxxx_xxxx_xxxx : 	begin						// 24'h020000
-			Significand = significand << 6;
-			shift = 5'd6;
-		end
-
-		25'b1_0000_0001_xxxx_xxxx_xxxx_xxxx : 	begin						// 24'h010000
-			Significand = significand << 7;
-			shift = 5'd7;
-		end
-
-		25'b1_0000_0000_1xxx_xxxx_xxxx_xxxx : 	begin						// 24'h008000
-			Significand = significand << 8;
-			shift = 5'd8;
-		end
-
-		25'b1_0000_0000_01xx_xxxx_xxxx_xxxx : 	begin						// 24'h004000
-			Significand = significand << 9;
-			shift = 5'd9;
-		end
-
-		25'b1_0000_0000_001x_xxxx_xxxx_xxxx : 	begin						// 24'h002000
-			Significand = significand << 10;
-			shift = 5'd10;
-		end
-
-		25'b1_0000_0000_0001_xxxx_xxxx_xxxx : 	begin						// 24'h001000
-			Significand = significand << 11;
-			shift = 5'd11;
-		end
-
-		25'b1_0000_0000_0000_1xxx_xxxx_xxxx : 	begin						// 24'h000800
-			Significand = significand << 12;
-			shift = 5'd12;
-		end
-
-		25'b1_0000_0000_0000_01xx_xxxx_xxxx : 	begin						// 24'h000400
-			Significand = significand << 13;
-			shift = 5'd13;
-		end
-
-		25'b1_0000_0000_0000_001x_xxxx_xxxx : 	begin						// 24'h000200
-			Significand = significand << 14;
-			shift = 5'd14;
-		end
-
-		25'b1_0000_0000_0000_0001_xxxx_xxxx  : 	begin						// 24'h000100
-			Significand = significand << 15;
-			shift = 5'd15;
-		end
-
-		25'b1_0000_0000_0000_0000_1xxx_xxxx : 	begin						// 24'h000080
-			Significand = significand << 16;
-			shift = 5'd16;
-		end
-
-		25'b1_0000_0000_0000_0000_01xx_xxxx : 	begin						// 24'h000040
-			Significand = significand << 17;
-			shift = 5'd17;
-		end
-
-		25'b1_0000_0000_0000_0000_001x_xxxx : 	begin						// 24'h000020
-			Significand = significand << 18;
-			shift = 5'd18;
-		end
-
-		25'b1_0000_0000_0000_0000_0001_xxxx : 	begin						// 24'h000010
-			Significand = significand << 19;
-			shift = 5'd19;
-		end
-
-		25'b1_0000_0000_0000_0000_0000_1xxx :	begin						// 24'h000008
-			Significand = significand << 20;
-			shift = 5'd20;
-		end
-
-		25'b1_0000_0000_0000_0000_0000_01xx : 	begin						// 24'h000004
-			Significand = significand << 21;
-			shift = 5'd21;
-		end
-
-		25'b1_0000_0000_0000_0000_0000_001x : 	begin						// 24'h000002
-			Significand = significand << 22;
-			shift = 5'd22;
-		end
-
-		25'b1_0000_0000_0000_0000_0000_0001 : 	begin						// 24'h000001
-			Significand = significand << 23;
-			shift = 5'd23;
-		end
-
-		25'b1_0000_0000_0000_0000_0000_0000 : 	begin						// 24'h000000
-			Significand = significand << 24;
-			shift = 5'd24;
-		end
-		default : 	begin
-			Significand = (~significand) + 1'b1;
-			shift = 8'd0;
-		end
-	endcase
+always @(IN) begin
+	if(!IN[24]) begin
+		OUT		= (~IN) + 1'b1;
+		shift	= 5'd0;
+	end
+	else if (IN[23]) begin
+		OUT = IN;
+		shift = 5'd0;
+	end
+	else if (IN[22]) begin
+		OUT = IN << 1;
+		shift = 5'd1;
+	end
+	else if (IN[21]) begin
+		OUT = IN << 2;
+		shift = 5'd2;
+	end
+	else if (IN[20]) begin
+		OUT = IN << 3;
+		shift = 5'd3;
+	end
+	else if (IN[19]) begin
+		OUT = IN << 4;
+		shift = 5'd4;
+	end
+	else if (IN[18]) begin
+		OUT = IN << 5;
+		shift = 5'd5;
+	end
+	else if (IN[17]) begin
+		OUT = IN << 6;
+		shift = 5'd6;
+	end
+	else if (IN[16]) begin
+		OUT = IN << 7;
+		shift = 5'd7;
+	end
+	else if (IN[15]) begin
+		OUT = IN << 8;
+		shift = 5'd8;
+	end
+	else if (IN[14]) begin
+		OUT = IN << 9;
+		shift = 5'd9;
+	end
+	else if (IN[13]) begin
+		OUT = IN << 10;
+		shift = 5'd10;
+	end
+	else if (IN[12]) begin
+		OUT = IN << 11;
+		shift = 5'd11;
+	end
+	else if (IN[11]) begin
+		OUT = IN << 12;
+		shift = 5'd12;
+	end
+	else if (IN[10]) begin
+		OUT = IN << 13;
+		shift = 5'd13;
+	end
+	else if (IN[9]) begin
+		OUT = IN << 14;
+		shift = 5'd14;
+	end
+	else if (IN[8]) begin
+		OUT = IN << 15;
+		shift = 5'd15;
+	end
+	else if (IN[7]) begin
+		OUT = IN << 16;
+		shift = 5'd16;
+	end
+	else if (IN[6]) begin
+		OUT = IN << 17;
+		shift = 5'd17;
+	end
+	else if (IN[5]) begin
+		OUT = IN << 18;
+		shift = 5'd18;
+	end
+	else if (IN[4]) begin
+		OUT = IN << 19;
+		shift = 5'd19;
+	end
+	else if (IN[3]) begin
+		OUT = IN << 20;
+		shift = 5'd20;
+	end
+	else if (IN[2]) begin
+		OUT = IN << 21;
+		shift = 5'd21;
+	end
+	else if (IN[1]) begin
+		OUT = IN << 22;
+		shift = 5'd22;
+	end
+	else if (IN[0]) begin
+		OUT = IN << 23;
+		shift = 5'd23;
+	end
+	else begin
+		OUT = IN << 24;
+		shift = 5'd24;
+	end
 end
-assign Exponent_sub = Exponent_a - shift;
+assign EXP_SUB	= EXP_A - {3'd0, shift};
 
 endmodule
