@@ -113,7 +113,6 @@ void APB_Slave::BusSignal(
 				m_state	= BUS_STATE_ACK;
 
 				if(!m_bWrite) {
-				} else {
 					m_pPacket->dwData	= PRDATA;
 				}
 
