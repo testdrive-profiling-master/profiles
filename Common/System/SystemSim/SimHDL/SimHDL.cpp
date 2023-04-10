@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 3/24/2023 Fri (clonextop@gmail.com)
+// Rev.  : 4/10/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
 #include "TestDriver.inl"
@@ -106,7 +106,7 @@ public:
 		}
 
 #ifdef SYSTEM_MEMORY_BASE_ADDRESS
-		SetMemoryBaseAddress(SYSTEM_MEMORY_BASE_ADDRESS);
+		__pSimControl->SetMemoryBaseAddress(SYSTEM_MEMORY_BASE_ADDRESS);
 #endif
 #ifndef SIMULATION_TOP_EX
 		__pSimTop->INTR		= 0;
