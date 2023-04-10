@@ -573,6 +573,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 				sheet:GetColumn(false)
 				col_list[i][1]	= sheet:GetValue()
 				col_list[i][4]	= sheet:GetMergeCellPos()
+				col_list[i][5]	= sheet:GetStyle()
 				if #(col_list[i][1]) == 0 then col_list[i][1] = " " end	-- cell must be filled
 			end
 			bLast	= (sheet:GetRow(false) == false)
@@ -643,12 +644,25 @@ function GenerateTable(sExcelFileName, sSheetName)
 					table_code:Append("<w:right w:val=\"nil\"/>")
 				end
 				
+				-- set horizontal alignment
+				local table_alignment	= "TableTextLeft"
+				
+				if col_list[i][5] ~= nil then
+					if col_list[i][5]:AlignmentHorizontal() == "center"  then
+						table_alignment		= "TableTextCenter"
+					elseif col_list[i][5]:AlignmentHorizontal() == "right" then
+						table_alignment		= "TableTextRight"
+					end
+				elseif col_list[i][3] then
+					table_alignment		= "TableTextCenter"
+				end
+				
 				table_code:Append("\
 						</w:tcBorders>\
 					</w:tcPr>"
 					.. EncodeParagraph(col_list[i][1],
 					{
-						pPr=("<w:pStyle w:val=\"" .. (col_list[i][3] and "TableTextCenter" or "TableTextLeft") .. "\"/>"),
+						pPr=("<w:pStyle w:val=\"" .. table_alignment .. "\"/>"),
 						rPr="<w:rFonts w:hint=\"eastAsia\"/>"
 					}) .. 
 				"</w:tc>")

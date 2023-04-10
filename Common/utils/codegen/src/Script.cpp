@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive codegen project
-// Rev.  : 3/14/2023 Tue (clonextop@gmail.com)
+// Rev.  : 4/10/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -842,6 +842,10 @@ Script::Script(void)
 			.addFunction("AddSubDocument", &DocWord::AddSubDocument)
 			.addFunction("AddHyperlink", &DocWord::AddHyperlink)
 			.endClass()
+			.beginClass<DocExcelStyle>("DocExcelStyle")
+			.addFunction("ID", &DocExcelStyle::ID)
+			.addFunction("AlignmentHorizontal", &DocExcelStyle::AlignmentHorizontal)
+			.endClass()
 			.beginClass<DocExcelSheet>("DocExcelSheet")
 			.addFunction("SetPosition", &DocExcelSheet::SetPosition)
 			.addFunction("SetPos", &DocExcelSheet::SetPos)
@@ -862,6 +866,7 @@ Script::Script(void)
 				}
 				return "";
 			}))
+			.addFunction("GetStyle", &DocExcelSheet::GetStyle)
 			.addFunction("SetString", &DocExcelSheet::SetString)
 			.addFunction("SetInt", &DocExcelSheet::SetInt)
 			.addFunction("SetDouble", &DocExcelSheet::SetDouble)
@@ -884,6 +889,7 @@ Script::Script(void)
 			.addFunction("GetSheetCount", &DocExcel::GetSheetCount)
 			.addFunction("GetSheet", &DocExcel::GetSheet)
 			.addFunction("GetSheetByIndex", &DocExcel::GetSheetByIndex)
+			.addFunction("GetStyleByIndex", &DocExcel::GetStyleByIndex)
 			.addFunction("CreateSheet", &DocExcel::CreateSheet)
 			.addFunction("DeleteSheet", &DocExcel::DeleteSheet)
 			.addFunction("StyleFont", &DocExcel::StyleFont)

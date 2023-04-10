@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 1/26/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/10/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "DocExcel.h"
 
@@ -369,6 +369,15 @@ bool DocExcelSheet::SetDate(int iYear, int iMonth, int iDay)
 {
 	int iDate	= Excel_YMDToDate(iYear, iMonth, iDay);
 	return SetInt(iDate);
+}
+
+DocExcelStyle* DocExcelSheet::GetStyle(void)
+{
+	if(m_pExcel) {
+		return m_pExcel->GetStyleByIndex(m_Column.attribute("s").as_int());
+	}
+
+	return NULL;
 }
 
 bool DocExcelSheet::SetInt(int iValue)
@@ -743,6 +752,21 @@ bool DocExcelSheet::OnSave(void)
 	return false;
 }
 
+DocExcelStyle::DocExcelStyle(DocXML* pParent, int iID, pugi::xml_node node) : DocXML(node)
+{
+	m_pParent	= pParent;
+	m_iID		= iID;
+}
+
+DocExcelStyle::~DocExcelStyle()
+{
+}
+
+const char* DocExcelStyle::AlignmentHorizontal(void)
+{
+	return child("alignment").attribute("horizontal").as_string("left");
+}
+
 DocExcel::DocExcel(void)
 {
 }
@@ -809,6 +833,21 @@ bool DocExcel::OnOpen(void)
 		pStringTable->push_back(sText.c_str());
 		return true;
 	});
+	// make style list
+	{
+		DocXML	node	= m_Styles.child("cellXfs");
+		typedef	struct {
+			DocXML*									pParent;
+			vector<unique_ptr<DocExcelStyle>>*		pStyleList;
+		} STYLE_REF;
+		STYLE_REF	style_ref	= {&m_Styles, &m_StyleList};
+		node.Enumerate("xf", (void*)&style_ref, [](DocXML node, void* pPrivate) -> bool {
+			STYLE_REF&	p		= *((STYLE_REF*)pPrivate);
+			unique_ptr<DocExcelStyle>	pStyle(new DocExcelStyle(p.pParent, p.pStyleList->size(), node));
+			p.pStyleList->push_back(move(pStyle));
+			return true;
+		});
+	}
 	// make sheet table map
 	{
 		typedef	struct {
@@ -839,6 +878,7 @@ void DocExcel::OnClose(void)
 
 	m_SheetMap.clear();
 	m_StringTable.clear();
+	m_StyleList.clear();
 	m_CalcChain			= pugi::xml_node();
 	m_SharedStrings		= pugi::xml_node();
 	m_Relationships		= pugi::xml_node();
@@ -1599,6 +1639,15 @@ DocExcelSheet* DocExcel::CreateSheet(const char* sName)
 	}
 
 	return pSheet;
+}
+
+DocExcelStyle* DocExcel::GetStyleByIndex(int iIndex)
+{
+	if(iIndex >= 0 && iIndex < m_StyleList.size()) {
+		return m_StyleList[iIndex].get();
+	}
+
+	return NULL;
 }
 
 void DocExcel::DeleteSheet(DocExcelSheet* pSheet)	//@FIXME : not working

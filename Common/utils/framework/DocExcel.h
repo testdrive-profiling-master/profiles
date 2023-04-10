@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 1/26/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/10/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __DOC_EXCEL_H__
 #define __DOC_EXCEL_H__
@@ -48,6 +48,7 @@ typedef enum {
 
 class DocExcel;
 class DocExcelSheet;
+class DocExcelStyle;
 
 class DocExcelPos {
 public:
@@ -97,6 +98,7 @@ public:
 	double GetDouble(int fDefault = -1);
 	string GetValue(void);
 	struct tm* GetDate(int iDateOverride = -1);
+	DocExcelStyle* GetStyle(void);
 	bool SetDate(int iYear, int iMonth, int iDay);
 	bool SetInt(int iValue);
 	bool SetDouble(double fValue);
@@ -141,6 +143,23 @@ private:
 	} m_CurPos, m_Origin;
 };
 
+class DocExcelStyle : public DocXML {
+	friend class DocExcel;
+public:
+	DocExcelStyle(DocXML* pParent, int iID, pugi::xml_node node);
+	virtual ~DocExcelStyle(void);
+
+	const char* AlignmentHorizontal(void);
+
+	inline int ID(void) {
+		return m_iID;
+	}
+
+private:
+	DocXML*		m_pParent;
+	int			m_iID;
+};
+
 class DocExcel : public DocFile {
 public:
 	DocExcel(void);
@@ -154,6 +173,7 @@ public:
 	DocExcelSheet* GetSheet(const char* sName);
 	DocExcelSheet* GetSheetByIndex(int iIndex);
 	DocExcelSheet* CreateSheet(const char* sName);
+	DocExcelStyle* GetStyleByIndex(int iIndex);
 	void DeleteSheet(DocExcelSheet* pSheet);
 	int StyleFont(const char* sFontName, int iFontSize, bool bBold = false, bool bItalic = false, unsigned int dwARGB = 0);
 	int StyleFill(unsigned int dwColorARGB);
@@ -186,6 +206,7 @@ private:
 	DocXML						m_SharedStrings;
 	DocXML						m_CalcChain;
 	vector<string>				m_StringTable;
+	vector<unique_ptr<DocExcelStyle>>	m_StyleList;
 };
 
 void	Excel_PosDecode(cstring sPos, int& x, int& y);
