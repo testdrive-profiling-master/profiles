@@ -380,7 +380,7 @@ string DocExcelSheet::GetValue(void)
 			*/
 			v	+= 0.00000000000001;
 			sValue.Format("%.13f", v);
-			sValue.TrimRight("0");
+			sValue.TrimRight(".0");
 		}
 
 		sValue.ChangeCharsetToANSI();
