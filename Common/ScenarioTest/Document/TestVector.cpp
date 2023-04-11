@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Scenario test
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 4/11/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include "TestVector.h"
 #include "TestGroup.h"
@@ -334,14 +333,22 @@ void TestVector::DoTest(void)
 		TCHAR	sErrorTokenList[1024];
 		LPCTSTR sErrorToken[16];
 		int		iErrorCode[16];
-		sProgram.Format(_T("%s\\%s"), (LPCTSTR)m_sProgramPath, m_pGroup->GetConfig(TG_DESC_PROGRAM));
+		// retrieve program path
+		{
+			sProgram	= m_pGroup->GetConfig(TG_DESC_PROGRAM);
 
-		if(!IsFileExist(sProgram)) {
-			g_pSystem->LogError(_L(TEST_PROGRAM_IS_NOT_FOUND), (LPCTSTR)sProgram);
-			m_pHtmlTable->JScript(_T("ShowWait(0);"));
-			return;
+			if(sProgram[0] == _T('@')) {	// outside tool path
+				sProgram.Delete(0, 1);
+			} else {	// in program
+				sProgram.Format(_T("%s\\%s"), (LPCTSTR)m_sProgramPath, m_pGroup->GetConfig(TG_DESC_PROGRAM));
+
+				if(!IsFileExist(sProgram)) {
+					g_pSystem->LogError(_L(TEST_PROGRAM_IS_NOT_FOUND), (LPCTSTR)sProgram);
+					m_pHtmlTable->JScript(_T("ShowWait(0);"));
+					return;
+				}
+			}
 		}
-
 		{
 			_tcscpy(sErrorTokenList, m_pGroup->GetConfig(TG_DESC_ERROR_STRING));
 			memset(sErrorToken, 0, sizeof(LPCTSTR) * 16);
@@ -374,7 +381,6 @@ void TestVector::DoTest(void)
 				}
 			}
 		}
-
 		m_pHtmlTable->Control()->CallJScript(_T("SetBody('result_%d_%d', \"<font color='#FF3FFF'>%s</font>\");"), m_pGroup->GroupID(), m_iID, _L(TEST_IN_PROGRESS));
 		m_pCurrentTestVector	= this;
 		double fScore	= FLT_MAX;
