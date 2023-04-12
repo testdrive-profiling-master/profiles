@@ -726,6 +726,10 @@ static string __exec(const char* cmd)
 	return result;
 }
 
+static int __execute(const char* cmd){
+	return system(cmd);
+}
+
 static bool __IsWindows(void)
 {
 #ifdef WIN32
@@ -1028,6 +1032,7 @@ Script::Script(void)
 			.addFunction("LOGE", __LOGE)
 			.addFunction("LOGW", __LOGW)
 			.addFunction("exec", __exec)
+			.addFunction("run", __execute)
 			.addFunction("Pause", __Pause)
 			.addFunction("IsWindows", __IsWindows)
 			.addFunction("GetCommonToolPath", GetCommonToolPath);
