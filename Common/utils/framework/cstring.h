@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 3/14/2023 Tue (clonextop@gmail.com)
+// Rev.  : 4/12/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __CSTRING_H__
 #define __CSTRING_H__
@@ -79,7 +79,7 @@ public:
 	int Length(void) const;
 	cstring Tokenize(int& iPos, const char* sDelim = NULL);
 	int SearchBraket(int iPos = 0);
-	int RetrieveTag(const char** sTagList);
+	int RetrieveTag(const char** sTagList, int iTagSize = 0);
 	void Format(const char* sFormat, ...);
 	void AppendFormat(const char* sFormat, ...);
 	void Set(const char* sStr);

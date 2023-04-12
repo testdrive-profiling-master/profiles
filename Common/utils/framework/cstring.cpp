@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 3/30/2022 Wed (clonextop@gmail.com)
+// Rev.  : 4/12/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "UtilFramework.h"
 #include <stdarg.h>
@@ -568,9 +568,9 @@ int cstring::Length(void) const
 	return strlen(c_str());
 }
 
-int cstring::RetrieveTag(const char** sTagList)
+int cstring::RetrieveTag(const char** sTagList, int iTagSize)
 {
-	for(int i = 0; sTagList[i] != NULL; i++) {
+	for(int i = 0; iTagSize ? (i < iTagSize) : (sTagList[i] != NULL); i++) {
 		if(m_sStr == sTagList[i])
 			return i;
 	}
