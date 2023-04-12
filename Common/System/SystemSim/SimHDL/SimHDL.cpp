@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 4/10/2023 Mon (clonextop@gmail.com)
+// Rev.  : 4/12/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
 #include "TestDriver.inl"
@@ -56,6 +56,7 @@ static VerilatedVcdC*		__pWaveDump				= NULL;
 static VerilatedVcdGTKWave*	__pGtkWave				= NULL;
 #endif
 UINT64			g_lTraceStartTime		= 0;
+static bool		g_bSimOutEnable			= true;
 #endif
 
 #ifndef DEFAULT_HALF_CLOCK_PERIOD
@@ -115,8 +116,14 @@ public:
 #endif
 #ifdef SIM_TRACE
 		{
-			__pWaveDump			= NULL;
-			g_lTraceStartTime	= 0;
+			// get simulation enable/disable
+			char sEnv[MAX_PATH]	= "";
+			GetEnvironmentVariable("SIM_OUTPUT_ENABLE", sEnv, MAX_PATH);
+
+			if(*sEnv) g_bSimOutEnable	= atoi(sEnv);
+		}
+
+		if(g_bSimOutEnable) {
 			{
 				// set simulation start time
 				char sEnv[MAX_PATH];
@@ -156,6 +163,7 @@ public:
 				}
 			}
 		}
+
 #else
 		__pContext->traceEverOn(false);	// no tracing
 #endif

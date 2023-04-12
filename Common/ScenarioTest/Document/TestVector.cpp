@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Scenario test
-// Rev.  : 4/11/2023 Tue (clonextop@gmail.com)
+// Rev.  : 4/12/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "TestVector.h"
 #include "TestGroup.h"
@@ -384,6 +384,7 @@ void TestVector::DoTest(void)
 		m_pHtmlTable->Control()->CallJScript(_T("SetBody('result_%d_%d', \"<font color='#FF3FFF'>%s</font>\");"), m_pGroup->GroupID(), m_iID, _L(TEST_IN_PROGRESS));
 		m_pCurrentTestVector	= this;
 		double fScore	= FLT_MAX;
+		SetEnvironmentVariable(_T("SIM_OUTPUT_ENABLE"), _T("0"));	// suppress simulation output to quick execution
 		int iRet	= g_pSystem->ExecuteFile(sProgram, sArg, TRUE, NULL, m_sProgramPath,
 											 __sTestStatusList[TEST_STATUS_RUN_PASSED],		TEST_STATUS_RUN_PASSED,
 											 __sTestStatusList[TEST_STATUS_RUN_FAILED],		-TEST_STATUS_RUN_FAILED,
@@ -409,6 +410,7 @@ void TestVector::DoTest(void)
 											 sErrorToken[14],		iErrorCode[14],
 											 sErrorToken[15],		iErrorCode[15],
 											 NULL);
+		SetEnvironmentVariable(_T("SIM_OUTPUT_ENABLE"), _T("1"));	// restore
 		m_pCurrentTestVector	= NULL;
 
 		if(iRet < 0) iRet = -iRet;
