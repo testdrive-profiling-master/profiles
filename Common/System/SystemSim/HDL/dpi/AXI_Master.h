@@ -39,7 +39,7 @@
 #include "RoundQueue.h"
 #include "ChainList.h"
 
-#define	MAXI_TIMEOUT_COUNT		100000
+#define	MAXI_TIMEOUT_COUNT		50000
 
 typedef struct {
 	WORD	ID;
