@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 3/24/2023 Fri (clonextop@gmail.com)
+// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_HDL_H__
 #define __SIM_HDL_H__
@@ -45,18 +45,18 @@ typedef unsigned int	svBitVecVal;
 #endif
 
 struct SimControl {
-	virtual BUS_SLAVE_INTERFACE* CreateSlave(UINT64 dwAddrBase, UINT64 dwAddrHigh) = 0;
-	virtual BUS_SLAVE_INTERFACE* FindSlave(UINT64 dwAddress) = 0;
+	virtual BUS_SLAVE_INTERFACE* CreateSlave(UINT64 lAddrBase, UINT64 lAddrHigh) = 0;
+	virtual BUS_SLAVE_INTERFACE* FindSlave(UINT64 lAddress) = 0;
 	virtual CLOCK_INTERFACE* CreateClock(BYTE* pCLK, BYTE* pRST) = 0;
 	virtual CLOCK_INTERFACE* FindClock(BYTE* pCLK) = 0;
 	virtual bool AwakeInterrupt(void) = 0;	// true(Awaked), false(Pending)
-	virtual void SetMemoryBaseAddress(UINT64 dwAddress) = 0;
-	virtual void MemoryRead32(int iID, UINT64 dwAddress, DWORD& dwData) = 0;
-	virtual void MemoryWrite32(int iID, UINT64 dwAddress, DWORD dwData) = 0;
-	virtual void MemoryRead16(int iID, UINT64 dwAddress, WORD& dwData) = 0;
-	virtual void MemoryWrite16(int iID, UINT64 dwAddress, WORD dwData) = 0;
-	virtual void MemoryRead8(int iID, UINT64 dwAddress, BYTE& dwData) = 0;
-	virtual void MemoryWrite8(int iID, UINT64 dwAddress, BYTE dwData) = 0;
+	virtual void SetMemoryBaseAddress(UINT64 lAddress) = 0;
+	virtual void MemoryRead32(int iID, UINT64 lAddress, DWORD& dwData) = 0;
+	virtual void MemoryWrite32(int iID, UINT64 lAddress, DWORD dwData) = 0;
+	virtual void MemoryRead16(int iID, UINT64 lAddress, WORD& dwData) = 0;
+	virtual void MemoryWrite16(int iID, UINT64 lAddress, WORD dwData) = 0;
+	virtual void MemoryRead8(int iID, UINT64 lAddress, BYTE& dwData) = 0;
+	virtual void MemoryWrite8(int iID, UINT64 lAddress, BYTE dwData) = 0;
 	virtual SYSTEM_CONFIG* GetSystemConfig(void) = 0;
 	virtual DisplayConfig* GetDisplayConfig(void) = 0;
 	virtual BYTE* GetMemoryPointer(UINT64 lAddress, UINT64 dwSize = 0, bool bDisplay = false) = 0;

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __AXI_MASTER_H__
 #define __AXI_MASTER_H__
@@ -44,7 +44,7 @@
 typedef struct {
 	WORD	ID;
 	WORD	SIZE;		// byte size
-	DWORD	ADDR;		// address
+	UINT64	ADDR;		// address
 	WORD	BEAT;		// beat count
 	WORD	LEN;		// length
 	DWORD	BURST;		// burst mode
@@ -67,7 +67,7 @@ public:
 };
 
 class MAXI : public SelfDestory {
-	// 메인 메모리 접근
+	// access main memory
 	MAXI_QUEUE	m_WriteQ;
 	MAXI_QUEUE	m_ReadQ;
 public:
@@ -89,7 +89,7 @@ public:
 
 	void BusWriteRequest(
 		BYTE nRST,
-		int AWID, DWORD AWADDR, DWORD AWLEN, DWORD AWSIZE, DWORD AWBURST, BYTE AWLOCK, DWORD AWCACHE, DWORD AWPROT, DWORD AWREGION, DWORD AWQOS,
+		int AWID, UINT64 AWADDR, DWORD AWLEN, DWORD AWSIZE, DWORD AWBURST, BYTE AWLOCK, DWORD AWCACHE, DWORD AWPROT, DWORD AWREGION, DWORD AWQOS,
 		BYTE AWVALID, BYTE& AWREADY
 	);
 	void BusWriteData(
@@ -99,7 +99,7 @@ public:
 	);
 	void BusReadRequest(
 		BYTE nRST,
-		int ARID, DWORD ARADDR, DWORD ARLEN, DWORD ARSIZE, DWORD ARBURST, BYTE ARLOCK, DWORD ARCACHE, DWORD ARPROT, DWORD& ARREGION, DWORD& ARQOS,
+		int ARID, UINT64 ARADDR, DWORD ARLEN, DWORD ARSIZE, DWORD ARBURST, BYTE ARLOCK, DWORD ARCACHE, DWORD ARPROT, DWORD& ARREGION, DWORD& ARQOS,
 		BYTE ARVALID, BYTE& ARREADY
 	);
 	void BusReadData(

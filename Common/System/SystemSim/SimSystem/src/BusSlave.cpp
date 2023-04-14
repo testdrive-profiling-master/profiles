@@ -30,8 +30,8 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Simulation sub-system
-// Rev.  : 2/1/2023 Wed (clonextop@gmail.com)
+// Title : Common profiles
+// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "BusSlave.h"
@@ -42,11 +42,11 @@ Semaphore	BusSlave::m_LockSW(1);
 //----------------------------------------------------------------------------------------------------
 // Slave bus method
 //----------------------------------------------------------------------------------------------------
-BusSlave::BusSlave(DWORD dwAddrBase, DWORD dwAddrHigh) :
+BusSlave::BusSlave(UINT64 lAddrBase, UINT64 lAddrHigh) :
 	m_LockBusAck(0),
 	m_LockBus(1),
-	m_dwAddrBase(dwAddrBase),
-	m_dwAddrHigh(dwAddrHigh)
+	m_lAddrBase(lAddrBase),
+	m_lAddrHigh(lAddrHigh)
 {
 	// link chain
 	m_pNext			= m_pHead;
@@ -79,7 +79,7 @@ bool BusSlave::OnRun(void)
 	return m_Read.bEnable | m_Write.bEnable;
 }
 
-void BusSlave::Write(DWORD dwAddress, DWORD dwData)
+void BusSlave::Write(UINT64 lAddrBase, DWORD dwData)
 {
 	m_LockSW.Down();
 	{
@@ -91,7 +91,7 @@ void BusSlave::Write(DWORD dwAddress, DWORD dwData)
 			goto RETRY;
 		}
 
-		m_Write.packet.dwAddr	= dwAddress;
+		m_Write.packet.lAddr	= lAddrBase;
 		m_Write.packet.dwData	= dwData;
 		m_Write.bEnable			= true;
 		m_Write.bWait			= false;
@@ -103,7 +103,7 @@ void BusSlave::Write(DWORD dwAddress, DWORD dwData)
 	m_LockSW.Up();
 }
 
-DWORD BusSlave::Read(DWORD dwAddress)
+DWORD BusSlave::Read(UINT64 lAddrBase)
 {
 	DWORD	dwData;
 	m_LockSW.Down();
@@ -116,7 +116,7 @@ DWORD BusSlave::Read(DWORD dwAddress)
 			goto RETRY;
 		}
 
-		m_Read.packet.dwAddr	= dwAddress;
+		m_Read.packet.lAddr		= lAddrBase;
 		m_Read.bEnable			= true;
 		m_Read.bWait			= false;
 		m_LockBus.Up();
@@ -129,7 +129,7 @@ DWORD BusSlave::Read(DWORD dwAddress)
 	return dwData;
 }
 
-bool BusSlave::RequestWrite(DWORD dwAddr, DWORD dwData)
+bool BusSlave::RequestWrite(UINT64 lAddr, DWORD dwData)
 {
 	bool bRet	= false;
 	m_LockBus.Down();
@@ -138,7 +138,7 @@ bool BusSlave::RequestWrite(DWORD dwAddr, DWORD dwData)
 		bRet					= true;
 		m_Write.bEnable			= true;
 		m_Write.bWait			= true;
-		m_Write.packet.dwAddr	= dwAddr;
+		m_Write.packet.lAddr	= lAddr;
 		m_Write.packet.dwData	= dwData;
 		m_pSim->Unlock();
 	}
@@ -161,7 +161,7 @@ bool BusSlave::WaitWrite(void)
 	return bRet;
 }
 
-bool BusSlave::RequestRead(DWORD dwAddr)
+bool BusSlave::RequestRead(UINT64 lAddr)
 {
 	bool bRet	= false;
 	m_LockBus.Down();
@@ -170,7 +170,7 @@ bool BusSlave::RequestRead(DWORD dwAddr)
 		bRet					= true;
 		m_Read.bEnable			= true;
 		m_Read.bWait			= true;
-		m_Read.packet.dwAddr	= dwAddr;
+		m_Read.packet.lAddr		= lAddr;
 		m_pSim->Unlock();
 	}
 
@@ -226,17 +226,17 @@ void BusSlave::ReadAck(void)
 	m_pSim->Lock(32);
 }
 
-bool BusSlave::IsValidAddress(DWORD dwAddress)
+bool BusSlave::IsValidAddress(UINT64 lAddress)
 {
-	return (dwAddress >= m_dwAddrBase) && (dwAddress <= m_dwAddrHigh);
+	return (lAddress >= m_lAddrBase) && (lAddress <= m_lAddrHigh);
 }
 
-BusSlave* BusSlave::FindSlave(DWORD dwAddress)
+BusSlave* BusSlave::FindSlave(UINT64 lAddress)
 {
 	BusSlave* pSlave	= m_pHead;
 
 	while(pSlave) {
-		if(pSlave->IsValidAddress(dwAddress)) break;
+		if(pSlave->IsValidAddress(lAddress)) break;
 
 		pSlave	= pSlave->m_pNext;
 	}
@@ -244,12 +244,12 @@ BusSlave* BusSlave::FindSlave(DWORD dwAddress)
 	return pSlave;
 }
 
-BUS_SLAVE_INTERFACE* SimEngine::CreateSlave(UINT64 dwAddrBase, UINT64 dwAddrHigh)
+BUS_SLAVE_INTERFACE* SimEngine::CreateSlave(UINT64 lAddrBase, UINT64 lAddrHigh)
 {
-	return new BusSlave(dwAddrBase, dwAddrHigh);
+	return new BusSlave(lAddrBase, lAddrHigh);
 }
 
-BUS_SLAVE_INTERFACE* SimEngine::FindSlave(UINT64 dwAddress)
+BUS_SLAVE_INTERFACE* SimEngine::FindSlave(UINT64 lAddress)
 {
-	return BusSlave::FindSlave(dwAddress);
+	return BusSlave::FindSlave(lAddress);
 }

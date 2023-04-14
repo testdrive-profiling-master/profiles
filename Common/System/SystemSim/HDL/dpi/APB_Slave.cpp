@@ -31,20 +31,20 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 3/15/2023 Wed (clonextop@gmail.com)
+// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "APB_Slave.h"
 
-APB_Slave::APB_Slave(const char* sTitle, DWORD dwAddrBase, DWORD dwAddrHigh, DWORD dwTimeout)
+APB_Slave::APB_Slave(const char* sTitle, UINT64 lAddrBase, UINT64 lAddrHigh, DWORD dwTimeout)
 {
 	Log.SetTitle(*sTitle ? "APB_Slave('%s')" : "APB_Slave", sTitle);
-	m_pSlave		= CreateSlave(dwAddrBase, dwAddrHigh);
+	m_pSlave		= CreateSlave(lAddrBase, lAddrHigh);
 	m_state			= BUS_STATE_IDLE;
 	m_pPacket		= NULL;
 	m_bWrite		= FALSE;
 	m_dwTime		= 0;
 	m_dwTimeout		= dwTimeout;
-	LOGI("Bus created - 0x%08X ~ 0x%08X", dwAddrBase, dwAddrHigh);
+	LOGI("Bus created - 0x%08llX ~ 0x%08llX", lAddrBase, lAddrHigh);
 }
 
 APB_Slave::~APB_Slave(void)
@@ -53,7 +53,7 @@ APB_Slave::~APB_Slave(void)
 
 void APB_Slave::BusSignal(
 	BYTE nRST,
-	BYTE& PSEL, BYTE& PENABLE, BYTE& PWRITE, DWORD& PADDR, DWORD& PWDATA, DWORD& PSTRB,
+	BYTE& PSEL, BYTE& PENABLE, BYTE& PWRITE, UINT64& PADDR, DWORD& PWDATA, DWORD& PSTRB,
 	DWORD PRDATA, BYTE PREADY, BYTE PSLVERR)
 {
 	if(!nRST) {
@@ -81,7 +81,7 @@ void APB_Slave::BusSignal(
 				PSEL		= 1;
 				PENABLE		= 0;
 				PWRITE		= m_bWrite;
-				PADDR		= m_pPacket->dwAddr;
+				PADDR		= m_pPacket->lAddr;
 				PWDATA		= m_pPacket->dwData;
 				PSTRB		= 0xF;
 			} else goto ON_RESET;
@@ -95,7 +95,7 @@ void APB_Slave::BusSignal(
 			PSEL		= 1;
 			PENABLE		= 1;
 			PWRITE		= m_bWrite;
-			PADDR		= m_pPacket->dwAddr;
+			PADDR		= m_pPacket->lAddr;
 			PWDATA		= m_pPacket->dwData;
 			PSTRB		= 0xF;
 			break;
@@ -140,17 +140,17 @@ void APB_Slave::BusSignal(
 DPI_FUNCTION void APB_Slave_Interface(
 	void* hSAPB,
 	unsigned char nRST,
-	unsigned char* PSEL, unsigned char* PENABLE, unsigned char* PWRITE, svBitVecVal* PADDR, svBitVecVal* PWDATA, svBitVecVal* PSTRB, const svBitVecVal* PRDATA, unsigned char PREADY, unsigned char PSLVERR)
+	unsigned char* PSEL, unsigned char* PENABLE, unsigned char* PWRITE, unsigned long long* PADDR, svBitVecVal* PWDATA, svBitVecVal* PSTRB, const svBitVecVal* PRDATA, unsigned char PREADY, unsigned char PSLVERR)
 {
 	APB_Slave* pAPB		= reinterpret_cast<APB_Slave*>(hSAPB);
 	pAPB->BusSignal(
 		nRST,
 		*(BYTE*)PSEL, *(BYTE*)PENABLE, *(BYTE*)PWRITE,
-		*(DWORD*)PADDR, *(DWORD*)PWDATA, *(DWORD*)PSTRB,
+		*(UINT64*)PADDR, *(DWORD*)PWDATA, *(DWORD*)PSTRB,
 		*(DWORD*)PRDATA, PREADY, PSLVERR);
 }
 
-DPI_FUNCTION void* CreateAPBSlave(const char* sTitle, unsigned int dwAddrBase, unsigned int dwAddrBits, unsigned int dwTimeout)
+DPI_FUNCTION void* CreateAPBSlave(const char* sTitle, unsigned long long lAddrBase, unsigned int dwAddrBits, unsigned int dwTimeout)
 {
-	return (void*)(new APB_Slave(sTitle, dwAddrBase, dwAddrBase + (1 << dwAddrBits) - 1, dwTimeout));
+	return (void*)(new APB_Slave(sTitle, lAddrBase, lAddrBase + (1 << dwAddrBits) - 1, dwTimeout));
 }

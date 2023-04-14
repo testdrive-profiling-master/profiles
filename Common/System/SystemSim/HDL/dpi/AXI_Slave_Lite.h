@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,29 +31,28 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 11/5/2019 Tue (clonextop@gmail.com)
+// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __AXI_SLAVE_LITE_H__
 #define __AXI_SLAVE_LITE_H__
 #include "dpi_common.h"
 #include "RoundQueue.h"
 
-class SAXI_Lite : public SelfDestory
-{
+class SAXI_Lite : public SelfDestory {
 public:
 	SAXI_Lite(const char* sTitle, DWORD dwAddrBase, DWORD dwAddrHigh);
 	virtual ~SAXI_Lite(void);
 
 	void BusWrite(
-			BYTE nRST,
-			DWORD& AWADDR, BYTE& AWVALID, BYTE AWREADY,
-			DWORD& WDATA, DWORD& WSTRB, BYTE& WVALID, BYTE WREADY,
-			DWORD BRESP, BYTE BVALID, BYTE& BREADY);
+		BYTE nRST,
+		UINT64& AWADDR, BYTE& AWVALID, BYTE AWREADY,
+		DWORD& WDATA, DWORD& WSTRB, BYTE& WVALID, BYTE WREADY,
+		DWORD BRESP, BYTE BVALID, BYTE& BREADY);
 	void BusRead(
-			BYTE nRST,
-			DWORD& ARADDR, BYTE& ARVALID, BYTE ARREADY,
-			DWORD RDATA, DWORD RRESP, BYTE RVALID, BYTE& RREADY);
-			
+		BYTE nRST,
+		UINT64& ARADDR, BYTE& ARVALID, BYTE ARREADY,
+		DWORD RDATA, DWORD RRESP, BYTE RVALID, BYTE& RREADY);
+
 protected:
 	typedef enum {
 		BUS_STATE_RESET,
@@ -66,19 +64,19 @@ protected:
 
 private:
 	BUS_SLAVE_INTERFACE*	m_pSlave;
-	struct{
+	struct {
 		BUS_STATE			state;
 		BUS_SALVE_PACKET*	packet;
 		DWORD				dwTime;
-	}m_Read, m_Write;
-	union{
+	} m_Read, m_Write;
+	union {
 		DWORD				all;
-		struct{
+		struct {
 			BYTE				control;
 			BYTE				data;
 		};
-	}m_WFlag;	// write flag
-	
+	} m_WFlag;	// write flag
+
 	SystemLog				Log;
 };
 

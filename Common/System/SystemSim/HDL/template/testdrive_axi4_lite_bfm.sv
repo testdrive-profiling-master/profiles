@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive template design
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 `timescale 1ns/1ns
@@ -43,7 +43,7 @@
 module testdrive_axi4_lite_bfm #(
 	parameter string	C_BUS_TITLE		= "",
 	parameter			C_DATA_WIDTH	= 32,
-	parameter			C_BASE_ADDR		= 32'h0,
+	parameter			C_BASE_ADDR		= 64'h0,
 	parameter			C_ADDR_BITS		= 10
 ) (
 	// system
@@ -80,7 +80,7 @@ module testdrive_axi4_lite_bfm #(
 	input	chandle							hSAXIL,
 	input	bit								nRST,
 	// write address
-	output	bit [`RANGE_DWORD]				AWADDR,
+	output	longint unsigned				AWADDR,
 	output	bit								AWVALID,
 	input	bit								AWREADY,
 	// write data
@@ -95,7 +95,7 @@ module testdrive_axi4_lite_bfm #(
 );
 
 // register pipes
-reg	[`RANGE_DWORD]							r_AWADDR;
+reg	[63:0]									r_AWADDR;
 reg											r_AWVALID;
 reg	[C_DATA_WIDTH-1:0]						r_WDATA;
 reg	[(C_DATA_WIDTH/8)-1:0]					r_WSTRB;
@@ -105,7 +105,7 @@ reg											r_WVALID;
 	input	chandle							hSAXIL,
 	input	bit								nRST,
 	// read address
-	output	bit [`RANGE_DWORD]				ARADDR,
+	output	longint unsigned				ARADDR,
 	output	bit								ARVALID,
 	input	bit								ARREADY,
 	// read data
@@ -116,7 +116,7 @@ reg											r_WVALID;
 );
 
 // register pipes
-reg	[`RANGE_DWORD]							r_ARADDR;
+reg	[63:0]									r_ARADDR;
 reg											r_ARVALID;
 reg											r_RREADY;
 reg											r_BREADY;
@@ -127,7 +127,7 @@ chandle saxil;
 // initialize
 `DPI_FUNCTION chandle CreateSAXILite(
 	input	string							sTitle,
-	input	int unsigned					dwAddrBase,
+	input	longint unsigned				lAddrBase,
 	input	int unsigned					dwAddrBits
 );
 initial begin

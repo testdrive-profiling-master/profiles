@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __VIRTUAL_SLAVE_H__
 #define __VIRTUAL_SLAVE_H__
@@ -40,15 +40,15 @@
 
 class VirtualSlave : public SelfDestory {
 public:
-	VirtualSlave(const char* sTitle, DWORD dwAddrBase, DWORD dwAddrHigh);
+	VirtualSlave(const char* sTitle, UINT64 lAddrBase, UINT64 lAddrHigh);
 	virtual ~VirtualSlave(void);
 
 	void BusWrite(
 		BYTE nRST,
-		BYTE& EN, DWORD& ADDR, DWORD& DATA);
+		BYTE& EN, UINT64& ADDR, DWORD& DATA);
 	void BusRead(
 		BYTE nRST,
-		BYTE& EN, DWORD& ADDR, DWORD DATA);
+		BYTE& EN, UINT64& ADDR, DWORD DATA);
 
 private:
 	BUS_SLAVE_INTERFACE*	m_pSlave;

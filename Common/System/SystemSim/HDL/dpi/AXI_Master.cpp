@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "AXI_common.h"
 #include "AXI_Master.h"
@@ -97,7 +97,7 @@ void MAXI::TouchAddress(MAXI_DESC* pDesc)
 		break;
 
 	case BURST_WRAP: {
-		DWORD	dwMask	= (pDesc->SIZE * pDesc->LEN) - 1;
+		UINT64	dwMask	= (pDesc->SIZE * pDesc->LEN) - 1;
 		pDesc->ADDR		= ((pDesc->ADDR + pDesc->SIZE) & dwMask) | (pDesc->ADDR & (~dwMask));
 	}
 	break;
@@ -113,7 +113,7 @@ bool MAXI::Read(MAXI_DESC* pDesc, BYTE* pData)
 		if(!m_pReadSlave) {
 			m_pReadSlave	= FindSlave(pDesc->ADDR);
 
-			if(!m_pReadSlave) LOGE("Unreachable read address : 0x%X (%d bytes)", pDesc->ADDR, pDesc->SIZE);
+			if(!m_pReadSlave) LOGE("Unreachable read address : 0x%llX (%d bytes)", pDesc->ADDR, pDesc->SIZE);
 			else {
 				if(!m_pReadSlave->RequestRead(pDesc->ADDR))
 					m_pReadSlave	= NULL;
@@ -150,7 +150,7 @@ bool MAXI::Read(MAXI_DESC* pDesc, BYTE* pData)
 				}
 			}
 
-			LOGI("READ[%08X, %2d/%d] = %s", pDesc->ADDR, (1 + pDesc->LEN - pDesc->BEAT), pDesc->LEN, sData);
+			LOGI("READ[%08llX, %2d/%d] = %s", pDesc->ADDR, (1 + pDesc->LEN - pDesc->BEAT), pDesc->LEN, sData);
 		}
 	}
 
@@ -166,7 +166,7 @@ bool MAXI::Write(MAXI_DESC* pDesc, const BYTE* pData, const DWORD* pByteStrob)
 		if(!m_pWriteSlave) {
 			m_pWriteSlave	= FindSlave(pDesc->ADDR);
 
-			if(!m_pWriteSlave) LOGE("Unreachable write address : 0x%X (%d bytes)", pDesc->ADDR, pDesc->SIZE);
+			if(!m_pWriteSlave) LOGE("Unreachable write address : 0x%llX (%d bytes)", pDesc->ADDR, pDesc->SIZE);
 			else {
 				if(!m_pWriteSlave->RequestWrite(pDesc->ADDR, *(DWORD*)pData))
 					m_pWriteSlave	= NULL;
@@ -234,7 +234,7 @@ bool MAXI::Write(MAXI_DESC* pDesc, const BYTE* pData, const DWORD* pByteStrob)
 					}
 				}
 
-				LOGI("WRITE[%08X, %2d/%d] = %s", pDesc->ADDR, (1 + pDesc->LEN - pDesc->BEAT), pDesc->LEN, sData);
+				LOGI("WRITE[%08llX, %2d/%d] = %s", pDesc->ADDR, (1 + pDesc->LEN - pDesc->BEAT), pDesc->LEN, sData);
 			}
 		}
 
@@ -242,7 +242,7 @@ bool MAXI::Write(MAXI_DESC* pDesc, const BYTE* pData, const DWORD* pByteStrob)
 			DWORD	dwShift	= pDesc->ADDR & (m_dwDataBytes - 1);
 
 			if(dwTransferSize > pDesc->SIZE || dwFirst < dwShift || dwLast > (dwShift + pDesc->SIZE)) {
-				LOGE("Invalid write narrow byte strobe : Address(0x%08X), Size(%d)", pDesc->ADDR, pDesc->SIZE);
+				LOGE("Invalid write narrow byte strobe : Address(0x%08llX), Size(%d)", pDesc->ADDR, pDesc->SIZE);
 			}
 		}
 	}
@@ -264,7 +264,7 @@ DPI_FUNCTION void* CreateMAXI(const char* sTitle, int iDataWidth, int bUseAXI4, 
 
 void MAXI::BusReadRequest(
 	BYTE nRST,
-	int ARID, DWORD ARADDR, DWORD ARLEN, DWORD ARSIZE, DWORD ARBURST, BYTE ARLOCK, DWORD ARCACHE, DWORD ARPROT, DWORD& ARREGION, DWORD& ARQOS,
+	int ARID, UINT64 ARADDR, DWORD ARLEN, DWORD ARSIZE, DWORD ARBURST, BYTE ARLOCK, DWORD ARCACHE, DWORD ARPROT, DWORD& ARREGION, DWORD& ARQOS,
 	BYTE ARVALID, BYTE& ARREADY
 )
 {
@@ -291,7 +291,7 @@ void MAXI::BusReadRequest(
 					LOGE("ARSIZE(=%d) must be less or equal than %d(%d bit).", ARSIZE, m_dwMaxASIZE, 8 * (1 << m_dwMaxASIZE));
 
 				if(((1 << ARSIZE) - 1) & ARADDR)
-					LOGE("ARADDR(=0x%08X) is not met in memory alignment.", ARADDR);
+					LOGE("ARADDR(=0x%08llX) is not met in memory alignment.", ARADDR);
 
 				if(ARBURST == BURST_WRAP && (ARSIZE < 1 || ARSIZE > 4)) {
 					LOGE("In Read wrap burst's length(%d) must be 2, 4, 8 or 16.", pReqDesc->SIZE);
@@ -305,11 +305,11 @@ void MAXI::BusReadRequest(
 					LOGE("When 'ReadOnce' operation, ARBURST(%d) must be INCR(0) or WRAP(2).", ARBURST);
 				}
 
-				DEBUG_LEVEL(1) if(((ARADDR ^ (ARADDR + pReqDesc->SIZE * ARLEN)) & ~0xFFF)) {
-					LOGW("A burst must not cross a 4KB address boundary (Read 0x%08X ~ 0x%08X)", ARADDR, ARADDR + pReqDesc->SIZE * (ARLEN + 1) - 1);
+				DEBUG_LEVEL(1) if(((ARADDR ^ (ARADDR + pReqDesc->SIZE * ARLEN)) & ~0xFFFULL)) {
+					LOGW("A burst must not cross a 4KB address boundary (Read 0x%08llX ~ 0x%08llX)", ARADDR, ARADDR + pReqDesc->SIZE * (ARLEN + 1) - 1);
 				}
 
-				DEBUG_LEVEL(1) LOGI("Request(Read : 0x%08X), ID #%d, %d bit, %d beat, %s mode", ARADDR, ARID, pReqDesc->SIZE * 8, pReqDesc->LEN, __sBURST_MODE[pReqDesc->BURST]);
+				DEBUG_LEVEL(1) LOGI("Request(Read : 0x%08llX), ID #%d, %d bit, %d beat, %s mode", ARADDR, ARID, pReqDesc->SIZE * 8, pReqDesc->LEN, __sBURST_MODE[pReqDesc->BURST]);
 				AquireBus();
 			}
 		} else {
@@ -383,7 +383,7 @@ void MAXI::BusReadData(
 DPI_FUNCTION void MAXIR_Interface(
 	void* hMAXI,
 	unsigned char nRST,
-	int ARID, const svBitVecVal* ARADDR, const svBitVecVal* ARLEN, const svBitVecVal* ARSIZE, const svBitVecVal* ARBURST, svBit ARLOCK, const svBitVecVal* ARCACHE, const svBitVecVal* ARPROT, svBitVecVal* ARREGION, svBitVecVal* ARQOS,
+	int ARID, unsigned long long ARADDR, const svBitVecVal* ARLEN, const svBitVecVal* ARSIZE, const svBitVecVal* ARBURST, svBit ARLOCK, const svBitVecVal* ARCACHE, const svBitVecVal* ARPROT, svBitVecVal* ARREGION, svBitVecVal* ARQOS,
 	unsigned char ARVALID, unsigned char* ARREADY,
 	int* RID, svBitVecVal* RDATA, svBitVecVal* RRESP, unsigned char* RLAST, unsigned char* RVALID, unsigned char RREADY)
 {
@@ -396,14 +396,14 @@ DPI_FUNCTION void MAXIR_Interface(
 	// read request
 	pMAXI->BusReadRequest(
 		nRST,
-		ARID, *ARADDR, *ARLEN, *ARSIZE, *ARBURST, ARLOCK, *ARCACHE, *ARPROT, *(DWORD*)ARREGION, *(DWORD*)ARQOS,
+		ARID, ARADDR, *ARLEN, *ARSIZE, *ARBURST, ARLOCK, *ARCACHE, *ARPROT, *(DWORD*)ARREGION, *(DWORD*)ARQOS,
 		ARVALID, *(BYTE*)ARREADY
 	);
 }
 
 void MAXI::BusWriteRequest(
 	BYTE nRST,
-	int AWID, DWORD AWADDR, DWORD AWLEN, DWORD AWSIZE, DWORD AWBURST, BYTE AWLOCK, DWORD AWCACHE, DWORD AWPROT, DWORD AWREGION, DWORD AWQOS,
+	int AWID, UINT64 AWADDR, DWORD AWLEN, DWORD AWSIZE, DWORD AWBURST, BYTE AWLOCK, DWORD AWCACHE, DWORD AWPROT, DWORD AWREGION, DWORD AWQOS,
 	BYTE AWVALID, BYTE& AWREADY
 )
 {
@@ -430,7 +430,7 @@ void MAXI::BusWriteRequest(
 					LOGE("AWSIZE(=%d) must be less or equal than %d(%d bit).", AWSIZE, m_dwMaxASIZE, 8 * (1 << m_dwMaxASIZE));
 
 				if(((1 << AWSIZE) - 1) & AWADDR)
-					LOGE("AWADDR(=0x%08X) is not met in memory alignment.", AWADDR);
+					LOGE("AWADDR(=0x%08llX) is not met in memory alignment.", AWADDR);
 
 				if(AWBURST == BURST_WRAP && (AWSIZE < 1 || AWSIZE > 4)) {
 					LOGE("In Write wrap burst's length(%d) must be 2, 4, 8 or 16.", pReqDesc->SIZE);
@@ -444,11 +444,11 @@ void MAXI::BusWriteRequest(
 					LOGE("When 'WriteUnique' operation, AWBURST(%d) must be INCR(0) or WRAP(2).", AWBURST);
 				}
 
-				DEBUG_LEVEL(1) if(((AWADDR ^ (AWADDR + pReqDesc->SIZE * AWLEN)) & ~0xFFF)) {
-					LOGW("A burst must not cross a 4KB address boundary (Write 0x%08X ~ 0x%08X)", AWADDR, AWADDR + pReqDesc->SIZE * (AWLEN + 1) - 1);
+				DEBUG_LEVEL(1) if(((AWADDR ^ (AWADDR + pReqDesc->SIZE * AWLEN)) & ~0xFFFULL)) {
+					LOGW("A burst must not cross a 4KB address boundary (Write 0x%08llX ~ 0x%08llX)", AWADDR, AWADDR + pReqDesc->SIZE * (AWLEN + 1) - 1);
 				}
 
-				DEBUG_LEVEL(1) LOGI("Request(Write : 0x%08X), ID #%d, %d bit, %d beat, %s mode", AWADDR, AWID, pReqDesc->SIZE * 8, pReqDesc->LEN, __sBURST_MODE[pReqDesc->BURST]);
+				DEBUG_LEVEL(1) LOGI("Request(Write : 0x%08llX), ID #%d, %d bit, %d beat, %s mode", AWADDR, AWID, pReqDesc->SIZE * 8, pReqDesc->LEN, __sBURST_MODE[pReqDesc->BURST]);
 				AquireBus();
 			}
 		} else {
@@ -495,7 +495,7 @@ void MAXI::BusWriteData(
 						LOGE("Sorry! non-sequential data transaction is not supported yet. WID(%d) != %d", WID, m_Write.pDesc->ID);
 
 					if(m_Write.pDesc->BEAT && WLAST)
-						LOGE("Early termination is not supported on a 'Burst mode'. 'WLAST' is asserted on middle of burst transaction(WID:#%d,NEXT_ADDR:0x%08X,BEAT:%d/%d).", WID, m_Write.pDesc->ADDR, m_Write.pDesc->LEN - m_Write.pDesc->BEAT, m_Write.pDesc->LEN);
+						LOGE("Early termination is not supported on a 'Burst mode'. 'WLAST' is asserted on middle of burst transaction(WID:#%d,NEXT_ADDR:0x%08llX,BEAT:%d/%d).", WID, m_Write.pDesc->ADDR, m_Write.pDesc->LEN - m_Write.pDesc->BEAT, m_Write.pDesc->LEN);
 				}
 			}
 
@@ -544,7 +544,7 @@ void MAXI::BusWriteData(
 DPI_FUNCTION void MAXIW_Interface(
 	void* hMAXI,
 	unsigned char nRST,
-	int AWID, const svBitVecVal* AWADDR, const svBitVecVal* AWLEN, const svBitVecVal* AWSIZE, const svBitVecVal* AWBURST, svBit AWLOCK, const svBitVecVal* AWCACHE, const svBitVecVal* AWPROT, const svBitVecVal* AWREGION, const svBitVecVal* AWQOS, unsigned char AWVALID, unsigned char* AWREADY,
+	int AWID, unsigned long long AWADDR, const svBitVecVal* AWLEN, const svBitVecVal* AWSIZE, const svBitVecVal* AWBURST, svBit AWLOCK, const svBitVecVal* AWCACHE, const svBitVecVal* AWPROT, const svBitVecVal* AWREGION, const svBitVecVal* AWQOS, unsigned char AWVALID, unsigned char* AWREADY,
 	int WID, const svBitVecVal* WDATA, const svBitVecVal* WSTRB, unsigned char WLAST, unsigned char WVALID, unsigned char* WREADY,
 	int* BID, svBitVecVal* BRESP, unsigned char* BVALID, unsigned char BREADY)
 {
@@ -558,7 +558,7 @@ DPI_FUNCTION void MAXIW_Interface(
 	// write request
 	pMAXI->BusWriteRequest(
 		nRST,
-		AWID, *AWADDR, *AWLEN, *AWSIZE, *AWBURST, AWLOCK, *AWCACHE, *AWPROT, *AWREGION, *AWQOS,
+		AWID, AWADDR, *AWLEN, *AWSIZE, *AWBURST, AWLOCK, *AWCACHE, *AWPROT, *AWREGION, *AWQOS,
 		AWVALID, *AWREADY
 	);
 }

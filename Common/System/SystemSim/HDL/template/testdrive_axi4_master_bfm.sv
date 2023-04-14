@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive template design
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 /*verilator tracing_off*/
@@ -117,7 +117,7 @@ end
 	input	bit								nRST,			// reset (active low)
 	// write address
 	input	int								AWID,			// The ID tag for the write address group of signals
-	input	bit [C_ADDR_WIDTH-1:0]			AWADDR,			// Write address
+	input	longint unsigned				AWADDR,			// Write address
 	input	bit [(C_USE_AXI4==0 ? 4:8)-1:0]	AWLEN,			// Burst_Length = AxLEN + 1
 	input	bit [2:0]						AWSIZE,			// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	input	bit [1:0]						AWBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)
@@ -154,7 +154,7 @@ reg								r_BVALID;
 	input	bit								nRST,			// reset (active low)
 	// read address
 	input	int								ARID,			// Read address ID tag
-	input	bit [C_ADDR_WIDTH-1:0]			ARADDR,			// Read address
+	input	longint unsigned				ARADDR,			// Read address
 	input	bit [(C_USE_AXI4==0 ? 4:8)-1:0]	ARLEN,			// Burst_Length = AxLEN + 1
 	input	bit [2:0]						ARSIZE,			// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	input	bit [1:0]						ARBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)

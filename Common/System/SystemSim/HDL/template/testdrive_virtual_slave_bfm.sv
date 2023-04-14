@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive template design
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 /*verilator tracing_off*/
@@ -63,7 +63,7 @@ module testdrive_virtual_slave_bfm #(
 	input	bit								nRST,
 	// write
 	output	bit 							EN,
-	output	bit	[`RANGE_DWORD]				ADDR,
+	output	longint unsigned				ADDR,
 	output	bit	[`RANGE_DWORD]				DATA
 );
 
@@ -72,13 +72,13 @@ module testdrive_virtual_slave_bfm #(
 	input	bit								nRST,
 	// read
 	output	bit 							EN,
-	output	bit	[`RANGE_DWORD]				ADDR,
+	output	longint unsigned				ADDR,
 	input	bit	[`RANGE_DWORD]				DATA
 );
 
 // register pipes
 reg											r_en, w_en;
-reg	[`RANGE_DWORD]							r_addr, w_addr;
+reg	[63:0]									r_addr, w_addr;
 reg	[`RANGE_DWORD]							w_data;
 
 // implementation ------------------------------------------------------------
@@ -87,7 +87,7 @@ chandle svirtual;
 // initialize
 `DPI_FUNCTION chandle CreateVirtualSlave(
 	input	string							sTitle,
-	input	int unsigned					dwAddrBase,
+	input	longint unsigned				dwAddrBase,
 	input	int unsigned					dwAddrBits
 );
 initial begin

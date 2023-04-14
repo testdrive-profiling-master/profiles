@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,6 +31,8 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive base system definitions
+// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
+//================================================================================
 // Rev.  : 3/23/2021 Tue (clonextop@gmail.com)
 //================================================================================
 `ifndef __TESTDRIVE_SYSTEM_VH__
@@ -117,12 +118,12 @@
 
 `ifdef USE_TESTDRIVE
 // meomory interface ---------------------------------------------------------
-`DPI_FUNCTION void MemoryWrite32 (input int ID, input int unsigned ADDR, input  int      unsigned DATA);
-`DPI_FUNCTION void MemoryWrite16 (input int ID, input int unsigned ADDR, input  shortint unsigned DATA);
-`DPI_FUNCTION void MemoryWrite8  (input int ID, input int unsigned ADDR, input  byte     unsigned DATA);
-`DPI_FUNCTION void MemoryRead32  (input int ID, input int unsigned ADDR, output int      unsigned DATA);
-`DPI_FUNCTION void MemoryRead16  (input int ID, input int unsigned ADDR, output shortint unsigned DATA);
-`DPI_FUNCTION void MemoryRead8   (input int ID, input int unsigned ADDR, output byte     unsigned DATA);
+`DPI_FUNCTION void MemoryWrite32 (input int ID, input longint unsigned ADDR, input  int      unsigned DATA);
+`DPI_FUNCTION void MemoryWrite16 (input int ID, input longint unsigned ADDR, input  shortint unsigned DATA);
+`DPI_FUNCTION void MemoryWrite8  (input int ID, input longint unsigned ADDR, input  byte     unsigned DATA);
+`DPI_FUNCTION void MemoryRead32  (input int ID, input longint unsigned ADDR, output int      unsigned DATA);
+`DPI_FUNCTION void MemoryRead16  (input int ID, input longint unsigned ADDR, output shortint unsigned DATA);
+`DPI_FUNCTION void MemoryRead8   (input int ID, input longint unsigned ADDR, output byte     unsigned DATA);
 
 `DPI_FUNCTION void BreakPoint (input string sFileName, input int iLine);
 `DPI_FUNCTION longint unsigned SimulationTime();

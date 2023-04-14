@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 3/24/2023 Fri (clonextop@gmail.com)
+// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "STDInterface.h"
@@ -60,7 +60,7 @@ SystemMemory::SystemMemory(void)
 	m_pSystemConfig		= m_pSystemMemory ? (SYSTEM_CONFIG*)m_pSystemMemory->GetConfig() : NULL;
 	m_pDisplayMemory	= TestDriver_GetMemory(sMemoryNameDisplay);
 	m_pDisplayConfig	= m_pDisplayMemory ? (DisplayConfig*)m_pDisplayMemory->GetConfig() : NULL;
-	m_dwBaseAddress		= 0x80000000;	// default system memory's base address
+	m_lBaseAddress		= 0x80000000;	// default system memory's base address
 }
 
 SystemMemory::~SystemMemory(void)
@@ -77,5 +77,5 @@ BYTE* SystemMemory::GetPointer(UINT64 lAddress, UINT64 dwSize, bool bDisplay)
 {
 	if(bDisplay) return m_pDisplayMemory->GetPointer(lAddress, dwSize);
 
-	return m_pSystemMemory->GetPointer(lAddress - m_dwBaseAddress, dwSize);
+	return m_pSystemMemory->GetPointer(lAddress - m_lBaseAddress, dwSize);
 }

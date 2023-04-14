@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive template design
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 /*verilator tracing_off*/
@@ -41,7 +41,7 @@
 
 module testdrive_apb_slave_bfm #(
 	parameter string	C_BUS_TITLE			= "",
-	parameter			C_BASE_ADDR			= 32'h0,
+	parameter			C_BASE_ADDR			= 64'h0,
 	parameter integer	C_ADDR_BITS			= 10,
 	parameter integer	C_TIME_OUT			= 3000		// if '0', not use timeout
 ) (
@@ -68,7 +68,7 @@ module testdrive_apb_slave_bfm #(
 	output	bit 							PSEL,
 	output	bit 							PENABLE,
 	output	bit 							PWRITE,
-	output	bit	[`RANGE_DWORD] 				PADDR,
+	output	longint unsigned 				PADDR,
 	output	bit	[`RANGE_DWORD]				PWDATA,
 	output	bit	[3:0]						PSTRB,
 	input	bit	[`RANGE_DWORD]				PRDATA,
@@ -78,7 +78,8 @@ module testdrive_apb_slave_bfm #(
 
 // register pipes
 reg											r_sel, r_enable, r_write;
-reg	[`RANGE_DWORD]							r_addr, r_wdata;
+reg	[63:0]									r_addr;
+reg	[`RANGE_DWORD]							r_wdata;
 reg	[3:0]									r_strb;
 
 // implementation ------------------------------------------------------------
@@ -87,7 +88,7 @@ chandle sapb;
 // initialize
 `DPI_FUNCTION chandle CreateAPBSlave(
 	input	string							sTitle,
-	input	int unsigned					dwAddrBase,
+	input	longint unsigned				lAddrBase,
 	input	int unsigned					dwAddrBits,
 	input	int unsigned					dwTimeOut
 );

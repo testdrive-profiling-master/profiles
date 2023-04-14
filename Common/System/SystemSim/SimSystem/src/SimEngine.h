@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 3/24/2023 Fri (clonextop@gmail.com)
+// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_ENGINE_H__
 #define __SIM_ENGINE_H__
@@ -85,18 +85,18 @@ protected:
 	virtual void OnThreadKill(bool bForced);
 
 	// SimControl interface
-	virtual BUS_SLAVE_INTERFACE* CreateSlave(UINT64 dwAddrBase, UINT64 dwAddrHigh);
-	virtual BUS_SLAVE_INTERFACE* FindSlave(UINT64 dwAddress);
+	virtual BUS_SLAVE_INTERFACE* CreateSlave(UINT64 lAddrBase, UINT64 lAddrHigh);
+	virtual BUS_SLAVE_INTERFACE* FindSlave(UINT64 lAddress);
 	virtual CLOCK_INTERFACE* CreateClock(BYTE* pCLK, BYTE* pRST);
 	virtual CLOCK_INTERFACE* FindClock(BYTE* pCLK);
 	virtual bool AwakeInterrupt(void);	// true(Awaked), false(Pending)
-	virtual void SetMemoryBaseAddress(UINT64 dwAddress);
-	virtual void MemoryRead32(int iID, UINT64 dwAddress, DWORD& dwData);
-	virtual void MemoryWrite32(int iID, UINT64 dwAddress, DWORD dwData);
-	virtual void MemoryRead16(int iID, UINT64 dwAddress, WORD& dwData);
-	virtual void MemoryWrite16(int iID, UINT64 dwAddress, WORD dwData);
-	virtual void MemoryRead8(int iID, UINT64 dwAddress, BYTE& dwData);
-	virtual void MemoryWrite8(int iID, UINT64 dwAddress, BYTE dwData);
+	virtual void SetMemoryBaseAddress(UINT64 lAddress);
+	virtual void MemoryRead32(int iID, UINT64 lAddress, DWORD& dwData);
+	virtual void MemoryWrite32(int iID, UINT64 lAddress, DWORD dwData);
+	virtual void MemoryRead16(int iID, UINT64 lAddress, WORD& dwData);
+	virtual void MemoryWrite16(int iID, UINT64 lAddress, WORD dwData);
+	virtual void MemoryRead8(int iID, UINT64 lAddress, BYTE& dwData);
+	virtual void MemoryWrite8(int iID, UINT64 lAddress, BYTE dwData);
 	virtual SYSTEM_CONFIG* GetSystemConfig(void);
 	virtual DisplayConfig* GetDisplayConfig(void);
 	virtual BYTE* GetMemoryPointer(UINT64 lAddress, UINT64 dwSize = 0, bool bDisplay = false);

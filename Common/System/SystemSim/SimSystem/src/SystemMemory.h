@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 3/24/2023 Fri (clonextop@gmail.com)
+// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_MEMORY_H__
 #define __SYSTEM_MEMORY_H__
@@ -44,8 +44,8 @@ class SystemMemory {
 public:
 	SystemMemory(void);
 	virtual ~SystemMemory(void);
-	void SetBaseAddress(UINT64 dwAddress)				{
-		m_dwBaseAddress	= dwAddress;
+	void SetBaseAddress(UINT64 lAddress)				{
+		m_lBaseAddress	= lAddress;
 	}
 	UINT64 ByteSize(void);
 	BYTE* GetPointer(UINT64 lAddress, UINT64 dwSize = 0, bool bDisplay = false);
@@ -57,7 +57,7 @@ public:
 		return (m_pSystemMemory != NULL) && (m_pDisplayMemory != NULL);
 	}
 	inline UINT64 BaseAddress(void)					{
-		return m_dwBaseAddress;
+		return m_lBaseAddress;
 	}
 	inline ITestDriverMemory* Handle(void)			{
 		return m_pSystemMemory;
@@ -74,7 +74,7 @@ private:
 	ITestDriverMemory*		m_pDisplayMemory;
 	SYSTEM_CONFIG*			m_pSystemConfig;
 	DisplayConfig*			m_pDisplayConfig;
-	UINT64					m_dwBaseAddress;
+	UINT64					m_lBaseAddress;
 };
 
 extern SystemMemory			g_SystemMemory;

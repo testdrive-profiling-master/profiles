@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Simulation HDL module
-// Rev.  : 4/12/2023 Wed (clonextop@gmail.com)
+// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
 #include "TestDriver.inl"
@@ -255,14 +255,14 @@ double sc_time_stamp()          // Called by $time in Verilog
 
 //-----------------------------------------------------------------------------------------------
 // bypass command
-BUS_SLAVE_INTERFACE* CreateSlave(UINT64 dwAddrBase, UINT64 dwAddrHigh)
+BUS_SLAVE_INTERFACE* CreateSlave(UINT64 lAddrBase, UINT64 lddrHigh)
 {
-	return __pSimControl->CreateSlave(dwAddrBase, dwAddrHigh);
+	return __pSimControl->CreateSlave(lAddrBase, lddrHigh);
 }
 
-BUS_SLAVE_INTERFACE* FindSlave(UINT64 dwAddress)
+BUS_SLAVE_INTERFACE* FindSlave(UINT64 lAddress)
 {
-	return __pSimControl->FindSlave(dwAddress);
+	return __pSimControl->FindSlave(lAddress);
 }
 
 CLOCK_INTERFACE* FindClock(BYTE* pCLK)
@@ -275,32 +275,32 @@ void RegisterDriverCommand(DRIVER_COMMAND func)
 	__pSimControl->RegisterDriverCommand(func);
 }
 
-void MemoryRead32(int ID, unsigned int ADDR, unsigned int* DATA)
+void MemoryRead32(int ID, UINT64 ADDR, unsigned int* DATA)
 {
 	__pSimControl->MemoryRead32(ID, ADDR, *(DWORD*)DATA);
 }
 
-void MemoryWrite32(int ID, unsigned int ADDR, unsigned int DATA)
+void MemoryWrite32(int ID, UINT64 ADDR, unsigned int DATA)
 {
 	__pSimControl->MemoryWrite32(ID, ADDR, DATA);
 }
 
-void MemoryRead16(int ID, unsigned int ADDR, unsigned short int* DATA)
+void MemoryRead16(int ID, UINT64 ADDR, unsigned short int* DATA)
 {
 	__pSimControl->MemoryRead16(ID, ADDR, *(WORD*)DATA);
 }
 
-void MemoryWrite16(int ID, unsigned int ADDR, unsigned short int DATA)
+void MemoryWrite16(int ID, UINT64 ADDR, unsigned short int DATA)
 {
 	__pSimControl->MemoryWrite16(ID, ADDR, DATA);
 }
 
-void MemoryRead8(int ID, unsigned int ADDR, unsigned char* DATA)
+void MemoryRead8(int ID, UINT64 ADDR, unsigned char* DATA)
 {
 	__pSimControl->MemoryRead8(ID, ADDR, *(BYTE*)DATA);
 }
 
-void MemoryWrite8(int ID, unsigned int ADDR, unsigned char DATA)
+void MemoryWrite8(int ID, UINT64 ADDR, unsigned char DATA)
 {
 	__pSimControl->MemoryWrite8(ID, ADDR, DATA);
 }

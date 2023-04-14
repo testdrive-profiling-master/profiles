@@ -31,17 +31,17 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "VirtualSlave.h"
 
-VirtualSlave::VirtualSlave(const char* sTitle, DWORD dwAddrBase, DWORD dwAddrHigh)
+VirtualSlave::VirtualSlave(const char* sTitle, UINT64 lAddrBase, UINT64 lAddrHigh)
 {
 	Log.SetTitle(*sTitle ? "Virtual_Slave('%s')" : "Virtual_Slave", sTitle);
-	m_pSlave		= CreateSlave(dwAddrBase, dwAddrHigh);
+	m_pSlave		= CreateSlave(lAddrBase, lAddrHigh);
 	m_pReadPacket	= NULL;
 	m_bReadWait		= FALSE;
-	LOGI("Bus created - 0x%08X ~ 0x%08X", dwAddrBase, dwAddrHigh);
+	LOGI("Bus created - 0x%08llX ~ 0x%08llX", lAddrBase, lAddrHigh);
 }
 
 VirtualSlave::~VirtualSlave(void)
@@ -53,7 +53,7 @@ VirtualSlave::~VirtualSlave(void)
 //----------------------------------------------------------------------------------------------------
 void VirtualSlave::BusWrite(
 	BYTE nRST,
-	BYTE& EN, DWORD& ADDR, DWORD& DATA)
+	BYTE& EN, UINT64& ADDR, DWORD& DATA)
 {
 	if(!nRST) {
 		EN					= 0;
@@ -64,7 +64,7 @@ void VirtualSlave::BusWrite(
 
 		if(packet) {
 			EN				= 1;
-			ADDR			= packet->dwAddr;
+			ADDR			= packet->lAddr;
 			DATA			= packet->dwData;
 			m_pSlave->WriteAck();
 		} else {
@@ -78,12 +78,12 @@ void VirtualSlave::BusWrite(
 DPI_FUNCTION void VirtualSlave_Write(
 	void* hSVirtual,
 	unsigned char nRST,
-	unsigned char* EN, svBitVecVal* ADDR, svBitVecVal* DATA)
+	unsigned char* EN, unsigned long long* ADDR, svBitVecVal* DATA)
 {
 	VirtualSlave* pSAXI	= reinterpret_cast<VirtualSlave*>(hSVirtual);
 	pSAXI->BusWrite(
 		nRST,
-		*(BYTE*)EN, *(DWORD*)ADDR, *(DWORD*)DATA);
+		*(BYTE*)EN, *(UINT64*)ADDR, *(DWORD*)DATA);
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ DPI_FUNCTION void VirtualSlave_Write(
 //----------------------------------------------------------------------------------------------------
 void VirtualSlave::BusRead(
 	BYTE nRST,
-	BYTE& EN, DWORD& ADDR, DWORD DATA)
+	BYTE& EN, UINT64& ADDR, DWORD DATA)
 {
 	if(!nRST) {
 		EN					= 0;
@@ -102,7 +102,7 @@ void VirtualSlave::BusRead(
 
 			if(m_pReadPacket) {
 				EN				= 1;
-				ADDR			= m_pReadPacket->dwAddr;
+				ADDR			= m_pReadPacket->lAddr;
 			} else {
 				EN				= 0;
 				ADDR			= 0;
@@ -126,15 +126,15 @@ void VirtualSlave::BusRead(
 DPI_FUNCTION void VirtualSlave_Read(
 	void* hSVirtual,
 	unsigned char nRST,
-	unsigned char* EN, svBitVecVal* ADDR, const svBitVecVal* DATA)
+	unsigned char* EN, unsigned long long* ADDR, const svBitVecVal* DATA)
 {
 	VirtualSlave* pSAXI	= reinterpret_cast<VirtualSlave*>(hSVirtual);
 	pSAXI->BusRead(
 		nRST,
-		*(BYTE*)EN, *(DWORD*)ADDR, *DATA);
+		*(BYTE*)EN, *(UINT64*)ADDR, *DATA);
 }
 
-DPI_FUNCTION void* CreateVirtualSlave(const char* sTitle, unsigned int dwAddrBase, unsigned int dwAddrBits)
+DPI_FUNCTION void* CreateVirtualSlave(const char* sTitle, unsigned long long lAddrBase, UINT64 dwAddrBits)
 {
-	return (void*)(new VirtualSlave(sTitle, dwAddrBase, dwAddrBase + (1 << dwAddrBits) - 1));
+	return (void*)(new VirtualSlave(sTitle, lAddrBase, lAddrBase + (1 << dwAddrBits) - 1));
 }

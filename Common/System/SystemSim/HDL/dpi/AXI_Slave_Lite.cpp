@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 11/5/2019 Tue (clonextop@gmail.com)
+// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "AXI_Slave_Lite.h"
 
@@ -69,7 +68,7 @@ SAXI_Lite::~SAXI_Lite(void)
 //----------------------------------------------------------------------------------------------------
 void SAXI_Lite::BusWrite(
 	BYTE nRST,
-	DWORD& AWADDR, BYTE& AWVALID, BYTE AWREADY,
+	UINT64& AWADDR, BYTE& AWVALID, BYTE AWREADY,
 	DWORD& WDATA, DWORD& WSTRB, BYTE& WVALID, BYTE WREADY,
 	DWORD BRESP, BYTE BVALID, BYTE& BREADY)
 {
@@ -98,7 +97,7 @@ void SAXI_Lite::BusWrite(
 				AWVALID			= 1;
 				WVALID			= 1;
 				WSTRB			= 0xF;
-				AWADDR			= m_Write.packet->dwAddr;
+				AWADDR			= m_Write.packet->lAddr;
 				WDATA			= m_Write.packet->dwData;
 				m_Write.dwTime	= 0;
 				m_WFlag.control	= 1;
@@ -131,7 +130,7 @@ void SAXI_Lite::BusWrite(
 
 			if(m_WFlag.all) {
 				WSTRB			= 0xF;
-				AWADDR			= m_Write.packet->dwAddr;
+				AWADDR			= m_Write.packet->lAddr;
 				WDATA			= m_Write.packet->dwData;
 			} else {
 				m_pSlave->WriteAck();
@@ -172,7 +171,7 @@ DPI_FUNCTION void SAXIW_Interface(
 	SAXI_Lite* pSAXI	= reinterpret_cast<SAXI_Lite*>(hSAXIL);
 	pSAXI->BusWrite(
 		nRST,
-		*(DWORD*)AWADDR, *AWVALID, AWREADY,
+		*(UINT64*)AWADDR, *AWVALID, AWREADY,
 		*(DWORD*)WDATA, *(DWORD*)WSTRB, *WVALID, WREADY,
 		*BRESP, BVALID, *BREADY);
 }
@@ -182,7 +181,7 @@ DPI_FUNCTION void SAXIW_Interface(
 //----------------------------------------------------------------------------------------------------
 void SAXI_Lite::BusRead(
 	BYTE nRST,
-	DWORD& ARADDR, BYTE& ARVALID, BYTE ARREADY,
+	UINT64& ARADDR, BYTE& ARVALID, BYTE ARREADY,
 	DWORD RDATA, DWORD RRESP, BYTE RVALID, BYTE& RREADY)
 {
 	ARADDR		= 0;
@@ -205,7 +204,7 @@ void SAXI_Lite::BusRead(
 			if((m_Read.packet = m_pSlave->GetRead())) {
 				// address transaction
 				ARVALID			= 1;
-				ARADDR			= m_Read.packet->dwAddr;
+				ARADDR			= m_Read.packet->lAddr;
 				m_Read.dwTime	= 0;
 				m_Read.state	= BUS_STATE_CONTROL;
 			}
@@ -222,7 +221,7 @@ void SAXI_Lite::BusRead(
 				m_Read.state	= BUS_STATE_DATA;
 			} else {
 				ARVALID			= 1;
-				ARADDR			= m_Read.packet->dwAddr;
+				ARADDR			= m_Read.packet->lAddr;
 			}
 
 			if(m_Read.dwTime > 5000)
@@ -257,16 +256,16 @@ void SAXI_Lite::BusRead(
 DPI_FUNCTION void SAXIR_Interface(
 	void* hSAXIL,
 	unsigned char nRST,
-	svBitVecVal* ARADDR, unsigned char* ARVALID, unsigned char ARREADY, const svBitVecVal* RDATA, const svBitVecVal* RRESP, unsigned char RVALID, unsigned char* RREADY)
+	unsigned long long* ARADDR, unsigned char* ARVALID, unsigned char ARREADY, const svBitVecVal* RDATA, const svBitVecVal* RRESP, unsigned char RVALID, unsigned char* RREADY)
 {
 	SAXI_Lite* pSAXI	= reinterpret_cast<SAXI_Lite*>(hSAXIL);
 	pSAXI->BusRead(
 		nRST,
-		*(DWORD*)ARADDR, *ARVALID, ARREADY,
+		*(UINT64*)ARADDR, *ARVALID, ARREADY,
 		*RDATA, *RRESP, RVALID, *RREADY);
 }
 
-DPI_FUNCTION void* CreateSAXILite(const char* sTitle, unsigned int dwAddrBase, unsigned int dwAddrBits)
+DPI_FUNCTION void* CreateSAXILite(const char* sTitle, unsigned long long lAddrBase, unsigned int dwAddrBits)
 {
-	return (void*)(new SAXI_Lite(sTitle, dwAddrBase, dwAddrBase + (1 << dwAddrBits) - 1));
+	return (void*)(new SAXI_Lite(sTitle, lAddrBase, lAddrBase + (1 << dwAddrBits) - 1));
 }

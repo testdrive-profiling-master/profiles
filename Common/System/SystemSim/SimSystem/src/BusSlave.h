@@ -30,8 +30,8 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Simulation sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Title : Common profiles
+// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __BUS_SLAVE_H__
 #define __BUS_SLAVE_H__
@@ -42,18 +42,18 @@ class BusSlave :
 	public SimInstance,
 	public BUS_SLAVE_INTERFACE {
 public:
-	BusSlave(DWORD dwAddrBase, DWORD dwAddrHigh);
+	BusSlave(UINT64 lAddrBase, UINT64 lAddrHigh);
 	virtual ~BusSlave(void);
 
 	//// S/W master interface
 	virtual bool OnRun(void);
-	void Write(DWORD dwAddress, DWORD dwData);
-	DWORD Read(DWORD dwAddress);
+	void Write(UINT64 lAddrBase, DWORD dwData);
+	DWORD Read(UINT64 lAddrBase);
 
 	//// H/W master interface
-	virtual bool RequestWrite(DWORD dwAddr, DWORD dwData);
+	virtual bool RequestWrite(UINT64 lAddr, DWORD dwData);
 	virtual bool WaitWrite(void);
-	virtual bool RequestRead(DWORD dwAddr);
+	virtual bool RequestRead(UINT64 lAddr);
 	virtual bool WaitRead(DWORD& dwData);
 
 	// H/W slave interface
@@ -62,9 +62,9 @@ public:
 	virtual BUS_SALVE_PACKET* GetRead(void);		// get read
 	virtual void ReadAck(void);						// read ack to S/W
 
-	bool IsValidAddress(DWORD dwAddress);
+	bool IsValidAddress(UINT64 lAddress);
 
-	static BusSlave* FindSlave(DWORD dwAddress);
+	static BusSlave* FindSlave(UINT64 lAddress);
 
 private:
 	static BusSlave*	m_pHead;
@@ -75,8 +75,8 @@ private:
 	Semaphore			m_LockBusAck;
 
 	// address range
-	DWORD				m_dwAddrBase;
-	DWORD				m_dwAddrHigh;
+	UINT64				m_lAddrBase;
+	UINT64				m_lAddrHigh;
 
 	struct {
 		bool				bEnable;

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
+// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __DPI_INTERFACES_H__
 #define __DPI_INTERFACES_H__
@@ -41,14 +41,14 @@
 // Slave bus interface
 //-----------------------------------------------------------------------
 typedef struct {
-	DWORD		dwAddr;
+	UINT64		lAddr;
 	DWORD		dwData;
 } BUS_SALVE_PACKET;
 
 struct BUS_SLAVE_INTERFACE {
-	virtual bool RequestWrite(DWORD dwAddr, DWORD dwData) = 0;
+	virtual bool RequestWrite(UINT64 dwAddr, DWORD dwData) = 0;
 	virtual bool WaitWrite(void) = 0;
-	virtual bool RequestRead(DWORD dwAddr) = 0;
+	virtual bool RequestRead(UINT64 dwAddr) = 0;
 	virtual bool WaitRead(DWORD& dwData) = 0;
 
 	virtual BUS_SALVE_PACKET* GetWrite(void) = 0;
@@ -58,8 +58,8 @@ struct BUS_SLAVE_INTERFACE {
 	virtual void ReadAck(void) = 0;
 };
 
-BUS_SLAVE_INTERFACE* CreateSlave(UINT64 dwAddrBase, UINT64 dwAddrHigh);
-BUS_SLAVE_INTERFACE* FindSlave(UINT64 dwAddress);
+BUS_SLAVE_INTERFACE* CreateSlave(UINT64 lAddrBase, UINT64 lddrHigh);
+BUS_SLAVE_INTERFACE* FindSlave(UINT64 lAddress);
 
 //-----------------------------------------------------------------------
 // clocking interface
