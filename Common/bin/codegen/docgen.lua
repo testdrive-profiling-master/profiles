@@ -1,7 +1,9 @@
 local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.01")
+local	sProfilePath	= String(nil)
 local	sTemplatePath	= String(nil)
 
-sTemplatePath:GetEnvironment("TESTDRIVE_PROFILE")
+sProfilePath:GetEnvironment("TESTDRIVE_PROFILE")
+sTemplatePath.s			= sProfilePath.s
 
 Arg:AddOptionString	("template", "", "t", nil, "template", "Document template name/file.")
 
@@ -260,7 +262,13 @@ function GenerateFigure(sFileName, fRatio)
 				sFileName:Append("." .. sPageName)
 			end
 			sFileName:Append(".svg")
-			temp_visio_file_list[#temp_visio_file_list + 1]		= sFileName.s
+			
+			if lfs.attributes(sFileName.s) == false then	-- no visio
+				LOGE("Visio is not installed.")
+				sFileName.s	= sProfilePath.s .. "common/bin/codegen/no_visio.svg"
+			else
+				temp_visio_file_list[#temp_visio_file_list + 1]		= sFileName.s	-- clean up list.
+			end
 		end
 	end
 	

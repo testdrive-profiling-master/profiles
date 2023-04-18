@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Microsoft Visio, SVG Export에서 생성되었습니다. no_visio.vsdx.no_visio.svg no_visio -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
+		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="5.70866in" height="1.77165in"
+		viewBox="0 0 411.024 127.559" xml:space="preserve" color-interpolation-filters="sRGB" class="st3">
+	<v:documentProperties v:langID="1042" v:metric="true" v:viewMarkup="false">
+		<v:userDefs>
+			<v:ud v:nameU="msvNoAutoConnect" v:val="VT0(1):26"/>
+		</v:userDefs>
+	</v:documentProperties>
+
+	<style type="text/css">
+	<![CDATA[
+		.st1 {fill:#ffffff;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;stroke-width:1.25}
+		.st2 {fill:#ff0000;font-family:맑은 고딕;font-size:2.50001em;font-style:italic;font-weight:bold}
+		.st3 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+	]]>
+	</style>
+
+	<g v:mID="0" v:index="1" v:groupContext="foregroundPage">
+		<title>no_visio</title>
+		<v:pageProperties v:drawingScale="0.0393701" v:pageScale="0.0393701" v:drawingUnits="24" v:shadowOffsetX="8.50394"
+				v:shadowOffsetY="-8.50394"/>
+		<g id="shape1-1" v:mID="1" v:groupContext="shape" transform="translate(28.3465,-36.8504)">
+			<title>시트.1</title>
+			<desc>Visio is not installed!</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="177.165" cy="99.2126" width="354.34" height="56.6929"/>
+			<rect x="0" y="70.8661" width="354.331" height="56.6929" rx="11.3386" ry="11.3386" class="st1"/>
+			<text x="26.8" y="108.21" class="st2" v:langID="1042"><v:paragraph v:horizAlign="1"/><v:tabList/>Visio is not installed!</text>		</g>
+	</g>
+</svg>
