@@ -408,8 +408,12 @@ endmodule
 ## 그림 삽입
 
 @<size:30>@<b>표현식 : @@<img:@<color:FF0000>파일명@</color>;@<color:FF0000>스케일@</color>;@<color:FF0000>캡션@</color>>@</b>@</size>
-그림은 jpg, png, bmp, gif, tif, svg, wmf, vsd/vsdx(Visio 설치 필요) 포멧을 지원하고 있습니다. @<color:FF0000>파일명@</color>은 표시할 파일명을 지정하게 되며, 그림에 외각선 경계가 필요할 경우 "@<color:0000FF>#@</color>@<color:FF0000>파일명@</color>"으로 표시합니다. Visio 파일일 경우는 "@<color:FF0000>파일명@</color>[@<color:FF0000>페이지명@</color>]"으로 별도의 페이지 이름을 지정할 수 있으며, @<color:FF0000>페이지명@</color>이 지정되지 않을 때는 첫 페이지로 간주합니다.
-또한 @<color:FF0000>스케일@</color>의 경우, 종이의 폭 기준 최대값 1.0으로 0 초과 1 이하의 값을 넣어 크기를 지정할 수 있습니다. 지정되지 않을 경우 기본 1.0으로 간주 합니다.
+그림은 jpg, png, bmp, gif, tif, svg, wmf, vsd/vsdx(Visio 설치 필요) 포멧을 지원하고 있습니다. @<color:FF0000>파일명@</color>은 표시할 파일명을 지정하게 되며, \
+그림에 외각선 경계가 필요할 경우 "@<color:0000FF>#@</color>@<color:FF0000>파일명@</color>"으로 표시합니다. \
+Visio 파일일 경우는 "@<color:FF0000>파일명@</color>[@<color:FF0000>페이지명@</color>]"으로 별도의 페이지 이름을 지정할 수 있으며, \
+@<color:FF0000>페이지명@</color>이 지정되지 않을 때는 첫 페이지로 간주합니다.
+또한 @<color:FF0000>스케일@</color>의 경우, 종이의 폭 기준 최대값 1.0으로 0 초과 1 이하의 값을 넣어 크기를 지정할 수 있습니다. \
+지정되지 않을 경우 기본 1.0으로 간주 합니다.
 @<color:FF0000>캡션@</color>은 말 그대로 캡션 내용을 지정하며, '@<bookmark:@상호 참조>'에서 사용될 수 있습니다. 지정되지 않을 경우 캡션은 삽입되지 않습니다.
  
 예1) $$1/4$$ 크기의 경계선 있는 도넛 그림
@@ -421,10 +425,17 @@ endmodule
 
 예2) 경계선 없는 벡터 방식 그림
 ```html
-@<img:media/awesome_svg.svg;1.0;SVG 벡터 그림 예시>
+@<img:media/awesome_svg.svg;0.7;SVG 벡터 그림 예시>
 ```
 결과)
-@<img:media/awesome_svg.svg;1.0;SVG 벡터 그림 예시>
+@<img:media/awesome_svg.svg;0.7;SVG 벡터 그림 예시>
+
+예2) Visio 특정 page를 벡터 이미지로 삽입
+```html
+@<img:media/test.vsdx[test_sample];0.8;SVG 벡터 그림 예시>
+```
+결과)
+@<img:media/test.vsdx[test_sample];0.8;SVG 벡터 그림 예시>
 
 
  

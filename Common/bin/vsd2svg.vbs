@@ -7,9 +7,9 @@ If WScript.Arguments.Count > 0 Then
 	
 	If WScript.Arguments.Count > 1 Then
 		page_name	= WScript.Arguments(1)
-		svgPath		= fso.GetParentFolderName(vsdPath) & "\" & fso.GetBaseName(vsdPath) & "." & page_name & ".svg"
+		svgPath		= fso.GetParentFolderName(vsdPath) & "\" & fso.GetFileName(vsdPath) & "." & page_name & ".svg"
 	else
-		svgPath		= fso.GetParentFolderName(vsdPath) & "\" & fso.GetBaseName(vsdPath) & ".svg"
+		svgPath		= fso.GetParentFolderName(vsdPath) & "\" & fso.GetFileName(vsdPath) & ".svg"
 	End If
 	
 	'SVG 파일이 잠겨 있는지 채크
@@ -21,17 +21,19 @@ If WScript.Arguments.Count > 0 Then
 		End If
 	End If
 	
-	If LCase(Right(docPath, 4)) = ".vsd" Or LCase(Right(docPath, 5)) = ".vsdx" Then
+	
+	If LCase(Right(vsdPath, 4)) = ".vsd" Or LCase(Right(vsdPath, 5)) = ".vsdx" Then
 		On Error Resume Next	'오류 강제 처리
 
-		Set objVisio			= CreateObject("Visio.Application")
-		objVisio.Visible		= False
-		
+		Set objVisio			= CreateObject("Visio.InvisibleApp")
+
 		If Err.Number <> 0 Then
-			Wscript.Echo "Visio is not installed."
+			Wscript.Echo "Microsoft Visio is not installed."
 			Err.Clear
 			WScript.Quit(1)
 		End If
+		
+		objVisio.Visible		= False
 		
 		Set objDraw = objVisio.documents.open(vsdPath)
 
@@ -59,9 +61,6 @@ If WScript.Arguments.Count > 0 Then
 		objDraw			= NoThing
 		Set objVisio	= NoThing
 	Else
-		objVisio.Quit
-		objDraw			= NoThing
-		Set objVisio	= NoThing
 		Wscript.Echo "Not a Visio file."
 	End If
 Else

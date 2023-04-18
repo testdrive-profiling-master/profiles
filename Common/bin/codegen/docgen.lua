@@ -277,6 +277,8 @@ function GenerateFigure(sFileName, fRatio)
 	
 	do	-- get image width & height
 		local sInfo		= String((sExt == "wmf") and exec("identify " .. sFileName) or exec("identify -size x " .. sFileName))
+
+		sInfo:CutFront(sFileName, false)
 		sInfo:CutFront(" ", false)
 		sInfo:CutFront(" ", false)
 		sInfo:CutBack(" ", true)
