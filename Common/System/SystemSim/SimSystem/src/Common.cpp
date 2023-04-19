@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,8 +30,8 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Simulation sub-system
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Title : Common profiles
+// Rev.  : 4/19/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 
@@ -45,6 +44,7 @@ void LOGI(char* fmt, ...)
 		vprintf(fmt, ap);
 		va_end(ap);
 	}
+	printf("\n");
 	fflush(stdout);
 }
 
@@ -57,5 +57,6 @@ void LOGE(char* fmt, ...)
 		vprintf(fmt, ap);
 		va_end(ap);
 	}
+	printf("\n");
 	fflush(stdout);
 }

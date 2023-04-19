@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 3/14/2023 Tue (clonextop@gmail.com)
+// Rev.  : 4/19/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __INTERRUPT_SERVICE_H__
 #define __INTERRUPT_SERVICE_H__
@@ -46,11 +46,8 @@ public:
 
 	void RegisterService(INTRRUPT_SERVICE service, void* pPrivate);
 	bool Awake(void);
-	void ClearPending(bool bForced = false);
-
-	inline void Enable(bool bEnable = true)	{
-		m_bEnable	= bEnable;
-	}
+	void ClearPending(void);
+	void Enable(bool bEnable = true);
 
 private:
 	virtual void MonitorThread(void);					// monitor thread

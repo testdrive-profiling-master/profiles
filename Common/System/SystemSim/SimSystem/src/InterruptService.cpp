@@ -31,12 +31,11 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 3/14/2023 Tue (clonextop@gmail.com)
+// Rev.  : 4/19/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "InterruptService.h"
 #include "SimEngine.h"
-#include "SimDelayCall.h"
 #include <assert.h>
 
 static void __interrupt_service_routine_default(void* pPrivate)
@@ -60,7 +59,7 @@ InterruptService::~InterruptService(void)
 
 void InterruptService::MonitorThread(void)
 {
-	for(; m_bRun;) {
+	while(m_bRun) {
 		m_SemaInterrupt.Down();
 
 		if(m_bEnable) m_ISR(m_pPrivate);
@@ -70,7 +69,8 @@ void InterruptService::MonitorThread(void)
 void InterruptService::OnThreadKill(bool bForced)
 {
 	m_bRun		= false;
-	Enable(false);
+	m_bEnable	= false;
+	m_bPending	= false;
 	m_SemaInterrupt.Up();
 }
 
@@ -85,17 +85,23 @@ bool InterruptService::Awake(void)
 	return false;
 }
 
-static void __delayed_interrupt_pending(void* pPrivate)
+void InterruptService::ClearPending(void)
 {
-	*((volatile bool*)pPrivate)	= false;
+	if(m_bPending) {
+		m_bPending	= false;
+		SimResource::Sim()->Unlock(20);	// wake up simulation a little bit for h/w interrupt deassertion
+	}
 }
 
-void InterruptService::ClearPending(bool bForced)
+void InterruptService::Enable(bool bEnable)
 {
-	if(bForced) m_bPending	= false;
-	else new SimDelayCall(__delayed_interrupt_pending, (void*)&m_bPending, 1000 * 100);	//100ns delayed pending clear
+	if(m_bEnable != bEnable) {
+		if(bEnable) {
+			m_bPending	= false;
+		}
 
-	SimResource::Sim()->Unlock(2);
+		m_bEnable	= bEnable;
+	}
 }
 
 void InterruptService::RegisterService(INTRRUPT_SERVICE service, void* pPrivate)
@@ -104,6 +110,6 @@ void InterruptService::RegisterService(INTRRUPT_SERVICE service, void* pPrivate)
 	Enable(false);
 	m_ISR		= service ? service : __interrupt_service_routine_default;
 	m_pPrivate	= pPrivate;
-	ClearPending(true);
+	ClearPending();
 	Enable(bEnable);
 }
