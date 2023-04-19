@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common profiles
-// Rev.  : 3/10/2023 Fri (clonextop@gmail.com)
+// Rev.  : 4/19/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include <assert.h>
 #include <stdio.h>
@@ -302,6 +302,11 @@ IMemory* CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAdd
 		}
 	}
 	__SemaAlloc.Up();
+
+	if(pMem->ByteSize() != dwByteSize) {
+		printf("*W: Memory byte size is not matched : requested(%lld bytes) != allocated(%lld bytes), alignment(%lld)\n", dwByteSize, pMem->ByteSize(), dwByteAlignment);
+	}
+
 	return pMem;
 }
 
