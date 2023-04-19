@@ -70,6 +70,7 @@ protected:
 	static CString		m_sScenarioPath;
 	static CString		m_sLogPath;
 	static HtmlTable*	m_pHtmlTable;
+	static BOOL			m_bSuppressWaveform;
 };
 
 class TestGroup;

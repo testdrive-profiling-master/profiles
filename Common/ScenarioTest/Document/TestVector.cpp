@@ -46,6 +46,7 @@ CString 	TestResource::m_sProgramPath;
 CString 	TestResource::m_sScenarioPath;
 CString 	TestResource::m_sLogPath;
 HtmlTable*	TestResource::m_pHtmlTable			= NULL;
+BOOL		TestResource::m_bSuppressWaveform	= TRUE;
 TestResource::TestResource(void) {}
 TestResource::~TestResource(void) {}
 
@@ -384,7 +385,9 @@ void TestVector::DoTest(void)
 		m_pHtmlTable->Control()->CallJScript(_T("SetBody('result_%d_%d', \"<font color='#FF3FFF'>%s</font>\");"), m_pGroup->GroupID(), m_iID, _L(TEST_IN_PROGRESS));
 		m_pCurrentTestVector	= this;
 		double fScore	= FLT_MAX;
-		SetEnvironmentVariable(_T("SIM_OUTPUT_ENABLE"), _T("0"));	// suppress simulation output to quick execution
+		if(m_bSuppressWaveform) {	// suppress simulation output to quick execution
+			SetEnvironmentVariable(_T("SIM_OUTPUT_ENABLE"), _T("0"));
+		}
 		int iRet	= g_pSystem->ExecuteFile(sProgram, sArg, TRUE, NULL, m_sProgramPath,
 											 __sTestStatusList[TEST_STATUS_RUN_PASSED],		TEST_STATUS_RUN_PASSED,
 											 __sTestStatusList[TEST_STATUS_RUN_FAILED],		-TEST_STATUS_RUN_FAILED,

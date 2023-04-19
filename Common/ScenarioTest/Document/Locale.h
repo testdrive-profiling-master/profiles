@@ -238,4 +238,14 @@ LOCALE_TEXT(DESC_NAME_FILTER,
 	_T("名前フィルターを指定します。"),
 	_T("Especifique un filtro de nombre."),
 	_T("Specify a name filter."))
+LOCALE_TEXT(SUPPRESS_WAVEFORM_OUT,
+	_T("파형 출력 취소"),
+	_T("波形出力のキャンセル"),
+	_T("Cancelar salida de forma de onda"),
+	_T("Cancel waveform output"))
+LOCALE_TEXT(DESC_SUPPRESS_WAVEFORM_OUT,
+	_T("Interactive mode 에서 테스트 실행시 파형 출력을 임시적으로 취소합니다.\nH/W 컴파일 없이 테스트를 보다 빠르게 실행할 수 있습니다."),
+	_T("Interactive mode でテスト実行時に波形出力を一時的にキャンセルします。\nH/Wコンパイルなしでテストをより速く実行できます。"),
+	_T("Cancela temporalmente la salida de forma de onda durante la ejecución de la prueba en el modo interactivo.\nLas pruebas pueden ejecutarse más rápido sin compilación H/W."),
+	_T("Temporarily cancels waveform output during test execution in Interactive mode.\nTests can run faster without H/W compilation."))
 LOCALE_END

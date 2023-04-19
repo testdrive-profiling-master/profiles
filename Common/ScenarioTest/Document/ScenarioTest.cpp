@@ -89,7 +89,11 @@ ScenarioTest::ScenarioTest(ITDDocument* pDoc)
 		ITDPropertyData* pProperty;
 		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_NAME_FILTER, _L(NAME_FILTER), (DWORD_PTR)((LPCTSTR)m_TestList.TestFilter()), _L(DESC_NAME_FILTER));
 		pProperty->UpdateConfigFile();
+
+		pProperty			= pDoc->AddPropertyData(PROPERTY_TYPE_BOOL, PROPERTY_ID_SUPPRESS_WAVEFORM_OUT, _L(SUPPRESS_WAVEFORM_OUT), (DWORD_PTR)(&m_bSuppressWaveform), _L(DESC_SUPPRESS_WAVEFORM_OUT));
+		pProperty->UpdateConfigFile();
 	}
+
 	{
 		m_TimeToday				= GetCurrentDayTime();
 		m_pDoc->SetTimer(COMMAND_ID_REFRESH_TABLE, 1000 * 60 * 60);	// every 1 hour, refresh table when day changed
