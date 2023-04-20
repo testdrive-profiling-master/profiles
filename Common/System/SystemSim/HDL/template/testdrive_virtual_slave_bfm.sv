@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive template design
-// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
+// Rev.  : 4/20/2023 Thu (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 /*verilator tracing_off*/
@@ -41,7 +41,7 @@
 
 module testdrive_virtual_slave_bfm #(
 	parameter string	C_BUS_TITLE		= "",
-	parameter			C_BASE_ADDR		= 32'h0,
+	parameter			C_BASE_ADDR		= 64'h0,
 	parameter integer	C_ADDR_BITS		= 10
 ) (
 	// system

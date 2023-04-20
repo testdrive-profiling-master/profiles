@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
+// Rev.  : 4/20/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "VirtualSlave.h"
 
@@ -134,7 +134,7 @@ DPI_FUNCTION void VirtualSlave_Read(
 		*(BYTE*)EN, *(UINT64*)ADDR, *DATA);
 }
 
-DPI_FUNCTION void* CreateVirtualSlave(const char* sTitle, unsigned long long lAddrBase, UINT64 dwAddrBits)
+DPI_FUNCTION void* CreateVirtualSlave(const char* sTitle, unsigned long long lAddrBase, unsigned int dwAddrBits)
 {
 	return (void*)(new VirtualSlave(sTitle, lAddrBase, lAddrBase + (1 << dwAddrBits) - 1));
 }
