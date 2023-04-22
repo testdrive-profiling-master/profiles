@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : processor AXI wrapper
-// Rev.  : 6/30/2021 Wed (clonextop@gmail.com)
+// Rev.  : 4/23/2023 Sun (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 
@@ -43,7 +42,7 @@
 
 // AXI slave definitions
 `ifndef SAXI_BASE_ADDR
-`define SAXI_BASE_ADDR					32'h00020000
+`define SAXI_BASE_ADDR					64'h00020000
 `endif
 `ifndef SAXI_ADDR_BITS
 `define SAXI_ADDR_BITS					16

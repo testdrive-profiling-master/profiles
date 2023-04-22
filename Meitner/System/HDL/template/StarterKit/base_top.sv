@@ -122,7 +122,7 @@ wire					S_PSLVERR;
 
 testdrive_apb_slave_bfm #(
 	.C_BUS_TITLE		("APB slave"),
-	.C_BASE_ADDR		(32'h0002_0000),
+	.C_BASE_ADDR		(64'h0002_0000),
 	.C_ADDR_BITS		(16)
 ) apb_slave_inst (
 	// system

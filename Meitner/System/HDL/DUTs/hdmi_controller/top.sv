@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : HDMI controller
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/23/2023 Sun (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 `define	M_AXI_USE_AXI4			1
@@ -152,7 +152,7 @@ end
 // APB bus implementation
 testdrive_apb_slave_bfm #(
 	.C_BUS_TITLE		("HDMI"),
-	.C_BASE_ADDR		(32'h00010000),
+	.C_BASE_ADDR		(64'h00010000),
 	.C_ADDR_BITS		(C_S_AXI_ADDR_WIDTH)
 ) apb_slave_bfm (
 	// system

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/23/2023 Sun (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 `include "template/testdrive_apb_slave_bfm.sv"
@@ -62,7 +62,7 @@ wire							APB_PSLVERR	= `FALSE;
 // implementation ------------------------------------------------------------
 testdrive_apb_slave_bfm #(
 	.C_BUS_TITLE	("Test"),
-	.C_BASE_ADDR	(32'h12300000),
+	.C_BASE_ADDR	(64'h12300000),
 	.C_ADDR_BITS	(10)
 ) apb (
 	.CLK			(MCLK),
