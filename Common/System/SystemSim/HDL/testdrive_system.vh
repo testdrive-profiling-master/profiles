@@ -31,9 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive base system definitions
-// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
-//================================================================================
-// Rev.  : 3/23/2021 Tue (clonextop@gmail.com)
+// Rev.  : 4/24/2023 Mon (clonextop@gmail.com)
 //================================================================================
 `ifndef __TESTDRIVE_SYSTEM_VH__
 `define __TESTDRIVE_SYSTEM_VH__
