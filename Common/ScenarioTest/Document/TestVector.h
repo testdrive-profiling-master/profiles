@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Scenario test
-// Rev.  : 8/13/2020 Thu (clonextop@gmail.com)
+// Rev.  : 4/24/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __TEST_VECTOR_H__
 #define __TEST_VECTOR_H__
@@ -43,9 +42,9 @@
 
 using namespace std;
 
-typedef union{
+typedef union {
 	DWORD		m[7];
-	struct{
+	struct {
 		DWORD		total;
 		DWORD		passed;
 		DWORD		failed;
@@ -53,17 +52,19 @@ typedef union{
 		DWORD		untested;
 		double		fScoreSum;
 	};
-}TEST_ANALYSIS;
+} TEST_ANALYSIS;
 
 extern LPCTSTR	g_sTestStatus[TEST_STATUS_SIZE];
 extern LPCTSTR	g_sAppName;
 extern LPCTSTR	g_sEmpty;
 
-class TestResource{
+class TestResource {
 public:
 	TestResource(void);
 	~TestResource(void);
-	LPCTSTR ScenarioPath(void)	{return m_sScenarioPath;}
+	LPCTSTR ScenarioPath(void)	{
+		return m_sScenarioPath;
+	}
 
 protected:
 	static CString		m_sProgramPath;
@@ -74,10 +75,9 @@ protected:
 };
 
 class TestGroup;
-class TestVector : public TestResource
-{
+class TestVector : public TestResource {
 public:
-	TestVector(TestGroup* pGroup, int iID, LPCTSTR sRelativePath, LPCTSTR sFileName);
+	TestVector(TestGroup* pGroup, int iID, LPCTSTR sRelativePath, LPCTSTR sFileName, LPCTSTR sPathName);
 	~TestVector(void);
 
 	void UpdateTable(void);
@@ -85,12 +85,20 @@ public:
 	void DoTest(void);
 	CString FullName(void);
 
-	inline LPCTSTR Name(void)			{return m_sFileName;}
-	inline TEST_STATUS Status(void)	{return m_Status;}
-	TestGroup* Group(void)				{return m_pGroup;}
+	inline LPCTSTR Name(void)			{
+		return m_sFileName;
+	}
+	inline TEST_STATUS Status(void)	{
+		return m_Status;
+	}
+	TestGroup* Group(void)				{
+		return m_pGroup;
+	}
 	double Score(void);
 
-	static TestVector* CurrentTestVecotr(void)	{return m_pCurrentTestVector;}
+	static TestVector* CurrentTestVecotr(void)	{
+		return m_pCurrentTestVector;
+	}
 
 protected:
 	void ExtensionString(CString& sStr);

@@ -158,40 +158,16 @@ BOOL TestGroup::Initialize(int iGroupID, LPCTSTR sPath, LPCTSTR sNameFilter)
 	}
 	// scan test vectors
 	Scan(sPath);	// scan current folder
-	{
-		// scan sub folder
-		HANDLE				hFind;
-		WIN32_FIND_DATA		FindFileData;
-		{
-			// scan sub vectors
-			CString	sFindPath;
-			sFindPath.Format(_T("%s\\*.*"), sPath);
-			hFind = FindFirstFile(sFindPath, &FindFileData);
-		}
-
-		if(hFind != INVALID_HANDLE_VALUE) {
-			do {
-				if(FindFileData.cFileName[0] == _T('.')) {
-				} else if(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-					CString	sNextPath;
-					sNextPath.Format(_T("%s\\%s"), sPath, FindFileData.cFileName);
-					Scan(sNextPath);
-				}
-			} while(FindNextFile(hFind, &FindFileData));
-
-			FindClose(hFind);
-		}
-	}
 	UpdateTable();
 	return TRUE;
 }
 
-void TestGroup::Scan(LPCTSTR sPath)
+void TestGroup::Scan(LPCTSTR sPath, LPCTSTR sPathName)
 {
 	// Find Vectors
 	HANDLE				hFind;
 	WIN32_FIND_DATA		FindFileData;
-	{
+	{	// scan source files
 		CString	sWildCards(m_sDesc[TG_DESC_FILES]);
 		int iPos = 0;
 		CString sTok;
@@ -214,15 +190,11 @@ void TestGroup::Scan(LPCTSTR sPath)
 
 				do {
 					if(FindFileData.cFileName[0] == _T('.')) {
-					} else if(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-						CString	sNextPath;
-						sNextPath.Format(_T("%s\\%s"), sPath, FindFileData.cFileName);
-						Scan(sNextPath);
-					} else {
+					} else if(!(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
 						CString sCurFileName(FindFileData.cFileName);
 
 						if(sCurFileName.Find(_T('~')) == -1 && sCurFileName.Find(_T('$')) == -1) {	// except with temporary files (~$*.docx...)
-							TestVector* pTest	= new TestVector(this, m_List.size(), sRelPath, FindFileData.cFileName);
+							TestVector* pTest	= new TestVector(this, m_List.size(), sRelPath, FindFileData.cFileName, sPathName);
 							m_Analysis.total++;
 							m_List.push_back(pTest);
 						}
@@ -231,6 +203,31 @@ void TestGroup::Scan(LPCTSTR sPath)
 
 				FindClose(hFind);
 			}
+		}
+	}
+
+	{
+		// scan sub folders
+		{
+			// scan sub vectors
+			CString	sFindPath;
+			sFindPath.Format(_T("%s\\*.*"), sPath);
+			hFind = FindFirstFile(sFindPath, &FindFileData);
+		}
+
+		if(hFind != INVALID_HANDLE_VALUE) {
+			do {
+				if(FindFileData.cFileName[0] == _T('.')) {
+				} else if(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+					CString	sNextPath;
+					CString	sNextPathName;
+					sNextPath.Format(_T("%s\\%s"), sPath, FindFileData.cFileName);
+					sNextPathName.Format(_T("%s%s/"), sPathName ? sPathName : _T(""), FindFileData.cFileName);
+					Scan(sNextPath, sNextPathName);
+				}
+			} while(FindNextFile(hFind, &FindFileData));
+
+			FindClose(hFind);
 		}
 	}
 }

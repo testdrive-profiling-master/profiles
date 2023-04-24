@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,13 +31,13 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Scenario test
-// Rev.  : 8/13/2020 Thu (clonextop@gmail.com)
+// Rev.  : 4/24/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __TEST_GROUP_H__
 #define __TEST_GROUP_H__
 #include "TestVector.h"
 
-typedef enum{
+typedef enum {
 	TG_DESC_NAME,
 	TG_DESC_PROGRAM,
 	TG_DESC_PARAMETERS,
@@ -48,39 +47,52 @@ typedef enum{
 	TG_DESC_POSTFIX,
 	TG_DESC_SCORE_FORAMT,
 	TG_DESC_SIZE
-}TG_DESC;
+} TG_DESC;
 
-typedef struct{
+typedef struct {
 	CString		sFormat;
 	double		min, max;
-}TG_SCORE_FORMAT;
+} TG_SCORE_FORMAT;
 
-class TestGroup : public TestResource
-{
+class TestGroup : public TestResource {
 public:
 	TestGroup(void);
 	~TestGroup(void);
 
 	BOOL Initialize(int iGroupID, LPCTSTR sPath, LPCTSTR sNameFilter);
 	void Clear(void);
-	void Scan(LPCTSTR sPath);
+	void Scan(LPCTSTR sPath, LPCTSTR sPathName = NULL);
 	void Analysis(TEST_ANALYSIS* pParent = NULL);
 	void UpdateTable(void);
 	void UpdateProfile(BOOL bUpdate = TRUE);
 
-	inline LPCTSTR GetConfig(TG_DESC id){return m_sDesc[id];}
-	inline CString& Path(void)		{return m_sPath;}
-	inline CString& Name(void)		{return m_sName;}
+	inline LPCTSTR GetConfig(TG_DESC id) {
+		return m_sDesc[id];
+	}
+	inline CString& Path(void)		{
+		return m_sPath;
+	}
+	inline CString& Name(void)		{
+		return m_sName;
+	}
 
 	void OpenFolder(void);
 
-	inline int GroupID(void)		{return m_iGroupID;}
-	inline LPCTSTR GroupName(void)	{return m_sGroup;}
-	inline size_t Size(void)		{return m_List.size();}
+	inline int GroupID(void)		{
+		return m_iGroupID;
+	}
+	inline LPCTSTR GroupName(void)	{
+		return m_sGroup;
+	}
+	inline size_t Size(void)		{
+		return m_List.size();
+	}
 
 	TestVector* FindVector(LPCTSTR sPath);
 	TestVector* GetNextVector(TestVector* pVector = NULL);
-	inline TG_SCORE_FORMAT* ScoreFormat(void)	{return &m_ScoreFormat;}
+	inline TG_SCORE_FORMAT* ScoreFormat(void)	{
+		return &m_ScoreFormat;
+	}
 
 protected:
 	int					m_iGroupID;

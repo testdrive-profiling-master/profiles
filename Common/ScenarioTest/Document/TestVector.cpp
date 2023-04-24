@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Scenario test
-// Rev.  : 4/12/2023 Wed (clonextop@gmail.com)
+// Rev.  : 4/24/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "TestVector.h"
 #include "TestGroup.h"
@@ -52,7 +52,7 @@ TestResource::~TestResource(void) {}
 
 TestVector*	TestVector::m_pCurrentTestVector	= NULL;
 
-TestVector::TestVector(TestGroup* pGroup, int iID, LPCTSTR sRelativePath, LPCTSTR sFileName)
+TestVector::TestVector(TestGroup* pGroup, int iID, LPCTSTR sRelativePath, LPCTSTR sFileName, LPCTSTR sPathName)
 {
 	m_pGroup			= pGroup;
 	m_sRelativePath		= sRelativePath;
@@ -69,18 +69,30 @@ TestVector::TestVector(TestGroup* pGroup, int iID, LPCTSTR sRelativePath, LPCTST
 		m_pHtmlTable->SetBoarderWidth(TABLE_BOARDER_RIGHT, 0);
 		m_pHtmlTable->SetSpan(TABLE_SPAN_COL, 4);
 		{
-			CString sPrefix		= pGroup->GetConfig(TG_DESC_PREFIX);
-			CString sExtension	= pGroup->GetConfig(TG_DESC_POSTFIX);
-			CString sPrivate	= GetConfigString(_T("Private"));
+			CString sTitle		= GetConfigString(_T("TITLE"));
+			CString sPrefix		= GetConfigString(_T("PREFIX"));
+			CString sPostfix	= GetConfigString(_T("POSTFIX"));
+
+			if(sTitle.empty()) {
+				sTitle.Format(_T("%s%s"), sPathName ? sPathName : _T(""), sFileName);
+			}
+
+			if(sPrefix.empty()) {
+				sPrefix		= pGroup->GetConfig(TG_DESC_PREFIX);
+			}
+
+			if(sPostfix.empty()) {
+				sPostfix	= pGroup->GetConfig(TG_DESC_POSTFIX);
+			}
+
 			ExtensionString(sPrefix);
-			ExtensionString(sExtension);
-			m_pHtmlTable->Control()->CallJScript(_T("SetTBody(\"%s <a href='test:%s'>%d-%d. %s/%s</a> %s %s\");"),
+			ExtensionString(sPostfix);
+			m_pHtmlTable->Control()->CallJScript(_T("SetTBody(\"%s <a href='test:%s'>%d-%d. %s</a> %s\");"),
 												 (LPCTSTR)sPrefix,
 												 (LPCTSTR)FullName(),
 												 iGroupID + 1, iID + 1,
-												 (LPCTSTR)m_sRelativePath, sFileName,
-												 (LPCTSTR)sExtension,
-												 (LPCTSTR)sPrivate);
+												 (LPCTSTR)sTitle,
+												 (LPCTSTR)sPostfix);
 		}
 		m_pHtmlTable->NewCell(CELL_TD, _T("date_%d_%d"), pGroup->GroupID(), m_iID);
 		m_pHtmlTable->SetBoarderWidth(TABLE_BOARDER_RIGHT, 0);
@@ -326,7 +338,6 @@ void TestVector::DoTest(void)
 	g_pSystem->LogInfo(_T("Test : %d.%s(%d) - %s"), m_pGroup->GroupID() + 1, m_pGroup->GetConfig(TG_DESC_NAME), m_iID + 1, (LPCTSTR)FullName());
 	sFullPath.Format(_T("%s%s\\%s"), (LPCTSTR)m_sScenarioPath, (LPCTSTR)m_sRelativePath, (LPCTSTR)m_sFileName);
 	sArg.Format(m_pGroup->GetConfig(TG_DESC_PARAMETERS), (LPCTSTR)sFullPath);
-	//return;
 	m_pHtmlTable->JScript(_T("ShowWait(\"%s<br><font color=#3F3FFF><b>%d-%d. '%s'</b></font><br><small><small>(%s)</small></small>\");"), _L(TEST_IS_RUNNING), m_pGroup->GroupID() + 1, m_iID + 1, (LPCTSTR)FullName(), _L(INFO_FORCE_TO_QUIT_PROGRAM));
 	{
 		// run test
@@ -385,9 +396,11 @@ void TestVector::DoTest(void)
 		m_pHtmlTable->Control()->CallJScript(_T("SetBody('result_%d_%d', \"<font color='#FF3FFF'>%s</font>\");"), m_pGroup->GroupID(), m_iID, _L(TEST_IN_PROGRESS));
 		m_pCurrentTestVector	= this;
 		double fScore	= FLT_MAX;
+
 		if(m_bSuppressWaveform) {	// suppress simulation output to quick execution
 			SetEnvironmentVariable(_T("SIM_OUTPUT_ENABLE"), _T("0"));
 		}
+
 		int iRet	= g_pSystem->ExecuteFile(sProgram, sArg, TRUE, NULL, m_sProgramPath,
 											 __sTestStatusList[TEST_STATUS_RUN_PASSED],		TEST_STATUS_RUN_PASSED,
 											 __sTestStatusList[TEST_STATUS_RUN_FAILED],		-TEST_STATUS_RUN_FAILED,
