@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
+// Rev.  : 4/24/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "AXI_common.h"
 #include "AXI_Master.h"
@@ -61,7 +61,7 @@ MAXI::MAXI(const char* sTitle, int iDataWidth, bool bUseAXI4, int iDebugLevel)
 		break;
 	}
 
-	m_dwAddressMask	= ~(m_dwDataBytes - 1);
+	m_lAddressMask	= ~((UINT64)m_dwDataBytes - 1);
 	m_dwMaxASIZE	= (DWORD)log2(m_dwDataBytes);
 	memset(&m_Read, 0, sizeof(m_Read));
 	memset(m_Read.RDATA, 0xCC, sizeof(m_Read.RDATA));
@@ -160,7 +160,7 @@ bool MAXI::Read(MAXI_DESC* pDesc, BYTE* pData)
 
 bool MAXI::Write(MAXI_DESC* pDesc, const BYTE* pData, const DWORD* pByteStrob)
 {
-	BYTE*	pMem	= (BYTE*)GetMemoryPointer(pDesc->ADDR & m_dwAddressMask, m_dwDataBytes, FALSE);
+	BYTE*	pMem	= (BYTE*)GetMemoryPointer(pDesc->ADDR & m_lAddressMask, m_dwDataBytes, FALSE);
 
 	if(!pMem) {
 		if(!m_pWriteSlave) {

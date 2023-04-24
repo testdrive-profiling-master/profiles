@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
+// Rev.  : 4/24/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __AXI_MASTER_H__
 #define __AXI_MASTER_H__
@@ -111,7 +111,7 @@ protected:
 
 private:
 	DWORD		m_dwDataBytes;
-	DWORD		m_dwAddressMask;
+	UINT64		m_lAddressMask;
 	DWORD		m_dwMaxASIZE;
 	bool		m_bUseAXI4;
 	int			m_iDebugLevel;
