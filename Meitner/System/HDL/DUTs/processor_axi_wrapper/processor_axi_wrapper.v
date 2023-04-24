@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : processor AXI wrapper
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/24/2023 Mon (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 `include "testdrive_system.vh"
@@ -131,7 +131,6 @@ wire										p_mr_last,	p_mw_last;	// last
 
 // processor
 wire										p_CLK, p_nRST;			// processing clock & reset(active low)
-wire										p_INTR;					// interrupt
 wire										busy;					// busy
 wire										p_EN, p_WE;				// slave enable / write enable
 wire	[S_ADDR_WIDTH-1:0]					p_ADDR;					// slave address
@@ -224,13 +223,11 @@ processor_clkgen_slave clk_gen_slave (
 	.nRST			(nRST),
 	.PCLK			(p_CLK),
 	.nPRST			(p_nRST),
-	.PINTR			(p_INTR),
 	.EN				(S_PSEL & S_PENABLE & clkgen_en),
 	.WE				(S_PWRITE),
 	.WDATA			(S_PWDATA),
 	.RDATA			(S_PRDATA_clkgen),
-	.BUSY			(busy),
-	.INTR			(INTR)
+	.BUSY			(busy)
 );
 
 processor_async_slave #(
@@ -306,7 +303,7 @@ processor_top #(
 	.CLK			(p_CLK),
 	.nRST			(p_nRST),
 	.BUSY			(busy),
-	.INTR			(p_INTR),
+	.INTR			(INTR),
 	// slave bus
 	.P_EN			(p_EN),
 	.P_WE			(p_WE),

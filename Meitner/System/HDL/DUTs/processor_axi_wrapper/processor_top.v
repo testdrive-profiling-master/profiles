@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : processor AXI wrapper
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/24/2023 Mon (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 
@@ -110,7 +110,7 @@ wire	data_trans		= bWrite ? (MW_VALID & MW_READY) : (MR_VALID & MR_READY);
 always@(posedge CLK, negedge nRST) begin
 	if(!nRST) begin
 		INTR		<= `FALSE;
-		P_RDATA		<= 32'hBEEF0000;
+		P_RDATA		<= 32'h0BEEF000;
 
 		MR_REQ		<= `FALSE;
 		MW_REQ		<= `FALSE;
@@ -127,10 +127,12 @@ always@(posedge CLK, negedge nRST) begin
 		};
 	end
 	else begin
-		INTR		<= P_EN & P_WE & (P_ADDR == 'd4) & P_WDATA[0];	// Invoke interrupt
+		if(P_EN & P_WE & (P_ADDR == 'd4)) begin
+			INTR		<= P_WDATA[0];	// Invoke interrupt
+		end
 
 		if(P_EN & ~P_WE)	begin // slave read test
-			P_RDATA		<= P_RDATA + 1'b1;
+			P_RDATA		<= {INTR, P_RDATA[30:0] + 1'b1};
 		end
 
 		if(P_EN && P_WE) begin	// slave write test

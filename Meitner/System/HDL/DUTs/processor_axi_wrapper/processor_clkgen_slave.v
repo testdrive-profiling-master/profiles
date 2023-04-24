@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : processor AXI wrapper
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 4/24/2023 Mon (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 
@@ -41,7 +40,6 @@ module processor_clkgen_slave (
 	// clock in/out
 	input				CLK, nRST,		// system clock & reset (active low)
 	output				PCLK, nPRST,	// processing clock & reset (active low)
-	input				PINTR,			// processor interrupt (one hot - positive)
 
 	// slave interface
 	input				EN,				// enable
@@ -50,8 +48,7 @@ module processor_clkgen_slave (
 	output	[31:0]		RDATA,			// read data
 
 	// processor states
-	input				BUSY,			// processor is busy
-	output	reg			INTR			// interrupt signal
+	input				BUSY			// processor is busy
 );
 
 // definition & assignment ---------------------------------------------------
@@ -62,15 +59,9 @@ reg		[15:0]			clkgen_WDATA;
 wire	[15:0]			clkgen_RDATA;
 wire					clkgen_READY, clkgen_LOCKED;
 
-// interrupt
-reg						intr_s_toggle, intr_p_toggle;
-reg		[9:0]			intr_counter;	// interrupt counter
-
 assign	RDATA			= {
 	BUSY,
-	INTR,
-	2'd0,
-	intr_counter,
+	13'd0,
 	clkgen_READY,
 	clkgen_LOCKED,
 	clkgen_RDATA
@@ -92,9 +83,6 @@ always@(posedge CLK, negedge nRST) begin
 		clkgen_RST			<= 1'b1;
 		clkgen_ADDR			<= 7'd0;
 		clkgen_WDATA		<= 16'd0;
-		intr_s_toggle		<= 1'b0;
-		intr_counter		<= 'd0;
-		INTR				<= 1'b0;
 	end
 	else begin
 		if(EN & WE) begin
@@ -104,30 +92,15 @@ always@(posedge CLK, negedge nRST) begin
 			clkgen_ADDR		<= WDATA[22:16];
 			clkgen_WDATA	<= WDATA[15:0];
 		end
-
-		if(EN & (~WE)) begin
-			intr_counter	<= 'd0;
-			INTR			<= 1'b0;
-		end
-		else begin
-			if(intr_s_toggle ^ intr_p_toggle) begin
-				intr_s_toggle		<= ~intr_s_toggle;
-				intr_counter		<= intr_counter + 1'b1;
-				INTR				<= 1'b1;
-			end
-		end
 	end
 end
 
 always@(posedge PCLK, negedge nRST) begin
 	if(!nRST) begin
 		reset_pipe			<= 4'b0;
-		intr_p_toggle		<= 1'b0;
 	end
 	else begin
 		reset_pipe			<= {reset_pipe[2:0], clkgen_LOCKED};
-		if(PINTR)
-			intr_p_toggle		<= ~intr_p_toggle;
 	end
 end
 

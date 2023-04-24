@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 2/20/2023 Mon (clonextop@gmail.com)
+// Rev.  : 4/24/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "hw/DUT.h"
@@ -68,9 +68,12 @@ public:
 	}
 
 	virtual void OnInterrupt(void) {
-		printf("*** INTERRUPT is occurred. ***\n");
-		m_pDDK->RegWrite((DUT_BASE | (4 << 2)), 0);		// clear interrupt flag
-		m_IntrSema.Up();								// release waiting for interrupt
+		if(m_pDDK->RegRead(DUT_BASE) & 0x80000000) {		// check interrupt flag
+			printf("*** INTERRUPT is occurred. ***\n");
+			m_pDDK->RegWrite((DUT_BASE | (4 << 2)), 0);		// clear interrupt flag
+			m_IntrSema.Up();								// release waiting for interrupt
+		}
+
 		m_pDDK->ClearInterruptPending();
 	}
 
@@ -84,7 +87,7 @@ public:
 
 		for(int i = 0; i < 5; i++) {
 			DWORD	dwData	= 0xABCD0000 | i;
-			printf("\tWrite : 0x%X\n", dwData);
+			printf("\tWrite : 0x%08X\n", dwData);
 			m_pDDK->RegWrite(DUT_BASE | (3 << 2), dwData);
 		}
 
@@ -92,7 +95,7 @@ public:
 		printf("\tRead slave fifo 5 times...\n");
 
 		for(int i = 0; i < 5; i++)
-			printf("\tRead : 0x%X\n", m_pDDK->RegRead(DUT_BASE));
+			printf("\tRead : 0x%08X\n", m_pDDK->RegRead(DUT_BASE));
 
 		//-----------------------------------------------------
 		// master R/W test
@@ -164,7 +167,6 @@ public:
 		printf("\nInterrupt test...\n");
 		m_pDDK->RegWrite((DUT_BASE | (4 << 2)), 1);
 		m_IntrSema.Down();			// wait for interrupt
-		printf("\tInterrupt Counted = 0x%X\n", (m_pDDK->RegRead((DUT_CLOCKGEN_BASE | (4 << 2))) >> 18) & 0x3FF);	// clear & get interrupt counter
 		printf("process is done!\n");
 		return true;
 	}

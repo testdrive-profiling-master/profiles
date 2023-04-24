@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/24/2023 Mon (clonextop@gmail.com)
 //================================================================================
 `include "library/SyncPipe.v"
 `include "library/SRAM_Dual_Distributed.v"
@@ -54,7 +54,7 @@ reg	[31:0]			sim_cnt_r;
 assign	INTR		= `FALSE;
 
 reg					we, re;
-reg		[31:0]		wdata;
+reg		[31:0]		wdata, rdata_golden;
 wire	[31:0]		rdata;
 wire				empty, full;
 
@@ -107,8 +107,9 @@ always@(posedge w_clk, negedge nRST) begin
 	end
 	else begin
 		sim_cnt_w		<= sim_cnt_w + 1;
-
-		wdata			<= wdata + 1;
+		if(we && ~full) begin
+			wdata			<= wdata + 1;
+		end
 
 		`ON_TIME_W(2) begin
 			we			<= `TRUE;
@@ -126,6 +127,10 @@ always@(posedge w_clk, negedge nRST) begin
 			we			<= `FALSE;
 		end
 
+		`ON_TIME_W(40) we	<= `TRUE;
+		`ON_TIME_W(50) we	<= `FALSE;
+
+
 		`ON_TIME_W(100) begin
 			BUSY		<= `FALSE;
 		end
@@ -136,9 +141,17 @@ always@(posedge r_clk, negedge nRST) begin
 	if(!nRST) begin
 		sim_cnt_r		<= 'd0;
 		re				<= `FALSE;
+		rdata_golden	<= 'd0;
 	end
 	else begin
 		sim_cnt_r		<= sim_cnt_r + 1;
+
+		if(re && ~empty) begin
+			if(rdata != rdata_golden) begin
+				$display("*E: Got Error at sim count %d", sim_cnt);
+			end
+			rdata_golden	<= rdata_golden + 1;
+		end
 
 		`ON_TIME_R(9) begin
 			re			<= `TRUE;
@@ -153,9 +166,12 @@ always@(posedge r_clk, negedge nRST) begin
 			re			<= `TRUE;
 		end
 
-		`ON_TIME_R(29) begin
+		`ON_TIME_R(30) begin
 			re			<= `FALSE;
 		end
+
+		`ON_TIME(40) re	<= `TRUE;
+		`ON_TIME(50) re	<= `FALSE;
 	end
 end
 
