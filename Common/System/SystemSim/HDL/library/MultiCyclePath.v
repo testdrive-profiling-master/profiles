@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common verilog library
-// Rev.  : 9/2/2022 Fri (clonextop@gmail.com)
+// Rev.  : 4/25/2023 Tue (clonextop@gmail.com)
 //================================================================================
 `ifndef __TESTDRIVE_MULTICYCLE_PIPE_V__
 `define __TESTDRIVE_MULTICYCLE_PIPE_V__
@@ -73,6 +73,7 @@ genvar i;
 
 reg		[CYCLE-1:0]			ie_pipe;		// input enable pipe
 reg		[CYCLE:0]			oe_pipe;		// output enable pipe
+reg		[CYCLE:0]			en_pipe;		// state enable pipe
 wire	[OWIDTH-1:0]		demux_dout;		// demuxed data out
 
 assign	OE					= oe_pipe[CYCLE];
@@ -83,11 +84,13 @@ always@(posedge CLK, negedge nRST) begin
 	if(!nRST) begin
 		ie_pipe		<= {{(CYCLE-1){1'b0}}, 1'b1};
 		oe_pipe		<= {(CYCLE+1){1'b0}};
+		en_pipe		<= {(CYCLE+1){1'b0}};
 	end
 	else begin
-		if(IE || (|oe_pipe)) begin
+		if(IE || en_pipe[CYCLE]) begin
 			ie_pipe		<= {ie_pipe[CYCLE-2:0], ie_pipe[CYCLE-1]};
 			oe_pipe		<= {oe_pipe[CYCLE-1:0], IE};
+			en_pipe		<= {en_pipe[CYCLE-1:0] | {(CYCLE){IE}}, IE};
 		end
 	end
 end
@@ -110,7 +113,8 @@ endgenerate
 // demuxing result output
 demux_by_enable #(
 	.WIDTH			(OWIDTH),
-	.CHANNELS		(CYCLE)
+	.CHANNELS		(CYCLE),
+	.TRISTATE		(1)
 ) odata_demux (
 	.EN_BUS			(ie_pipe),
 	.DIN_BUS		(PIPE_O),

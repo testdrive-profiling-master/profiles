@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,21 +31,21 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common verilog library
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 4/25/2023 Tue (clonextop@gmail.com)
 //================================================================================
 `ifndef __TESTDRIVE_SRAM_SINGLE_MULTICYCLE_V__
 `define __TESTDRIVE_SRAM_SINGLE_MULTICYCLE_V__
 `include "testdrive_system.vh"
 
-`define __GEN_MULTIPATH_PIPE(name) \
-	(* keep="true"*) reg		[DATA_WIDTH-1:0]		name; \
-	assign DOUT		= name; \
-	always@(posedge CLK, negedge nRST) begin \
-		if(!nRST) begin \
-			name	<= {(DATA_WIDTH){1'b0}}; \
-		end \
-		else if(o_en) begin \
-			name	<= sram_out; \
+`define __GEN_MULTIPATH_SRAM \
+	(* keep="true"*) reg		[(DATA_WIDTH-1):0]		mem[(2**ADDR_WIDTH)-1:0]; \
+	(* keep="true"*) reg		[DATA_WIDTH-1:0]		o_data; \
+	assign DOUT		= o_data; \
+	always@(posedge CLK) begin \
+		if(en) begin \
+			if(r_we) \
+				mem[r_addr]	<= r_din; \
+			o_data	<= mem[r_addr]; \
 		end \
 	end
 
@@ -55,87 +54,89 @@ module SRAM_Single_Multicycle #(
 	parameter	DATA_WIDTH			= 32,
 	parameter	CYCLE				= 2
 ) (
-	input							CLK,	// clock
-	input							nRST,	// reset (active low)
-	input							nCE,	// chip enable (active low)
-	input							nWE,	// write enable (active low)
-	output	reg						READY,	// input ready
-	input	[ADDR_WIDTH-1:0]		ADDR,	// address
-	input	[DATA_WIDTH-1:0]		DIN,	// data input
-	output	reg						OE,		// output enable
-	output	[DATA_WIDTH-1:0]		DOUT	// data output
+	input							CLK,		// clock
+	input							nRST,		// reset (active low)
+	input							EN,			// enable
+	input							WE,			// write enable
+	output							READY,		// input ready
+	input	[ADDR_WIDTH-1:0]		ADDR,		// address
+	input	[DATA_WIDTH-1:0]		DIN,		// data input
+	output							OE,			// output enable
+	output	[DATA_WIDTH-1:0]		DOUT		// data output
 );
 // synopsys template
 
 // definition & assignment ---------------------------------------------------
 reg		[CYCLE-1:0]			oe_pipe;
+reg		[CYCLE-1:0]			en_pipe;
+reg		[ADDR_WIDTH-1:0]	r_addr;
+reg		[DATA_WIDTH-1:0]	r_din;
+reg							r_we;
 wire	[DATA_WIDTH-1:0]	sram_out;
 
-wire	re					= (~nCE) & nWE;
-wire	o_en				= oe_pipe[CYCLE-1];
+wire	en					= EN & READY;
+wire	re					= en & ~WE;
+
+assign	READY				= ~en_pipe[CYCLE-1];
+assign	OE					= oe_pipe[CYCLE-1];
 
 // implementation ------------------------------------------------------------
-SRAM_Single #(
-	.ADDR_WIDTH		(ADDR_WIDTH),
-	.DATA_WIDTH		(DATA_WIDTH)
-) sram (
-	.CLK			(CLK),
-	.nCE			(nCE),
-	.nWE			(nWE),
-	.ADDR			(ADDR),
-	.DIN			(DIN),
-	.DOUT			(sram_out)
-);
-
 always@(posedge CLK, negedge nRST) begin
 	if(!nRST) begin
+		en_pipe		<= {(CYCLE){1'b0}};
 		oe_pipe		<= {(CYCLE){1'b0}};
-		READY		<= 1'b0;
-		OE			<= 1'b0;
+		r_addr		<= 'd0;
+		r_din		<= 'd0;
+		r_we		<= 1'b0;
 	end
 	else begin
+		en_pipe		<= {en_pipe[(CYCLE-2):0] | {(CYCLE - 1){en}}, 1'b0};
 		oe_pipe		<= {oe_pipe[(CYCLE-2):0], re};
-		READY		<= |{re, oe_pipe};
-		OE			<= o_en;
+		if(en) begin
+			r_we		<= WE;
+			r_addr		<= ADDR;
+			//if(~WE)
+			r_din		<= DIN;
+		end
 	end
 end
 
 generate begin : gen_multicycle
 	if(CYCLE==2) begin : path_2
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_SRAM
 	end
 	else if(CYCLE==3) begin : path_3
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_SRAM
 	end
 	else if(CYCLE==4) begin : path_4
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_SRAM
 	end
 	else if(CYCLE==5) begin : path_5
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_SRAM
 	end
 	else if(CYCLE==6) begin : path_6
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_SRAM
 	end
 	else if(CYCLE==7) begin : path_7
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_SRAM
 	end
 	else if(CYCLE==8) begin : path_8
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_SRAM
 	end
 	else if(CYCLE==9) begin : path_9
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_SRAM
 	end
 	else if(CYCLE==10) begin : path_10
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_SRAM
 	end
 	else if(CYCLE==11) begin : path_11
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_SRAM
 	end
 	else if(CYCLE==12) begin : path_12
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_SRAM
 	end
 	else begin : multicycle_path
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_SRAM
 	end
 end
 endgenerate

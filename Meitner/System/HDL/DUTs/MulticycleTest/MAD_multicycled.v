@@ -31,33 +31,34 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/25/2023 Tue (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 
 module MAD_multicycled #(
-	parameter				CYCLE	= 3
+	parameter				CYCLE	= 2
 ) (
 	input					CLK,	// clock
 	input					nRST,	// reset (active low)
 	input					IE,		// input enable
-	input	[31:0]			A,		// A
-	input	[31:0]			B,		// B
-	input	[31:0]			C,		// C
+	input	[63:0]			A,		// A
+	input	[63:0]			B,		// B
+	input	[63:0]			C,		// C
 	output					OE,		// output enable
-	output	[31:0]			O		// output
+	output	reg [63:0]		O		// output
 );
 
 // definition & assignment ---------------------------------------------------
 genvar i;
 
-wire	[(32*CYCLE*3)-1:0]	pipe_i;
-wire	[(32*CYCLE)-1:0]	pipe_o;
+wire	[(64*CYCLE*3)-1:0]	pipe_i;
+wire	[(64*CYCLE)-1:0]	pipe_o;
+wire	[63:0]				out;
 
 // implementation ------------------------------------------------------------
 MultiCyclePath #(
-	.IWIDTH		(32*3),
-	.OWIDTH		(32),
+	.IWIDTH		(64*3),
+	.OWIDTH		(64),
 	.CYCLE		(CYCLE)
 ) multi_pipe (
 	.CLK		(CLK),
@@ -67,20 +68,29 @@ MultiCyclePath #(
 	.PIPE_I		(pipe_i),
 	.PIPE_O		(pipe_o),
 	.OE			(OE),
-	.ODATA		(O)
+	.ODATA		(out)
 );
 
 generate
 for(i=0;i<CYCLE;i=i+1) begin : mad_gen
-	wire	[32-1:0]	a,b,c;
-	assign	{a,b,c}		= pipe_i[`BUS_RANGE((32*3), i)];
+	wire	[64-1:0]	a,b,c;
+	assign	{a,b,c}		= pipe_i[`BUS_RANGE((64*3), i)];
 	MAD mad_inst(
 		.A		(a),
 		.B		(b),
 		.C		(c),
-		.O		(pipe_o[`BUS_RANGE(32,i)])
+		.O		(pipe_o[`BUS_RANGE(64,i)])
 	);
 end
 endgenerate
+
+always@(posedge CLK) begin		// for multi-cycle contraint 'PIN' to 'CELL' search configuration
+	if(!nRST) begin
+		O	<= 'd0;
+	end
+	else begin
+		O	<= out;
+	end
+end
 
 endmodule

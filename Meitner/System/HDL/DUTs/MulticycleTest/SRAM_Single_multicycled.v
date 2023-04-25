@@ -31,39 +31,74 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/25/2023 Tue (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 
-module SRAM_Single_multicycled (
+module SRAM_Single_multicycled #(
+	parameter				CYCLE	= 2
+) (
 	input					CLK,	// clock
 	input					nRST,	// reset (active low)
-	input					nCE,	// chip enable (active low)
-	input					nWE,	// write enable (active low)
+	input					EN,		// chip enable
+	input					WE,		// write enable
 	output					READY,	// input ready
-	input	[6:0]			ADDR,	// address
-	input	[31:0]			DIN,	// data input
+	input	[7:0]			ADDR,	// address
+	input	[63:0]			DIN,	// data input
 	output					OE,		// output enable
-	output	[31:0]			DOUT	// data output
+	output	reg [63:0]		DOUT	// data output
 );
 
 // definition & assignment ---------------------------------------------------
+wire	[63:0]				w_dout;
+reg		[63:0]				r_dout;
+reg							r_EN;
+reg							r_WE;
+reg		[7:0]				r_ADDR;
+reg		[63:0]				r_DIN;
 
 // implementation ------------------------------------------------------------
+always@(posedge CLK) begin	// for checking clock MHz
+	if(!nRST) begin
+		r_EN	<= 1'b0;
+		r_WE	<= 1'b0;
+		r_ADDR	<= 'd0;
+		r_DIN	<= 'd0;
+	end
+	else begin
+		r_EN	<= EN;
+		r_WE	<= WE;
+		r_ADDR	<= ADDR;
+		r_DIN	<= DIN;
+	end
+end
+
 SRAM_Single_Multicycle #(
-	.ADDR_WIDTH		(7),
-	.DATA_WIDTH		(32),
-	.CYCLE			(2)
+	.ADDR_WIDTH		(8),
+	.DATA_WIDTH		(64),
+	.CYCLE			(CYCLE)
 ) sram (
 	.CLK			(CLK),
 	.nRST			(nRST),
-	.nCE			(nCE),
-	.nWE			(nWE),
+	.EN				(r_EN),
+	.WE				(r_WE),
 	.READY			(READY),
-	.ADDR			(ADDR),
-	.DIN			(DIN),
+	.ADDR			(r_ADDR),
+	.DIN			(r_DIN),
 	.OE				(OE),
-	.DOUT			(DOUT)
+	.DOUT			(w_dout)
 );
+
+always@(posedge CLK) begin	// for multi-cycle contraint 'PIN' to 'CELL' search configuration
+	if(!nRST) begin
+		r_dout	<= 'd0;
+		DOUT	<= 'd0;
+
+	end
+	else begin
+		r_dout	<= w_dout;
+		DOUT	<= r_dout;
+	end
+end
 
 endmodule

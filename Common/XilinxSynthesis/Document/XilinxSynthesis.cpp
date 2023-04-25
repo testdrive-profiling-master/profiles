@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 1/8/2022 Sat (clonextop@gmail.com)
+// Rev.  : 4/25/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include "testdrive_document.inl"
 #include "XilinxSynthesis.h"
@@ -329,6 +329,32 @@ void XilinxSynthesis::OnHtmlDocumentComplete(DWORD dwID, LPCTSTR lpszURL)
 	}
 }
 
+BOOL XilinxSynthesis::AddSynthesisList(LPCTSTR sPath)
+{
+	BOOL	bExisted	= FALSE;
+
+	// check existence in list.
+	for(auto& i : m_pSynthesisList) {
+		if(i == sPath) {
+			bExisted	= TRUE;
+			break;
+		}
+	}
+
+	if(!bExisted) {
+		m_pSynthesisList.push_back(sPath);
+
+		if(m_pDoc->IsLocked()) {
+			g_pSystem->LogInfo(_T("%s : '%s'"), _L(ADD_SYNTHESIS_LIST), sPath);
+		}
+
+		return TRUE;
+	}
+
+	g_pSystem->LogInfo(_T("%s : '%s'"), _L(ALREADY_EXIST_IN_SYNTHESIS_LIST), sPath);
+	return FALSE;
+}
+
 void XilinxSynthesis::StartSynthesis(LPCTSTR sPath, BOOL bGroup)
 {
 	if(!*m_Config.sXilinxPath) {	// xilinx path is not existed.
@@ -343,17 +369,15 @@ void XilinxSynthesis::StartSynthesis(LPCTSTR sPath, BOOL bGroup)
 			SourceVector* pSource	= pGroup->GetNextSource(NULL);
 
 			while(pSource) {
-				m_pSynthesisList.push_back(pSource->FullName());
+				AddSynthesisList(pSource->FullName());
 				pSource	= pGroup->GetNextSource(pSource);
 			}
 		}
 	} else {
-		m_pSynthesisList.push_back(sPath);
+		AddSynthesisList(sPath);
 	}
 
-	if(m_pDoc->IsLocked()) {
-		g_pSystem->LogInfo(_T("%s : '%s'"), _L(ADD_SYNTHESIS_LIST), sPath);
-	} else {
+	if(!m_pDoc->IsLocked()) {
 		m_pDoc->Lock();
 		m_pDoc->SetTimer(COMMAND_ID_SYNTHESIS, 0);
 	}

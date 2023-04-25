@@ -35,10 +35,11 @@
 //================================================================================
 `include "testdrive_system.vh"
 
-module MAD_multicycled_4 (
+module MAD_multicycled_Ex_6 (
 	input					CLK,	// clock
 	input					nRST,	// reset (active low)
 	input					IE,		// input enable
+	output					IREADY,	// input ready
 	input	[63:0]			A,		// A
 	input	[63:0]			B,		// B
 	input	[63:0]			C,		// C
@@ -49,12 +50,14 @@ module MAD_multicycled_4 (
 // definition & assignment ---------------------------------------------------
 
 // implementation ------------------------------------------------------------
-MAD_multicycled #(
-	.CYCLE		(4)
+MAD_multicycled_Ex #(
+	.CYCLE		(6),
+	.COUNT		(1)
 ) multi_pipe (
 	.CLK		(CLK),
 	.nRST		(nRST),
 	.IE			(IE),
+	.IREADY		(IREADY),
 	.A			(A),
 	.B			(B),
 	.C			(C),

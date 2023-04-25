@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/25/2023 Tue (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 
@@ -42,15 +42,15 @@ module MAD_multicycled_Slice #(
 	input					nRST,	// reset (active low)
 	input					IE,		// input enable
 	output					IREADY,	// input ready
-	input	[31:0]			A,		// A
-	input	[31:0]			B,		// B
-	input	[31:0]			C,		// C
+	input	[63:0]			A,		// A
+	input	[63:0]			B,		// B
+	input	[63:0]			C,		// C
 	output					OE,		// output enable
-	output	[31:0]			O		// output
+	output	[63:0]			O		// output
 );
 
 // definition & assignment ---------------------------------------------------
-wire	[32-1:0]	result;
+wire	[64-1:0]	result;
 
 // implementation ------------------------------------------------------------
 MAD mad_inst(
@@ -61,7 +61,7 @@ MAD mad_inst(
 );
 
 MultiCycleSlice #(
-	.WIDTH			(32),
+	.WIDTH			(64),
 	.CYCLE			(CYCLE),
 	.CHAINED		(0)
 ) muti_slice (

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/25/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include "LocaleString.h"
 
@@ -319,6 +319,11 @@ LOCALE_TEXT(ADD_SYNTHESIS_LIST,
 			_T("合成のリストを追加しました。"),
 			_T("lista de síntesis añadido."),
 			_T("Added list of synthesis."))
+LOCALE_TEXT(ALREADY_EXIST_IN_SYNTHESIS_LIST,
+			_T("이미 합성 목록에 존재합니다."),
+			_T("すでに合成リストに存在します。"),
+			_T("Ya existe en la lista compuesta."),
+			_T("It already exists in the composite list."))
 LOCALE_TEXT(SET_MARK,
 			_T("현재 결과를 비교 대상으로 지정합니다."),
 			_T("現在の結果を比較対象として指定します。"),

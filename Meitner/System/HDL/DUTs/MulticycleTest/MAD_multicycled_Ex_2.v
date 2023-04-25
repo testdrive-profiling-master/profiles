@@ -31,28 +31,28 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/25/2023 Tue (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 
-module MAD_multicycled_Ex_4_4 (
+module MAD_multicycled_Ex_2 (
 	input					CLK,	// clock
 	input					nRST,	// reset (active low)
 	input					IE,		// input enable
 	output					IREADY,	// input ready
-	input	[31:0]			A,		// A
-	input	[31:0]			B,		// B
-	input	[31:0]			C,		// C
+	input	[63:0]			A,		// A
+	input	[63:0]			B,		// B
+	input	[63:0]			C,		// C
 	output					OE,		// output enable
-	output	[31:0]			O		// output
+	output	[63:0]			O		// output
 );
 
 // definition & assignment ---------------------------------------------------
 
 // implementation ------------------------------------------------------------
 MAD_multicycled_Ex #(
-	.CYCLE		(4),
-	.COUNT		(4)
+	.CYCLE		(2),
+	.COUNT		(1)
 ) multi_pipe (
 	.CLK		(CLK),
 	.nRST		(nRST),

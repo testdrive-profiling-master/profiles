@@ -31,17 +31,20 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/25/2023 Tue (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 `include "library/demux_by_enable.v"
 `include "library/MultiCyclePath.v"
 `include "library/MultiCyclePathEx.v"
 `include "library/MultiCycleSlice.v"
+`include "library/SRAM_Single.v"
+`include "library/SRAM_Single_Multicycle.v"
 `include "DUTs/MultiCycleTest/MAD.v"
 `include "DUTs/MultiCycleTest/MAD_multicycled.v"
 `include "DUTs/MultiCycleTest/MAD_multicycled_Ex.v"
 `include "DUTs/MultiCycleTest/MAD_multicycled_Slice.v"
+`include "DUTs/MultiCycleTest/SRAM_Single_multicycled.v"
 
 /* HIDDEN */
 module top (
@@ -58,9 +61,9 @@ assign	INTR				= `FALSE;
 
 reg							ie;
 wire						iready;
-reg		[31:0]				data_a, data_b, data_c;
+reg		[63:0]				data_a, data_b, data_c;
 wire						oe;
-wire	[31:0]				odata;
+wire	[63:0]				odata;
 
 `define ON_TIME(t)	if(sim_counter==t)
 
@@ -207,6 +210,25 @@ MAD_multicycled_Slice #(
 	.C			(data_c),
 	.OE			(oe),
 	.O			(odata)
+);
+`endif
+
+//----------------------------------------------------------------------------
+// Multi-cycle Single SRAM
+//----------------------------------------------------------------------------
+`ifdef MULTICYCLE_SRAM
+SRAM_Single_multicycled #(
+	.CYCLE		(3)
+) multicycle_sram (
+	.CLK		(MCLK),
+	.nRST		(nRST),
+	.EN			(ie),
+	.WE			(sim_counter[1]),
+	.READY		(iready),
+	.ADDR		(data_a[7:0]),
+	.DIN		(data_b),
+	.OE			(oe),
+	.DOUT		(odata)
 );
 `endif
 

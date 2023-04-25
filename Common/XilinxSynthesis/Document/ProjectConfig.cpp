@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/25/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include "ProjectConfig.h"
 #include "SourceList.h"
@@ -119,22 +119,22 @@ BOOL ProjectConfig::UpdateConfig(CONFIG_ID id, BOOL bUpdate)
 	switch(id) {
 	case CONFIG_ID_FAMILY:
 		sTarget	= m_Config.spec.sFamily;
-		sDefault = _T("Virtex7");
+		sDefault = _T("Virtex UltraScale+");
 		break;
 
 	case CONFIG_ID_DEVICE:
 		sTarget	= m_Config.spec.sDevice;
-		sDefault = _T("xc7vx485t");
+		sDefault = _T("xcvu3p");
 		break;
 
 	case CONFIG_ID_PACKAGE:
 		sTarget	= m_Config.spec.sPackage;
-		sDefault = _T("ffg1761");
+		sDefault = _T("ffvc1517");
 		break;
 
 	case CONFIG_ID_SPEED_GRADE:
 		sTarget	= m_Config.spec.sSpeedGrade;
-		sDefault = _T("-2");
+		sDefault = _T("-2-w");
 		break;
 
 	case CONFIG_ID_TARGET_SPEED:

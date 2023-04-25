@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 1/8/2022 Sat (clonextop@gmail.com)
+// Rev.  : 4/25/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __XILINX_SYNTHESIS_H__
 #define __XILINX_SYNTHESIS_H__
@@ -92,6 +92,7 @@ public:
 	void RefreshButtonClick(void);
 
 protected:
+	BOOL AddSynthesisList(LPCTSTR sPath);
 	void StartSynthesis(LPCTSTR sPath, BOOL bGroup);
 	BOOL OnSynthesis(void);
 
@@ -103,11 +104,8 @@ private:
 	HtmlTable			m_Table;
 
 	ITDPropertyData*	m_pProperty[PROPERTY_ID_SIZE];
-
 	XilinxDevices		m_XilinxDevices;
-
 	SourceGroup*		m_pSourceList;
-
 	list<CString>		m_pSynthesisList;
 };
 #endif//__XILINX_SYNTHESIS_H__

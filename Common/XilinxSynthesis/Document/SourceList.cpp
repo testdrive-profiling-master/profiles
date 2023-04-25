@@ -270,12 +270,24 @@ void SourceVector::UpdateTable(void)
 	// area
 	{
 		CString		sBody;
-		LPCTSTR		sRatiox2	= _T("%d<font color='#9F9F9F'><small><small> (%.2f%%)</small></small></font>");
-		LPCTSTR		sRatiox1	= _T("%d<font color='#9F9F9F'><small><small> (%.1f%%)</small></small></font>");
+		auto FormatRatio = [](CString & sBody, int reg_count, float fRatio) {
+			DWORD	dwColor		= 0;
+			BOOL	bOverflow	= (fRatio > 100);
+			{
+				// set text color
+				float	fFixedRatio	= bOverflow ? 100 : fRatio;
+				DWORD	dwBlack		= (159 * (100 - fFixedRatio)) / 100;
+				DWORD	dwRed		= (159 * (100 - fFixedRatio) + (255 * fFixedRatio)) / 100;
+				dwColor				= ((dwRed << 16) | (dwBlack << 8) | dwBlack);
+			}
+			LPCTSTR		sRatiox2	= _T("%d<font color='#9F9F9F'><small><small> (%s<font color='#%06X'>%.2f%%</font>%s)</small></small></font>");
+			LPCTSTR		sRatiox1	= _T("%d<font color='#9F9F9F'><small><small> (%s<font color='#%06X'>%.1f%%</font>%s)</small></small></font>");
+			sBody.Format(fRatio < 10.f ? sRatiox2 : sRatiox1, reg_count, bOverflow ? _T("<u>") : _T(""), dwColor, fRatio, bOverflow ? _T("</u>") : _T(""));
+		};
 
 		// registers
 		if(m_Info.area.regs.count > 0) {
-			sBody.Format(m_Info.area.regs.ratio < 10.f ? sRatiox2 : sRatiox1, m_Info.area.regs.count, m_Info.area.regs.ratio);
+			FormatRatio(sBody, m_Info.area.regs.count, m_Info.area.regs.ratio);
 
 			if(m_PreviousInfo.time_stamp && m_PreviousInfo.area.regs.count >= 0)
 				__StrAppendMark(sBody, _T("%+.0f"), (float)(m_Info.area.regs.count - m_PreviousInfo.area.regs.count), FALSE);
@@ -287,7 +299,7 @@ void SourceVector::UpdateTable(void)
 
 		// luts
 		if(m_Info.area.luts.count > 0) {
-			sBody.Format(m_Info.area.luts.ratio < 10.f ? sRatiox2 : sRatiox1, m_Info.area.luts.count, m_Info.area.luts.ratio);
+			FormatRatio(sBody, m_Info.area.luts.count, m_Info.area.luts.ratio);
 
 			if(m_PreviousInfo.time_stamp && m_PreviousInfo.area.luts.count >= 0)
 				__StrAppendMark(sBody, _T("%+.0f"), (float)(m_Info.area.luts.count - m_PreviousInfo.area.luts.count), FALSE);
@@ -299,7 +311,7 @@ void SourceVector::UpdateTable(void)
 
 		// brams
 		if(m_Info.area.brams.count > 0) {
-			sBody.Format(m_Info.area.brams.ratio < 10.f ? sRatiox2 : sRatiox1, m_Info.area.brams.count, m_Info.area.brams.ratio);
+			FormatRatio(sBody, m_Info.area.brams.count, m_Info.area.brams.ratio);
 
 			if(m_PreviousInfo.time_stamp && m_PreviousInfo.area.brams.count >= 0)
 				__StrAppendMark(sBody, _T("%+.0f"), (float)(m_Info.area.brams.count - m_PreviousInfo.area.brams.count), FALSE);
@@ -311,7 +323,7 @@ void SourceVector::UpdateTable(void)
 
 		// dsps
 		if(m_Info.area.dsps.count > 0) {
-			sBody.Format(m_Info.area.dsps.ratio < 10.f ? sRatiox2 : sRatiox1, m_Info.area.dsps.count, m_Info.area.dsps.ratio);
+			FormatRatio(sBody, m_Info.area.dsps.count, m_Info.area.dsps.ratio);
 
 			if(m_PreviousInfo.time_stamp && m_PreviousInfo.area.dsps.count >= 0)
 				__StrAppendMark(sBody, _T("%+.0f"), (float)(m_Info.area.dsps.count - m_PreviousInfo.area.dsps.count), FALSE);
@@ -523,7 +535,7 @@ BOOL SourceVector::Synthesis_Vivado(void)
 							  (LPCTSTR)sSrcList);
 				}
 			}
-			FilePrint(fp, _T("synth_design -include_dirs \"%s\" -top %s -part %s -no_iobuf\n"),
+			FilePrint(fp, _T("synth_design -directive PerformanceOptimized -include_dirs \"%s\" -top %s -part %s -no_iobuf\n"),
 					  (LPCTSTR)sIncludePaths,
 					  (LPCTSTR)sTopName,
 					  (LPCTSTR)sDevice);
