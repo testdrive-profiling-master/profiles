@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/25/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include "SourceList.h"
 #include <tchar.h>
@@ -661,7 +661,8 @@ BOOL SourceVector::Synthesis_Vivado(void)
 					CString st	= (sTok + 17);
 					int pos		= 0;
 					m_Info.area.regs.count	= _ttoi(st.Tokenize(sTokDlim, pos));
-					st.Tokenize(sTokDlim, pos);
+					st.Tokenize(sTokDlim, pos);	// fixed
+					st.Tokenize(sTokDlim, pos);	// prohibited
 					int iTotal				= _ttoi(st.Tokenize(sTokDlim, pos));
 
 					if(iTotal) m_Info.area.regs.ratio	= (100.f * m_Info.area.regs.count) / iTotal;
@@ -669,7 +670,8 @@ BOOL SourceVector::Synthesis_Vivado(void)
 					CString st	= (sTok + 13);
 					int pos		= 0;
 					m_Info.area.luts.count	= _ttoi(st.Tokenize(sTokDlim, pos));
-					st.Tokenize(sTokDlim, pos);
+					st.Tokenize(sTokDlim, pos);	// fixed
+					st.Tokenize(sTokDlim, pos);	// prohibited
 					int iTotal				= _ttoi(st.Tokenize(sTokDlim, pos));
 
 					if(iTotal) m_Info.area.luts.ratio	= (100.f * m_Info.area.luts.count) / iTotal;
@@ -682,7 +684,8 @@ BOOL SourceVector::Synthesis_Vivado(void)
 						_stscanf(st.Tokenize(sTokDlim, pos), _T("%f"), &fCount);
 						m_Info.area.brams.count	= (int)(fCount + 0.9999f);
 					}
-					st.Tokenize(sTokDlim, pos);
+					st.Tokenize(sTokDlim, pos);	// fixed
+					st.Tokenize(sTokDlim, pos);	// prohibited
 					int iTotal				= _ttoi(st.Tokenize(sTokDlim, pos));
 
 					if(iTotal) m_Info.area.brams.ratio	= (100.f * m_Info.area.brams.count) / iTotal;
@@ -690,7 +693,8 @@ BOOL SourceVector::Synthesis_Vivado(void)
 					CString st	= (sTok + 6);
 					int pos		= 0;
 					m_Info.area.dsps.count	= _ttoi(st.Tokenize(sTokDlim, pos));
-					st.Tokenize(sTokDlim, pos);
+					st.Tokenize(sTokDlim, pos);	// fixed
+					st.Tokenize(sTokDlim, pos);	// prohibited
 					int iTotal				= _ttoi(st.Tokenize(sTokDlim, pos));
 
 					if(iTotal) m_Info.area.dsps.ratio	= (100.f * m_Info.area.dsps.count) / iTotal;
