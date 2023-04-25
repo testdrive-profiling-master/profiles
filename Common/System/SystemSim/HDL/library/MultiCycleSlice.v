@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,21 +31,21 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common verilog library
-// Rev.  : 9/2/2022 Fri (clonextop@gmail.com)
+// Rev.  : 4/26/2023 Wed (clonextop@gmail.com)
 //================================================================================
 `ifndef __TESTDRIVE_MULTICYCLE_SLICE_V__
 `define __TESTDRIVE_MULTICYCLE_SLICE_V__
 `include "testdrive_system.vh"
 
-`define __GEN_MULTIPATH_PIPE(name) \
-	(* dont_touch = "yes" *) reg		[WIDTH-1:0]		name; \
-	assign ODATA	= name; \
+`define __GEN_MULTIPATH_PIPE \
+	(* dont_touch = "yes" *) reg		[WIDTH-1:0]		o_data; \
+	assign ODATA	= o_data; \
 	always@(posedge CLK, negedge nRST) begin \
 		if(!nRST) begin \
-			name	<= INITIAL; \
+			o_data	<= INITIAL; \
 		end \
 		else if(ie & IREADY) begin \
-			name	<= IDATA; \
+			o_data	<= IDATA; \
 		end \
 	end
 
@@ -143,40 +143,40 @@ endgenerate
 
 generate begin : gen_multicycle
 	if(CYCLE==2) begin : path_2
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_PIPE
 	end
 	else if(CYCLE==3) begin : path_3
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_PIPE
 	end
 	else if(CYCLE==4) begin : path_4
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_PIPE
 	end
 	else if(CYCLE==5) begin : path_5
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_PIPE
 	end
 	else if(CYCLE==6) begin : path_6
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_PIPE
 	end
 	else if(CYCLE==7) begin : path_7
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_PIPE
 	end
 	else if(CYCLE==8) begin : path_8
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_PIPE
 	end
 	else if(CYCLE==9) begin : path_9
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_PIPE
 	end
 	else if(CYCLE==10) begin : path_10
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_PIPE
 	end
 	else if(CYCLE==11) begin : path_11
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_PIPE
 	end
 	else if(CYCLE==12) begin : path_12
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_PIPE
 	end
 	else begin : multicycle_path
-		`__GEN_MULTIPATH_PIPE(o_data)
+		`__GEN_MULTIPATH_PIPE
 	end
 end
 endgenerate
