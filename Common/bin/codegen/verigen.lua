@@ -24,9 +24,17 @@ if lfs.attributes(sOutPath, "mode") ~= "directory" then
 end
 
 -- top, interface, config 識情
+model		= {}
 top			= {}
 interface	= {}
 config		= {}
+
+model.__index	= model
+
+function model:create()
+	local	t = setmetatable({}, model)
+	return t
+end
 
 interface.Create = function(name, decl)
 end
@@ -65,7 +73,7 @@ end
 -- configuration 持失
 do
 	local	f = TextFile()
-	if f:Create(sOutPath .. "/" .. top.name_ucase .. "_config.vh") == false then
+	if f:Create(sOutPath .. "/" .. top.name .. "_config.vh") == false then
 		LOGE("Can't create configuration file.")
 		os.exit(1)
 	end
@@ -78,7 +86,7 @@ end
 -- defines 持失
 do
 	local	f = TextFile()
-	if f:Create(sOutPath .. "/" .. top.name_ucase .. "_defines.vh") == false then
+	if f:Create(sOutPath .. "/" .. top.name .. "_defines.vh") == false then
 		LOGE("Can't create configuration file.")
 		os.exit(1)
 	end
@@ -98,7 +106,7 @@ do
 		LOGE("Can't create top design file.")
 		os.exit(1)
 	end
-	f:Put(	"`include \"" .. top.name_ucase .. "_defines.vh\"\n\n")
+	f:Put(	"`include \"" .. top.name .. "_defines.vh\"\n\n")
 	
 	f:Put(	"module " .. top.name)
 	
