@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 4/25/2023 Tue (clonextop@gmail.com)
+// Rev.  : 4/26/2023 Wed (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 
@@ -39,7 +39,7 @@ module SRAM_Single_conventional (
 	input					CLK,	// clock
 	input					nCE,	// chip enable (active low)
 	input					nWE,	// write enable (active low)
-	input	[7:0]			ADDR,	// address (256 entries)
+	input	[9:0]			ADDR,	// address (1024 entries)
 	input	[63:0]			DIN,	// data input
 	output	reg [63:0]		DOUT	// data output
 );
@@ -47,7 +47,7 @@ module SRAM_Single_conventional (
 // definition & assignment ---------------------------------------------------
 reg							r_nCE;
 reg							r_nWE;
-reg		[7:0]				r_ADDR;
+reg		[9:0]				r_ADDR;
 reg		[63:0]				r_DIN;
 wire	[63:0]				w_DOUT;
 
@@ -61,7 +61,7 @@ always@(posedge CLK) begin	// dummy register F/F for checking clock MHz
 end
 
 SRAM_Single #(
-	.ADDR_WIDTH		(8),
+	.ADDR_WIDTH		(10),
 	.DATA_WIDTH		(64)
 ) sram (
 	.CLK			(CLK),

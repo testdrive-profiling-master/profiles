@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 4/25/2023 Tue (clonextop@gmail.com)
+// Rev.  : 4/26/2023 Wed (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 `include "library/demux_by_enable.v"
@@ -225,7 +225,7 @@ SRAM_Single_multicycled #(
 	.EN			(ie),
 	.WE			(sim_counter[1]),
 	.READY		(iready),
-	.ADDR		(data_a[7:0]),
+	.ADDR		(data_a[9:0]),
 	.DIN		(data_b),
 	.OE			(oe),
 	.DOUT		(odata)

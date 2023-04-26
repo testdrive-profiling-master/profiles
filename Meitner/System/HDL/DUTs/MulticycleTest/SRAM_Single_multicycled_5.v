@@ -31,17 +31,17 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 4/25/2023 Tue (clonextop@gmail.com)
+// Rev.  : 4/26/2023 Wed (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 
 module SRAM_Single_multicycled_5 (
 	input					CLK,	// clock
 	input					nRST,	// reset (active low)
-	input					nCE,	// chip enable (active low)
-	input					nWE,	// write enable (active low)
+	input					EN,		// chip enable
+	input					WE,		// write enable
 	output					READY,	// input ready
-	input	[7:0]			ADDR,	// address
+	input	[9:0]			ADDR,	// address
 	input	[63:0]			DIN,	// data input
 	output					OE,		// output enable
 	output	[63:0]			DOUT	// data output
@@ -55,8 +55,8 @@ SRAM_Single_multicycled #(
 ) sram (
 	.CLK			(CLK),
 	.nRST			(nRST),
-	.nCE			(nCE),
-	.nWE			(nWE),
+	.EN				(EN),
+	.WE				(WE),
 	.READY			(READY),
 	.ADDR			(ADDR),
 	.DIN			(DIN),

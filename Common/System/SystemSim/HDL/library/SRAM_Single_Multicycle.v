@@ -31,21 +31,44 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common verilog library
-// Rev.  : 4/25/2023 Tue (clonextop@gmail.com)
+// Rev.  : 4/26/2023 Wed (clonextop@gmail.com)
 //================================================================================
 `ifndef __TESTDRIVE_SRAM_SINGLE_MULTICYCLE_V__
 `define __TESTDRIVE_SRAM_SINGLE_MULTICYCLE_V__
 `include "testdrive_system.vh"
 
 `define __GEN_MULTIPATH_SRAM \
-	(* keep="true"*) reg		[(DATA_WIDTH-1):0]		mem[(2**ADDR_WIDTH)-1:0]; \
-	(* keep="true"*) reg		[DATA_WIDTH-1:0]		o_data; \
-	assign DOUT		= o_data; \
-	always@(posedge CLK) begin \
-		if(en) begin \
-			if(r_we) \
-				mem[r_addr]	<= r_din; \
-			o_data	<= mem[r_addr]; \
+	reg		[(DATA_WIDTH-1):0]		mem[(2**ADDR_WIDTH)-1:0]; \
+	(* keep="true"*) reg		[ADDR_WIDTH-1:0]	i_addr; \
+	(* keep="true"*) reg		[DATA_WIDTH-1:0]	i_din; \
+	(* keep="true"*) reg							i_wen; \
+	\
+	SRAM_Single #( \
+		.ADDR_WIDTH		(ADDR_WIDTH), \
+		.DATA_WIDTH		(DATA_WIDTH) \
+	) sram ( \
+		.CLK			(CLK), \
+		.nCE			(~sram_en), \
+		.nWE			(i_wen), \
+		.ADDR			(i_addr), \
+		.DIN			(i_din), \
+		.DOUT			(DOUT) \
+	); \
+	\
+	always@(posedge CLK, negedge nRST) begin \
+		if(!nRST) begin \
+			i_addr		<= 'd0;	\
+			i_din		<= 'd0; \
+			i_wen		<= 1'b1; \
+		end \
+		else begin \
+			if(en) begin \
+				i_wen		<= ~WE; \
+				i_addr		<= ADDR; \
+				if(WE) begin \
+					i_din	<= DIN; \
+				end \
+			end \
 		end \
 	end
 
@@ -67,37 +90,27 @@ module SRAM_Single_Multicycle #(
 // synopsys template
 
 // definition & assignment ---------------------------------------------------
-reg		[CYCLE-1:0]			oe_pipe;
-reg		[CYCLE-1:0]			en_pipe;
-reg		[ADDR_WIDTH-1:0]	r_addr;
-reg		[DATA_WIDTH-1:0]	r_din;
-reg							r_we;
-wire	[DATA_WIDTH-1:0]	sram_out;
+reg		[CYCLE:0]			oe_pipe;			// output enable pipe
+reg		[CYCLE-1:0]			rd_pipe;			// ready pipe
+reg		[CYCLE-1:0]			se_pipe;			// sram enable pipe
 
-wire	en					= EN & READY;
-wire	re					= en & ~WE;
-
-assign	READY				= ~en_pipe[CYCLE-1];
-assign	OE					= oe_pipe[CYCLE-1];
+wire	en					= EN & READY;		// enable
+wire	oe					= en & ~WE;			// output enable
+wire	sram_en				= se_pipe[CYCLE-1];	// sram enable
+assign	READY				= rd_pipe[CYCLE-1];
+assign	OE					= oe_pipe[CYCLE];
 
 // implementation ------------------------------------------------------------
 always@(posedge CLK, negedge nRST) begin
 	if(!nRST) begin
-		en_pipe		<= {(CYCLE){1'b0}};
-		oe_pipe		<= {(CYCLE){1'b0}};
-		r_addr		<= 'd0;
-		r_din		<= 'd0;
-		r_we		<= 1'b0;
+		rd_pipe		<= {(CYCLE){1'b1}};
+		oe_pipe		<= {(CYCLE+1){1'b0}};
+		se_pipe		<= {(CYCLE){1'b0}};
 	end
 	else begin
-		en_pipe		<= {en_pipe[(CYCLE-2):0] | {(CYCLE - 1){en}}, 1'b0};
-		oe_pipe		<= {oe_pipe[(CYCLE-2):0], re};
-		if(en) begin
-			r_we		<= WE;
-			r_addr		<= ADDR;
-			//if(~WE)
-			r_din		<= DIN;
-		end
+		rd_pipe		<= {rd_pipe[(CYCLE-2):0] & {(CYCLE - 1){~en}}, 1'b1};
+		oe_pipe		<= {oe_pipe[(CYCLE-1):0], oe};
+		se_pipe		<= {se_pipe[(CYCLE-2):0], en};
 	end
 end
 

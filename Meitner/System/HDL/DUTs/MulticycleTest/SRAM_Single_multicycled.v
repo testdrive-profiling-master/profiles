@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 4/25/2023 Tue (clonextop@gmail.com)
+// Rev.  : 4/26/2023 Wed (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 
@@ -43,7 +43,7 @@ module SRAM_Single_multicycled #(
 	input					EN,		// chip enable
 	input					WE,		// write enable
 	output					READY,	// input ready
-	input	[7:0]			ADDR,	// address
+	input	[9:0]			ADDR,	// address
 	input	[63:0]			DIN,	// data input
 	output					OE,		// output enable
 	output	reg [63:0]		DOUT	// data output
@@ -51,10 +51,9 @@ module SRAM_Single_multicycled #(
 
 // definition & assignment ---------------------------------------------------
 wire	[63:0]				w_dout;
-reg		[63:0]				r_dout;
 reg							r_EN;
 reg							r_WE;
-reg		[7:0]				r_ADDR;
+reg		[9:0]				r_ADDR;
 reg		[63:0]				r_DIN;
 
 // implementation ------------------------------------------------------------
@@ -74,7 +73,7 @@ always@(posedge CLK) begin	// for checking clock MHz
 end
 
 SRAM_Single_Multicycle #(
-	.ADDR_WIDTH		(8),
+	.ADDR_WIDTH		(10),
 	.DATA_WIDTH		(64),
 	.CYCLE			(CYCLE)
 ) sram (
@@ -91,13 +90,11 @@ SRAM_Single_Multicycle #(
 
 always@(posedge CLK) begin	// for multi-cycle contraint 'PIN' to 'CELL' search configuration
 	if(!nRST) begin
-		r_dout	<= 'd0;
 		DOUT	<= 'd0;
 
 	end
 	else begin
-		r_dout	<= w_dout;
-		DOUT	<= r_dout;
+		DOUT	<= w_dout;
 	end
 end
 
