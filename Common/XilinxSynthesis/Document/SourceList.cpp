@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 4/25/2023 Tue (clonextop@gmail.com)
+// Rev.  : 4/26/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "SourceList.h"
 #include <tchar.h>
@@ -665,11 +665,17 @@ BOOL SourceVector::Synthesis_Vivado(void)
 		{
 			TCHAR sLine[1024];
 			LPCTSTR	sTokDlim	= _T(" |");
+			struct {
+				BOOL	Registers;
+				BOOL	LUTs;
+				BOOL	BRAM;
+				BOOL	DSPs;
+			} found = {FALSE};
 
 			while(_fgetts(sLine, 1024, fp)) {
 				TCHAR* sTok;
 
-				if((sTok = _tcsstr(sLine, _T("| Slice Registers"))) || (sTok = _tcsstr(sLine, _T("| CLB Registers")))) {
+				if(!found.Registers && ((sTok = _tcsstr(sLine, _T("| Slice Registers"))) || (sTok = _tcsstr(sLine, _T("| CLB Registers"))))) {
 					CString st	= (sTok + 17);
 					int pos		= 0;
 					m_Info.area.regs.count	= _ttoi(st.Tokenize(sTokDlim, pos));
@@ -678,7 +684,9 @@ BOOL SourceVector::Synthesis_Vivado(void)
 					int iTotal				= _ttoi(st.Tokenize(sTokDlim, pos));
 
 					if(iTotal) m_Info.area.regs.ratio	= (100.f * m_Info.area.regs.count) / iTotal;
-				} else if((sTok = _tcsstr(sLine, _T("| Slice LUTs*"))) || (sTok = _tcsstr(sLine, _T("| CLB LUTs*")))) {
+
+					found.Registers		= TRUE;
+				} else if(!found.LUTs && ((sTok = _tcsstr(sLine, _T("| Slice LUTs*"))) || (sTok = _tcsstr(sLine, _T("| CLB LUTs*"))))) {
 					CString st	= (sTok + 13);
 					int pos		= 0;
 					m_Info.area.luts.count	= _ttoi(st.Tokenize(sTokDlim, pos));
@@ -687,7 +695,9 @@ BOOL SourceVector::Synthesis_Vivado(void)
 					int iTotal				= _ttoi(st.Tokenize(sTokDlim, pos));
 
 					if(iTotal) m_Info.area.luts.ratio	= (100.f * m_Info.area.luts.count) / iTotal;
-				} else if((sTok = _tcsstr(sLine, _T("| Block RAM Tile")))) {
+
+					found.LUTs			= TRUE;
+				} else if(!found.BRAM && (sTok = _tcsstr(sLine, _T("| Block RAM Tile")))) {
 					CString st	= (sTok + 16);
 					int pos		= 0;
 					{
@@ -701,7 +711,9 @@ BOOL SourceVector::Synthesis_Vivado(void)
 					int iTotal				= _ttoi(st.Tokenize(sTokDlim, pos));
 
 					if(iTotal) m_Info.area.brams.ratio	= (100.f * m_Info.area.brams.count) / iTotal;
-				} else if((sTok = _tcsstr(sLine, _T("| DSPs")))) {
+
+					found.BRAM			= TRUE;
+				} else if(!found.DSPs && (sTok = _tcsstr(sLine, _T("| DSPs")))) {
 					CString st	= (sTok + 6);
 					int pos		= 0;
 					m_Info.area.dsps.count	= _ttoi(st.Tokenize(sTokDlim, pos));
@@ -710,6 +722,8 @@ BOOL SourceVector::Synthesis_Vivado(void)
 					int iTotal				= _ttoi(st.Tokenize(sTokDlim, pos));
 
 					if(iTotal) m_Info.area.dsps.ratio	= (100.f * m_Info.area.dsps.count) / iTotal;
+
+					found.DSPs			= TRUE;
 				}
 			}
 
