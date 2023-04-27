@@ -1,4 +1,5 @@
 +incdir+${TESTDRIVE_PROFILE}common/System/SystemSim/HDL/
++incdir+./
 
 includes.vh
 
@@ -10,7 +11,5 @@ HDMI_Out.v
 HDMI_Slave.v
 HDMI_SyncGen.v
 HDMI_TOP.v
-MultiCycleSlice.v
 
-template/testdrive_apb_slave_bfm.sv
-processor_top.sv
+top.sv
