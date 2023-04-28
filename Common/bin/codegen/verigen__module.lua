@@ -1,13 +1,15 @@
 module				= {}
 module.__index		= module
 module.__list		= {}
+module.__port		= {}
 module.__author		= "testdirve profiling master - verigen"
 module.__date		= os.date("%B/%d/%Y %a")
 module.__year		= os.date("%Y")
 module.__time		= os.date("%X")
 module.__title		= "no title"
-module.__top		= "top"
+module.__current	= module
 module.__inception	= ""
+module.name			= "top"
 module.enable		= false
 
 -- 모델 찾기
@@ -36,6 +38,9 @@ function module:new(name, base)
 	else
 		__ERROR("Module[" .. name .. "] creation is failed : invalid base module instance.")
 	end
+	
+	-- construction 
+	t.__port		= {}
 	t.__index		= t
 
 	-- module duplication check
@@ -86,8 +91,8 @@ function module:set_inception(filename)
 	
 end
 
-function module:set_top(name)
-	self.__top			= name
+function module:make_current(m)
+	module.__current	= self
 end
 
 function module:add_port(name, i, type)
@@ -108,10 +113,10 @@ end
 function module.build_all()
 	local f = TextFile()
 	
-	LOGI("TOP design name : " .. module.__top)
+	LOGI("TOP design name : " .. module.name)
 	
 	-- create top design file
-	if f:Create(sOutPath .. "/" .. module.__top .. ".sv") == false then
+	if f:Create(sOutPath .. "/" .. module.name .. ".sv") == false then
 		__ERROR("Can't create top design file.")
 	end
 	
@@ -128,11 +133,11 @@ function module.build_all()
 	
 	-------------------------------------------------------------------
 	-- common include
-	f:Put(	"`include \"" .. module.__top .. "_defines.vh\"\n\n")
+	f:Put(	"`include \"" .. module.name .. "_defines.vh\"\n\n")
 
 	-------------------------------------------------------------------
 	-- module declaration
-	f:Put(	"module " .. module.__top .. " (\n")
+	f:Put(	"module " .. module.name .. " (\n")
 	do
 		-- clocks
 		f:Put(	"\t// clocks\n")
@@ -188,6 +193,7 @@ function module.build_all()
 	for i_name, i in key_pairs(interface.__list) do
 		if i.__active then
 			f:Put("// " .. i.name .. "\n")
+			f:Put("i_" .. i.name .. " \n")
 		end
 	end
 

@@ -32,14 +32,7 @@ function interface:new(name, base)
 	end
 
 	-- create instance
-	local	t = nil
-	if base == nil then
-		t		= setmetatable({}, interface)
-	elseif interface.is_valid(base) then
-		t		= setmetatable({}, base)
-	else
-		__ERROR("Interface[" .. name .. "] creation is failed : invalid base module instance.")
-	end
+	local	t		= setmetatable({}, self)
 	t.__index		= t
 
 	-- interface duplication check
@@ -59,14 +52,14 @@ function interface:new(name, base)
 	t.__port_name	= nil
 	
 	-- copy construct
-	if base ~= nil then
-		for name, param in pairs(base.param) do
+	if self ~= interface then
+		for name, param in pairs(self.param) do
 			t.param[name]	= param
 		end
-		for name, signal in pairs(base.signal) do
+		for name, signal in pairs(self.signal) do
 			t.signal[name]	= {["name"]=name, ["width"] = signal.width}
 		end
-		for name, modport in pairs(base.modport) do
+		for name, modport in pairs(self.modport) do
 			t.modport[name]	= modport
 		end
 	end

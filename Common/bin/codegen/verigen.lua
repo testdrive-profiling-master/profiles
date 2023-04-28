@@ -81,16 +81,16 @@ end
 -- defines 생성
 do
 	local	f = TextFile()
-	if f:Create(sOutPath .. "/" .. module.__top .. "_defines.vh") == false then
+	if f:Create(sOutPath .. "/" .. module.name .. "_defines.vh") == false then
 		__ERROR("Can't create configuration file.")
 	end
 
-	f:Put(	"`ifndef __" .. module.__top:upper() .. "_DEFINES_VH__\n"..
-			"`define __" .. module.__top:upper() .. "_DEFINES_VH__\n"..
+	f:Put(	"`ifndef __" .. module.name:upper() .. "_DEFINES_VH__\n"..
+			"`define __" .. module.name:upper() .. "_DEFINES_VH__\n"..
 			"`include \"testdrive_system.vh\"		// default system defines\n"..
-			"`include \"" .. module.__top .. "_config.vh\"		// current system configurations\n\n")
+			"`include \"" .. module.name .. "_config.vh\"		// current system configurations\n\n")
 	interface.__make_code(f)
-	f:Put(	"`endif//__" .. module.__top:upper() .. "_DEFINES_VH__\n")
+	f:Put(	"`endif//__" .. module.name:upper() .. "_DEFINES_VH__\n")
 end
 
 -- design 생성

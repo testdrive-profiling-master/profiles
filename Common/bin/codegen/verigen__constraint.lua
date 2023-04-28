@@ -2,7 +2,7 @@
 
 do
 	local	f = TextFile()
-	if f:Create(sOutPath .. "/" .. module.__top .. "_constraint.xdc") == false then
+	if f:Create(sOutPath .. "/" .. module.name .. "_constraint.xdc") == false then
 		__ERROR("Can't create constraint file.")
 	end
 	
