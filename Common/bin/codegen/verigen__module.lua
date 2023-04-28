@@ -6,26 +6,25 @@ module.__date		= os.date("%B/%d/%Y %a")
 module.__year		= os.date("%Y")
 module.__time		= os.date("%X")
 module.__title		= "no title"
-module.__external	= false
+module.__top		= "top"
 module.__inception	= ""
 module.enable		= false
 
--- ¸ðµ¨ Ã£±â
+-- ëª¨ë¸ ì°¾ê¸°
 function module.find(name)
 	return load("return module.__list." .. name)()
 end
 
--- ¸ðµâ À¯È¿¼º È®ÀÎ
+-- ëª¨ë“ˆ ìœ íš¨ì„± í™•ì¸
 function module.is_valid(inst)
 	return __meta_is_valid(inst, module)
 end
 
--- ¸ðµ¨ »ý¼º
-function module.new(name, base)
+-- ëª¨ë¸ ìƒì„±
+function module:new(name, base)
 	-- name validation
 	if type(name) ~= "string" then
-		LOGE("Invalid module name.")
-		os.exit(1)
+		__ERROR("Invalid module name.")
 	end
 	
 	-- create instance
@@ -35,15 +34,13 @@ function module.new(name, base)
 	elseif interface.is_valid(base) then
 		t = setmetatable({}, base)
 	else
-		LOGE("Module[" .. name .. "] creation is failed : invalid base module instance.")
-		os.exit(1)
+		__ERROR("Module[" .. name .. "] creation is failed : invalid base module instance.")
 	end
 	t.__index		= t
 
 	-- module duplication check
 	if module.find(name) ~= nil then
-		LOGE("already existed module : '" .. name .. "'")
-		os.exit(1)
+		__ERROR("already existed module : '" .. name .. "'")
 	end
 	
 	-- add to list
@@ -67,18 +64,14 @@ function module.new(name, base)
 end
 
 function module:set_title(title)
-	__slf_test(self)
 	self.__title		= title
 end
 
 function module:set_author(name)
-	__slf_test(self)
 	self.__author		= name
 end
 
 function module:set_inception(filename)
-	__slf_test(self)
-	
 	local f = TextFile()
 	if f:Open(filename) then
 		self.__inception	= String(f:GetAll(false))
@@ -88,90 +81,116 @@ function module:set_inception(filename)
 		self.__inception	= self.__inception.s
 		f:Close()
 	else
-		LOGE("Can't find code inception : " .. filename)
-		os.exit(1)
+		__ERROR("Can't find code inception : " .. filename)
 	end
 	
 end
 
-function module:set_external()
-	__slf_test(self)
-	module.__external	= true
-end
-
-function module:set_top()
-	__slf_test(self)
-	module.__top	= self
+function module:set_top(name)
+	self.__top			= name
 end
 
 function module:add_port(name, i, type)
 	if interface.is_valid(i) == false then
-		LOGE("Invalid interface : " .. name)
-		os.exit(1)
+		__ERROR("Invalid interface : " .. name)
 	end
 	self.port[name]	= {["i"] = i, ["type"] = type}
 end
 
-function module:parameter(name, default_value)
-	__slf_test(self)
+function module:set_param(name, default_value)
 	if load("return module.__list." .. self.name .. ".param." .. name)() ~= nil then
-		LOGE("module[" .. self.name .. "] : given parameter[" .. name .. "] is already existed.")
+		__ERROR("module[" .. self.name .. "] : given parameter[" .. name .. "] is already existed.")
 	end
 
 	load("module.__list." .. self.name .. ".param." .. name .. "=" .. default_value)()
 end
 
 function module.build_all()
-	for name, m in pairs(module.__list) do
-		if m.external ~= true then
-			local	f = TextFile()
-			if f:Create(sOutPath .. "/" .. m.name .. ".sv") == false then
-				LOGE("Can't create top design file.")
-			os.exit(1)
-			end
-			-- code inception
-			do
-				local code_inception = String(m.__inception)
-				code_inception:Replace("__YEAR__", m.__year)
-				code_inception:Replace("__TITLE__", m.__title)
-				code_inception:Replace("__DATE__", m.__date)
-				code_inception:Replace("__TIME__", m.__time)
-				code_inception:Replace("__AUTHOR__", m.__author)
-				f:Put(code_inception.s)
-			end
-			-- common include
-			f:Put(	"`include \"" .. module.__top.name .. "_defines.vh\"\n\n")
+	local f = TextFile()
+	
+	LOGI("TOP design name : " .. module.__top)
+	
+	-- create top design file
+	if f:Create(sOutPath .. "/" .. module.__top .. ".sv") == false then
+		__ERROR("Can't create top design file.")
+	end
+	
+	-- code inception
+	do
+		local code_inception = String(module.__inception)
+		code_inception:Replace("__YEAR__", module.__year)
+		code_inception:Replace("__TITLE__", module.__title)
+		code_inception:Replace("__DATE__", module.__date)
+		code_inception:Replace("__TIME__", module.__time)
+		code_inception:Replace("__AUTHOR__", module.__author)
+		f:Put(code_inception.s)
+	end
+	
+	-------------------------------------------------------------------
+	-- common include
+	f:Put(	"`include \"" .. module.__top .. "_defines.vh\"\n\n")
 
-			-- module declaration
-			f:Put(	"module " .. m.name)
-
-			-- parameters
-			do
-				local	param_count	= 0
-				for name, v in pairs(m.param) do
-					if param_count == 0 then
-						f:Put(" #(")
-					else
-						f:Put(",")
-					end
-					f:Put(string.format("\n    %-20s = %s", name, tostring(v)) .. "")
-					param_count	= param_count + 1
+	-------------------------------------------------------------------
+	-- module declaration
+	f:Put(	"module " .. module.__top .. " (\n")
+	do
+		-- clocks
+		f:Put(	"\t// clocks\n")
+		for clk_name, clk in key_pairs(clock.__list) do
+			if clk.__desc == nil then
+				f:Put("\t" .. string.format("input  %16s%s,", "", clk_name) .. "\n")
+			else
+				f:Put(string.format("\t%-40s// %s\n", string.format("input  %16s%s,", "", clk_name), clk.__desc))
+			end
+		end
+		-- resets
+		f:Put(	"\t// resets\n")
+		local	use_default_rst = false
+		for clk_name, clk in key_pairs(clock.__list) do
+			if clk.__rst ~= nil then
+				f:Put(string.format("\t%-40s// reset of '%s' (active low)\n", string.format("input  %16s%s,", "", clk.__rst), clk.name))
+			else
+				use_default_rst	= true
+			end
+		end
+		if use_default_rst then
+			f:Put(string.format("\t%-40s// default global reset (active low)\n", string.format("input  %16s%s,", "", clock.__default_rst)))
+		end
+		
+		-- interface ports
+		for i_name, i in key_pairs(interface.__list) do
+			if i.__port_type ~= nil then
+				local	sCode	= String("\n\t// " .. i.name .. "\n")
+				
+				local	modport	= i.modport[i.__port_type]
+				
+				if modport == nil then
+					__ERROR("Can't find modport '" .. i.__port_type .. "' on interface '" .. i_name .. "'")
 				end
 				
-				if param_count ~= 0 then
-					f:Put(	"\n)")
+				for io_type, io_list in key_pairs(modport) do
+					for id, io_name in key_pairs(io_list) do
+						local	signal	= i.signal[io_name]
+						
+						sCode:Append("\t" .. string.format("%-6s ", io_type) ..
+							(string.format("%-16s", (signal.width > 1) and string.format("[%d:0]", signal.width - 1) or "")) ..
+							i.__port_name .. "_" .. io_name .. ",\n")
+					end
 				end
+				f:Put(sCode.s)
 			end
-
-			-- ports
-			do
-				f:Put(	" (\n")
-				for name, port in pairs(m.port) do
-				end
-				f:Put(	");\n\n")
-			end
-			f:Put(	"endmodule\n")
-			f:Close()
 		end
-    end
+	end
+	f:Put(	");\n\n")
+	
+	-------------------------------------------------------------------
+	-- active interface
+	for i_name, i in key_pairs(interface.__list) do
+		if i.__active then
+			f:Put("// " .. i.name .. "\n")
+		end
+	end
+
+	f:Put(	"endmodule\n")
+	f:Close()
 end

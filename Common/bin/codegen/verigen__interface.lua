@@ -1,72 +1,170 @@
-interface			= {}
-interface.__index	= interface
-interface.__list	= {}
-interface.__clock	= nil
-interface.__enable	= false
+interface				= {}
+interface.__index		= interface
+interface.__list		= {}
+interface.__clock		= nil
+interface.__active		= false
 
--- ÀÎÅÍÆäÀÌ½º Ã£±â
+-- ì¸í„°íŽ˜ì´ìŠ¤ ì°¾ê¸°
 function interface.find(name)
 	return load("return interface.__list." .. name)()
 end
 
--- ÀÎÅÍÆäÀÌ½º À¯È¿¼º È®ÀÎ
+function interface.find_port(name)
+	for i_name, i in pairs(interface.__list) do
+		if i.__port_name == name then
+			return i
+		end
+	end
+	
+	return nil
+end
+
+-- ì¸í„°íŽ˜ì´ìŠ¤ ìœ íš¨ì„± í™•ì¸
 function interface.is_valid(inst)
 	return __meta_is_valid(inst, interface)
 end
 
--- ÀÎÅÍÆäÀÌ½º »ý¼º
-function interface.new(name, base)
+-- ì¸í„°íŽ˜ì´ìŠ¤ ìƒì„±
+function interface:new(name, base)
 	-- name validation
 	if type(name) ~= "string" then
-		LOGE("Invalid interface name.")
-		os.exit(1)
+		__ERROR("Invalid interface name.")
 	end
 
 	-- create instance
 	local	t = nil
 	if base == nil then
-		t = setmetatable({}, interface)
+		t		= setmetatable({}, interface)
 	elseif interface.is_valid(base) then
-		t = setmetatable({}, base)
+		t		= setmetatable({}, base)
 	else
-		LOGE("Interface[" .. name .. "] creation is failed : invalid base module instance.")
-		os.exit(1)
+		__ERROR("Interface[" .. name .. "] creation is failed : invalid base module instance.")
 	end
 	t.__index		= t
 
 	-- interface duplication check
 	if interface.find(name) ~= nil then
-		LOGE("already existed interface : '" .. name .. "'")
-		os.exit(1)
+		__ERROR("already existed interface : '" .. name .. "'")
 	end
 	
 	-- add to list
 	interface.__list[name] = t
 
-	-- set name
+	-- set variables
 	t.name			= name
 	t.param			= {}
+	t.signal		= {}
+	t.modport		= {}
+	t.__port_type	= nil
+	t.__port_name	= nil
+	
+	-- copy construct
+	if base ~= nil then
+		for name, param in pairs(base.param) do
+			t.param[name]	= param
+		end
+		for name, signal in pairs(base.signal) do
+			t.signal[name]	= {["name"]=name, ["width"] = signal.width}
+		end
+		for name, modport in pairs(base.modport) do
+			t.modport[name]	= modport
+		end
+	end
 	
 	return t
 end
 
-function interface:parameter(name, default_value)
-	__slf_test(self)
-	if load("return interface.__list." .. self.name .. ".param." .. name)() ~= nil then
-		LOGE("Interfrace[" .. self.name .. "] : given parameter[" .. name .. "] is already existed.")
-	end
-	
-	--load("interface.__list." .. self.name .. ".param." .. name .. "=" .. default_value)()
-	load("interface.__list." .. self.name .. ".param." .. name .. "=" .. default_value)()
+function interface:set_param(name, default_value)
+	self.param[name]	= default_value
 end
 
 function interface:set_clock(clk)
-	__slf_test(self)
-	
 	if clock.is_valid(clk) == false then
-		LOGE("invalid clock setting on interface '" .. self.name .. "'")
-		os.exit(1)
+		__ERROR("invalid clock setting on interface '" .. self.name .. "'")
 	end
 	
 	self.__clock	= clk
+end
+
+function interface:set_signal(name, bit_width)
+	if bit_width == nil then
+		bit_width	= 1
+	end
+	
+	if load("return interface.__list." .. self.name .. ".signal." .. name .. " ~= nil")() then
+		self.signal[name].width	= bit_width
+	else
+		self.signal[name]		= {["name"]=name, ["width"] = bit_width}
+	end
+end
+
+function interface:set_modport(name, modport)
+	self.modport[name]	= modport
+end
+
+function interface:set_port(modport_type, port_name)
+	if modport_type == nil then
+		self.__port_type	= nil
+		self.__port_name	= nil
+		return
+	end
+
+	if interface.find_port(port_name) ~= nil then
+		__ERROR("Same port name '" .. port_name .. "' with interface '" .. interface.find_port(port_name).name .. "'")
+	end
+
+	self.__port_type	= modport_type
+	self.__port_name	= (port_name == nil) and self.name or port_name
+	self.__active		= (modport_type ~= nil)
+end
+
+function interface:full_name()
+	local	name	= self.name
+	local	parent	= getmetatable(self)
+	
+	while parent ~= nil do
+		if parent.name == nil then
+			break
+		end
+		name	= parent.name .. "_" .. name
+		parent	= getmetatable(parent)
+	end
+
+	return name
+end
+
+-- ì¸í„°íŽ˜ì´ìŠ¤ ì½”ë“œ ìƒì„±
+function interface.__make_code(f)
+	-- build bit width
+	for i_name, i in key_pairs(interface.__list) do
+		for signal_name, signal in key_pairs(i.signal) do
+			if type(signal.width) ~= "number" then
+				signal.width	= __retrieve_param(i.param, signal.width)
+			end
+		end
+	end
+	
+
+	f:Put("//---------------------------------------------\n")
+	f:Put("// interfaces\n")
+	f:Put("//---------------------------------------------\n")
+	
+	for i_name, i in key_pairs(interface.__list) do
+		f:Put("interface i_" .. i_name .. ";\n")
+		-- signal list
+		for signal_name, signal in key_pairs(i.signal) do
+			if signal.width > 0 then
+				f:Put("    logic ")
+				-- bitwidth
+				if signal.width > 1 then
+					f:Put(string.format("%-16s", "[" .. tostring(signal.width - 1) .. ":0] "))
+				else
+					f:Put(string.format("%-16s", ""))
+				end
+				
+				f:Put(signal_name .. ";\n")
+			end
+		end
+		f:Put("endinterface\n\n")
+	end
 end

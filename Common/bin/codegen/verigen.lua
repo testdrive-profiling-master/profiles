@@ -14,20 +14,36 @@ end
 sInFilename				= Arg:GetOptionFile("in_file", 0)
 sOutPath				= Arg:GetOptionFile("out_path", 0)
 
--- Ãâ·Â Æú´õ »ı¼º
+function __ERROR(msg)
+	LOGE(msg)
+	os.exit(1)
+end
+
+-- ì¶œë ¥ í´ë” ìƒì„±
 if lfs.attributes(sOutPath, "mode") ~= "directory" then
 	lfs.mkdir(sOutPath)
 	if lfs.attributes(sOutPath, "mode") ~= "directory" then
-		LOGE("Output path can't access : '" .. sOutPath .. "'")
-		os.exit(1)
+		__ERROR("Output path can't access : '" .. sOutPath .. "'")
 	end
 end
 
--- Àß¸øµÈ member »ç¿ë Å×½ºÆ®
-function __slf_test(s)
-	if s == nil then
-		LOGE("invalid use.")
-		os.exit(1)
+local function __collect_keys(t, sort)
+	local _k = {}
+	for k in pairs(t) do
+		_k[#_k+1] = k
+	end
+	table.sort(_k, sort)
+	return _k
+end
+
+function key_pairs(t)
+	local keys = __collect_keys(t, function(a,b) return a < b end)
+	local i = 0
+	return function()
+		i = i+1
+		if keys[i] then
+			return keys[i], t[keys[i]]
+		end
 	end
 end
 
@@ -42,57 +58,43 @@ function __meta_is_valid(inst, base)
 	return false
 end
 
+function __retrieve_param(param_list, t)
+	local	s	= String(t)
+	
+	for name, val in pairs(param_list) do
+		s:ReplaceVariable(name, tostring(val))
+	end
+	
+	return load("return (" .. s.s .. ")")()
+end
+
 -- default script libraries
 RunScript("verigen__clock.lua")
 RunScript("verigen__interface.lua")
 RunScript("verigen__module.lua")
 
--- »ç¿ëÀÚ ¼Ò½º ½ÇÇà
+-- ì‚¬ìš©ì ì†ŒìŠ¤ ì‹¤í–‰
 if RunScript(sInFilename) == false then
 	return
 end
 
--- top design ¼±¾ğ ¿©ºÎ ÆÇ´Ü
+-- defines ìƒì„±
 do
-	if module.__top == nil then
-		LOGE("Top design name is not declared.")
-		os.exit(1)
+	local	f = TextFile()
+	if f:Create(sOutPath .. "/" .. module.__top .. "_defines.vh") == false then
+		__ERROR("Can't create configuration file.")
 	end
 
-	LOGI("Top design : " .. module.__top.name)
+	f:Put(	"`ifndef __" .. module.__top:upper() .. "_DEFINES_VH__\n"..
+			"`define __" .. module.__top:upper() .. "_DEFINES_VH__\n"..
+			"`include \"testdrive_system.vh\"		// default system defines\n"..
+			"`include \"" .. module.__top .. "_config.vh\"		// current system configurations\n\n")
+	interface.__make_code(f)
+	f:Put(	"`endif//__" .. module.__top:upper() .. "_DEFINES_VH__\n")
 end
 
--- design »ı¼º
+-- design ìƒì„±
 module.build_all()
 
--- configuration »ı¼º
-do
-	local	f = TextFile()
-	if f:Create(sOutPath .. "/" .. module.__top.name .. "_config.vh") == false then
-		LOGE("Can't create configuration file.")
-		os.exit(1)
-	end
-	f:Put(	"`ifndef __" .. module.__top.name:upper() .. "_CONFIG_VH__\n"..
-			"`define __" .. module.__top.name:upper() .. "_CONFIG_VH__\n\n")
-			
-	f:Put(	"`endif//__" .. module.__top.name:upper() .. "_DEFINES_VH__\n")
-end
-
--- defines »ı¼º
-do
-	local	f = TextFile()
-	if f:Create(sOutPath .. "/" .. module.__top.name .. "_defines.vh") == false then
-		LOGE("Can't create configuration file.")
-		os.exit(1)
-	end
-
-	f:Put(	"`ifndef __" .. module.__top.name:upper() .. "_DEFINES_VH__\n"..
-			"`define __" .. module.__top.name:upper() .. "_DEFINES_VH__\n"..
-			"`include \"testdrive_system.vh\"		// default system defines\n"..
-			"`include \"" .. module.__top.name:upper() .. "_config.vh\"		// current system configurations\n\n")
-			
-	f:Put(	"`endif//__" .. module.__top.name:upper() .. "_DEFINES_VH__\n")
-end
-
--- constraint ÆÄÀÏ »ı¼º
+-- constraint íŒŒì¼ ìƒì„±
 RunScript("verigen__constraint.lua")

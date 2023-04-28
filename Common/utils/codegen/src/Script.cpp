@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive codegen project
-// Rev.  : 4/10/2023 Mon (clonextop@gmail.com)
+// Rev.  : 4/28/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -107,6 +107,10 @@ public:
 	bool Replace(const char* sSearch, const char* sReplace, bool bRecursive = false) {
 		iTokenizePos	= 0;
 		return cstring::Replace(sSearch, sReplace, bRecursive);
+	}
+	bool ReplaceVariable(const char* sSearch, const char* sReplace) {
+		iTokenizePos	= 0;
+		return cstring::ReplaceVariable(sSearch, sReplace);
 	}
 	void TrimLeft(const char* sDelim) {
 		iTokenizePos	= 0;
@@ -726,7 +730,8 @@ static string __exec(const char* cmd)
 	return result;
 }
 
-static int __execute(const char* cmd){
+static int __execute(const char* cmd)
+{
 	return system(cmd);
 }
 
@@ -906,6 +911,7 @@ Script::Script(void)
 			.beginClass<lua_cstring>("String")
 			.addConstructor<void(*)(const char* s)>()
 			.addFunction("Replace", &lua_cstring::Replace)
+			.addFunction("ReplaceVariable", &lua_cstring::ReplaceVariable)
 			.addProperty("s", &lua_cstring::c_str, &lua_cstring::Set)
 			.addFunction("Append", &lua_cstring::Append)
 			.addFunction("Length", &lua_cstring::Length)

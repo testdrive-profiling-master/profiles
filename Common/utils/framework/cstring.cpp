@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : utility framework
-// Rev.  : 4/12/2023 Wed (clonextop@gmail.com)
+// Rev.  : 4/28/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "UtilFramework.h"
 #include <stdarg.h>
@@ -379,6 +379,50 @@ bool cstring::Replace(const char* sSearch, const char* sReplace, bool bRecursive
 			}
 
 			if(!bRecursive) break;
+		}
+	}
+
+	return bRet;
+}
+
+bool cstring::ReplaceVariable(const char* sSearch, const char* sReplace)
+{
+	bool bRet		= false;
+	int iPos		= 0;
+	int iSearchLen	= sSearch ? strlen(sSearch) : 0;
+
+	if(sSearch != NULL && iSearchLen != 0) {
+		int iReplaceLen	= sReplace ? strlen(sReplace) : 0;
+
+		while((iPos = m_sStr.find(sSearch, iPos)) >= 0) {
+			bRet	= true;
+
+			// pre-fix error check
+			if(iPos) {
+				char ch	= m_sStr[iPos - 1];
+
+				if(isalpha(ch) || isdigit(ch) || ch == '_') {
+					iPos	+= iSearchLen;
+					continue;
+				}
+			}
+
+			// post-fix error check
+			if(iPos + iSearchLen < m_sStr.length()) {
+				char ch	= m_sStr[iPos + iSearchLen];
+
+				if(isalpha(ch) || isdigit(ch) || ch == '_') {
+					iPos	+= iSearchLen;
+					continue;
+				}
+			}
+
+			m_sStr.erase(iPos, iSearchLen);
+
+			if(iReplaceLen) {
+				m_sStr.insert(iPos, sReplace);
+				iPos	+= iReplaceLen;
+			}
 		}
 	}
 

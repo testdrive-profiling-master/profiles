@@ -2,35 +2,33 @@ clock					= {}
 clock.__index			= clock
 clock.__list			= {}
 clock.__constraint		= {}
-clock.__edge			= true		-- true(active high), false(active low)
+clock.__desc			= nil
+clock.__default_rst		= "nRST"
+clock.__rst				= nil		-- reset name
 clock.__private_reset	= false
 clock.__speed			= 100		-- default clock speed
 clock.__enable			= false
 
-active_high			= true
-active_low			= false
-
 __clock_edge_enum 			= {}
 __clock_edge_enum.high		= true
-__clock_edge_enum.low		= true
+__clock_edge_enum.low		= false
 
 
--- ≈¨∑∞ √£±‚
+-- ÌÅ¥Îü≠ Ï∞æÍ∏∞
 function clock.find(name)
 	return load("return clock.__list." .. name)()
 end
 
--- ≈¨∑∞ ¿Ø»øº∫ »Æ¿Œ
+-- ÌÅ¥Îü≠ Ïú†Ìö®ÏÑ± ÌôïÏù∏
 function clock.is_valid(inst)
 	return __meta_is_valid(inst, clock)
 end
 
--- ≈¨∑∞ ª˝º∫
-function clock.new(name, base)
+-- ÌÅ¥Îü≠ ÏÉùÏÑ±
+function clock:new(name, desc, base)
 	-- name validation
 	if type(name) ~= "string" then
-		LOGE("Invalid clock name.")
-		os.exit(1)
+		__ERROR("Invalid clock name.")
 	end
 	
 	-- create instance
@@ -40,18 +38,20 @@ function clock.new(name, base)
 	elseif interface.is_valid(base) then
 		t = setmetatable({}, base)
 	else
-		LOGE("Clock[" .. name .. "] creation is failed : invalid base module instance.")
-		os.exit(1)
+		__ERROR("Clock[" .. name .. "] creation is failed : invalid base module instance.")
 	end
 	t.__index		= t
 
 	-- clock duplication check
 	if clock.find(name) ~= nil then
-		LOGE("already existed module : '" .. name .. "'")
-		os.exit(1)
+		__ERROR("already existed module : '" .. name .. "'")
 	end
 	
 	t.name	= name
+	
+	if desc ~= nil then
+		t.__desc		= desc
+	end
 	
 	-- add to list
 	clock.__list[name]		= t
@@ -59,21 +59,17 @@ function clock.new(name, base)
 	return t
 end
 
-function clock:set_edge(edge_type)
-	__slf_test(self)
-	local ret = load("return __clock_edge_enum." .. edge_type)()
-	if ret == nil then
-		LOGE("clock edge type must be 'high' or 'low'")
-		os.exit(1)
+function clock:set_reset(name)
+	self.__rst	= name
+	
+	if name == __default_rst then
+		__ERROR("reset '" .. name .. "' is same as global reset.")
 	end
-	self.__edge	= ret
 end
 
-function clock:constraint_speed(mhz)
-	__slf_test(self)
+function clock:set_speed(mhz)
 	if mhz <= 0 then
-		LOGE("clock speed constraint must be higher than zero.")
-		os.exit(1)
+		__ERROR("clock speed constraint must be higher than zero.")
 	end
 	self.__speed		= mhz
 end
