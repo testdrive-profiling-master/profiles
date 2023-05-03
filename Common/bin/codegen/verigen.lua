@@ -48,12 +48,17 @@ function key_pairs(t)
 end
 
 function __meta_is_valid(inst, base)
-	local meta = getmetatable(inst)
-	while meta ~= nil do
-		if meta == base then
+	if inst == nil then
+		return false
+	end
+
+	inst	= getmetatable(inst)
+	
+	while inst ~= nil do
+		if inst == base then
 			return true
 		end
-		meta	= getmetatable(meta)
+		inst	= getmetatable(inst)
 	end
 	return false
 end
@@ -72,29 +77,9 @@ end
 RunScript("verigen__clock.lua")
 RunScript("verigen__interface.lua")
 RunScript("verigen__module.lua")
+RunScript("verigen__make.lua")
 
 -- 사용자 소스 실행
 if RunScript(sInFilename) == false then
 	return
 end
-
--- defines 생성
-do
-	local	f = TextFile()
-	if f:Create(sOutPath .. "/" .. module.name .. "_defines.vh") == false then
-		__ERROR("Can't create configuration file.")
-	end
-
-	f:Put(	"`ifndef __" .. module.name:upper() .. "_DEFINES_VH__\n"..
-			"`define __" .. module.name:upper() .. "_DEFINES_VH__\n"..
-			"`include \"testdrive_system.vh\"		// default system defines\n"..
-			"`include \"" .. module.name .. "_config.vh\"		// current system configurations\n\n")
-	interface.__make_code(f)
-	f:Put(	"`endif//__" .. module.name:upper() .. "_DEFINES_VH__\n")
-end
-
--- design 생성
-module.build_all()
-
--- constraint 파일 생성
-RunScript("verigen__constraint.lua")

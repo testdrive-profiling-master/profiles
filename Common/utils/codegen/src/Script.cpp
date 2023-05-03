@@ -1054,6 +1054,11 @@ Script::~Script(void)
 	}
 }
 
+static void __lua_traceback(lua_State* L, const char* sFileName){
+	luaL_loadbuffer(L, "print(debug.traceback())", 24, sFileName);
+	lua_pcall(L, 0, LUA_MULTRET, 0);
+}
+
 bool Script::Run(const char* sFileName)
 {
 	cstring sLuaFilePath(sFileName);
@@ -1110,10 +1115,13 @@ bool Script::Run(const char* sFileName)
 	LuaFile	f;
 
 	if(f.Load(sLuaFilePath.c_str())) {
-		if(luaL_loadbuffer(m_pLua, f.Buffer(), f.Size(), sLuaFilePath.c_str()) || lua_pcall(m_pLua, 0, LUA_MULTRET, 0)) {
+		cstring	sShortenFilePath	= sLuaFilePath;
+		sShortenFilePath.Replace(m_sEnvPath, "[TOOL_PATH]/");
+		if(luaL_loadbuffer(m_pLua, f.Buffer(), f.Size(), sShortenFilePath.c_str()) || lua_pcall(m_pLua, 0, LUA_MULTRET, 0)) {
 			const char* sError	= luaL_checkstring(m_pLua, -1);
 			LOGE("Error on running script : %s", sError);
 			lua_pop(m_pLua, 1); // pop out error message
+			__lua_traceback(m_pLua, sShortenFilePath.c_str());
 		} else {
 			bRet	=  true;
 		}
@@ -1140,6 +1148,7 @@ bool Script::RunBuffer(const char* sBuffer, const char* sFileName)
 			const char* sError	= luaL_checkstring(m_pLua, -1);
 			LOGE("Error on running script : %s", sError);
 			lua_pop(m_pLua, 1); // pop out error message
+			__lua_traceback(m_pLua, sFileName);
 		} else {
 			bRet	=  true;
 		}

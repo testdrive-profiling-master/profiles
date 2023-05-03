@@ -1,7 +1,6 @@
 interface				= {}
 interface.__index		= interface
 interface.__list		= {}
-interface.__clock		= nil
 interface.__active		= false
 
 -- 인터페이스 찾기
@@ -25,7 +24,7 @@ function interface.is_valid(inst)
 end
 
 -- 인터페이스 생성
-function interface:new(name, base)
+function interface:new(name)
 	-- name validation
 	if type(name) ~= "string" then
 		__ERROR("Invalid interface name.")
@@ -48,8 +47,7 @@ function interface:new(name, base)
 	t.param			= {}
 	t.signal		= {}
 	t.modport		= {}
-	t.__port_type	= nil
-	t.__port_name	= nil
+	t.__active		= false
 	
 	-- copy construct
 	if self ~= interface then
@@ -67,8 +65,16 @@ function interface:new(name, base)
 	return t
 end
 
+function interface:get_param(name)
+	return load("return interface.__list." .. self.name .. ".param." .. name)()
+end
+
 function interface:set_param(name, default_value)
 	self.param[name]	= default_value
+end
+
+function interface:get_clock()
+	return self.__clock
 end
 
 function interface:set_clock(clk)
@@ -76,7 +82,7 @@ function interface:set_clock(clk)
 		__ERROR("invalid clock setting on interface '" .. self.name .. "'")
 	end
 	
-	self.__clock	= clk
+	self["__clock"]		= clk
 end
 
 function interface:set_signal(name, bit_width)
@@ -91,24 +97,27 @@ function interface:set_signal(name, bit_width)
 	end
 end
 
-function interface:set_modport(name, modport)
-	self.modport[name]	= modport
+function interface:get_modport(name)
+	return self.modport[name]
 end
 
-function interface:set_port(modport_type, port_name)
-	if modport_type == nil then
-		self.__port_type	= nil
-		self.__port_name	= nil
-		return
+function interface:set_modport(name, modport)
+	self.modport[name]			= {}
+	self.modport[name].data		= {}
+	self.modport[name].name		= name
+	
+	for io_name, io_list in key_pairs(modport) do
+		if io_name ~= "i" then
+			self.modport[name].data.input	= io_list
+		elseif io_name ~= "o" then
+			self.modport[name].data.output	= io_list
+		elseif io_name ~= "io" then
+			self.modport[name].data.inout	= io_list
+		else
+			__ERROR("Interface [" .. self.name .. "]'s modport[" .. name .. "]'s I/O type must be 'i', 'o' or 'io'")
+		end
 	end
-
-	if interface.find_port(port_name) ~= nil then
-		__ERROR("Same port name '" .. port_name .. "' with interface '" .. interface.find_port(port_name).name .. "'")
-	end
-
-	self.__port_type	= modport_type
-	self.__port_name	= (port_name == nil) and self.name or port_name
-	self.__active		= (modport_type ~= nil)
+	
 end
 
 function interface:full_name()
@@ -136,7 +145,6 @@ function interface.__make_code(f)
 			end
 		end
 	end
-	
 
 	f:Put("//---------------------------------------------\n")
 	f:Put("// interfaces\n")
@@ -159,5 +167,61 @@ function interface.__make_code(f)
 			end
 		end
 		f:Put("endinterface\n\n")
+	end
+end
+
+-- interface instance
+interface_i				= {}
+interface_i.__index		= interface_i
+
+-- 인터페이스 유효성 확인
+function interface_i.is_valid(inst)
+	return __meta_is_valid(inst, interface_i)
+end
+
+function interface_i:new(name, i, parent)
+	-- name validation
+	if type(name) ~= "string" then
+		__ERROR("Invalid instance of interface name.")
+	end
+
+	-- create instance
+	local	t	= setmetatable({}, self)
+	t.__index	= t
+	
+	-- set default
+	t.name			= name
+	
+	if self == interface_i then
+		if module.is_valid(parent) == false then
+			__ERROR("Not a module.")
+		end
+	
+		t.parent		= parent
+		t.interface		= i
+		t.lookup		= nil
+		t.prefix		= ""
+		t.desc			= nil
+		t.modport		= nil
+	end
+
+	return t
+end
+
+function interface_i:set_desc(desc)
+	self.desc			= desc
+end
+
+function interface_i:set_port(modport_name, prefix)
+	if modport_name ~= nil then
+		if self.interface:get_modport(modport_name) == nil then
+			__ERROR("Can't find modport '" .. modport_name .. "' on interface '" .. self.interface.name .. "'")
+		end
+	end
+
+	self.modport	= self.interface:get_modport(modport_name)
+	
+	if prefix ~= nil then
+		self.prefix	= prefix .. "_"
 	end
 end

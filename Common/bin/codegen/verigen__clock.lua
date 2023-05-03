@@ -7,7 +7,6 @@ clock.__default_rst		= "nRST"
 clock.__rst				= nil		-- reset name
 clock.__private_reset	= false
 clock.__speed			= 100		-- default clock speed
-clock.__enable			= false
 
 __clock_edge_enum 			= {}
 __clock_edge_enum.high		= true
@@ -47,7 +46,8 @@ function clock:new(name, desc, base)
 		__ERROR("already existed module : '" .. name .. "'")
 	end
 	
-	t.name	= name
+	t.name				= name
+	t.__active			= false
 	
 	if desc ~= nil then
 		t.__desc		= desc

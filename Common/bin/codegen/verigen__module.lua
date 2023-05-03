@@ -1,16 +1,13 @@
 module				= {}
 module.__index		= module
 module.__list		= {}
-module.__port		= {}
-module.__author		= "testdirve profiling master - verigen"
+module.__author		= "testdrive profiling master - verigen"
 module.__date		= os.date("%B/%d/%Y %a")
 module.__year		= os.date("%Y")
 module.__time		= os.date("%X")
 module.__title		= "no title"
-module.__current	= module
+module.__top		= nil
 module.__inception	= ""
-module.name			= "top"
-module.enable		= false
 
 -- 모델 찾기
 function module.find(name)
@@ -23,31 +20,21 @@ function module.is_valid(inst)
 end
 
 -- 모델 생성
-function module:new(name, base)
+function module:new(name)
 	-- name validation
 	if type(name) ~= "string" then
 		__ERROR("Invalid module name.")
 	end
 	
-	-- create instance
-	local	t = nil
-	if base == nil then
-		t = setmetatable({}, module)
-	elseif interface.is_valid(base) then
-		t = setmetatable({}, base)
-	else
-		__ERROR("Module[" .. name .. "] creation is failed : invalid base module instance.")
-	end
-	
-	-- construction 
-	t.__port		= {}
-	t.__index		= t
-
 	-- module duplication check
 	if module.find(name) ~= nil then
 		__ERROR("already existed module : '" .. name .. "'")
 	end
 	
+	-- create instance
+	local			t = setmetatable({}, self)
+	t.__index		= t
+
 	-- add to list
 	module.__list[name] = t
 
@@ -61,9 +48,13 @@ function module:new(name, base)
 	name:Trim("_ \t")
 	t.name			= name.s
 	
-	-- add details
-	t.port		= {}
-	t.param		= {}
+	-- construction
+	t.modules		= {}
+	t.params		= {}
+	t.interfaces	= {}
+	t.constraint	= {}
+	t.code			= ""
+	t.enable		= false
 	
 	return t
 end
@@ -91,112 +82,124 @@ function module:set_inception(filename)
 	
 end
 
-function module:make_current(m)
-	module.__current	= self
+function module:get_inception(void)
+	local code_inception = String(self.__inception)
+	code_inception:Replace("__YEAR__", self.__year)
+	code_inception:Replace("__TITLE__", self.__title)
+	code_inception:Replace("__DATE__", self.__date)
+	code_inception:Replace("__TIME__", self.__time)
+	code_inception:Replace("__AUTHOR__", self.__author)
+	return code_inception.s
 end
 
-function module:add_port(name, i, type)
+function module:get_interface(name)
+	return self.interfaces[name]
+end
+
+function module:get_port(name)
+	local	i = get_interface(name)
+	return (i.modport == nil) and nil or i
+end
+
+function module:add_interface(name, i)
 	if interface.is_valid(i) == false then
-		__ERROR("Invalid interface : " .. name)
+		__ERROR("Not a interface of '" .. name .. "'")
 	end
-	self.port[name]	= {["i"] = i, ["type"] = type}
+	
+	if self:get_interface(name) ~= nil then
+		__ERROR("Already interface instance '" .. name .. "' is existed.")
+	end
+	
+	if is_port == nil then
+		is_port	= false
+	end
+	
+	local	t				= interface_i:new(name, i, self)
+	self.interfaces[name]	= t
+	
+	return t
 end
 
-function module:set_param(name, default_value)
-	if load("return module.__list." .. self.name .. ".param." .. name)() ~= nil then
+function module:get_param(name, is_local)
+	local param	= self.params[name]
+	
+	if is_local ~= nil then
+		if param.is_local ~= is_local then
+			return nil
+		end
+	end
+	
+	return param
+end
+
+function module:set_param(name, value, is_local)
+	if self.params[name] ~= nil then
 		__ERROR("module[" .. self.name .. "] : given parameter[" .. name .. "] is already existed.")
 	end
+	
+	if is_local == nil then
+		is_local	= false
+	end
 
-	load("module.__list." .. self.name .. ".param." .. name .. "=" .. default_value)()
+	self.params[name] = {["default"] = value, ["is_local"] = is_local}
 end
 
-function module.build_all()
-	local f = TextFile()
-	
-	LOGI("TOP design name : " .. module.name)
-	
-	-- create top design file
-	if f:Create(sOutPath .. "/" .. module.name .. ".sv") == false then
-		__ERROR("Can't create top design file.")
-	end
-	
-	-- code inception
-	do
-		local code_inception = String(module.__inception)
-		code_inception:Replace("__YEAR__", module.__year)
-		code_inception:Replace("__TITLE__", module.__title)
-		code_inception:Replace("__DATE__", module.__date)
-		code_inception:Replace("__TIME__", module.__time)
-		code_inception:Replace("__AUTHOR__", module.__author)
-		f:Put(code_inception.s)
-	end
-	
-	-------------------------------------------------------------------
-	-- common include
-	f:Put(	"`include \"" .. module.name .. "_defines.vh\"\n\n")
+function module:get_module(name)
+	return self.modules[name]
+end
 
-	-------------------------------------------------------------------
-	-- module declaration
-	f:Put(	"module " .. module.name .. " (\n")
-	do
-		-- clocks
-		f:Put(	"\t// clocks\n")
-		for clk_name, clk in key_pairs(clock.__list) do
-			if clk.__desc == nil then
-				f:Put("\t" .. string.format("input  %16s%s,", "", clk_name) .. "\n")
-			else
-				f:Put(string.format("\t%-40s// %s\n", string.format("input  %16s%s,", "", clk_name), clk.__desc))
-			end
-		end
-		-- resets
-		f:Put(	"\t// resets\n")
-		local	use_default_rst = false
-		for clk_name, clk in key_pairs(clock.__list) do
-			if clk.__rst ~= nil then
-				f:Put(string.format("\t%-40s// reset of '%s' (active low)\n", string.format("input  %16s%s,", "", clk.__rst), clk.name))
-			else
-				use_default_rst	= true
-			end
-		end
-		if use_default_rst then
-			f:Put(string.format("\t%-40s// default global reset (active low)\n", string.format("input  %16s%s,", "", clock.__default_rst)))
-		end
-		
-		-- interface ports
-		for i_name, i in key_pairs(interface.__list) do
-			if i.__port_type ~= nil then
-				local	sCode	= String("\n\t// " .. i.name .. "\n")
-				
-				local	modport	= i.modport[i.__port_type]
-				
-				if modport == nil then
-					__ERROR("Can't find modport '" .. i.__port_type .. "' on interface '" .. i_name .. "'")
-				end
-				
-				for io_type, io_list in key_pairs(modport) do
-					for id, io_name in key_pairs(io_list) do
-						local	signal	= i.signal[io_name]
-						
-						sCode:Append("\t" .. string.format("%-6s ", io_type) ..
-							(string.format("%-16s", (signal.width > 1) and string.format("[%d:0]", signal.width - 1) or "")) ..
-							i.__port_name .. "_" .. io_name .. ",\n")
-					end
-				end
-				f:Put(sCode.s)
-			end
-		end
+function module:add_module(name, m)
+	if module.is_valid(m) == nil then
+		__ERROR("Not a module instance : '" .. name .. "'")
 	end
-	f:Put(	");\n\n")
 	
-	-------------------------------------------------------------------
-	-- active interface
-	for i_name, i in key_pairs(interface.__list) do
-		if i.__active then
-			f:Put("// " .. i.name .. "\n")
-			f:Put("i_" .. i.name .. " \n")
-		end
+	if self:get_module(name) then
+		__ERROR("already same module[" .. self.name .. "] instance[" .. name .. "] is existed.")
 	end
 
-	f:Put(	"endmodule\n")
-	f:Close()
+	self.modules[name]	= module_i:new(name, m, self)
+end
+
+-- module instance
+module_i				= {}
+module_i.__index		= module_i
+
+-- 인터페이스 유효성 확인
+function module_i.is_valid(inst)
+	return __meta_is_valid(inst, module_i)
+end
+
+function module_i:new(name, m, parent)
+	-- name validation
+	if type(name) ~= "string" then
+		__ERROR("Invalid instance of module name.")
+	end
+
+	-- create instance
+	local	t	= setmetatable({}, self)
+	t.__index	= t
+	
+	-- set default
+	t.name			= name
+	
+	if self == module_i then
+		if module.is_valid(parent) == false then
+			__ERROR("Not a module.")
+		end
+	
+		t.parent		= parent
+		t.module		= m
+		t.param			= {}
+		t.desc			= nil
+	end
+
+	return t
+end
+
+function module_i:get_param(name)
+	return self.param[name]
+end
+
+function module_i:set_param(name, val)
+	self.param[name]	= val
 end
