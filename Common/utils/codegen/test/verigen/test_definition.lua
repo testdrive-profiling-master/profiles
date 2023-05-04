@@ -39,6 +39,8 @@ bus.apb:set_signal("PSLVERR")
 bus.apb:set_modport("s", {["i"]={"PSEL", "PENABLE", "PWRITE", "PADDR", "PWDATA"}, ["o"]={"PREADY", "PRDATA", "PSLVERR"}})
 bus.apb:set_modport("m", {["o"]={"PSEL", "PENABLE", "PWRITE", "PADDR", "PWDATA"}, ["i"]={"PREADY", "PRDATA", "PSLVERR"}})
 
+bus.apb:set_prefix("S#")
+
 
 -- AXI3 master bus
 bus.maxi3 	= interface:new("maxi3")
@@ -51,6 +53,10 @@ bus.maxi3:set_signal("AWADDR")
 bus.maxi3:set_modport("s", {["i"]={"ARADDR"}, ["o"]={"AWADDR"}})
 bus.maxi3:set_modport("m", {["o"]={"ARADDR"}, ["i"]={"AWADDR"}})
 
+bus.maxi3:set_prefix("M#")
+
 -- AXI4 master bus
 bus.maxi4	= bus.maxi3:new("maxi4")
 bus.maxi4:set_signal("TEN", 4)
+
+bus.maxi4:set_prefix("M#")

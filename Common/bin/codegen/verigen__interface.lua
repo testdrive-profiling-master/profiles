@@ -47,6 +47,7 @@ function interface:new(name)
 	t.param			= {}
 	t.signal		= {}
 	t.modport		= {}
+	t.prefix		= name:upper() .. "#"
 	t.__active		= false
 	
 	-- copy construct
@@ -63,6 +64,10 @@ function interface:new(name)
 	end
 	
 	return t
+end
+
+function interface:set_prefix(prefix)
+	self.prefix		= prefix
 end
 
 function interface:get_param(name)
@@ -135,8 +140,7 @@ function interface:full_name()
 	return name
 end
 
--- 인터페이스 코드 생성
-function interface.__make_code(f)
+function interface.__build()
 	-- build bit width
 	for i_name, i in key_pairs(interface.__list) do
 		for signal_name, signal in key_pairs(i.signal) do
@@ -145,28 +149,52 @@ function interface.__make_code(f)
 			end
 		end
 	end
+end
 
+-- 인터페이스 코드 생성
+function interface.__make_code(f)
 	f:Put("//---------------------------------------------\n")
 	f:Put("// interfaces\n")
 	f:Put("//---------------------------------------------\n")
 	
 	for i_name, i in key_pairs(interface.__list) do
-		f:Put("interface i_" .. i_name .. ";\n")
-		-- signal list
-		for signal_name, signal in key_pairs(i.signal) do
-			if signal.width > 0 then
-				f:Put("    logic ")
-				-- bitwidth
-				if signal.width > 1 then
-					f:Put(string.format("%-16s", "[" .. tostring(signal.width - 1) .. ":0] "))
-				else
-					f:Put(string.format("%-16s", ""))
+		if i.__active then
+			f:Put("interface i_" .. i_name .. ";\n")
+			
+			-- signal list
+			for signal_name, signal in key_pairs(i.signal) do
+				if signal.width > 0 then
+					f:Put("	logic ")
+					-- bitwidth
+					if signal.width > 1 then
+						f:Put(string.format("%-16s", "[" .. tostring(signal.width - 1) .. ":0] "))
+					else
+						f:Put(string.format("%-16s", ""))
+					end
+					
+					f:Put(signal_name .. ";\n")
+				end
+			end
+			
+			-- modport list
+			for mp_name, mp in key_pairs(i.modport) do
+				f:Put("	modport " .. mp_name .. " (\n")
+				local sModport	= String("")
+				for io_type, io_list in key_pairs(mp.data) do
+					sModport:Append("\t\t" .. string.format("%-7s ", io_type))
+					for io_num, io_name in ipairs(io_list) do
+						sModport:Append(io_name .. ", ")
+					end
+					sModport:Append("\n")
 				end
 				
-				f:Put(signal_name .. ";\n")
+				sModport:DeleteBack(", ")
+
+				f:Put(sModport.s .. "\t);\n")
 			end
+			
+			f:Put("endinterface\n\n")
 		end
-		f:Put("endinterface\n\n")
 	end
 end
 
@@ -200,7 +228,7 @@ function interface_i:new(name, i, parent)
 		t.parent		= parent
 		t.interface		= i
 		t.lookup		= nil
-		t.prefix		= ""
+		t.prefix		= nil
 		t.desc			= nil
 		t.modport		= nil
 	end
@@ -212,7 +240,39 @@ function interface_i:set_desc(desc)
 	self.desc			= desc
 end
 
-function interface_i:set_port(modport_name, prefix)
+function interface_i:get_prefix()
+	local	prefix		= String((self.prefix == nil) and self.interface.prefix or self.prefix)
+	
+	if prefix:Length() > 0 then
+		local	inst_id		= 0
+		local	inst_count	= 0
+	
+		for i_name, i in key_pairs(self.parent.interfaces) do
+			if i.modport ~= nil and i.interface == self.interface then
+				if i == self then
+					inst_id	= inst_count
+				end
+				inst_count	= inst_count + 1
+			end
+		end
+		
+		if inst_count > 1 then
+			prefix:Replace("#", tostring(inst_id))
+		else
+			prefix:Replace("#", "")		-- only one interface port
+		end
+		
+		prefix:Append("_")
+	end
+	
+	return prefix.s
+end
+
+function interface_i:set_prefix(prefix)
+	self.prefix			= prefix
+end
+
+function interface_i:set_port(modport_name)
 	if modport_name ~= nil then
 		if self.interface:get_modport(modport_name) == nil then
 			__ERROR("Can't find modport '" .. modport_name .. "' on interface '" .. self.interface.name .. "'")
@@ -220,8 +280,4 @@ function interface_i:set_port(modport_name, prefix)
 	end
 
 	self.modport	= self.interface:get_modport(modport_name)
-	
-	if prefix ~= nil then
-		self.prefix	= prefix .. "_"
-	end
 end

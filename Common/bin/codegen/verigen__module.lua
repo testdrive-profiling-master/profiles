@@ -53,8 +53,8 @@ function module:new(name)
 	t.params		= {}
 	t.interfaces	= {}
 	t.constraint	= {}
-	t.code			= ""
-	t.enable		= false
+	t.code			= String("")
+	t.enable		= true
 	
 	return t
 end
@@ -148,7 +148,28 @@ function module:get_module(name)
 	return self.modules[name]
 end
 
-function module:add_module(name, m)
+function module:add_module(m, name)
+	if m == self then
+		__ERROR("Can't include self module instance : '" .. self.name .. "'")
+	end
+
+	if name == nil then
+		name	= m.name
+		
+		local	conflict_module	= self:get_module(name)
+		if conflict_module ~= nil then
+			conflict_module.name	= name .. "_0"
+			
+			local	i = 1
+			
+			while self:get_module(name .. "_" .. tostring(i)) ~= nil do
+				i = i + 1
+			end
+			
+			name	= name .. "_" .. tostring(i)
+		end
+	end
+
 	if module.is_valid(m) == nil then
 		__ERROR("Not a module instance : '" .. name .. "'")
 	end
@@ -157,7 +178,10 @@ function module:add_module(name, m)
 		__ERROR("already same module[" .. self.name .. "] instance[" .. name .. "] is existed.")
 	end
 
-	self.modules[name]	= module_i:new(name, m, self)
+	local	moudule_inst	= module_i:new(name, m, self)
+	self.modules[name]		= moudule_inst
+	
+	return moudule_inst
 end
 
 -- module instance
@@ -190,6 +214,7 @@ function module_i:new(name, m, parent)
 		t.parent		= parent
 		t.module		= m
 		t.param			= {}
+		t.port			= {}
 		t.desc			= nil
 	end
 
@@ -202,4 +227,12 @@ end
 
 function module_i:set_param(name, val)
 	self.param[name]	= val
+end
+
+function module_i:get_port(name)
+	return self.port[name]
+end
+
+function module_i:set_port(name, val)
+	self.port[name]		= val
 end
