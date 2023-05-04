@@ -101,7 +101,12 @@ function module:get_port(name)
 	return (i.modport == nil) and nil or i
 end
 
-function module:add_interface(name, i)
+function module:add_interface(i, name)
+	if name == nil then
+		name	= i.name
+		LOGI("name : " .. name)
+	end
+
 	if interface.is_valid(i) == false then
 		__ERROR("Not a interface of '" .. name .. "'")
 	end

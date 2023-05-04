@@ -49,6 +49,7 @@ function interface:new(name)
 	t.modport		= {}
 	t.prefix		= name:upper() .. "#"
 	t.__active		= false
+	t.__bared		= false
 	
 	-- copy construct
 	if self ~= interface then
@@ -58,16 +59,45 @@ function interface:new(name)
 		for name, signal in pairs(self.signal) do
 			t.signal[name]	= {["name"]=name, ["width"] = signal.width}
 		end
-		for name, modport in pairs(self.modport) do
-			t.modport[name]	= modport
+		for mp_name, mp in pairs(self.modport) do
+			t.modport[mp_name]			= {}
+			t.modport[mp_name].name		= mp_name
+			t.modport[mp_name].data		= {}
+			for io_type, io_list in pairs(mp.data) do
+				local	io_data		= {}
+				for i, io_name in pairs(io_list) do
+					io_data[#io_data + 1]	= io_name
+				end
+				t.modport[mp_name].data[io_type]	= io_data
+			end
 		end
 	end
 	
 	return t
 end
 
+function new_signal(name, width)
+	local	signal	= interface:new(name)
+	
+	if width == nil then
+		width	= 1
+	end
+
+	signal:set_param("WIDTH", width)
+	signal:set_signal(name, "WIDTH")
+	signal:set_modport("s", {["input" ] = {name}})
+	signal:set_modport("m", {["output"] = {name}})
+	signal:set_prefix()		-- none prefix
+	signal:set_bared()		-- bared signals
+	return signal
+end
+
 function interface:set_prefix(prefix)
-	self.prefix		= prefix
+	self.prefix		= (prefix == nil) and "" or prefix
+end
+
+function interface:set_bared(bared)
+	self.__bared	= (bared == nil) and true or bared
 end
 
 function interface:get_param(name)
@@ -108,21 +138,26 @@ end
 
 function interface:set_modport(name, modport)
 	self.modport[name]			= {}
-	self.modport[name].data		= {}
+	self.modport[name].data		= modport
 	self.modport[name].name		= name
-	
-	for io_name, io_list in key_pairs(modport) do
-		if io_name ~= "i" then
-			self.modport[name].data.input	= io_list
-		elseif io_name ~= "o" then
-			self.modport[name].data.output	= io_list
-		elseif io_name ~= "io" then
-			self.modport[name].data.inout	= io_list
-		else
-			__ERROR("Interface [" .. self.name .. "]'s modport[" .. name .. "]'s I/O type must be 'i', 'o' or 'io'")
-		end
+end
+
+function interface:add_modport(name, modport)
+	if self.modport[name] == nil then
+		__ERROR("Can't find mod port[" .. name .. "] on interface[" .. self.name .. "]")
 	end
 	
+	for mp_name, mp_list in pairs(modport) do
+		local	io_base	= self.modport[name].data[mp_name]
+		
+		if io_base == nil then
+			__ERROR("Can't find modport[" .. mp_name .. "] on interface[" .. self.name .. "]")
+		end
+		
+		for i, signal_name in pairs(mp_list) do
+			io_base[#io_base + 1]	= signal_name
+		end
+	end
 end
 
 function interface:full_name()
@@ -146,6 +181,7 @@ function interface.__build()
 		for signal_name, signal in key_pairs(i.signal) do
 			if type(signal.width) ~= "number" then
 				signal.width	= __retrieve_param(i.param, signal.width)
+				signal.width	= tonumber(signal.width) and math.tointeger(tonumber(signal.width)) or signal.width
 			end
 		end
 	end
@@ -158,21 +194,21 @@ function interface.__make_code(f)
 	f:Put("//---------------------------------------------\n")
 	
 	for i_name, i in key_pairs(interface.__list) do
-		if i.__active then
+		if i.__active and (i.__bared == false) then
 			f:Put("interface i_" .. i_name .. ";\n")
 			
 			-- signal list
 			for signal_name, signal in key_pairs(i.signal) do
 				if signal.width > 0 then
-					f:Put("	logic ")
+					--f:Put("	logic ")
 					-- bitwidth
 					if signal.width > 1 then
-						f:Put(string.format("%-16s", "[" .. tostring(signal.width - 1) .. ":0] "))
-					else
-						f:Put(string.format("%-16s", ""))
+						f:Put(string.format("	logic %-16s" .. signal_name .. ";\n", "[" .. tostring(signal.width - 1) .. ":0] "))
+					elseif signal.width == 1 then
+						f:Put(string.format("	logic %-16s" .. signal_name .. ";\n", ""))
 					end
 					
-					f:Put(signal_name .. ";\n")
+					--f:Put(signal_name .. ";\n")
 				end
 			end
 			
@@ -231,6 +267,7 @@ function interface_i:new(name, i, parent)
 		t.prefix		= nil
 		t.desc			= nil
 		t.modport		= nil
+		t.__bared		= i.__bared
 	end
 
 	return t

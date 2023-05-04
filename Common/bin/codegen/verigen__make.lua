@@ -202,15 +202,15 @@ function module:make_code(is_top)
 								clock_list[clk.name]	= 0
 								sPort:Append("\t" .. string.format(".%-20s", clk.name) .."(" .. clk.name .. "),\n")
 							end
-						end
-						
-						if clk.__rst ~= nil then
-							if clock_list[clk.__rst] == nil then
-								clock_list[clk.__rst]	= 0
-								sPort:Append("\t" .. string.format(".%-20s", clk.__rst) .."(" .. clk.__rst .. "),\n")
+							
+							if clk.__rst ~= nil then
+								if clock_list[clk.__rst] == nil then
+									clock_list[clk.__rst]	= 0
+									sPort:Append("\t" .. string.format(".%-20s", clk.__rst) .."(" .. clk.__rst .. "),\n")
+								end
+							else
+								use_global_rst	= true
 							end
-						else
-							use_global_rst	= true
 						end
 					end
 				end
@@ -231,7 +231,7 @@ function module:make_code(is_top)
 						
 						if i_self == nil then
 							sPort:Append(i_name)
-							i_self	= self:add_interface(i_name, i.interface)
+							i_self	= self:add_interface(i.interface, i_name)
 							
 							i_self.prefix		= i.prefix
 							i_self.desc			= i.desc
@@ -296,9 +296,16 @@ function module:make_code(is_top)
 		i.interface.__active	= true
 
 		if is_top or (modport == nil) then
-			sDeclares:Append("// interface : " .. i_name .. ((i.desc == nil) and "" or (" (" .. i.desc .. ")")) .. "\n")
-			
-			sDeclares:Append(string.format("i_%-20s ", i.interface.name) .. i_name .. ";\n")
+			if i.__bared then
+				sDeclares:Append("// bared interface : " .. i_name .. ((i.desc == nil) and "" or (" (" .. i.desc .. ")")) .. "\n")
+
+				for signal_name, signal in key_pairs(i.interface.signal) do
+					sDeclares:Append(string.format("logic %-24s %s;\n", ((signal.width == 1) and "" or string.format("[%d:0]", signal.width - 1)), signal.name))
+				end
+			else
+				sDeclares:Append("// interface : " .. i_name .. ((i.desc == nil) and "" or (" (" .. i.desc .. ")")) .. "\n")
+				sDeclares:Append(string.format("i_%-20s ", i.interface.name) .. i_name .. ";\n")
+			end
 			
 			if is_top and (modport ~= nil) then
 				for mp_name, mp_list in key_pairs(modport.data) do
@@ -320,43 +327,44 @@ function module:make_code(is_top)
 	-------------------------------------------------------------------
 	-- ports	
 	do
-		-- clock & reset (active check)	
+		-- clock & reset (active check)
+		local 	iClockCount	= 0
 		do
-			local	bFirst	= true
+			local	bFirst			= true
+			local	clk_list		= {}	-- prevent clock duplication
+			local	use_default_rst = false
 			for i_name, i in key_pairs(self.interfaces) do
 				local	clk		= i.interface:get_clock()
 
-				if clk ~= nil then
+				if clk ~= nil and clk_list[clk.name] == nil then
 					if bFirst then
 						sPorts:Append(	"\t// clock & reset\n")
 						bFirst	= false
 					end
 					
-					clk.__active	= true
+					clk_list[clk.name]	= true
+					iClockCount			= iClockCount + 1
+					clk.__active		= true
 					
+					-- apply clock
 					if clk.__desc == nil then
 						sPorts:Append("\t" .. string.format("input  %20s%s,", "", clk.name) .."\n")
 					else
 						sPorts:Append(string.format("\t%-40s// %s\n", string.format("input  %20s%s,", "", clk.name), clk.__desc))
 					end
-				end
-			end
-			
-			-- resets
-			if bFirst == false then
-				local	use_default_rst = false
-				for clk_name, clk in key_pairs(clock.__list) do
-					if clk.__active then
-						if clk.__rst ~= nil then
-							sPorts:Append(string.format("\t%-40s// reset of '%s' (active low)\n", string.format("input  %20s%s,", "", clk.__rst), clk.name))
-						else
-							use_default_rst	= true
-						end
+					
+					-- apply reset
+					if clk.__rst ~= nil then
+						sPorts:Append(string.format("\t%-40s// reset of '%s' (active low)\n", string.format("input  %20s%s,", "", clk.__rst), clk.name))
+					else
+						use_default_rst	= true
 					end
 				end
-				if use_default_rst then
-					sPorts:Append(string.format("\t%-40s// default global reset (active low)\n", string.format("input  %20s%s,", "", clock.__default_rst)))
-				end
+			end
+
+			-- check default reset
+			if use_default_rst then
+				sPorts:Append(string.format("\t%-40s// default global reset (active low)\n", string.format("input  %20s%s,", "", clock.__default_rst)))
 			end
 		end
 
@@ -366,16 +374,17 @@ function module:make_code(is_top)
 			local	modport	= i.modport
 			if modport ~= nil then
 				iPortCount	= iPortCount + 1
-				sPorts:Append("\n\t// " .. i_name .. ((i.desc == nil) and "" or (" (" .. i.desc .. ")")) .. "\n")
-				if is_top then
-					if is_top then
-						for mp_name, mp_list in key_pairs(modport.data) do
-							for id, io_name in key_pairs(mp_list) do
-								local	signal	= i.interface.signal[io_name]
-								sPorts:Append("\t" .. string.format("%-6s ", mp_name) ..
-									(string.format("%-20s", (signal.width > 1) and string.format("[%d:0]", signal.width - 1) or "")) ..
-									i:get_prefix() .. io_name .. ",\n")
-							end
+				if sPorts:Length() > 0 then
+					sPorts:Append("\n")
+				end
+				sPorts:Append("\t// " .. i_name .. ((i.desc == nil) and "" or (" (" .. i.desc .. ")")) .. "\n")
+				if is_top or i.__bared then
+					for mp_name, mp_list in key_pairs(modport.data) do
+						for id, io_name in key_pairs(mp_list) do
+							local	signal	= i.interface.signal[io_name]
+							sPorts:Append("\t" .. string.format("%-6s ", mp_name) ..
+								(string.format("%-20s", (signal.width > 1) and string.format("[%d:0]", signal.width - 1) or "")) ..
+								i:get_prefix() .. io_name .. ",\n")
 						end
 					end
 				else
