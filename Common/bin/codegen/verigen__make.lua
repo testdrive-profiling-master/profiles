@@ -151,14 +151,56 @@ function module:make_code(is_top)
 	local	sPorts			= String("")
 	local	sDeclares		= String("")
 	local	sBody			= String("")
+	local	sGraphviz		= String("label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><tr><td><b>" .. self.name .. "</b></td></tr><tr><td align=\"left\">__PARAM__</td></tr><tr><td align=\"left\">__PORT__</td></tr></table>>, fillcolor=\"#__FILL_COLOR__\", shape=plain")
+	
+	if is_top then
+		sGraphviz:Replace("__FILL_COLOR__", "ff880022")
+	else
+		sGraphviz:Replace("__FILL_COLOR__", "00000010")
+
+		-- original parameters
+		do
+			local	sParam	= String("")
+			
+			for name, param in key_pairs(self.params) do
+				if param.is_local == false then
+					sParam:Append("<font point-size=\"8\">" .. name .. "</font>\n")
+				end
+			end
+			
+			sParam:Trim(" \n")
+			sParam:Replace("\n", "<br align=\"left\"/>", true)
+			
+			sGraphviz:Replace("__PARAM__", sParam.s)
+		end
+		
+		-- original ports
+		do
+			local	sPort	= String("")
+			
+			for i_name, i in key_pairs(self.interfaces) do
+				local	modport	= i.modport
+				if modport ~= nil then
+					sPort:Append("<font point-size=\"8\">" .. i_name  .. (i.__bared and "" or (" <font color=\"gray\">(" .. i.interface.name .. ")</font>")) .. "</font>\n")
+					--if is_top or i.__bared then
+				end
+			end
+			
+			sPort:Trim(" \n")
+			sPort:Replace("\n", "<br align=\"left\"/>", true)
+			
+			sGraphviz:Replace("__PORT__", sPort.s)
+		end
+	end
 
 	-------------------------------------------------------------------
 	-- module instances
 	for m_name, m in key_pairs(self.modules) do
 		sBody:Append("\n" .. m.module.name)
 		
-		__graphviz:Append("\t" .. self.name .. " -> " .. m.module.name .. " [label=\"" .. m.name .. "\"];\n")
-		
+		__graphviz:Append("\t" .. self.name .. " -> " .. m.module.name .. " [label=<<table border='0' cellborder='0' cellspacing='0' cellpadding='0'><tr><td><b>" .. m.name .. "</b></td></tr><tr><td align=\"left\">__MODULE__</td></tr></table>>];\n")
+		local sGraphviz_Module	= String("")
+
 		-- parameters
 		do
 			local	sParam		= String("")
@@ -173,6 +215,8 @@ function module:make_code(is_top)
 					end
 				else
 					sParam:Append(tostring(m:get_param(p_name)))
+					
+					sGraphviz_Module:Append(p_name .. " = " .. tostring(m:get_param(p_name)) .. "\n")
 				end
 				
 				sParam:Append("),\n")
@@ -226,6 +270,8 @@ function module:make_code(is_top)
 					
 					if m:get_port(i_name) ~= nil then	-- specified port
 						sPort:Append(tostring(m:get_port(i_name)))
+						
+						sGraphviz_Module:Append("." .. i.name .. " (" .. tostring(m:get_port(i_name)) .. ")\n")
 					else
 						local	i_self	= self:get_interface(i_name)
 						
@@ -252,6 +298,15 @@ function module:make_code(is_top)
 			sBody:Append(sPort.s)
 		end
 		sBody:Append(");\n")
+		
+		sGraphviz_Module:Trim(" \n")
+		sGraphviz_Module:Replace("\n", "<br align=\"left\"/>", true)
+		
+		if sGraphviz_Module:Length() == 0 then
+			__graphviz:Replace("__MODULE__", sGraphviz_Module.s)
+		else
+			__graphviz:Replace("__MODULE__", "<font point-size=\"6\" color=\"gray\">" .. sGraphviz_Module.s .. "</font>")
+		end
 	end
 	
 	-------------------------------------------------------------------
@@ -425,20 +480,57 @@ function module:make_code(is_top)
 	
 	f:Close()
 	
+	-- top final parameters and ports
+	if is_top then
+		-- original parameters
+		do
+			local	sParam	= String("")
+			
+			for name, param in key_pairs(self.params) do
+				if param.is_local == false then
+					sParam:Append("<font point-size=\"8\">" .. name .. " = " ..  param.default .. "</font>\n")
+				end
+			end
+			
+			sParam:Trim(" \n")
+			sParam:Replace("\n", "<br align=\"left\"/>", true)
+			
+			sGraphviz:Replace("__PARAM__", sParam.s)
+		end
+		
+		-- original ports
+		do
+			local	sPort	= String("")
+			
+			for i_name, i in key_pairs(self.interfaces) do
+				local	modport	= i.modport
+				if modport ~= nil then
+					sPort:Append("<font point-size=\"8\">" .. i_name  .. (i.__bared and "" or (" <font color=\"gray\">(" .. i.interface.name .. ")</font>")) .. "</font>\n")
+					--if is_top or i.__bared then
+				end
+			end
+			
+			sPort:Trim(" \n")
+			sPort:Replace("\n", "<br align=\"left\"/>", true)
+			
+			sGraphviz:Replace("__PORT__", sPort.s)
+		end
+	end
+
+	__graphviz:Append("\t\"" .. self.name .. "\" [" .. sGraphviz.s .. "];\n")
+	
 	if is_top then
 		self:make_constraint()
-		
-		__graphviz:Append("\t\"" .. self.name .. "\" [label=<<b>" .. self.name .. "</b>>];\n")
 		
 		if __graphviz:Length() > 0 then
 			if f:Create(sOutPath .. "/" .. self.name .. ".dot") then
 				f:Put(
-					"digraph G {\n"..
+					"digraph Design_Hierarchy {\n"..
 					"fontname=\"Helvetica,Arial,sans-serif\"\n"..
-					"node [fontname=\"Helvetica,Arial,sans-serif\", color=\"#00008880\"]\n"..
+					"node [fontname=\"Helvetica,Arial,sans-serif\", color=\"#00000020\"]\n"..
 					"edge [fontname=\"Helvetica,Arial,sans-serif\", fontsize=8, color=\"#00008880\"]\n"..
 					--"rankdir=\"LR\"\n"..
-					"node [fontsize=12, shape=box, height=0.25]\n"..
+					"node [fontsize=12, shape=rect, height=0.25, style=filled, pencolor=\"#00000034\"]\n"..
 					__graphviz.s ..
 					"}\n")
 				f:Close()
