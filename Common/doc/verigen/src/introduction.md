@@ -7,16 +7,16 @@ verilog 디자인을 설계할 때 가장 문제가 되는 부분 중 하나는 
 이 부분을 자동으로 해결하고, 빠르게 모듈간 네트워크를 변경할 수 있도록 하는 툴이 필요힙니다.
 
 :::NoteHeading
-신규 기능이 필요하거나 개선사항이나 버그를 발견하시면, 정형기(@<link:mailto:clonextop@gmail.com;clonextop@gmail.com>)에게 건의 부탁드립니다.
+신규 기능이 필요하거나 개선사항이나 버그를 발견하시면, 문의(@<link:mailto:clonextop@gmail.com;clonextop@gmail.com>) 부탁드립니다.
 
 ## 주요 기능
 
 verigen 은..
 
-## 문서 자동화 생성 과정
+## verilog 자동v화 생성 과정
 verigen 을 통한 프로젝트 작성은 아래와 같은 단계로 진행됩니다.
 
-* >1. 모듈간의 hierarchy 연결 
+* >1. 모듈 선언 및 hierarchy 연결 
 * >2. A
 
  

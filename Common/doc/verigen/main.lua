@@ -19,3 +19,4 @@ AddTerm("Lua", "Lua script language (@<link:https://ko.wikipedia.org/wiki/%EB%A3
 
 -- 챕터 추가
 AddParagraph("[[src/introduction.md]]")
+AddParagraph("[[src/instructions.md]]")
