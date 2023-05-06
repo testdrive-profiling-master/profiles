@@ -82,6 +82,7 @@ function module:make_constraint()
 end
 
 local	__graphviz	= String("")
+local	__FileList	= String("")
 
 function module:make_code(is_top)
 	if self.__active or self.enable == false then
@@ -99,12 +100,15 @@ function module:make_code(is_top)
 		module.__top	= self
 		interface.__build()
 		__graphviz:clear()
+		__FileList:clear()
 	end
 	
 	-- make leaf module first
 	for name, m in key_pairs(self.modules) do
 		m.module:make_code(false)
 	end
+	
+	__FileList:Append(self.name .. ".sv\n")
 
 	-- top definitions
 	if is_top then
@@ -437,6 +441,11 @@ function module:make_code(is_top)
 					for mp_name, mp_list in key_pairs(modport.data) do
 						for id, io_name in key_pairs(mp_list) do
 							local	signal	= i.interface.signal[io_name]
+							
+							if signal == nil then
+								__ERROR("Error on modport[" .. mp_name .. "] : Can't find signal[" .. io_name .. "] on interface[" .. i.interface.name .. "]")
+							end
+							
 							sPorts:Append("\t" .. string.format("%-6s ", mp_name) ..
 								(string.format("%-20s", (signal.width > 1) and string.format("[%d:0]", signal.width - 1) or "")) ..
 								i:get_prefix() .. io_name .. ",\n")
@@ -538,6 +547,12 @@ function module:make_code(is_top)
 				os.execute("dot -Tsvg " .. sOutPath .. "/" .. self.name .. ".dot -o " .. sOutPath .. "/" .. self.name .. "_hierarchy.svg")
 				os.remove(sOutPath .. "/" .. self.name .. ".dot")
 			end
+		end
+		
+		-- file list
+		if f:Create(sOutPath .. "/" .. self.name .. ".f") then
+			f:Put(__FileList.s)
+			f:Close()
 		end
 	end
 end

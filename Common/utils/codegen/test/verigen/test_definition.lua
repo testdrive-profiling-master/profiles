@@ -18,7 +18,7 @@ clk.ACLK:set_speed(1000)
 
 
 ---------------------------------------------------------
--- bus definitions
+-- bus interface
 ---------------------------------------------------------
 bus		= {}
 
@@ -138,6 +138,23 @@ bus.maxi4:add_modport("m", {
 })
 
 bus.maxi4:set_prefix("M#")
+
+---------------------------------------------------------
+-- core interface
+---------------------------------------------------------
+core_i	= {}
+core_i.inst		= interface:new("inst")
+core_i.inst:set_signal("EN")
+core_i.inst:set_signal("INST", 32)
+core_i.inst:set_signal("READY")
+core_i.inst:set_modport("m", {
+	["output"]={"EN", "INST"},
+	["input"] ={"READY"}
+})
+core_i.inst:set_modport("s", {
+	["input"]={"EN", "INST"},
+	["output"] ={"READY"}
+})
 
 ---------------------------------------------------------
 -- configuration
