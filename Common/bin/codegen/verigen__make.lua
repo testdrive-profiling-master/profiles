@@ -1,20 +1,5 @@
 local	__constraint_list	= {}
 
--- build constraint file
-function module:make_definition()
-	local	f = TextFile()
-	if f:Create(sOutPath .. "/" .. module.name .. "_defines.vh") == false then
-		__ERROR("Can't create configuration file.")
-	end
-
-	f:Put(	"`ifndef __" .. module.name:upper() .. "_DEFINES_VH__\n"..
-			"`define __" .. module.name:upper() .. "_DEFINES_VH__\n"..
-			"`include \"testdrive_system.vh\"		// default system defines\n"..
-			"`include \"" .. module.name .. "_config.vh\"		// current system configurations\n\n")
-	interface.__make_code(f)
-	f:Put(	"`endif//__" .. module.name:upper() .. "_DEFINES_VH__\n")
-end
-
 function set_constraint(name, constraint)
 	if __constraint_list[name] == nil then
 		__constraint_list[name]		= constraint
@@ -26,6 +11,8 @@ function module:make_constraint()
 	if f:Create(sOutPath .. "/" .. self.name .. "_constraint.xdc") == false then
 		__ERROR("Can't create constraint file.")
 	end
+	
+	LOGI("Build contraint : " .. self.name .. "_constraint.xdc")
 	
 	f:Put("###############################################################################\n")
 	f:Put("# clock & reset constraint\n")
@@ -113,23 +100,6 @@ function module:make_code(is_top)
 	-- top definitions
 	if is_top then
 		LOGI("Build TOP design : " .. self.name .. ".sv")
-		
-		-- defines »ý¼º
-		do
-			local	f = TextFile()
-			if f:Create(sOutPath .. "/" .. self.name .. "_defines.vh") == false then
-				__ERROR("Can't create configuration file.")
-			end
-			
-			f:Put(self:get_inception())
-
-			f:Put(	"`ifndef __" .. self.name:upper() .. "_DEFINES_VH__\n"..
-					"`define __" .. self.name:upper() .. "_DEFINES_VH__\n"..
-					"`include \"testdrive_system.vh\"		// default system defines\n"..
-					"`include \"" .. self.name .. "_config.vh\"		// current system configurations\n\n")
-			interface.__make_code(f)
-			f:Put(	"`endif//__" .. self.name:upper() .. "_DEFINES_VH__\n")
-		end
 	else
 		LOGI("Build sub design : " .. self.name .. ".sv")
 	end
@@ -539,10 +509,12 @@ function module:make_code(is_top)
 	__graphviz:Append("\t\"" .. self.name .. "\" [" .. sGraphviz.s .. "];\n")
 	
 	if is_top then
+		-- contraint
 		self:make_constraint()
 		
 		if __graphviz:Length() > 0 then
 			if f:Create(sOutPath .. "/" .. self.name .. ".dot") then
+				LOGI("Make design hierarchy : " .. self.name .. "_hierarchy.svg")
 				f:Put(
 					"digraph Design_Hierarchy {\n"..
 					"fontname=\"Helvetica,Arial,sans-serif\"\n"..
@@ -554,13 +526,30 @@ function module:make_code(is_top)
 					"}\n")
 				f:Close()
 				
-				os.execute("dot -Tsvg " .. sOutPath .. "/" .. self.name .. ".dot -o " .. sOutPath .. "/" .. self.name .. "_hierarchy.svg")
+				exec("dot -Tsvg " .. sOutPath .. "/" .. self.name .. ".dot -o " .. sOutPath .. "/" .. self.name .. "_hierarchy.svg")
 				os.remove(sOutPath .. "/" .. self.name .. ".dot")
 			end
 		end
 		
+		-- common defines
+		if f:Create(sOutPath .. "/" .. self.name .. "_defines.vh") == false then
+			__ERROR("Can't create common definition file.")
+		else
+			LOGI("Make common defines : " .. self.name .. "_defines.vh")
+			
+			f:Put(self:get_inception())
+
+			f:Put(	"`ifndef __" .. self.name:upper() .. "_DEFINES_VH__\n"..
+					"`define __" .. self.name:upper() .. "_DEFINES_VH__\n"..
+					"`include \"testdrive_system.vh\"		// default system defines\n\n")
+			interface.__make_code(f)
+			f:Put(	"`endif//__" .. self.name:upper() .. "_DEFINES_VH__\n")
+			f:Close()
+		end
+		
 		-- file list
 		if f:Create(sOutPath .. "/" .. self.name .. ".f") then
+			LOGI("Make design file list : " .. self.name .. ".f")
 			f:Put(__FileList.s)
 			f:Close()
 		end

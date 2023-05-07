@@ -104,7 +104,6 @@ end
 function module:add_interface(i, name)
 	if name == nil then
 		name	= i.name
-		LOGI("name : " .. name)
 	end
 
 	if interface.is_valid(i) == false then
