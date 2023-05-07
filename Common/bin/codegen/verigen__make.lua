@@ -208,6 +208,8 @@ function module:make_code(is_top)
 		-- parameters
 		do
 			local	sParam		= String("")
+			local	used_param	= {}
+			
 			for p_name, param in key_pairs(m.module.params) do
 				sParam:Append("\t" .. string.format(".%-20s", p_name) .. "(")
 
@@ -219,6 +221,7 @@ function module:make_code(is_top)
 					end
 				else
 					sParam:Append(tostring(m:get_param(p_name)))
+					used_param[p_name]	= true
 					
 					sGraphviz_Module:Append(p_name .. " = " .. tostring(m:get_param(p_name)) .. "\n")
 				end
@@ -229,6 +232,13 @@ function module:make_code(is_top)
 			if sParam:Length() ~= 0 then
 				sParam:DeleteBack(",")
 				sBody:Append(" #(\n" .. sParam.s .. ")")
+			end
+			
+			-- check unused parameters
+			for p_name, param in key_pairs(m.param) do
+				if used_param[p_name] ~= true then
+					LOGW("Parameter '" .. p_name .. "' is not matched on module[" .. m.module.name .. "]'s instance[" .. m.name .. "]")
+				end
 			end
 		end
 		
