@@ -23,7 +23,7 @@ function clock.is_valid(inst)
 end
 
 -- 클럭 생성
-function clock:new(name, desc, base)
+function clock:new(name, desc)
 	-- name validation
 	if type(name) ~= "string" then
 		__ERROR("Invalid clock name.")

@@ -33,17 +33,34 @@ verigen 은 TestDrive Profiling Master 의 codegen 을 이용하여 제작되었
 verigen 을 통한 프로젝트 작성은 아래와 같은 단계로 진행됩니다.
 
 * >1. Lua 스크립트 작성
-** > 1). 모듈 선언
+** > 1). 모듈 생성
 ** > 2). 모듈 연결
-** > 3). 인터페이스 선언
-** > 4). 모듈내 인터페이스 선언
-** > 5). 모듈간 인터페이스 연결
+** > 3). 모듈에 parameter 선언 및 연결
+** > 4). 모듈에 interface 선언 및 연결
 * >2. verigen 실행하여 코드 생성
+ 
+생성된 verilog 코드는 아래처럼 일부 합성 가능한 systemverilog 문법인 interface를 사용하고 있습니다.
+
+@<b>[systemverilog interface 선언]@</b>
+```verilog
+interface my_intf;
+	logic			a;
+	logic	[3:0]	b;
+
+	// modport example
+	modport s (input a, output b);		// slave modport
+	modport m (input a, input  b);		// master modport
+endinterface
+```
+
+:::NoteHeading
+systemverilog interface의 상세한 설명은 외부링크 \
+@<link:https://verificationguide.com/systemverilog/systemverilog-modport/;systemverilog modport 설명>을 참조 바랍니다.
  
 
 ## 실행 방법
 
-verigen 을 실행하기 위해서는 아래와 같이 실행합니다.
+verigen을 실행하기 위해서는 아래와 같이 실행합니다.
 
 ```txt
 > verigen
@@ -65,4 +82,4 @@ Usage: verigen  [--help] input_file [output_path]
  
 
 ## 라이센스 허가
-verigen 에 구현된 소스는 BSD 라이센스를 준수하며, verilog 생성에 사용된 사용자의 개별 스크립트나 verilog 등의 2차 저작물은 온전히 사용자의 소유입니다.
+verigen에 구현된 소스는 BSD 라이센스를 준수하며, verilog 생성에 사용된 사용자의 개별 스크립트나 verilog 등의 2차 저작물은 온전히 사용자의 소유입니다.
