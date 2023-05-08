@@ -42,9 +42,6 @@ function module:make_constraint()
 		for name, clk in key_pairs(clock.__list) do
 			if clk.__active then
 				f:Put("create_clock -name " .. name .. " -period " .. string.format("%f", 1000/clk.__speed) .. " [get_ports " .. name .. "]\n")
-				if clk.__private_reset then
-					f:Put("set_false_path -from [get_ports " .. name .. "_nRST]\n")
-				end
 			end
 		end
 		
@@ -70,6 +67,20 @@ end
 
 local	__graphviz	= String("")
 local	__FileList	= String("")
+
+function module:find_sub_module_matched_interface(cur_m, cur_i, cur_i_name)
+	for name, m in key_pairs(self.modules) do
+		if m ~= cur_m then
+			for i_name, i in key_pairs(m.module.interfaces) do
+				if i_name == cur_i_name and i.interface == cur_i then
+					return true
+				end
+			end
+		end
+	end
+	
+	return false
+end
 
 function module:make_code(is_top)
 	if self.__active or self.enable == false then
@@ -248,6 +259,7 @@ function module:make_code(is_top)
 				end
 			end
 			
+			-- sub modules
 			for i_name, i in key_pairs(m.module.interfaces) do
 				if i.modport ~= nil then
 					sPort:Append("\t" .. string.format(".%-20s", i.name) .."(")
@@ -265,7 +277,11 @@ function module:make_code(is_top)
 							
 							i_self.prefix		= i.prefix
 							i_self.desc			= i.desc
-							i_self.modport		= i.modport
+							
+							-- search other submodule's same name with same interface
+							if self:find_sub_module_matched_interface(m, i.interface, i_name) == false then
+								i_self.modport		= i.modport
+							end
 						else	-- check interface
 							if i_self.interface ~= i.interface then
 								__ERROR("Not same interface type : " .. m.module.name .. "(" .. i.interface.name .. ") != " .. self.name .. "(" .. i_self.name .. ")")

@@ -5,7 +5,6 @@ clock.__constraint		= {}
 clock.__desc			= nil
 clock.__default_rst		= "nRST"
 clock.__rst				= nil		-- reset name
-clock.__private_reset	= false
 clock.__speed			= 100		-- default clock speed
 
 __clock_edge_enum 			= {}
@@ -31,14 +30,7 @@ function clock:new(name, desc, base)
 	end
 	
 	-- create instance
-	local	t = nil
-	if base == nil then
-		t = setmetatable({}, clock)
-	elseif interface.is_valid(base) then
-		t = setmetatable({}, base)
-	else
-		__ERROR("Clock[" .. name .. "] creation is failed : invalid base module instance.")
-	end
+	local	t = setmetatable({}, self)
 	t.__index		= t
 
 	-- clock duplication check

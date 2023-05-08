@@ -50,7 +50,7 @@ core_busy		= new_signal("core_busy")
 
 core.top:add_interface(core_busy):set_port("m")
 core_wrapper:add_interface(core_busy_all)
-core.busy_ctrl:add_interface(core_busy_all):set_port("m")
+core.busy_ctrl:add_interface(core_busy_all):set_port("s")
 
 -- add instruction
 core.core_if:add_interface(core_i.inst, "if_inst"):set_port("m")
@@ -58,9 +58,6 @@ core.core_ex:add_interface(core_i.inst, "if_inst"):set_port("s")
 
 core.core_ex:add_interface(core_i.inst, "ex_inst"):set_port("m")
 core.core_wb:add_interface(core_i.inst, "ex_inst"):set_port("s")
-
-core.top:add_interface(core_i.inst, "if_inst")
-core.top:add_interface(core_i.inst, "ex_inst")
 
 -----------------------------------------------
 -- Step 2 : modules parameters
