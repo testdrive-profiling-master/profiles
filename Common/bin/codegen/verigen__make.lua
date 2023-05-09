@@ -261,7 +261,9 @@ function module:make_code(is_top)
 			
 			-- sub modules
 			for i_name, i in key_pairs(m.module.interfaces) do
+				--local	sIPort	= String("")
 				if i.modport ~= nil then
+					--i.interface.__bared --TODO : bared interface?
 					sPort:Append("\t" .. string.format(".%-20s", i.name) .."(")
 					
 					if m:get_port(i_name) ~= nil then	-- specified port

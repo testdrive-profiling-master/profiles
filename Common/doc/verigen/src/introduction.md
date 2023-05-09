@@ -39,25 +39,6 @@ verigen 을 통한 프로젝트 작성은 아래와 같은 단계로 진행됩�
 ** > 4). 모듈에 interface 선언 및 연결
 * >2. verigen 실행하여 코드 생성
  
-생성된 verilog 코드는 아래처럼 일부 합성 가능한 systemverilog 문법인 interface를 사용하고 있습니다.
-
-@<b>[systemverilog interface 선언]@</b>
-```verilog
-interface my_intf;
-	logic			a;
-	logic	[3:0]	b;
-
-	// modport example
-	modport s (input a, output b);		// slave modport
-	modport m (input a, input  b);		// master modport
-endinterface
-```
-
-:::NoteHeading
-systemverilog interface의 상세한 설명은 외부링크 \
-@<link:https://verificationguide.com/systemverilog/systemverilog-modport/;systemverilog modport 설명>을 참조 바랍니다.
- 
-
 ## 실행 방법
 
 verigen을 실행하기 위해서는 아래와 같이 실행합니다.

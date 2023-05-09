@@ -89,6 +89,7 @@ function module:get_inception(void)
 	code_inception:Replace("__DATE__", self.__date)
 	code_inception:Replace("__TIME__", self.__time)
 	code_inception:Replace("__AUTHOR__", self.__author)
+	code_inception:Replace("__CHECK__", "", true)			-- for global code inception format
 	return code_inception.s
 end
 
