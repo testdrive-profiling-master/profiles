@@ -92,6 +92,45 @@ function new_signal(name, width)
 	return signal
 end
 
+function interface:set_multicycle(modport_name, cycle, inst_count)
+	if self:get_clock() == nil then
+		__ERROR("Multicycle interface[" .. i.name .. "] must have a clock.")
+	end
+	
+	if cycle <= 1 then
+		__ERROR("Multicycle interface[" .. i.name .. "]'s cycle(required : " .. cycle .. ") must greater than 2.")
+	elseif cycle > 12 then
+		__ERROR("Multicycle interface[" .. i.name .. "]'s cycle(required : " .. cycle .. ") is too high.")
+	end
+	
+	if inst_count == nil then
+		inst_count	= cycle
+	end
+	
+	if inst_count < 1 then
+		__ERROR("Multicycle interface[" .. i.name .. "]'s instance count(required : " .. inst_count .. ") must greater than 1.")
+	elseif inst_count > cycle then
+		__ERROR("Multicycle interface[" .. i.name .. "]'s instance count(required : " .. inst_count .. ") must be less than cycle(" .. cycle .. ").")
+	end
+	
+	if self.__muticycle ~= nil then
+		__ERROR("Already interface[" .. i.name .. "] is defined multicycled.")
+	end
+	
+	local	modport	= self:get_modport(modport_name)
+	
+	if modport == nil then
+		__ERROR("Interface[" .. i.name .. "]'s Multicycle modport(" .. modport_name .. ") is not existed.")
+	end
+	
+	self.set_signal("IE")
+	self.set_signal("IREADY")
+	self.set_signal("OE")
+	self.set_signal("OREADY")
+	
+	self.__muticycle	= {["modport"] = modport, ["cycle"] = cycle, ["count"] = inst_count}
+end
+
 function interface:set_prefix(prefix)
 	self.prefix		= (prefix == nil) and "" or prefix
 end
