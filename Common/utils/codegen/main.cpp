@@ -92,7 +92,7 @@ int main(int argc, const char* argv[])
 		// encrypt or decrypt
 		bool	bEncrypt	= main_arg_table.GetOption("encrypt");
 		bool	bDecrypt	= main_arg_table.GetOption("decrypt");
-		//Script::EnableTraceBack(main_arg_table.GetOption("trace"));
+		Script::EnableTraceBack(main_arg_table.GetOption("trace"));
 
 		if(bEncrypt || bDecrypt) {
 			if(arg_size != argc) {

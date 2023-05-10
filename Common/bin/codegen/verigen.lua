@@ -1,18 +1,23 @@
-local	Arg				= ArgTable("Verilog Generator for TestDrive Profiling Master. v1.00")
 local	sProfilePath	= String(nil)
 
 sProfilePath:GetEnvironment("TESTDRIVE_PROFILE")
 
-Arg:AddOptionFile	("in_file", nil, nil, nil, "input_file", "input Lua file")
-Arg:AddOptionFile	("out_path", "./output", nil, nil, "output_path", "output path")
-Arg:AddRemark(nil, "default : ./output")
+if lfs.attributes(".verigen", "mode") == "file" then
+	RunScript(".verigen")
+else
+	local	Arg				= ArgTable("Verilog Generator for TestDrive Profiling Master. v1.00")
+	
+	Arg:AddOptionFile	("in_file", nil, nil, nil, "input_file", "input Lua file")
+	Arg:AddOptionFile	("out_path", "./output", nil, nil, "output_path", "output path")
+	Arg:AddRemark(nil, "default : ./output")
 
-if (Arg:DoParse() == false) then
-	return
+	if (Arg:DoParse() == false) then
+		return
+	end
+
+	sInFilename				= Arg:GetOptionFile("in_file", 0)
+	sOutPath				= Arg:GetOptionFile("out_path", 0)
 end
-
-sInFilename				= Arg:GetOptionFile("in_file", 0)
-sOutPath				= Arg:GetOptionFile("out_path", 0)
 
 -- 출력 폴더 생성
 if lfs.attributes(sOutPath, "mode") ~= "directory" then
