@@ -1054,11 +1054,6 @@ Script::~Script(void)
 	}
 }
 
-static void __lua_traceback(lua_State* L, const char* sFileName){
-	luaL_loadbuffer(L, "print(debug.traceback())", 24, sFileName);
-	lua_pcall(L, 0, LUA_MULTRET, 0);
-}
-
 bool Script::Run(const char* sFileName)
 {
 	cstring sLuaFilePath(sFileName);
@@ -1121,7 +1116,6 @@ bool Script::Run(const char* sFileName)
 			const char* sError	= luaL_checkstring(m_pLua, -1);
 			LOGE("Error on running script : %s", sError);
 			lua_pop(m_pLua, 1); // pop out error message
-			__lua_traceback(m_pLua, sShortenFilePath.c_str());
 		} else {
 			bRet	=  true;
 		}
@@ -1148,7 +1142,6 @@ bool Script::RunBuffer(const char* sBuffer, const char* sFileName)
 			const char* sError	= luaL_checkstring(m_pLua, -1);
 			LOGE("Error on running script : %s", sError);
 			lua_pop(m_pLua, 1); // pop out error message
-			__lua_traceback(m_pLua, sFileName);
 		} else {
 			bRet	=  true;
 		}

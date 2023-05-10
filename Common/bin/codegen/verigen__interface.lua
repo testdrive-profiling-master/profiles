@@ -27,7 +27,7 @@ end
 function interface:new(name)
 	-- name validation
 	if type(name) ~= "string" then
-		error("Invalid interface name.")
+		error("Invalid interface name.", 2)
 	end
 
 	-- create instance
@@ -36,7 +36,7 @@ function interface:new(name)
 
 	-- interface duplication check
 	if interface.find(name) ~= nil then
-		error("already existed interface : '" .. name .. "'")
+		error("already existed interface : '" .. name .. "'", 2)
 	end
 	
 	-- add to list
@@ -94,13 +94,13 @@ end
 
 function interface:set_multicycle(modport_name, cycle, inst_count)
 	if self:get_clock() == nil then
-		error("Multicycle interface[" .. i.name .. "] must have a clock.")
+		error("Multicycle interface[" .. i.name .. "] must have a clock.", 2)
 	end
 	
 	if cycle <= 1 then
-		error("Multicycle interface[" .. i.name .. "]'s cycle(required : " .. cycle .. ") must greater than 2.")
+		error("Multicycle interface[" .. i.name .. "]'s cycle(required : " .. cycle .. ") must greater than 2.", 2)
 	elseif cycle > 12 then
-		error("Multicycle interface[" .. i.name .. "]'s cycle(required : " .. cycle .. ") is too high.")
+		error("Multicycle interface[" .. i.name .. "]'s cycle(required : " .. cycle .. ") is too high.", 2)
 	end
 	
 	if inst_count == nil then
@@ -108,19 +108,19 @@ function interface:set_multicycle(modport_name, cycle, inst_count)
 	end
 	
 	if inst_count < 1 then
-		error("Multicycle interface[" .. i.name .. "]'s instance count(required : " .. inst_count .. ") must greater than 1.")
+		error("Multicycle interface[" .. i.name .. "]'s instance count(required : " .. inst_count .. ") must greater than 1.", 2)
 	elseif inst_count > cycle then
-		error("Multicycle interface[" .. i.name .. "]'s instance count(required : " .. inst_count .. ") must be less than cycle(" .. cycle .. ").")
+		error("Multicycle interface[" .. i.name .. "]'s instance count(required : " .. inst_count .. ") must be less than cycle(" .. cycle .. ").", 2)
 	end
 	
 	if self.__muticycle ~= nil then
-		error("Already interface[" .. i.name .. "] is defined multicycled.")
+		error("Already interface[" .. i.name .. "] is defined multicycled.", 2)
 	end
 	
 	local	modport	= self:get_modport(modport_name)
 	
 	if modport == nil then
-		error("Interface[" .. i.name .. "]'s Multicycle modport(" .. modport_name .. ") is not existed.")
+		error("Interface[" .. i.name .. "]'s Multicycle modport(" .. modport_name .. ") is not existed.", 2)
 	end
 	
 	self.set_signal("IE")
@@ -153,7 +153,7 @@ end
 
 function interface:set_clock(clk)
 	if clock.is_valid(clk) == false then
-		error("invalid clock setting on interface '" .. self.name .. "'")
+		error("invalid clock setting on interface '" .. self.name .. "'", 2)
 	end
 	
 	self["__clock"]		= clk
@@ -183,14 +183,14 @@ end
 
 function interface:add_modport(name, modport)
 	if self.modport[name] == nil then
-		error("Can't find mod port[" .. name .. "] on interface[" .. self.name .. "]")
+		error("Can't find mod port[" .. name .. "] on interface[" .. self.name .. "]", 2)
 	end
 	
 	for mp_name, mp_list in pairs(modport) do
 		local	io_base	= self.modport[name].data[mp_name]
 		
 		if io_base == nil then
-			error("Can't find modport[" .. mp_name .. "] on interface[" .. self.name .. "]")
+			error("Can't find modport[" .. mp_name .. "] on interface[" .. self.name .. "]", 2)
 		end
 		
 		for i, signal_name in pairs(mp_list) do
@@ -285,7 +285,7 @@ end
 function interface_i:new(name, i, parent)
 	-- name validation
 	if type(name) ~= "string" then
-		error("Invalid instance of interface name.")
+		error("Invalid instance of interface name.", 2)
 	end
 
 	-- create instance
@@ -297,7 +297,7 @@ function interface_i:new(name, i, parent)
 	
 	if self == interface_i then
 		if module.is_valid(parent) == false then
-			error("Not a module.")
+			error("Not a module.", 2)
 		end
 	
 		t.parent		= parent
@@ -351,7 +351,7 @@ end
 function interface_i:set_port(modport_name)
 	if modport_name ~= nil then
 		if self.interface:get_modport(modport_name) == nil then
-			error("Can't find modport '" .. modport_name .. "' on interface '" .. self.interface.name .. "'")
+			error("Can't find modport '" .. modport_name .. "' on interface '" .. self.interface.name .. "'", 2)
 		end
 	end
 

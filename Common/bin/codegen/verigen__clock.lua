@@ -26,7 +26,7 @@ end
 function clock:new(name, desc)
 	-- name validation
 	if type(name) ~= "string" then
-		error("Invalid clock name.")
+		error("Invalid clock name.", 2)
 	end
 	
 	-- create instance
@@ -35,7 +35,7 @@ function clock:new(name, desc)
 
 	-- clock duplication check
 	if clock.find(name) ~= nil then
-		error("already existed module : '" .. name .. "'")
+		error("already existed module : '" .. name .. "'", 2)
 	end
 	
 	t.name				= name
@@ -55,13 +55,13 @@ function clock:set_reset(name)
 	self.__rst	= name
 	
 	if name == __default_rst then
-		error("reset '" .. name .. "' is same as global reset.")
+		error("reset '" .. name .. "' is same as global reset.", 2)
 	end
 end
 
 function clock:set_speed(mhz)
 	if mhz <= 0 then
-		error("clock speed constraint must be higher than zero.")
+		error("clock speed constraint must be higher than zero.", 2)
 	end
 	self.__speed		= mhz
 end
