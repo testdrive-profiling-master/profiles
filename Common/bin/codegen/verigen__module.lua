@@ -102,6 +102,10 @@ function module:get_port(name)
 end
 
 function module:add_interface(i, name)
+	if i == nil then
+		error("NULLed interface.", 2)
+	end
+	
 	if name == nil then
 		name	= i.name
 	end

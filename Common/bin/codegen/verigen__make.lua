@@ -481,9 +481,11 @@ function module:make_code(is_top)
 	
 	f:Put(sBody.s)
 	
-	f:Put(self.code.s .. "\n")
+	if self.code:Length() > 0 then
+		f:Put("\n" .. self.code.s .. "\n")
+	end
 
-	f:Put(	"endmodule\n")
+	f:Put("endmodule\n")
 	
 	f:Close()
 	
