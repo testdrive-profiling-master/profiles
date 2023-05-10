@@ -23,12 +23,12 @@ end
 function module:new(name)
 	-- name validation
 	if type(name) ~= "string" then
-		__ERROR("Invalid module name.")
+		error("Invalid module name.")
 	end
 	
 	-- module duplication check
 	if module.find(name) ~= nil then
-		__ERROR("already existed module : '" .. name .. "'")
+		error("already existed module : '" .. name .. "'")
 	end
 	
 	-- create instance
@@ -41,7 +41,6 @@ function module:new(name)
 
 	-- set name
 	name	= String(name)
-	name:MakeLower()
 	name:Replace(" ", "_", true)
 	name:Replace(".", "_", true)
 	name:Replace("__", "_", true)
@@ -77,7 +76,7 @@ function module:set_inception(filename)
 		self.__inception	= self.__inception.s
 		f:Close()
 	else
-		__ERROR("Can't find code inception : " .. filename)
+		error("Can't find code inception : " .. filename)
 	end
 	
 end
@@ -108,11 +107,11 @@ function module:add_interface(i, name)
 	end
 
 	if interface.is_valid(i) == false then
-		__ERROR("Not a interface of '" .. name .. "'")
+		error("Not a interface of '" .. name .. "'")
 	end
 	
 	if self:get_interface(name) ~= nil then
-		__ERROR("Already interface instance '" .. name .. "' is existed.")
+		error("Already interface instance '" .. name .. "' is existed.")
 	end
 	
 	if is_port == nil then
@@ -139,7 +138,7 @@ end
 
 function module:set_param(name, value, is_local)
 	if self.params[name] ~= nil then
-		__ERROR("module[" .. self.name .. "] : given parameter[" .. name .. "] is already existed.")
+		error("module[" .. self.name .. "] : given parameter[" .. name .. "] is already existed.")
 	end
 	
 	if is_local == nil then
@@ -154,8 +153,12 @@ function module:get_module(name)
 end
 
 function module:add_module(m, name)
+	if m == nil then
+		error("Nulled module added to module[" .. self.name .. "]")
+	end
+
 	if m == self then
-		__ERROR("Can't include self module instance : '" .. self.name .. "'")
+		error("Can't include self module instance : '" .. self.name .. "'")
 	end
 
 	if name == nil then
@@ -176,11 +179,11 @@ function module:add_module(m, name)
 	end
 
 	if module.is_valid(m) == nil then
-		__ERROR("Not a module instance : '" .. name .. "'")
+		error("Not a module instance : '" .. name .. "'")
 	end
 	
 	if self:get_module(name) then
-		__ERROR("already same module[" .. self.name .. "] instance[" .. name .. "] is existed.")
+		error("already same module[" .. self.name .. "] instance[" .. name .. "] is existed.")
 	end
 
 	local	moudule_inst	= module_i:new(name, m, self)
@@ -201,7 +204,7 @@ end
 function module_i:new(name, m, parent)
 	-- name validation
 	if type(name) ~= "string" then
-		__ERROR("Invalid instance of module name.")
+		error("Invalid instance of module name.")
 	end
 
 	-- create instance
@@ -213,7 +216,7 @@ function module_i:new(name, m, parent)
 	
 	if self == module_i then
 		if module.is_valid(parent) == false then
-			__ERROR("Not a module.")
+			error("Not a module.")
 		end
 	
 		t.parent		= parent

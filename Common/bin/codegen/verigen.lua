@@ -14,16 +14,11 @@ end
 sInFilename				= Arg:GetOptionFile("in_file", 0)
 sOutPath				= Arg:GetOptionFile("out_path", 0)
 
-function __ERROR(msg)
-	LOGE(msg)
-	os.exit(1)
-end
-
 -- 출력 폴더 생성
 if lfs.attributes(sOutPath, "mode") ~= "directory" then
 	lfs.mkdir(sOutPath)
 	if lfs.attributes(sOutPath, "mode") ~= "directory" then
-		__ERROR("Output path can't access : '" .. sOutPath .. "'")
+		error("Output path can't access : '" .. sOutPath .. "'")
 	end
 end
 

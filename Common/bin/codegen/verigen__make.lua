@@ -9,7 +9,7 @@ end
 function module:make_constraint()
 	local	f = TextFile()
 	if f:Create(sOutPath .. "/" .. self.name .. "_constraint.xdc") == false then
-		__ERROR("Can't create constraint file.")
+		error("Can't create constraint file.")
 	end
 	
 	LOGI("Build contraint : " .. self.name .. "_constraint.xdc")
@@ -118,7 +118,7 @@ function module:make_code(is_top)
 	-- create top design file
 	local	f		= TextFile()
 	if f:Create(sOutPath .. "/" .. self.name .. ".sv") == false then
-		__ERROR("Can't create top design file.")
+		error("Can't create top design file.")
 	end
 	
 	-- code inception
@@ -286,7 +286,7 @@ function module:make_code(is_top)
 							end
 						else	-- check interface
 							if i_self.interface ~= i.interface then
-								__ERROR("Not same interface type : " .. m.module.name .. "(" .. i.interface.name .. ") != " .. self.name .. "(" .. i_self.name .. ")")
+								error("Not same interface type : " .. m.module.name .. "(" .. i.interface.name .. ") != " .. self.name .. "(" .. i_self.name .. ")")
 							end
 							sPort:Append(i_name)
 						end
@@ -372,7 +372,7 @@ function module:make_code(is_top)
 						elseif mp_name == "output" then
 							sDeclares:Append(string.format("assign %-23s = ", i:get_prefix() .. io_name) .. i_name .. "." .. io_name .. ";\n")
 						elseif mp_name == "inout" then
-							__ERROR("inout port is not supported.")
+							error("inout port is not supported.")
 						end
 					end
 				end
@@ -441,7 +441,7 @@ function module:make_code(is_top)
 							local	signal	= i.interface.signal[io_name]
 							
 							if signal == nil then
-								__ERROR("Error on modport[" .. mp_name .. "] : Can't find signal[" .. io_name .. "] on interface[" .. i.interface.name .. "]")
+								error("Error on modport[" .. mp_name .. "] : Can't find signal[" .. io_name .. "] on interface[" .. i.interface.name .. "]")
 							end
 							
 							sPorts:Append("\t" .. string.format("%-6s ", mp_name) ..
@@ -450,7 +450,7 @@ function module:make_code(is_top)
 						end
 					end
 				else
-					sPorts:Append(string.format("\t%-26s ", i.interface.name .. "." .. modport.name) .. i_name .. ",\n")
+					sPorts:Append(string.format("\t%-26s ", (i.interface.__bared and "" or "i_") .. i.interface.name .. "." .. modport.name) .. i_name .. ",\n")
 				end
 			end
 		end
@@ -551,7 +551,7 @@ function module:make_code(is_top)
 		
 		-- common defines
 		if f:Create(sOutPath .. "/" .. self.name .. "_defines.vh") == false then
-			__ERROR("Can't create common definition file.")
+			error("Can't create common definition file.")
 		else
 			LOGI("Make common defines : " .. self.name .. "_defines.vh")
 			
