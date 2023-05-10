@@ -51,6 +51,8 @@ public:
 	bool Run(const char* sFileName);
 	bool RunBuffer(const char* sBuffer, const char* sFileName = "inline");
 
+	static void EnableTraceBack(bool bEnable = true);
+
 protected:
 	static bool __RunScript(const char* sFileName);
 

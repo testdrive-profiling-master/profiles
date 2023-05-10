@@ -56,6 +56,7 @@ int main(int argc, const char* argv[])
 	ArgTable::SetDefaultArguments(argc, argv);
 	main_arg_table.AddOption("encrypt", "e", "encrypt", "Encrypt Lua script file");
 	main_arg_table.AddOption("decrypt", "d", "decrypt", "Decrypt Lua script file");
+	main_arg_table.AddOption("trace", NULL, "trace", "Enable traceback on Lua script");
 	main_arg_table.AddOptionString("key", "code_gen_default", "k", "key", "key_code", "Set key code for Encrypt/Decrypt");
 	main_arg_table.AddOptionFile("lua_file", NULL, NULL, NULL, "lua_file", "Lua script file");
 	// calculate maintain ArgumentSize
@@ -91,6 +92,7 @@ int main(int argc, const char* argv[])
 		// encrypt or decrypt
 		bool	bEncrypt	= main_arg_table.GetOption("encrypt");
 		bool	bDecrypt	= main_arg_table.GetOption("decrypt");
+		//Script::EnableTraceBack(main_arg_table.GetOption("trace"));
 
 		if(bEncrypt || bDecrypt) {
 			if(arg_size != argc) {
