@@ -656,6 +656,26 @@ top:set_param("BYTE_WIDTH", "DATA_WIDTH/8", true)
 @<tbl:media/instruction_module.xlsx;is_valid>
 ;;;
 
+### module.apply_code
+@<tbl:media/instruction_module.xlsx;apply_code>
+ 
+ex) module.apply_code 예시 (Core, ALU 모듈에 코드를 추가하고자 할 때.)
+```lua
+module.apply_code("__core.sv")
+```
+ 
+[__core.sv]
+```verilog
+:Core
+assign	A = B;		// Core's code
+assign	C = D;		// Core's code
+
+:ALU
+assign	E = F;		// ALU's code
+assign	G = H;		// ALU's code
+```
+;;;
+
 ### module_i:set_param
 @<tbl:media/instruction_module.xlsx;i_set_param>
 ;;;

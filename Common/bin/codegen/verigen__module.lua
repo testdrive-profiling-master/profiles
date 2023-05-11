@@ -258,6 +258,51 @@ function module:add_code(s)
 	self.code:Append(code.s)
 end
 
+function module.apply_code(filename)
+	local	f = TextFile()
+	local	cur_module	= nil
+	if f:Open(filename) then
+		local	codes	= String("")
+		
+		function add_code(m, code)
+			if m ~= nil then
+				code:TrimLeft("\r\n")
+				code:TrimRight(" \t\r\n")
+				code:Replace("\r", "", true)
+				m:add_code(code.s .. "\n")
+			end
+			code:clear()
+		end
+		
+		while f:IsEOF() == false do
+			local	s	= String(f:Get())
+			
+			if s == nil then
+				break
+			end
+			
+			if s:CompareFront(":") then
+				s:Trim(": \r\n")
+				if s:CompareFront("-") == false then
+					add_code(cur_module, codes)
+				
+					cur_module	= module.find(s.s)
+					if cur_module == nil then
+						error("module[" .. s.s .. "] is not found.", 2)
+					end
+				end
+			else
+				codes:Append(s.s)
+			end
+		end
+		
+		add_code(cur_module, codes)
+		f:Close()
+	else
+		error("Can't open code file : " .. filename)
+	end
+end
+
 -- module instance
 module_i				= {}
 module_i.__index		= module_i
