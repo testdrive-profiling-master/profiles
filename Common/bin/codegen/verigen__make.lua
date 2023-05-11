@@ -489,6 +489,9 @@ function module:make_code(is_top)
 	
 	f:Close()
 	
+	-- apply istyle
+	exec("istyle --style=kr -T4 -n \"" .. sOutPath .. "/" .. self.name .. ".sv\"")
+	
 	-- top final parameters and ports
 	if is_top then
 		-- original parameters
