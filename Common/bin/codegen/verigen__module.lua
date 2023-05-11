@@ -9,17 +9,17 @@ module.__title		= "no title"
 module.__top		= nil
 module.__inception	= ""
 
--- 모델 찾기
+-- find module
 function module.find(name)
 	return load("return module.__list." .. name)()
 end
 
--- 모듈 유효성 확인
+-- check module validation
 function module.is_valid(inst)
 	return __meta_is_valid(inst, module)
 end
 
--- 모델 생성
+-- create module
 function module:new(name)
 	-- name validation
 	if type(name) ~= "string" then
@@ -196,14 +196,14 @@ function module:add_module(m, name)
 	return moudule_inst
 end
 
-function module:add_code(s, t, v_end, v_step)
+function _V(s, v_start, v_end, v_step)
 	local	code	= String(s)
 	
-	if type(t) == "number" then
+	if type(v_start) == "number" then
 		if type(v_end) == "number" then
 			-- step check
 			if type(v_step) ~= "number" then
-				if t > v_end then
+				if v_start > v_end then
 					v_step	= -1
 				else
 					v_step	= 1
@@ -212,22 +212,24 @@ function module:add_code(s, t, v_end, v_step)
 				if v_step == 0 then
 					error("step size is zero.", 2)
 				end
-				if (t > v_end and v_step > 0) or (t < v_end and v_step < 0) then
+				if (v_start > v_end and v_step > 0) or (v_start < v_end and v_step < 0) then
 					error("invalid step size.", 2)
 				end
 			end
 			
-			local	s_start		= code:TokenizeVariable("$*$").s
+			local	s_start		= code:TokenizeVariable("$(*)").s
 			local	s_variable	= code:GetVariable().s
 			local	s_end		= code:Tokenize("").s
 			
 			if #s_variable == 0 then
-				error("Can't find variable text", 2)
+				s_variable	= s
+				s_start		= ""
+				s_end		= ""
 			end
 			
 			do
 				local s_code = String("")
-				for i = t, v_end, v_step do
+				for i = v_start, v_end, v_step do
 					local s_val = String(s_variable)
 					s_val:Replace("#", tostring(i), true)
 					s_code:Append(" " .. s_val.s)
@@ -238,13 +240,17 @@ function module:add_code(s, t, v_end, v_step)
 				code.s	= s_start .. s_code.s .. s_end
 			end
 		else
-			code:Replace("#", tostring(t), true)
-		end
-	elseif type(t) == "table" then
-		for tag, val in pairs(t) do
-			code:Replace(tostring(tag), tostring(val), true)
+			code:Replace("#", tostring(v_start), true)
 		end
 	end
+	
+	return code.s
+end
+
+function module:add_code(s)
+	local	code	= String(s)
+	
+	code:TrimBack(" \t")
 	
 	if code:CompareBack(";") then
 		code:Append("\n")
@@ -256,7 +262,7 @@ end
 module_i				= {}
 module_i.__index		= module_i
 
--- 인터페이스 유효성 확인
+-- check module instance validation
 function module_i.is_valid(inst)
 	return __meta_is_valid(inst, module_i)
 end

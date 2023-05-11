@@ -298,8 +298,7 @@ function GenerateFigure(sFileName, fRatio)
 		height	= tonumber(sy.s)
 		
 		if height == nil then
-			LOGE("Invalid image : \"" .. sFileName .. "\"")
-			os.exit()
+			error("Invalid image : \"" .. sFileName .. "\"")
 		end
 		
 		cx	= math.floor(fRatio * 6400000)
@@ -401,8 +400,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 	local	xls		= DocExcel()
 	
 	if xls:Open(sExcelFileName) == false then
-		LOGE("Can't open excel file : " .. sExcelFileName)
-		os.exit()
+		error("Can't open excel file : " .. sExcelFileName)
 	end
 	
 	-- 시트 열기
@@ -412,8 +410,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 	local	col_list		= {}
 	
 	if sheet == nil then
-		LOGE("Can't open sheet table : " .. sExcelFileName .. "(" .. sSheetName .. ")")
-		os.exit()
+		error("Can't open sheet table : " .. sExcelFileName .. "(" .. sSheetName .. ")")
 	end
 	
 	-- 첫 줄 목록 얻기
@@ -989,8 +986,7 @@ function GenerateTableFromLua(sLuaTable)
 		end
 		
 		if iRowCount == 0 then
-			LOGE("No table data in Lua variable : " .. sLuaTable)
-			os.exit(1)
+			error("No table data in Lua variable : " .. sLuaTable)
 		end
 	end
 
@@ -1002,8 +998,7 @@ end
 ReadText = function(sFile)
 	local	txt	= TextFile()
 	if txt:Open(sFile) == false then
-		LOGE("Text file '" .. sFile .. ". is not existed.")
-		os.exit()
+		error("Text file '" .. sFile .. ". is not existed.")
 	end
 	return txt:GetAll(false)
 end
@@ -1020,8 +1015,7 @@ function EncodeParagraph(sText, sExtra)
 		sPara:ChangeCharsetToANSI()
 		local	txt	= TextFile()
 		if txt:Open(sPara.s) == false then
-			LOGE("Text file '" .. sPara.s .. ". is not existed.")
-			os.exit()
+			error("Text file '" .. sPara.s .. ". is not existed.")
 		end
 		sPara	= String(txt:GetAll(false))
 		sPara:Replace("  \\\n", " ", true);
@@ -1131,8 +1125,7 @@ function EncodeParagraph(sText, sExtra)
 					local txt = TextFile()
 					if txt:Create(".docgen_code_highlight.tmp") then
 					else
-						LOGE("Create temporary file is failed.")
-						os.exit()
+						error("Create temporary file is failed.")
 					end
 					txt:Put(sContent.s)
 					txt:Close()
@@ -1457,8 +1450,7 @@ function EncodeParagraph(sText, sExtra)
 									<w:t>"  .. sComment.s ..  "</w:t>\
 								</w:r></w:hyperlink>")
 						else
-							LOGE("Can't recognize paragraph command : " .. sTag.s)
-							os.exit()
+							error("Can't recognize paragraph command : " .. sTag.s)
 						end
 					end
 				end
@@ -1589,8 +1581,7 @@ while true do
 	local	bookmark_num	= bookmark_list[sTarget.s]
 	
 	if bookmark_num == nil then
-		LOGE("bookmark \"" .. sTarget.s .. "\" is not found.")
-		os.exit()
+		error("bookmark \"" .. sTarget.s .. "\" is not found.")
 	end
 	
 	bookmark_text:Destroy(1)
@@ -1618,19 +1609,16 @@ do
 		
 	-- 기존 doc/pdf 파일 제거
 	if os.execute("rm -f \"" .. sOutFilename.s .. "\"") == false then
-		LOGE("file '" .. sOutFilename.s .. "' is locked.")
-		os.exit()
+		error("file '" .. sOutFilename.s .. "' is locked.")
 	end
 	if os.execute("rm -f \"" .. sOutFilename_PDF.s .. "\"") == false then
-		LOGE("file \"" .. sOutFilename_PDF.s .. "\" is locked.")
-		os.exit()
+		error("file \"" .. sOutFilename_PDF.s .. "\" is locked.")
 	end
 	
 	-- 결과 저장
 	LOGI("Build document : " .. sOutFilename.s)
 	if doc:Save(sOutFilename.s) == false then
-		LOGE("Can't create : " .. sOutFilename.s)
-		os.exit()
+		error("Can't create : " .. sOutFilename.s)
 	end
 	doc:Close()
 	

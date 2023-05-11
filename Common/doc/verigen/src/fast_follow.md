@@ -1,7 +1,7 @@
 # Fast follow
 
 이 단은 예제 중심으로 빠르게 설명하고 있습니다. \
-사전 형식으로 class 와 method 를 확인하려면, 다음 단 '@<bookmark:Classes and Methods>'를 참조하시기 바랍니다.
+사전 형식으로 class 와 method 를 확인하려면, 다음 단 '@<bookmark:Class and Method>'를 참조하시기 바랍니다.
 
 ## Step #1 : 모듈의 생성
 

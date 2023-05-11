@@ -644,6 +644,10 @@ top:set_param("BYTE_WIDTH", "DATA_WIDTH/8", true)
 @<tbl:media/instruction_module.xlsx;get_module>
 ;;;
 
+### module:add_code
+@<tbl:media/instruction_module.xlsx;add_code>
+;;;
+
 ### module.find
 @<tbl:media/instruction_module.xlsx;find>
 ;;;
