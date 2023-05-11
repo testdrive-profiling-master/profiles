@@ -250,7 +250,7 @@ end
 function module:add_code(s)
 	local	code	= String(s)
 	
-	code:TrimBack(" \t")
+	code:TrimRight(" \t")
 	
 	if code:CompareBack(";") then
 		code:Append("\n")
