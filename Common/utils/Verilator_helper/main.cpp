@@ -295,6 +295,7 @@ int main(int argc, const char* argv[])
 							sLine.Trim(" \r\n");
 
 							if(sLine.CompareFront(":")) {
+								bool	bRun	= false;
 								cstring	sRunPath;
 								sLine.erase(0, 1);
 
@@ -306,11 +307,23 @@ int main(int argc, const char* argv[])
 									sLine.CutFront("]");
 									sLine.Trim(" ");
 									sRunPath.Trim(" ");
-									sRunPath.insert(0, sWorkPath);
-									fs::current_path(fs::path(sRunPath.c_str())); //setting path
+
+									if(sRunPath.CompareFront("!")) {	// run when directory is not existed.
+										sRunPath.erase(0, 1);
+										sRunPath.Trim(" ");
+										sRunPath.insert(0, sWorkPath);
+										bRun	= !fs::exists(fs::path(sRunPath.c_str()));
+										fs::current_path(fs::path(sWorkPath.c_str()));
+									} else {	// run when directory is existed.
+										sRunPath.insert(0, sWorkPath);
+										bRun	= fs::exists(fs::path(sRunPath.c_str()));
+
+										if(bRun) fs::current_path(fs::path(sRunPath.c_str()));
+									}
 								}
 
-								system(sLine);
+								if(bRun) system(sLine);
+
 								fs::current_path(sCurPath);
 							} else {	// add to argument
 								if(sLine.size())
