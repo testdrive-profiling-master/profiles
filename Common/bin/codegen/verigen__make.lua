@@ -172,6 +172,10 @@ function module:make_code(is_top)
 					sPort:Append("<font point-size=\"8\">" .. i_name  .. (i.__bared and "" or (" <font color=\"gray\">(" .. i.interface.name .. ")</font>")) .. "</font>\n")
 					--if is_top or i.__bared then
 				end
+				
+				if i.interface:get_clock() ~= nil then
+					self:add_clock(i.interface:get_clock())
+				end
 			end
 			
 			sPort:Trim(" \n")
@@ -237,25 +241,21 @@ function module:make_code(is_top)
 			do
 				local	clock_list		= {}
 				local	use_global_rst	= false
-				for i_name, i in key_pairs(m.module.interfaces) do
-					if i.modport ~= nil then
-						local	clk		= i.interface:get_clock()
-
-						if clk ~= nil then			
-							if clock_list[clk.name] == nil then
-								clock_list[clk.name]	= 0
-								sPort:Append("\t" .. string.format(".%-20s", clk.name) .."(" .. clk.name .. "),\n")
-							end
-							
-							if clk.__rst ~= nil then
-								if clock_list[clk.__rst] == nil then
-									clock_list[clk.__rst]	= 0
-									sPort:Append("\t" .. string.format(".%-20s", clk.__rst) .."(" .. clk.__rst .. "),\n")
-								end
-							else
-								use_global_rst	= true
-							end
+				for clk_name, clk in key_pairs(m.module.clocks) do
+					self:add_clock(clk)
+					
+					if clock_list[clk.name] == nil then
+						clock_list[clk.name]	= 0
+						sPort:Append("\t" .. string.format(".%-20s", clk.name) .."(" .. clk.name .. "),\n")
+					end
+					
+					if clk.__rst ~= nil then
+						if clock_list[clk.__rst] == nil then
+							clock_list[clk.__rst]	= 0
+							sPort:Append("\t" .. string.format(".%-20s", clk.__rst) .."(" .. clk.__rst .. "),\n")
 						end
+					else
+						use_global_rst	= true
 					end
 				end
 				
@@ -367,18 +367,24 @@ function module:make_code(is_top)
 		i.interface.__active	= true
 
 		if is_top or (modport == nil) then
+			if i.interface:get_clock() ~= nil then
+				self:add_clock(i.interface:get_clock())
+			end
+		
 			if i.__bared then
-				sDeclares:Append("// bared interface : " .. i_name .. ((i.desc == nil) and "" or (" (" .. i.desc .. ")")) .. "\n")
+				if modport == nil then
+					sDeclares:Append("// bared interface : " .. i_name .. ((i.desc == nil) and "" or (" (" .. i.desc .. ")")) .. "\n")
 
-				for signal_name, signal in key_pairs(i.interface.signal) do
-					sDeclares:Append(string.format("logic %-24s %s;\n", ((signal.width == 1) and "" or string.format("[%d:0]", signal.width - 1)), signal.name))
+					for signal_name, signal in key_pairs(i.interface.signal) do
+						sDeclares:Append(string.format("logic %-24s %s;\n", ((signal.width == 1) and "" or string.format("[%d:0]", signal.width - 1)), signal.name))
+					end
 				end
 			else
 				sDeclares:Append("// interface : " .. i_name .. ((i.desc == nil) and "" or (" (" .. i.desc .. ")")) .. "\n")
 				sDeclares:Append(string.format("i_%-20s ", i.interface.name) .. i_name .. ";\n")
 			end
 			
-			if is_top and (modport ~= nil) then
+			if is_top and (modport ~= nil) and i.__bared == false then
 				for mp_name, mp_list in key_pairs(modport.data) do
 					for id, io_name in key_pairs(mp_list) do
 						if mp_name == "input" then
@@ -402,34 +408,29 @@ function module:make_code(is_top)
 		local 	iClockCount	= 0
 		do
 			local	bFirst			= true
-			local	clk_list		= {}	-- prevent clock duplication
 			local	use_default_rst = false
-			for i_name, i in key_pairs(self.interfaces) do
-				local	clk		= i.interface:get_clock()
-
-				if clk ~= nil and clk_list[clk.name] == nil then
-					if bFirst then
-						sPorts:Append(	"\t// clock & reset\n")
-						bFirst	= false
-					end
-					
-					clk_list[clk.name]	= true
-					iClockCount			= iClockCount + 1
-					clk.__active		= true
-					
-					-- apply clock
-					if clk.__desc == nil then
-						sPorts:Append("\t" .. string.format("input  %20s%s,", "", clk.name) .."\n")
-					else
-						sPorts:Append(string.format("\t%-40s// %s\n", string.format("input  %20s%s,", "", clk.name), clk.__desc))
-					end
-					
-					-- apply reset
-					if clk.__rst ~= nil then
-						sPorts:Append(string.format("\t%-40s// reset of '%s' (active low)\n", string.format("input  %20s%s,", "", clk.__rst), clk.name))
-					else
-						use_default_rst	= true
-					end
+			
+			for clk_name, clk in key_pairs(self.clocks) do
+				if bFirst then
+					sPorts:Append(	"\t// clock & reset\n")
+					bFirst	= false
+				end
+				
+				iClockCount			= iClockCount + 1
+				clk.__active		= true
+				
+				-- apply clock
+				if clk.__desc == nil then
+					sPorts:Append("\t" .. string.format("input  %20s%s,", "", clk.name) .."\n")
+				else
+					sPorts:Append(string.format("\t%-40s// %s\n", string.format("input  %20s%s,", "", clk.name), clk.__desc))
+				end
+				
+				-- apply reset
+				if clk.__rst ~= nil then
+					sPorts:Append(string.format("\t%-40s// reset of '%s' (active low)\n", string.format("input  %20s%s,", "", clk.__rst), clk.name))
+				else
+					use_default_rst	= true
 				end
 			end
 

@@ -50,6 +50,7 @@ function module:new(name)
 	-- construction
 	t.modules		= {}
 	t.params		= {}
+	t.clocks		= {}
 	t.interfaces	= {}
 	t.constraint	= {}
 	t.code			= String("")
@@ -99,6 +100,16 @@ end
 function module:get_port(name)
 	local	i = get_interface(name)
 	return (i.modport == nil) and nil or i
+end
+
+function module:add_clock(clk)
+	if clock.is_valid(clk) == false then
+		error("Not a valid clock", 2)
+	end
+	
+	if self.clocks[clk.name] == nil then
+		self.clocks[clk.name]	= clk
+	end
 end
 
 function module:add_interface(i, name)
