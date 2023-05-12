@@ -131,6 +131,13 @@ void BuildAutomation::DoCheck(DWORD command, LPCTSTR sFileName)
 		if(m_bAutoBuild && !pItem->sExecuteFile.IsEmpty())
 			m_pDoc->KillTimer(id + m_dwBuildCommandStart);
 
+		CString sDir(sFileName);
+		{	// get directory only
+			int iPos	= sDir.ReverseFind('\\');
+			if(iPos>=0) sDir.Delete(iPos + 1, -1);
+			else sDir.clear();
+		}
+		if(!IsFileExisted(sDir + ".no_touch")) {
 		{
 			CString sName(sFileName);
 
@@ -170,7 +177,7 @@ void BuildAutomation::DoCheck(DWORD command, LPCTSTR sFileName)
 
 		if(!pItem->sInceptionFile.IsEmpty())
 			g_pSystem->InsertCodeInception((LPCTSTR)sFileName, pItem->sInceptionFile, pItem->sTitle, m_sAuthorName);
-
+		}
 		if(m_bAutoBuild && !pItem->sExecuteFile.IsEmpty()) {
 			m_sTempFilePath	= sFileName;
 			m_pDoc->SetTimer(id + m_dwBuildCommandStart, 700);		// delayed build for chained source change

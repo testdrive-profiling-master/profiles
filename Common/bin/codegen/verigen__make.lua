@@ -65,8 +65,9 @@ function module:make_constraint()
 	end
 end
 
-local	__graphviz	= String("")
-local	__FileList	= String("")
+local	__graphviz		= String("")
+local	__FileList		= String("")
+local	__IncludeList	= String("")
 
 function module:find_sub_module_matched_interface(cur_m, cur_i, cur_i_name)
 	for name, m in key_pairs(self.modules) do
@@ -99,6 +100,7 @@ function module:make_code(is_top)
 		interface.__build()
 		__graphviz:clear()
 		__FileList:clear()
+		__IncludeList:clear()
 	end
 	
 	-- make leaf module first
@@ -107,6 +109,7 @@ function module:make_code(is_top)
 	end
 	
 	__FileList:Append(self.name .. ".sv\n")
+	__IncludeList:Append("`include \"" .. self.name .. ".sv\"\n")
 
 	-- top definitions
 	if is_top then
@@ -181,7 +184,9 @@ function module:make_code(is_top)
 	-------------------------------------------------------------------
 	-- module instances
 	for m_name, m in key_pairs(self.modules) do
-		sBody:Append("\n" .. m.module.name)
+		local	sModule		= String("")
+		local	no_ports	= true
+		sModule:Append("\n" .. m.module.name)
 		
 		__graphviz:Append("\t" .. self.name .. " -> " .. m.module.name .. " [label=<<table border='0' cellborder='0' cellspacing='0' cellpadding='0'><tr><td><b>" .. m.name .. "</b></td></tr><tr><td align=\"left\">__MODULE__</td></tr></table>>];\n")
 		local sGraphviz_Module	= String("")
@@ -212,7 +217,7 @@ function module:make_code(is_top)
 
 			if sParam:Length() ~= 0 then
 				sParam:DeleteBack(",")
-				sBody:Append(" #(\n" .. sParam.s .. ")")
+				sModule:Append(" #(\n" .. sParam.s .. ")")
 			end
 			
 			-- check unused parameters
@@ -224,7 +229,7 @@ function module:make_code(is_top)
 		end
 		
 		-- ports
-		sBody:Append(" " .. m.name .. " (\n")
+		sModule:Append(" " .. m.name .. " (\n")
 		do
 			local	sPort			= String("")
 
@@ -259,7 +264,7 @@ function module:make_code(is_top)
 				end
 			end
 			
-			-- sub modules
+			-- ports
 			for i_name, i in key_pairs(m.module.interfaces) do
 				--local	sIPort	= String("")
 				if i.modport ~= nil then
@@ -293,13 +298,22 @@ function module:make_code(is_top)
 					end
 					
 					sPort:Append("),\n")
+					
+					no_ports	= false
 				end
 			end
 			
 			sPort:DeleteBack(",")
-			sBody:Append(sPort.s)
+			sModule:Append(sPort.s)
 		end
-		sBody:Append(");\n")
+		sModule:Append(");\n")
+		
+		if no_ports then
+			sModule:Trim(" \r\n")
+			sBody:Append("\n/* no ports module. (commented out for DRC.)\n" .. sModule.s .. "*/\n")
+		else
+			sBody:Append(sModule.s)
+		end
 		
 		sGraphviz_Module:Trim(" \n")
 		sGraphviz_Module:Replace("\n", "<br align=\"left\"/>", true)
@@ -574,6 +588,15 @@ function module:make_code(is_top)
 		if f:Create(sOutPath .. "/" .. self.name .. ".f") then
 			LOGI("Make design file list : " .. self.name .. ".f")
 			f:Put(__FileList.s)
+			f:Close()
+		end
+		
+		-- include list
+		if f:Create(sOutPath .. "/" .. self.name .. "_includes.vh") then
+			f:Put("`ifndef __" .. self.name:upper() .. "_INCLUDES_VH__\n")
+			f:Put("`define __" .. self.name:upper() .. "_INCLUDES_VH__\n")
+			f:Put(__IncludeList.s)
+			f:Put("`endif//__" .. self.name:upper() .. "_INCLUDES_VH__\n")
 			f:Close()
 		end
 	end
