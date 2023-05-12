@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 4/26/2023 Wed (clonextop@gmail.com)
+// Rev.  : 5/12/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "SourceList.h"
 #include <tchar.h>
@@ -1068,13 +1068,6 @@ void SourceGroup::Scan(void)
 	{
 		CString sNoSourcePath;
 		sNoSourcePath.Format(_T("%s\\%s"), sFindPath, NO_SEARCH_NAME);
-
-		if(_taccess(sNoSourcePath, 0) != -1) {
-			bNoSource = TRUE;
-			return;
-		}
-
-		sNoSourcePath.Format(_T("%s\\%s"), sFindPath, NO_SEARCH_NAME2);
 
 		if(_taccess(sNoSourcePath, 0) != -1) {
 			bNoSource = TRUE;

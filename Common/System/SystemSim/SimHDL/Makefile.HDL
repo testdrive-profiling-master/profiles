@@ -5,28 +5,29 @@ SRC_PATH		:= $(TESTDRIVE_PROFILE)Common/System/SystemSim/SimHDL
 LIBPATH			:= ../../../../Application/lib
 TARGETPATH		:= ../../../../Program
 TARGETNAME		:= SimHDL
+SIMPATH			:= ../../../HDL/$(SIM_TOP_PATH)
 
-ifneq ("$(wildcard ../../../HDL/$(SIM_TOP_PATH)/config.mk)","")
-include ../../../HDL/$(SIM_TOP_PATH)/config.mk
+ifneq ("$(wildcard $(SIMPATH)/config.mk)","")
+include $(SIMPATH)/config.mk
 endif
 
-ifneq ("$(wildcard ../../../HDL/$(SIM_TOP_PATH)/dpi_private/config.mk)","")
-include ../../../HDL/$(SIM_TOP_PATH)/dpi_private/config.mk
+ifneq ("$(wildcard $(SIMPATH)/dpi_private/config.mk)","")
+include $(SIMPATH)/dpi_private/config.mk
 endif
 
 CPPCHECK_SRCS	:= $(SRCS) \
-	$(wildcard ../../../HDL/$(SIM_TOP_PATH)/dpi_private/*.cpp) \
+	$(wildcard $(SIMPATH)/dpi_private/*.cpp) \
 	$(wildcard ../../../HDL/dpi/*.cpp)
 
 SRCS := $(SRCS) \
 	$(SRC_PATH)/SimHDL.cpp \
 	$(wildcard $(TESTDRIVE_PROFILE)Common/System/SystemSim/HDL/dpi/*.cpp) \
-	$(wildcard ../../../HDL/$(SIM_TOP_PATH)/dpi_private/*.cpp) \
+	$(wildcard $(SIMPATH)/dpi_private/*.cpp) \
 	$(wildcard ../../../HDL/dpi/*.cpp) \
 	$(wildcard ../verilator/*.cpp)
 
 LIBDIR			:= $(LIBDIR) -lshell32 -lz -lm
-INC				:= $(INC) -I. -I../../../../Application/include -I../../../HDL -I../../../HDL/dpi -I$(TESTDRIVE_PROFILE)Common/System/SystemSim/HDL/dpi -I../../../HDL/$(SIM_TOP_PATH)/dpi_private -I../verilator -I$(TESTDRIVE_DIR)include/verilator -I$(TESTDRIVE_DIR)bin/msys64/ucrt64/share/verilator/include -I$(TESTDRIVE_DIR)bin/msys64/ucrt64/share/verilator/include/vltstd -I$(TESTDRIVE_DIR)bin/msys64/ucrt64/share/verilator/include/gtkwave
+INC				:= $(INC) -I. -I../../../../Application/include -I../../../HDL -I../../../HDL/dpi -I$(TESTDRIVE_PROFILE)Common/System/SystemSim/HDL/dpi -I$(SIMPATH)/dpi_private -I../verilator -I$(TESTDRIVE_DIR)include/verilator -I$(TESTDRIVE_DIR)bin/msys64/ucrt64/share/verilator/include -I$(TESTDRIVE_DIR)bin/msys64/ucrt64/share/verilator/include/vltstd -I$(TESTDRIVE_DIR)bin/msys64/ucrt64/share/verilator/include/gtkwave
 
 CDEFS			:= $(CDEFS) $(SIM_CDEFS) -D__STDC_FORMAT_MACROS -DSIM_HDL_EXPORTS -DUSE_VERILATOR -DUSE_TESTDRIVE -DVL_USER_FINISH -DVL_USER_STOP -DVL_USER_FATAL -DVL_THREADED
 EXTRA_CFLAGS	:= -Os -std=c++20 -DNDEBUG

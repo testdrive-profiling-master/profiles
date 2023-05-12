@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Verilator helper
-// Rev.  : 3/20/2023 Mon (clonextop@gmail.com)
+// Rev.  : 5/12/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "UtilFramework.h"
 #include <filesystem>
@@ -281,7 +281,10 @@ int main(int argc, const char* argv[])
 				sPath.Replace("/", "\\", true);
 
 				if((pos = sPath.rfind("\\")) > 0) {
+					cstring	sWorkPath;
+					fs::path	sCurPath	= fs::current_path();
 					sPath.erase(pos, -1);
+					sWorkPath.Format("%s\\%s\\", sCurPath.string().c_str(), sPath.c_str());
 					sPath += "\\.verilator";
 					TextFile	f;
 
@@ -291,8 +294,28 @@ int main(int argc, const char* argv[])
 						while(f.GetLine(sLine)) {
 							sLine.Trim(" \r\n");
 
-							if(sLine.size())
-								sArg.AppendFormat(" %s", sLine.c_str());
+							if(sLine.CompareFront(":")) {
+								cstring	sRunPath;
+								sLine.erase(0, 1);
+
+								if(sLine.CompareFront("[")) {
+									sLine.erase(0, 1);
+									int iEnd	= sLine.find("]");
+									sRunPath	= sLine;
+									sRunPath.CutBack("]", true);
+									sLine.CutFront("]");
+									sLine.Trim(" ");
+									sRunPath.Trim(" ");
+									sRunPath.insert(0, sWorkPath);
+									fs::current_path(fs::path(sRunPath.c_str())); //setting path
+								}
+
+								system(sLine);
+								fs::current_path(sCurPath);
+							} else {	// add to argument
+								if(sLine.size())
+									sArg.AppendFormat(" %s", sLine.c_str());
+							}
 						}
 					}
 				}

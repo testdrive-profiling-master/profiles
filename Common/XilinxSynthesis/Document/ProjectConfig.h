@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 3/22/2021 Mon (clonextop@gmail.com)
+// Rev.  : 5/12/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __PROJECT_CONFIG_H__
 #define __PROJECT_CONFIG_H__
@@ -43,13 +42,12 @@
 #define	SOURCE_LIST_FILE_NAME	_T("." GLOBAL_NAME ".sources")
 #define	WORK_DIR_NAME			_T("." GLOBAL_NAME ".work")
 #define	NO_SEARCH_NAME			_T("." GLOBAL_NAME ".nosearch")
-#define	NO_SEARCH_NAME2			_T("." "TestDrive" ".nosearch")
 
 extern LPCTSTR		g_sGlobalName;
 extern LPCTSTR		g_sEmpty;
 extern LPCTSTR		g_sNotepadPath;
 
-typedef enum{
+typedef enum {
 	CONFIG_ID_FAMILY,
 	CONFIG_ID_DEVICE,
 	CONFIG_ID_PACKAGE,
@@ -59,13 +57,13 @@ typedef enum{
 	CONFIG_ID_RESETS,
 	CONFIG_ID_MAX_PATHS,
 	CONFIG_ID_SIZE
-}CONFIG_ID;
+} CONFIG_ID;
 
-typedef struct{
+typedef struct {
 	int			iMaxPaths;
 	TCHAR		sProjectPath[2048];
 	TCHAR		sXilinxPath[2048];
-	struct{
+	struct {
 		TCHAR		sFamily[1024];
 		TCHAR		sDevice[1024];
 		TCHAR		sPackage[1024];
@@ -73,15 +71,14 @@ typedef struct{
 		TCHAR		sTargetSpeed[1024];
 		TCHAR		sClocks[1024];
 		TCHAR		sResets[1024];
-	}spec;
+	} spec;
 	CString		sDocPath;
-}CONFIG;
+} CONFIG;
 
 class SourceVector;
 class HtmlTable;
 
-class ProjectConfig
-{
+class ProjectConfig {
 public:
 	ProjectConfig(void);
 	virtual ~ProjectConfig(void);
@@ -90,7 +87,9 @@ public:
 	BOOL UpdateConfigAll(BOOL bUpdate = TRUE);
 	CString RetrievePath(LPCTSTR sExtPath = NULL);
 	BOOL RetrieveSourcePath(LPCTSTR sSrcFile, CString& sSrcPath);
-	void SetRebuild(void)	{m_bMustRebuild	= TRUE;}
+	void SetRebuild(void)	{
+		m_bMustRebuild	= TRUE;
+	}
 	CString MakeDevicePartName(void);
 
 	static CONFIG		m_Config;
@@ -99,7 +98,14 @@ protected:
 	BOOL GetDefaultProjectPath(void);
 	BOOL CheckConfigCompleteness(void);
 	BOOL MakeProjectConfigFile(SourceVector* pSource);
-	BOOL IsMustRebuild(void)	{if(m_bMustRebuild){m_bMustRebuild	= FALSE;return TRUE;}return FALSE;}
+	BOOL IsMustRebuild(void)	{
+		if(m_bMustRebuild) {
+			m_bMustRebuild	= FALSE;
+			return TRUE;
+		}
+
+		return FALSE;
+	}
 
 	static HtmlTable*	m_pTable;
 	static CString		m_sNameFilter;
