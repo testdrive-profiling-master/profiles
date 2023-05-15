@@ -552,7 +552,30 @@ function module:make_code(is_top)
 	if is_top then
 		-- contraint
 		self:make_constraint()
+
+		-- common defines
+		if f:Create(sOutPath .. "/" .. self.name .. "_defines.vh") == false then
+			error("Can't create common definition file.", 2)
+		else
+			LOGI("Make common defines : " .. self.name .. "_defines.vh")
+			
+			f:Put(self:get_inception())
+
+			f:Put(	"`ifndef __" .. self.name:upper() .. "_DEFINES_VH__\n"..
+					"`define __" .. self.name:upper() .. "_DEFINES_VH__\n"..
+					"`include \"testdrive_system.vh\"		// default system defines\n\n")
+			interface.__make_code(f)
+			f:Put(	"`endif//__" .. self.name:upper() .. "_DEFINES_VH__\n")
+			f:Close()
+			
+			-- make html style output
+			exec("code_highlighter --ilang=verilog -n " .. sOutPath .. "/" .. self.name .. "_defines.vh " .. sOutPath .. "/html/" .. self.name .. "_defines.html")
+			
+			__graphviz:Append("\t\"" .. self.name .. "_defines\" [URL=\"html/" .. self.name .. "_defines.html\" target=\"_" .. self.name:upper() ..  "_DEFINES\" fillcolor=\"#D0FFD0\"];\n")
+			__graphviz:Append("\t\"" .. self.name .. "\" -> \"" .. self.name .. "_defines\" [fillcolor=\"#F0C0C0\" style=dotted];\n")
+		end
 		
+		-- graphviz
 		if __graphviz:Length() > 0 then
 			if f:Create(sOutPath .. "/" .. self.name .. ".dot") then
 				LOGI("Make design hierarchy : " .. self.name .. "_hierarchy.svg")
@@ -570,22 +593,6 @@ function module:make_code(is_top)
 				exec("dot -Tsvg " .. sOutPath .. "/" .. self.name .. ".dot -o " .. sOutPath .. "/" .. self.name .. "_hierarchy.svg")
 				os.remove(sOutPath .. "/" .. self.name .. ".dot")
 			end
-		end
-		
-		-- common defines
-		if f:Create(sOutPath .. "/" .. self.name .. "_defines.vh") == false then
-			error("Can't create common definition file.", 2)
-		else
-			LOGI("Make common defines : " .. self.name .. "_defines.vh")
-			
-			f:Put(self:get_inception())
-
-			f:Put(	"`ifndef __" .. self.name:upper() .. "_DEFINES_VH__\n"..
-					"`define __" .. self.name:upper() .. "_DEFINES_VH__\n"..
-					"`include \"testdrive_system.vh\"		// default system defines\n\n")
-			interface.__make_code(f)
-			f:Put(	"`endif//__" .. self.name:upper() .. "_DEFINES_VH__\n")
-			f:Close()
 		end
 		
 		-- file list
