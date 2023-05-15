@@ -1,8 +1,8 @@
 #include "ArgTable.h"
 #include "TextFile.h"
 #include "cstring.h"
-#include "source-highlight/sourcehighlight.h"
-#include "source-highlight/langmap.h"
+#include "srchilite/sourcehighlight.h"
+#include "srchilite/langmap.h"
 
 using namespace std;
 using namespace srchilite;

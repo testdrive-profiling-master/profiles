@@ -19,11 +19,18 @@ else
 	sOutPath				= Arg:GetOptionFile("out_path", 0)
 end
 
--- 출력 폴더 생성
+-- create output directory
 if lfs.attributes(sOutPath, "mode") ~= "directory" then
 	lfs.mkdir(sOutPath)
 	if lfs.attributes(sOutPath, "mode") ~= "directory" then
 		error("Output path can't access : '" .. sOutPath .. "'")
+	end
+end
+
+if lfs.attributes(sOutPath .. "/html", "mode") ~= "directory" then
+	lfs.mkdir(sOutPath .. "/html")
+	if lfs.attributes(sOutPath .. "/html", "mode") ~= "directory" then
+		error("Output html path can't access : '" .. sOutPath .. "/html'")
 	end
 end
 

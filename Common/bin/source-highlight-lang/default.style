@@ -24,7 +24,7 @@ predef_func darkblue b ;
 classname teal ; // for class names, e.g., in Java and C++
 
 // line numbers
-linenum black f;
+linenum gray f;
 
 // Internet related
 url blue u, f;

@@ -139,7 +139,7 @@ function module:make_code(is_top)
 	local	sPorts			= String("")
 	local	sDeclares		= String("")
 	local	sBody			= String("")
-	local	sGraphviz		= String("label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><tr><td><b>" .. self.name .. "</b></td></tr><tr><td align=\"left\">__PARAM__</td></tr><tr><td align=\"left\">__PORT__</td></tr></table>>, fillcolor=\"#__FILL_COLOR__\", shape=plain")
+	local	sGraphviz		= String("URL=\"html/" .. self.name .. ".html\" target=\"_" .. self.name:upper() .. "\" label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><tr><td><b>" .. self.name .. "</b></td></tr><tr><td align=\"left\">__PARAM__</td></tr><tr><td align=\"left\">__PORT__</td></tr></table>>, fillcolor=\"#__FILL_COLOR__\", shape=plain")
 	
 	if is_top then
 		sGraphviz:Replace("__FILL_COLOR__", "ff880022")
@@ -507,7 +507,10 @@ function module:make_code(is_top)
 	-- apply istyle
 	exec("istyle --style=kr -T4 -n \"" .. sOutPath .. "/" .. self.name .. ".sv\"")
 	
-	-- top final parameters and ports
+	-- make html style output
+	exec("code_highlighter --ilang=verilog -n " .. sOutPath .. "/" .. self.name .. ".sv " .. sOutPath .. "/html/" .. self.name .. ".html")
+	
+	-- graphivz : top final parameters and ports
 	if is_top then
 		-- original parameters
 		do
