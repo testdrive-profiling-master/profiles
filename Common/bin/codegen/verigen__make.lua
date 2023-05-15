@@ -490,6 +490,10 @@ function module:make_code(is_top)
 		f:Put(" ();\n\n")
 	end
 	
+	if sParameters:Length() > 0 then
+		f:Put("// synopsys template\n")
+	end
+	
 	if sDeclares:Length() > 0 then
 		f:Put(sDeclares.s)
 	end
