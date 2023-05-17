@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,6 +31,8 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common verilog library
+// Rev.  : 5/17/2023 Wed (clonextop@gmail.com)
+//================================================================================
 // Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
 //================================================================================
 `ifndef __TESTDRIVE_COMMAND_QUEUE_V__
@@ -51,11 +52,11 @@ module CommandQueue #(
 	input							I_EN,			// enable
 	input	[ID_DEPTH-1:0]			I_ID,			// ID
 	input	[DATA_WIDTH-1:0]		I_DATA,			// input data
-	output							I_VALID,		// output validation
+	output							I_READY,		// input ready
 	// command output
 	output	[(2**ID_DEPTH)-1:0]		O_EN,			// enable
 	output	[DATA_WIDTH-1:0]		O_DATA,			// output data
-	input	[(2**ID_DEPTH)-1:0]		O_VALID			// output validation
+	input	[(2**ID_DEPTH)-1:0]		O_READY			// output ready
 );
 // synopsys template
 
@@ -68,16 +69,16 @@ wire	[ID_DEPTH+DATA_WIDTH-1:0]	q_data;
 wire								s_iready, s_oe, s_oready;
 wire	[ID_DEPTH-1:0]				s_id;
 
-assign	s_oready					= |(O_EN & O_VALID);
+assign	s_oready					= |(O_EN & O_READY);
 
-assign	I_VALID						= ~q_full;
+assign	I_READY						= ~q_full;
 
 // implementation ------------------------------------------------------------
 // command queue memory
 FiFo #(
 	.DATA_WIDTH		(ID_DEPTH+DATA_WIDTH),
 	.FIFO_DEPTH		(FIFO_DEPTH)
-) cmd_quene (
+) cmd_queue (
 	.CLK			(CLK),
 	.nCLR			(nRST),
 	// push interface

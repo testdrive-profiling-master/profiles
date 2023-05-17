@@ -459,8 +459,13 @@ function module:make_code(is_top)
 								error("Error on modport[" .. mp_name .. "] : Can't find signal[" .. io_name .. "] on interface[" .. i.interface.name .. "]", 2)
 							end
 							
+							local	sLogic	= is_top and "" or "logic "
+							if mp_name == "input" then
+								sLogic	= ""
+							end
+							
 							sPorts:Append("\t" .. string.format("%-6s ", mp_name) ..
-								(string.format("%-20s", (signal.width > 1) and string.format("[%d:0]", signal.width - 1) or "")) ..
+								(string.format("%-20s", (signal.width > 1) and string.format(sLogic .. "[%d:0]", signal.width - 1) or sLogic)) ..
 								i:get_prefix() .. io_name .. ",\n")
 						end
 					end
@@ -540,7 +545,6 @@ function module:make_code(is_top)
 				local	modport	= i.modport
 				if modport ~= nil then
 					sPort:Append("<font point-size=\"8\">" .. i_name  .. (i.__bared and "" or (" <font color=\"gray\">(" .. i.interface.name .. ")</font>")) .. "</font>\n")
-					--if is_top or i.__bared then
 				end
 			end
 			
