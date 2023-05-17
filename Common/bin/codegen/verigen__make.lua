@@ -315,7 +315,6 @@ function module:make_code(is_top)
 			sBody:Append(sModule.s)
 		end
 		
-		sGraphviz_Module:Trim(" \n")
 		sGraphviz_Module:Replace("\n", "<br align=\"left\"/>", true)
 		
 		if sGraphviz_Module:Length() == 0 then
