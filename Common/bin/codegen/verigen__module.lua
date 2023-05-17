@@ -112,7 +112,7 @@ function module:add_clock(clk)
 	end
 end
 
-function module:add_interface(i, name)
+function module:add_interface(i, name, modport)
 	if i == nil then
 		error("NULLed interface.", 2)
 	end
@@ -135,6 +135,10 @@ function module:add_interface(i, name)
 	
 	local	t				= interface_i:new(name, i, self)
 	self.interfaces[name]	= t
+	
+	if modport ~= nil then
+		t:set_port(modport)
+	end
 	
 	return t
 end

@@ -353,8 +353,8 @@ inst:set_modport("m", {["output"]={"EN", "INST"}})
 inst:set_prefix("I#")	-- 시그널에 I#_* 로 시작하게 된다.
 
 m		= module:new("top")
-m:add_interface(inst, "inst_0"):set_port("m")
-m:add_interface(inst, "inst_1"):set_port("m")
+m:add_interface(inst, "inst_0", "m")
+m:add_interface(inst, "inst_1", "m")
 
 m:make_code()
 ```
