@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive template design
-// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
+// Rev.  : 5/17/2023 Wed (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 /*verilator tracing_off*/
@@ -83,8 +83,8 @@ module testdrive_axi4_master_bfm #(
 	input									ARLOCK,			// b0(Normal), b1(Exclusive)
 	input	[3:0]							ARCACHE,		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 	input	[2:0]							ARPROT,			// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
-	output reg	[3:0]						ARREGION,		// Read region identifier (not defined in this)
-	output reg	[3:0]						ARQOS,			// Read Quality of Service (not defined in this)
+	input	[3:0]							ARREGION,		// Read region identifier (not defined in this)
+	input	[3:0]							ARQOS,			// Read Quality of Service (not defined in this)
 	input									ARVALID,		// Read address valid
 	output reg								ARREADY,		// Read address ready (1 = slave ready, 0 = slave not ready)
 	// read data
@@ -161,8 +161,8 @@ reg								r_BVALID;
 	input	bit 							ARLOCK,			// b0(Normal), b1(Exclusive)
 	input	bit [3:0]						ARCACHE,		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 	input	bit [2:0]						ARPROT,			// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
-	output	bit	[3:0]						ARREGION,		//
-	output	bit	[3:0]						ARQOS,			//
+	input	bit	[3:0]						ARREGION,		//
+	input	bit	[3:0]						ARQOS,			//
 	input	bit								ARVALID,		// Read address valid
 	output	bit								ARREADY,		// Read address ready (1 = slave ready, 0 = slave not ready)
 	// read data
@@ -175,8 +175,6 @@ reg								r_BVALID;
 );
 
 // register pipes
-reg	[3:0]						r_ARREGION;
-reg	[3:0]						r_ARQOS;
 reg								r_ARREADY;
 reg [C_DATA_WIDTH-1:0]			r_RDATA;
 reg [1:0]						r_RRESP;
@@ -207,11 +205,9 @@ always@(posedge CLK) begin
 	MAXIR_Interface(
 		maxi, nRST,
 		iARID, ARADDR, ARLEN, ARSIZE, ARBURST, ARLOCK, ARCACHE,
-		ARPROT, r_ARREGION, r_ARQOS, ARVALID, r_ARREADY,
+		ARPROT, ARREGION, ARQOS, ARVALID, r_ARREADY,
 		iRID, r_RDATA, r_RRESP, r_RLAST, r_RVALID, RREADY
 	);
-	ARREGION	<= r_ARREGION;
-	ARQOS		<= r_ARQOS;
 	ARREADY		<= r_ARREADY;
 	RID			<= iRID;
 	RDATA		<= r_RDATA;

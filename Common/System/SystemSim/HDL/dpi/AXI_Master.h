@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 4/24/2023 Mon (clonextop@gmail.com)
+// Rev.  : 5/17/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __AXI_MASTER_H__
 #define __AXI_MASTER_H__
@@ -99,7 +99,7 @@ public:
 	);
 	void BusReadRequest(
 		BYTE nRST,
-		int ARID, UINT64 ARADDR, DWORD ARLEN, DWORD ARSIZE, DWORD ARBURST, BYTE ARLOCK, DWORD ARCACHE, DWORD ARPROT, DWORD& ARREGION, DWORD& ARQOS,
+		int ARID, UINT64 ARADDR, DWORD ARLEN, DWORD ARSIZE, DWORD ARBURST, BYTE ARLOCK, DWORD ARCACHE, DWORD ARPROT, DWORD ARREGION, DWORD ARQOS,
 		BYTE ARVALID, BYTE& ARREADY
 	);
 	void BusReadData(

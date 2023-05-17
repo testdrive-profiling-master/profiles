@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 4/24/2023 Mon (clonextop@gmail.com)
+// Rev.  : 5/17/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "AXI_common.h"
 #include "AXI_Master.h"
@@ -264,7 +264,7 @@ DPI_FUNCTION void* CreateMAXI(const char* sTitle, int iDataWidth, int bUseAXI4, 
 
 void MAXI::BusReadRequest(
 	BYTE nRST,
-	int ARID, UINT64 ARADDR, DWORD ARLEN, DWORD ARSIZE, DWORD ARBURST, BYTE ARLOCK, DWORD ARCACHE, DWORD ARPROT, DWORD& ARREGION, DWORD& ARQOS,
+	int ARID, UINT64 ARADDR, DWORD ARLEN, DWORD ARSIZE, DWORD ARBURST, BYTE ARLOCK, DWORD ARCACHE, DWORD ARPROT, DWORD ARREGION, DWORD ARQOS,
 	BYTE ARVALID, BYTE& ARREADY
 )
 {
@@ -318,8 +318,6 @@ void MAXI::BusReadRequest(
 		}
 	}
 
-	ARREGION		= 0;
-	ARQOS			= 0;
 	ARREADY			= m_Read.ARREADY;
 }
 
@@ -383,7 +381,7 @@ void MAXI::BusReadData(
 DPI_FUNCTION void MAXIR_Interface(
 	void* hMAXI,
 	unsigned char nRST,
-	int ARID, unsigned long long ARADDR, const svBitVecVal* ARLEN, const svBitVecVal* ARSIZE, const svBitVecVal* ARBURST, svBit ARLOCK, const svBitVecVal* ARCACHE, const svBitVecVal* ARPROT, svBitVecVal* ARREGION, svBitVecVal* ARQOS,
+	int ARID, unsigned long long ARADDR, const svBitVecVal* ARLEN, const svBitVecVal* ARSIZE, const svBitVecVal* ARBURST, svBit ARLOCK, const svBitVecVal* ARCACHE, const svBitVecVal* ARPROT, const svBitVecVal* ARREGION, const svBitVecVal* ARQOS,
 	unsigned char ARVALID, unsigned char* ARREADY,
 	int* RID, svBitVecVal* RDATA, svBitVecVal* RRESP, unsigned char* RLAST, unsigned char* RVALID, unsigned char RREADY)
 {
