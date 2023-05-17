@@ -60,7 +60,7 @@ function module:make_constraint()
 	end
 	
 	for name, constraint in key_pairs(__constraint_list) do
-		f:Put("\n# " .. key .. "\n")
+		f:Put("\n# " .. name .. "\n")
 		f:Put(constraint .. "\n")
 	end
 end
@@ -381,7 +381,7 @@ function module:make_code(is_top)
 				end
 			else
 				sDeclares:Append("// interface : " .. i_name .. ((i.desc == nil) and "" or (" (" .. i.desc .. ")")) .. "\n")
-				sDeclares:Append(string.format("i_%-20s ", i.interface.name) .. i_name .. ";\n")
+				sDeclares:Append(string.format("i_%-20s ", i.interface.name) .. i_name .. "();\n")
 			end
 			
 			if is_top and (modport ~= nil) and i.__bared == false then
@@ -392,7 +392,7 @@ function module:make_code(is_top)
 						elseif mp_name == "output" then
 							sDeclares:Append(string.format("assign %-23s = ", i:get_prefix() .. io_name) .. i_name .. "." .. io_name .. ";\n")
 						elseif mp_name == "inout" then
-							error("inout port is not supported.", 2)
+							error("inout port is not supported yet.", 2)
 						end
 					end
 				end
