@@ -282,9 +282,7 @@ function module.apply_code(filename)
 		
 		function add_code(m, code)
 			if m ~= nil then
-				for name, val in pairs(variables) do
-					code:ReplaceVariable(name, tostring(load("return (" .. val .. ")")()))
-				end
+				ApplyDefines(code, variables)
 
 				code:TrimLeft("\r\n")
 				code:TrimRight(" \t\r\n")
@@ -316,7 +314,7 @@ function module.apply_code(filename)
 						local	sVal	= s:Tokenize("")
 						sName:Trim(" \t")
 						sVal:Trim(" \t=")
-						variables[sName.s]	= sVal.s
+						SetDefine(sName.s, sVal.s, variables)
 					else
 						local	bEnable		= true
 						add_code(cur_module, codes)
