@@ -1,4 +1,4 @@
-`include "system_defines.vh"
+`include "testdrive_system.vh"
 
 /* HIDDEN */
 module top (
