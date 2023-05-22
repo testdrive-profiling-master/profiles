@@ -297,13 +297,37 @@ function module.apply_code(filename)
 			end
 			
 			if s:CompareFront(":") then
+				s:CutBack("//", true)	-- comment out
 				s:Trim(": \r\n")
 				if s:CompareFront("-") == false then
+					local	bEnable		= true
 					add_code(cur_module, codes)
-				
-					cur_module	= module.find(s.s)
-					if cur_module == nil then
-						error("module[" .. s.s .. "] is not found.", 2)
+					
+					if s:CompareBack(")") and (s:find("(", 0) > 0) then
+						local	sOption	= String(s.s)
+						
+						sOption:CutFront("(")
+						sOption:CutBack(")")
+						sOption:Trim(" \t")
+						
+						if sOption:Length() > 0 then
+							bEnable	= load("return (" .. sOption.s .. ")")()
+							
+							if type(bEnable) ~= "boolean" then
+								error("Invalid boolean result in code descriptor : " .. s.s)
+							end
+						end
+						
+						s:CutBack("(", true)
+					end
+					
+					if bEnable then
+						cur_module	= module.find(s.s)
+						if cur_module == nil then
+							error("module[" .. s.s .. "] is not found.", 2)
+						end
+					else
+						cur_module	= nil
 					end
 				end
 			else

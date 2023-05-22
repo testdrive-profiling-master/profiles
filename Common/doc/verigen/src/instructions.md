@@ -670,7 +670,7 @@ module.apply_code("__core.sv")
 assign	A = B;		// Core's code
 assign	C = D;		// Core's code
 
-:ALU
+:ALU (config.core_size > 4)
 assign	E = F;		// ALU's code
 assign	G = H;		// ALU's code
 ```
