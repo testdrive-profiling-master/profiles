@@ -225,7 +225,7 @@ end
 			{r_GSCs_INC_Q3X[i], r_GSCs_INC_Q3Y[i], r_GSCs_INC_Q3Z[i], r_GSCs_INC_Q3W[i]}	<= {w_GSCs_INC_Q3X[i], w_GSCs_INC_Q3Y[i], w_GSCs_INC_Q3Z[i], w_GSCs_INC_Q3W[i]};
 			{r_GSCs_INC_Q4X[i], r_GSCs_INC_Q4Y[i], r_GSCs_INC_Q4Z[i], r_GSCs_INC_Q4W[i]}	<= {w_GSCs_INC_Q4X[i], w_GSCs_INC_Q4Y[i], w_GSCs_INC_Q4Z[i], w_GSCs_INC_Q4W[i]};
 		end
-		// ÄÚ¾î °³¼ö¿¡ µû¶ó ¾Æ·¡ÀÇ ÁÖ¼®À» Ç®¾îÁà¾ß ÇÑ´Ù.
+		// ì½”ì–´ ê°œìˆ˜ì— ë”°ë¼ ì•„ëž˜ì˜ ì£¼ì„ì„ í’€ì–´ì¤˜ì•¼ í•œë‹¤.
 		r_GSCs_INC_X[0]		<= r_GSCs_INC_Q1X[0];
 		r_GSCs_INC_X[1]		<= r_GSCs_INC_Q2X[0];
 		r_GSCs_INC_X[2]		<= r_GSCs_INC_Q3X[0];
@@ -340,12 +340,12 @@ generate begin
 				r_BUS_valid[index]	<= `FALSE;
 			end
 			else begin
-				if(bus_process_en) begin			// ÄÁÅ×ÀÌ³Ê¿¡ ¸ðµÎ REQ°¡ ¾øÀ» ¶§... ÄÚ¾îµé·ÎºÎÅÍ ¾÷µ¥ÀÌÆ® ÇÑ´Ù.
+				if(bus_process_en) begin			// ì»¨í…Œì´ë„ˆì— ëª¨ë‘ REQê°€ ì—†ì„ ë•Œ... ì½”ì–´ë“¤ë¡œë¶€í„° ì—…ë°ì´íŠ¸ í•œë‹¤.
 					r_BUS_en[index]			<= mem_command_core[index].en;
 					r_BUS_desc[index]		<= mem_command_core[index].en ? mem_command_core[index].desc : 128'b0;
 					r_BUS_valid[index]		<= (index==0) ? `TRUE : `FALSE;
 				end
-				else if(mem_command.valid || !r_BUS_en[0]) begin		// ACK ½ÅÈ£°¡ ¿À°Å³ª ÃÖ ¾Õ´ÜÀÇ REQ°¡ Á¸ÀçÇÏÁö ¾ÊÀ» ¶§ ÄÁÅ×ÀÌ³Ê¸¦ ¿òÁ÷ÀÎ´Ù.
+				else if(mem_command.valid || !r_BUS_en[0]) begin		// ACK ì‹ í˜¸ê°€ ì˜¤ê±°ë‚˜ ìµœ ì•žë‹¨ì˜ REQê°€ ì¡´ìž¬í•˜ì§€ ì•Šì„ ë•Œ ì»¨í…Œì´ë„ˆë¥¼ ì›€ì§ì¸ë‹¤.
 					r_BUS_en[index]			<= (index == (CORE_SIZE-1)) ? `FALSE : r_BUS_en[index+1];
 					r_BUS_desc[index]		<= (index == (CORE_SIZE-1)) ? 128'b0 : r_BUS_desc[index+1];
 					r_BUS_valid[index]		<= (index == 0) ? `FALSE : r_BUS_valid[index-1];

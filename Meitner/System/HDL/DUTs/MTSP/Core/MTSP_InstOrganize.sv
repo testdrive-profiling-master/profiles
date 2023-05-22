@@ -34,8 +34,8 @@
 // Title : Meitner processor v1.1
 // Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
 //================================================================================
-//             Phase #1·Î ³Ñ¾î°¥¶§ 31¹øÀº ¸í·É¾î Enable(active low)·Î º¯°æµÇ¸ç,
-//             30¹ø ºñÆ®´Â Arithmetic Enable(active low) ½ÅÈ£·Î ±³Ã¼µÈ´Ù.
+//             Phase #1ë¡œ ë„˜ì–´ê°ˆë•Œ 31ë²ˆì€ ëª…ë ¹ì–´ Enable(active low)ë¡œ ë³€ê²½ë˜ë©°,
+//             30ë²ˆ ë¹„íŠ¸ëŠ” Arithmetic Enable(active low) ì‹ í˜¸ë¡œ êµì²´ëœë‹¤.
 //----------------------------------------------------------------------------
 `include "MTSP_Defines.vh"
 
@@ -65,18 +65,18 @@ p0_DEC_nEN, p1_DEC_nEN,			// unit instruction decode enable
 p0_ALU_nEN, p1_ALU_nEN;			// alu operation enable
 // implementation ------------------------------------------------------------
 // step #0 : separate unit instruction
-// 4°³ÀÇ ¸í·É¾î¸¦ ºĞÇØ.
+// 4ê°œì˜ ëª…ë ¹ì–´ë¥¼ ë¶„í•´.
 assign	{uin_0, uin_1, uin_2, uin_3}	= UINSTx4;
 
 // step #1 : re-arrange unit instruction
-// PC°ª ÇÏÀ§ 2ºñÆ®¿¡ µû¶ó ¸Ş¸ğ¸® ¼ø¼­¿¡ ¸Â°Ô ¸í·É¾î ¼ø¼­ ÀçÁ¤·Ä
+// PCê°’ í•˜ìœ„ 2ë¹„íŠ¸ì— ë”°ë¼ ë©”ëª¨ë¦¬ ìˆœì„œì— ë§ê²Œ ëª…ë ¹ì–´ ìˆœì„œ ì¬ì •ë ¬
 assign	{uog_0, uog_1, uog_2, uog_3}	= (PC[1:0]==2'd0) ? {uin_0, uin_1, uin_2, uin_3} :	// 0 : 0,1,2,3
 (PC[1:0]==2'd1) ? {uin_1, uin_2, uin_3, uin_0} :	// 1 : 1,2,3,0
 (PC[1:0]==2'd2) ? {uin_2, uin_3, uin_0, uin_1} :	// 2 : 2,3,0,1
 {uin_3, uin_0, uin_1, uin_2};	// 3 : 3,0,1,2
 
 // step #2 : check end & phase bits
-// END, PHASE ºñÆ® »Ì¾Æ³¿. ÀÌ¶§ ¸¶Áö¸· END ºñÆ® ¹«È¿. ¸¶Áö¸· 2°³ ÆäÀÌÁîºñÆ® ¹«È¿µÊ.
+// END, PHASE ë¹„íŠ¸ ë½‘ì•„ëƒ„. ì´ë•Œ ë§ˆì§€ë§‰ END ë¹„íŠ¸ ë¬´íš¨. ë§ˆì§€ë§‰ 2ê°œ í˜ì´ì¦ˆë¹„íŠ¸ ë¬´íš¨ë¨.
 assign	iend					= {uog_2[`RANGE_UINST_END]|iend[1],
 				   uog_1[`RANGE_UINST_END]|iend[0],
 				   uog_0[`RANGE_UINST_END]};
@@ -84,13 +84,13 @@ assign	phase					= {uog_1[`RANGE_UINST_PHASE],
 					uog_0[`RANGE_UINST_PHASE]};
 
 // step #4 : set phase #0 unit instructions
-// Phase #0 ¸í·É¾î ºĞ¸®
+// Phase #0 ëª…ë ¹ì–´ ë¶„ë¦¬
 assign	p0_nEN					= {(phase[1] | iend[0]),
 					 phase[0]};
 assign	{up0_m, up0_s}			= {uog_0, uog_1};
 
 // step #5 : set phase #1 unit instructions
-// Phase #1 ¸í·É¾î ºĞ¸®
+// Phase #1 ëª…ë ¹ì–´ ë¶„ë¦¬
 assign	p1_nEN					= phase[0] ? {iend[0], 1'b0} :
 phase[1] ? iend[1:0] : iend[2:1];
 
@@ -111,10 +111,10 @@ p1_ALU_nEN				= {p1_DEC_nEN[1]|(&up1_s[29:28]), p1_DEC_nEN[0]|(&up1_m[29:28])};
 		SRC0A_ADDR		<= 0;
 	end
 	else begin
-		// STEP #3 : PC°ªÀ» END ºñÆ®¿¡ ¸Â°Ô Áõ°¡ÇÔ
+		// STEP #3 : PCê°’ì„ END ë¹„íŠ¸ì— ë§ê²Œ ì¦ê°€í•¨
 		PC_OUT			<= PC + {~iend[2],(iend[2]&~iend[0]),((iend[2]&~iend[1])|iend[0])}; /* (iend[0] ? 1 : iend[1] ? 2 : iend[2] ? 3 : 4);*/
 		// STEP #6 : set output unit instructions
-		// ¸í·É¾î ÆĞÄ¡		decode enable  alu enable                  decode enable  alu enable
+		// ëª…ë ¹ì–´ íŒ¨ì¹˜		decode enable  alu enable                  decode enable  alu enable
 		UINSTx4_OUT		<= {p0_DEC_nEN[0], p0_ALU_nEN[0], up0_m[29:0], p0_DEC_nEN[1], p0_ALU_nEN[1], up0_s[29:0],
 						 p1_DEC_nEN[0], p1_ALU_nEN[0], up1_m[29:0], p1_DEC_nEN[1], p1_ALU_nEN[1], up1_s[29:0]};
 		// Source phase#0-A

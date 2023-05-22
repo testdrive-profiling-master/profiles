@@ -277,14 +277,20 @@ function module.apply_code(filename)
 	local	f = TextFile()
 	local	cur_module	= nil
 	if f:Open(filename) then
-		local	codes	= String("")
+		local	codes		= String("")
+		local	variables	= {}				-- local variables
 		
 		function add_code(m, code)
 			if m ~= nil then
+				for name, val in pairs(variables) do
+					code:ReplaceVariable(name, tostring(load("return (" .. val .. ")")()))
+				end
+
 				code:TrimLeft("\r\n")
 				code:TrimRight(" \t\r\n")
 				code:Replace("\r", "", true)
 				m:add_code(code.s .. "\n")
+				variables	= {}
 			end
 			code:clear()
 		end
@@ -299,35 +305,47 @@ function module.apply_code(filename)
 			if s:CompareFront(":") then
 				s:CutBack("//", true)	-- comment out
 				s:Trim(": \r\n")
-				if s:CompareFront("-") == false then
-					local	bEnable		= true
-					add_code(cur_module, codes)
-					
-					if s:CompareBack(")") and (s:find("(", 0) > 0) then
-						local	sOption	= String(s.s)
-						
-						sOption:CutFront("(")
-						sOption:CutBack(")")
-						sOption:Trim(" \t")
-						
-						if sOption:Length() > 0 then
-							bEnable	= load("return (" .. sOption.s .. ")")()
-							
-							if type(bEnable) ~= "boolean" then
-								error("Invalid boolean result in code descriptor : " .. s.s)
-							end
+				
+				if (s:Length() > 0) and (s:CompareFront("-") == false) then
+					if s:CompareFront("$") then
+						if s:find("=", 0) < 0 then
+							error("Invalid code variable expression : " .. s.s, 2)
 						end
-						
-						s:CutBack("(", true)
-					end
-					
-					if bEnable then
-						cur_module	= module.find(s.s)
-						if cur_module == nil then
-							error("module[" .. s.s .. "] is not found.", 2)
-						end
+						s:DeleteFront("$")
+						local	sName	= s:Tokenize("=")
+						local	sVal	= s:Tokenize("")
+						sName:Trim(" \t")
+						sVal:Trim(" \t=")
+						variables[sName.s]	= sVal.s
 					else
-						cur_module	= nil
+						local	bEnable		= true
+						add_code(cur_module, codes)
+						if s:CompareBack(")") and (s:find("(", 0) > 0) then
+							local	sOption	= String(s.s)
+							
+							sOption:CutFront("(")
+							sOption:CutBack(")")
+							sOption:Trim(" \t")
+							
+							if sOption:Length() > 0 then
+								bEnable	= load("return (" .. sOption.s .. ")")()
+								
+								if type(bEnable) ~= "boolean" then
+									error("Invalid boolean result in code descriptor : " .. s.s)
+								end
+							end
+							
+							s:CutBack("(", true)
+						end
+						
+						if bEnable then
+							cur_module	= module.find(s.s)
+							if cur_module == nil then
+								error("module[" .. s.s .. "] is not found.", 2)
+							end
+						else
+							cur_module	= nil
+						end
 					end
 				end
 			else

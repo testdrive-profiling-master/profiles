@@ -56,7 +56,7 @@ module MTSP_TRDs_Status(
 //		01 : all (revolt all thread to PC_NEXT)
 //		10 : end (end current thread)
 //		11 : seq (sequencing thread)
-//										newall ¸í·É or °³º°¸í·É ÀÌ¸é seq ÀÏ¶© ~nSOL. ¾Æ´Ï¸é jmp ÀÏ¶§¸¸ enable
+//										newall ëª…ë ¹ or ê°œë³„ëª…ë ¹ ì´ë©´ seq ì¼ë• ~nSOL. ì•„ë‹ˆë©´ jmp ì¼ë•Œë§Œ enable
 wire						busy_next = EN_ALL | (nEN|(BOP==2'b01) ? BUSY : (&BOP ?  ~nSOLITUDE : ~BOP[1]));
 
 // implementation ------------------------------------------------------------
@@ -67,12 +67,12 @@ wire						busy_next = EN_ALL | (nEN|(BOP==2'b01) ? BUSY : (&BOP ?  ~nSOLITUDE : 
 		RUN		<= 1'b0;
 	end
 	else begin
-		//			°³º°¸í·ÉÀÌ°Å³ª newall È°¼ºÀÌ¸é¼­ BUSY°¡ ºñÈ°¼ºÀÏ¶§ PC_NEXT ¹ŞÀ½
+		//			ê°œë³„ëª…ë ¹ì´ê±°ë‚˜ newall í™œì„±ì´ë©´ì„œ BUSYê°€ ë¹„í™œì„±ì¼ë•Œ PC_NEXT ë°›ìŒ
 		PC		<= (nEN & ((~EN_ALL)|BUSY)) ? PC : PC_NEXT;
 		BUSY	<=	busy_next;
-		//		   ´ÙÀ½»óÅÂ°¡ busy ÀÌ¸é¼­
+		//		   ë‹¤ìŒìƒíƒœê°€ busy ì´ë©´ì„œ
 		RUN		<= busy_next &
-		//			nWAITÀÇÇÑ Á¤Áö		nWAK.È°¼º,  newall È°¼º
+		//			nWAITì˜í•œ ì •ì§€		nWAK.í™œì„±,  newall í™œì„±
 		((RUN&(nWAIT|nEN)) | (~nAWAKE) | EN_ALL);
 	end
 end
