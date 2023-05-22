@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 4/24/2023 Mon (clonextop@gmail.com)
+// Rev.  : 5/22/2023 Mon (clonextop@gmail.com)
 //================================================================================
 `include "library/SyncPipe.v"
 `include "library/SRAM_Dual_Distributed.v"
@@ -148,7 +148,7 @@ always@(posedge r_clk, negedge nRST) begin
 
 		if(re && ~empty) begin
 			if(rdata != rdata_golden) begin
-				$display("*E: Got Error at sim count %d", sim_cnt);
+				$display("*E: Got Error at sim count %d", sim_cnt_r);
 			end
 			rdata_golden	<= rdata_golden + 1;
 		end
@@ -170,8 +170,8 @@ always@(posedge r_clk, negedge nRST) begin
 			re			<= `FALSE;
 		end
 
-		`ON_TIME(40) re	<= `TRUE;
-		`ON_TIME(50) re	<= `FALSE;
+		`ON_TIME_R(40) re	<= `TRUE;
+		`ON_TIME_R(50) re	<= `FALSE;
 	end
 end
 
