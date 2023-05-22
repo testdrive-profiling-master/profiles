@@ -17,3 +17,8 @@ print(_V("assign A = {$(B[#],)};", 0, 3))
 assign A = {B[0], B[1], B[2], B[3]};
 ```
 ;;;
+
+## AddDefine 함수
+@<tbl:media/instruction_macros.xlsx;AddDefine>
+ 
+;;;

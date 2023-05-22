@@ -81,6 +81,7 @@ function __retrieve_param(param_list, t)
 end
 
 -- default script libraries
+RunScript("verigen__defines.lua")
 RunScript("verigen__clock.lua")
 RunScript("verigen__interface.lua")
 RunScript("verigen__module.lua")
