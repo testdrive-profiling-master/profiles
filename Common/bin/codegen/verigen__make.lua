@@ -517,7 +517,46 @@ function module:make_code(is_top)
 	exec("istyle --style=kr -T4 -n \"" .. sOutPath .. "/" .. self.name .. ".sv\"")
 	
 	-- make html style output
-	exec("code_highlighter --ilang=verilog -n " .. sOutPath .. "/" .. self.name .. ".sv " .. sOutPath .. "/html/" .. self.name .. ".html")
+	do
+		exec("code_highlighter --ilang=verilog -n " .. sOutPath .. "/" .. self.name .. ".sv " .. sOutPath .. "/html/" .. self.name .. ".html")
+		
+		-- add link with interface
+		if f:Open(sOutPath .. "/html/" .. self.name .. ".html") then
+			local	sHtml	= String(f:GetAll())
+
+			f:Close()
+			
+			local	iPos	= sHtml:find("i_", 1)
+			
+			while iPos > 0 do
+				if (string.match(sHtml:at(iPos-1), "[0-9a-zA-Z_]") == nil) and (string.match(sHtml:at(iPos+2), "[0-9a-zA-Z_]") ~= nil) then
+					local	iSize	= 3
+					
+					-- get interface name
+					while string.match(sHtml:at(iPos+iSize), "[0-9a-zA-Z_]") ~= nil do
+						iSize	= iSize + 1
+					end
+					local	i_name	= string.sub(sHtml.s,iPos + 1, iPos + iSize)
+					
+					-- delete previous expression
+					sHtml:erase(iPos, iSize)
+					
+					-- insert link
+					local	sLink	= "<a href=\"" .. module.__top.name .. "_defines.html#" .. i_name .. "\"  target=\"_" .. module.__top.name:upper() ..  "_DEFINES\"><font color=\"#F00000\"><b>" .. i_name .. "</font></b></a>"
+					sHtml:insert(iPos, sLink)
+					iPos	= iPos + #sLink
+				end
+
+				iPos	= iPos + 1
+				iPos	= sHtml:find("i_", iPos)
+			end
+			
+			-- write back
+			f:Create(sOutPath .. "/html/" .. self.name .. ".html")
+			f:Put(sHtml.s)
+			f:Close()
+		end
+	end
 	
 	-- graphivz : top final parameters and ports
 	if is_top then
@@ -577,7 +616,45 @@ function module:make_code(is_top)
 			f:Close()
 			
 			-- make html style output
-			exec("code_highlighter --ilang=verilog -n " .. sOutPath .. "/" .. self.name .. "_defines.vh " .. sOutPath .. "/html/" .. self.name .. "_defines.html")
+			do
+				exec("code_highlighter --ilang=verilog -n " .. sOutPath .. "/" .. self.name .. "_defines.vh " .. sOutPath .. "/html/" .. self.name .. "_defines.html")
+				-- add bookmark
+				
+				if f:Open(sOutPath .. "/html/" .. self.name .. "_defines.html") then
+					local	sHtml	= String(f:GetAll())
+
+					f:Close()
+					
+					local	iPos	= sHtml:find(">interface</font> ", 1)
+					
+					while iPos > 0 do
+						iPos	= iPos + 18
+
+						local	iSize	= 1
+						
+						-- get interface name
+						while string.match(sHtml:at(iPos+iSize), "[0-9a-zA-Z_]") ~= nil do
+							iSize	= iSize + 1
+						end
+						local	i_name	= string.sub(sHtml.s,iPos + 1, iPos + iSize)
+						
+						-- delete previous expression
+						sHtml:erase(iPos, iSize)
+						
+						-- insert link
+						local	sLink	= "<a id=\"" .. i_name .. "\"><font color=\"#F00000\"><b>" .. i_name .. "</b></font></a>"
+						sHtml:insert(iPos, sLink)
+						iPos	= iPos + #sLink
+
+						iPos	= sHtml:find(">interface</font> ", iPos)
+					end
+					
+					-- write back
+					f:Create(sOutPath .. "/html/" .. self.name .. "_defines.html")
+					f:Put(sHtml.s)
+					f:Close()
+				end
+			end
 			
 			__graphviz:Append("\t\"" .. self.name .. "_defines\" [URL=\"html/" .. self.name .. "_defines.html\" target=\"_" .. self.name:upper() ..  "_DEFINES\" fillcolor=\"#D0FFD0\"];\n")
 			__graphviz:Append("\t\"" .. self.name .. "\" -> \"" .. self.name .. "_defines\" [fillcolor=\"#F0C0C0\" style=dotted];\n")
