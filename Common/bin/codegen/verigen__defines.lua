@@ -41,10 +41,6 @@ function SetDefine(name, code, defines)
 			sTok	= sArgs:Tokenize(",")
 			sTok:Trim(" \t")
 		end
-		
-		--[[for i, arg in ipairs(defines[sName.s].arg) do
-			LOGI("p : " .. arg)
-		end--]]
 	end
 end
 
@@ -52,46 +48,55 @@ function ApplyDefines(s, defines)
 	if defines == nil then
 		defines	= __defines
 	end
+	
+	local	bEnable		= true
 
-	for name, val in pairs(defines) do
-		if val.arg == nil then
-			-- just variable
-			s:ReplaceVariable(name, load("return (" .. val.code .. ")")())
-		else
-			-- function
-			local	sSrc	= String(s.s)
-			local	sOut	= String("")
-			local	sExpr	= "$" .. name .. "(*)"
-
-			while sSrc.TokenizePos >= 0 do
-				sOut:Append(sSrc:TokenizeVariable(sExpr).s)
-				
-				if sSrc.TokenizePos >= 0 then
-					-- get all arguments
-					local	sArgs	= sSrc:GetVariable()
-					local	val_table	= {}
-					local	sTok		= sArgs:Tokenize(",")
-					while sTok:Length() ~= 0 do
-						val_table[#val_table + 1]	= sTok.s
-						sTok		= sArgs:Tokenize(",")
-					end
-					
-					-- make code
-					local	sCode		= String(val.code)
-					
-					for i, arg in ipairs(val.arg) do
-						if i <= #val_table then
-							sCode:ReplaceVariable(arg, val_table[i])
-						else
-							sCode:ReplaceVariable(arg, "nil")
-						end
-					end
-					
-					sOut:Append(tostring(load("return (" .. sCode.s .. ")")()))
+	while bEnable do
+		bEnable		= false
+		
+		for name, val in pairs(defines) do
+			if val.arg == nil then
+				-- just variable
+				if s:ReplaceVariable(name, load("return (" .. val.code .. ")")()) then
+					bEnable		= true
 				end
+			else
+				-- function
+				local	sSrc	= String(s.s)
+				local	sOut	= String("")
+				local	sExpr	= "$" .. name .. "(*)"
+
+				while sSrc.TokenizePos >= 0 do
+					sOut:Append(sSrc:TokenizeVariable(sExpr).s)
+					
+					if sSrc.TokenizePos >= 0 then
+						-- get all arguments
+						local	sArgs	= sSrc:GetVariable()
+						local	val_table	= {}
+						local	sTok		= sArgs:Tokenize(",")
+						while sTok:Length() ~= 0 do
+							val_table[#val_table + 1]	= sTok.s
+							sTok		= sArgs:Tokenize(",")
+						end
+						
+						-- make code
+						local	sCode		= String(val.code)
+						
+						for i, arg in ipairs(val.arg) do
+							if i <= #val_table then
+								sCode:ReplaceVariable(arg, val_table[i])
+							else
+								sCode:ReplaceVariable(arg, "nil")
+							end
+						end
+						
+						sOut:Append(tostring(load("return (" .. sCode.s .. ")")()))
+						bEnable		= true
+					end
+				end
+				
+				s.s	= sOut.s
 			end
-			
-			s.s	= sOut.s
 		end
 	end
 end
