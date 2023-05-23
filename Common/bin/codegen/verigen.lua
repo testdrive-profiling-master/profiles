@@ -80,8 +80,23 @@ function __retrieve_param(param_list, t)
 	return load("return (" .. s.s .. ")")()
 end
 
+function __apply_code(s)
+	local	sSrc	= String(s.s)
+	local	sOut	= String("")
+
+	sOut:Append(sSrc:TokenizeVariable("$(*)").s)
+	local	sVal	= sSrc:GetVariable()
+	
+	while sVal:Length() ~= 0 do
+		sOut:Append(tostring(load("return (" .. sVal.s .. ")")()))
+		sOut:Append(sSrc:TokenizeVariable("$(*)").s)
+		sVal	= sSrc:GetVariable()
+	end
+
+	s.s	= sOut.s
+end
+
 -- default script libraries
-RunScript("verigen__defines.lua")
 RunScript("verigen__clock.lua")
 RunScript("verigen__interface.lua")
 RunScript("verigen__module.lua")

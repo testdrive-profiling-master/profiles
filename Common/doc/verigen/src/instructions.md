@@ -673,7 +673,11 @@ assign	C = D;		// Core's code
 :ALU (config.core_size > 4)
 assign	E = F;		// ALU's code
 assign	G = H;		// ALU's code
+wire	[15:0]	CORE_SIZE	= $(config.core_size);
 ```
+:::NoteHeading
+verilog 코드 중간에 '$(*)' 로 기술하여, lua 코드를 실행할 수 있습니다.
+
 ;;;
 
 ### module_i:set_param

@@ -278,17 +278,15 @@ function module.apply_code(filename)
 	local	cur_module	= nil
 	if f:Open(filename) then
 		local	codes		= String("")
-		local	variables	= {}				-- local variables
 		
 		function add_code(m, code)
 			if m ~= nil then
-				ApplyDefines(code, variables)
+				__apply_code(code)
 
 				code:TrimLeft("\r\n")
 				code:TrimRight(" \t\r\n")
 				code:Replace("\r", "", true)
 				m:add_code(code.s .. "\n")
-				variables	= {}
 			end
 			code:clear()
 		end
@@ -305,45 +303,33 @@ function module.apply_code(filename)
 				s:Trim(": \r\n")
 				
 				if (s:Length() > 0) and (s:CompareFront("-") == false) then
-					if s:CompareFront("$") then
-						if s:find("=", 0) < 0 then
-							error("Invalid code variable expression : " .. s.s, 2)
-						end
-						s:DeleteFront("$")
-						local	sName	= s:Tokenize("=")
-						local	sVal	= s:Tokenize("")
-						sName:Trim(" \t")
-						sVal:Trim(" \t=")
-						SetDefine(sName.s, sVal.s, variables)
-					else
-						local	bEnable		= true
-						add_code(cur_module, codes)
-						if s:CompareBack(")") and (s:find("(", 0) > 0) then
-							local	sOption	= String(s.s)
+					local	bEnable		= true
+					add_code(cur_module, codes)
+					if s:CompareBack(")") and (s:find("(", 0) > 0) then
+						local	sOption	= String(s.s)
+						
+						sOption:CutFront("(")
+						sOption:CutBack(")")
+						sOption:Trim(" \t")
+						
+						if sOption:Length() > 0 then
+							bEnable	= load("return (" .. sOption.s .. ")")()
 							
-							sOption:CutFront("(")
-							sOption:CutBack(")")
-							sOption:Trim(" \t")
-							
-							if sOption:Length() > 0 then
-								bEnable	= load("return (" .. sOption.s .. ")")()
-								
-								if type(bEnable) ~= "boolean" then
-									error("Invalid boolean result in code descriptor : " .. s.s)
-								end
+							if type(bEnable) ~= "boolean" then
+								error("Invalid boolean result in code descriptor : " .. s.s)
 							end
-							
-							s:CutBack("(", true)
 						end
 						
-						if bEnable then
-							cur_module	= module.find(s.s)
-							if cur_module == nil then
-								error("module[" .. s.s .. "] is not found.", 2)
-							end
-						else
-							cur_module	= nil
+						s:CutBack("(", true)
+					end
+					
+					if bEnable then
+						cur_module	= module.find(s.s)
+						if cur_module == nil then
+							error("module[" .. s.s .. "] is not found.", 2)
 						end
+					else
+						cur_module	= nil
 					end
 				end
 			else

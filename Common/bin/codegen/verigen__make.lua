@@ -505,7 +505,7 @@ function module:make_code(is_top)
 	f:Put(sBody.s)
 	
 	if self.code:Length() > 0 then
-		ApplyDefines(self.code)
+		__apply_code(self.code)
 		f:Put("\n" .. self.code.s .. "\n")
 	end
 
