@@ -2,22 +2,22 @@
 // Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
-// 
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -29,7 +29,7 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : System manager
 // Rev.  : 3/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
@@ -163,14 +163,8 @@ void BuildAutomation::DoCheck(DWORD command, LPCTSTR sFileName)
 				SetDirtySystem();
 			} else if(sName.Find(_T(".do"), sName.GetAllocLength() - 3) > 0) {
 				CString sArg;
-				CString sProjectPath	= g_pSystem->RetrieveFullPath(_T("%PROJECT%"));
-				CString sProgramPath	= sProjectPath + _T("Program\\");
-				sProjectPath.Replace(_T("\\"), _T("\\\\\\"));
-				sProgramPath.Replace(_T("\\"), _T("\\\\\\"));
-				sArg.Format(_T("-i 's;%s;;' %s"), sProgramPath.c_str(), sFileName);
-				g_pSystem->ExecuteFile(_T("sed"), sArg, TRUE, NULL, NULL, NULL);
-				sArg.Format(_T("-i 's;%s;..\\\\\\;' %s"), sProjectPath.c_str(), sFileName);
-				g_pSystem->ExecuteFile(_T("sed"), sArg, TRUE, NULL, NULL, NULL);
+				sArg.Format(_T("gtkwave_do_fix %s"), sFileName);
+				g_pSystem->ExecuteFile(_T("codegen"), sArg, TRUE, NULL, NULL, NULL);
 				return;
 			}
 		}
