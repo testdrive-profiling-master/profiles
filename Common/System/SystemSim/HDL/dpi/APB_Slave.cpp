@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
+// Rev.  : 5/24/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "APB_Slave.h"
 
@@ -64,7 +64,7 @@ void APB_Slave::BusSignal(
 		PENABLE		= 0;
 		PWRITE		= 0;
 		PADDR		= 0;
-		PWDATA		= 0;
+		PWDATA		= 0xDEADC0DE;
 		PSTRB		= 0;
 	} else {
 		switch(m_state) {
@@ -125,6 +125,10 @@ void APB_Slave::BusSignal(
 			m_state	= BUS_STATE_IDLE;
 			PSEL		= 0;
 			PENABLE		= 0;
+			PWRITE		= 0;
+			PADDR		= 0;
+			PWDATA		= 0xDEADC0DE;
+			PSTRB		= 0;
 
 			if(m_bWrite) {
 				m_pSlave->WriteAck();
