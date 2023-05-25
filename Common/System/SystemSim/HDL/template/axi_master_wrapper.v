@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,8 +30,8 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Template design
-// Rev.  : 6/30/2021 Wed (clonextop@gmail.com)
+// Title : TestDrive template design
+// Rev.  : 5/25/2023 Thu (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 `ifndef __AXI_MASTER_WRAPPER_V__
@@ -115,7 +114,7 @@ module axi_master_wrapper #(
 	// read
 	input									MR_REQ,			// read request
 	output									MR_GRANT,		// read grant
-	input	[31:0]							MR_ADDR,		// read address
+	input	[C_M_AXI_ADDR_WIDTH-1:0]		MR_ADDR,		// read address
 	input	[(C_USE_AXI4 ? 8:4)-1:0]		MR_SIZE,		// read size
 	output	[C_M_AXI_DATA_WIDTH-1:0]		MR_DATA,		// read data
 	output									MR_VALID,		// read validation
@@ -124,7 +123,7 @@ module axi_master_wrapper #(
 	// write
 	input									MW_REQ,			// write request
 	output									MW_GRANT,		// write grant
-	input	[31:0]							MW_ADDR,		// write address
+	input	[C_M_AXI_ADDR_WIDTH-1:0]		MW_ADDR,		// write address
 	input	[(C_USE_AXI4 ? 8:4)-1:0]		MW_SIZE,		// write size
 	input	[C_M_AXI_DATA_WIDTH-1:0]		MW_DATA,		// write data
 	input									MW_VALID,		// write validation
