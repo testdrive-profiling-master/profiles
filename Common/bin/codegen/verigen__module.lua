@@ -53,6 +53,7 @@ function module:new(name)
 	t.clocks		= {}
 	t.interfaces	= {}
 	t.constraint	= {}
+	t.fill_color	= "00000010"
 	t.code			= String("")
 	t.enable		= true
 	
@@ -396,3 +397,6 @@ end
 function module_i:set_port(name, val)
 	self.port[name]		= val
 end
+
+-- global definitions
+__global_defines__	= module:new("GLOBAL_DEFINES")

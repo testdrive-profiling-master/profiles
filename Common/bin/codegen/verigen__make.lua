@@ -144,7 +144,7 @@ function module:make_code(is_top)
 	if is_top then
 		sGraphviz:Replace("__FILL_COLOR__", "ff880022")
 	else
-		sGraphviz:Replace("__FILL_COLOR__", "00000010")
+		sGraphviz:Replace("__FILL_COLOR__", self.fill_color)
 
 		-- original parameters
 		do
@@ -612,6 +612,12 @@ function module:make_code(is_top)
 					"`define __" .. self.name:upper() .. "_DEFINES_VH__\n"..
 					"`include \"testdrive_system.vh\"		// default system defines\n\n")
 			interface.__make_code(f)
+			
+			if __global_defines__.code:Length() > 0 then
+				__apply_code(__global_defines__.code)
+				f:Put("\n" .. __global_defines__.code.s .. "\n")
+			end
+			
 			f:Put(	"`endif//__" .. self.name:upper() .. "_DEFINES_VH__\n")
 			f:Close()
 			
