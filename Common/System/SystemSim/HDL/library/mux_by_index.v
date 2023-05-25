@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common verilog library
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 5/25/2023 Thu (clonextop@gmail.com)
 //================================================================================
 `ifndef __TESTDRIVE_MUX_BY_INDEX_V__
 `define __TESTDRIVE_MUX_BY_INDEX_V__
@@ -55,7 +54,7 @@ genvar	i;
 // implementation ------------------------------------------------------------
 generate
 for(i=0;i<CHANNELS;i=i+1) begin: enable_out
-	wire	[(INDEX_BITS-1):0]	temp	/* verilator lint_off WIDTH */ = i;
+	wire	[(INDEX_BITS-1):0]	temp	= i[(INDEX_BITS-1):0];
 	assign	MUX[i]	= EN & (INDEX == temp);
 end
 endgenerate

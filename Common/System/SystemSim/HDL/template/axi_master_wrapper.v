@@ -51,7 +51,7 @@ module axi_master_wrapper #(
 	// write address
 	output	[C_M_AXI_ID_WIDTH-1:0]			M_AWID,			// The ID tag for the write address group of signals
 	output	[C_M_AXI_ADDR_WIDTH-1:0]		M_AWADDR,		// Write address
-	output	[(C_USE_AXI4 ? 8:4)-1:0]		M_AWLEN,		// Burst_Length = AxLEN + 1
+	output	[((C_USE_AXI4==1) ? 8:4)-1:0]	M_AWLEN,		// Burst_Length = AxLEN + 1
 	output	[2:0]							M_AWSIZE,		// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	output	[1:0]							M_AWBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)
 	output									M_AWLOCK,		// b0(Normal), b1(Exclusive)
@@ -77,7 +77,7 @@ module axi_master_wrapper #(
 	// read address
 	output	[C_M_AXI_ID_WIDTH-1:0]			M_ARID,			// Read address ID tag
 	output	[C_M_AXI_ADDR_WIDTH-1:0]		M_ARADDR,		// Read address
-	output	[(C_USE_AXI4 ? 8:4)-1:0]		M_ARLEN,		// Burst_Length = AxLEN + 1
+	output	[((C_USE_AXI4==1) ? 8:4)-1:0]	M_ARLEN,		// Burst_Length = AxLEN + 1
 	output	[2:0]							M_ARSIZE,		// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	output	[1:0]							M_ARBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)
 	output									M_ARLOCK,		// b0(Normal), b1(Exclusive)
@@ -115,7 +115,7 @@ module axi_master_wrapper #(
 	input									MR_REQ,			// read request
 	output									MR_GRANT,		// read grant
 	input	[C_M_AXI_ADDR_WIDTH-1:0]		MR_ADDR,		// read address
-	input	[(C_USE_AXI4 ? 8:4)-1:0]		MR_SIZE,		// read size
+	input	[((C_USE_AXI4==1) ? 8:4)-1:0]	MR_SIZE,		// read size
 	output	[C_M_AXI_DATA_WIDTH-1:0]		MR_DATA,		// read data
 	output									MR_VALID,		// read validation
 	input									MR_READY,		// read ready
@@ -124,7 +124,7 @@ module axi_master_wrapper #(
 	input									MW_REQ,			// write request
 	output									MW_GRANT,		// write grant
 	input	[C_M_AXI_ADDR_WIDTH-1:0]		MW_ADDR,		// write address
-	input	[(C_USE_AXI4 ? 8:4)-1:0]		MW_SIZE,		// write size
+	input	[((C_USE_AXI4==1) ? 8:4)-1:0]	MW_SIZE,		// write size
 	input	[C_M_AXI_DATA_WIDTH-1:0]		MW_DATA,		// write data
 	input									MW_VALID,		// write validation
 	output									MW_READY,		// write ready

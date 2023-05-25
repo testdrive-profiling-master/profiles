@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common verilog library
-// Rev.  : 5/17/2023 Wed (clonextop@gmail.com)
+// Rev.  : 5/25/2023 Thu (clonextop@gmail.com)
 //================================================================================
 // Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
 //================================================================================
@@ -60,7 +60,6 @@ module CommandQueue #(
 );
 // synopsys template
 
-localparam	ID_SIZE	= (2**ID_DEPTH);
 // register definition & assignment ------------------------------------------
 // queue
 wire								q_full, q_empty;

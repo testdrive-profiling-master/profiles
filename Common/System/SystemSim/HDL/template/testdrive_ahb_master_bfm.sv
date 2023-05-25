@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive template design
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 5/25/2023 Thu (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 /*verilator tracing_off*/
@@ -112,11 +112,11 @@ end
 
 // write interface
 `DPI_FUNCTION void MAXIW_Interface (
-	input	int								MAXI,
-	input	bit								nRST,
+	input	chandle							hMAXI,			// handle
+	input	bit								nRST,			// reset (active low)
 	// write address
 	input	int								AWID,			// The ID tag for the write address group of signals
-	input	bit [C_ADDR_WIDTH-1:0]			AWADDR,			// Write address
+	input	longint unsigned				AWADDR,			// Write address
 	input	bit [(C_USE_AXI4==0 ? 4:8)-1:0]	AWLEN,			// Burst_Length = AxLEN + 1
 	input	bit [2:0]						AWSIZE,			// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	input	bit [1:0]						AWBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)
@@ -149,19 +149,19 @@ reg								r_BVALID;
 
 // read interface
 `DPI_FUNCTION void MAXIR_Interface (
-	input	int								MAXI,
-	input	bit								nRST,
+	input	chandle							hMAXI,			// handle
+	input	bit								nRST,			// reset (active low)
 	// read address
 	input	int								ARID,			// Read address ID tag
-	input	bit [C_ADDR_WIDTH-1:0]			ARADDR,			// Read address
+	input	longint unsigned				ARADDR,			// Read address
 	input	bit [(C_USE_AXI4==0 ? 4:8)-1:0]	ARLEN,			// Burst_Length = AxLEN + 1
 	input	bit [2:0]						ARSIZE,			// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	input	bit [1:0]						ARBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)
-	input	bit [1:0]						ARLOCK,			// b00(Normal), b01(Exclusive), b10(Locked), b11(Reserved)
+	input	bit [1:0]						ARLOCK,			// b00(Normal), b01(Exclusive), b10(Locked), b11(Reserved) : Locked/Reserved is removed in AXI4
 	input	bit [3:0]						ARCACHE,		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 	input	bit [2:0]						ARPROT,			// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
-	output	bit	[3:0]						ARREGION,		//
-	output	bit	[3:0]						ARQOS,			//
+	input	bit	[3:0]						ARREGION,		//
+	input	bit	[3:0]						ARQOS,			//
 	input	bit								ARVALID,		// Read address valid
 	output	bit								ARREADY,		// Read address ready (1 = slave ready, 0 = slave not ready)
 	// read data
@@ -182,37 +182,34 @@ reg [1:0]						r_RRESP;
 reg								r_RLAST;
 reg								r_RVALID;
 
-integer		iAWID, iARID, iWID, iBID, iRID;
+integer		iBID, iRID;
 // implementation ------------------------------------------------------------
 always@(posedge CLK) begin
 	// write interaction
-	iAWID	/* verilator lint_off WIDTH */ = AWID;
-	iWID	/* verilator lint_off WIDTH */ = WID;
 	MAXIW_Interface(
 		maxi, nRST,
-		iAWID, AWADDR, AWLEN, AWSIZE, AWBURST, AWLOCK, AWCACHE, AWPROT,
-		AWREGION, AWQOS, AWVALID, r_AWREADY, iWID,
+		{{(32-C_THREAD_ID_WIDTH){1'b0}},AWID}, AWADDR, AWLEN, AWSIZE, AWBURST, AWLOCK, AWCACHE, AWPROT,
+		AWREGION, AWQOS, AWVALID, r_AWREADY, {{(32-C_THREAD_ID_WIDTH){1'b0}},WID},
 		WDATA, WSTRB, WLAST, WVALID, r_WREADY,
 		iBID, r_BRESP, r_BVALID, BREADY
 	);
 	AWREADY		<= r_AWREADY;
 	WREADY		<= r_WREADY;
-	BID			<= iBID;
+	BID			<= iBID[C_THREAD_ID_WIDTH-1:0];
 	BRESP		<= r_BRESP;
 	BVALID		<= r_BVALID;
 
-	iARID	/* verilator lint_off WIDTH */ = ARID;
 	// read interaction
 	MAXIR_Interface(
 		maxi, nRST,
-		iARID, ARADDR, ARLEN, ARSIZE, ARBURST, ARLOCK, ARCACHE,
+		{{(32-C_THREAD_ID_WIDTH){1'b0}},ARID}, {{(64-C_ADDR_WIDTH){1'b0}}, ARADDR}, ARLEN, ARSIZE, ARBURST, ARLOCK, ARCACHE,
 		ARPROT, r_ARREGION, r_ARQOS, ARVALID, r_ARREADY,
 		iRID, r_RDATA, r_RRESP, r_RLAST, r_RVALID, RREADY
 	);
 	ARREGION	<= r_ARREGION;
 	ARQOS		<= r_ARQOS;
 	ARREADY		<= r_ARREADY;
-	RID			<= iRID;
+	RID			<= iRID[C_THREAD_ID_WIDTH-1:0];
 	RDATA		<= r_RDATA;
 	RRESP		<= r_RRESP;
 	RLAST		<= r_RLAST;

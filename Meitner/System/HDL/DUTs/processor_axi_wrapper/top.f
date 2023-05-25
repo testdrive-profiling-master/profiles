@@ -1,4 +1,5 @@
-+incdir+${TESTDRIVE_PROFILE}common/System/SystemSim/HDL/
++incdir+${TESTDRIVE_PROFILE}common/System/SystemSim/HDL
++incdir+./
 
 testdrive_system.vh
 includes.vh

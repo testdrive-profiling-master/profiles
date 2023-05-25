@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive template design
-// Rev.  : 5/17/2023 Wed (clonextop@gmail.com)
+// Rev.  : 5/25/2023 Thu (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 /*verilator tracing_off*/
@@ -55,7 +55,7 @@ module testdrive_axi4_master_bfm #(
 	input	[(C_USE_AXI4==0 ? 4:8)-1:0]		AWLEN,			// Burst_Length = AxLEN + 1
 	input	[2:0]							AWSIZE,			// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	input	[1:0]							AWBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)
-	input									AWLOCK,			// b0(Normal), b1(Exclusive)
+	input	[(C_USE_AXI4==0 ? 1:0):0]		AWLOCK,			// b00(Normal), b01(Exclusive), b10(Locked), b11(Reserved) : Locked/Reserved is removed in AXI4
 	input	[3:0]							AWCACHE,		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 	input	[2:0]							AWPROT,			// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
 	input	[3:0]							AWREGION,		// Write region identifier (not defined in this)
@@ -80,7 +80,7 @@ module testdrive_axi4_master_bfm #(
 	input	[(C_USE_AXI4==0 ? 4:8)-1:0]		ARLEN,			// Burst_Length = AxLEN + 1
 	input	[2:0]							ARSIZE,			// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	input	[1:0]							ARBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)
-	input									ARLOCK,			// b0(Normal), b1(Exclusive)
+	input	[(C_USE_AXI4==0 ? 1:0):0]		ARLOCK,			// b00(Normal), b01(Exclusive), b10(Locked), b11(Reserved) : Locked/Reserved is removed in AXI4
 	input	[3:0]							ARCACHE,		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 	input	[2:0]							ARPROT,			// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
 	input	[3:0]							ARREGION,		// Read region identifier (not defined in this)
@@ -121,7 +121,7 @@ end
 	input	bit [(C_USE_AXI4==0 ? 4:8)-1:0]	AWLEN,			// Burst_Length = AxLEN + 1
 	input	bit [2:0]						AWSIZE,			// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	input	bit [1:0]						AWBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)
-	input	bit 							AWLOCK,			// b0(Normal), b1(Exclusive)
+	input	bit [1:0]						AWLOCK,			// b00(Normal), b01(Exclusive), b10(Locked), b11(Reserved) : Locked/Reserved is removed in AXI4
 	input	bit [3:0]						AWCACHE,		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 	input	bit [2:0]						AWPROT,			// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
 	input	bit [3:0]						AWREGION,		//
@@ -158,7 +158,7 @@ reg								r_BVALID;
 	input	bit [(C_USE_AXI4==0 ? 4:8)-1:0]	ARLEN,			// Burst_Length = AxLEN + 1
 	input	bit [2:0]						ARSIZE,			// bytes in transfer b000(1:8bit), b001(2:16bit), b010(4:32bit), b011(8:64bit), b100(16:128bit), b101(32:256bit), b110(64:512bit), b111(128:1024bit)
 	input	bit [1:0]						ARBURST,		// b00(FIXED), b01(INCR), b10(WRAP), b11(Reserved)
-	input	bit 							ARLOCK,			// b0(Normal), b1(Exclusive)
+	input	bit [1:0]						ARLOCK,			// b00(Normal), b01(Exclusive), b10(Locked), b11(Reserved) : Locked/Reserved is removed in AXI4
 	input	bit [3:0]						ARCACHE,		// [0] Bufferable, [1] Cacheable, [2] Read Allocate, [3] Write Allocate
 	input	bit [2:0]						ARPROT,			// Protection level : [0] privileged(1)/normal(0) access, [1] nonesecure(1)/secure(0) access, [2] instruction(1)/data(0) access
 	input	bit	[3:0]						ARREGION,		//
@@ -181,35 +181,45 @@ reg [1:0]						r_RRESP;
 reg								r_RLAST;
 reg								r_RVALID;
 
-integer		iAWID, iARID, iWID, iBID, iRID;
+wire	[1:0]	_AWLOCK, _ARLOCK;
+
+generate
+if (C_USE_AXI4 == 0) begin
+	assign	_AWLOCK	= AWLOCK;
+	assign	_ARLOCK	= ARLOCK;
+end
+else begin
+	assign	_AWLOCK	= {1'b0, AWLOCK};
+	assign	_ARLOCK	= {1'b0, ARLOCK};
+end
+endgenerate
+
+integer		iBID, iRID;
 // implementation ------------------------------------------------------------
 always@(posedge CLK) begin
 	// write interaction
-	iAWID	/* verilator lint_off WIDTH */ = AWID;
-	iWID	/* verilator lint_off WIDTH */ = WID;
 	MAXIW_Interface(
 		maxi, nRST,
-		iAWID, AWADDR, AWLEN, AWSIZE, AWBURST, AWLOCK, AWCACHE, AWPROT,
-		AWREGION, AWQOS, AWVALID, r_AWREADY, iWID,
+		{{(32-C_THREAD_ID_WIDTH){1'b0}},AWID}, {{(64-C_ADDR_WIDTH){1'b0}}, AWADDR}, AWLEN, AWSIZE, AWBURST, _AWLOCK, AWCACHE, AWPROT,
+		AWREGION, AWQOS, AWVALID, r_AWREADY, {{(32-C_THREAD_ID_WIDTH){1'b0}},WID},
 		WDATA, WSTRB, WLAST, WVALID, r_WREADY,
 		iBID, r_BRESP, r_BVALID, BREADY
 	);
 	AWREADY		<= r_AWREADY;
 	WREADY		<= r_WREADY;
-	BID			<= iBID;
+	BID			<= iBID[C_THREAD_ID_WIDTH-1:0];
 	BRESP		<= r_BRESP;
 	BVALID		<= r_BVALID;
 
-	iARID	/* verilator lint_off WIDTH */ = ARID;
 	// read interaction
 	MAXIR_Interface(
 		maxi, nRST,
-		iARID, ARADDR, ARLEN, ARSIZE, ARBURST, ARLOCK, ARCACHE,
+		{{(32-C_THREAD_ID_WIDTH){1'b0}},ARID}, {{(64-C_ADDR_WIDTH){1'b0}}, ARADDR}, ARLEN, ARSIZE, ARBURST, _ARLOCK, ARCACHE,
 		ARPROT, ARREGION, ARQOS, ARVALID, r_ARREADY,
 		iRID, r_RDATA, r_RRESP, r_RLAST, r_RVALID, RREADY
 	);
 	ARREADY		<= r_ARREADY;
-	RID			<= iRID;
+	RID			<= iRID[C_THREAD_ID_WIDTH-1:0];
 	RDATA		<= r_RDATA;
 	RRESP		<= r_RRESP;
 	RLAST		<= r_RLAST;

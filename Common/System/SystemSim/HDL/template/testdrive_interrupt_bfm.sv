@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive template design
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 5/25/2023 Thu (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 
@@ -50,6 +50,7 @@ module testdrive_interrupt_edge_bfm #(
 
 // definition & assignment ---------------------------------------------------
 `DPI_FUNCTION int SimulationAwakeInterrupt();
+int		__dummy;
 wire	_Active			= C_ACTIVE;
 reg		_prev_INTR;
 
@@ -60,7 +61,7 @@ always@(posedge CLK, negedge nRST) begin
 		_prev_INTR	<= INTR;
 	end begin
 		if(EN && (INTR^_prev_INTR) && (INTR == _Active)) begin
-			/* verilator lint_off IGNOREDRETURN */ SimulationAwakeInterrupt();
+			__dummy	= SimulationAwakeInterrupt();
 		end
 		_prev_INTR	<= INTR;
 	end
@@ -82,6 +83,7 @@ module testdrive_interrupt_level_bfm #(
 
 // definition & assignment ---------------------------------------------------
 `DPI_FUNCTION int SimulationAwakeInterrupt();
+int		__dummy;
 wire	_Active			= C_ACTIVE;
 
 // implementation ------------------------------------------------------------
@@ -90,7 +92,7 @@ always@(posedge CLK, negedge nRST) begin
 	if(nRST) begin
 	end begin
 		if(EN && (INTR == _Active)) begin
-			/* verilator lint_off IGNOREDRETURN */ SimulationAwakeInterrupt() ;
+			__dummy	= SimulationAwakeInterrupt() ;
 		end
 	end
 end

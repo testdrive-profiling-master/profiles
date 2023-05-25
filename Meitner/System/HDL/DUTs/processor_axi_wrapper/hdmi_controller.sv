@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : processor AXI wrapper
-// Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 5/25/2023 Thu (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 `include "testdrive_system.vh"
@@ -40,7 +40,7 @@
 /* HIDDEN */
 // virtual hdmi controller
 module hdmi_controller #(
-	parameter		C_S_AXI_ADDR			= 32'h00010000,
+	parameter		C_S_AXI_ADDR			= 64'h00010000,
 	parameter		C_DEFAULT_VIDEO_BASE	= 32'h80000000
 ) (
 	//// system
@@ -54,7 +54,7 @@ module hdmi_controller #(
 
 initial begin
 	SetSystemDescription("HDMI controller");
-	VirtualDisplayInitialize(`FALSE);
+	VirtualDisplayInitialize(0);
 	VirtualDisplayBaseAddress(C_DEFAULT_VIDEO_BASE, 0);
 	VirtualDisplayBaseAddress(C_DEFAULT_VIDEO_BASE, 1);
 	VirtualDisplayFormat(1920, 1080, 0, 8);

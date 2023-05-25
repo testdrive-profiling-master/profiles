@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common DPI
-// Rev.  : 5/17/2023 Wed (clonextop@gmail.com)
+// Rev.  : 5/25/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "AXI_common.h"
 #include "AXI_Master.h"
@@ -381,7 +381,7 @@ void MAXI::BusReadData(
 DPI_FUNCTION void MAXIR_Interface(
 	void* hMAXI,
 	unsigned char nRST,
-	int ARID, unsigned long long ARADDR, const svBitVecVal* ARLEN, const svBitVecVal* ARSIZE, const svBitVecVal* ARBURST, svBit ARLOCK, const svBitVecVal* ARCACHE, const svBitVecVal* ARPROT, const svBitVecVal* ARREGION, const svBitVecVal* ARQOS,
+	int ARID, unsigned long long ARADDR, const svBitVecVal* ARLEN, const svBitVecVal* ARSIZE, const svBitVecVal* ARBURST, const svBitVecVal* ARLOCK, const svBitVecVal* ARCACHE, const svBitVecVal* ARPROT, const svBitVecVal* ARREGION, const svBitVecVal* ARQOS,
 	unsigned char ARVALID, unsigned char* ARREADY,
 	int* RID, svBitVecVal* RDATA, svBitVecVal* RRESP, unsigned char* RLAST, unsigned char* RVALID, unsigned char RREADY)
 {
@@ -394,7 +394,7 @@ DPI_FUNCTION void MAXIR_Interface(
 	// read request
 	pMAXI->BusReadRequest(
 		nRST,
-		ARID, ARADDR, *ARLEN, *ARSIZE, *ARBURST, ARLOCK, *ARCACHE, *ARPROT, *(DWORD*)ARREGION, *(DWORD*)ARQOS,
+		ARID, ARADDR, *ARLEN, *ARSIZE, *ARBURST, *ARLOCK, *ARCACHE, *ARPROT, *(DWORD*)ARREGION, *(DWORD*)ARQOS,
 		ARVALID, *(BYTE*)ARREADY
 	);
 }
@@ -542,7 +542,7 @@ void MAXI::BusWriteData(
 DPI_FUNCTION void MAXIW_Interface(
 	void* hMAXI,
 	unsigned char nRST,
-	int AWID, unsigned long long AWADDR, const svBitVecVal* AWLEN, const svBitVecVal* AWSIZE, const svBitVecVal* AWBURST, svBit AWLOCK, const svBitVecVal* AWCACHE, const svBitVecVal* AWPROT, const svBitVecVal* AWREGION, const svBitVecVal* AWQOS, unsigned char AWVALID, unsigned char* AWREADY,
+	int AWID, unsigned long long AWADDR, const svBitVecVal* AWLEN, const svBitVecVal* AWSIZE, const svBitVecVal* AWBURST, const svBitVecVal* AWLOCK, const svBitVecVal* AWCACHE, const svBitVecVal* AWPROT, const svBitVecVal* AWREGION, const svBitVecVal* AWQOS, unsigned char AWVALID, unsigned char* AWREADY,
 	int WID, const svBitVecVal* WDATA, const svBitVecVal* WSTRB, unsigned char WLAST, unsigned char WVALID, unsigned char* WREADY,
 	int* BID, svBitVecVal* BRESP, unsigned char* BVALID, unsigned char BREADY)
 {
@@ -556,7 +556,7 @@ DPI_FUNCTION void MAXIW_Interface(
 	// write request
 	pMAXI->BusWriteRequest(
 		nRST,
-		AWID, AWADDR, *AWLEN, *AWSIZE, *AWBURST, AWLOCK, *AWCACHE, *AWPROT, *AWREGION, *AWQOS,
+		AWID, AWADDR, *AWLEN, *AWSIZE, *AWBURST, *AWLOCK, *AWCACHE, *AWPROT, *AWREGION, *AWQOS,
 		AWVALID, *AWREADY
 	);
 }

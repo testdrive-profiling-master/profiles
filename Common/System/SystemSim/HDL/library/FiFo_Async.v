@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common verilog library
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 5/25/2023 Thu (clonextop@gmail.com)
 //================================================================================
 `ifndef __TESTDRIVE_FIFO_ASYNC_V__
 `define __TESTDRIVE_FIFO_ASYNC_V__
@@ -67,7 +66,7 @@ end
 
 assign	ADDR			= bin[FIFO_DEPTH-1:0];			// current address
 assign	inc				= ~(nEN | STATUS);				// increase
-assign	bin_next		/* verilator lint_off WIDTH */ = bin + inc;			// next address
+assign	bin_next		= bin + {{(FIFO_DEPTH-1){1'b0}}, inc};		// next address
 assign	ptr_next		= {bin_next[FIFO_DEPTH], (bin_next[FIFO_DEPTH:1] ^bin_next[FIFO_DEPTH-1:0])};		// next pointer
 
 assign	status_next		= (ptr_next == PTR_CMP);
