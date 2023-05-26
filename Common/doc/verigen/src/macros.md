@@ -17,3 +17,23 @@ print(_V("assign A = {$(B[#],)};", 0, 3))
 assign A = {B[0], B[1], B[2], B[3]};
 ```
 ;;;
+
+## vfunction 메크로
+@<tbl:media/instruction_macros.xlsx;vfunction>
+ 
+ex) vfunction 메크로 예시
+```lua
+vfunction("RANGE", function(size,step)
+	return ("[" .. ((size*(step+1))-1) .. ":" .. (size*step) .. "]")
+end)
+```
+[소스 입력]
+```verilog
+wire	$RANGE(32,1)	T;
+```
+
+[출력]
+```verilog
+wire	[63:32]		T;
+```
+;;;

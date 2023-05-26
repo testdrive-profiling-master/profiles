@@ -262,6 +262,7 @@ function _V(s, v_start, v_end, v_step)
 	
 	return code.s
 end
+vfunction("_V", _V)
 
 function module:add_code(s)
 	local	code	= String(s)

@@ -80,17 +80,47 @@ function __retrieve_param(param_list, t)
 	return load("return (" .. s.s .. ")")()
 end
 
+__vfunctions	= {}
+
+function vfunction(name, func)
+	if type(name) ~= "string" then
+		error("vfunction name must be a string type.", 2)
+	end
+
+	__vfunctions[name]	= func
+end
+
 function __apply_code(s)
 	local	sSrc	= String(s.s)
 	local	sOut	= String("")
 
-	sOut:Append(sSrc:TokenizeVariable("$(*)").s)
-	local	sVal	= sSrc:GetVariable()
-	
-	while sVal:Length() ~= 0 do
-		sOut:Append(tostring(load("return (" .. sVal.s .. ")")()))
+	-- lua vfunction call
+	for name, func in pairs(__vfunctions) do
+		local	sExp = "$" .. name .. "(*)"
+		
+		sOut:Append(sSrc:TokenizeVariable(sExp).s)
+		local	sVal	= sSrc:GetVariable()
+		
+		while sVal:Length() ~= 0 do
+			sOut:Append(tostring(load("return " .. "__vfunctions[\"" .. name .. "\"](" .. sVal.s .. ")")()))
+			sOut:Append(sSrc:TokenizeVariable(sExp).s)
+			sVal	= sSrc:GetVariable()
+		end
+		
+		sSrc.s = sOut.s
+		sOut:clear()
+	end
+
+	-- global lua function call
+	do
 		sOut:Append(sSrc:TokenizeVariable("$(*)").s)
-		sVal	= sSrc:GetVariable()
+		local	sVal	= sSrc:GetVariable()
+		
+		while sVal:Length() ~= 0 do
+			sOut:Append(tostring(load("return (" .. sVal.s .. ")")()))
+			sOut:Append(sSrc:TokenizeVariable("$(*)").s)
+			sVal	= sSrc:GetVariable()
+		end
 	end
 
 	s.s	= sOut.s
