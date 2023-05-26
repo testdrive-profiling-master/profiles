@@ -90,20 +90,33 @@ function vfunction(name, func)
 	__vfunctions[name]	= func
 end
 
-function __apply_code(s)
+function __build_code(s)
 	local	sSrc	= String(s.s)
 	local	sOut	= String("")
 
 	-- lua vfunction call
 	for name, func in pairs(__vfunctions) do
-		local	sExp = "$" .. name .. "(*)"
+		local	sExp	= "$" .. name .. "(*)"
 		
 		sOut:Append(sSrc:TokenizeVariable(sExp).s)
 		local	sVal	= sSrc:GetVariable()
 		
 		while sVal:Length() ~= 0 do
-			sOut:Append(tostring(load("return " .. "__vfunctions[\"" .. name .. "\"](" .. sVal.s .. ")")()))
-			sOut:Append(sSrc:TokenizeVariable(sExp).s)
+			if type(func) == "string" then
+				local sResult	= load("return " .. func .."(" .. sVal.s .. ")")()
+				if type(sResult) == "string" or type(sResult) == "number" then
+					sOut:Append(tostring(sResult))
+				end
+				local sExtra	= sSrc:TokenizeVariable(sExp)
+				sExtra:TrimRight(" \r\n")
+				sOut:Append(sExtra.s)
+			else
+				local sResult	= load("return " .. "__vfunctions[\"" .. name .. "\"](" .. sVal.s .. ")")()
+				if type(sResult) == "string" or type(sResult) == "number" then
+					sOut:Append(tostring(sResult))
+				end
+				sOut:Append(sSrc:TokenizeVariable(sExp).s)
+			end
 			sVal	= sSrc:GetVariable()
 		end
 		
@@ -117,11 +130,31 @@ function __apply_code(s)
 		local	sVal	= sSrc:GetVariable()
 		
 		while sVal:Length() ~= 0 do
-			sOut:Append(tostring(load("return (" .. sVal.s .. ")")()))
+			local sResult	= load("return (" .. sVal.s .. ")")()
+			if type(sResult) == "string" or type(sResult) == "number" then
+				sOut:Append(tostring(sResult))
+			end
 			sOut:Append(sSrc:TokenizeVariable("$(*)").s)
 			sVal	= sSrc:GetVariable()
 		end
 	end
+	
+	-- inline lua code
+	sSrc.s = sOut.s
+	sOut:clear()
+	do
+		sOut:Append(sSrc:TokenizeVariable("${*}").s)
+		local	sVal	= sSrc:GetVariable()
+		
+		while sVal:Length() ~= 0 do
+			load(sVal.s)()
+			sOut:Append(sSrc:TokenizeVariable("${*}").s)
+			sVal	= sSrc:GetVariable()
+		end
+	end
+
+	sOut:TrimLeft(" \t\r\n")
+	sOut:Replace("\r", "", true)	-- linux style only
 
 	s.s	= sOut.s
 end

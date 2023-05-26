@@ -9,6 +9,8 @@ module.__title		= "no title"
 module.__top		= nil
 module.__inception	= ""
 
+__m				= nil
+
 -- find module
 function module.find(name)
 	return load("return module.__list." .. name)()
@@ -80,7 +82,6 @@ function module:set_inception(filename)
 	else
 		error("Can't find code inception : " .. filename, 2)
 	end
-	
 end
 
 function module:get_inception(void)
@@ -283,8 +284,6 @@ function module.apply_code(filename)
 		
 		function add_code(m, code)
 			if m ~= nil then
-				__apply_code(code)
-
 				code:TrimLeft("\r\n")
 				code:TrimRight(" \t\r\n")
 				code:Replace("\r", "", true)
@@ -383,6 +382,14 @@ function module_i:new(name, m, parent)
 	return t
 end
 
+-- verilog inline function
+vfunction("set_author", "__m:set_author")
+vfunction("set_inception", "__m:set_inception")
+vfunction("set_param", "__m:set_param")
+vfunction("add_clock", "__m:add_clock")
+vfunction("add_interface", "__m:add_interface")
+
+-- module instance
 function module_i:get_param(name)
 	return self.param[name]
 end

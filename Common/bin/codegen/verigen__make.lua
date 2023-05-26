@@ -119,9 +119,15 @@ function module:make_code(is_top)
 	end
 
 	-- create top design file
-	local	f		= TextFile()
+	__m		= self
+	local	f	= TextFile()
 	if f:Create(sOutPath .. "/" .. self.name .. ".sv") == false then
 		error("Can't create top design file.", 2)
+	end
+
+	-- build code
+	if self.code:Length() > 0 then
+		__build_code(self.code)
 	end
 	
 	-- code inception
@@ -156,12 +162,7 @@ function module:make_code(is_top)
 				end
 			end
 			
-			sParam:Trim(" \n")
-			if sParam:Length() > 0 then
-				sParam:Append("\n")
-			end
 			sParam:Replace("\n", "<br align=\"left\"/>", true)
-			
 			sGraphviz:Replace("__PARAM__", sParam.s)
 		end
 		
@@ -181,12 +182,7 @@ function module:make_code(is_top)
 				end
 			end
 			
-			sPort:Trim(" \n")
-			if sPort:Length() > 0 then
-				sPort:Append("\n")
-			end
 			sPort:Replace("\n", "<br align=\"left\"/>", true)
-			
 			sGraphviz:Replace("__PORT__", sPort.s)
 		end
 	end
@@ -511,13 +507,13 @@ function module:make_code(is_top)
 	f:Put(sBody.s)
 	
 	if self.code:Length() > 0 then
-		__apply_code(self.code)
 		f:Put("\n" .. self.code.s .. "\n")
 	end
 
 	f:Put("endmodule\n")
 	
 	f:Close()
+	__m	= nil
 	
 	-- apply istyle
 	exec("istyle --style=kr -T4 -n \"" .. sOutPath .. "/" .. self.name .. ".sv\"")
@@ -620,7 +616,7 @@ function module:make_code(is_top)
 			interface.__make_code(f)
 			
 			if __global_defines__.code:Length() > 0 then
-				__apply_code(__global_defines__.code)
+				__build_code(__global_defines__.code)
 				f:Put("\n" .. __global_defines__.code.s .. "\n")
 			end
 			
