@@ -157,6 +157,9 @@ function module:make_code(is_top)
 			end
 			
 			sParam:Trim(" \n")
+			if sParam:Length() > 0 then
+				sParam:Append("\n")
+			end
 			sParam:Replace("\n", "<br align=\"left\"/>", true)
 			
 			sGraphviz:Replace("__PARAM__", sParam.s)
@@ -179,7 +182,9 @@ function module:make_code(is_top)
 			end
 			
 			sPort:Trim(" \n")
-			sPort:Append("\n")
+			if sPort:Length() > 0 then
+				sPort:Append("\n")
+			end
 			sPort:Replace("\n", "<br align=\"left\"/>", true)
 			
 			sGraphviz:Replace("__PORT__", sPort.s)
