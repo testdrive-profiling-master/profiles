@@ -20,6 +20,8 @@ assign A = {B[0], B[1], B[2], B[3]};
 
 ## vfunction 메크로
 @<tbl:media/instruction_macros.xlsx;vfunction>
+:::NoteHeading
+기본적으로 "_V" 메크로가 vfunction 으로 선언되어 있어서, verilog 내에서 $_V(...) 함수를 동일하게 사용할 수 있습니다.
  
 ex) vfunction 메크로 예시
 ```lua
