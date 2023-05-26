@@ -170,15 +170,16 @@ function module:make_code(is_top)
 				local	modport	= i.modport
 				if modport ~= nil then
 					sPort:Append("<font point-size=\"8\">" .. i_name  .. (i.__bared and "" or (" <font color=\"gray\">(" .. i.interface.name .. ")</font>")) .. "</font>\n")
-					--if is_top or i.__bared then
 				end
-				
+
+				-- force to add port interface's clock
 				if i.interface:get_clock() ~= nil then
 					self:add_clock(i.interface:get_clock())
 				end
 			end
 			
 			sPort:Trim(" \n")
+			sPort:Append("\n")
 			sPort:Replace("\n", "<br align=\"left\"/>", true)
 			
 			sGraphviz:Replace("__PORT__", sPort.s)
