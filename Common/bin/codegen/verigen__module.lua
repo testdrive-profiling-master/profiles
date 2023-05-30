@@ -380,6 +380,7 @@ function module_i:new(name, m, parent)
 		t.code			= {}
 		t.code.prefix	= ""
 		t.code.postfix	= ""
+		t.name_postfix	= ""
 	end
 
 	return t
