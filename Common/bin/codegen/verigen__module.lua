@@ -377,6 +377,9 @@ function module_i:new(name, m, parent)
 		t.param			= {}
 		t.port			= {}
 		t.desc			= nil
+		t.code			= {}
+		t.code.prefix	= ""
+		t.code.postfix	= ""
 	end
 
 	return t

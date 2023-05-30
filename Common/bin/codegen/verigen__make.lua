@@ -192,6 +192,9 @@ function module:make_code(is_top)
 	for m_name, m in key_pairs(self.modules) do
 		local	sModule		= String("")
 		local	no_ports	= true
+		
+		sModule:Append(m.code.prefix)
+		
 		sModule:Append("\n" .. m.module.name)
 		
 		__graphviz:Append("\t" .. self.name .. " -> " .. m.module.name .. " [label=<<table border='0' cellborder='0' cellspacing='0' cellpadding='0'><tr><td><b>" .. m.name .. "</b></td></tr><tr><td align=\"left\">__MODULE__</td></tr></table>>];\n")
@@ -309,6 +312,7 @@ function module:make_code(is_top)
 			sModule:Append(sPort.s)
 		end
 		sModule:Append(");\n")
+		sModule:Append(m.code.postfix)
 		
 		if no_ports then
 			sModule:Trim(" \r\n")
