@@ -31,19 +31,17 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Processor
-// Rev.  : 4/27/2023 Thu (clonextop@gmail.com)
+// Rev.  : 5/30/2023 Tue (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 `include "library/demux_by_enable.v"
 `include "library/MultiCyclePath.v"
 `include "library/MultiCyclePathEx.v"
-`include "library/MultiCycleSlice.v"
 `include "library/SRAM_Single.v"
 `include "library/SRAM_Single_Multicycle.v"
 `include "MAD.v"
 `include "MAD_multicycled.v"
 `include "MAD_multicycled_Ex.v"
-`include "MAD_multicycled_Slice.v"
 `include "SRAM_Single_multicycled.v"
 
 /* HIDDEN */

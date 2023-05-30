@@ -31,21 +31,24 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Common verilog library
-// Rev.  : 4/26/2023 Wed (clonextop@gmail.com)
+// Rev.  : 5/30/2023 Tue (clonextop@gmail.com)
 //================================================================================
 `ifndef __TESTDRIVE_MULTICYCLE_PIPE_V__
 `define __TESTDRIVE_MULTICYCLE_PIPE_V__
 `include "testdrive_system.vh"
 
 `define __GEN_MULTIPATH_PIPE \
-	(* dont_touch = "yes" *) reg	[OWIDTH-1:0]	o_data; \
-	assign ODATA	= o_data; \
-	always@(posedge CLK, negedge nRST) begin \
-		if(!nRST) begin \
-			o_data	<= {(OWIDTH){1'b0}}; \
-		end \
-		else if(oe_pipe[CYCLE-1]) begin \
-			o_data	<= demux_dout; \
+	(* dont_touch = "yes" *) reg	[(IWIDTH*CYCLE)-1:0]	i_data; \
+	assign	PIPE_I		= i_data; \
+	for(i=0;i<CYCLE;i=i+1) begin : i_pipe \
+		always@(posedge CLK, negedge nRST) begin \
+			if(!nRST) begin \
+				i_data[`BUS_RANGE(IWIDTH, i)]	<= {(IWIDTH){1'b0}}; \
+			end \
+			else begin \
+				if(ie_pipe[i] & IE) \
+					i_data[`BUS_RANGE(IWIDTH, i)]	<= IDATA; \
+			end \
 		end \
 	end
 
@@ -60,7 +63,7 @@ module MultiCyclePath #(
 	input								IE,				// input enable
 	input	[IWIDTH-1:0]				IDATA,			// input data or control
 	// i/o pipes
-	output	reg [(IWIDTH*CYCLE)-1:0]	PIPE_I,			// input bus
+	output	[(IWIDTH*CYCLE)-1:0]		PIPE_I,			// input bus
 	input	[(OWIDTH*CYCLE)-1:0]		PIPE_O,			// output bus
 	// output
 	output								OE,				// output enable
@@ -72,43 +75,30 @@ module MultiCyclePath #(
 genvar i;
 
 reg		[CYCLE-1:0]			ie_pipe;		// input enable pipe
-reg		[CYCLE:0]			oe_pipe;		// output enable pipe
+reg		[CYCLE-1:0]			oe_pipe;		// output enable pipe
 reg		[CYCLE:0]			en_pipe;		// state enable pipe
-wire	[OWIDTH-1:0]		demux_dout;		// demuxed data out
 
-assign	OE					= oe_pipe[CYCLE];
+assign	OE					= oe_pipe[CYCLE-1];
 
 // implementation ------------------------------------------------------------
 // in/out enable pipe
 always@(posedge CLK, negedge nRST) begin
 	if(!nRST) begin
 		ie_pipe		<= {{(CYCLE-1){1'b0}}, 1'b1};
-		oe_pipe		<= {(CYCLE+1){1'b0}};
+		oe_pipe		<= {(CYCLE){1'b0}};
 		en_pipe		<= {(CYCLE+1){1'b0}};
 	end
 	else begin
 		if(IE || en_pipe[CYCLE]) begin
-			ie_pipe		<= {ie_pipe[CYCLE-2:0], ie_pipe[CYCLE-1]};
-			oe_pipe		<= {oe_pipe[CYCLE-1:0], IE};
+			oe_pipe		<= {oe_pipe[CYCLE-2:0], IE};
 			en_pipe		<= {en_pipe[CYCLE-1:0] | {(CYCLE){IE}}, IE};
 		end
-	end
-end
 
-// input bus generation
-generate
-for(i=0;i<CYCLE;i=i+1) begin : level_gen
-	always@(posedge CLK, negedge nRST) begin
-		if(!nRST) begin
-			PIPE_I[`BUS_RANGE(IWIDTH, i)]	<= {(IWIDTH){1'b0}};
-		end
-		else begin
-			if(ie_pipe[i] & IE)
-				PIPE_I[`BUS_RANGE(IWIDTH, i)]	<= IDATA;
+		if(IE || en_pipe[CYCLE-2]) begin
+			ie_pipe		<= {ie_pipe[CYCLE-2:0], ie_pipe[CYCLE-1]};
 		end
 	end
 end
-endgenerate
 
 // demuxing result output
 demux_by_enable #(
@@ -118,7 +108,7 @@ demux_by_enable #(
 ) odata_demux (
 	.EN_BUS			(ie_pipe),
 	.DIN_BUS		(PIPE_O),
-	.DOUT			(demux_dout)
+	.DOUT			(ODATA)
 );
 
 generate begin : gen_multicycle
