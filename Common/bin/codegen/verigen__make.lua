@@ -197,7 +197,13 @@ function module:make_code(is_top)
 		
 		sModule:Append("\n" .. m.module.name)
 		
-		__graphviz:Append("\t" .. self.name .. " -> " .. m.module.name .. " [label=<<table border='0' cellborder='0' cellspacing='0' cellpadding='0'><tr><td><b>" .. m.name .. m.name_postfix .. "</b></td></tr><tr><td align=\"left\">__MODULE__</td></tr></table>>];\n")
+		__graphviz:Append("\t" .. self.name .. " -> " .. m.module.name .. " [label=<<table border='0' cellborder='0' cellspacing='0' cellpadding='0'><tr><td><b>"..
+			((m.graphviz.name_prefix ~= nil) and m.graphviz.name_prefix or "") ..
+			m.name ..
+			((m.graphviz.name_postfix ~= nil) and m.graphviz.name_postfix or "") .. 
+			"</b></td></tr><tr><td align=\"left\">__MODULE__</td></tr></table>>" ..
+			((m.graphviz.node ~= nil) and ("," .. m.graphviz.node) or "") ..
+			"];\n")
 		local sGraphviz_Module	= String("")
 
 		-- parameters

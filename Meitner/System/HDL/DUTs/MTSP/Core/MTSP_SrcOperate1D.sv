@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -31,8 +30,8 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 // 
-// Title : Meitner processor v1.1
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Title : MTSP(Multi-thread Stream Processor) 'Meitner' v1.1
+// Rev.  : 5/31/2023 Wed (clonextop@gmail.com)
 //================================================================================
 `include "MTSP_Defines.vh"
 
@@ -54,11 +53,11 @@ bNEG	= OP[`RANGE_SRCOP_NEGATE];		// negate
 wire	[`RANGE_DWORD]		src_fp, src_int;
 
 // implementation ------------------------------------------------------------
-// 24bit floating point¿œ ∞ÊøÏ
+// 24bit floating pointÏùº Í≤ΩÏö∞
 assign	src_fp		= {SRC_IN[31:24], (bNEG^SRC_IN[`RANGE_DATA_SIGN]), SRC_IN[`MSB_DATA_EXP:0]};
-// integer¿œ ∞ÊøÏ
+// integerÏùº Í≤ΩÏö∞
 assign	src_int		= bNEG ? -SRC_IN : SRC_IN;
-// Negate/Absolute ∞·∞˙ √‚∑¬
+// Negate/Absolute Í≤∞Í≥º Ï∂úÎ†•
 assign	SRC_OUT		= {(bINT ? src_int : src_fp)};
 
 endmodule
