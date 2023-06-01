@@ -285,7 +285,9 @@ function module:make_code(is_top)
 					if m:get_port(i_name) ~= nil then	-- specified port
 						sPort:Append(tostring(m:get_port(i_name)))
 						
-						sGraphviz_Module:Append("." .. i.name .. " (" .. tostring(m:get_port(i_name)) .. ")\n")
+						if m.graphviz.ignore_port == nil then
+							sGraphviz_Module:Append("." .. i.name .. " (" .. tostring(m:get_port(i_name)) .. ")\n")
+						end
 					else
 						local	i_self	= self:get_interface(i_name)
 						

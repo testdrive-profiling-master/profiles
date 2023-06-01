@@ -58,29 +58,29 @@ wire								addr_nEN, pred_nEN,				// address override enable
 p0_disable;
 wire	[`RANGE_MASK4D]				pred_mask;
 wire	[`RANGE_DWORD]				s0a_x, s0a_y, s0a_z, s0a_w;
-assign	{p0_m, p0_s, p1_m, p1_s}	= UINSTx4;						// ¸í·É¾î ºĞ¸®
-assign	addr_nEN					= p0_m[`RANGE_UINST_nEN] | (p0_m[`RANGE_UINST_MO]!=`MO_ADDR),	// phase #0-Main ¸í·É¾îÀÇ ADDR ¿©ºÎ
-pred_nEN					= p0_m[`RANGE_UINST_nEN] | (p0_m[`RANGE_UINST_MO]!=`MO_PRED);	// phase #0-Main ¸í·É¾îÀÇ PRED ¿©ºÎ
-assign	{s0a_x, s0a_y, s0a_z, s0a_w}	= SRC0A;					// phase #0 source A ÆĞÄ¡
+assign	{p0_m, p0_s, p1_m, p1_s}	= UINSTx4;						// ëª…ë ¹ì–´ ë¶„ë¦¬
+assign	addr_nEN					= p0_m[`RANGE_UINST_nEN] | (p0_m[`RANGE_UINST_MO]!=`MO_ADDR),	// phase #0-Main ëª…ë ¹ì–´ì˜ ADDR ì—¬ë¶€
+pred_nEN					= p0_m[`RANGE_UINST_nEN] | (p0_m[`RANGE_UINST_MO]!=`MO_PRED);	// phase #0-Main ëª…ë ¹ì–´ì˜ PRED ì—¬ë¶€
+assign	{s0a_x, s0a_y, s0a_z, s0a_w}	= SRC0A;					// phase #0 source A íŒ¨ì¹˜
 
 // implementation ------------------------------------------------------------
-// etc. : ¸ñÀûÁö¿Í address »ó´ë ÁÖ¼Ò °áÁ¤
+// etc. : ëª©ì ì§€ì™€ address ìƒëŒ€ ì£¼ì†Œ ê²°ì •
 assign	REF_ADDR_DEST				= ((addr_nEN | p0_m[7]) ? 0 : s0a_z[`RANGE_GPRs]),
 REF_ADDR_RELATIVE			= ((addr_nEN | p0_m[6]) ? 0 : s0a_w[`RANGE_INDEX]);
-// Predicate °è»ê
+// Predicate ê³„ì‚°
 assign	pred_mask[`SELECT_X]		= ~|(s0a_x[`RANGE_MASK4D]&p0_m[`RANGE_UINST_CMPX]),
 pred_mask[`SELECT_Y]		= ~|(s0a_y[`RANGE_MASK4D]&p0_m[`RANGE_UINST_CMPY]),
 pred_mask[`SELECT_Z]		= ~|(s0a_z[`RANGE_MASK4D]&p0_m[`RANGE_UINST_CMPZ]),
 pred_mask[`SELECT_W]		= ~|(s0a_w[`RANGE_MASK4D]&p0_m[`RANGE_UINST_CMPW]);
-//assign	p0_disable					= p1_m[`RANGE_UINST_nALU] & (|pred_mask) & pred_nEN;	// phase #1 ¸í·É¾î°¡ ¹«È¿È­ µÇ´Â °æ¿ì
-assign	p0_disable					= (&pred_mask) & (~pred_nEN);	// phase #1 ¸í·É¾î°¡ ¹«È¿È­ µÇ´Â °æ¿ì : pred ¸í·É¾î Á¸ÀçÇÏ¸é¼­ ÀüºÎ maskµÉ¶§ phase 1 ¸í·É¾î Ãë¼Ò
-// Predicate Àû¿ë
+//assign	p0_disable					= p1_m[`RANGE_UINST_nALU] & (|pred_mask) & pred_nEN;	// phase #1 ëª…ë ¹ì–´ê°€ ë¬´íš¨í™” ë˜ëŠ” ê²½ìš°
+assign	p0_disable					= (&pred_mask) & (~pred_nEN);	// phase #1 ëª…ë ¹ì–´ê°€ ë¬´íš¨í™” ë˜ëŠ” ê²½ìš° : pred ëª…ë ¹ì–´ ì¡´ì¬í•˜ë©´ì„œ ì „ë¶€ maskë ë•Œ phase 1 ëª…ë ¹ì–´ ì·¨ì†Œ
+// Predicate ì ìš©
 assign	UINSTx4_OUT					= {p0_m, p0_s,
-						  p1_m[`RANGE_UINST_nEN]|p0_disable,					// ALU ¸í·É¾î°¡ ¾Æ´Ò¶§ predicate Ã³¸®
+						  p1_m[`RANGE_UINST_nEN]|p0_disable,					// ALU ëª…ë ¹ì–´ê°€ ì•„ë‹ë•Œ predicate ì²˜ë¦¬
 						  p1_m[30:12],
-						  p1_m[`RANGE_UINST_WMASK]|((pred_nEN | p1_m[`RANGE_UINST_nALU]) ? 4'b0 : pred_mask),	// PredicationÀÇ WMASK Ã³¸®(ALU ¸í·É¾îÀÏ °æ¿ì)
+						  p1_m[`RANGE_UINST_WMASK]|((pred_nEN | p1_m[`RANGE_UINST_nALU]) ? 4'b0 : pred_mask),	// Predicationì˜ WMASK ì²˜ë¦¬(ALU ëª…ë ¹ì–´ì¼ ê²½ìš°)
 						  p1_m[7:0],
 
-						  p1_s[`RANGE_UINST_nEN]|p0_disable,					// ALU ¸í·É¾î°¡ ¾Æ´Ò¶§ predicate Ã³¸®
+						  p1_s[`RANGE_UINST_nEN]|p0_disable,					// ALU ëª…ë ¹ì–´ê°€ ì•„ë‹ë•Œ predicate ì²˜ë¦¬
 						  p1_s[30:0]};
 endmodule
