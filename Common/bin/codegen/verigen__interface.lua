@@ -159,9 +159,34 @@ function interface:set_clock(clk)
 	self["__clock"]		= clk
 end
 
+local __forbidden_word_list = {
+	["end"]			= 1,
+	["else"]		= 1,
+	["module"]		= 1,
+	["interface"]	= 1,
+	["local"]		= 1,
+	["function"]	= 1,
+	["then"]		= 1,
+	["and"]			= 1,
+	["or"]			= 1,
+	["xor"]			= 1,
+	["xnor"]		= 1,
+	["if"]			= 1,
+	["for"]			= 1,
+	["begin"]		= 1
+}
+
+local function __check_forbidden_word(s)
+	return __forbidden_word_list[s] ~= nil
+end
+
 function interface:set_signal(name, bit_width)
 	if bit_width == nil then
 		bit_width	= 1
+	end
+	
+	if __check_forbidden_word(name) then
+		error("[interface:set_signal] forbidden signal name : '" .. name .. "'")
 	end
 	
 	if load("return interface.__list." .. self.name .. ".signal." .. name .. " ~= nil")() then
