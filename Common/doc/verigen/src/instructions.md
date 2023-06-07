@@ -226,6 +226,10 @@ i_axi3:set_signal("WSTRB", "DATA_WIDTH/8")
 ```
 ;;;
 
+### interface:signal_count
+@<tbl:media/instruction_interface.xlsx;signal_count>
+;;;
+
 ### interface:set_param
 @<tbl:media/instruction_interface.xlsx;set_param>
  

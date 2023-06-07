@@ -388,8 +388,14 @@ function module:make_code(is_top)
 				if modport == nil then
 					sDeclares:Append("// bared interface : " .. i_name .. ((i.desc == nil) and "" or (" (" .. i.desc .. ")")) .. "\n")
 
-					for signal_name, signal in key_pairs(i.interface.signal) do
-						sDeclares:Append(string.format("logic %-24s %s;\n", ((signal.width == 1) and "" or string.format("[%d:0]", signal.width - 1)), signal.name))
+					if i.interface:signal_count() == 1 then
+						for signal_name, signal in key_pairs(i.interface.signal) do
+							sDeclares:Append(string.format("logic %-24s %s;\n", ((signal.width == 1) and "" or string.format("[%d:0]", signal.width - 1)), i_name))
+						end
+					else
+						for signal_name, signal in key_pairs(i.interface.signal) do
+							sDeclares:Append(string.format("logic %-24s %s;\n", ((signal.width == 1) and "" or string.format("[%d:0]", signal.width - 1)), signal.name))
+						end
 					end
 				end
 			else
@@ -475,6 +481,10 @@ function module:make_code(is_top)
 							local	sLogic	= is_top and "" or "logic "
 							if mp_name == "input" then
 								sLogic	= ""
+							end
+							
+							if i.__bared and i.interface:signal_count() == 1 then	-- single signal
+								io_name	= i_name
 							end
 							
 							sPorts:Append("\t" .. string.format("%-6s ", mp_name) ..

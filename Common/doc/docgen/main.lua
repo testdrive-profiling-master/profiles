@@ -39,6 +39,6 @@ lua_table_example = {
 
 
 -- 챕터 추가
-AddParagraph("[[src/소개.md]]")
-AddParagraph("[[src/Lua_표현.md]]")
-AddParagraph("[[src/Pragraph_표현.md]]")
+AddParagraph("[[src/Introduction.md]]")
+AddParagraph("[[src/Lua_expression.md]]")
+AddParagraph("[[src/Pragraph_expression.md]]")

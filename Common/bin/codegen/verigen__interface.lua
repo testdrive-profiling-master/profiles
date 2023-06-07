@@ -159,6 +159,14 @@ function interface:set_clock(clk)
 	self["__clock"]		= clk
 end
 
+function interface:signal_count()
+	local	iCount	= 0
+	for signal_name, signal in pairs(self.signal) do
+		iCount	= iCount + 1
+	end
+	return iCount
+end
+
 local __forbidden_word_list = {
 	["end"]			= 1,
 	["else"]		= 1,

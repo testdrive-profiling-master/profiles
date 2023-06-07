@@ -1,4 +1,4 @@
-local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.01")
+local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.3")
 local	sProfilePath	= String(nil)
 local	sTemplatePath	= String(nil)
 
