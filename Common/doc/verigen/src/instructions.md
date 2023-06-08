@@ -433,6 +433,11 @@ inst:set_bared()			-- bared interface 설정
 ```
 ;;;
 
+### interface:set_top_uppercase
+@<tbl:media/instruction_interface.xlsx;set_top_uppercase>
+ 
+;;;
+
 ### interface_i:set_port
 @<tbl:media/instruction_interface.xlsx;i_set_port>
  

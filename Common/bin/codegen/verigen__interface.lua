@@ -232,6 +232,10 @@ function interface:add_modport(name, modport)
 	end
 end
 
+function interface:set_top_uppercase(en)
+	self.__bared_uppercase	= en
+end
+
 function interface:full_name()
 	local	name	= self.name
 	local	parent	= getmetatable(self)

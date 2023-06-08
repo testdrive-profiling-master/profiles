@@ -406,10 +406,18 @@ function module:make_code(is_top)
 			if is_top and (modport ~= nil) and i.__bared == false then
 				for mp_name, mp_list in key_pairs(modport.data) do
 					for id, io_name in key_pairs(mp_list) do
+						local	bared_io_name	= io_name
+						-- force to uppercase name
+						if i.interface.__bared_uppercase == true then
+							bared_io_name	= bared_io_name:upper()
+						elseif i.interface.__bared_uppercase == false then
+							bared_io_name	= bared_io_name:lower()
+						end
+					
 						if mp_name == "input" then
-							sDeclares:Append(string.format("assign %-23s = ", i_name .. "." .. io_name) .. i:get_prefix() .. io_name .. ";\n")
+							sDeclares:Append(string.format("assign %-23s = ", i_name .. "." .. io_name) .. i:get_prefix() .. bared_io_name .. ";\n")
 						elseif mp_name == "output" then
-							sDeclares:Append(string.format("assign %-23s = ", i:get_prefix() .. io_name) .. i_name .. "." .. io_name .. ";\n")
+							sDeclares:Append(string.format("assign %-23s = ", i:get_prefix() .. bared_io_name) .. i_name .. "." .. io_name .. ";\n")
 						elseif mp_name == "inout" then
 							error("inout port is not supported yet.", 2)
 						end
@@ -485,6 +493,13 @@ function module:make_code(is_top)
 							
 							if i.__bared and i.interface:signal_count() == 1 then	-- single signal
 								io_name	= i_name
+							end
+							
+							-- force to uppercase name
+							if i.interface.__bared_uppercase == true then
+								io_name	= io_name:upper()
+							elseif i.interface.__bared_uppercase == false then
+								io_name	= io_name:lower()
 							end
 							
 							sPorts:Append("\t" .. string.format("%-6s ", mp_name) ..

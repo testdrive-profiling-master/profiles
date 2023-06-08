@@ -11,7 +11,8 @@ property["Security_Level"]			= "BSD License."
 --property["Water_Mark"]				= "TESTDRIVE OPENSOURCE"		-- watermark text, if you don't wan't it, comment it.
 
 -- Revision history (버전, 연도, 월, 일, 설명) : 마지막 버전/날짜가 도큐먼트의 버전/날짜가 됩니다. 날짜 순으로 나열할 것!!!
-AddRevision("1.0",	2023, 5,  8,	"Initial relase")
+AddRevision("1.00",	2023, 5,  8,	"Initial relase")
+AddRevision("1.01",	2023, 6,  8,	"add interface:set_top_uppercase function")
 
 -- Term 추가
 AddTerm("TestDrive", "TestDrive Profiling Master (@<link:https://testdrive-profiling-master.github.io/>)")
