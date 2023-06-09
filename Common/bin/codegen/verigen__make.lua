@@ -592,7 +592,17 @@ function module:make_code(is_top)
 			
 			-- write back
 			f:Create(sOutPath .. "/html/" .. self.name .. ".html")
+			f:Put("<!DOCTYPE html>\n" ..
+				"<html>\n"..
+				"<head>\n"..
+				"	<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />\n"..
+				"	<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\" />\n"..
+				"	<meta name=\"google\" content=\"notranslate\">\n"..
+				"	<title>MTSP register map</title>\n"..
+				"</head>\n"..
+				"<body>\n")
 			f:Put(sHtml.s)
+			f:Put("</body>\n</html>\n")
 			f:Close()
 		end
 	end
