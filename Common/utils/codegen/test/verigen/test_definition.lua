@@ -156,6 +156,7 @@ core_i.inst:set_modport("s", {
 	["input"]={"EN", "INST"},
 	["output"] ={"READY"}
 })
+core_i.inst:set_clock(clk.MCLK)
 
 ---------------------------------------------------------
 -- configuration

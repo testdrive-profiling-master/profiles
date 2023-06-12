@@ -1,74 +1,74 @@
 # Macro functions
 
-코드 구성에 유용한 메크로 함수를 제공합니다.
+Provides macro functions useful for organizing your code.
 
-@<tbl:media/instruction_macros.xlsx;summary;메크로 함수 요약>
+@<tbl:media/instruction_macros.xlsx;summary;Macro function summary>
 
  
-아래 함수는 verilog에서 사용 가능한 vfunction으로 미리 정의된 함수들입니다. "$함수명(~)"으로 사용할 수 있습니다.
+The functions below are predefined functions as vfunction available in verilog. It can be used as "$function_name(~)".
 
-@<tbl:media/instruction_macros.xlsx;vfunction_list;미리 정의된 vfunction 목록>
+@<tbl:media/instruction_macros.xlsx;vfunction_list;List of predefined vfunctions>
 
 ;;;
 
-## _V 메크로
+## _V macro
 @<tbl:media/instruction_macros.xlsx;_V>
  
-ex) _V 메크로 예시
+ex) _V macro example
 ```lua
 print(_V("assign A = {$(B[#],)};", 0, 3))
 ```
-[출력]
+[Result]
 ```verilog
 assign A = {B[0], B[1], B[2], B[3]};
 ```
 ;;;
 
-## vfunction 메크로
+## vfunction macro
 @<tbl:media/instruction_macros.xlsx;vfunction>
 :::NoteHeading
-기본적으로 "_V" 메크로가 vfunction 으로 선언되어 있어서, verilog 내에서 $_V(...) 함수를 동일하게 사용할 수 있습니다.
+By default, the "_V" macro is declared as vfunction , so you can use the $_V(...) function equivalently within verilog.
  
-ex) vfunction 메크로 예시
+ex) vfunction macro example
 ```lua
 vfunction("RANGE", function(size,step)
 	return ("[" .. ((size*(step+1))-1) .. ":" .. (size*step) .. "]")
 end)
 ```
-[소스 입력]
+[Source input]
 ```verilog
 wire	$RANGE(32,1)	T;
 ```
 
-[출력]
+[Result]
 ```verilog
 wire	[63:32]		T;
 ```
 ;;;
 
-## $LOG2 함수
+## $LOG2 function
 @<tbl:media/instruction_macros.xlsx;LOG2>
  
-ex) $LOG2 예시
+ex) $LOG2 example
 ```lua
 val_a = 16
 ```
-[소스 입력]
+[Source input]
 ```verilog
 localparam		BITS	= $LOG2(val_a);
 ```
 
-[출력]
+[Result]
 ```verilog
 localparam		BITS	= 4;
 ```
 ;;;
 
-## $DEMUX_BY_EN 함수
+## $DEMUX_BY_EN function
 @<tbl:media/instruction_macros.xlsx;DEMUX_BY_EN>
  
-ex) $DEMUX_BY_EN 예시
-[소스 입력]
+ex) $DEMUX_BY_EN example
+[Source input]
 ```verilog
 wire	[31:0]		a,b,c,d;
 wire	[3:0]		en;
@@ -77,7 +77,7 @@ wire	[31:0]		odata;
 $DEMUX_BY_EN(32, 4, "en", "{a,b,c,d}", "odata")
 ```
 
-[출력]
+[Result]
 ```verilog
 wire	[31:0]		a,b,c,d;
 wire	[3:0]		en;
@@ -95,16 +95,16 @@ demux_by_enable #(
 ```
 ;;;
 
-## $MULTICYCLE 함수
+## $MULTICYCLE function
 @<tbl:media/instruction_macros.xlsx;MULTICYCLE>
  
-ex) $MULTICYCLE 예시
-[소스 입력]
+ex) $MULTICYCLE example
+[Source input]
 ```verilog
 $MULTICYCLE("MTSP_Synchronize", "mtsp_sync", 2, 1)
 ```
 
-[출력]
+[Result]
 ```verilog
 genvar i;
 // multicycle design for MTSP_Synchronize

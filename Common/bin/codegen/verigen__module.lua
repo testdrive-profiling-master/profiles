@@ -169,7 +169,13 @@ function module:set_param(name, value, is_local)
 	self.params[name] = {["default"] = value, ["is_local"] = is_local}
 end
 
-function module:get_module(name)
+function module:get_module(name, nilAsError)
+	if nilAsError == nil or nilAsError == true then
+		if self.modules[name] == nil then
+			error("Can't find submodule '" .. name .. "' in module '" .. self.name .. "'", 2)
+		end
+	end
+
 	return self.modules[name]
 end
 
@@ -185,13 +191,13 @@ function module:add_module(m, name)
 	if name == nil then
 		name	= m.name
 		
-		local	conflict_module	= self:get_module(name)
+		local	conflict_module	= self:get_module(name, false)
 		if conflict_module ~= nil then
 			conflict_module.name	= name .. "_0"
 			
 			local	i = 1
 			
-			while self:get_module(name .. "_" .. tostring(i)) ~= nil do
+			while self:get_module(name .. "_" .. tostring(i), false) ~= nil do
 				i = i + 1
 			end
 			
@@ -203,7 +209,7 @@ function module:add_module(m, name)
 		error("Not a module instance : '" .. name .. "'", 2)
 	end
 	
-	if self:get_module(name) then
+	if self:get_module(name, false) then
 		error("already same module[" .. self.name .. "] instance[" .. name .. "] is existed.", 2)
 	end
 

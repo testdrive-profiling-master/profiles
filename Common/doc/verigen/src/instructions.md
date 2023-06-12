@@ -1,44 +1,44 @@
 # Class and Method
 
-아래와 같이 총 3개의 객체 종류가 존재합니다.
+There are three object types as shown below.
 
 * clock
-** 클럭을 생성하고, interface 에 할당할 수 있습니다. 해당 interface 가 사용될 때, 자동으로 할당된 클럭과 클럭에 매칭되는 reset 이 port 로 선언됩니다. 만약 reset 이 선언되어 있지 않는다면, 자동으로 기본 리셋 nRST 신호가 생성됩니다.
+** You can generate clocks and assign them to interfaces. When the corresponding interface is used, the automatically assigned clock and reset matching the clock are declared to the port. If reset is not declared, the default reset nRST signal is automatically generated.
 * interface
-** module 에서 사용할 interface 를 생성합니다. interface 는 다른 interface 로 부터 상속을 받아 생성될 수 있습니다. 모듈에 add_interface 로 부탁된 instance 는 interface_i:* 함수만 호출 가능합니다.
+** Create an interface to be used in the module. Interfaces can be created by inheriting from other interfaces. Instances requested by add_interface to a module can only call interface_i:* functions.
 * module
-** 모듈을 생성하고, module:add_module 함수를 통해 다른 하위 모듈을 포함하거나, module:add_interface 를 호출하여 interface instance 를 생성할 수 있습니다.
+** You can create a module, include other submodules via the module:add_module function, or call module:add_interface to create an interface instance.
 
 ;;;
 
 ## clock
-interface 에 할당할 클럭을 생성하거나 관리합니다. \
-할당된 클럭은 해당 interface 가 사용될 때 자동으로 module의 port에 따라 선언되게 됩니다.
-또한 contraint 에 해당 클럭의 speed 가 정의되며, 이종 클럭간의 register 들과 클럭에 설정된 reset 에 대해서도 false_path 를 자동으로 지정하게 됩니다.
+Generates or manages clocks to be assigned to interfaces. \
+The assigned clock is automatically declared according to the port of the module when the corresponding interface is used.
+In addition, the speed of the corresponding clock is defined in the contraint, and false_path is automatically designated for registers between heterogeneous clocks and reset set for the clock.
 
-@<tbl:media/instruction_clock.xlsx;summary;clock 객체 요약>
+@<tbl:media/instruction_clock.xlsx;summary;clock object summary>
 
 ;;;
 
 ### clock:new
 @<tbl:media/instruction_clock.xlsx;new>
  
-ex) 생성 예시
+ex) creation example
 ```lua
-new_clock	= clock:new("CLK")			-- 기본 클럭으로 부터 생성
+new_clock	= clock:new("CLK")			-- generated from the base clock
 new_clock:set_reset("GRSTn")
 
-new_clock2	= new_clock:new("ACLK")		-- new_clock을 복제한 클럭. reset, speed 를 상속 받는다.
+new_clock2	= new_clock:new("ACLK")		-- Clock cloned from new_clock. It inherits reset and speed.
 ```
 ;;;
 
 ### clock:set_reset
 @<tbl:media/instruction_clock.xlsx;set_reset>
   
-ex) reset 지정 예시
+ex) Example of specifying reset
 ```lua
 aclock	= clock:new("ACLK")
-aclock:set_reset("ARSTn")				-- 리셋 ARSTn 지정
+aclock:set_reset("ARSTn")				-- Assign reset ARSTn
 ```
 ;;;
 
@@ -50,17 +50,17 @@ aclock:set_reset("ARSTn")				-- 리셋 ARSTn 지정
 ### clock:set_speed
 @<tbl:media/instruction_clock.xlsx;set_speed>
   
-ex) 동작 속도 지정 예시
+ex) Example of motion speed designation
 ```lua
 aclock	= clock:new("ACLK")
-aclock:set_speed(1000)					-- ACK에 1GHz 설정
+aclock:set_speed(1000)					-- Set 1GHz to ACK
 ```
 ;;;
 
 ### clock:set_default
 @<tbl:media/instruction_clock.xlsx;set_default>
   
-ex) 기본클럭 설정 예시
+ex) Basic clock setting example
 ```lua
 aclock	= clock:new("MCLK")
 aclock:set_default()
@@ -70,12 +70,12 @@ aclock:set_default()
 ### clock.find
 @<tbl:media/instruction_clock.xlsx;find>
   
-ex) clock 찾기 예시
+ex) clock find example
 ```lua
-aclock	= clock.find("ACLK")			-- ACLK 찾기
+aclock	= clock.find("ACLK")			-- Find ACLK
 
 if aclock ~= nil then
-	LOGI("ACLK is found.")				-- 찾았음.
+	LOGI("ACLK is found.")				-- found.
 end
 ```
 ;;;
@@ -83,12 +83,12 @@ end
 ### clock.is_valid
 @<tbl:media/instruction_clock.xlsx;is_valid>
  
-ex) clock 객체 확인 예시
+ex) Example of checking the clock object
 ```lua
 aclock	= clock:new("ACLK")
 
 if clock.is_valid(aclock) then
-	LOGI("aclock is clock object.")		-- clock 객체가 맞음.
+	LOGI("aclock is clock object.")		-- clock object is correct.
 end
 ```
 ;;;
@@ -99,8 +99,8 @@ end
 ;;;
 
 ## interface
-interface 객체는 systemverilog 의 interface 기술과 동일하게 작동합니다. \
-systemverilog 의 interface 문법을 살펴보면 아래와 같습니다.
+The interface object works identically to systemverilog's interface technology. \
+If you look at the interface syntax of systemverilog, it is as follows.
 
 @<b>[systemverilog interface 선언]@</b>
 ```verilog
@@ -114,25 +114,25 @@ interface my_intface;
 endinterface
 ```
 :::NoteHeading
-systemverilog interface의 상세한 설명은 외부링크 \
-@<link:https://verificationguide.com/systemverilog/systemverilog-modport/;systemverilog modport 설명>을 참조 바랍니다.
+A detailed description of the systemverilog interface can be found in external links. \
+See @<link:https://verificationguide.com/systemverilog/systemverilog-modport/;systemverilog modport description>.
  
-그 중 합성 가능한 modport 기능을 사용하여, port 구성을 시도하며, \
-기본 객체인 interface 와 \
-module 객체에 add_interface 를 통해 생성된 interface_i 객체로 크게 나뉩니다.
+Among them, port configuration is attempted using the modport function that can be synthesized, \
+and it is largely divided into the interface_i object created through add_interface to the interface object, \
+which is the basic object, and the module object.
 
-@<tbl:media/instruction_interface.xlsx;summary;interface 객체 요약>
+@<tbl:media/instruction_interface.xlsx;summary;interface object summary>
  
-@<tbl:media/instruction_interface.xlsx;summary_i;interface_i 객체 요약>
+@<tbl:media/instruction_interface.xlsx;summary_i;interface_i object summary>
 
 ;;;
 
 ### interface:new
 @<tbl:media/instruction_interface.xlsx;new>
  
-ex) interface 생성 예시
+ex) Example of interface creation
 ```lua
-i_apb		= interface:new("APB")		-- APB interface 생성
+i_apb		= interface:new("APB")		-- APB interface creation
 i_apb:set_signal("RARDDR", 32)
 ```
 ;;;
@@ -140,11 +140,10 @@ i_apb:set_signal("RARDDR", 32)
 ### new_signal
 @<tbl:media/instruction_interface.xlsx;new_signal>
  
-내부의 실제 구현은 아래와 같이 bared interface 를 생성하고, \
-modport 's'는 input으로 modport 'm'은 output으로 설정합니다. \
-또한 bared interface 이기 때문에 [top_module]_include.vh 헤더에도 \
-interface 로 기록되지 않습니다.
-
+The actual implementation inside creates a bared interface as shown below, \
+setting modport 's' to input and modport 'm' to output. \
+Also, because it is a bared interface, \
+it is not even logged as an interface in the [top_module]_include.vh header.
 ```lua
 function new_signal(name, width)
 	local	signal	= interface:new(name)
@@ -163,7 +162,7 @@ function new_signal(name, width)
 end
 ```
  
-ex) signal 생성 예시
+ex) signal creation example
 ```lua
 s_BUSY		= new_signal("BUSY_ALL", 4)
 ```
@@ -172,7 +171,7 @@ s_BUSY		= new_signal("BUSY_ALL", 4)
 ### interface.find
 @<tbl:media/instruction_interface.xlsx;find>
  
-ex) interface 찾기 예시
+ex) Example of finding an interface
 ```lua
 i_APB		= interface:new("APB")
 
@@ -185,12 +184,12 @@ end
 ### interface.is_valid
 @<tbl:media/instruction_interface.xlsx;is_valid>
  
-ex) interface 객체 확인 예시
+ex) Example of checking interface object
 ```lua
 i_APB	= interface:new("APB")
 
 if interface.is_valid(i_APB) then
-	LOGI("i_APB is interface object.")		-- interface 객체가 맞음.
+	LOGI("i_APB is interface object.")		-- interface object is correct.
 end
 ```
 ;;;
@@ -198,21 +197,21 @@ end
 ### interface:set_clock
 @<tbl:media/instruction_interface.xlsx;set_clock>
  
-ex) interface 객체에 클럭 설정 예시
+ex) Example of setting clock on interface object
 ```lua
 i_APB	= interface:new("APB")
 
 PCLK	= clock:new("PCLK", "APB's clock")
 PCLK:set_reset("PRSTn")
 
-i_APB:set_clock(PCLK)			-- PCLK 설정
+i_APB:set_clock(PCLK)			-- PCLK setting
 ```
 ;;;
 
 ### interface:get_clock
 @<tbl:media/instruction_interface.xlsx;get_clock>
  
-ex) interface 객체에 클럭 설정 예시
+ex) Example of setting clock on interface object
 ```lua
 i_APB	= interface:new("APB")
 
@@ -221,14 +220,14 @@ PCLK:set_reset("PRSTn")
 
 i_APB:set_clock(PCLK)
 
-LOGI("APB's clock is " .. i_APB:get_clock().name)	-- 클럭 이름 출력
+LOGI("APB's clock is " .. i_APB:get_clock().name)	-- print clock name
 ```
 ;;;
 
 ### interface:set_signal
 @<tbl:media/instruction_interface.xlsx;set_signal>
  
-ex) interface 객체에 signal 추가 예시
+ex) Example of adding signal to interface object
 ```lua
 i_axi3	= interface:new("AXI3")
 
@@ -253,15 +252,15 @@ i_axi3:set_signal("WSTRB", "DATA_WIDTH/8")
 ### interface:set_param
 @<tbl:media/instruction_interface.xlsx;set_param>
  
-ex) interface 객체에 parameter 추가 예시
+ex) Example of adding parameter to interface object
 ```lua
 i_axi3	= interface:new("AXI3")
 
--- parameter 설정
+-- parameter setting
 i_axi3:set_param("ADDR_WIDTH", 16)
 i_axi3:set_param("DATA_WIDTH", 128)
 
--- prameter 수정
+-- Modify parameter
 i_axi3:set_param("DATA_WIDTH", 256)
 ```
 ;;;
@@ -269,15 +268,15 @@ i_axi3:set_param("DATA_WIDTH", 256)
 ### interface:get_param
 @<tbl:media/instruction_interface.xlsx;get_param>
  
-ex) interface 객체에 parameter 얻기 예시
+ex) An example of getting parameters to an interface object
 ```lua
 i_axi3	= interface:new("AXI3")
 
--- parameter 설정
+-- parameter setting
 i_axi3:set_param("ADDR_WIDTH", 16)
 i_axi3:set_param("DATA_WIDTH", 128)
 
--- parameter 얻어 출력하기
+-- get parameter and print
 LOGI("i_axi3's data width = " .. tostring(i_axi3:get_param("DATA_WIDTH")))
 ```
 ;;;
@@ -285,7 +284,7 @@ LOGI("i_axi3's data width = " .. tostring(i_axi3:get_param("DATA_WIDTH")))
 ### interface:set_modport
 @<tbl:media/instruction_interface.xlsx;set_modport>
  
-ex) set_modport 예시
+ex) set_modport example
 ```lua
 -- APB bus
 bus_apb 	= interface:new("apb")
@@ -309,7 +308,7 @@ bus_apb:set_modport("m", {["output"]={"PSEL", "PENABLE", "PWRITE", "PADDR", "PWD
 ### interface:add_modport
 @<tbl:media/instruction_interface.xlsx;add_modport>
  
-ex) add_modport 예시
+ex) add_modport example
 ```lua
 -- APB bus
 bus_apb 	= interface:new("apb")
@@ -336,7 +335,7 @@ bus_apb:add_modport('m', {["output"]={"PADDR", "PWDATA"}})
 ### interface:get_modport
 @<tbl:media/instruction_interface.xlsx;get_modport>
 
-ex) add_modport 예시
+ex) add_modport example
 ```lua
 -- APB bus
 bus_apb 	= interface:new("apb")
@@ -355,7 +354,7 @@ bus_apb:set_signal("PSLVERR")
 bus_apb:set_modport("s", {["input" ]={"PSEL", "PENABLE", "PWRITE"}, ["output"]={"PREADY", "PRDATA", "PSLVERR"}})
 bus_apb:set_modport("m", {["output"]={"PSEL", "PENABLE", "PWRITE"}, ["input" ]={"PREADY", "PRDATA", "PSLVERR"}})
 
--- modeport 's' 의 'input' 나열
+-- List 'input' of modeport 's'
 for i, signal_name in ipairs(bus_apb:get_modport("s").input) do
 	LOGI("modport 's' input : " .. signal_name)
 end
@@ -365,16 +364,16 @@ end
 ### interface:set_prefix
 @<tbl:media/instruction_interface.xlsx;set_prefix>
  
-ex) set_prefix 예시
+ex) set_prefix example
 ```lua
--- interface 예제
+-- interface example
 inst 	= interface:new("inst")
 inst:set_signal("EN")
 inst:set_signal("INST", 32)
 inst:set_modport("s", {["input" ]={"EN", "INST"}})
 inst:set_modport("m", {["output"]={"EN", "INST"}})
 
-inst:set_prefix("I#")	-- 시그널에 I#_* 로 시작하게 된다.
+inst:set_prefix("I#")	-- Signals start with I#_*.
 
 m		= module:new("top")
 m:add_interface(inst, "inst_0", "m")
@@ -383,7 +382,7 @@ m:add_interface(inst, "inst_1", "m")
 m:make_code()
 ```
  
-@<b>[실행 결과 : top_defines.vh]@<b>
+@<b>[execution result : top_defines.vh]@<b>
 ```#verilog
 `ifndef __TOP_DEFINES_VH__
 `define __TOP_DEFINES_VH__
@@ -406,7 +405,7 @@ endinterface
 `endif//__TOP_DEFINES_VH__
 ```
  
-@<b>[실행 결과 : top.sv]@<b>
+@<b>[execution result : top.sv]@<b>
 ```#verilog
 `include "top_defines.vh"
 
@@ -438,18 +437,18 @@ endmodule
 ### interface:set_bared
 @<tbl:media/instruction_interface.xlsx;set_bared>
  
-bared signal 구성시 사용됩니다.
+Used when configuring bared signals.
  
-ex) set_bared 예시
+ex) set_bared example
 ```lua
--- interface 예제
+-- interface example
 inst 	= interface:new("inst")
 inst:set_signal("EN")
 inst:set_signal("INST", 32)
 inst:set_modport("s", {["input" ]={"EN", "INST"}})
 inst:set_modport("m", {["output"]={"EN", "INST"}})
 
-inst:set_bared()			-- bared interface 설정
+inst:set_bared()			-- bared interface setting
 ```
 ;;;
 
@@ -461,12 +460,12 @@ inst:set_bared()			-- bared interface 설정
 ### interface_i:set_port
 @<tbl:media/instruction_interface.xlsx;i_set_port>
  
-기본적인 interface 를 module에 추가하였을 때, \
-이 함수를 통해 port 출력(input, output, inout)이 결정되게 됩니다.
+When a basic interface is added to a module, \
+the port output (input, output, inout) is determined through this function.
  
-ex) interface_i:set_port 예시
+ex) interface_i:set_port example
 ```lua
--- interface 예제
+-- interface example
 inst 	= interface:new("inst")
 inst:set_signal("EN")
 inst:set_signal("INST", 32)
@@ -475,16 +474,16 @@ inst:set_modport("m", {["output"]={"EN", "INST"}})
 
 top			= module:new("top")
 
-top:add_interface(inst):set_port("m")	-- inst interface를 modport 'm' 으로 top 출력 지정
+top:add_interface(inst):set_port("m")	-- Set inst interface to top output as modport 'm'
 ```
 ;;;
 
 ### interface_i:set_desc
 @<tbl:media/instruction_interface.xlsx;i_set_desc>
  
-ex) interface_i:set_desc 예시
+ex) interface_i:set_desc example
 ```lua
--- interface 예제
+-- interface example
 inst 	= interface:new("inst")
 inst:set_signal("EN")
 inst:set_signal("INST", 32)
@@ -494,17 +493,17 @@ inst:set_modport("m", {["output"]={"EN", "INST"}})
 top			= module:new("top")
 
 i_int = top:add_interface(inst)
-i_int:set_port("m")	-- inst interface를 modport 'm' 으로 top 출력 지정
-i_int:set_desc("main instruction")	-- 주석 설명
+i_int:set_port("m")	-- Set inst interface to top output as modport 'm'
+i_int:set_desc("main instruction")	-- comment description
 ```
 ;;;
 
 ### interface_i:set_prefix
 @<tbl:media/instruction_interface.xlsx;i_set_prefix>
  
-ex) interface_i:set_prefix 예시
+ex) interface_i:set_prefix example
 ```lua
--- interface 예제
+-- interface example
 inst 	= interface:new("inst")
 inst:set_signal("EN")
 inst:set_signal("INST", 32)
@@ -514,18 +513,18 @@ inst:set_modport("m", {["output"]={"EN", "INST"}})
 top			= module:new("top")
 
 i_int = top:add_interface(inst)
-i_int:set_port("m")		-- inst interface를 modport 'm' 으로 top 출력 지정
-i_int:set_prefix("IF")	-- prefix 지정
+i_int:set_port("m")		-- Set inst interface to top output as modport 'm'
+i_int:set_prefix("IF")	-- Specify prefix
 ```
-이 interface instance 는 IF_EN, IF_INST 로 전환되어 port 로 출력됩니다.
+This interface instance is converted to IF_EN, IF_INST and output as port.
 ;;;
 
 ### interface_i:get_prefix
 @<tbl:media/instruction_interface.xlsx;i_get_prefix>
  
-ex) interface_i:get_prefix 예시
+ex) interface_i:get_prefix example
 ```lua
--- interface 예제
+-- interface example
 inst 	= interface:new("inst")
 inst:set_signal("EN")
 inst:set_signal("INST", 32)
@@ -535,34 +534,34 @@ inst:set_modport("m", {["output"]={"EN", "INST"}})
 top			= module:new("top")
 
 i_int = top:add_interface(inst)
-i_int:set_port("m")		-- inst interface를 modport 'm' 으로 top 출력 지정
+i_int:set_port("m")		-- Set inst interface to top output as modport 'm'
 
--- 기본 설정된 prefix 출력
+-- default prefix output
 LOGI("PREFIX : " .. i_int:get_prefix())
 ```
 ;;;
 
 ## module
 
-verilog module 선언과 매칭되는 객체입니다. \
-@<bookmark:module:new> 함수로 생성되며, @<bookmark:module:make_code> 함수를 통해 \
-최종 결과 소스를 출력합니다. \
-이때 하위에 포함된 sub module 들과 한번이라도 사용된 interface 들의 선언도 함께 이루워집니다.
-top module 의 port 는 systemverilog 의 interface 문법이 아닌 input/output 형태의 단일 signal들로 \
-전환되어 출력되며, 내부 sub module 들은 interface 문법에 따라 기술됩니다.
-@<bookmark:module:add_module>함수로 추가된 sub module 객체는 module_i 인터페이스로 사용하게 됩니다.
+An object that matches a verilog module declaration. \
+It is created with the @<bookmark:module:new> function, \
+and the final result source is output through the @<bookmark:module:make_code> function. \
+At this time, the declaration of sub modules included in the lower level and interfaces used at least once are also made.
+The port of the top module is converted into single signals in the form of input/output, \
+not the systemverilog interface syntax, and the internal sub modules are described according to the interface syntax.
+The sub module object added with the @<bookmark:module:add_module> function is used as the module_i interface.
  
-@<tbl:media/instruction_module.xlsx;summary;module 객체 요약>
+@<tbl:media/instruction_module.xlsx;summary;module object summary>
  
-@<tbl:media/instruction_module.xlsx;summary_i;module_i(sub module) 객체 요약>
+@<tbl:media/instruction_module.xlsx;summary_i;module_i(sub module) object summary>
 ;;;
 
 ### module:new
 @<tbl:media/instruction_module.xlsx;new>
 
-ex) module 생성 예시
+ex) Module creation example
 ```lua
-top			= module:new("top")		-- 모듈 생성 예
+top			= module:new("top")		-- Module creation example
 ```
 ;;;
 
@@ -573,14 +572,14 @@ top			= module:new("top")		-- 모듈 생성 예
 ### module:set_inception
 @<tbl:media/instruction_module.xlsx;set_inception>
  
-이 inception 문구는 각 .sv 소스의 상단에 위치하게 됩니다. \
-각 module 마다 별도로 :set_inception, :set_title, :set_author 함수로 지정하여 별도로 license 와 같은 \
-문장을 삽입할 수 있습니다.
-만약 module:set_inception 으로 호출하면, 모든 생성 모듈에서 별도로 지정하지 않는 한 기본 모듈의 code inception을 사용하게 됩니다.
+This inception text will be placed at the top of each .sv source. \
+You can separately insert sentences such as license by specifying :set_inception, \
+:set_title, :set_author functions for each module separately.
+If you call it with module:set_inception, all generated modules will use the code inception of the base module unless otherwise specified.
 
-ex) set_inception 예시
+ex) set_inception example
 ```lua
--- code inception 설정
+-- code inception setting
 module:set_inception("code_inception.txt")
 module:set_title("some title")
 module:set_author("me")
@@ -602,8 +601,8 @@ top:make_code()
 //================================================================================
 ```
  
-실행 결과
-@<b>[결과 파일 : top.sv]@</b>
+execution result
+@<b>[result file : top.sv]@</b>
 ```verilog
 //================================================================================
 // Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
@@ -639,7 +638,7 @@ endmodule
  
 ex) module:set_param 예시
 ```lua
-top	= module:new("top")		-- 모듈 생성 예
+top	= module:new("top")		-- Module creation example
 
 -- port parameter 설정
 top:set_param("DATA_WIDTH", 32)
@@ -655,6 +654,10 @@ top:set_param("BYTE_WIDTH", "DATA_WIDTH/8", true)
 
 ### module:add_interface
 @<tbl:media/instruction_module.xlsx;add_interface>
+;;;
+
+### module:add_clock
+@<tbl:media/instruction_module.xlsx;add_clock>
 ;;;
 
 ### module:get_interface
@@ -688,7 +691,7 @@ top:set_param("BYTE_WIDTH", "DATA_WIDTH/8", true)
 ### module.apply_code
 @<tbl:media/instruction_module.xlsx;apply_code>
  
-ex) module.apply_code 예시 (Core, ALU 모듈에 코드를 추가하고자 할 때.)
+ex) module.apply_code example (When you want to add code to Core and ALU modules.)
 ```lua
 module.apply_code("__core.sv")
 ```
@@ -705,7 +708,7 @@ assign	G = H;		// ALU's code
 wire	[15:0]	CORE_SIZE	= $(config.core_size);
 ```
 :::NoteHeading
-verilog 코드 중간에 '$(*)' 또는 '${*}'로 기술하여, lua 코드를 실행할 수 있습니다. '$(*)'는 string 또는 number 반환되는 코드이며, '${*}'는 반환없는 lua 코드 실행을 기술할 수 있습니다.
+You can execute lua code by writing '$(*)' or '${*}' in the middle of verilog code. '$(*)' is a string or number returned code, and '${*}' can describe lua code execution without return.
 
 ;;;
 
