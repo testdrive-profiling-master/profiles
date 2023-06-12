@@ -26,7 +26,7 @@ verigen 은 TestDrive Profiling Master 의 codegen 을 이용하여 제작되었
 
 * verilog 디자인(.sv, .f) 자동 생성
 * constraint(.xdc) 자동 생성
-* hierarchy diagram(.svg) 자동 생성
+* hierarchy diagram(.svg), HTML highlited source code(.html) 자동 생성
  
 
 ## verilog 자동화 생성 과정

@@ -42,6 +42,11 @@ aclock:set_reset("ARSTn")				-- 리셋 ARSTn 지정
 ```
 ;;;
 
+### clock:get_reset
+@<tbl:media/instruction_clock.xlsx;get_reset>
+
+;;;
+
 ### clock:set_speed
 @<tbl:media/instruction_clock.xlsx;set_speed>
   
@@ -49,6 +54,16 @@ ex) 동작 속도 지정 예시
 ```lua
 aclock	= clock:new("ACLK")
 aclock:set_speed(1000)					-- ACK에 1GHz 설정
+```
+;;;
+
+### clock:set_default
+@<tbl:media/instruction_clock.xlsx;set_default>
+  
+ex) 기본클럭 설정 예시
+```lua
+aclock	= clock:new("MCLK")
+aclock:set_default()
 ```
 ;;;
 
@@ -76,6 +91,11 @@ if clock.is_valid(aclock) then
 	LOGI("aclock is clock object.")		-- clock 객체가 맞음.
 end
 ```
+;;;
+
+### clock.get_default
+@<tbl:media/instruction_clock.xlsx;get_default>
+
 ;;;
 
 ## interface
@@ -685,7 +705,7 @@ assign	G = H;		// ALU's code
 wire	[15:0]	CORE_SIZE	= $(config.core_size);
 ```
 :::NoteHeading
-verilog 코드 중간에 '$(*)' 로 기술하여, lua 코드를 실행할 수 있습니다.
+verilog 코드 중간에 '$(*)' 또는 '${*}'로 기술하여, lua 코드를 실행할 수 있습니다. '$(*)'는 string 또는 number 반환되는 코드이며, '${*}'는 반환없는 lua 코드 실행을 기술할 수 있습니다.
 
 ;;;
 

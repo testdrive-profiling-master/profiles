@@ -762,3 +762,221 @@ function module:make_code(is_top)
 		end
 	end
 end
+
+---------------------------------------------------------------------------------------
+-- verilog inline commands
+---------------------------------------------------------------------------------------
+vfunction("LOG2", function(val, bOverflow)
+	local	result	= (math.log(val)/math.log(2))
+	
+	if bOverflow == nil then
+		bOverflow	= false
+	end
+	
+	if bOverflow then
+		if math.floor(result) < result then
+			result	= math.floor(result + 1)
+		end
+	end
+	
+	if math.floor(result) ~= result then
+		error("LOG2 fault : input '" .. val .. "' is not 2^N", 2)
+	end
+	
+	return math.floor(result)
+end)
+
+vfunction("RANGE", function(size, step)
+	local s = String("")
+
+	if size == nil then size = 1 end
+
+	if size <= 0 then
+		error("size must be greater than 0.", 2)
+	end
+
+	if step == nil then
+		step	= 0
+	end
+	
+	start_pos	= step * size
+
+	local	end_pos = size + start_pos - 1
+
+	if end_pos ~= 0 then
+		s:Append("[" .. end_pos .. ":" .. start_pos .. "]")
+	end
+
+	return s.s
+end)
+
+
+vfunction("DEMUX_BY_EN", function(width, channel_count, en, data_in, data_out)
+	local s	= String("")
+	local inst_name = String(data_out)
+
+	inst_name:Replace(".", "_", true)
+	inst_name:CutBack("[", true)
+
+	s:Append("wire	[" .. (width-1) .. ":0]	__" .. inst_name.s .. ";")
+	s:Append("demux_by_enable #(\n")
+	s:Append("	.WIDTH				(" .. width .. "),\n")
+	s:Append("	.CHANNELS			(" .. channel_count .. "),\n")
+	s:Append("	.TRISTATE			(1)\n")
+	s:Append(") demux_en_" .. inst_name.s .. " (\n")
+	s:Append("	.EN_BUS				(" .. en .. "),\n")
+	s:Append("	.DIN_BUS			(" .. data_in .. "),\n")
+	s:Append("	.DOUT				(__" .. inst_name.s .. ")\n")
+	s:Append(");\n")
+	s:Append("assign	" .. data_out .. " = __" .. inst_name.s .. ";\n")
+
+	return s.s
+end)
+
+vfunction("MULTICYCLE", function(module_inst_name, if_name, cycle_count, instance_count, clk)
+	if __m == nil then
+		error("Multicycle instance can specified only in module code.", 2)
+	end
+	
+	local	m	= __m:get_module(module_inst_name)
+	
+	if m == nil then
+		error("Can't find module instance[" .. tostring(module_inst_name) .. "] in module[" .. __m.name .. "]", 2)
+	end
+	
+	if cycle_count < 2 or cycle_count > 12 then
+		error("multicycle count is out of range : " .. cycle_count, 2)
+	end
+	
+	if #m.code.prefix ~= 0 then
+		error("Already other code wrapper is assigned.", 2)
+	end
+	
+	if instance_count == nil then
+		instance_count	= cycle_count
+	end
+	
+	if (instance_count > cycle_count) or (instance_count < 1) then
+		error("Multicycle instance count is out of range.", 2)
+	end
+	
+	if clk == nil then
+		clk	= clock.get_default()
+		
+		if clk == nil then
+			error("No clock is existed.", 2)
+		end
+	end
+	
+	-- add "genvar i"
+	if __m.__genvar_i == nil then
+		m.code.prefix	= "genvar i;\n"
+		__m.__genvar_i	= true
+	end
+	
+	-- find interface
+	local	_i			= nil
+	local	input_size	= 0
+	local	output_size	= 0
+	local	sInput		= ""
+	local	sOutput		= ""
+
+	do
+		local	interface_count		= 0
+		for i_name, i in pairs(m.module.interfaces) do
+			if i.modport ~= nil then
+				interface_count	= interface_count + 1
+				_i	= i
+			end
+		end
+		
+		if interface_count ~= 1 then
+			error("Multicycle design[" .. m.module.name .. "] must specify one interface port.", 2)
+		end
+		
+		if if_name == nil then
+			if_name		= _i.name
+		end
+		
+		
+		for port_type, port_list in key_pairs(_i.modport.data) do
+			for i, sig_name in ipairs(port_list) do
+				
+				if port_type == "input" then
+					input_size	= input_size + _i.interface.signal[sig_name].width
+			
+					if #sInput ~= 0 then
+						sInput	= sInput .. ", "
+					end
+					sInput		= sInput .. "$." .. sig_name
+				elseif port_type == "output" then
+					output_size	= output_size + _i.interface.signal[sig_name].width
+
+					if #sOutput ~= 0 then
+						sOutput	= sOutput .. ", "
+					end
+					sOutput		= sOutput .. "$." .. sig_name
+				else
+					error("Unknown port type.")
+				end
+				
+			end
+		end
+	end
+	
+	local	sInput_temp		= String(sInput)
+	local	sOutput_temp	= String(sOutput)
+	local	bEx				= (instance_count ~= cycle_count)
+	
+	sInput	= String(sInput)
+	sOutput	= String(sOutput)
+	
+	sInput:Replace("$", if_name, true)
+	sOutput:Replace("$", if_name, true)
+	sInput_temp:Replace("$", "__temp", true)
+	sOutput_temp:Replace("$", "__temp", true)
+	
+	m.code.prefix	= m.code.prefix..
+		"// multicycle design for " .. module_inst_name .. "\n" ..
+		"i_" .. _i.interface.name .. "	" .. if_name .. "();\n"..
+		"wire	" .. if_name .. "_ie, " .. if_name .. "_oe" .. (bEx and (", " .. if_name .. "_iready") or "").. ";\n"..
+		"generate\n" ..
+		"wire	[" .. (input_size * instance_count - 1) .. ":0]	pipe_i;\n"..
+		"wire	[" .. (output_size * instance_count - 1) .. ":0]	pipe_o;\n"..
+		"wire	[" .. (output_size - 1) .. ":0]	__o;\n\n"..
+		"MultiCyclePath" .. (bEx and "Ex" or "") .. " #(\n"..
+		"	.IWIDTH		(" .. input_size .. "),\n"..
+		"	.OWIDTH		(" .. output_size .. "),\n"..
+		"	.CYCLE		(" .. cycle_count .. ")"..
+		(bEx and ",\n	.COUNT		(" .. instance_count .. ")\n" or "\n")..
+		") multi_pipe (\n"..
+		"	.CLK		(" .. clk.name .. "),\n"..
+		"	.nRST		(" .. clk:get_reset() .. "),\n"..
+		"	.IE			(" .. if_name .. "_ie),\n"..
+		"	.IDATA		({" .. sInput.s .. "}),\n"..
+		(bEx and ("	.IREADY		({" .. if_name .. "_iready}),\n") or "")..
+		"	.PIPE_I		(pipe_i),\n"..
+		"	.PIPE_O		(pipe_o),\n"..
+		"	.OE			(" .. if_name .. "_oe),\n"..
+		"	.ODATA		(__o)\n"..
+		");\n\n"..
+		"assign	{" .. sOutput.s .. "}	= __o;\n\n" ..
+		"for(i=0; i<" .. instance_count .. "; i=i+1) begin\n"..
+		"i_" .. _i.interface.name .. "		__temp;" ..
+		"assign	{" .. sInput_temp.s .. "}	= pipe_i[`BUS_RANGE(" .. input_size .. ", i)];\n" ..
+		"assign	pipe_o[`BUS_RANGE(" .. output_size .. ",i)]	= {" .. sOutput_temp.s .. "};\n"
+
+	-- add constraint
+	set_constraint("multicycle_path_" .. cycle_count .. "_hold" , "set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ \"*gen_multicycle.path_" .. cycle_count .. ".i_*\"}] " .. (cycle_count-1))
+	set_constraint("multicycle_path_" .. cycle_count .. "_setup", "set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ \"*gen_multicycle.path_" .. cycle_count .. ".i_*\"}] " .. (cycle_count))
+
+	m:set_port(_i.name, "__temp")
+
+	m.code.postfix	= "end\nendgenerate\n"
+	
+	-- graphviz coordinate
+	m.graphviz.name_prefix	= "<font color=\"#0000CF\">"
+	m.graphviz.name_postfix	= "</font><font color=\"red\">(" .. (bEx and (instance_count .. "/" .. cycle_count) or tostring(cycle_count)) .. ")</font>"
+	m.graphviz.node			= "color=orange,style=\"dashed\""
+	m.graphviz.ignore_port	= true
+end)

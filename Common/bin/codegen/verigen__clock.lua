@@ -3,6 +3,7 @@ clock.__index			= clock
 clock.__list			= {}
 clock.__constraint		= {}
 clock.__desc			= nil
+clock.__default			= nil
 clock.__default_rst		= "nRST"
 clock.__rst				= nil		-- reset name
 clock.__speed			= 100		-- default clock speed
@@ -15,6 +16,10 @@ __clock_edge_enum.low		= false
 -- 클럭 찾기
 function clock.find(name)
 	return load("return clock.__list." .. name)()
+end
+
+function clock.get_default()
+	return clock.__default
 end
 
 -- 클럭 유효성 확인
@@ -45,6 +50,10 @@ function clock:new(name, desc)
 		t.__desc		= desc
 	end
 	
+	if clock.__default == nil then
+		clock.__default		= t
+	end
+	
 	-- add to list
 	clock.__list[name]		= t
 	
@@ -59,9 +68,17 @@ function clock:set_reset(name)
 	end
 end
 
+function clock:get_reset(name)
+	return (self.__rst == nil) and clock.__default_rst or self.__rst
+end
+
 function clock:set_speed(mhz)
 	if mhz <= 0 then
 		error("clock speed constraint must be higher than zero.", 2)
 	end
 	self.__speed		= mhz
+end
+
+function clock:set_default()
+	clock.__default		= self
 end
