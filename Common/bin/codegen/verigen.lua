@@ -81,10 +81,68 @@ function __retrieve_param(param_list, t)
 end
 
 __vfunctions	= {}
+local __vfunction_reserved = {
+	["display"] = 1,
+	["write"] = 1,
+	["strobe"] = 1,
+	["monitor"] = 1,
+	["monitoron"] = 1,
+	["monitoroff"] = 1,
+	["displayb"] = 1,
+	["writeb"] = 1,
+	["strobeb"] = 1,
+	["monitorb"] = 1,
+	["displayo"] = 1,
+	["writeo"] = 1,
+	["strobeo"] = 1,
+	["monitoro"] = 1,
+	["displayh"] = 1,
+	["writeh"] = 1,
+	["strobeh"] = 1,
+	["monitorh"] = 1,
+	["fopen"] = 1,
+	["fclose"] = 1,
+	["frewind"] = 1,
+	["fflush"] = 1,
+	["fseek"] = 1,
+	["ftell"] = 1,
+	["fdisplay"] = 1,
+	["fwrite"] = 1,
+	["swrite"] = 1,
+	["fstrobe"] = 1,
+	["fmonitor"] = 1,
+	["fread"] = 1,
+	["fscanf"] = 1,
+	["fdisplayb"] = 1,
+	["fwriteb"] = 1,
+	["swriteb"] = 1,
+	["fstrobeb"] = 1,
+	["fmonitorb"] = 1,
+	["fdisplayo"] = 1,
+	["fwriteo"] = 1,
+	["swriteo"] = 1,
+	["fstrobeo"] = 1,
+	["fmonitoro"] = 1,
+	["fdisplayh"] = 1,
+	["fwriteh"] = 1,
+	["swriteh"] = 1,
+	["fstrobeh"] = 1,
+	["fmonitorh"] = 1,
+	["sscanf"] = 1,
+	["sdf_annotate"] = 1
+}
 
 function vfunction(name, func)
 	if type(name) ~= "string" then
 		error("vfunction name must be a string type.", 2)
+	end
+	
+	if __vfunction_reserved[name] ~= nil then
+		error("vfunction name[" .. name .. "] is reserved by verilog system call.", 2)
+	end
+	
+	if __vfunctions[name] ~= nil then
+		error("vfunction name[" .. name .. "] is already defined.", 2)
 	end
 
 	__vfunctions[name]	= func
