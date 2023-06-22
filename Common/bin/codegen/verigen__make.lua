@@ -21,18 +21,17 @@ function module:make_constraint()
 	-- global reset
 	f:Put("# resets\n")
 	do
-		local	use_default_rst = false
-		for clk_name, clk in key_pairs(clock.__list) do
+		local	reset_list		= {}
+		for clk_name, clk in pairs(clock.__list) do
 			if clk.__active then
-				if clk.__rst ~= nil then
-					f:Put("set_false_path -from [get_ports " .. clk.__rst .. "]\n")
-				else
-					use_default_rst	= true
+				if clk:get_reset() ~= nil then
+					reset_list[clk:get_reset()]	= 0
 				end
 			end
 		end
-		if use_default_rst then
-			f:Put("set_false_path -from [get_ports nRST]\n")
+		
+		for rst_name, val in key_pairs(reset_list) do
+			f:Put("set_false_path -from [get_ports " .. rst_name .. "]\n")
 		end
 	end
 	
@@ -251,7 +250,6 @@ function module:make_code(is_top)
 			-- clock & reset
 			do
 				local	clock_list		= {}
-				local	use_global_rst	= false
 				for clk_name, clk in key_pairs(m.module.clocks) do
 					self:add_clock(clk)
 					
@@ -260,18 +258,12 @@ function module:make_code(is_top)
 						sPort:Append("\t" .. string.format(".%-20s", clk.name) .."(" .. clk.name .. "),\n")
 					end
 					
-					if clk.__rst ~= nil then
-						if clock_list[clk.__rst] == nil then
-							clock_list[clk.__rst]	= 0
-							sPort:Append("\t" .. string.format(".%-20s", clk.__rst) .."(" .. clk.__rst .. "),\n")
+					if clk:get_reset() ~= nil then
+						if clock_list[clk:get_reset()] == nil then
+							clock_list[clk:get_reset()]	= 0
+							sPort:Append("\t" .. string.format(".%-20s", clk:get_reset()) .."(" .. clk:get_reset() .. "),\n")
 						end
-					else
-						use_global_rst	= true
 					end
-				end
-				
-				if use_global_rst then
-					sPort:Append("\t" .. string.format(".%-20s", "nRST") .."(" .. "nRST" .. "),\n")
 				end
 			end
 			
@@ -435,7 +427,6 @@ function module:make_code(is_top)
 		local 	iClockCount	= 0
 		do
 			local	bFirst			= true
-			local	use_default_rst = false
 			
 			for clk_name, clk in key_pairs(self.clocks) do
 				if bFirst then
@@ -454,16 +445,9 @@ function module:make_code(is_top)
 				end
 				
 				-- apply reset
-				if clk.__rst ~= nil then
-					sPorts:Append(string.format("\t%-40s// reset of '%s' (active low)\n", string.format("input  %20s%s,", "", clk.__rst), clk.name))
-				else
-					use_default_rst	= true
+				if clk:get_reset() ~= nil then
+					sPorts:Append(string.format("\t%-40s// reset of '%s' (active low)\n", string.format("input  %20s%s,", "", clk:get_reset()), clk.name))
 				end
-			end
-
-			-- check default reset
-			if use_default_rst then
-				sPorts:Append(string.format("\t%-40s// default global reset (active low)\n", string.format("input  %20s%s,", "", clock.__default_rst)))
 			end
 		end
 
@@ -865,6 +849,10 @@ vfunction("MULTICYCLE", function(module_inst_name, if_name, cycle_count, instanc
 		
 		if clk == nil then
 			error("No clock is existed.", 2)
+		end
+		
+		if clk:get_reset() == nil then
+			error("MULTICYCLE instance needs a reset signal on clock[" .. clk.name .. "].", 2)
 		end
 	end
 	

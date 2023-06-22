@@ -4,8 +4,8 @@ clock.__list			= {}
 clock.__constraint		= {}
 clock.__desc			= nil
 clock.__default			= nil
-clock.__default_rst		= "nRST"
-clock.__rst				= nil		-- reset name
+clock.__rst				= "nRST"	-- default reset
+clock.__no_reset		= false
 clock.__speed			= 100		-- default clock speed
 
 __clock_edge_enum 			= {}
@@ -35,14 +35,9 @@ function clock:new(name, desc)
 	end
 	
 	-- create instance
-	local	t = setmetatable({}, self)
+	local	t		= setmetatable({}, self)
 	t.__index		= t
 
-	-- clock duplication check
-	if clock.find(name) ~= nil then
-		error("already existed module : '" .. name .. "'", 2)
-	end
-	
 	t.name				= name
 	t.__active			= false
 	
@@ -54,22 +49,30 @@ function clock:new(name, desc)
 		clock.__default		= t
 	end
 	
-	-- add to list
-	clock.__list[name]		= t
+	if self == clock then	-- top clock
+		-- clock duplication check
+		if clock.find(name) ~= nil then
+			error("already existed module : '" .. name .. "'", 2)
+		end
+
+		-- add to list
+		clock.__list[name]		= t
+	end
 	
 	return t
 end
 
 function clock:set_reset(name)
-	self.__rst	= name
-	
-	if name == __default_rst then
-		error("reset '" .. name .. "' is same as global reset.", 2)
-	end
+	self.__rst			= name
+	self.__no_reset		= (name == nil)
 end
 
 function clock:get_reset(name)
-	return (self.__rst == nil) and clock.__default_rst or self.__rst
+	if self.__no_reset then
+		return nil
+	end
+
+	return self.__rst
 end
 
 function clock:set_speed(mhz)
