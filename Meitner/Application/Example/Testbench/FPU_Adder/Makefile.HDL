@@ -1,0 +1,11 @@
+#-------------------------------------------------
+# HDL build Project
+#-------------------------------------------------
+SRCS			:= $(wildcard ./HDL/*)
+
+all: $(BUILD_TARGET)
+
+$(BUILD_TARGET):$(SRCS)
+	@rm -f .verilated_src/SimTop*
+	@verilator ./HDL/top.v -IHDL -sv -cc --autoflush --compiler gcc -Mdir ./.verilated_src -prefix SimTop --top-module top
+	@echo HDL build is done!
