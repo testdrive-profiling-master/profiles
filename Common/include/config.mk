@@ -134,9 +134,7 @@ else
 endif
 
 dep:
-	@for def_file in $(DEPS); do \
-		DependencyPrepare "$$def_file";  \
-	done
+	@DependencyPrepare -s $(DEPS)
 
 #-------------------------------------------------
 # dependencies

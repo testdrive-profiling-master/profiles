@@ -31,18 +31,17 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Dependency prepare
-// Rev.  : 2/4/2023 Sat (clonextop@gmail.com)
+// Rev.  : 7/13/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "UtilFramework.h"
 #include <filesystem>
 
-bool	g_bVerbose	= false;
+
 
 bool CheckDepency(const char* sDepFileName)
 {
 	TextFile	f;
-
-	if(g_bVerbose) printf("- %s\n", sDepFileName);
+	LOGI("@3- %s\n", sDepFileName);
 
 	if(f.Open(sDepFileName)) {
 		bool	bFirstLine	= true;
@@ -61,6 +60,7 @@ bool CheckDepency(const char* sDepFileName)
 
 			sLine.Trim(" \r\n");
 			bool bContinue	= sLine.CompareBack("\\");
+
 			if(bContinue) sLine.Trim(" \\");
 
 			// dependency file existence check
@@ -95,33 +95,44 @@ int main(int argc, const char* argv[])
 {
 	int			arg_size;
 	ArgTable	arg_table("TestDrive's dependency preparation check.");
-	arg_table.AddOption("verbose", "v", NULL, "Force to show verbose.");
-	arg_table.AddOptionFile("dep_file", NULL, NULL, NULL, "dep_file", "dependency file.");
+	arg_table.SetDefaultArguments(argc, argv);
+	arg_table.AddOption("suppress", "s", NULL, "Suppress the log output.");
+	arg_table.AddOptionFiles("dep_files", NULL, NULL, "dep_files", "dependency files...");
 	arg_table.AddRemark(NULL, "file extension must be .d");
 
 	if(!arg_table.DoParse(argc, argv))
 		return 0;
 
-	g_bVerbose	= arg_table.GetOption("verbose");
-	cstring sDepFileName(arg_table.GetOptionFile("dep_file"));
-	cstring cExt(sDepFileName);
-	cExt.CutFront(".", true);
-	cExt.MakeLower();
+	LOG_Suppress(arg_table.GetOption("suppress"));
 
-	if(cExt != "d") {
-		if(g_bVerbose) LOGE("Unknown file extension : %s", sDepFileName.c_str());
+	for(int i = 0;; i++) {
+		const char* sFileName = arg_table.GetOptionFile("dep_files", i);
 
-		return 0;
-	}
+		if(!sFileName) break;
 
-	if(!CheckDepency(sDepFileName)) {
-		if(g_bVerbose) LOGW("Dependency(%s) is broken, it will be deleted.", sDepFileName.c_str());
+		cstring sDepFileName(sFileName);
+		cstring cExt(sDepFileName);
+		cExt.CutFront(".", true);
+		cExt.MakeLower();
 
-		cstring	sObjectFile	= sDepFileName;
-		sObjectFile.DeleteBack(".d");
-		sObjectFile	+= ".o";
-		remove(sDepFileName.c_str());	// delete dependency file
-		remove(sObjectFile.c_str());	// delete object file
+		if(cExt != "d") {
+			LOGW("Unknown file extension : %s", sDepFileName.c_str());
+			continue;
+		}
+
+		{
+			cstring	sObjectFile	= sDepFileName;
+			sObjectFile.DeleteBack(".d");
+			sObjectFile	+= ".o";
+
+			if(!access(sObjectFile, F_OK)) {	// object file is existed?
+				if(!CheckDepency(sDepFileName)) {
+					LOGW("Dependency(%s) is broken, it will be deleted.", sDepFileName.c_str());
+					remove(sDepFileName.c_str());	// delete dependency file
+					remove(sObjectFile.c_str());	// delete object file
+				}
+			}
+		}
 	}
 
 	return 0;
