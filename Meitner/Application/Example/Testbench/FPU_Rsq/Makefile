@@ -1,14 +1,14 @@
 #-------------------------------------------------
 # Project
 #-------------------------------------------------
-#TD_DESCRIPTION	= FPU test (Adder)
+#TD_DESCRIPTION	= FPU test (Reciprocal Square Root)
 #TD_TYPE		= profile
 #TD_ERROR_TOKEN	= "*E: ", "*I: ":0, "*W: ":W
 SRC_PATH		:= .
 #TD_WORK_FOLDER :=
 TARGETPATH		:= ../../../../Program
 #TD_FILE_NAME	:= %%PROJECT%%Program\%s.exe
-TARGETNAME		:= Testbench_FPU_Adder
+TARGETNAME		:= Testbench_FPU_RSQ
 
 .PHONY: build_hw
 

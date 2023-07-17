@@ -41,42 +41,39 @@
 using namespace std;
 
 typedef union {
-	uint64_t	m;
+	uint32_t	m;
 	union {
 		int32_t		i;
 		uint32_t	u;
 		float		f;
-	} v[2];
+	} v;
 } PARAMs;
 
 static PARAMs	__param	= {0};
 std::mutex		__param_mutex;
 
-bool RetrieveParams(uint32_t& A, uint32_t& B)
+bool RetrieveParams(uint32_t& A)
 {
 	bool	bLog;
 	{
 		std::lock_guard<std::mutex> guard(__param_mutex);
 
-		if(__param.m == 0xFFFFFFFF'FFFFFFFFULL) return false;
+		if(__param.m == 0xFFFFFFFF) return false;
 
 		bLog	= (__param.m & 0xFFFFFF) == 0;
-		A		= __param.v[0].u;
-		B		= __param.v[1].u;
+		A		= __param.v.u;
 
 		// bypassing nan
-		if(!isnormal(__param.v[1].f)) {
-			__param.v[1].u	+= (1 << 21);
-		} else if(!isnormal(__param.v[1].f)) {
-			__param.v[0].u	+= (1 << 21);
+		if(!isnormal(__param.v.f)) {
+			__param.v.u	+= (1 << 21);
 		} else {
 			__param.m++;
 		}
 	}
 
 	if(bLog) {
-		double	fRatio	= (double)(__param.m >> 24) / 0xFFFFFFFFFFULL;
-		printf("\r %f%%[%d] completed.", fRatio * 100, __param.m);
+		double	fRatio	= (double)(__param.m >> 24) / 0xFF;
+		printf("\r %f%% completed.", fRatio * 100);
 		fflush(stdout);
 	}
 
@@ -85,16 +82,15 @@ bool RetrieveParams(uint32_t& A, uint32_t& B)
 
 bool CheckResult(vSim& sim)
 {
-	float	golden	= (*(float*) & (sim.Top()->A)) + (*(float*) & (sim.Top()->B));
+	float	golden	= 1 / (*(float*) & (sim.Top()->A));
 	float	result	= *(float*) & (sim.Top()->O);
 
 	if(result != golden) {
 		std::lock_guard<std::mutex> guard(__param_mutex);
 		printf("\n");
 		fflush(stdout);
-		printf("*E: A(%f[0x%08X]) + B(%f[0x%08X]) = %f[0x%08X] (!= %f[0x%08X] golden)",
+		printf("*E: RCP(A(%f[0x%08X])) = %f[0x%08X] (!= %f[0x%08X] golden)",
 			   *(float*) & (sim.Top()->A), sim.Top()->A,
-			   *(float*) & (sim.Top()->B), sim.Top()->B,
 			   *(float*) & (sim.Top()->O), sim.Top()->O,
 			   golden, *(uint32_t*)&golden);
 		return false;
@@ -106,13 +102,13 @@ bool CheckResult(vSim& sim)
 int main(int argc, const char* argv[])
 {
 	atomic<bool>	bFine	= true;
-	printf("- Check FPU32 Adder\n\n");
+	printf("- Check FPU32 Reciprocal\n\n");
 	#pragma omp parallel
 	{
 		vSim	sim;
 
 		if(sim.Initialize()) for(;;) {
-				if(!RetrieveParams(sim.Top()->A, sim.Top()->B)) {
+				if(!RetrieveParams(sim.Top()->A)) {
 					// last
 					break;
 				}
