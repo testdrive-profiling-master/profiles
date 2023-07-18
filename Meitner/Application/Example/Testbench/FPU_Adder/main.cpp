@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 7/17/2023 Mon (clonextop@gmail.com)
+// Rev.  : 7/18/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include "vSim.h"
 #include <math.h>
@@ -39,6 +39,14 @@
 #include <mutex>
 
 using namespace std;
+
+//#define USE_DEBUG
+
+#ifdef USE_DEBUG
+#define	LOGI(...)	{printf(__VA_ARGS__);}
+#else
+#define	LOGI(...)	{}
+#endif
 
 typedef union {
 	uint64_t	m;
@@ -152,6 +160,8 @@ unsigned int fadd_reference(unsigned int a, unsigned int b)
 		for(int j = 0; j < i - 23 - 1; j++) {
 			sticky = sticky | ((ans_significand & (1 << j)) >> j);
 		}
+
+		LOGI("sticky(%d), residual(%d)\n", sticky, residual);
 
 		if((int(ans_exp) + (i - 23) - 7) > 0 && (int(ans_exp) + (i - 23) - 7) < 255) {
 			ans_significand = (ans_significand >> (i - 23));
@@ -273,6 +283,7 @@ int main(int argc, const char* argv[])
 					break;
 				}
 
+				LOGI("\n---------------------------------\n\n")
 				sim.Eval();
 
 				if(!CheckResult(sim)) break;
