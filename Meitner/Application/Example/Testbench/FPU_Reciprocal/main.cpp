@@ -31,93 +31,18 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 7/17/2023 Mon (clonextop@gmail.com)
+// Rev.  : 7/19/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "vSim.h"
-#include <math.h>
-#include <atomic>
-#include <mutex>
 
-using namespace std;
-
-typedef union {
-	uint32_t	m;
-	union {
-		int32_t		i;
-		uint32_t	u;
-		float		f;
-	} v;
-} PARAMs;
-
-static PARAMs	__param	= {0};
-std::mutex		__param_mutex;
-
-bool RetrieveParams(uint32_t& A)
+float fadd_Reciprocal(float A)
 {
-	bool	bLog;
-	{
-		std::lock_guard<std::mutex> guard(__param_mutex);
-
-		if(__param.m == 0xFFFFFFFF) return false;
-
-		bLog	= (__param.m & 0xFFFFFF) == 0;
-		A		= __param.v.u;
-
-		// bypassing nan
-		if(!isnormal(__param.v.f)) {
-			__param.v.u	+= (1 << 21);
-		} else {
-			__param.m++;
-		}
-	}
-
-	if(bLog) {
-		double	fRatio	= (double)(__param.m >> 24) / 0xFF;
-		printf("\r %f%% completed.", fRatio * 100);
-		fflush(stdout);
-	}
-
-	return true;
-}
-
-bool CheckResult(vSim& sim)
-{
-	float	golden	= 1 / (*(float*) & (sim.Top()->A));
-	float	result	= *(float*) & (sim.Top()->O);
-
-	if(result != golden) {
-		std::lock_guard<std::mutex> guard(__param_mutex);
-		printf("\n");
-		fflush(stdout);
-		printf("*E: RCP(A(%f[0x%08X])) = %f[0x%08X] (!= %f[0x%08X] golden)",
-			   *(float*) & (sim.Top()->A), sim.Top()->A,
-			   *(float*) & (sim.Top()->O), sim.Top()->O,
-			   golden, *(uint32_t*)&golden);
-		return false;
-	}
-
-	return true;
+	return (1 / A);
 }
 
 int main(int argc, const char* argv[])
 {
-	atomic<bool>	bFine	= true;
-	printf("- Check FPU32 Reciprocal\n\n");
-	#pragma omp parallel
-	{
-		vSim	sim;
-
-		if(sim.Initialize()) for(;;) {
-				if(!RetrieveParams(sim.Top()->A)) {
-					// last
-					break;
-				}
-
-				sim.Eval();
-
-				if(!CheckResult(sim)) break;
-			}
-	}
-	printf("\n");
+	DO_FP32_TEST_QUICK(fadd_Reciprocal, sim.Top()->O, sim.Top()->A)
+	DO_FP32_TEST_FULL(fadd_Reciprocal, sim.Top()->O, sim.Top()->A)
 	return 0;
 }

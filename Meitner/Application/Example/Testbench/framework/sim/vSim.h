@@ -31,13 +31,35 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 7/12/2023 Wed (clonextop@gmail.com)
+// Rev.  : 7/19/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __V_SIM_H__
 #define __V_SIM_H__
 #include "STDInterface.h"
 #include "TestDriver.h"
 #include "SimTop.h"
+#include <math.h>
+#include <mutex>
+
+#define	LOGI(...)	{printf(__VA_ARGS__);}
+
+typedef union {
+	int32_t		i;
+	uint32_t	u;
+	float		f;
+} SIM_VALUE;
+
+void EnableReferenceTest(bool bEnable = true);
+
+bool RetrieveFP32_TestParam(uint32_t& A);
+bool RetrieveFP32_TestParam(uint32_t& A, uint32_t& B);
+bool RetrieveFP32_Param(uint32_t& A);
+bool RetrieveFP32_Param(uint32_t& A, uint32_t& B);
+
+typedef float (*FP32_GOLDEN_1)(float A);
+typedef float (*FP32_GOLDEN_2)(float A, float B);
+bool CheckFP32_Result(FP32_GOLDEN_1 golden_func, uint32_t A, uint32_t O);
+bool CheckFP32_Result(FP32_GOLDEN_2 golden_func, uint32_t A, uint32_t B, uint32_t O);
 
 class vSim {
 public:
@@ -58,4 +80,30 @@ private:
 	SimTop*				m_pSimTop;
 };
 
+#define	DO_FP32_TEST_QUICK(golden_func, out, ...) \
+	printf("- Check FPU32 quick test sequence.\n\n");\
+	{\
+		vSim	sim;\
+		if(sim.Initialize()) for(;;) {\
+			if(!RetrieveFP32_TestParam(__VA_ARGS__)) break;\
+			sim.Eval();\
+			if(!CheckFP32_Result(golden_func, __VA_ARGS__, out)) {\
+				printf("\n");\
+				return 1;\
+			}\
+		}\
+	}
+
+#define DO_FP32_TEST_FULL(golden_func, out, ...) \
+		printf("- Check FPU32 full test sequence.\n\n");\
+		_Pragma("omp parallel")\
+		{\
+			vSim	sim;\
+			if(sim.Initialize()) for(;;) {\
+				if(!RetrieveFP32_Param(__VA_ARGS__)) break;\
+				sim.Eval();\
+				if(!CheckFP32_Result(golden_func, __VA_ARGS__, out)) break;\
+			}\
+		}\
+		printf("\n");
 #endif//__V_SIM_H__

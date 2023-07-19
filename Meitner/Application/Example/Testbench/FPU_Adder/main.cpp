@@ -31,36 +31,11 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 7/18/2023 Tue (clonextop@gmail.com)
+// Rev.  : 7/19/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "vSim.h"
-#include <math.h>
-#include <atomic>
-#include <mutex>
 
-using namespace std;
-
-//#define USE_DEBUG
-
-#ifdef USE_DEBUG
-#define	LOGI(...)	{printf(__VA_ARGS__);}
-#else
-#define	LOGI(...)	{}
-#endif
-
-typedef union {
-	uint64_t	m;
-	union {
-		int32_t		i;
-		uint32_t	u;
-		float		f;
-	} v[2];
-} PARAMs;
-
-static PARAMs	__param	= {0};
-std::mutex		__param_mutex;
-
-unsigned int fadd_reference(unsigned int a, unsigned int b)
+uint32_t fadd_reference(uint32_t a, uint32_t b)
 {
 	//Taking care of zero cases
 	if(a == 0) {
@@ -214,81 +189,31 @@ unsigned int fadd_reference(unsigned int a, unsigned int b)
 	}
 
 	/* Constructing floating point number from sign, exponent and significand */
-	unsigned int ans = (ans_sign << 31) | (ans_exp << 23) | (ans_significand & (0x7FFFFF));
+	uint32_t ans = (ans_sign << 31) | (ans_exp << 23) | (ans_significand & (0x7FFFFF));
 	return ans;
 }
-bool RetrieveParams(uint32_t& A, uint32_t& B)
+
+static bool	__bReferenceMode	= false;
+float fadd_golden(float A, float B)
 {
-	bool	bLog;
-	{
-		std::lock_guard<std::mutex> guard(__param_mutex);
-
-		if(__param.m == 0xFFFFFFFF'FFFFFFFFULL) return false;
-
-		bLog	= (__param.m & 0xFFFFFF) == 0;
-		A		= __param.v[0].u;
-		B		= __param.v[1].u;
-
-		// bypassing nan
-		if(!isnormal(__param.v[1].f)) {
-			__param.v[1].u	+= (1 << 21);
-		} else if(!isnormal(__param.v[1].f)) {
-			__param.v[0].u	+= (1 << 21);
-		} else {
-			__param.m++;
-		}
+	if(__bReferenceMode) {
+		uint32_t out = fadd_reference(*(uint32_t*)&A, *(uint32_t*)&B);
+		return *(float*)&out;
 	}
 
-	if(bLog) {
-		double	fRatio	= (double)(__param.m >> 24) / 0xFFFFFFFFFFULL;
-		printf("\r %f%%[%d] completed.", fRatio * 100, __param.m);
-		fflush(stdout);
-	}
-
-	return true;
-}
-
-bool CheckResult(vSim& sim)
-{
-	float	golden	= *((float*) & (sim.Top()->A)) + *((float*) & (sim.Top()->B));
-	float	result	= *((float*) & (sim.Top()->O));
-
-	if(result != golden) {
-		std::lock_guard<std::mutex> guard(__param_mutex);
-		printf("\n");
-		fflush(stdout);
-		printf("*E: A(%f[0x%08X]) + B(%f[0x%08X]) = %f[0x%08X] (!= %f[0x%08X] golden) 0x%08X",
-			   *(float*) & (sim.Top()->A), sim.Top()->A,
-			   *(float*) & (sim.Top()->B), sim.Top()->B,
-			   *(float*) & (sim.Top()->O), sim.Top()->O,
-			   golden, *(uint32_t*)&golden,
-			   fadd_reference(sim.Top()->A, sim.Top()->B));
-		return false;
-	}
-
-	return true;
+	return A + B;
 }
 
 int main(int argc, const char* argv[])
 {
-	atomic<bool>	bFine	= true;
-	printf("- Check FPU32 Adder\n\n");
-	#pragma omp parallel
-	{
-		vSim	sim;
-
-		if(sim.Initialize()) for(;;) {
-				if(!RetrieveParams(sim.Top()->A, sim.Top()->B)) {
-					// last
-					break;
-				}
-
-				LOGI("\n---------------------------------\n\n")
-				sim.Eval();
-
-				if(!CheckResult(sim)) break;
-			}
+	if(GetAsyncKeyState(VK_LCONTROL) < 0 && GetAsyncKeyState(VK_LSHIFT) < 0) {
+		__bReferenceMode	= true;
+		printf("***************************************\n");
+		printf("***** REFERENCE MODE IS ACTIVATED *****\n");
+		printf("***************************************\n\n");
 	}
-	printf("\n");
+
+	DO_FP32_TEST_QUICK(fadd_golden, sim.Top()->O, sim.Top()->A, sim.Top()->B)
+	DO_FP32_TEST_FULL(fadd_golden, sim.Top()->O, sim.Top()->A, sim.Top()->B)
 	return 0;
 }
