@@ -47,6 +47,11 @@ typedef union {
 	int32_t		i;
 	uint32_t	u;
 	float		f;
+	struct {
+		uint32_t	mantissa	: 23;
+		uint32_t	exponent	: 8;
+		uint32_t	sign		: 1;
+	} fp;
 } SIM_VALUE;
 
 void EnableReferenceTest(bool bEnable = true);
@@ -92,18 +97,19 @@ private:
 				return 1;\
 			}\
 		}\
-	}
+	}\
+	printf("*I: Passed.\n");
 
 #define DO_FP32_TEST_FULL(golden_func, out, ...) \
-		printf("- Check FPU32 full test sequence.\n\n");\
-		_Pragma("omp parallel")\
-		{\
-			vSim	sim;\
-			if(sim.Initialize()) for(;;) {\
-				if(!RetrieveFP32_Param(__VA_ARGS__)) break;\
-				sim.Eval();\
-				if(!CheckFP32_Result(golden_func, __VA_ARGS__, out)) break;\
-			}\
+	printf("- Check FPU32 full test sequence.\n\n");\
+	_Pragma("omp parallel")\
+	{\
+		vSim	sim;\
+		if(sim.Initialize()) for(;;) {\
+			if(!RetrieveFP32_Param(__VA_ARGS__)) break;\
+			sim.Eval();\
+			if(!CheckFP32_Result(golden_func, __VA_ARGS__, out)) break;\
 		}\
-		printf("\n");
+	}\
+	printf("*I: Done.\n");
 #endif//__V_SIM_H__

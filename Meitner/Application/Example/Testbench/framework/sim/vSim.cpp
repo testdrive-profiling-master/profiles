@@ -127,89 +127,94 @@ bool RetrieveFP32_TestParam(uint32_t& A, uint32_t& B)
 bool RetrieveFP32_Param(uint32_t& A)
 {
 	static union {
-		uint32_t	m;
-		union {
-			int32_t		i;
-			uint32_t	u;
-			float		f;
-		} v;
-	} __param = {
+		volatile uint32_t	m;
+		volatile SIM_VALUE	v;
+	} p = {
 		.m = 0
 	};
 	bool	bLog;
 	{
 		std::lock_guard<std::mutex> guard(__fp32_test_mutex);
 
-		if(__param.m == 0xFFFFFFFF) return false;
+		if(p.m == 0xFFFFFFFF) return false;
 
-		bLog	= (__param.m & 0xFFFFFF) == 0;
-		A		= __param.v.u;
+		bLog	= (p.m & 0xFFFFFF) == 0;
+		A		= p.v.u;
 
 		// bypassing nan
-		if(!isnormal(__param.v.f)) {
-			__param.v.u	+= (1 << 21);
+		if(!isnormal(p.v.f) && p.v.fp.mantissa < 0x7EFFFF) {
+			p.v.u	+= (1 << 16);
 		} else {
-			__param.m++;
+			p.m++;
+		}
+
+		if(bLog) {
+			double	fRatio	= (double)(p.m >> 24) / 0xFF;
+			printf("\r %.10f%% completed.", fRatio * 100);
+			fflush(stdout);
 		}
 	}
-
-	if(bLog) {
-		double	fRatio	= (double)(__param.m >> 24) / 0xFF;
-		printf("\r %f%% completed.", fRatio * 100);
-		fflush(stdout);
-	}
-
 	return true;
 }
 
 bool RetrieveFP32_Param(uint32_t& A, uint32_t& B)
 {
 	static union {
-		uint64_t	m;
-		SIM_VALUE	v[2];
-	} __param = {
+		volatile uint64_t	m;
+		volatile SIM_VALUE	v[2];
+	} p = {
 		.m = 0
 	};
 	bool	bLog;
 	{
 		std::lock_guard<std::mutex> guard(__fp32_test_mutex);
 
-		if(__param.m == 0xFFFFFFFF'FFFFFFFFULL) return false;
+		if(p.m == 0xFFFFFFFF'FFFFFFFFULL) return false;
 
-		bLog	= (__param.m & 0xFFFFFF) == 0;
-		A		= __param.v[0].u;
-		B		= __param.v[1].u;
+		bLog	= (p.m & 0xFFFFFF) == 0;
+		A		= p.v[0].u;
+		B		= p.v[1].u;
 
 		// bypassing nan
-		if(!isnormal(__param.v[1].f)) {
-			__param.v[1].u	+= (1 << 21);
-		} else if(!isnormal(__param.v[1].f)) {
-			__param.v[0].u	+= (1 << 21);
+		if(!isnormal(p.v[1].f) && p.v[1].fp.mantissa < 0x7EFFFF) {	// for fast overcome
+			p.v[1].u += 1 << 16;
+		} else if(!isnormal(p.v[0].f) && p.v[0].fp.mantissa < 0x7EFFFF) {
+			p.v[0].u += 1 << 16;
 		} else {
-			__param.m++;
+			p.m++;
+		}
+
+		if(bLog) {
+			double	fRatio	= (double)(p.m >> 24) / 0xFFFFFFFFFFULL;
+			printf("\r %.10f%% completed.", fRatio * 100);
+			fflush(stdout);
 		}
 	}
-
-	if(bLog) {
-		double	fRatio	= (double)(__param.m >> 24) / 0xFFFFFFFFFFULL;
-		printf("\r %f%%[%d] completed.", fRatio * 100, __param.m);
-		fflush(stdout);
-	}
-
 	return true;
 }
 
 bool CheckFP32_Result(FP32_GOLDEN_1 golden_func, uint32_t A, uint32_t O)
 {
 	float	golden	= golden_func(*(float*)&A);
-	float	result	= *((float*) & O);
+	float	result	= *(float*)&O;
 
-	if(result != golden) {
+	if(isnan(result) && isnan(golden)) return true;
+
+	if(isinf(result) && isinf(golden) && !(((*(uint32_t*)&golden) ^ O) & 0x80000000)) return true;
+
+	if(O != *(uint32_t*)&golden) {
 		std::lock_guard<std::mutex> guard(__fp32_test_mutex);
-		printf("\n*E: FP_OP(A(%f[0x%08X])) = %f[0x%08X] (!= %f[0x%08X] golden)",
-			   *(float*) & A, A,
-			   *(float*) & O, O,
-			   golden, *(uint32_t*)&golden);
+		SIM_VALUE	As, Os, Gs;
+		As.u = A;
+		Os.u = O;
+		Gs.u = *(uint32_t*)&golden;
+		printf("\n*E: Result not matched with golden data\n");
+		printf("    A      = 0x%08X [s(%d),e(0x%02X),m(0x%06X)] : %f\n",
+			   As.u, As.fp.sign, As.fp.exponent, As.fp.mantissa, As.f);
+		printf("    RESULT = 0x%08X [s(%d),e(0x%02X),m(0x%06X)] : %f <- NOT MATCHED!\n",
+			   Os.u, Os.fp.sign, Os.fp.exponent, Os.fp.mantissa, Os.f);
+		printf("    GOLDEN = 0x%08X [s(%d),e(0x%02X),m(0x%06X)] : %f\n",
+			   Gs.u, Gs.fp.sign, Gs.fp.exponent, Gs.fp.mantissa, Gs.f);
 		fflush(stdout);
 		return false;
 	}
@@ -220,15 +225,28 @@ bool CheckFP32_Result(FP32_GOLDEN_1 golden_func, uint32_t A, uint32_t O)
 bool CheckFP32_Result(FP32_GOLDEN_2 golden_func, uint32_t A, uint32_t B, uint32_t O)
 {
 	float	golden	= golden_func(*(float*)&A, *(float*)&B);
-	float	result	= *((float*) & O);
+	float	result	= *(float*)&O;
 
-	if(result != golden) {
+	if(isnan(result) && isnan(golden)) return true;
+
+	if(isinf(result) && isinf(golden) && !(((*(uint32_t*)&golden) ^ O) & 0x80000000)) return true;
+
+	if(O != *(uint32_t*)&golden) {
 		std::lock_guard<std::mutex> guard(__fp32_test_mutex);
-		printf("\n*E: FP_OP(A(%f[0x%08X]), B(%f[0x%08X])) = %f[0x%08X] (!= %f[0x%08X] golden)",
-			   *(float*) & A, A,
-			   *(float*) & B, B,
-			   *(float*) & O, O,
-			   golden, *(uint32_t*)&golden);
+		SIM_VALUE	As, Bs, Os, Gs;
+		As.u = A;
+		Bs.u = B;
+		Os.u = O;
+		Gs.u = *(uint32_t*)&golden;
+		printf("\n*E: Result not matched with golden data\n");
+		printf("    A      = 0x%08X [s(%d),e(0x%02X),m(0x%06X)] : %f\n",
+			   As.u, As.fp.sign, As.fp.exponent, As.fp.mantissa, As.f);
+		printf("    B      = 0x%08X [s(%d),e(0x%02X),m(0x%06X)] : %f\n",
+			   Bs.u, Bs.fp.sign, Bs.fp.exponent, Bs.fp.mantissa, Bs.f);
+		printf("    RESULT = 0x%08X [s(%d),e(0x%02X),m(0x%06X)] : %f <- NOT MATCHED!\n",
+			   Os.u, Os.fp.sign, Os.fp.exponent, Os.fp.mantissa, Os.f);
+		printf("    GOLDEN = 0x%08X [s(%d),e(0x%02X),m(0x%06X)] : %f\n",
+			   Gs.u, Gs.fp.sign, Gs.fp.exponent, Gs.fp.mantissa, Gs.f);
 		fflush(stdout);
 		return false;
 	}

@@ -122,6 +122,7 @@ uint32_t fadd_reference(uint32_t a, uint32_t b)
 		}
 	}
 
+	LOGI("ans_significand = %X\n", ans_significand);
 	/* Normalization */
 	int i;
 
@@ -188,6 +189,8 @@ uint32_t fadd_reference(uint32_t a, uint32_t b)
 		ans_exp = 0;
 	}
 
+	LOGI("final ans_exp = %X\n", ans_exp);
+	LOGI("final ans_significand = %X\n", ans_significand);
 	/* Constructing floating point number from sign, exponent and significand */
 	uint32_t ans = (ans_sign << 31) | (ans_exp << 23) | (ans_significand & (0x7FFFFF));
 	return ans;

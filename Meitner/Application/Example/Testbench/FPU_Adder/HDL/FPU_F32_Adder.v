@@ -46,18 +46,18 @@ assign {a, b} = (A[30:0] < B[30:0]) ? {B, A} : {A, B};
 
 // dispatch floating point component
 wire					sign_a, sign_b;
-wire	[7:0]			exp_org_a, exp_org_b, exp_a, exp_b;
+wire	[7:0]			exp_org_a, exp_org_b;
 wire	[22:0]			mantissa_a, mantissa_b;
 
 assign	{sign_a, exp_org_a, mantissa_a}	= a;
 assign	{sign_b, exp_org_b, mantissa_b}	= b;
 // denormalized number check
-assign	exp_a			= (exp_org_a == 0) ? 1 : exp_org_a;
-assign	exp_b			= (exp_org_b == 0) ? 1 : exp_org_b;
+wire	[7:0]			exp_a			= (exp_org_a == 0) ? 8'd1 : exp_org_a;
+wire	[7:0]			exp_b			= (exp_org_b == 0) ? 8'd1 : exp_org_b;
 
 // significand
-wire	[31:0]			significand_a	= {1'b0, |exp_a, mantissa_a, 7'd0};
-wire	[31:0]			significand_b	= {1'b0, |exp_b, mantissa_b, 7'd0};
+wire	[31:0]			significand_a	= {1'b0, |exp_org_a, mantissa_a, 7'd0};
+wire	[31:0]			significand_b	= {1'b0, |exp_org_b, mantissa_b, 7'd0};
 
 // sub operation?
 wire	operation_sub	= A[31] ^ B[31];
@@ -170,7 +170,52 @@ wire	[24:0]	significand_round = (
 	/* no round up */ {2'b01, significand_normalized}
 );
 
+// exponential
+wire	signed [7:0]	exp_delta = (
+		significand_ans[31] ? 'd1 :
+		significand_ans[30] ? 'd0 :
+		significand_ans[29] ? -'d1 :
+		significand_ans[28] ? -'d2 :
+		significand_ans[27] ? -'d3 :
+		significand_ans[26] ? -'d4 :
+		significand_ans[25] ? -'d5 :
+		significand_ans[24] ? -'d6 :
+		significand_ans[23] ? -'d7 :
+		significand_ans[22] ? -'d8 :
+		significand_ans[21] ? -'d9 :
+		significand_ans[20] ? -'d10 :
+		significand_ans[19] ? -'d11 :
+		significand_ans[18] ? -'d12 :
+		significand_ans[17] ? -'d13 :
+		significand_ans[16] ? -'d14 :
+		significand_ans[15] ? -'d15 :
+		significand_ans[14] ? -'d16 :
+		significand_ans[13] ? -'d17 :
+		significand_ans[12] ? -'d18 :
+		significand_ans[11] ? -'d19 :
+		significand_ans[10] ? -'d20 :
+		significand_ans[ 9] ? -'d21 :
+		significand_ans[ 8] ? -'d22 :
+		significand_ans[ 7] ? -'d23 :
+		significand_ans[ 6] ? -'d24 :
+		significand_ans[ 5] ? -'d25 :
+		significand_ans[ 4] ? -'d26 :
+		significand_ans[ 3] ? -'d27 :
+		significand_ans[ 2] ? -'d28 :
+		significand_ans[ 1] ? -'d29 :
+		/*significand_ans[ 0]*/ -'d30
+	);
+
+wire	is_zero			= ~|significand_ans;
+
+wire	[8:0]	exp_round = {1'b0, exp_a} + {8'd0, significand_round[24]} + {exp_delta[7], exp_delta};
+
+wire	is_denormal		= exp_round[8] || (exp_round == 9'd0);
+wire	[7:0]	exp_o	= is_denormal ? 8'd0 : exp_round[7:0];
+
+// significand output
 wire	[22:0]	significand_o = (
+	is_denormal           ? significand_ans[29:7] :
 	significand_round[24] ? significand_round[23:1] : significand_round[22:0]
 );
 
@@ -188,11 +233,30 @@ wire	nan_o		= (
 
 assign Exception	= (&exp_a) | (&exp_b);
 
+`ifdef USE_LOG
+always@(A, B) begin
+	$display("[SIM]");
+	$display("	- A(%X), B(%X)", A, B);
+	$display("	- significand_normalized = %X", significand_normalized);
+	$display("	- residual = %d, sticky = %d", residual, sticky);
+	$display("	- significand_a = %X", significand_a);
+	$display("	- significand_b = %X, significand_b_shifted = %X", significand_b, significand_b_shifted);
+	$display("	- significand_ans = %X", significand_ans);
+	$display("	- significand_round = %X", significand_round);
+	$display("	- significand_o = %X", significand_o);
+	$display("	- exp_a = %X, exp_b = %X, exp_diff = %di, exp_delta = %di, exp_round = %X, exp_o = %X", exp_a, exp_b, exp_diff, exp_delta, exp_round, exp_o);
+	$display("	- inf_a(%d) inf_b(%d) nan_a(%d) nan_b(%d) nan_o(%d) is_zero(%d) is_denormal(%d)", inf_a, inf_b, nan_a, nan_b, nan_o, is_zero, is_denormal);
+end
+`endif
+
 assign O = (
+	(~|A)	? B :
+	(~|B)	? A :
 	nan_o	? 32'h7FFFFFFF :
 	inf_a	? a :
 	inf_b	? b :
-	/* OUT */ (operation_sub ? {sign_o, 31'd0} : {sign_o, /*exp_add*/ 8'd0, significand_o})
+	is_zero	? 32'd0 :
+	/* OUT */ {sign_o, exp_o, significand_o}
 );
 
 endmodule
