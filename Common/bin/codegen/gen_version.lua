@@ -25,9 +25,9 @@ end
 
 -- 
 local	f 				= TextFile()
-local	iVersionMajor	= 0
-local	iVersionMinor	= 0
-local	iBuildCount		= 0
+iVersionMajor	= 0
+iVersionMinor	= 0
+iBuildCount		= 0
 
 -- get version number
 if f:Open(sFileName) then
