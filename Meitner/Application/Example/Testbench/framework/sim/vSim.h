@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 7/19/2023 Wed (clonextop@gmail.com)
+// Rev.  : 7/21/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __V_SIM_H__
 #define __V_SIM_H__
@@ -98,7 +98,7 @@ private:
 			}\
 		}\
 	}\
-	printf("*I: Passed.\n");
+	printf("*I: Passed.\n\n");
 
 #define DO_FP32_TEST_FULL(golden_func, out, ...) \
 	printf("- Check FPU32 full test sequence.\n\n");\
@@ -111,5 +111,5 @@ private:
 			if(!CheckFP32_Result(golden_func, __VA_ARGS__, out)) break;\
 		}\
 	}\
-	printf("*I: Done.\n");
+	printf("*I: Done.\n\n");
 #endif//__V_SIM_H__

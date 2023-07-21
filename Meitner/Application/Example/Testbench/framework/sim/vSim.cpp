@@ -31,10 +31,11 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 7/19/2023 Wed (clonextop@gmail.com)
+// Rev.  : 7/21/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "vSim.h"
 #include "TestDriver.inl"
+#include <chrono>
 #include <time.h>		// for rand/srand
 
 static std::mutex		__fp32_test_mutex;
@@ -132,13 +133,23 @@ bool RetrieveFP32_Param(uint32_t& A)
 	} p = {
 		.m = 0
 	};
-	bool	bLog;
+	static auto start_time	= std::chrono::high_resolution_clock::now();
 	{
 		std::lock_guard<std::mutex> guard(__fp32_test_mutex);
 
 		if(p.m == 0xFFFFFFFF) return false;
 
-		bLog	= (p.m & 0xFFFFFF) == 0;
+		auto		end_time	= std::chrono::high_resolution_clock::now();
+		bool		bLog		= false;
+		// timing check
+		{
+			std::chrono::duration<double, std::milli>	float_ms	= end_time - start_time;
+
+			if(float_ms.count() > 3000 || !p.m) {
+				start_time	= end_time;
+				bLog		= true;
+			}
+		}
 		A		= p.v.u;
 
 		// bypassing nan
@@ -165,13 +176,23 @@ bool RetrieveFP32_Param(uint32_t& A, uint32_t& B)
 	} p = {
 		.m = 0
 	};
-	bool	bLog;
+	static auto start_time	= std::chrono::high_resolution_clock::now();
 	{
 		std::lock_guard<std::mutex> guard(__fp32_test_mutex);
 
 		if(p.m == 0xFFFFFFFF'FFFFFFFFULL) return false;
 
-		bLog	= (p.m & 0xFFFFFF) == 0;
+		auto		end_time	= std::chrono::high_resolution_clock::now();
+		bool		bLog		= false;
+		// timing check
+		{
+			std::chrono::duration<double, std::milli>	float_ms	= end_time - start_time;
+
+			if(float_ms.count() > 3000 || !p.m) {
+				start_time	= end_time;
+				bLog		= true;
+			}
+		}
 		A		= p.v[0].u;
 		B		= p.v[1].u;
 
