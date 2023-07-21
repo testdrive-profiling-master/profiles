@@ -38,6 +38,7 @@
 #include "STDInterface.h"
 #include "TestDriver.h"
 #include "SimTop.h"
+#include <thread>
 #include <math.h>
 #include <mutex>
 
@@ -98,18 +99,34 @@ private:
 			}\
 		}\
 	}\
-	printf("*I: Passed.\n\n");
+	printf("*I: Passed.\n\n");fflush(stdout);
 
 #define DO_FP32_TEST_FULL(golden_func, out, ...) \
 	printf("- Check FPU32 full test sequence.\n\n");\
-	_Pragma("omp parallel")\
 	{\
-		vSim	sim;\
-		if(sim.Initialize()) for(;;) {\
-			if(!RetrieveFP32_Param(__VA_ARGS__)) break;\
-			sim.Eval();\
-			if(!CheckFP32_Result(golden_func, __VA_ARGS__, out)) break;\
+		std::thread t([]() {\
+			extern volatile uint64_t	g_vSim_Count;\
+			extern volatile bool		g_vSim_End;\
+			int t=0;\
+			while(!g_vSim_End) {\
+				std::this_thread::sleep_for(std::chrono::seconds(1));\
+				double	fRatio	= (double)(g_vSim_Count >> 16) / 0xFFFFFFFFFFFFULL;\
+				printf("\r %.10f%% completed", fRatio * 100);\
+				for(int i = 0; i < (t & 0x3); i++) printf(".");\
+				t++;\
+				fflush(stdout);\
+			}\
+		});\
+		_Pragma("omp parallel")\
+		{\
+			vSim	sim;\
+			if(sim.Initialize()) for(;;){\
+				if(!RetrieveFP32_Param(__VA_ARGS__)) break;\
+				sim.Eval();\
+				if(!CheckFP32_Result(golden_func, __VA_ARGS__, out)) break;\
+			}\
 		}\
+		t.join();\
 	}\
 	printf("*I: Done.\n\n");
 #endif//__V_SIM_H__

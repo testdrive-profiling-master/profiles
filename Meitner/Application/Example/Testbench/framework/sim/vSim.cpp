@@ -125,6 +125,9 @@ bool RetrieveFP32_TestParam(uint32_t& A, uint32_t& B)
 	return true;
 }
 
+volatile uint64_t	g_vSim_Count	= 0;
+volatile bool		g_vSim_End		= false;
+
 bool RetrieveFP32_Param(uint32_t& A)
 {
 	static union {
@@ -133,36 +136,22 @@ bool RetrieveFP32_Param(uint32_t& A)
 	} p = {
 		.m = 0
 	};
-	static auto start_time	= std::chrono::high_resolution_clock::now();
 	{
 		std::lock_guard<std::mutex> guard(__fp32_test_mutex);
 
-		if(p.m == 0xFFFFFFFF) return false;
+		if(g_vSim_End) return false;
 
+		g_vSim_Count	= ((uint64_t)p.m) << 32;
 		auto		end_time	= std::chrono::high_resolution_clock::now();
-		bool		bLog		= false;
-		// timing check
-		{
-			std::chrono::duration<double, std::milli>	float_ms	= end_time - start_time;
-
-			if(float_ms.count() > 3000 || !p.m) {
-				start_time	= end_time;
-				bLog		= true;
-			}
-		}
 		A		= p.v.u;
+
+		if(p.m == 0xFFFFFFFF) g_vSim_End = true;
 
 		// bypassing nan
 		if(!isnormal(p.v.f) && p.v.fp.mantissa < 0x7EFFFF) {
 			p.v.u	+= (1 << 16);
 		} else {
 			p.m++;
-		}
-
-		if(bLog) {
-			double	fRatio	= (double)(p.m >> 24) / 0xFF;
-			printf("\r %.10f%% completed.", fRatio * 100);
-			fflush(stdout);
 		}
 	}
 	return true;
@@ -176,25 +165,16 @@ bool RetrieveFP32_Param(uint32_t& A, uint32_t& B)
 	} p = {
 		.m = 0
 	};
-	static auto start_time	= std::chrono::high_resolution_clock::now();
 	{
 		std::lock_guard<std::mutex> guard(__fp32_test_mutex);
 
-		if(p.m == 0xFFFFFFFF'FFFFFFFFULL) return false;
+		if(g_vSim_End) return false;
 
-		auto		end_time	= std::chrono::high_resolution_clock::now();
-		bool		bLog		= false;
-		// timing check
-		{
-			std::chrono::duration<double, std::milli>	float_ms	= end_time - start_time;
-
-			if(float_ms.count() > 3000 || !p.m) {
-				start_time	= end_time;
-				bLog		= true;
-			}
-		}
+		g_vSim_Count	= p.m;
 		A		= p.v[0].u;
 		B		= p.v[1].u;
+
+		if(p.m == 0xFFFFFFFF'FFFFFFFFULL) g_vSim_End = true;
 
 		// bypassing nan
 		if(!isnormal(p.v[1].f) && p.v[1].fp.mantissa < 0x7EFFFF) {	// for fast overcome
@@ -203,12 +183,6 @@ bool RetrieveFP32_Param(uint32_t& A, uint32_t& B)
 			p.v[0].u += 1 << 16;
 		} else {
 			p.m++;
-		}
-
-		if(bLog) {
-			double	fRatio	= (double)(p.m >> 24) / 0xFFFFFFFFFFULL;
-			printf("\r %.10f%% completed.", fRatio * 100);
-			fflush(stdout);
 		}
 	}
 	return true;
