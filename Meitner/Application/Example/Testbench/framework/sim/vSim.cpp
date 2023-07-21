@@ -50,12 +50,16 @@ const SIM_VALUE	g_FP_test_value_list[] = {
 	{.f = 0.000139f},
 	// zero
 	{.u = 0x00000000},
+	// special
+	{.u = 0x04FF8109},
+	{.u = 0x04FF8115},
 	// denormal numbers
 	{.u = 0x00000001},	// min
 	{.u = 0x00000002},
 	{.u = 0x00000003},
 	{.u = 0x00000131},
 	{.u = 0x00200000},	// middle
+	{.u = 0x007F0001},
 	{.u = 0x007FFFFD},
 	{.u = 0x007FFFFE},
 	{.u = 0x007FFFFF},	// max
