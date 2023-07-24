@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Testbench
-// Rev.  : 9/19/2020 Sat (clonextop@gmail.com)
+// Rev.  : 7/24/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "DefaultSystemConfig.h"
 #include "Chart.h"
@@ -82,8 +81,16 @@ void Chart::RemoveSerie(DWORD dwIndex)
 {
 	if(!CheckValidate()) return;
 
-	// clear all series if dwIndex == -1
+	// remove all series if dwIndex == -1
 	SendMessage(m_hWnd, WM_USER, CHART_CMD_REMOVE_SERIE, dwIndex);
+}
+
+void Chart::ClearSerie(DWORD dwIndex)
+{
+	if(!CheckValidate()) return;
+
+	// clear all series if dwIndex == -1
+	SendMessage(m_hWnd, WM_USER, CHART_CMD_CLEAR_SERIE, dwIndex);
 }
 
 void Chart::SetName(DWORD dwID, const char* sName)
