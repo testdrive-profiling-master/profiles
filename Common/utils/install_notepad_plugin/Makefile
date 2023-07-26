@@ -4,6 +4,7 @@
 SRC_PATH		:= .
 TARGETPATH		:= $(TESTDRIVE_DIR)/bin/
 TARGETNAME		:= install_notepad_plugin
+PRESERVE_RESULT	:= 1
 
 SRCS			:= \
 	$(wildcard $(SRC_PATH)/*.cpp) \
