@@ -30,7 +30,7 @@ profile.call		"Profiles\\RegisterMap\\initialize.sp"					// register map
 profile.call		"Profiles\\FPGA_StarterKit\\initialize.sp"				// FPGA Starter kit
 profile.call		"Profiles\\common\\initialize.sp"						// build archive
 profile.call		"Application\\Example\\initialize.sp"					// Examples
-profile.call		"Documents\\SystemMap\\initialize.sp"					// documents
+profile.call		"Documents\\initialize.sp"								// documents
 profile.call		"Driver\\initialize.sp"									// driver
 
 profile.call		"%TESTDRIVE_PROFILE%\\common\\Community\\initialize.sp"			// community
