@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 5/12/2023 Fri (clonextop@gmail.com)
+// Rev.  : 8/1/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include "SourceList.h"
 #include <tchar.h>
@@ -1086,8 +1086,10 @@ void SourceGroup::Scan(void)
 			sNextSubPath 	= TargetPath();
 			sNextSubPath	+= _T('/');
 			sNextSubPath	+= FindFileData.cFileName;
+			CString	sFilterSearch;
+			sFilterSearch.Format(_T("%s/"), (LPCTSTR)sNextSubPath);
 
-			if(!m_sNameFilter[0] || sNextSubPath.Find(m_sNameFilter) >= 0) {
+			if(!m_sNameFilter[0] || sFilterSearch.Find(m_sNameFilter) >= 0) {
 				SourceGroup* pGroup	= new SourceGroup(sNextSubPath, this);
 
 				if(!pGroup->Size()) delete pGroup;
@@ -1177,6 +1179,7 @@ void SourceGroup::MakeTable(void)
 		m_pTable->SetBody(_T("<b>BRAMs</b>"));
 		m_pTable->NewCell(CELL_TH);
 		m_pTable->SetTextAlignment(TABLE_ALIGN_CENTER);
+		m_pTable->SetBoarderWidth(TABLE_BOARDER_RIGHT, 1, _T("solid #ccc"));
 		m_pTable->SetBody(_T("<b>DSPs</b>"));
 	}
 

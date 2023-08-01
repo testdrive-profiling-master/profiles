@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 1/10/2022 Mon (clonextop@gmail.com)
+// Rev.  : 8/1/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __HTML_TABLE_H__
 #define __HTML_TABLE_H__
@@ -78,7 +78,7 @@ public:
 	void SetBody(LPCTSTR sFormat, ...);
 	void SetField(LPCTSTR sID, LPCTSTR sFormat, ...);
 	void SetTextAlignment(TABLE_ALIGN alignment);
-	void SetBoarderWidth(TABLE_BOARDER side, int iWidth = 0);
+	void SetBoarderWidth(TABLE_BOARDER side, int iWidth = 0, LPCTSTR sExtra = NULL);
 	void SetSpan(TABLE_SPAN span, int iSize);
 	void JScript(LPCTSTR sFormat, ...);
 

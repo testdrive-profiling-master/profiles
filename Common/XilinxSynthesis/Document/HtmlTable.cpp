@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2022. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 // 
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 1/10/2022 Mon (clonextop@gmail.com)
+// Rev.  : 8/1/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include "HtmlTable.h"
 
@@ -99,7 +99,7 @@ void HtmlTable::SetTextAlignment(TABLE_ALIGN alignment)
 	};
 	m_pHtml->CallJScript(_T("SetTStyle(\"text-align\",\"%s\");"), __ALIGNMENT[alignment]);
 }
-void HtmlTable::SetBoarderWidth(TABLE_BOARDER side, int iWidth)
+void HtmlTable::SetBoarderWidth(TABLE_BOARDER side, int iWidth, LPCTSTR sExtra)
 {
 	static LPCTSTR __SIDE[] = {
 		_T("left"),
@@ -107,7 +107,10 @@ void HtmlTable::SetBoarderWidth(TABLE_BOARDER side, int iWidth)
 		_T("top"),
 		_T("bottom")
 	};
-	m_pHtml->CallJScript(_T("SetTStyle(\"border-%s\",\"%dpx\");"), __SIDE[side], iWidth);
+
+	if(!sExtra) sExtra = _T("");
+
+	m_pHtml->CallJScript(_T("SetTStyle(\"border-%s\",\"%dpx %s\");"), __SIDE[side], iWidth, sExtra);
 }
 void HtmlTable::SetSpan(TABLE_SPAN span, int iSize)
 {

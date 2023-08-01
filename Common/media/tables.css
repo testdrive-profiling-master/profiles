@@ -98,10 +98,12 @@ table.default0 caption {
 	color: #369;
 	background: #ebeef3;
 	border-bottom: 1px solid #ccc;
+	border-right: 1px solid #ccc;
 }
 table.default0 thread th {
 	color: #369;
 	border-bottom: 1px solid #ccc;
+	border-right: 1px solid #ccc;
 }
 table.default0 tbody th {
 	color: #369;
