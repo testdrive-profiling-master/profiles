@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 8/1/2023 Tue (clonextop@gmail.com)
+// Rev.  : 8/3/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "SourceList.h"
 #include <tchar.h>
@@ -270,19 +270,58 @@ void SourceVector::UpdateTable(void)
 	// area
 	{
 		CString		sBody;
-		auto FormatRatio = [](CString & sBody, int reg_count, float fRatio) {
-			DWORD	dwColor		= 0;
+		auto GetColor = [](float fRatio) -> DWORD {
+			DWORD dwColor;
+
+			if(fRatio > 100) fRatio = 100;
+
+			DWORD	dwBlack		= (159 * (100 - fRatio)) / 100;
+			DWORD	dwRed		= (159 * (100 - fRatio) + (255 * fRatio)) / 100;
+			dwColor				= ((dwRed << 16) | (dwBlack << 8) | dwBlack);
+			return dwColor;
+		};
+		auto FormatRatio = [&](CString & sBody, int reg_count, float fRatio) {
 			BOOL	bOverflow	= (fRatio > 100);
-			{
-				// set text color
-				float	fFixedRatio	= bOverflow ? 100 : fRatio;
-				DWORD	dwBlack		= (159 * (100 - fFixedRatio)) / 100;
-				DWORD	dwRed		= (159 * (100 - fFixedRatio) + (255 * fFixedRatio)) / 100;
-				dwColor				= ((dwRed << 16) | (dwBlack << 8) | dwBlack);
-			}
 			LPCTSTR		sRatiox2	= _T("%d<font color='#9F9F9F'><small><small> (%s<font color='#%06X'>%.2f%%</font>%s)</small></small></font>");
 			LPCTSTR		sRatiox1	= _T("%d<font color='#9F9F9F'><small><small> (%s<font color='#%06X'>%.1f%%</font>%s)</small></small></font>");
-			sBody.Format(fRatio < 10.f ? sRatiox2 : sRatiox1, reg_count, bOverflow ? _T("<u>") : _T(""), dwColor, fRatio, bOverflow ? _T("</u>") : _T(""));
+			sBody.Format(fRatio < 10.f ? sRatiox2 : sRatiox1, reg_count, bOverflow ? _T("<u>") : _T(""), GetColor(fRatio), fRatio, bOverflow ? _T("</u>") : _T(""));
+		};
+		auto FormatRatio2 = [&](CString & sBody, int reg_count1, int reg_count2, float fRatio1, float fRatio2) {
+			BOOL	bOverflow1		= (fRatio1 > 100);
+			BOOL	bOverflow2		= (fRatio2 > 100);
+			sBody.clear();
+			sBody.AppendFormat(_T("%d"), reg_count1);
+			sBody.Append(_T("<font color='#9F9F9F'>/</font>"));
+			sBody.AppendFormat(_T("%d"), reg_count2);
+			sBody.Append(_T("<font color='#9F9F9F'><small><small> ("));
+			{
+				if(bOverflow1)sBody.Append(_T("<u>"));
+
+				if(fRatio1) {
+					sBody.AppendFormat(_T("<font color='#%06X'>"), GetColor(fRatio1));
+					sBody.AppendFormat(fRatio1 < 10.f ? _T("%.2f%%") : _T("%.1f%%"), fRatio1);
+					sBody.Append(_T("</font>"));
+				} else {
+					sBody.AppendFormat(_T("-"));
+				}
+
+				if(bOverflow1)sBody.Append(_T("</u>"));
+			}
+			sBody.Append(_T("<font color='#9F9F9F'>/</font>"));
+			{
+				if(bOverflow2)sBody.Append(_T("<u>"));
+
+				if(fRatio2) {
+					sBody.AppendFormat(_T("<font color='#%06X'>"), GetColor(fRatio2));
+					sBody.AppendFormat(fRatio2 < 10.f ? _T("%.2f%%") : _T("%.1f%%"), fRatio2);
+					sBody.Append(_T("</font>"));
+				} else {
+					sBody.AppendFormat(_T("-"));
+				}
+
+				if(bOverflow2)sBody.Append(_T("</u>"));
+			}
+			sBody.Append(_T(")</small></small></font>"));
 		};
 
 		// registers
@@ -309,12 +348,25 @@ void SourceVector::UpdateTable(void)
 
 		m_pTable->SetField(_T("luts_%s"), _T("%s"), (LPCTSTR)FullName(), (LPCTSTR)sBody);
 
-		// brams
-		if(m_Info.area.brams.count > 0) {
-			FormatRatio(sBody, m_Info.area.brams.count, m_Info.area.brams.ratio);
+		// brams / urams
+		if(m_Info.area.brams.count > 0 || m_Info.area.urams.count > 0) {
+			FormatRatio2(sBody, m_Info.area.brams.count, m_Info.area.urams.count, m_Info.area.brams.ratio, m_Info.area.urams.ratio);
 
-			if(m_PreviousInfo.time_stamp && m_PreviousInfo.area.brams.count >= 0)
-				__StrAppendMark(sBody, _T("%+.0f"), (float)(m_Info.area.brams.count - m_PreviousInfo.area.brams.count), FALSE);
+			if(m_PreviousInfo.time_stamp) {
+				if(m_PreviousInfo.area.brams.count >= 0) {
+					__StrAppendMark(sBody, _T("%+.0f"), (float)(m_Info.area.brams.count - m_PreviousInfo.area.brams.count), FALSE);
+				} else {
+					sBody.Append(_T("-"));
+				}
+
+				sBody.Append(_T("<font color='#9F9F9F'>/</font>"));
+
+				if(m_PreviousInfo.area.urams.count >= 0) {
+					__StrAppendMark(sBody, _T("%+.0f"), (float)(m_Info.area.urams.count - m_PreviousInfo.area.urams.count), FALSE);
+				} else {
+					sBody.Append(_T("-"));
+				}
+			}
 		} else {
 			sBody	= sBLANK_FILED;
 		}
@@ -669,6 +721,7 @@ BOOL SourceVector::Synthesis_Vivado(void)
 				BOOL	Registers;
 				BOOL	LUTs;
 				BOOL	BRAM;
+				BOOL	URAM;
 				BOOL	DSPs;
 			} found = {FALSE};
 
@@ -697,7 +750,7 @@ BOOL SourceVector::Synthesis_Vivado(void)
 					if(iTotal) m_Info.area.luts.ratio	= (100.f * m_Info.area.luts.count) / iTotal;
 
 					found.LUTs			= TRUE;
-				} else if(!found.BRAM && (sTok = _tcsstr(sLine, _T("| Block RAM Tile")))) {
+				} else if(!found.BRAM && (sTok = _tcsstr(sLine, _T("| Block RAM Tile ")))) {
 					CString st	= (sTok + 16);
 					int pos		= 0;
 					{
@@ -708,11 +761,27 @@ BOOL SourceVector::Synthesis_Vivado(void)
 					}
 					st.Tokenize(sTokDlim, pos);	// fixed
 					st.Tokenize(sTokDlim, pos);	// prohibited
-					int iTotal				= _ttoi(st.Tokenize(sTokDlim, pos));
+					int iTotal				= _ttoi(st.Tokenize(sTokDlim, pos));	// total
 
 					if(iTotal) m_Info.area.brams.ratio	= (100.f * m_Info.area.brams.count) / iTotal;
 
 					found.BRAM			= TRUE;
+				} else if(!found.URAM && (sTok = _tcsstr(sLine, _T("| URAM ")))) {
+					CString st	= (sTok + 6);
+					int pos		= 0;
+					{
+						// round up.
+						float fCount	= 0;
+						_stscanf(st.Tokenize(sTokDlim, pos), _T("%f"), &fCount);
+						m_Info.area.urams.count	= (int)(fCount + 0.9999f);
+					}
+					st.Tokenize(sTokDlim, pos);	// fixed
+					st.Tokenize(sTokDlim, pos);	// prohibited
+					int iTotal				= _ttoi(st.Tokenize(sTokDlim, pos));	// total
+
+					if(iTotal) m_Info.area.urams.ratio	= (100.f * m_Info.area.urams.count) / iTotal;
+
+					found.URAM			= TRUE;
 				} else if(!found.DSPs && (sTok = _tcsstr(sLine, _T("| DSPs")))) {
 					CString st	= (sTok + 6);
 					int pos		= 0;
@@ -1176,7 +1245,7 @@ void SourceGroup::MakeTable(void)
 		m_pTable->NewCell(CELL_TH);
 		m_pTable->SetTextAlignment(TABLE_ALIGN_CENTER);
 		m_pTable->SetBoarderWidth(TABLE_BOARDER_RIGHT, 0);
-		m_pTable->SetBody(_T("<b>BRAMs</b>"));
+		m_pTable->SetBody(_T("<b>B/URAMs</b>"));
 		m_pTable->NewCell(CELL_TH);
 		m_pTable->SetTextAlignment(TABLE_ALIGN_CENTER);
 		m_pTable->SetBoarderWidth(TABLE_BOARDER_RIGHT, 1, _T("solid #ccc"));
@@ -1280,6 +1349,11 @@ void SourceGroup::ResetData(void)
 			m_Info.area.brams.ratio	= pInfo->area.brams.ratio;
 		}
 
+		if(pInfo->area.urams.count > m_Info.area.urams.count) {
+			m_Info.area.urams.count	= pInfo->area.urams.count;
+			m_Info.area.urams.ratio	= pInfo->area.urams.ratio;
+		}
+
 		if(pInfo->area.dsps.count > m_Info.area.dsps.count) {
 			m_Info.area.dsps.count	= pInfo->area.dsps.count;
 			m_Info.area.dsps.ratio	= pInfo->area.dsps.ratio;
@@ -1352,9 +1426,17 @@ void SourceGroup::UpdateTable(BOOL bUpdateSubTable)
 
 		m_pTable->SetField(_T("luts_%s"), _T("%s"), TargetPath(), (LPCTSTR)sBody);
 
-		// brams
-		if(m_Info.area.brams.count > 0) {
-			sBody.Format(m_Info.area.brams.ratio < 10.f ? sRatiox2 : sRatiox1, m_Info.area.brams.count, m_Info.area.brams.ratio);
+		// brams / urams
+		if(m_Info.area.brams.count > 0 || m_Info.area.urams.count > 0) {
+			sBody.clear();
+			sBody.AppendFormat(m_Info.area.brams.count ? _T("%d") : _T("-"), m_Info.area.brams.count);
+			sBody.AppendFormat(_T("<font color='#9F9F9F'>/</font>"));
+			sBody.AppendFormat(m_Info.area.urams.count ? _T("%d") : _T("-"), m_Info.area.urams.count);
+			sBody.Append(_T("<font color='#9F9F9F'><small><small> ("));
+			sBody.AppendFormat(m_Info.area.brams.ratio ? (m_Info.area.brams.ratio < 10.f ? _T("%.2f%%") : _T("%.1f%%")) : _T("-"), m_Info.area.brams.ratio);
+			sBody.AppendFormat(_T("<font color='#9F9F9F'>/</font>"));
+			sBody.AppendFormat(m_Info.area.urams.ratio ? (m_Info.area.urams.ratio < 10.f ? _T("%.2f%%") : _T("%.1f%%")) : _T("-"), m_Info.area.urams.ratio);
+			sBody.Append(_T(")</small></small></font>"));
 		} else {
 			sBody	= sBLANK_FILED;
 		}

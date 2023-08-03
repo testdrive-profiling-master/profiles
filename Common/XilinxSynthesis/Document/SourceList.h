@@ -1,8 +1,7 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
 // 
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
@@ -32,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Xilinx synthesis
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 8/3/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SOURCE_LIST_H__
 #define __SOURCE_LIST_H__
@@ -41,39 +40,44 @@
 #include <list>
 using namespace std;
 
-typedef struct{
-	struct{
+typedef struct {
+	struct {
 		float		frequency;		// maximum frequency (MHz)
 		float		input_time;		// minimum input arrival time (ns)
 		float		output_time;	// maximum output required time (ns)
 		float		logic_delay;	// maximum combinational logic delay (ns)
-	}timing;
-	struct{
-		struct{
+	} timing;
+	struct {
+		struct {
 			int			count;
 			float		ratio;
-		}regs, luts, brams, dsps;
-	}area;
-}SYNTHESIS_DATA;
+		} regs, luts, brams, urams, dsps;
+	} area;
+} SYNTHESIS_DATA;
 
-typedef struct : public SYNTHESIS_DATA{
+typedef struct : public SYNTHESIS_DATA {
 	time_t		time_stamp;
-}SYNTHESIS_INFO;
+} SYNTHESIS_INFO;
 
 class SourceGroup;
 
 class SourceVector :
-	public ProjectConfig
-{
+	public ProjectConfig {
 public:
 	SourceVector(LPCTSTR sName, SourceGroup* pGroup);
 	virtual ~SourceVector(void);
 
 	void MakeTable(void);
 	void UpdateTable(void);
-	inline CString& Name(void)				{return m_sName;}
-	inline CString& FullName(void)			{return m_sFullName;}
-	inline SourceGroup* Group(void)			{return m_pGroup;}
+	inline CString& Name(void)				{
+		return m_sName;
+	}
+	inline CString& FullName(void)			{
+		return m_sFullName;
+	}
+	inline SourceGroup* Group(void)			{
+		return m_pGroup;
+	}
 
 	BOOL Synthesis(LPCTSTR sComparePath = NULL);
 
@@ -81,7 +85,9 @@ public:
 	void SetMark(void);
 
 	void Report(void);
-	inline const SYNTHESIS_DATA* Info(void)	{return m_Info.time_stamp ? &m_Info : NULL;}
+	inline const SYNTHESIS_DATA* Info(void)	{
+		return m_Info.time_stamp ? &m_Info : NULL;
+	}
 
 	BOOL GetModuleName(CString& sModuleName);
 
@@ -99,8 +105,7 @@ private:
 };
 
 class SourceGroup :
-		public ProjectConfig
-	{
+	public ProjectConfig {
 public:
 	SourceGroup(LPCTSTR sTargetPath = NULL, SourceGroup* pGroup = NULL);
 	~SourceGroup(void);
@@ -108,10 +113,18 @@ public:
 	void ReleaseAll(void);
 
 	size_t Size(void);
-	inline LPCTSTR TargetPath(void)			{return m_sTargetPath;}
-	inline LPCTSTR ScorePath(void)			{return m_sScorePath;}
-	inline BOOL IsRoot(void)					{return m_sTargetPath.IsEmpty();}
-	inline const SYNTHESIS_DATA* Info(void)	{return &m_Info;}
+	inline LPCTSTR TargetPath(void)			{
+		return m_sTargetPath;
+	}
+	inline LPCTSTR ScorePath(void)			{
+		return m_sScorePath;
+	}
+	inline BOOL IsRoot(void)					{
+		return m_sTargetPath.IsEmpty();
+	}
+	inline const SYNTHESIS_DATA* Info(void)	{
+		return &m_Info;
+	}
 
 	void MakeTable(void);
 	void UpdateTable(BOOL bUpdateSubTable = FALSE);
