@@ -67,6 +67,7 @@ public:
 	bool DeleteBack(const char* s);							// find last 's' and delete
 	bool DeleteBlock(const char* sExpression, int iPos = 0);		// ex) sExpression = "[*]"
 	int FindVariableString(cstring& sVar, const char* sExpression = "$(*)", int iPos = 0);	// ex : "$(" variable ")"
+	int FindNameString(const char* sName, int iPos = 0);	// ex) sName = 'box', 'abox'(X), 'a box'(O)
 	operator const char* (void) const {
 		return m_sStr.c_str();
 	}
