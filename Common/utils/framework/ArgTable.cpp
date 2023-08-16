@@ -198,6 +198,7 @@ void ArgTable::AddOptionFiles(const char* sName, const char* sOptShort, const ch
 {
 	bool	bOption	= (sOptShort != NULL) || (sOptLong != NULL);
 	struct arg_file* pArg = arg_filen(sOptShort, sOptLong, sDataType, bOption ? 0 : 1, ArgumentSize(), sGlossary);
+	assert(__default_argc != 0);
 	m_MapList[sName]	= ARG_DATA{ARG_TYPE_FILE, pArg};
 	m_ArgList.push_back(pArg);
 }
