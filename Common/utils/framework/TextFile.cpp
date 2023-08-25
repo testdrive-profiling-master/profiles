@@ -111,7 +111,7 @@ const char* TextFile::Gets(bool bUseComment)
 
 void TextFile::Write(const char* sFormat, ...)
 {
-	if(!m_fp || !m_bWrite) return;
+	if(!m_fp || !m_bWrite || !sFormat) return;
 
 	{
 		int iLen		= 0;
