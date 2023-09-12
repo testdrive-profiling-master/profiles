@@ -94,7 +94,7 @@ CFLAGS			:= $(subst -std=c++14,,$(CFLAGS))
 CFLAGS			:= $(subst -std=c++17,,$(CFLAGS))
 CFLAGS			:= $(subst -std=c++20,,$(CFLAGS))
 ARFLAGS			:= crv
-CDEFS			:= $(CDEFS) -D__int64="long long" -DWIN32 -D_WIN32 -DWIN64 -D_WIN64
+CDEFS			:= $(CDEFS) -D__int64="long long" -DWIN32 -D_WIN32 -DWIN64 -D_WIN64 -D_FILE_OFFSET_BITS=64
 
 #-------------------------------------------------
 # Build commands
