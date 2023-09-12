@@ -103,7 +103,7 @@ bool SystemDriverInterface::Initialize(const char* sDeviceName)
 			return true;
 		}
 
-		// faild to create device driver
+		// failed to create device driver
 		m_hDriver	= NULL;
 	}
 
