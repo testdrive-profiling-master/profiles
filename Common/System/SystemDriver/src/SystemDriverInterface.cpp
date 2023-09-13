@@ -103,6 +103,10 @@ bool SystemDriverInterface::Initialize(const char* sDeviceName)
 			return true;
 		}
 
+		char sError[4096];
+		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), sError, sizeof(sError), NULL);
+		LOGE(sError);
+
 		// failed to create device driver
 		m_hDriver	= NULL;
 	}
