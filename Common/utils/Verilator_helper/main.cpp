@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 // 
 // Title : Verilator helper
-// Rev.  : 5/12/2023 Fri (clonextop@gmail.com)
+// Rev.  : 9/20/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "UtilFramework.h"
 #include <filesystem>
@@ -164,6 +164,7 @@ int main(int argc, const char* argv[])
 	cstring	sArg;	// argument path
 	cstring	sExe;	// verilator path
 	cstring	sCmd;	// modified command line
+	bool	bHelp	= false;
 
 	if(!g_sTestDrivePath.GetEnvironment("TESTDRIVE_DIR")) {
 		LOGE("You must run TestDrive Profiling Master first.");
@@ -206,6 +207,10 @@ int main(int argc, const char* argv[])
 					sBakePath.Replace("\\", "/", true);
 					sBakePath.CutBack("/");
 					sBakePath	+= "/.bake/";
+				}
+
+				if(sArg == "--help") {
+					bHelp	= true;
 				}
 
 				if(sArg == "-Mdir" && (i + 1) < argc) {
@@ -340,12 +345,21 @@ int main(int argc, const char* argv[])
 
 	{
 		// get verilator path
-		sExe.Format("%sbin/msys64/ucrt64/bin", g_sTestDrivePath.c_str());
+		sExe.Format("%sbin/msys64/ucrt64/share/verilator", g_sTestDrivePath.c_str());
 		sExe.SetEnvironment("VERILATOR_ROOT");
-		sExe += "/verilator";
+		sExe.Format("%sbin/msys64/ucrt64/bin", g_sTestDrivePath.c_str());
+
+		if(bHelp)
+			sExe += "/verilator";
+		else
+			sExe += "/verilator_bin";
 	}
 
 	// make command
-	sCmd.Format("perl \"%s\" %s", sExe.c_str(), sArg.c_str());
+	if(bHelp)
+		sCmd.Format("perl \"%s\" %s", sExe.c_str(), sArg.c_str());
+	else
+		sCmd.Format("\"%s\" %s", sExe.c_str(), sArg.c_str());
+
 	return system(sCmd.c_str());
 }
