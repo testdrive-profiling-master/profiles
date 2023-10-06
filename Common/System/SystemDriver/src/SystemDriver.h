@@ -31,14 +31,13 @@
 // OF SUCH DAMAGE.
 // 
 // Title : TestDrive System Driver wrapper
-// Rev.  : 3/14/2023 Tue (clonextop@gmail.com)
+// Rev.  : 9/20/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_DRIVER_H__
 #define __SYSTEM_DRIVER_H__
 #include "SystemDriverInterface.h"
 #include "InterruptService.h"
 #include "ThreadManager.h"
-#include "TD_Semaphore.h"
 #include <string>
 
 class SystemDriver :
@@ -82,6 +81,5 @@ private:
 	InterruptService		m_ISR;
 	bool					m_bMustExit;
 	std::string				m_sSystemDesc;
-	Semaphore				m_SemaReg;
 };
 #endif//__SYSTEM_DRIVER_H__
