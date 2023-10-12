@@ -42,6 +42,7 @@ namespace fs = std::filesystem;
 
 cstring		g_sTestDrivePath;
 bool		g_bUseBakedModel	= false;
+bool		g_bNoBaked			= false;
 
 static string GetEnvString(const char* sKey)
 {
@@ -222,12 +223,13 @@ int main(int argc, const char* argv[])
 				}
 			}
 
-			if(g_bUseBakedModel) {	// source .bake path check
+			if(g_bUseBakedModel) do {	// source .bake path check
 				cstring sBakeName;
 
 				if(sBakePath.IsEmpty()) {
-					LOGE("Can't find repo. path.", sBakePath.c_str());
-					return 1;
+					// cancel using baked model.
+					g_bUseBakedModel	= false;
+					break;
 				}
 
 				if(!MakeTargetName(sBakeName))
@@ -238,8 +240,9 @@ int main(int argc, const char* argv[])
 				auto repo_path	= fs::path(sBakePath.c_str());
 
 				if(!fs::exists(repo_path) || !fs::is_regular_file(repo_path)) {
-					LOGE("Can't access source repo. path : '%s'\n", sBakePath.c_str());
-					return 1;
+					// cancel using baked model.
+					g_bUseBakedModel	= false;
+					break;
 				}
 
 				if(sDst.IsEmpty()) sDst = "./";
@@ -256,7 +259,7 @@ int main(int argc, const char* argv[])
 					system(sCmd);
 				}
 				return 0;
-			}
+			} while(0);
 		}
 	}
 
