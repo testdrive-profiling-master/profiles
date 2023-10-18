@@ -2,22 +2,22 @@
 // Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
-// 
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -29,14 +29,16 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : Common DPI
-// Rev.  : 5/25/2023 Thu (clonextop@gmail.com)
+// Rev.  : 10/18/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "AXI_common.h"
 #include "AXI_Master.h"
 
 #define DEBUG_LEVEL(n)	if(m_iDebugLevel>=n)
+
+BandwidthLimiter		MAXI::m_Bandwidth;
 
 MAXI::MAXI(const char* sTitle, int iDataWidth, bool bUseAXI4, int iDebugLevel)
 {
@@ -89,14 +91,14 @@ void MAXI::TouchAddress(MAXI_DESC* pDesc)
 	pDesc->BEAT--;
 
 	switch(pDesc->BURST) {
-	case 	BURST_FIXED:
+	case AXI_BURST_FIXED:
 		return;
 
-	case BURST_INCR:
+	case AXI_BURST_INCR:
 		pDesc->ADDR	+= pDesc->SIZE;
 		break;
 
-	case BURST_WRAP: {
+	case AXI_BURST_WRAP: {
 		UINT64	dwMask	= (pDesc->SIZE * pDesc->LEN) - 1;
 		pDesc->ADDR		= ((pDesc->ADDR + pDesc->SIZE) & dwMask) | (pDesc->ADDR & (~dwMask));
 	}
@@ -293,15 +295,15 @@ void MAXI::BusReadRequest(
 				if(((1 << ARSIZE) - 1) & ARADDR)
 					LOGE("ARADDR(=0x%08llX) is not met in memory alignment.", ARADDR);
 
-				if(ARBURST == BURST_WRAP && (ARSIZE < 1 || ARSIZE > 4)) {
+				if(ARBURST == AXI_BURST_WRAP && (ARSIZE < 1 || ARSIZE > 4)) {
 					LOGE("In Read wrap burst's length(%d) must be 2, 4, 8 or 16.", pReqDesc->SIZE);
 				}
 
-				if(ARBURST == BURST_RESERVED) {
+				if(ARBURST == AXI_BURST_RESERVED) {
 					LOGE("ARBURST(%d) is not a specified operation.", ARBURST);
 				}
 
-				if(!ARLEN && (ARBURST == BURST_FIXED)) {
+				if(!ARLEN && (ARBURST == AXI_BURST_FIXED)) {
 					LOGE("When 'ReadOnce' operation, ARBURST(%d) must be INCR(0) or WRAP(2).", ARBURST);
 				}
 
@@ -430,15 +432,15 @@ void MAXI::BusWriteRequest(
 				if(((1 << AWSIZE) - 1) & AWADDR)
 					LOGE("AWADDR(=0x%08llX) is not met in memory alignment.", AWADDR);
 
-				if(AWBURST == BURST_WRAP && (AWSIZE < 1 || AWSIZE > 4)) {
+				if(AWBURST == AXI_BURST_WRAP && (AWSIZE < 1 || AWSIZE > 4)) {
 					LOGE("In Write wrap burst's length(%d) must be 2, 4, 8 or 16.", pReqDesc->SIZE);
 				}
 
-				if(AWBURST == BURST_RESERVED) {
+				if(AWBURST == AXI_BURST_RESERVED) {
 					LOGE("AWBURST(%d) is not a specified operation.", AWBURST);
 				}
 
-				if(!AWLEN && (AWBURST == BURST_FIXED)) {
+				if(!AWLEN && (AWBURST == AXI_BURST_FIXED)) {
 					LOGE("When 'WriteUnique' operation, AWBURST(%d) must be INCR(0) or WRAP(2).", AWBURST);
 				}
 

@@ -33,59 +33,81 @@
 // Title : Common DPI
 // Rev.  : 10/18/2023 Wed (clonextop@gmail.com)
 //================================================================================
-#ifndef __AXI_COMMON_H__
-#define __AXI_COMMON_H__
-#include "dpi_common.h"
-#include "TD_Semaphore.h"
+#include "AXI_common.h"
 
-typedef enum {
-	AXI_RESP_OKAY,
-	AXI_RESP_EXOKAY,
-	AXI_RESP_SLVERR,
-	AXI_RESP_DECERR,
-	AXI_RESP_SIZE
-} AXI_RESP;
-
-typedef enum {
-	AXI_BURST_FIXED,
-	AXI_BURST_INCR,
-	AXI_BURST_WRAP,
-	AXI_BURST_RESERVED,
-	AXI_BURST_SIZE
-} AXI_BURST;
-
-extern const char* g_sAXI_BRESP[AXI_RESP_SIZE];
-extern const char* g_sAXI_BURST[AXI_BURST_SIZE];
-
-class BandwidthLimiter {
-public:
-	BandwidthLimiter(void);
-	virtual ~BandwidthLimiter(void);
-	void Initialize(uint32_t kb_size);
-	void Transaction(uint32_t byte_size);
-
-	inline bool IsValid(void) {
-		return m_bValid;
-	}
-
-protected:
-	Semaphore			m_Sema;
-	uint64_t			m_dwLimitBandwidth;	// (KB)
-	volatile uint32_t	m_dwConsumedByte;
-	volatile bool		m_bValid;
-
-private:
-	typedef struct {
-		uint64_t		uTime;
-		uint32_t		bytes;
-	} TIME_SLOT;
-
-	struct {
-		TIME_SLOT*			pData;
-		volatile TIME_SLOT*	pCurrent;
-		volatile int		iIndex;
-		volatile uint64_t	uElapsedTime;
-	} m_Slot;
+const char* g_sAXI_BRESP[AXI_RESP_SIZE] = {
+	"OKAY",
+	"EXOKAY",
+	"SLVERR",
+	"DECERR",
 };
 
-#endif//__AXI_COMMON_H__
+const char* g_sAXI_BURST[AXI_BURST_SIZE] = {
+	"FIXED",
+	"INCR",
+	"WRAP",
+	"*RESERVED*",
+};
+
+#define MAX_BANDWIDTH_QUEUE_COUNT		(1024*256)
+
+BandwidthLimiter::BandwidthLimiter(void) : m_Sema(1)
+{
+	m_Slot.pData			= NULL;
+	Initialize(0);		// initial : no limit
+}
+
+BandwidthLimiter::~BandwidthLimiter(void)
+{
+	Initialize(0);
+}
+
+void BandwidthLimiter::Initialize(uint32_t kb_size)
+{
+	m_dwLimitBandwidth		= kb_size;
+	m_Slot.uElapsedTime		= 0;
+	m_Slot.iIndex			= 0;
+	if(kb_size) {
+		if(!m_Slot.pData)
+			m_Slot.pData	= new TIME_SLOT[MAX_BANDWIDTH_QUEUE_COUNT];
+		memset(m_Slot.pData, 0, sizeof(TIME_SLOT) * MAX_BANDWIDTH_QUEUE_COUNT);
+	} else {
+		SAFE_DELETE_ARRAY(m_Slot.pData);
+	}
+	m_Slot.pCurrent			= m_Slot.pData;
+	m_dwConsumedByte		= 0;
+	m_bValid				= true;
+}
+
+void BandwidthLimiter::Transaction(uint32_t byte_size)
+{
+	if(m_Slot.pData) {
+		uint64_t	uCurTime	= SimulationTime();
+		m_Sema.Down();
+		{
+			if(m_Slot.pCurrent->uTime == uCurTime) {
+				m_Slot.pCurrent->bytes		+= byte_size;
+				m_dwConsumedByte			+= byte_size;
+			} else {
+				m_Slot.iIndex++;
+
+				if(m_Slot.iIndex >= MAX_BANDWIDTH_QUEUE_COUNT) {
+					m_Slot.iIndex = 0;
+					m_Slot.pCurrent		= m_Slot.pData;
+				} else {
+					m_Slot.pCurrent++;
+				}
+
+				m_Slot.uElapsedTime			= uCurTime - m_Slot.pCurrent->uTime;
+				m_dwConsumedByte			+= (byte_size - m_Slot.pCurrent->bytes);
+				m_Slot.pCurrent->bytes		= byte_size;
+				m_Slot.pCurrent->uTime		= uCurTime;
+			}
+
+			if(m_Slot.uElapsedTime) {
+				m_bValid	= (((uint64_t)m_dwConsumedByte * 976562500ULL) / m_Slot.uElapsedTime) < m_dwLimitBandwidth;	// 976562500 = 1000000000000 / 1024 = (1/1ps) / 1KB
+			}
+		}
+		m_Sema.Up();
+	}
+}

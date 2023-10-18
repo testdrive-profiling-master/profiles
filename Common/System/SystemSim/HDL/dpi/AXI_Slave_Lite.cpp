@@ -2,22 +2,22 @@
 // Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
-// 
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -29,25 +29,11 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : Common DPI
-// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
+// Rev.  : 10/18/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "AXI_Slave_Lite.h"
-
-const char* g_sBRESP[] = {
-	"OKAY",
-	"EXOKAY",
-	"SLVERR",
-	"DECERR",
-};
-
-const char* g_sBURST[] = {
-	"FIXED",
-	"INCR",
-	"WRAP",
-	"*RESERVED*",
-};
 
 SAXI_Lite::SAXI_Lite(const char* sTitle, DWORD dwAddrBase, DWORD dwAddrHigh)
 {
@@ -149,7 +135,7 @@ void SAXI_Lite::BusWrite(
 
 			if(BVALID) {
 				if(BRESP) {
-					LOGE("BRESP('%s') is asserted.", g_sBRESP[BRESP]);
+					LOGE("BRESP('%s') is asserted.", g_sAXI_BRESP[BRESP]);
 				}
 
 				m_Write.state	= BUS_STATE_IDLE;
@@ -239,7 +225,7 @@ void SAXI_Lite::BusRead(
 				m_Read.state	= BUS_STATE_IDLE;
 
 				if(RRESP) {
-					LOGE("RRESP('%s') is asserted.", g_sBRESP[RRESP]);
+					LOGE("RRESP('%s') is asserted.", g_sAXI_BRESP[RRESP]);
 				}
 			} else {
 				RREADY			= 1;
