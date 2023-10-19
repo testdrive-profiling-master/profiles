@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 10/18/2023 Wed (clonextop@gmail.com)
+// Rev.  : 10/19/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "AXI_common.h"
 #include "AXI_Master.h"
@@ -111,23 +111,7 @@ bool MAXI::Read(MAXI_DESC* pDesc, BYTE* pData)
 	BYTE* pMem = (BYTE*)GetMemoryPointer(pDesc->ADDR, pDesc->SIZE, FALSE);
 	pData	+= (pDesc->ADDR & (pDesc->SIZE - 1));
 
-	if(!pMem) {
-		if(!m_pReadSlave) {
-			m_pReadSlave	= FindSlave(pDesc->ADDR);
-
-			if(!m_pReadSlave) LOGE("Unreachable read address : 0x%llX (%d bytes)", pDesc->ADDR, pDesc->SIZE);
-			else {
-				if(!m_pReadSlave->RequestRead(pDesc->ADDR))
-					m_pReadSlave	= NULL;
-			}
-
-			return FALSE;
-		} else {
-			if(m_pReadSlave->WaitRead(*(DWORD*)pData)) {
-				m_pReadSlave	= NULL;
-			} else return FALSE;
-		}
-	} else {
+	if(pMem) {
 		memcpy(pData, pMem, pDesc->SIZE);
 		{
 			// Observer of MAXI
@@ -154,7 +138,7 @@ bool MAXI::Read(MAXI_DESC* pDesc, BYTE* pData)
 
 			LOGI("READ[%08llX, %2d/%d] = %s", pDesc->ADDR, (1 + pDesc->LEN - pDesc->BEAT), pDesc->LEN, sData);
 		}
-	}
+	} else false;
 
 	TouchAddress(pDesc);
 	return true;
@@ -164,23 +148,7 @@ bool MAXI::Write(MAXI_DESC* pDesc, const BYTE* pData, const DWORD* pByteStrob)
 {
 	BYTE*	pMem	= (BYTE*)GetMemoryPointer(pDesc->ADDR & m_lAddressMask, m_dwDataBytes, FALSE);
 
-	if(!pMem) {
-		if(!m_pWriteSlave) {
-			m_pWriteSlave	= FindSlave(pDesc->ADDR);
-
-			if(!m_pWriteSlave) LOGE("Unreachable write address : 0x%llX (%d bytes)", pDesc->ADDR, pDesc->SIZE);
-			else {
-				if(!m_pWriteSlave->RequestWrite(pDesc->ADDR, *(DWORD*)pData))
-					m_pWriteSlave	= NULL;
-			}
-
-			return FALSE;
-		} else {
-			if(m_pWriteSlave->WaitWrite()) {
-				m_pWriteSlave	= NULL;
-			} else return FALSE;
-		}
-	} else {
+	if(pMem) {
 		DWORD	dwTransferSize	= 0;
 		DWORD	dwFirst			= 0;
 		DWORD	dwLast			= 0;
@@ -247,7 +215,7 @@ bool MAXI::Write(MAXI_DESC* pDesc, const BYTE* pData, const DWORD* pByteStrob)
 				LOGE("Invalid write narrow byte strobe : Address(0x%08llX), Size(%d)", pDesc->ADDR, pDesc->SIZE);
 			}
 		}
-	}
+	} else return false;
 
 	TouchAddress(pDesc);
 	return true;
@@ -282,6 +250,7 @@ void MAXI::BusReadRequest(
 				pReqDesc->LEN			= ARLEN + 1;
 				pReqDesc->BEAT			= ARLEN + 1;	// 1~16	: 0 => 1, 15 => 16 number of transfers
 				pReqDesc->BURST			= ARBURST;
+				pReqDesc->status		= MAXI_STATUS_INIT;
 				pReqDesc->TimeOut		= MAXI_TIMEOUT_COUNT;
 				m_Read.ARREADY			= 0;
 
@@ -331,39 +300,110 @@ void MAXI::BusReadData(
 	if(!nRST) {
 		m_Read.pDesc	= NULL;
 		RID				= 0;
-		m_Read.RLAST	= 0;
 		m_Read.RVALID	= 0;
 		m_Read.RLAST	= 0;
 	} else {
 		if(m_Read.pDesc) {					// activation status
-			RID	= m_Read.pDesc->ID;			// transaction ID
+			MAXI_DESC*	pDesc	= m_Read.pDesc;
+			RID			= pDesc->ID;			// transaction ID
 
-			if(m_Read.RLAST && RREADY) {
-				// no more transaction
-				m_Read.pDesc			= NULL;					// terminate transaction
-				m_Read.RLAST			= 0;					// clear last
-				m_Read.RVALID			= 0;					// clear valid
-				ReleaseBus();									// release bus
-				DEBUG_LEVEL(2) LOGI("Read done.");
+			switch(pDesc->status) {
+			case MAXI_STATUS_INIT: {
+				pDesc->status	= GetMemoryPointer(pDesc->ADDR & m_lAddressMask, m_dwDataBytes, FALSE) ? MAXI_STATUS_MEMORY : MAXI_STATUS_SLAVE_REQUEST;
 
-				for(int i = 0; i < (m_dwDataBytes >> 2); i++) m_Read.RDATA[i] = 0xDEADC0DE;
-			} else {
-				bool bNewTransaction	= !m_Read.RVALID || (m_Read.RVALID && RREADY);
+				if(pDesc->status == MAXI_STATUS_SLAVE_REQUEST) {
+					if(pDesc->BEAT != 1) {
+						LOGE("Multiple 'burst' transaction to slave bus from MAXI. : ARID:#%d, ARADDR:0x%08llX, ARLEN:%d", RID, pDesc->ADDR, pDesc->LEN - 1);
+						m_Read.RLAST	= 1;
+						ReleaseBus();
+						break;
+					}
 
-				if(m_Read.pDesc->BEAT && bNewTransaction) {	// new transaction is requested...
-					if(Read(m_Read.pDesc, (BYTE*)m_Read.RDATA)) {		// next transaction data
-						m_Read.RVALID			= 1;					// next valid transaction
-						m_Read.RLAST			= !m_Read.pDesc->BEAT;
-						m_Read.pDesc->TimeOut	= MAXI_TIMEOUT_COUNT;
-					} else {
-						m_Read.RVALID			= 0;					// next valid transaction
+					if(m_dwDataBytes != 4) {	// 32bit bus only
+						LOGE("Only 32bit MAXI to Slave is supported.");
+						ReleaseBus();
+						break;
+					}
+
+					m_pReadSlave	= FindSlave(pDesc->ADDR);
+
+					if(!m_pReadSlave) {
+						LOGE("Unreachable slave read address : 0x%llX (%d bytes)", pDesc->ADDR, pDesc->SIZE);
+						m_Read.RLAST	= 1;
+						ReleaseBus();
+						break;
 					}
 				}
+			}
+			break;
 
-				m_Read.pDesc->TimeOut--;
+			case MAXI_STATUS_SLAVE_REQUEST: {
+				pDesc->TimeOut--;
 
-				if(!m_Read.pDesc->TimeOut)
-					LOGE("Read timeout.");
+				if(!pDesc->TimeOut) LOGE("Read timeout on request to slave.");
+
+				if(m_pReadSlave->RequestRead(pDesc->ADDR)) {
+					pDesc->status	= MAXI_STATUS_SLAVE_WAIT;
+				}
+			}
+			break;
+
+			case MAXI_STATUS_SLAVE_WAIT: {
+				pDesc->TimeOut--;
+
+				if(!pDesc->TimeOut) LOGE("Read timeout on wait for slave transaction.");
+
+				if(m_pReadSlave->WaitWrite()) {
+					m_pReadSlave	= NULL;
+					pDesc->status	= MAXI_STATUS_DONE;
+					m_Read.RVALID	= 1;
+					m_Read.RLAST	= 1;
+					ReleaseBus();
+				}
+			}
+			break;
+
+			case MAXI_STATUS_MEMORY: {
+				if(m_Read.RLAST && RREADY) {
+					// no more transaction
+					m_Read.pDesc			= NULL;					// terminate transaction
+					m_Read.RLAST			= 0;					// clear last
+					m_Read.RVALID			= 0;					// clear valid
+					ReleaseBus();									// release bus
+					DEBUG_LEVEL(2) LOGI("Read done.");
+
+					for(int i = 0; i < (m_dwDataBytes >> 2); i++) m_Read.RDATA[i] = 0xDEADC0DE;
+				} else {
+					bool bTransaction	= !m_Read.RVALID || (m_Read.RVALID && RREADY);
+
+					if(bTransaction) {		// new transaction is available...
+						if(m_Bandwidth.IsValid()) {
+							if(Read(pDesc, (BYTE *)m_Read.RDATA)) {		// next transaction data
+								m_Read.RVALID			= 1;			// next valid transaction
+								m_Read.RLAST			= !pDesc->BEAT;
+								pDesc->TimeOut			= MAXI_TIMEOUT_COUNT;
+							} else {
+								LOGE("Unreachable memory address on read : 0x%08llX", pDesc->ADDR);
+								ReleaseBus();
+								break;
+							}
+						} else {
+							m_Read.RVALID		= 0;
+							bTransaction		= false;
+						}
+					}
+
+					m_Bandwidth.Transaction(bTransaction ? m_dwDataBytes : 0);
+					{
+						// check timeout
+						pDesc->TimeOut--;
+
+						if(!pDesc->TimeOut)
+							LOGE("Read timeout on memory transaction.");
+					}
+				}
+			}
+			break;
 			}
 		} else {
 			// wait new transaction
@@ -419,6 +459,7 @@ void MAXI::BusWriteRequest(
 				pReqDesc->LEN			= AWLEN + 1;
 				pReqDesc->BEAT			= AWLEN + 1;	// 1~16	: 0 => 1, 15 => 16 number of transfers
 				pReqDesc->BURST			= AWBURST;
+				pReqDesc->status		= MAXI_STATUS_INIT;
 				pReqDesc->TimeOut		= MAXI_TIMEOUT_COUNT;
 				m_Write.AWREADY			= 0;
 
@@ -473,49 +514,119 @@ void MAXI::BusWriteData(
 		m_Write.BRESP		= 0;
 		m_Write.BVALID		= 0;
 	} else {
-		if(m_Write.pDesc) {
-			if(!m_Write.WREADY) {
-				if(Write(m_Write.pDesc, (const BYTE*)m_Write.WDATA, m_Write.WSTRB)) {
-					if(m_Write.pDesc->BEAT)
-						m_Write.WREADY				= 1;
-				}
-			} else {
-				bool bTransaction	= (m_Write.WREADY && WVALID);
+		if(m_Write.pDesc) {		// handling with write transaction
+			MAXI_DESC*	pDesc	= m_Write.pDesc;
 
-				if(bTransaction) {
-					if(Write(m_Write.pDesc, (const BYTE*)WDATA, WSTRB)) {
-						m_Write.pDesc->TimeOut		= MAXI_TIMEOUT_COUNT;
-					} else {
-						m_Write.WREADY				= 0;
-						memcpy(m_Write.WDATA, WDATA, m_dwDataBytes);
-						memcpy(m_Write.WSTRB, WSTRB, (m_dwDataBytes + 31) / 32);
+			switch(pDesc->status) {
+			case MAXI_STATUS_INIT: {
+				pDesc->status	= GetMemoryPointer(pDesc->ADDR & m_lAddressMask, m_dwDataBytes, FALSE) ? MAXI_STATUS_MEMORY : MAXI_STATUS_SLAVE_REQUEST;
+
+				if(pDesc->status == MAXI_STATUS_SLAVE_REQUEST) {
+					if(pDesc->BEAT != 1) {
+						LOGE("Multiple 'burst' transaction to slave bus from MAXI. : AWID:#%d, AWADDR:0x%08llX, AWLEN:%d", WID, pDesc->ADDR, pDesc->LEN - 1);
+						m_Write.BRESP	= 1;
+						ReleaseBus();
+						break;
 					}
 
-					if(WID != m_Write.pDesc->ID)
-						LOGE("Sorry! non-sequential data transaction is not supported yet. WID(%d) != %d", WID, m_Write.pDesc->ID);
+					if(m_dwDataBytes != 4) {	// 32bit bus only
+						LOGE("Only 32bit MAXI to Slave is supported.");
+						ReleaseBus();
+						break;
+					}
 
-					if(m_Write.pDesc->BEAT && WLAST)
-						LOGE("Early termination is not supported on a 'Burst mode'. 'WLAST' is asserted on middle of burst transaction(WID:#%d,NEXT_ADDR:0x%08llX,BEAT:%d/%d).", WID, m_Write.pDesc->ADDR, m_Write.pDesc->LEN - m_Write.pDesc->BEAT, m_Write.pDesc->LEN);
+					m_pWriteSlave	= FindSlave(pDesc->ADDR);
+
+					if(!m_pWriteSlave) {
+						LOGE("Unreachable slave write address : 0x%llX (%d bytes)", pDesc->ADDR, pDesc->SIZE);
+						m_Write.BRESP	= 1;
+						ReleaseBus();
+						break;
+					}
 				}
 			}
+			break;
 
-			m_Write.pDesc->TimeOut--;
+			case MAXI_STATUS_SLAVE_REQUEST: {
+				pDesc->TimeOut--;
 
-			if(!m_Write.pDesc->TimeOut)
-				LOGE("Write timeout.");
+				if(!pDesc->TimeOut) LOGE("Write timeout on request to slave.");
 
-			if(!m_Write.pDesc->BEAT) {
-				// no more transaction
-				m_Write.pDesc			= NULL;		// terminate transaction
-				m_Write.BVALID_TimeOut	= MAXI_TIMEOUT_COUNT;
-				m_Write.WREADY			= 0;
-				m_Write.BVALID			= 1;
-				ReleaseBus();
-				DEBUG_LEVEL(2) LOGI("Write done.");
+				if(WVALID) {
+					if((*WSTRB) & 0xF != 0xF) {
+						LOGE("Only 32bit MAXI to Slave write is supported.");
+						ReleaseBus();
+						break;
+					}
 
-				if(!WLAST) LOGE("'WLAST' is not asserted at the last data transaction(WID:#%d).", WID);
+					if(m_pWriteSlave->RequestWrite(pDesc->ADDR, *(DWORD *)WDATA)) {
+						m_Write.WREADY	= 1;
+
+						if(!WLAST) LOGE("'WLAST' is not asserted at the last data transaction(WID:#%d).", WID);
+
+						pDesc->status	= MAXI_STATUS_SLAVE_WAIT;
+					}
+				}
 			}
-		} else {
+			break;
+
+			case MAXI_STATUS_SLAVE_WAIT: {
+				m_Write.WREADY	= 0;
+				pDesc->TimeOut--;
+
+				if(!pDesc->TimeOut) LOGE("Write timeout on wait for slave transaction.");
+
+				if(m_pWriteSlave->WaitWrite()) {
+					m_pWriteSlave	= NULL;
+					pDesc->status	= MAXI_STATUS_DONE;
+					ReleaseBus();
+				}
+			}
+			break;
+
+			case MAXI_STATUS_MEMORY: {
+				bool	bTransaction	= m_Write.WREADY && WVALID;
+
+				if(bTransaction) {
+					if(Write(pDesc, (const BYTE *)WDATA, WSTRB)) {
+						pDesc->TimeOut		= MAXI_TIMEOUT_COUNT;
+					} else {
+						LOGE("Unreachable memory address on write : 0x%08llX", pDesc->ADDR);
+						ReleaseBus();
+					}
+
+					if(WID != pDesc->ID)
+						LOGE("Non-sequential data transaction is not supported yet. WID(%d) != Current order of WID(%d)", WID, pDesc->ID);
+
+					if(pDesc->BEAT && WLAST)
+						LOGE("Early termination is not supported on a 'Burst mode'. 'WLAST' is asserted on middle of burst transaction(WID:#%d,NEXT_ADDR:0x%08llX,BEAT:%d/%d).", WID, pDesc->ADDR, pDesc->LEN - pDesc->BEAT, pDesc->LEN);
+				}
+
+				m_Write.WREADY	= m_Bandwidth.IsValid();
+				m_Bandwidth.Transaction(bTransaction ? m_dwDataBytes : 0);
+				{
+					// check timeout
+					pDesc->TimeOut--;
+
+					if(!pDesc->TimeOut)
+						LOGE("Write timeout on memory transaction.");
+				}
+
+				if(!pDesc->BEAT) {
+					// no more transaction
+					m_Write.pDesc			= NULL;		// terminate transaction
+					m_Write.BVALID_TimeOut	= MAXI_TIMEOUT_COUNT;
+					m_Write.WREADY			= 0;
+					m_Write.BVALID			= 1;
+					ReleaseBus();
+					DEBUG_LEVEL(2) LOGI("Write done.");
+
+					if(!WLAST) LOGE("'WLAST' is not asserted at the last data transaction(WID:#%d).", WID);
+				}
+			}
+			break;
+			}
+		} else {	// bus termination
 			if(m_Write.BVALID) {
 				m_Write.BVALID_TimeOut--;
 
@@ -529,7 +640,6 @@ void MAXI::BusWriteData(
 
 				if(m_Write.pDesc) {
 					m_Write.BID		= m_Write.pDesc->ID;
-					m_Write.WREADY	= 1;
 				}
 			}
 		}

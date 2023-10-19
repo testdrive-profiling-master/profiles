@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 10/18/2023 Wed (clonextop@gmail.com)
+// Rev.  : 10/19/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "AXI_common.h"
 
@@ -67,13 +67,17 @@ void BandwidthLimiter::Initialize(uint32_t kb_size)
 	m_dwLimitBandwidth		= kb_size;
 	m_Slot.uElapsedTime		= 0;
 	m_Slot.iIndex			= 0;
+
 	if(kb_size) {
-		if(!m_Slot.pData)
+		if(!m_Slot.pData) {
 			m_Slot.pData	= new TIME_SLOT[MAX_BANDWIDTH_QUEUE_COUNT];
+		}
+
 		memset(m_Slot.pData, 0, sizeof(TIME_SLOT) * MAX_BANDWIDTH_QUEUE_COUNT);
 	} else {
 		SAFE_DELETE_ARRAY(m_Slot.pData);
 	}
+
 	m_Slot.pCurrent			= m_Slot.pData;
 	m_dwConsumedByte		= 0;
 	m_bValid				= true;

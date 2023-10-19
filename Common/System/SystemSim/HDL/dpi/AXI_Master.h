@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 10/18/2023 Wed (clonextop@gmail.com)
+// Rev.  : 10/19/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __AXI_MASTER_H__
 #define __AXI_MASTER_H__
@@ -41,14 +41,23 @@
 
 #define	MAXI_TIMEOUT_COUNT		50000
 
+typedef enum {
+	MAXI_STATUS_INIT,
+	MAXI_STATUS_SLAVE_REQUEST,
+	MAXI_STATUS_SLAVE_WAIT,
+	MAXI_STATUS_MEMORY,
+	MAXI_STATUS_DONE,
+} MAXI_STATUS;
+
 typedef struct {
-	WORD	ID;
-	WORD	SIZE;		// byte size
-	UINT64	ADDR;		// address
-	WORD	BEAT;		// beat count
-	WORD	LEN;		// length
-	DWORD	BURST;		// burst mode
-	DWORD	TimeOut;
+	WORD			ID;
+	WORD			SIZE;		// byte size
+	UINT64			ADDR;		// address
+	WORD			BEAT;		// beat count
+	WORD			LEN;		// length
+	DWORD			BURST;		// burst mode
+	MAXI_STATUS		status;		// current status
+	DWORD			TimeOut;	// timeout count
 } MAXI_DESC;
 
 typedef RoundQueue<MAXI_DESC, 4>		MAXI_QUEUE;
