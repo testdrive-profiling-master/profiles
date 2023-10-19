@@ -53,8 +53,16 @@ const char* g_sAXI_BURST[AXI_BURST_SIZE] = {
 
 BandwidthLimiter::BandwidthLimiter(void) : m_Sema(1)
 {
+	uint32_t	iBandwidth	= GetConfigInt("MAXI_BANDWIDTH");
+
+	if(!iBandwidth) iBandwidth = MAXI_BANDWIDTH;
+
+	if(iBandwidth) {
+		printf("*I: Total memory bandwidth is set to %dKB\n", iBandwidth);
+	}
+
 	m_Slot.pData			= NULL;
-	Initialize(0);		// initial : no limit
+	Initialize(iBandwidth);
 }
 
 BandwidthLimiter::~BandwidthLimiter(void)

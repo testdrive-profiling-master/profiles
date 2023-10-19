@@ -39,7 +39,7 @@
 #include "RoundQueue.h"
 #include "ChainList.h"
 
-#define	MAXI_TIMEOUT_COUNT		50000
+#define	MAXI_TIMEOUT_COUNT		100000
 
 typedef enum {
 	MAXI_STATUS_INIT,

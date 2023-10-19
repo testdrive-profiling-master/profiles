@@ -38,12 +38,17 @@
 #include "SimHDL.h"
 #include "SimTop.h"
 #include <time.h>		// for rand/srand
+#include <string>
+#include <filesystem>
+
+using namespace std;
 
 UINT64						g_lSimulationTime		= 0;		// global simulation timestamp
 static SimHDL*				__pSimHDL				= NULL;
 static SimControl*			__pSimControl			= NULL;
 static VerilatedContext*	__pContext				= NULL;
 static SimTop*				__pSimTop				= NULL;
+static char					__sEnvName[MAX_PATH]	= "SimHDL";
 bool (*DPI_Initialize)(void)						= NULL;
 void (*DPI_Finalize)(void)							= NULL;
 #ifndef SIMULATION_TOP_EX
@@ -66,6 +71,22 @@ static bool		g_bSimOutEnable			= true;
 #ifndef DEFAULT_INITIAL_CLOCK_VALUE
 #define DEFAULT_INITIAL_CLOCK_VALUE		0			// start default clock width '0'
 #endif
+
+
+static const char* GetCurrentFileName(void)
+{
+	static string sFileName;
+
+	if(!sFileName.length()) {
+		char sFullPath[4096];
+		GetModuleFileName(NULL, sFullPath, 4096);
+		std::filesystem::path p = sFullPath;
+		p.replace_extension("ini");
+		sFileName	= p.string();
+	}
+
+	return sFileName.c_str();
+}
 
 class SimHDL_imp : public SimHDL {
 public:
@@ -338,6 +359,40 @@ bool GetMemory(const char* sName, void*& pConfig, void*& pMemory)
 	if(!__pSimControl) return false;
 
 	return __pSimControl->GetMemory(sName, pConfig, pMemory);
+}
+
+const char* GetConfigString(const char* sKeyName, const char* sDefault)
+{
+	static char sEnv[4096];
+
+	if(!sKeyName) return sDefault;
+
+	GetPrivateProfileString("SimHDL", sKeyName, sDefault ? sDefault : "", sEnv, 4096, GetCurrentFileName());
+	return sEnv;
+}
+
+void SetConfigString(const char* sKeyName, const char* sData)
+{
+	if(!sKeyName) return;
+
+	WritePrivateProfileString("SimHDL", sKeyName, sData ? sData : "", GetCurrentFileName());
+}
+
+int GetConfigInt(const char* sKeyName, int iDefault)
+{
+	if(!sKeyName) return iDefault;
+
+	return GetPrivateProfileInt("SimHDL", sKeyName, iDefault, GetCurrentFileName());
+}
+
+void SetConfigInt(const char* sKeyName, int iData)
+{
+	char sData[MAX_PATH];
+
+	if(!sKeyName) return;
+
+	sprintf(sData, "%d", iData);
+	WritePrivateProfileString("SimHDL", sKeyName, sData, GetCurrentFileName());
 }
 
 void SimulationQuit(bool bError)

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 10/18/2023 Wed (clonextop@gmail.com)
+// Rev.  : 10/19/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __AXI_COMMON_H__
 #define __AXI_COMMON_H__
@@ -56,6 +56,10 @@ typedef enum {
 
 extern const char* g_sAXI_BRESP[AXI_RESP_SIZE];
 extern const char* g_sAXI_BURST[AXI_BURST_SIZE];
+
+#ifndef MAXI_BANDWIDTH
+#define	MAXI_BANDWIDTH		0	// default bandwidth(KB) = 0 (no limit)
+#endif//MAXI_BANDWIDTH
 
 class BandwidthLimiter {
 public:
