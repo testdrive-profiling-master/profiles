@@ -100,7 +100,11 @@ void MAXI::TouchAddress(MAXI_DESC* pDesc)
 
 		if(pDesc->BEAT) {	// 4KB boundary address crossing check
 			if((prev_addr ^ pDesc->ADDR) & (~(UINT64)(4096 - 1))) {
-				LOGW("Burst increase mode - 4KB address boundary crossing is detected.");
+#ifdef MAXI_4KB_BOUNDARY_CROSSING_AS_ERROR
+				LOGE("Burst increase mode - 4KB address(0x%llX) boundary crossing is detected.", pDesc->ADDR);
+#else
+				LOGW("Burst increase mode - 4KB address(0x%llX) boundary crossing is detected.", pDesc->ADDR);
+#endif
 			}
 		}
 	}
