@@ -559,15 +559,21 @@ function module:make_code(is_top)
 					while string.match(sHtml:at(iPos+iSize), "[0-9a-zA-Z_]") ~= nil do
 						iSize	= iSize + 1
 					end
-					local	i_name	= string.sub(sHtml.s,iPos + 1, iPos + iSize)
+
+					local	i_name		= string.sub(sHtml.s,iPos + 1, iPos + iSize)	-- expression name
+					local	i_org_name	= string.sub(sHtml.s,iPos + 3, iPos + iSize)	-- interface name
 					
-					-- delete previous expression
-					sHtml:erase(iPos, iSize)
-					
-					-- insert link
-					local	sLink	= "<a href=\"" .. module.__top.name .. "_defines.html#" .. i_name .. "\"  target=\"_" .. module.__top.name:upper() ..  "_DEFINES\"><font color=\"#F00000\"><b>" .. i_name .. "</font></b></a>"
-					sHtml:insert(iPos, sLink)
-					iPos	= iPos + #sLink
+					if (interface.find(i_org_name) ~= nil) then
+						-- delete previous expression
+						sHtml:erase(iPos, iSize)
+						
+						-- insert link
+						local	sLink	= "<a href=\"" .. module.__top.name .. "_defines.html#" .. i_name .. "\"  target=\"_" .. module.__top.name:upper() ..  "_DEFINES\"><font color=\"#F00000\"><b>" .. i_name .. "</font></b></a>"
+						sHtml:insert(iPos, sLink)
+						iPos	= iPos + #sLink
+					else
+						iPos	= iPos + iSize;
+					end
 				end
 
 				iPos	= iPos + 1
