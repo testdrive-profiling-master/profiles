@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 10/19/2023 Thu (clonextop@gmail.com)
+// Rev.  : 10/30/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "AXI_common.h"
 #include "AXI_Master.h"
@@ -94,9 +94,17 @@ void MAXI::TouchAddress(MAXI_DESC* pDesc)
 	case AXI_BURST_FIXED:
 		return;
 
-	case AXI_BURST_INCR:
+	case AXI_BURST_INCR: {
+		UINT64	prev_addr	= pDesc->ADDR;
 		pDesc->ADDR	+= pDesc->SIZE;
-		break;
+
+		if(pDesc->BEAT) {	// 4KB boundary address crossing check
+			if((prev_addr ^ pDesc->ADDR) & (~(UINT64)(1024 - 1))) {
+				LOGW("Burst increase mode - 4KB address boundary crossing is detected.");
+			}
+		}
+	}
+	break;
 
 	case AXI_BURST_WRAP: {
 		UINT64	dwMask	= (pDesc->SIZE * pDesc->LEN) - 1;
