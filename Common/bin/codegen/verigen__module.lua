@@ -271,6 +271,37 @@ function _V(s, v_start, v_end, v_step)
 end
 vfunction("_V", _V)
 
+function _PIPE(bit_width, name, source, en, default_value, clk, reset)
+	local	code	= String("reg	")
+	if type(bit_width) ~= "number" then
+		error("bit_width is not a number. : " .. name)
+	end
+	
+	if bit_width ~= 1 then
+		code.s	= code.s .. "[" .. (bit_width-1) .. ":0]	"
+	end
+	
+	code.s	= code.s .. name .. ";\n"
+	
+	code.s	= code.s ..
+		"always@(poesdge " .. clk .. ", negedge " .. reset .. ") begin\n" ..
+		"	if(!" .. reset .. ") begin\n" ..
+		"		" .. name	.. "	<= " .. default_value .. ";\n"
+	if en ~= nil then
+		code.s	= code.s ..
+			"	end else if(" .. en .. ") begin\n"
+	else
+		code.s	= code.s ..
+			"	end else begin\n"
+	end
+	code.s	= code.s ..
+		"		" .. name	.. "	<= " .. source .. ";\n" ..
+		"	end\n" ..
+		"end\n"
+		
+end
+vfunction("_PIPE", _PIPE)
+
 function module:add_code(s)
 	local	code	= String(s)
 	
@@ -305,12 +336,17 @@ function module.apply_code(filename)
 				break
 			end
 			
-			if s:CompareFront(":") then
+			local sTag	= s:Tokenize(" \t").s
+			
+			if sTag == "module" then
 				s:CutBack("//", true)	-- comment out
-				s:Trim(": \r\n")
+				s:Trim(" \t\r\n")
+				s:CutFront("module")
+				s:Trim(" \t")
 				
-				if (s:Length() > 0) and (s:CompareFront("-") == false) then
+				if (s:Length() > 0) then
 					local	bEnable		= true
+					
 					add_code(cur_module, codes)
 					if s:CompareBack(")") and (s:find("(", 0) > 0) then
 						local	sOption	= String(s.s)
