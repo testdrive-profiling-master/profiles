@@ -12,6 +12,7 @@ INC				:=
 
 CDEFS			:= -s
 CFLAGS			:=
+EXTRA_CFLAGS	:= -O3 -std=c++14 -DNDEBUG
 
 #-------------------------------------------------
 # common document config

@@ -59,7 +59,7 @@ using namespace astyle;
 ostream *_err = &cerr;
 string _suffix = ".orig";
 
-const string _version = "1.21";
+const string _version = "1.23";
 bool shouldBackupFile = true;
 
 // --------------------------------------------------------------------------
@@ -71,7 +71,7 @@ void SetColor(unsigned short ForeColor=3,unsigned short BackGroundColor=0)
         HANDLE hCon = GetStdHandle(STD_OUTPUT_HANDLE);
         SetConsoleTextAttribute(hCon,ForeColor|(BackGroundColor*16));
     #endif
-};
+}
 void error(const char *why, const char* what)
 {
     SetColor(12,0);
@@ -285,7 +285,7 @@ void importOptions(istream &in, vector<string> &optionsVector)
     char ch;
     string currentToken;
 
-    while (in)
+    while (in.peek() != istream::traits_type::eof())
     {
         currentToken = "";
         do
@@ -294,12 +294,15 @@ void importOptions(istream &in, vector<string> &optionsVector)
 
             // treat '#' as line comments
             if (ch == '#')
-                while (in)
+            {
+                while (in.peek() != istream::traits_type::eof())
                 {
                     in.get(ch);
                     if (ch == '\n')
                         break;
                 }
+                continue;
+            }
 
             // break options on spaces, tabs or new-lines
             if (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r')
@@ -308,7 +311,7 @@ void importOptions(istream &in, vector<string> &optionsVector)
                 currentToken.append(1, ch);
 
         }
-        while (in);
+        while (in.peek() != istream::traits_type::eof());
 
         if (currentToken.length() != 0)
             optionsVector.push_back(currentToken);
@@ -333,9 +336,7 @@ bool parseOptions(ASFormatter &formatter,
             ok &= parseOption(formatter, arg.substr(2), errorInfo);
         else if (arg[0] == '-')
         {
-            int i;
-
-            for (i=1; i < arg.length(); ++i)
+            for (unsigned int i=1; i < arg.length(); ++i)
             {
                 if (isalpha(arg[i]) && i > 1)
                 {
@@ -357,33 +358,44 @@ bool parseOptions(ASFormatter &formatter,
     return ok;
 }
 
-void printHelpTitle()
+void printTitle()
 {
     cout << endl;
 
     SetColor(10,0);
-    cout << "iStyle " << _version;
+    cout << "iStyle " << _version << endl;
 
     SetColor(2,0);
-    cout <<  " (Fast and Free Automatic Formatter for Verilog Source Code)\n";
-    cout << "               (Created by haimag, Report Bugs: haimag@gmail.com)\n";
-    cout << "               (Thanks to Tal Davidson & Astyle)\n";
-    cout << "               (Modified by HyungKi Jeong (clonextop@gmail.com))\n";
+    cout << "  Fast and Free Automatic Formatter for Verilog Source Code\n";
+    cout << "    Created by haimag\n";
+    cout << "    Thanks to Tal Davidson & Astyle\n";
+    cout << "    Report bugs https://github.com/thomasrussellmurphy/istyle-verilog-formatter/issues\n";
+    cout << "                (Modified by HyungKi Jeong (clonextop@gmail.com))\n";
     cout << endl;
     SetColor(7,0);
-    //~ cout << endl;
 }
+
+void printHelpBase()
+{
+    printTitle();
+    SetColor(14,0);
+
+    cout << endl;
+    cout << "Usage:\n";
+    cout << "    iStyle [options] Foo.v  B*r.v  [...]\n";
+    cout << "    OR, use stdin/stdout\n";
+    cout << "    iStyle [options] <Foo.v >Foo_formatted.v\n";
+    cout << endl;
+}
+
 void printHelpSimple(int isGetchar=0)
 {
+    printHelpBase();
 
-    SetColor(14,0);
-    cout << endl;
-    cout << "Usage  :  iStyle [options] Foo.v  B*r.v  [...]\n";
-    cout << endl;
     SetColor(7,0);
     cout << "For help on options, type 'iStyle -h'" ;
 
-    if(isGetchar ==1 )
+    if(isGetchar == 1)
     {
         cout << ", Press ENTER to exit." << endl;
         getchar();
@@ -397,11 +409,8 @@ void printHelpSimple(int isGetchar=0)
 
 void printHelpFull()
 {
+    printHelpBase();
 
-    SetColor(14,0);
-    cout << endl;
-    cout << "Usage  :  iStyle [options] Foo.v  B*r.v  [...]\n";
-    cout << endl;
     SetColor(7,0);
     cout << "When indenting a specific file, the resulting indented file RETAINS the\n";
     cout << "original file-name. The original pre-indented file is renamed, with a\n";
@@ -555,6 +564,7 @@ void printHelpFull()
     SetColor(7,0);
     cout << endl;
 }
+
 bool isWriteable( char const * const filename )
 {
     std::ifstream in(filename);
@@ -573,6 +583,17 @@ bool isWriteable( char const * const filename )
     out.close();
     return true;
 }
+
+void formatUsingStreams(ASFormatter &formatter, istream *in, ostream *out) {
+    formatter.init(new ASStreamIterator(in));
+    while (formatter.hasMoreLines())
+    {
+        *out << formatter.nextLine();
+        if (formatter.hasMoreLines())
+            *out << endl;
+    }
+}
+
 int main(int argc, char *argv[])
 {
     ASFormatter formatter;
@@ -586,8 +607,6 @@ int main(int argc, char *argv[])
 
     _err = &cerr;
     _suffix = ".orig";
-
-    if(argc==1) printHelpTitle();
 
     // manage flags
     for (int i=1; i<argc; i++)
@@ -660,6 +679,7 @@ int main(int argc, char *argv[])
             if (!ok)
             {
                 printHelpSimple();
+                exit(1);
             }
         }
     }
@@ -686,13 +706,15 @@ int main(int argc, char *argv[])
     // if no files have been given, use cin for input and cout for output
     if (fileNameVector.empty() )
     {
-        printHelpSimple(1);
-
+        formatUsingStreams(formatter, &cin, &cout);
     }
     else
     {
+        // Running in file-based mode, so can provide information on stdout
+        printTitle();
+
         // indent the given files
-        for (int i=0; i<fileNameVector.size(); i++)
+        for (unsigned int i=0; i<fileNameVector.size(); i++)
         {
             string originalFileName = fileNameVector[i];
             string inFileName = originalFileName + _suffix;
@@ -727,13 +749,7 @@ int main(int argc, char *argv[])
                 exit(1);
             }
 
-            formatter.init( new ASStreamIterator(&in) );
-            while (formatter.hasMoreLines() )
-            {
-                out << formatter.nextLine();
-                if (formatter.hasMoreLines())
-                    out << endl;
-            }
+            formatUsingStreams(formatter, &in, &out);
 
             out.flush();
             out.close();

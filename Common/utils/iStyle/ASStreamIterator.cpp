@@ -32,6 +32,7 @@
 #include <istream>
 //~ #include <strstream>
 
+
 #include <sstream>
 
 #ifdef USES_NAMESPACE
@@ -76,7 +77,7 @@ string ASStreamIterator::nextLine()
         str = "Could not read line " ;
         error(str.c_str(), "(too long?)");
     }
-    if (buffer[buffer.size() - 1] == '\r')
+    if (!buffer.empty() && buffer[buffer.size() - 1] == '\r')
     {
         buffer.erase(buffer.size() - 1);
     }

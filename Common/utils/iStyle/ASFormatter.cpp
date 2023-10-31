@@ -40,7 +40,6 @@
 #include <algorithm>
 #include <iostream>
 
-
 #define INIT_CONTAINER(container, value)     {if ( (container) != NULL ) delete (container); (container) = (value); }
 #define DELETE_CONTAINER(container)          {if ( (container) != NULL ) delete (container) ; }
 #define IS_A(a,b)                            ( ((a) & (b)) == (b))
@@ -50,7 +49,6 @@ using namespace std;
 namespace astyle
 {
 #endif
-
 
 bool ASFormatter::calledInitStatic = false;
 vector<const string*> ASFormatter::headers;
@@ -109,7 +107,6 @@ void ASFormatter::staticInit()
     headers.push_back(&AS_CASEZ);
     headers.push_back(&AS_CASEX);
 
-
     headers.push_back(&AS_INITIAL);
     headers.push_back(&AS_FOREVER);
 
@@ -117,7 +114,8 @@ void ASFormatter::staticInit()
 
     headers.push_back(&AS_ENDTASK      );
     headers.push_back(&AS_ENDPRIMITIVE );
-    //headers.push_back(&AS_ENDMODULE    );
+    headers.push_back(&AS_ENDMODULE    );
+	headers.push_back(&AS_ENDGENERATE  );
     headers.push_back(&AS_ENDFUNCTION  );
 
     nonParenHeaders.push_back(&AS_INITIAL);
@@ -127,7 +125,8 @@ void ASFormatter::staticInit()
     nonParenHeaders.push_back(&AS_ENDCASE      );
     nonParenHeaders.push_back(&AS_ENDTASK      );
     nonParenHeaders.push_back(&AS_ENDPRIMITIVE );
-    //nonParenHeaders.push_back(&AS_ENDMODULE    );
+    nonParenHeaders.push_back(&AS_ENDMODULE    );
+	nonParenHeaders.push_back(&AS_ENDGENERATE  );
     nonParenHeaders.push_back(&AS_ENDFUNCTION  );
 
     //add by renqh
@@ -155,6 +154,8 @@ void ASFormatter::staticInit()
     operators.push_back(&AS_EQUAL);
     operators.push_back(&AS_NOT_EQUAL);
     operators.push_back(&AS_GR_EQUAL);
+    operators.push_back(&AS_INDEX_ADD);
+    operators.push_back(&AS_INDEX_MINUS);
 
     operators.push_back(&AS_GR_GR);
     operators.push_back(&AS_LS_EQUAL);
@@ -164,6 +165,7 @@ void ASFormatter::staticInit()
     operators.push_back(&AS_AND);
     operators.push_back(&AS_OR);
 
+    operators.push_back(&AS_EXP);
     operators.push_back(&AS_PLUS);
     operators.push_back(&AS_MINUS);
     operators.push_back(&AS_MULT);
@@ -181,7 +183,6 @@ void ASFormatter::staticInit()
     operators.push_back(&AS_BIT_XOR);
 
     operators.push_back(&AS_COMMA);
-
 
     verilogBlockBegin.push_back(&AS_FORK      );
     verilogBlockBegin.push_back(&AS_TABLE     );
@@ -287,7 +288,6 @@ string ASFormatter::nextLine()
 
         vBlockBegin = NULL;
         vBlockEnd   = NULL;
-
 
         if (shouldReparseCurrentChar)
         {
@@ -407,7 +407,6 @@ string ASFormatter::nextLine()
         if (currentChar == PREPROCESSOR_CHAR && ( findHeader(preprocessorHeaders)!=NULL))
             isInPreprocessor = true;
 
-
         if (isInPreprocessor)
         {
             appendCurrentChar();
@@ -450,7 +449,7 @@ string ASFormatter::nextLine()
             // But treat else if() as a special case which should not be broken!
             if (shouldBreakOneLineStatements)
             {
-                // if may break 'else if()'s, ythen simply break the line
+                // if may break 'else if()'s, then simply break the line
                 if (shouldBreakElseIfs)
                     isInLineBreak = true;
                 else
@@ -465,7 +464,6 @@ string ASFormatter::nextLine()
 
                     if (!isInElseIf)
                         isInLineBreak = true;  ////BUGFIX: SHOULD NOT BE breakLine() !!!
-
 
                     // add by renqh, insert 'begin' , changed '   if(1) a; ' to ' if(1) begin a;
                     if(shouldPadBlocks && !isInElseIf )
@@ -509,9 +507,24 @@ string ASFormatter::nextLine()
             }
         }
 
+        if (isSequenceReached(AS_OPEN_ATTRIBUTES))
+        {
+            appendSequence(AS_OPEN_ATTRIBUTES);
+            if (shouldPadOperators)
+                appendSpacePad();
+            goForward(1);
+            continue;
+        }
+        else if (isSequenceReached(AS_CLOSE_ATTRIBUTES))
+        {
+            if (shouldPadOperators)
+                appendSpacePad();
+            appendSequence(AS_CLOSE_ATTRIBUTES);
+            appendSpacePad();
+            goForward(1);
+            continue;
+        }
         //handle verilogBlock +
-
-
 
         if (currentChar == '{' )
         {
@@ -527,7 +540,7 @@ string ASFormatter::nextLine()
         {
             if(currentChar=='e' || currentChar=='j' ) // join end endtable endspecify
             {
-                vBlockEnd= findHeader(verilogBlockEnd);
+                vBlockEnd = findHeader(verilogBlockEnd);
                 if (vBlockEnd )
                 {
                     currentChar = '}';
@@ -720,7 +733,6 @@ string ASFormatter::nextLine()
             continue;
         }
 
-
         //}
 
         if (previousNonWSChar == '}' || currentChar == ';')
@@ -766,8 +778,6 @@ string ASFormatter::nextLine()
                 passedColon = true;
             }
         }
-
-
 
         if (currentChar == '?')
         {
@@ -875,7 +885,6 @@ string ASFormatter::nextLine()
 
 }
 
-
 /**
 * check if there are any indented lines ready to be read by nextLine()
 *
@@ -914,7 +923,6 @@ void ASFormatter::setBracketFormatMode(BracketMode mode)
 {
     bracketFormatMode = mode;
 }
-
 
 /**
  * set 'else if()' breaking mode
@@ -990,7 +998,6 @@ void ASFormatter::setTabSpaceConversionMode(bool state)
     shouldConvertTabs = state;
 }
 
-
 /**
  * set option to break unrelated blocks of code with empty lines.
  *
@@ -1039,7 +1046,7 @@ void ASFormatter::goForward(int i)
 *
 * @return     the next unread character.
 */
-char ASFormatter::peekNextChar() const
+char ASFormatter::peekNextChar(const bool count_white_space) const
 {
     int peekNum = charNum + 1;
     int len = currentLine.length();
@@ -1048,7 +1055,7 @@ char ASFormatter::peekNextChar() const
     while (peekNum < len)
     {
         ch = currentLine[peekNum++];
-        if (!isWhiteSpace(ch))
+        if (count_white_space || !isWhiteSpace(ch))
             return ch;
     }
 
@@ -1114,8 +1121,7 @@ bool ASFormatter::getNextChar()
             previousCommandChar = previousNonWSChar;
     }
 
-
-    int currentLineLength = currentLine.length();
+    unsigned int currentLineLength = currentLine.length();
 
     if (charNum+1 < currentLineLength
             && (!isWhiteSpace(peekNextChar()) || isInComment || isInLineComment))
@@ -1177,7 +1183,7 @@ bool ASFormatter::getNextChar()
 */
 void ASFormatter::trimNewLine()
 {
-    int len = currentLine.length();
+    unsigned int len = currentLine.length();
     charNum = 0;
 
     if (isInComment || isInPreprocessor)
@@ -1277,7 +1283,8 @@ void ASFormatter::appendSequence(const string &sequence, bool canBreakLine)
 void ASFormatter::appendSpacePad()
 {
     int len = formattedLine.length();
-    if (len == 0 || !isWhiteSpace(formattedLine[len-1]))
+    if (peekNextChar(true) != ' '
+        && (len == 0 || !isWhiteSpace(formattedLine[len-1])))
         formattedLine.append(1, ' ');
 }
 
@@ -1322,8 +1329,6 @@ BracketType ASFormatter::getBracketType() const
     return COMMAND_TYPE;
 }
 
-
-
 /**
  * check if the currently reached '-' character is
  * a urinary minus
@@ -1339,7 +1344,6 @@ bool ASFormatter::isUrinaryMinus() const
              && previousCommandChar != ')'
              && previousCommandChar != ']' );
 }
-
 
 /**
  * check if the currently reached '-' or '+' character is
@@ -1437,7 +1441,6 @@ bool ASFormatter::isOneLineBlockReached() const
     return false;
 }
 
-
 /**
  * check if one of a set of headers has been reached in the
  * current position of the current line.
@@ -1451,10 +1454,7 @@ const string *ASFormatter::findHeader(const vector<const string*> &headers, bool
     return ASBeautifier::findHeader(currentLine, charNum, headers, checkBoundry);
 }
 
-
-
 #ifdef USES_NAMESPACE
 }
 #endif
-
 

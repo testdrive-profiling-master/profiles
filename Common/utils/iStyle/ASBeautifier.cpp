@@ -1,5 +1,4 @@
 // $Id: ASBeautifier.cpp,v 1.4 2004/02/06 08:37:56 devsolar Exp $
-// $Id: ASBeautifier.cpp,v 1.4 2004/02/06 08:37:56 devsolar Exp $
 // --------------------------------------------------------------------------
 //
 // Copyright (c) 1998,1999,2000,2001,2002 Tal Davidson. All rights reserved.
@@ -41,16 +40,12 @@
 #include <algorithm>
 #include <iostream>
 
-
 #define INIT_CONTAINER(container, value)     {if ( (container) != NULL ) delete (container); (container) = (value); }
 #define DELETE_CONTAINER(container)          {if ( (container) != NULL ) delete (container) ; }
 
 #ifdef USES_NAMESPACE
 using namespace std;
 #endif
-
-
-
 
 #ifdef USES_NAMESPACE
 namespace astyle
@@ -65,7 +60,6 @@ vector<const string*> ASBeautifier::nonParenHeaders;
 vector<const string*> ASBeautifier::verilogBlockBegin;
 vector<const string*> ASBeautifier::verilogBlockEnd;
 vector<const string*> ASBeautifier::preprocessorHeaders;
-vector<const string*> ASBeautifier::preprocessorDifines;
 
 /*
 * initialize the static vars
@@ -95,42 +89,44 @@ void ASBeautifier::initStatic()
     verilogBlockBegin.push_back(&AS_CASE      );
     verilogBlockBegin.push_back(&AS_CASEX     );
     verilogBlockBegin.push_back(&AS_CASEZ     );
+	verilogBlockBegin.push_back(&AS_GENERATE  );
     verilogBlockBegin.push_back(&AS_FUNCTION  );
-    verilogBlockBegin.push_back(&AS_GENERATE  );
     verilogBlockBegin.push_back(&AS_FORK      );
     verilogBlockBegin.push_back(&AS_TABLE     );
     verilogBlockBegin.push_back(&AS_TASK      );
     verilogBlockBegin.push_back(&AS_SPECIFY   );
     verilogBlockBegin.push_back(&AS_PRIMITIVE );
-    //verilogBlockBegin.push_back(&AS_MODULE    );
+    verilogBlockBegin.push_back(&AS_MODULE    );
     verilogBlockBegin.push_back(&AS_BEGIN     );
 
     verilogBlockEnd.push_back(&AS_ENDCASE      );
+	verilogBlockEnd.push_back(&AS_ENDGENERATE  );
     verilogBlockEnd.push_back(&AS_ENDFUNCTION  );
-    verilogBlockEnd.push_back(&AS_ENDGENERATE  );
     verilogBlockEnd.push_back(&AS_JOIN         );
     verilogBlockEnd.push_back(&AS_ENDTASK      );
     verilogBlockEnd.push_back(&AS_ENDTABLE     );
     verilogBlockEnd.push_back(&AS_ENDSPECIFY   );
     verilogBlockEnd.push_back(&AS_ENDPRIMITIVE );
-    //verilogBlockEnd.push_back(&AS_ENDMODULE    );
+    verilogBlockEnd.push_back(&AS_ENDMODULE    );
     verilogBlockEnd.push_back(&AS_END          );
 
     preprocessorHeaders.push_back(&PRO_CELLDEFINE           );
     preprocessorHeaders.push_back(&PRO_DEFAULT_NETTYPE      );
     preprocessorHeaders.push_back(&PRO_DEFINE               );
-    preprocessorHeaders.push_back(&PRO_ELSE);
+    preprocessorHeaders.push_back(&PRO_ELSE                 );
+    preprocessorHeaders.push_back(&PRO_ELSIF                );
     preprocessorHeaders.push_back(&PRO_ENDCELLDEFINE        );
     preprocessorHeaders.push_back(&PRO_ENDIF                );
+    preprocessorHeaders.push_back(&PRO_ENDPROTECT           );
     preprocessorHeaders.push_back(&PRO_IFDEF                );
+    preprocessorHeaders.push_back(&PRO_IFNDEF               );
     preprocessorHeaders.push_back(&PRO_INCLUDE              );
     preprocessorHeaders.push_back(&PRO_NOUNCONNECTED_DRIVE  );
+    preprocessorHeaders.push_back(&PRO_PROTECT              );
     preprocessorHeaders.push_back(&PRO_RESETALL             );
     preprocessorHeaders.push_back(&PRO_TIMESCALE            );
     preprocessorHeaders.push_back(&PRO_UNCONNECTED_DRIVE    );
     preprocessorHeaders.push_back(&PRO_UNDEF                );
-
-    preprocessorDifines.push_back(&PRO_IMPORT               );
 }
 
 /**
@@ -197,7 +193,7 @@ ASBeautifier::ASBeautifier(const ASBeautifier &other)
     inStatementIndentStack = new vector<int>;
     *inStatementIndentStack = *other.inStatementIndentStack;
 
-    inStatementIndentStackSizeStack = new vector<int>;
+    inStatementIndentStackSizeStack = new vector<unsigned int>;
     *inStatementIndentStackSizeStack = *other.inStatementIndentStackSizeStack;
 
     parenIndentStack = new vector<int>;
@@ -292,7 +288,7 @@ void ASBeautifier::init()
     INIT_CONTAINER( blockParenDepthStack, new vector<int> );
 
     INIT_CONTAINER( inStatementIndentStack, new vector<int> );
-    INIT_CONTAINER( inStatementIndentStackSizeStack, new vector<int> );
+    INIT_CONTAINER( inStatementIndentStackSizeStack, new vector<unsigned int> );
     inStatementIndentStackSizeStack->push_back(0);
     INIT_CONTAINER( parenIndentStack, new vector<int> );
 
@@ -321,11 +317,7 @@ void ASBeautifier::init()
     isInDefineDefinition = false;
     defineTabCount = 0;
 
-
 }
-
-
-
 
 /**
 * indent using one tab per indentation
@@ -418,7 +410,7 @@ void ASBeautifier::setBlockIndent(bool state)
 */
 void ASBeautifier::setSwitchIndent(bool state)
 {
-    ;// switchIndent = state;
+    ;//switchIndent = state;
 }
 
 /**
@@ -530,8 +522,6 @@ string ASBeautifier::beautify(const string &originalLine)
     vBlockBegin = NULL;
     vBlockEnd   = NULL;
 
-
-
     // handle and remove white spaces around the line:
     // If not in comment, first find out size of white space before line,
     // so that possible comments starting in the line continue in
@@ -546,14 +536,15 @@ string ASBeautifier::beautify(const string &originalLine)
     }
     else
     {
-        int trimSize;
+        // Search to determine the size to trim
+        unsigned int trimSize;
+
         for (trimSize=0;
                 trimSize < originalLine.length() && trimSize<leadingWhiteSpaces && originalLine[trimSize] <= 0x20 ;
                 trimSize++)
             ;
         line = originalLine.substr(trimSize);
     }
-
 
     if (line.length() == 0)
     {
@@ -566,14 +557,11 @@ string ASBeautifier::beautify(const string &originalLine)
     // handle preprocessor commands
     bool isPreprocesor = false;
     if(line[0] == PREPROCESSOR_CHAR)  isPreprocesor= (findHeader(line, 0, preprocessorHeaders)!=NULL);
-    else if(findHeader(line, 0, preprocessorDifines)!=NULL) isPreprocesor = true;
-
     if ( !isInComment && (isPreprocesor || backslashEndsPrevLine))
     {
         if (line[0] == PREPROCESSOR_CHAR)
         {
             string preproc = trim(string(line.c_str() + 1));
-
 
             // When finding a multi-lined #define statement, the original beautifier
             // 1. sets its isInDefineDefinition flag
@@ -624,7 +612,7 @@ string ASBeautifier::beautify(const string &originalLine)
 
             else if (preproc.COMPARE(0, 5, string("endif")) == 0)
             {
-                int stackLength;
+                unsigned int stackLength;
                 ASBeautifier *beautifier;
 
                 if (!waitingBeautifierStackLengthStack->empty())
@@ -717,7 +705,6 @@ string ASBeautifier::beautify(const string &originalLine)
 
         outBuffer.append(1, ch);
 
-
         if (isWhiteSpace(ch))
             continue;
 
@@ -790,10 +777,10 @@ string ASBeautifier::beautify(const string &originalLine)
         // join end endtable endspecify
         if(ch == '{')        ch = '[';
         else if(ch == '}')   ch = ']';
-        else if(ch=='e' || ch=='j' )
+        else {
               vBlockEnd   = findHeader(line, i, verilogBlockEnd);
-        else if(ch=='c' ||ch=='f' || ch=='t' || ch=='s'|| ch=='m' || ch=='p' ||ch=='b' )
               vBlockBegin = findHeader(line, i, verilogBlockBegin);
+		}
 
         if(vBlockEnd != NULL)
         {
@@ -855,7 +842,7 @@ string ASBeautifier::beautify(const string &originalLine)
 
                 if (!inStatementIndentStackSizeStack->empty())
                 {
-                    int previousIndentStackSize = inStatementIndentStackSizeStack->back();
+                    unsigned int previousIndentStackSize = inStatementIndentStackSizeStack->back();
                     inStatementIndentStackSizeStack->pop_back();
                     while (previousIndentStackSize < inStatementIndentStack->size())
                         inStatementIndentStack->pop_back();
@@ -932,7 +919,6 @@ string ASBeautifier::beautify(const string &originalLine)
                     }
                 }
 
-
                 headerStack->push_back(newHeader);
                 if (indexOf(nonParenHeaders, newHeader) == -1)
                 {
@@ -982,7 +968,6 @@ string ASBeautifier::beautify(const string &originalLine)
         if ((ch == ';'  || (parenDepth>0 && ch == ','))  && !inStatementIndentStackSizeStack->empty())
             while (inStatementIndentStackSizeStack->back() + (parenDepth>0 ? 1 : 0)  < inStatementIndentStack->size())
                 inStatementIndentStack->pop_back();
-
 
         // handle ends of statements
         if ( (ch == ';' && parenDepth == 0) || ch == '}'/* || (ch == ',' && parenDepth == 0)*/)
@@ -1074,15 +1059,12 @@ string ASBeautifier::beautify(const string &originalLine)
         }*/
     }
 
-
     // indent #define lines with one less tab
     //if (isInDefine)
     //    tabCount -= defineTabCount-1;
 
-
     vBlockBegin = findHeader(outBuffer, 0, verilogBlockBegin);
     vBlockEnd   = findHeader(outBuffer, 0, verilogBlockEnd);
-
 
     if (!lineStartsInComment
             && !blockIndent
@@ -1116,7 +1098,6 @@ string ASBeautifier::beautify(const string &originalLine)
         if (vBlockEnd!=NULL||vBlockBegin!=NULL)
             tabCount++;
 
-
     if (isInDefine)
     {
         if (outBuffer[0] == PREPROCESSOR_CHAR)
@@ -1143,7 +1124,6 @@ string ASBeautifier::beautify(const string &originalLine)
     if (tabCount < 0)
         tabCount = 0;
 
-
     // finally, insert indentations into begining of line
 
     prevFinalLineSpaceTabCount = spaceTabCount;
@@ -1162,7 +1142,6 @@ string ASBeautifier::beautify(const string &originalLine)
 
     return outBuffer;
 }
-
 
 string ASBeautifier::preLineWS(int spaceTabCount, int tabCount)
 {
@@ -1213,8 +1192,6 @@ void ASBeautifier::registerInStatementIndent(const string &line, int i, int spac
     if (i + nextNonWSChar > maxInStatementIndent)
         inStatementIndent =  indentLength*2 + spaceTabCount;
 
-
-
     if (!inStatementIndentStack->empty() &&
             inStatementIndent < inStatementIndentStack->back())
         inStatementIndent = inStatementIndentStack->back();
@@ -1264,7 +1241,6 @@ int ASBeautifier::getNextProgramCharDistance(const string &line, int i)
     return charDistance;
 }
 
-
 /**
 * check if a specific character can be used in a legal variable/method/class name
 *
@@ -1303,7 +1279,6 @@ bool ASBeautifier::isInVerilogNum(const string &line,int i) const
     }
     return isNum;
 }
-
 
 /**
 * check if a specific line position contains a header, out of several possible headers.
@@ -1366,7 +1341,6 @@ const string *ASBeautifier::findHeader(const string &line, int i, const vector<c
     return NULL;
 }
 
-
 /**
 * check if a specific character can be used in a legal variable/method/class name
 *
@@ -1421,5 +1395,4 @@ string ASBeautifier::trim(const string &str)
 #ifdef USES_NAMESPACE
 }
 #endif
-
 
