@@ -236,10 +236,10 @@ and the second one adds the two files below through the module.apply_code() func
 
 @<b>[src/__wrapper.sv]@</b>
 ```#verilog
-:---------------------------------------------------------------------
-:test_core
+//#---------------------------------------------------------------------
+module test_core
 
-:---------------------------------------------------------------------
+//#---------------------------------------------------------------------
 :core_if
 $set_param("CORE_ID", "0")
 $add_interface(core_i.inst, "if_inst", "m")
@@ -248,14 +248,14 @@ $add_interface(core_busy, nil, "m")
 assign	core_busy	= 1'b0;
 
 
-:---------------------------------------------------------------------
-:core_ex
+//#---------------------------------------------------------------------
+module core_ex
 $add_interface(core_i.inst, "if_inst", "s")
 $add_interface(core_i.inst, "ex_inst", "m")
 
 
-:---------------------------------------------------------------------
-:core_wb
+//#---------------------------------------------------------------------
+module core_wb
 $add_interface(core_i.inst, "ex_inst", "s")
 ```
 :::NoteHeading
@@ -265,8 +265,8 @@ the same interfaces declared in two different modules are automatically connecte
 
 @<b>[src/__wrapper.sv]@</b>
 ```#verilog
-:---------------------------------------------------------------------
-:test_wrapper
+//#---------------------------------------------------------------------
+module test_wrapper
 wire	$RANGE(config.core_size)	core_busy_all;
 
 ${
@@ -278,24 +278,24 @@ ${
 	__m:get_module("slave_ctrl"):set_port("core_busy", "|core_busy_all")
 }
 
-:---------------------------------------------------------------------
-:slave_ctrl
+//#---------------------------------------------------------------------
+module slave_ctrl
 $set_param("BASE_ADDR", "32'h10000000")
 $add_interface(bus.apb, "s_apb", "m")
 $add_interface(bus.apb, "s_apb_0", "m")
 
-:---------------------------------------------------------------------
-:mem_ctrl
+//#---------------------------------------------------------------------
+module mem_ctrl
 $add_interface(bus.maxi4, "maxi", "m")
 
-:---------------------------------------------------------------------
-:reg_ctrl
+//#---------------------------------------------------------------------
+module reg_ctrl
 $add_interface(core_busy, nil, "s")
 ```
 :::NoteHeading
 You can connect directly through the "@<bookmark:module_i:set_param>()" and "@<bookmark:module_i:set_port>()" functions without automatically connecting interfaces or parameters.
 
-After declaring ":>@<color:FF0000>module_name>@</color>" in the added .sv file, the file can be described using both Verilog and Lua grammars. \
+After declaring "@<color:0000FF>module@</color> @<color:FF0000><module_name>@</color>"(The use of "@<color:0000FF>endmodule@</color>" can be omitted.) in the added .sv file, the file can be described using both Verilog and Lua grammars. \
 You can either declare I/O via @@set_param() function and @@@<bookmark:module:add_interface>() function, respectively, or use Verilog syntax directly.
 In addition, if you want to directly access a Lua variable or function, you can access it with $(*), or you can execute a Lua statement by describing it with ${*}.
 

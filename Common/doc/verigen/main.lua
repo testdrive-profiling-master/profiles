@@ -14,6 +14,7 @@ property["Security_Level"]			= "BSD License."
 AddRevision("1.00",	2023, 5,  8,	"Initial relase")
 AddRevision("1.01",	2023, 6,  8,	"add interface:set_top_uppercase function")
 AddRevision("1.02",	2023, 6,  12,	"add default clock, add vfunctions ($LOG2, $RANGE, $DEMUX_BY_EN, $MULTICYCLE)")
+AddRevision("1.03",	2023, 11, 2,	"fix module definition")
 
 -- Term 추가
 AddTerm("TestDrive", "TestDrive Profiling Master (@<link:https://testdrive-profiling-master.github.io/>)")
