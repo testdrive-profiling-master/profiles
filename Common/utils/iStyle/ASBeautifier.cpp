@@ -1033,7 +1033,7 @@ string ASBeautifier::beautify(const string &originalLine)
                 isInStatement=false;
             continue;
         }
-        // Handle mult line assign : 불필요한 라인 띄어쓰기
+        // Handle mult line assign : Unnecessary line spacing...!!!
         /*if (!isInStatement && i==0 && parenDepth == 0 && isInCase==0)
         {
             int pos =0;

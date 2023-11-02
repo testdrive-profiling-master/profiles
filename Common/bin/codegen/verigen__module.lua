@@ -324,6 +324,7 @@ function module.apply_code(filename)
 				code:TrimLeft("\r\n")
 				code:TrimRight(" \t\r\n")
 				code:Replace("\r", "", true)
+				code:Replace("\n\n\n", "\n\n", true)	-- all 3~ empty lines to 2 empty line.
 				m:add_code(code.s .. "\n")
 			end
 			code:clear()
@@ -336,7 +337,14 @@ function module.apply_code(filename)
 				break
 			end
 			
-			local sTag	= s:Tokenize(" \t").s
+			do	-- '//#' 으로 시작하는 주석 처리는 유지하지 않는다.
+				local iPos = s:find("//#", 0)
+				if iPos >= 0 then
+					s:erase(iPos, -1)
+				end
+			end
+			
+			local sTag	= s:Tokenize(" \t\r\n").s
 			
 			if sTag == "module" then
 				s:CutBack("//", true)	-- comment out
@@ -347,7 +355,7 @@ function module.apply_code(filename)
 				if (s:Length() > 0) then
 					local	bEnable		= true
 					
-					add_code(cur_module, codes)
+					add_code(cur_module, codes) -- flush previous codes
 					if s:CompareBack(")") and (s:find("(", 0) > 0) then
 						local	sOption	= String(s.s)
 						
@@ -375,6 +383,9 @@ function module.apply_code(filename)
 						cur_module	= nil
 					end
 				end
+			elseif sTag == "endmodule" then
+				add_code(cur_module, codes)
+				cur_module	= nii
 			else
 				codes:Append(s.s)
 			end

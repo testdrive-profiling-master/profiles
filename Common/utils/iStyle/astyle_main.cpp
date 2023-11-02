@@ -711,7 +711,7 @@ int main(int argc, char *argv[])
     else
     {
         // Running in file-based mode, so can provide information on stdout
-        printTitle();
+        //printTitle();	// no title out when running!
 
         // indent the given files
         for (unsigned int i=0; i<fileNameVector.size(); i++)
