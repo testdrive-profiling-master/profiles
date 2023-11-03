@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : System manager
-// Rev.  : 3/20/2023 Mon (clonextop@gmail.com)
+// Rev.  : 11/3/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "BuildAutomation.h"
 #include "Utils.h"
@@ -132,46 +132,50 @@ void BuildAutomation::DoCheck(DWORD command, LPCTSTR sFileName)
 			m_pDoc->KillTimer(id + m_dwBuildCommandStart);
 
 		CString sDir(sFileName);
-		{	// get directory only
+		{
+			// get directory only
 			int iPos	= sDir.ReverseFind('\\');
-			if(iPos>=0) sDir.Delete(iPos + 1, -1);
+
+			if(iPos >= 0) sDir.Delete(iPos + 1, -1);
 			else sDir.clear();
 		}
-		if(!IsFileExisted(sDir + ".no_touch")) {
-		{
-			CString sName(sFileName);
 
-			if(m_sAStyle.GetAt(0) && m_sAStyle.GetAt(0) != ' ' &&
-			   (sName.Find(_T(".h"), sName.GetLength() - 2) > 0 ||
-				sName.Find(_T(".c"), sName.GetLength() - 2) > 0 ||
-				sName.Find(_T(".cpp"), sName.GetLength() - 4) > 0 ||
-				sName.Find(_T(".java"), sName.GetLength() - 5) > 0 ||
-				sName.Find(_T(".inl"), sName.GetLength() - 4) > 0)) {
-				CString sArg;
-				CString sAstylePath	= g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_DIR%bin\\msys64\\ucrt64\\bin\\AStyle.exe"));
-				sArg.Format(_T("%s \"%s\""), m_sAStyle, sFileName);
-				g_pSystem->ExecuteFile(sAstylePath, sArg, TRUE, NULL, NULL, NULL);
-			} else if(m_siStyle.GetAt(0) && m_siStyle.GetAt(0) != ' ' &&
-					  (sName.Find(_T(".v"), sName.GetAllocLength() - 2) > 0 ||
-					   sName.Find(_T(".sv"), sName.GetAllocLength() - 3) > 0)) {
-				CString sArg;
-				CString sIstylePath	= g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_PROFILE%Common\\bin\\iStyle.exe"));
-				sArg.Format(_T("%s \"%s\""), m_siStyle, sFileName);
-				g_pSystem->ExecuteFile(sIstylePath, sArg, TRUE, NULL, NULL, NULL);
-				SetDirtySystem();
-			} else if(sName.Find(_T(".vh"), sName.GetAllocLength() - 3) > 0) {
-				SetDirtySystem();
-			} else if(sName.Find(_T(".do"), sName.GetAllocLength() - 3) > 0) {
-				CString sArg;
-				sArg.Format(_T("gtkwave_do_fix %s"), sFileName);
-				g_pSystem->ExecuteFile(_T("codegen"), sArg, TRUE, NULL, NULL, NULL);
-				return;
+		if(!IsFileExisted(sDir + ".TestDrive.notouch")) {
+			{
+				CString sName(sFileName);
+
+				if(m_sAStyle.GetAt(0) && m_sAStyle.GetAt(0) != ' ' &&
+				   (sName.Find(_T(".h"), sName.GetLength() - 2) > 0 ||
+					sName.Find(_T(".c"), sName.GetLength() - 2) > 0 ||
+					sName.Find(_T(".cpp"), sName.GetLength() - 4) > 0 ||
+					sName.Find(_T(".java"), sName.GetLength() - 5) > 0 ||
+					sName.Find(_T(".inl"), sName.GetLength() - 4) > 0)) {
+					CString sArg;
+					CString sAstylePath	= g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_DIR%bin\\msys64\\ucrt64\\bin\\AStyle.exe"));
+					sArg.Format(_T("%s \"%s\""), m_sAStyle, sFileName);
+					g_pSystem->ExecuteFile(sAstylePath, sArg, TRUE, NULL, NULL, NULL);
+				} else if(m_siStyle.GetAt(0) && m_siStyle.GetAt(0) != ' ' &&
+						  (sName.Find(_T(".v"), sName.GetAllocLength() - 2) > 0 ||
+						   sName.Find(_T(".sv"), sName.GetAllocLength() - 3) > 0)) {
+					CString sArg;
+					CString sIstylePath	= g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_PROFILE%Common\\bin\\iStyle.exe"));
+					sArg.Format(_T("%s \"%s\""), m_siStyle, sFileName);
+					g_pSystem->ExecuteFile(sIstylePath, sArg, TRUE, NULL, NULL, NULL);
+					SetDirtySystem();
+				} else if(sName.Find(_T(".vh"), sName.GetAllocLength() - 3) > 0) {
+					SetDirtySystem();
+				} else if(sName.Find(_T(".do"), sName.GetAllocLength() - 3) > 0) {
+					CString sArg;
+					sArg.Format(_T("gtkwave_do_fix %s"), sFileName);
+					g_pSystem->ExecuteFile(_T("codegen"), sArg, TRUE, NULL, NULL, NULL);
+					return;
+				}
 			}
+
+			if(!pItem->sInceptionFile.IsEmpty())
+				g_pSystem->InsertCodeInception((LPCTSTR)sFileName, pItem->sInceptionFile, pItem->sTitle, m_sAuthorName);
 		}
 
-		if(!pItem->sInceptionFile.IsEmpty())
-			g_pSystem->InsertCodeInception((LPCTSTR)sFileName, pItem->sInceptionFile, pItem->sTitle, m_sAuthorName);
-		}
 		if(m_bAutoBuild && !pItem->sExecuteFile.IsEmpty()) {
 			m_sTempFilePath	= sFileName;
 			m_pDoc->SetTimer(id + m_dwBuildCommandStart, 700);		// delayed build for chained source change
