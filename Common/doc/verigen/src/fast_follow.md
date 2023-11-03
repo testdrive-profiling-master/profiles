@@ -240,7 +240,7 @@ and the second one adds the two files below through the module.apply_code() func
 module test_core
 
 //#---------------------------------------------------------------------
-:core_if
+module core_if
 $set_param("CORE_ID", "0")
 $add_interface(core_i.inst, "if_inst", "m")
 $add_interface(core_busy, nil, "m")
