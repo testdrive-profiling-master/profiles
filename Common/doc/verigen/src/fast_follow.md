@@ -60,6 +60,9 @@ The resulting design is literally an empty module file, and the hierarchy diagra
 
 @<b>[Result : test_wrapper_hierarchy.svg]@</b>
 @<img:#media/step1_test_wrapper_hierarchy.svg;0.3;Step #1 Hierarchy Diagram>
+
+:::NoteHeading
+You can view the actual verilog codes by clicking on the module name in this image.
  
 
 ## Step #2 : module interconnections
