@@ -188,6 +188,7 @@ void ASFormatter::staticInit()
     verilogBlockBegin.push_back(&AS_TABLE     );
     verilogBlockBegin.push_back(&AS_SPECIFY   );
     verilogBlockBegin.push_back(&AS_BEGIN     );
+    verilogBlockBegin.push_back(&AS_DO        );
 
     verilogBlockEnd.push_back(&AS_JOIN         );
     verilogBlockEnd.push_back(&AS_ENDTABLE     );

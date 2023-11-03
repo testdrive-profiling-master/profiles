@@ -154,6 +154,7 @@ const string ASResource::AS_SPECIFY      = string("specify"  );
 const string ASResource::AS_PRIMITIVE    = string("primitive");
 const string ASResource::AS_MODULE       = string("module"   );
 const string ASResource::AS_BEGIN        = string("begin"    );
+const string ASResource::AS_DO           = string("do"       ); // for lua inline
 
 const string ASResource::AS_ENDCASE      = string("endcase"       );
 const string ASResource::AS_ENDGENERATE  = string("endgenerate"   );

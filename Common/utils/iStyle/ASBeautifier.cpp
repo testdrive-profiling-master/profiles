@@ -98,6 +98,7 @@ void ASBeautifier::initStatic()
     verilogBlockBegin.push_back(&AS_PRIMITIVE );
     verilogBlockBegin.push_back(&AS_MODULE    );
     verilogBlockBegin.push_back(&AS_BEGIN     );
+    verilogBlockBegin.push_back(&AS_DO        );
 
     verilogBlockEnd.push_back(&AS_ENDCASE      );
 	verilogBlockEnd.push_back(&AS_ENDGENERATE  );
