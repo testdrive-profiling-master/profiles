@@ -1,0 +1,1 @@
+panzoom.min.js : https://github.com/anvaka/panzoom
