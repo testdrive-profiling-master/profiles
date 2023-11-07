@@ -138,6 +138,7 @@ CDesignMap::CDesignMap(ITDDocument* pDoc)
 
 CDesignMap::~CDesignMap(void)
 {
+	UpdateSourceViews(true);
 }
 
 BOOL CDesignMap::OnPropertyUpdate(ITDPropertyData* pProperty)
@@ -149,6 +150,34 @@ BOOL CDesignMap::OnPropertyUpdate(ITDPropertyData* pProperty)
 	}*/
 	pProperty->UpdateConfigFile(FALSE);
 	return TRUE;
+}
+
+void CDesignMap::UpdateSourceViews(bool bNewProject){
+	// refresh opened source view
+	for(auto i = m_SourceViewList.begin(); i != m_SourceViewList.end();) {
+		auto next = i;
+		next++;
+		LPCTSTR sTarget	= (LPCTSTR)i->first;
+		HWND hWnd = FindWindow(NULL, sTarget);
+
+		if(hWnd) {
+			SOURCE_VIEW& view	= i->second;
+
+			if(bNewProject) {
+				// close old project source view page
+				PostMessage(hWnd, WM_CLOSE, 0, 0);
+			} else {
+				// reopen the result source
+				g_pHtml->CallJScript(_T("OpenURL('%s', '%s');"), (LPCTSTR)view.sFilename, (LPCTSTR)sTarget);
+			}
+		} else {
+			m_SourceViewList.erase(i);
+		}
+
+		i = next;
+	}
+
+	if(bNewProject) m_SourceViewList.clear();
 }
 
 BOOL CDesignMap::OnCommand(DWORD command, WPARAM wParam, LPARAM lParam)
@@ -176,30 +205,7 @@ BOOL CDesignMap::OnCommand(DWORD command, WPARAM wParam, LPARAM lParam)
 		}
 		{
 			// refresh opened source view
-			for(auto i = m_SourceViewList.begin(); i != m_SourceViewList.end();) {
-				auto next = i;
-				next++;
-				LPCTSTR sTarget	= (LPCTSTR)i->first;
-				HWND hWnd = FindWindow(NULL, sTarget);
-
-				if(hWnd) {
-					SOURCE_VIEW& view	= i->second;
-
-					if(bNewProject) {
-						// close old project source view page
-						PostMessage(hWnd, WM_CLOSE, 0, 0);
-					} else {
-						// reopen the result source
-						g_pHtml->CallJScript(_T("OpenURL('%s', '%s');"), (LPCTSTR)view.sFilename, (LPCTSTR)sTarget);
-					}
-				} else {
-					m_SourceViewList.erase(i);
-				}
-
-				i = next;
-			}
-
-			if(bNewProject) m_SourceViewList.clear();
+			UpdateSourceViews(bNewProject);
 		}
 		m_sWorkPath		= sWorkPath;
 		m_sOutputPath	= sOutputPath;

@@ -74,7 +74,7 @@ public:
 	STDMETHOD_(LPCTSTR, OnHtmlNewWindowRequest)(DWORD dwID, LPCTSTR lpszURL, BOOL bUserInitiated);
 
 	int CheckModuleFile(LPCTSTR sFileName, LPCTSTR sModuleName);
-	bool OpenDesign();
+	void UpdateSourceViews(bool bNewProject);
 
 
 protected:

@@ -3,4 +3,4 @@ profile.tree "System" {
 }
 
 // initial run...
-//profile.call	"main.sp"
+profile.call	"main.sp"
