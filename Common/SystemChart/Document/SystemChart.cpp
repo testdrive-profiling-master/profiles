@@ -33,8 +33,6 @@
 // Title : System chart
 // Rev.  : 7/24/2023 Mon (clonextop@gmail.com)
 //================================================================================
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
-//================================================================================
 #include "SystemChart.h"
 #include "testdrive_document.inl"
 

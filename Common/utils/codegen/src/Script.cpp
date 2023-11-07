@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 4/28/2023 Fri (clonextop@gmail.com)
+// Rev.  : 11/7/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -259,8 +259,9 @@ public:
 		return m_sStr.c_str();
 	}
 	inline char get(int iPos) const								{
-		if (iPos < 0 || iPos >= m_sStr.length())
+		if(iPos < 0 || iPos >= m_sStr.length())
 			return 0;
+
 		return m_sStr.c_str()[iPos];
 	}
 	inline int find_ch(char ch, int pos = 0)					{
@@ -669,6 +670,39 @@ private:
 	shared_ptr<HtmlDocument>	m_pDoc;
 };
 
+static bool __PostToDocument(const char* sName, int iMsg, const char* sMsg)  	// To TestDrive document (windows only)
+{
+	if(!sName) return false;
+
+#ifdef WIN32
+	cstring sMemName;
+	if(sMemName.GetEnvironment("TESTDRIVE_MEMORY")) {
+		// find memory
+		sMemName	+= "_";
+		sMemName	+= sName;
+		ITestDriverMemory*	pMem	= TestDriver_GetMemory(sMemName);
+
+		if(!pMem) return false;
+
+		// set extra data
+		if(sMsg) {
+			strcpy((char*)pMem->GetPointer(), sMsg);
+		} else {
+			((char*)pMem->GetPointer())[0]	= 0;
+		}
+
+		{	// send to document
+			HWND hWnd	= *(HWND*)(pMem->GetConfig()->UserConfig);
+			SendMessage(hWnd, WM_USER, iMsg, 0);
+			pMem->Release();
+		}
+	}
+	return true;
+#else
+	return false;
+#endif
+}
+
 static void __LOGI(const char* sLog)
 {
 	cstring s(sLog);
@@ -873,8 +907,7 @@ Script::Script(void)
 			.addFunction("GetMergeCellPos", std::function<string(DocExcelSheet* pSheet)>([](DocExcelSheet * pSheet) -> string {
 				int tx, ty, width, height;
 
-				if(pSheet->GetMergeCellPos(tx, ty, width, height))
-				{
+				if(pSheet->GetMergeCellPos(tx, ty, width, height)) {
 					cstring sRet;
 					sRet.Format("%d,%d,%d,%d", tx, ty, width, height);
 					return sRet.c_str();
@@ -1041,6 +1074,7 @@ Script::Script(void)
 			.addFunction("RunScript", &Script::__RunScript)
 			.addFunction("ArgumentSize", &ArgTable::ArgumentSize)
 			.addFunction("GetArgument", &ArgTable::GetArgument)
+			.addFunction("PostToDocument", __PostToDocument)
 			.addFunction("LOGI", __LOGI)
 			.addFunction("LOGE", __LOGE)
 			.addFunction("LOGW", __LOGW)
@@ -1061,7 +1095,8 @@ Script::~Script(void)
 	}
 }
 
-static void __lua_traceback(lua_State* L, const char* sFileName){
+static void __lua_traceback(lua_State* L, const char* sFileName)
+{
 	luaL_loadbuffer(L, "print(debug.traceback())", 24, sFileName);
 	lua_pcall(L, 0, LUA_MULTRET, 0);
 }
@@ -1129,10 +1164,12 @@ bool Script::Run(const char* sFileName)
 	if(f.Load(sLuaFilePath.c_str())) {
 		cstring	sShortenFilePath	= sLuaFilePath;
 		sShortenFilePath.Replace(m_sEnvPath, "[TOOL_PATH]/");
+
 		if(luaL_loadbuffer(m_pLua, f.Buffer(), f.Size(), sShortenFilePath.c_str()) || lua_pcall(m_pLua, 0, LUA_MULTRET, 0)) {
 			const char* sError	= luaL_checkstring(m_pLua, -1);
 			LOGE("Error on running script : %s", sError);
 			lua_pop(m_pLua, 1); // pop out error message
+
 			if(__bUseTraceBack) __lua_traceback(m_pLua, sShortenFilePath.c_str());
 		} else {
 			bRet	=  true;
@@ -1160,6 +1197,7 @@ bool Script::RunBuffer(const char* sBuffer, const char* sFileName)
 			const char* sError	= luaL_checkstring(m_pLua, -1);
 			LOGE("Error on running script : %s", sError);
 			lua_pop(m_pLua, 1); // pop out error message
+
 			if(__bUseTraceBack) __lua_traceback(m_pLua, sFileName);
 		} else {
 			bRet	=  true;

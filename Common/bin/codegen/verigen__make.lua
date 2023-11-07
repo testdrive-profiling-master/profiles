@@ -144,7 +144,7 @@ function module:make_code(is_top)
 	local	sPorts			= String("")
 	local	sDeclares		= String("")
 	local	sBody			= String("")
-	local	sGraphviz		= String("URL=\"html/" .. self.name .. ".html\" target=\"_" .. self.name:upper() .. "\" label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><tr><td><b>" .. self.name .. "</b></td></tr><tr><td align=\"left\">__PARAM__</td></tr><tr><td align=\"left\">__PORT__</td></tr></table>>, fillcolor=\"#__FILL_COLOR__\", shape=plain")
+	local	sGraphviz		= String("URL=\"html/" .. self.name .. ".sv.html\" target=\"_" .. self.name:upper() .. "\" label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><tr><td><b>" .. self.name .. "</b></td></tr><tr><td align=\"left\">__PARAM__</td></tr><tr><td align=\"left\">__PORT__</td></tr></table>>, fillcolor=\"#__FILL_COLOR__\", shape=plain")
 	
 	if is_top then
 		sGraphviz:Replace("__FILL_COLOR__", "ff880022")
@@ -541,10 +541,10 @@ function module:make_code(is_top)
 	
 	-- make html style output
 	do
-		exec("code_highlighter --ilang=verilog -n " .. sOutPath .. "/" .. self.name .. ".sv " .. sOutPath .. "/html/" .. self.name .. ".html")
+		exec("code_highlighter --ilang=verilog -n " .. sOutPath .. "/" .. self.name .. ".sv " .. sOutPath .. "/html/" .. self.name .. ".sv.html")
 		
 		-- add link with interface
-		if f:Open(sOutPath .. "/html/" .. self.name .. ".html") then
+		if f:Open(sOutPath .. "/html/" .. self.name .. ".sv.html") then
 			local	sHtml	= String(f:GetAll())
 
 			f:Close()
@@ -568,7 +568,7 @@ function module:make_code(is_top)
 						sHtml:erase(iPos, iSize)
 						
 						-- insert link
-						local	sLink	= "<a href=\"" .. module.__top.name .. "_defines.html#" .. i_name .. "\"  target=\"_" .. module.__top.name:upper() ..  "_DEFINES\"><font color=\"#F00000\"><b>" .. i_name .. "</font></b></a>"
+						local	sLink	= "<a href=\"" .. module.__top.name .. "_defines.vh.html#" .. i_name .. "\"  target=\"_" .. module.__top.name:upper() ..  "_DEFINES\"><font color=\"#F00000\"><b>" .. i_name .. "</font></b></a>"
 						sHtml:insert(iPos, sLink)
 						iPos	= iPos + #sLink
 					else
@@ -581,7 +581,7 @@ function module:make_code(is_top)
 			end
 			
 			-- write back
-			f:Create(sOutPath .. "/html/" .. self.name .. ".html")
+			f:Create(sOutPath .. "/html/" .. self.name .. ".sv.html")
 			f:Put("<!DOCTYPE html>\n" ..
 				"<html>\n"..
 				"<head>\n"..
@@ -662,10 +662,10 @@ function module:make_code(is_top)
 			
 			-- make html style output
 			do
-				exec("code_highlighter --ilang=verilog -n " .. sOutPath .. "/" .. self.name .. "_defines.vh " .. sOutPath .. "/html/" .. self.name .. "_defines.html")
+				exec("code_highlighter --ilang=verilog -n " .. sOutPath .. "/" .. self.name .. "_defines.vh " .. sOutPath .. "/html/" .. self.name .. "_defines.vh.html")
 				-- add bookmark
 				
-				if f:Open(sOutPath .. "/html/" .. self.name .. "_defines.html") then
+				if f:Open(sOutPath .. "/html/" .. self.name .. "_defines.vh.html") then
 					local	sHtml	= String(f:GetAll())
 
 					f:Close()
@@ -695,7 +695,7 @@ function module:make_code(is_top)
 					end
 					
 					-- write back
-					f:Create(sOutPath .. "/html/" .. self.name .. "_defines.html")
+					f:Create(sOutPath .. "/html/" .. self.name .. "_defines.vh.html")
 					f:Put("<!DOCTYPE html>\n" ..
 						"<html>\n"..
 						"<head>\n"..
@@ -711,7 +711,7 @@ function module:make_code(is_top)
 				end
 			end
 			
-			__graphviz:Append("\t\"" .. self.name .. "_defines\" [URL=\"html/" .. self.name .. "_defines.html\" target=\"_" .. self.name:upper() ..  "_DEFINES\" fillcolor=\"#D0FFD0\"];\n")
+			__graphviz:Append("\t\"" .. self.name .. "_defines\" [URL=\"html/" .. self.name .. "_defines.vh.html\" target=\"_" .. self.name:upper() ..  "_DEFINES\" fillcolor=\"#D0FFD0\"];\n")
 			__graphviz:Append("\t\"" .. self.name .. "\" -> \"" .. self.name .. "_defines\" [fillcolor=\"#F0C0C0\" style=dotted];\n")
 		end
 		
