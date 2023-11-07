@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : System map
-// Rev.  : 11/6/2023 Mon (clonextop@gmail.com)
+// Rev.  : 11/7/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #include "DesignMap.h"
 #include "testdrive_document.inl"
@@ -45,11 +45,18 @@ REGISTER_LOCALED_DOCUMENT(CDesignMap);
 ITDDocument*	g_pDoc		= NULL;
 ITDHtml*		g_pHtml		= NULL;
 
+static LPCTSTR	__DOC_NAME	= _T("DESIGN_MAP");
+
 int DecodeStringList(CString& str, LPCTSTR* pID)
 {
 	for(int i = 0; pID[i]; i++) if(!str.Compare(pID[i])) return i;
 
 	return -1;
+}
+
+BOOL IsFileExist(LPCTSTR sFileName)
+{
+	return _taccess(sFileName, 0) == 0;
 }
 
 static bool __ReadSVG(CString& sContents, LPCTSTR sFilename)
@@ -68,11 +75,24 @@ static bool __ReadSVG(CString& sContents, LPCTSTR sFilename)
 			}
 		}
 
+		{
+			// rid of 'URL' target.
+			int iPos = 0;
+
+			while((iPos = sContents.Find(_T("target=\""), iPos)) >= 0) {
+				int iEnd	= sContents.Find(_T("\""), iPos + 8);
+
+				if(iEnd > 0) {
+					sContents.erase(iPos, iEnd - iPos + 1);
+				}
+			}
+		}
+
 		sContents.Replace(_T("\""), _T("'"));
 		sContents.Replace(_T("\r"), _T(""));
 		sContents.Replace(_T("\n"), _T(""));
 		sContents.Replace(_T("<svg"), _T("<svg id='svg_object'"));
-		//sContents.Replace(_T("xlink:href='"), _T("xlink:href='"));
+		sContents.Replace(_T("xlink:href='"), _T("xlink:href='cmd://URL/"));
 		fclose(fp);
 		return true;
 	}
@@ -80,20 +100,40 @@ static bool __ReadSVG(CString& sContents, LPCTSTR sFilename)
 	return false;
 }
 
-static void __BuildHTML(LPCTSTR sFilename)
-{
-	CString sStr;
-	_tfopen(sFilename, _T("r"));
-}
-
 CDesignMap::CDesignMap(ITDDocument* pDoc)
 {
 	m_bInitialized	= FALSE;
 	g_pDoc			= pDoc;
-	//g_pDoc->Show(FALSE);
+	{
+		// get previous buffer
+		CString sConfig;	// for clean assign to string
+		g_pDoc->GetConfigString(_T("WORK_PATH"), sConfig.GetBuffer(4096), 4096);
+		m_sWorkPath			= (LPCTSTR)sConfig;
+		g_pDoc->GetConfigString(_T("OUTPUT_PATH"), sConfig.GetBuffer(4096), 4096);
+		m_sOutputPath		= (LPCTSTR)sConfig;
+		g_pDoc->GetConfigString(_T("DESIGN_PATH"), sConfig.GetBuffer(4096), 4096);
+		m_sDesignFilePath	= (LPCTSTR)sConfig;
+	}
 	g_pHtml			= pDoc->GetHtml(_T("design_map"));
 	g_pHtml->SetManager(this);
 	g_pHtml->Navigate(_T("DesignMap.html"));
+	{
+		// get memory
+		CString	sName;
+		// get system memory & it's name
+		m_pMemory	= g_pSystem->GetMemory();
+
+		if(m_pMemory) sName	= m_pMemory->GetName();
+
+		sName	+= _T("_DesignMap");
+		m_pMemory	= g_pSystem->GetMemory(sName, TRUE);
+
+		if(sName.Compare(m_pMemory->GetName())) {	// if not existed, create!
+			m_pMemory->Create(1024 * 16, sName);	// 16KB
+		}
+	}
+	m_pConfig		= (DESIGNMAP_CONFIG*)m_pMemory->GetConfig();
+	m_pConfig->hWnd	= pDoc->GetWindowHandle();
 }
 
 CDesignMap::~CDesignMap(void)
@@ -113,7 +153,63 @@ BOOL CDesignMap::OnPropertyUpdate(ITDPropertyData* pProperty)
 
 BOOL CDesignMap::OnCommand(DWORD command, WPARAM wParam, LPARAM lParam)
 {
-	return 0;
+	if(command != TD_EXTERNAL_COMMAND) return 0;
+
+	switch(wParam) {
+	case USER_CMD_UPDATE:
+		CString	sWorkPath, sOutputPath, sDesignFileName;
+		{
+			int			iPos	= 0;
+			LPCTSTR		sDelim	= _T(";");
+			CString	sMsg((char*)m_pMemory->GetPointer());
+			sWorkPath			= sMsg.Tokenize(sDelim, iPos);
+			sOutputPath			= sMsg.Tokenize(sDelim, iPos);
+			sDesignFileName		= sMsg.Tokenize(sDelim, iPos);
+		}
+		bool	bNewProject = (sWorkPath != m_sWorkPath);
+		m_sDesignFilePath.Format(_T("%s\\%s"), (LPCTSTR)sOutputPath, (LPCTSTR)sDesignFileName);
+		{
+			// open design
+			CString sContents;
+			__ReadSVG(sContents, m_sDesignFilePath);
+			g_pHtml->CallJScript(_T("SetContent(\"%s\", %s);"), (LPCTSTR)sContents, bNewProject ? _T("false") : _T("true"));
+		}
+		{
+			// refresh opened source view
+			for(auto i = m_SourceViewList.begin(); i != m_SourceViewList.end();) {
+				auto next = i;
+				next++;
+				LPCTSTR sTarget	= (LPCTSTR)i->first;
+				HWND hWnd = FindWindow(NULL, sTarget);
+
+				if(hWnd) {
+					SOURCE_VIEW& view	= i->second;
+
+					if(bNewProject) {
+						// close old project source view page
+						PostMessage(hWnd, WM_CLOSE, 0, 0);
+					} else {
+						// reopen the result source
+						g_pHtml->CallJScript(_T("OpenURL('%s', '%s');"), (LPCTSTR)view.sFilename, (LPCTSTR)sTarget);
+					}
+				} else {
+					m_SourceViewList.erase(i);
+				}
+
+				i = next;
+			}
+
+			if(bNewProject) m_SourceViewList.clear();
+		}
+		m_sWorkPath		= sWorkPath;
+		m_sOutputPath	= sOutputPath;
+		g_pDoc->SetConfigString(_T("WORK_PATH"), m_sWorkPath);
+		g_pDoc->SetConfigString(_T("OUTPUT_PATH"), m_sOutputPath);
+		g_pDoc->SetConfigString(_T("DESIGN_PATH"), m_sDesignFilePath);
+		break;
+	}
+
+	return TRUE;
 }
 
 void CDesignMap::OnSize(int width, int height)
@@ -126,12 +222,11 @@ void CDesignMap::OnSize(int width, int height)
 }
 
 static LPCTSTR __sCommandID[CMD_ID_SIZE] = {
-	_T("url"),
-	_T("FIT_ON_SCREEN"),
+	_T("URL")
 };
 
 static LPCTSTR __sCommandDeli	= _T("/?");
-static LPCTSTR __sTokenDeli	= _T("?");
+static LPCTSTR __sTokenDeli		= _T("?");
 
 // Search string line from text file
 int GetFileSearchLine(LPCTSTR sFileName, LPCTSTR sSearch)
@@ -162,49 +257,184 @@ LPCTSTR CDesignMap::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 {
 	if(!m_bInitialized) return lpszURL;
 
-	g_pSystem->LogInfo(_T("lpszURL = %s"), lpszURL);
 	{
 		CString cmd(lpszURL), tag;
-		CMD_ID	cmd_id = (CMD_ID) - 1;
 		int iStart	= 0;
-		// "http://"
-		tag	= cmd.Tokenize(__sCommandDeli, iStart);
-		// get command
 		tag	= cmd.Tokenize(__sCommandDeli, iStart);
 
-		for(int i = 0; i < CMD_ID_SIZE; i++)
-			if(!tag.Compare(__sCommandID[i])) {
-				cmd_id	= (CMD_ID)i;
-				break;
+		if(tag == _T("cmd:")) {
+			// get command
+			tag	= cmd.Tokenize(__sCommandDeli, iStart);
+			CMD_ID	cmd_id = (CMD_ID) - 1;
+
+			for(int i = 0; i < CMD_ID_SIZE; i++)
+				if(!tag.Compare(__sCommandID[i])) {
+					cmd_id	= (CMD_ID)i;
+					break;
+				}
+
+			switch(cmd_id) {
+			case CMD_ID_URL: {
+				CString sLink		= cmd.Tokenize(_T(""), iStart);
+				CString sTarget		= sLink;
+				CString sSource;
+				{
+					// get target name
+					int iPos = sTarget.ReverseFind(_T('/'));
+
+					if(iPos > 0) sTarget.erase(0, iPos + 1);
+
+					iPos = sTarget.ReverseFind(_T('.'));
+
+					if(iPos > 0) sTarget.erase(iPos, -1);
+				}
+				// check file existence
+				{
+					sSource.Format(_T("%s\\%s"), (LPCTSTR)m_sOutputPath, (LPCTSTR)sLink);
+					sSource.Replace(_T("/"), _T("\\"));	// windows style
+
+					if(!IsFileExist(sSource)) {
+						g_pSystem->LogError(_T("File is not found : %s"), (LPCTSTR)sSource);
+						break;
+					}
+				}
+				// add to source view list
+				sSource.Replace(_T("\\"), _T("/"));	// web style
+				{
+					SOURCE_VIEW& src_view	= m_SourceViewList[sTarget];
+					src_view.sFilename		= sSource;
+				}
+				// open with HTML verilog output page
+				g_pHtml->CallJScript(_T("OpenURL('%s', '%s');"), (LPCTSTR)sSource, (LPCTSTR)sTarget);
+			}
+			break;
+
+			default:
+				if(_tcsstr(lpszURL, _T("http")) == lpszURL)
+					return lpszURL;
+
+				g_pSystem->LogInfo(_T("Invalid command : %s"), lpszURL);
 			}
 
-		switch(cmd_id) {
-		case CMD_ID_URL: {
-		} break;
-
-		case CMD_ID_FIT_ON_SCREEN: {
-			g_pSystem->LogInfo(_T("FIT_ON_SCREEN"));
-		}
-		break;
-
-		default:
-			if(_tcsstr(lpszURL, _T("http")) == lpszURL)
-				return lpszURL;
-
-			g_pSystem->LogInfo(_T("Invalid command : %s"), lpszURL);
+			return NULL;
 		}
 	}
-	return NULL;
+	return lpszURL;
 }
 
 void CDesignMap::OnHtmlDocumentComplete(DWORD dwID, LPCTSTR lpszURL)
 {
 	if(!m_bInitialized) {
-		g_pDoc->Show();
 		g_pDoc->SetForegroundDocument();
 		m_bInitialized	= TRUE;
-		CString sContents;
-		__ReadSVG(sContents, _T("D:/Project/Profiles/MobilintCI/System/HDL/DUTs/MTSP/rtl/MTSP_wrapper_hierarchy.svg"));
-		g_pHtml->CallJScript(_T("SetContent(\"%s\");"), (LPCTSTR)sContents);
+
+		if(!m_sDesignFilePath.IsEmpty()) {
+			CString sContents;
+			__ReadSVG(sContents, m_sDesignFilePath);
+			g_pHtml->CallJScript(_T("SetContent(\"%s\");"), (LPCTSTR)sContents);
+			g_pDoc->Show(TRUE);
+		}
 	}
+}
+
+int CDesignMap::CheckModuleFile(LPCTSTR sFileName, LPCTSTR sModuleName)
+{
+	int iLine	= 0;
+	CString sTargetFileName;
+	sTargetFileName.Format(_T("%s\\%s"), (LPCTSTR)m_sWorkPath, (LPCTSTR)sFileName);
+	FILE* fp	= _tfopen(sTargetFileName, _T("rt"));
+
+	if(fp) {
+		TCHAR	sLine[1024 * 16];
+		LPCTSTR	sDelim	= _T(" \t\r\n");
+
+		while(!feof(fp) && _fgetts(sLine, 1024 * 16, fp)) {
+			CString s(sLine);
+			int		iPos = 0;
+			CString	sTag	= s.Tokenize(sDelim, iPos);
+			iLine++;
+
+			if(sTag == _T("module")) {
+				CString	sName	= s.Tokenize(sDelim, iPos);
+
+				if(sName == sModuleName) {
+					return iLine;
+				}
+			}
+		}
+
+		fclose(fp);
+	}
+
+	return -1;
+}
+
+LPCTSTR CDesignMap::OnHtmlNewWindowRequest(DWORD dwID, LPCTSTR lpszURL, BOOL bUserInitiated)
+{
+	CString cmd(lpszURL), tag;
+	int iStart	= 0;
+	tag	= cmd.Tokenize(__sCommandDeli, iStart);
+
+	if(tag == _T("cmd:")) {
+		tag	= cmd.Tokenize(__sCommandDeli, iStart);
+
+		if(tag == _T("URL")) {
+			CString sModuleName;
+			// get module name
+			sModuleName	= cmd.Tokenize(_T(""), iStart);
+			{
+				int iPos	= sModuleName.ReverseFind(_T("/"));
+
+				if(iPos >= 0)  sModuleName.erase(0, iPos + 1);
+
+				iPos		= sModuleName.Find(_T("."));
+
+				if(iPos >= 0) sModuleName.erase(iPos, -1);
+			}
+			// do edit!
+			CString				sFoundFileName;
+			int					iFoundLineNumber	= 0;
+			{
+				// searching verigen files
+				WIN32_FIND_DATA		FindFileData;
+				HANDLE				hFind;
+				CString				sPath;
+				sPath.Format(_T("%s\\*.sv"), (LPCTSTR)m_sWorkPath);
+
+				if((hFind = FindFirstFile(sPath, &FindFileData)) != INVALID_HANDLE_VALUE) {
+					BOOL	bSearch	= TRUE;
+
+					while(bSearch) {
+						if(!(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && FindFileData.cFileName[0] != _T('.')) {
+							int iLineNumber	= CheckModuleFile(FindFileData.cFileName, sModuleName);
+
+							if(iLineNumber >= 0) {
+								sFoundFileName		= FindFileData.cFileName;
+								iFoundLineNumber	= iLineNumber;
+								break;
+							}
+						}
+
+						bSearch	= FindNextFile(hFind, &FindFileData);
+					}
+
+					FindClose(hFind);
+				}
+			}
+
+			// open the verigen source
+			if(!sFoundFileName.IsEmpty()) {
+				CString notepad_path	= g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_DIR%bin\\notepad\\notepad++.exe"));
+				CString sArg;
+				sArg.Format(_T("-n%d \"%s\\%s\""), iFoundLineNumber, (LPCTSTR)m_sWorkPath, (LPCTSTR)sFoundFileName);
+				ShellExecute(NULL, _T("open"), notepad_path, sArg, NULL, SW_SHOWDEFAULT);
+			} else {
+				g_pSystem->LogWarning(_T("Can't find '%s' module verigen source."), (LPCTSTR)sModuleName);
+			}
+		}
+
+		return NULL;
+	}
+
+	return lpszURL;
 }

@@ -31,23 +31,33 @@
 // OF SUCH DAMAGE.
 //
 // Title : System map
-// Rev.  : 11/6/2023 Mon (clonextop@gmail.com)
+// Rev.  : 11/7/2023 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __DESIGN_MAP_H__
 #define __DESIGN_MAP_H__
 #include "testdrive_document.h"
 #include "Locale.h"
+#include <map>
+
+using namespace std;
 
 typedef enum {
 	CMD_ID_URL,
-	CMD_ID_FIT_ON_SCREEN,
 	CMD_ID_SIZE
 } CMD_ID;
+
+typedef enum {
+	USER_CMD_UPDATE,
+} USER_CMD;
 
 typedef enum {
 	PROPERTY_ID_EDITOR,
 	PROPERTY_ID_SIZE
 } PROPERTY_ID;
+
+typedef struct {
+	CString		sFilename;
+} SOURCE_VIEW;
 
 class CDesignMap :
 	public TDImplDocumentBase,
@@ -61,8 +71,19 @@ public:
 	STDMETHOD_(void, OnSize)(int width, int height);
 	STDMETHOD_(LPCTSTR, OnHtmlBeforeNavigate)(DWORD dwID, LPCTSTR lpszURL);
 	STDMETHOD_(void, OnHtmlDocumentComplete)(DWORD dwID, LPCTSTR lpszURL);
+	STDMETHOD_(LPCTSTR, OnHtmlNewWindowRequest)(DWORD dwID, LPCTSTR lpszURL, BOOL bUserInitiated);
+
+	int CheckModuleFile(LPCTSTR sFileName, LPCTSTR sModuleName);
+	bool OpenDesign();
+
 
 protected:
-	BOOL		m_bInitialized;
+	BOOL						m_bInitialized;
+	ITDMemory*					m_pMemory;
+	DESIGNMAP_CONFIG*			m_pConfig;
+	CString						m_sWorkPath;
+	CString						m_sOutputPath;
+	CString						m_sDesignFilePath;
+	map<CString, SOURCE_VIEW>	m_SourceViewList;
 };
 #endif//__DESIGN_MAP_H__

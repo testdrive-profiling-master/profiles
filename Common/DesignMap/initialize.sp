@@ -1,2 +1,6 @@
+profile.tree "System" {
+	chart ("Design map",		"main.sp");
+}
+
 // initial run...
-profile.call	"main.sp"
+//profile.call	"main.sp"
