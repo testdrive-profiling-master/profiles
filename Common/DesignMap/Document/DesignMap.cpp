@@ -228,7 +228,8 @@ void CDesignMap::OnSize(int width, int height)
 }
 
 static LPCTSTR __sCommandID[CMD_ID_SIZE] = {
-	_T("URL")
+	_T("URL"),
+	_T("MANUAL"),
 };
 
 static LPCTSTR __sCommandDeli	= _T("/?");
@@ -312,6 +313,11 @@ LPCTSTR CDesignMap::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 				}
 				// open with HTML verilog output page
 				g_pHtml->CallJScript(_T("OpenURL('%s', '%s');"), (LPCTSTR)sSource, (LPCTSTR)sTarget);
+			}
+			break;
+
+			case CMD_ID_MANUAL: {
+				ShellExecute(NULL, _T("open"), _T("https://testdrive-profiling-master.github.io/download/verigen_userguide.pdf"), NULL, NULL, SW_SHOWDEFAULT);
 			}
 			break;
 
