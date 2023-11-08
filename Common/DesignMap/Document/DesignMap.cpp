@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : System map
-// Rev.  : 11/7/2023 Tue (clonextop@gmail.com)
+// Rev.  : 11/8/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "DesignMap.h"
 #include "testdrive_document.inl"
@@ -152,7 +152,8 @@ BOOL CDesignMap::OnPropertyUpdate(ITDPropertyData* pProperty)
 	return TRUE;
 }
 
-void CDesignMap::UpdateSourceViews(bool bNewProject){
+void CDesignMap::UpdateSourceViews(bool bNewProject)
+{
 	// refresh opened source view
 	for(auto i = m_SourceViewList.begin(); i != m_SourceViewList.end();) {
 		auto next = i;
@@ -197,18 +198,28 @@ BOOL CDesignMap::OnCommand(DWORD command, WPARAM wParam, LPARAM lParam)
 		}
 		bool	bNewProject = (sWorkPath != m_sWorkPath);
 		m_sDesignFilePath.Format(_T("%s\\%s"), (LPCTSTR)sOutputPath, (LPCTSTR)sDesignFileName);
-		{
-			// open design
-			CString sContents;
-			__ReadSVG(sContents, m_sDesignFilePath);
-			g_pHtml->CallJScript(_T("SetContent(\"%s\", %s);"), (LPCTSTR)sContents, bNewProject ? _T("false") : _T("true"));
+
+		if(IsFileExist(m_sDesignFilePath)) {
+			{
+				// open design
+				CString sContents;
+				__ReadSVG(sContents, m_sDesignFilePath);
+				g_pHtml->CallJScript(_T("SetContent(\"%s\", %s);"), (LPCTSTR)sContents, bNewProject ? _T("false") : _T("true"));
+			}
+			{
+				// refresh opened source view
+				UpdateSourceViews(bNewProject);
+			}
+			m_sWorkPath		= sWorkPath;
+			m_sOutputPath	= sOutputPath;
+		} else {
+			g_pSystem->LogError(_T("Design '%s' is not found."), (LPCTSTR)m_sDesignFilePath);
+			m_sWorkPath.clear();
+			m_sOutputPath.clear();
+			m_sDesignFilePath.clear();
+			g_pHtml->CallJScript(_T("ResetDesignMap();"));
 		}
-		{
-			// refresh opened source view
-			UpdateSourceViews(bNewProject);
-		}
-		m_sWorkPath		= sWorkPath;
-		m_sOutputPath	= sOutputPath;
+
 		g_pDoc->SetConfigString(_T("WORK_PATH"), m_sWorkPath);
 		g_pDoc->SetConfigString(_T("OUTPUT_PATH"), m_sOutputPath);
 		g_pDoc->SetConfigString(_T("DESIGN_PATH"), m_sDesignFilePath);
@@ -340,11 +351,10 @@ void CDesignMap::OnHtmlDocumentComplete(DWORD dwID, LPCTSTR lpszURL)
 		g_pDoc->SetForegroundDocument();
 		m_bInitialized	= TRUE;
 
-		if(!m_sDesignFilePath.IsEmpty()) {
+		if(!m_sDesignFilePath.IsEmpty() && IsFileExist(m_sDesignFilePath)) {
 			CString sContents;
 			__ReadSVG(sContents, m_sDesignFilePath);
 			g_pHtml->CallJScript(_T("SetContent(\"%s\");"), (LPCTSTR)sContents);
-			g_pDoc->Show(TRUE);
 		}
 	}
 }
