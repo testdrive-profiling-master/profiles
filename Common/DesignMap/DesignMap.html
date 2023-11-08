@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv='content-type' content='text/html; charset=utf-8' />
+	<meta name='viewport' content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no'>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge' >
+	<meta name='title' content='Design Map' />
+	<title>Design Map</title>
+	<style type="text/css" media="screen">
+		body, html {
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			padding: 0;
+			margin: 0;
+		}
+		svg, #svg_view {
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+		.logo {
+		  position: absolute;
+		  top: 50%;
+		  left: 50%;
+		  transform: translate(-50%, -50%);
+		}
+		.maual_link {
+			opacity: 0.3;
+			transition: opacity .5s ease-out;
+			-moz-transition: opacity .5s ease-out;
+			-webkit-transition: opacity .5s ease-out;
+			-o-transition: opacity .5s ease-out;
+		}
+		.maual_link:hover{
+		   opacity: 0.8;
+		}
+		
+	</style>
+	<script src='dist/panzoom.min.js' name='pz'></script>
+	
+	<SCRIPT LANGUAGE="JScript">
+		var bInitialized	= false;
+		var bPanZoomed		= false;
+		
+		function InitializePanZoom() {
+			var area = document.getElementById('svg_object')
+			window.pz = panzoom(area, {
+				autocenter: true, 
+				bounds: false,
+				smoothScroll: true
+			})
+			
+			bPanZoomed	= false;
+			
+			function fanzoom_moved() {
+				if(!bPanZoomed) {
+					bPanZoomed	= true;
+					document.getElementById("fit_on_screen_button").style.display = "block";
+				}
+			}
+			
+			window.pz.on('panstart', function(e) {
+				fanzoom_moved();
+			});
+			window.pz.on('zoom', function(e) {
+				fanzoom_moved();
+			});
+			
+			document.getElementById("fit_on_screen_button").style.display = "none";
+		}
+		
+		function SetContent(sSvg, bPreserveTransform) {
+			document.getElementById("svg_view").innerHTML = sSvg;
+			
+			if(!bInitialized) {
+				InitializePanZoom();
+				bInitialized	= true;
+			}
+			
+			RefreshView(bPreserveTransform);
+		}
+		
+		function OpenURL(url, target) {
+			var link = document.createElement("a");
+			link.href	= url;
+			link.target	= target;
+			link.setAttribute("menubar", "no");
+			link.setAttribute("toolbar", "no");
+			link.setAttribute("directories", "no");
+			link.click();
+		}
+		
+		function RefreshView(bPreserveTransform) {
+			var trans = window.pz.getTransform();
+			window.pz.dispose();
+			InitializePanZoom();
+			
+			if(bPreserveTransform) {
+				window.pz.zoomAbs(0, 0, trans.scale);
+				window.pz.moveTo(trans.x, trans.y);
+			}
+		}
+		
+		function FitOnScreen() {
+			RefreshView(false);
+		}
+		
+		function ResetDesignMap() {
+			document.getElementById("svg_view").innerHTML = "<img src='img/title.png' class='logo'/>";
+			document.getElementById("fit_on_screen_button").style.display = "none";
+			bInitialized	= false;
+			window.pz.dispose();
+		}
+	</SCRIPT>
+</head>
+<body>
+	<div id="svg_view">
+		<img src="img/title.png" class="logo"/>
+	</div>
+	<div id="fit_on_screen_button" style="display: none;">
+		<a href="javascript:FitOnScreen()"><img style="position: absolute; bottom: 0; right: 0; border: 0;" src="img/expand.png" title="Fit on screen"></a>
+	</div>
+	<div id="verigen_link" class="maual_link">
+		<a href="cmd://MANUAL/Verigen"><img style="position: absolute; top: 3px; left: 3px; border: 0;" src="img/verigen_link.png" title="Verigen Manual"></a>
+	</div>
+</body>
+
+</html>
