@@ -183,46 +183,54 @@ void CDesignMap::UpdateSourceViews(bool bNewProject)
 
 BOOL CDesignMap::OnCommand(DWORD command, WPARAM wParam, LPARAM lParam)
 {
-	if(command != TD_EXTERNAL_COMMAND) return 0;
+	switch(command) {
+	case MAIN_CMD_WATCHDOG_FREE:
+		g_pDoc->KillTimer(MAIN_CMD_WATCHDOG_FREE);
+		SetEnvironmentVariable(_T("TESTDRIVE_WATCHDOG"), NULL);
+		break;
 
-	switch(wParam) {
-	case USER_CMD_UPDATE:
-		CString	sWorkPath, sOutputPath, sDesignFileName;
-		{
-			int			iPos	= 0;
-			LPCTSTR		sDelim	= _T(";");
-			CString	sMsg((char*)m_pMemory->GetPointer());
-			sWorkPath			= sMsg.Tokenize(sDelim, iPos);
-			sOutputPath			= sMsg.Tokenize(sDelim, iPos);
-			sDesignFileName		= sMsg.Tokenize(sDelim, iPos);
-		}
-		bool	bNewProject = (sWorkPath != m_sWorkPath);
-		m_sDesignFilePath.Format(_T("%s\\%s"), (LPCTSTR)sOutputPath, (LPCTSTR)sDesignFileName);
-
-		if(IsFileExist(m_sDesignFilePath)) {
+	case TD_EXTERNAL_COMMAND:
+		switch(wParam) {
+		case USER_CMD_UPDATE:
+			CString	sWorkPath, sOutputPath, sDesignFileName;
 			{
-				// open design
-				CString sContents;
-				__ReadSVG(sContents, m_sDesignFilePath);
-				g_pHtml->CallJScript(_T("SetContent(\"%s\", %s);"), (LPCTSTR)sContents, bNewProject ? _T("false") : _T("true"));
+				int			iPos	= 0;
+				LPCTSTR		sDelim	= _T(";");
+				CString	sMsg((char*)m_pMemory->GetPointer());
+				sWorkPath			= sMsg.Tokenize(sDelim, iPos);
+				sOutputPath			= sMsg.Tokenize(sDelim, iPos);
+				sDesignFileName		= sMsg.Tokenize(sDelim, iPos);
 			}
-			{
-				// refresh opened source view
-				UpdateSourceViews(bNewProject);
+			bool	bNewProject = (sWorkPath != m_sWorkPath);
+			m_sDesignFilePath.Format(_T("%s\\%s"), (LPCTSTR)sOutputPath, (LPCTSTR)sDesignFileName);
+
+			if(IsFileExist(m_sDesignFilePath)) {
+				{
+					// open design
+					CString sContents;
+					__ReadSVG(sContents, m_sDesignFilePath);
+					g_pHtml->CallJScript(_T("SetContent(\"%s\", %s);"), (LPCTSTR)sContents, bNewProject ? _T("false") : _T("true"));
+				}
+				{
+					// refresh opened source view
+					UpdateSourceViews(bNewProject);
+				}
+				m_sWorkPath		= sWorkPath;
+				m_sOutputPath	= sOutputPath;
+			} else {
+				g_pSystem->LogError(_T("Design '%s' is not found."), (LPCTSTR)m_sDesignFilePath);
+				m_sWorkPath.clear();
+				m_sOutputPath.clear();
+				m_sDesignFilePath.clear();
+				g_pHtml->CallJScript(_T("ResetDesignMap();"));
 			}
-			m_sWorkPath		= sWorkPath;
-			m_sOutputPath	= sOutputPath;
-		} else {
-			g_pSystem->LogError(_T("Design '%s' is not found."), (LPCTSTR)m_sDesignFilePath);
-			m_sWorkPath.clear();
-			m_sOutputPath.clear();
-			m_sDesignFilePath.clear();
-			g_pHtml->CallJScript(_T("ResetDesignMap();"));
+
+			g_pDoc->SetConfigString(_T("WORK_PATH"), m_sWorkPath);
+			g_pDoc->SetConfigString(_T("OUTPUT_PATH"), m_sOutputPath);
+			g_pDoc->SetConfigString(_T("DESIGN_PATH"), m_sDesignFilePath);
+			break;
 		}
 
-		g_pDoc->SetConfigString(_T("WORK_PATH"), m_sWorkPath);
-		g_pDoc->SetConfigString(_T("OUTPUT_PATH"), m_sOutputPath);
-		g_pDoc->SetConfigString(_T("DESIGN_PATH"), m_sDesignFilePath);
 		break;
 	}
 
@@ -241,6 +249,7 @@ void CDesignMap::OnSize(int width, int height)
 static LPCTSTR __sCommandID[CMD_ID_SIZE] = {
 	_T("URL"),
 	_T("MANUAL"),
+	_T("NEW_MODULE_FILE"),
 };
 
 static LPCTSTR __sCommandDeli	= _T("/?");
@@ -332,6 +341,17 @@ LPCTSTR CDesignMap::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 			}
 			break;
 
+			case CMD_ID_NEW_MODULE_FILE: {
+				CString sModuleName		= cmd.Tokenize(__sCommandDeli, iStart);
+
+				if(OpenSourceFile(sModuleName, TRUE)) {
+					CString sMsg;
+					sMsg.Format(_L(MODULE_SOURCE_FILE_CREATED), (LPCTSTR)sModuleName);
+					g_pHtml->CallJScript(_T("toastr.info(\"%s\");"), (LPCTSTR)sMsg);
+				}
+			}
+			break;
+
 			default:
 				if(_tcsstr(lpszURL, _T("http")) == lpszURL)
 					return lpszURL;
@@ -391,6 +411,95 @@ int CDesignMap::CheckModuleFile(LPCTSTR sFileName, LPCTSTR sModuleName)
 	return -1;
 }
 
+bool CDesignMap::OpenSourceFile(LPCTSTR sModuleName, BOOL bMustOpen)
+{
+	CString				sFoundFileName;
+	int					iFoundLineNumber	= 0;
+	{
+		// searching verigen files
+		WIN32_FIND_DATA		FindFileData;
+		HANDLE				hFind;
+		CString				sPath;
+		sPath.Format(_T("%s\\*.sv"), (LPCTSTR)m_sWorkPath);
+
+		if((hFind = FindFirstFile(sPath, &FindFileData)) != INVALID_HANDLE_VALUE) {
+			BOOL	bSearch	= TRUE;
+
+			while(bSearch) {
+				if(!(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && FindFileData.cFileName[0] != _T('.')) {
+					int iLineNumber	= CheckModuleFile(FindFileData.cFileName, sModuleName);
+
+					if(iLineNumber >= 0) {
+						sFoundFileName		= FindFileData.cFileName;
+						iFoundLineNumber	= iLineNumber;
+						break;
+					}
+				}
+
+				bSearch	= FindNextFile(hFind, &FindFileData);
+			}
+
+			FindClose(hFind);
+		}
+	}
+	// editor function
+	auto OpenEditor = [](LPCTSTR sFileName, LPCTSTR sWorkPath, int iLineNumber) {
+		CString notepad_path	= g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_DIR%bin\\notepad\\notepad++.exe"));
+		CString sArg;
+		sArg.Format(_T("-n%d \"%s\\%s\""), iLineNumber, sWorkPath, sFileName);
+		ShellExecute(NULL, _T("open"), notepad_path, sArg, NULL, SW_SHOWDEFAULT);
+	};
+
+	// open the verigen source
+	if(!sFoundFileName.IsEmpty()) {
+		OpenEditor(sFoundFileName, m_sWorkPath, iFoundLineNumber);
+		return true;
+	} else if(bMustOpen) {
+		sFoundFileName	= sModuleName;
+		{
+			// name fix for verigen.
+			int iPos = sFoundFileName.Find(_T('_'));
+
+			if(iPos > 0) sFoundFileName.erase(0, iPos + 1);
+
+			sFoundFileName.Insert(0, _T("__"));
+			sFoundFileName	+= ".sv";
+		}
+		{
+			// create new file
+			CString sNewFilePath;
+			sNewFilePath.Format(_T("%s\\%s"), (LPCTSTR)m_sWorkPath, (LPCTSTR)sFoundFileName);
+			{
+				// create new or append to existed file.
+				bool bExist	= IsFileExist(sNewFilePath);
+				SetEnvironmentVariable(_T("TESTDRIVE_WATCHDOG"), _T("0"));
+				FILE* fp	= _tfopen(sNewFilePath, bExist ? _T("at") : _T("wt"));
+
+				if(fp) {
+					// insert separator
+					if(bExist) _fputts(_T("\n//#==============================================================================================================\n"), fp);
+
+					CString sModuleDeclare;
+					sModuleDeclare.Format(_T("module %s\n"), sModuleName);
+					_fputts(sModuleDeclare, fp);
+					fclose(fp);
+					g_pDoc->SetTimer(MAIN_CMD_WATCHDOG_FREE, 500);
+				} else {
+					g_pDoc->SetTimer(MAIN_CMD_WATCHDOG_FREE, 0);
+					return false;
+				}
+			}
+		}
+		return OpenSourceFile(sModuleName);
+	} else {
+		CString sMsg;
+		sMsg.Format(_L(CANT_FIND_MODULE_SOURCE), (LPCTSTR)sModuleName, (LPCTSTR)sModuleName);
+		g_pHtml->CallJScript(_T("toastr.error(\"%s\");"), (LPCTSTR)sMsg);
+	}
+
+	return false;
+}
+
 LPCTSTR CDesignMap::OnHtmlNewWindowRequest(DWORD dwID, LPCTSTR lpszURL, BOOL bUserInitiated)
 {
 	CString cmd(lpszURL), tag;
@@ -413,46 +522,8 @@ LPCTSTR CDesignMap::OnHtmlNewWindowRequest(DWORD dwID, LPCTSTR lpszURL, BOOL bUs
 
 				if(iPos >= 0) sModuleName.erase(iPos, -1);
 			}
-			// do edit!
-			CString				sFoundFileName;
-			int					iFoundLineNumber	= 0;
-			{
-				// searching verigen files
-				WIN32_FIND_DATA		FindFileData;
-				HANDLE				hFind;
-				CString				sPath;
-				sPath.Format(_T("%s\\*.sv"), (LPCTSTR)m_sWorkPath);
-
-				if((hFind = FindFirstFile(sPath, &FindFileData)) != INVALID_HANDLE_VALUE) {
-					BOOL	bSearch	= TRUE;
-
-					while(bSearch) {
-						if(!(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && FindFileData.cFileName[0] != _T('.')) {
-							int iLineNumber	= CheckModuleFile(FindFileData.cFileName, sModuleName);
-
-							if(iLineNumber >= 0) {
-								sFoundFileName		= FindFileData.cFileName;
-								iFoundLineNumber	= iLineNumber;
-								break;
-							}
-						}
-
-						bSearch	= FindNextFile(hFind, &FindFileData);
-					}
-
-					FindClose(hFind);
-				}
-			}
-
-			// open the verigen source
-			if(!sFoundFileName.IsEmpty()) {
-				CString notepad_path	= g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_DIR%bin\\notepad\\notepad++.exe"));
-				CString sArg;
-				sArg.Format(_T("-n%d \"%s\\%s\""), iFoundLineNumber, (LPCTSTR)m_sWorkPath, (LPCTSTR)sFoundFileName);
-				ShellExecute(NULL, _T("open"), notepad_path, sArg, NULL, SW_SHOWDEFAULT);
-			} else {
-				g_pSystem->LogWarning(_T("Can't find '%s' module verigen source."), (LPCTSTR)sModuleName);
-			}
+			// open source file
+			OpenSourceFile(sModuleName);
 		}
 
 		return NULL;

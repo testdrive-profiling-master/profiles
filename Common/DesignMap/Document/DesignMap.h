@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : System map
-// Rev.  : 11/7/2023 Tue (clonextop@gmail.com)
+// Rev.  : 11/8/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __DESIGN_MAP_H__
 #define __DESIGN_MAP_H__
@@ -44,8 +44,13 @@ using namespace std;
 typedef enum {
 	CMD_ID_URL,
 	CMD_ID_MANUAL,
+	CMD_ID_NEW_MODULE_FILE,
 	CMD_ID_SIZE
 } CMD_ID;
+
+typedef enum {
+	MAIN_CMD_WATCHDOG_FREE = 1000,
+} MAIN_CMD;
 
 typedef enum {
 	USER_CMD_UPDATE,
@@ -76,6 +81,7 @@ public:
 
 	int CheckModuleFile(LPCTSTR sFileName, LPCTSTR sModuleName);
 	void UpdateSourceViews(bool bNewProject);
+	bool OpenSourceFile(LPCTSTR sModuleName, BOOL bMustOpen = false);
 
 
 protected:

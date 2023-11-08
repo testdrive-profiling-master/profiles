@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : System map
-// Rev.  : 11/6/2023 Mon (clonextop@gmail.com)
+// Rev.  : 11/8/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "LocaleString.h"
 
@@ -64,5 +64,14 @@ LOCALE_TEXT(CANT_FIND_TAG_STRING,
 			_T("タグ文字列を見つけることができません。 : %s"),
 			_T("No se puede encontrar la cadena de etiquetas. : %s"),
 			_T("Can not find the tag string. : %s"))
-
+LOCALE_TEXT(CANT_FIND_MODULE_SOURCE,
+			_T("모듈('<b>%s</b>') 소스 파일을 찾을 수 없습니다.<br><button type='button' class='btn btn-light btn-sm' onclick='CreateModuleFile(\\\"%s\\\");'><i class='bi bi-magic'></i> 새로 파일을 생성</button> 하시겠습니까?"),
+			_T("モジュール('%s') ソース ファイル が見つかりません。<br><button type='button' class='btn btn-light btn-sm' onclick='CreateModuleFile(\\\"%s\\\");'><i class='bi bi-magic'></i> 新しいファイルを作成</button> しますか？"),
+			_T("No se encuentra el archivo fuente del módulo('%s').<br>Le gustaría <button type='button' class='btn btn-light btn-sm' onclick='CreateModuleFile(\\\"%s\\\");'><i class='bi bi-magic'></i> crear un nuevo archivo</button>?"),
+			_T("Module('%s') source file is not found.<br>Would you like to <button type='button' class='btn btn-light btn-sm' onclick='CreateModuleFile(\\\"%s\\\");'><i class='bi bi-magic'></i> create a new file</button>?"))
+LOCALE_TEXT(MODULE_SOURCE_FILE_CREATED,
+			_T("모듈('<b>%s</b>') 소스 파일이 생성되었습니다."),
+			_T("モジュール ('<b>%s</b>') ソース ファイルが作成されました。"),
+			_T("Se ha creado el archivo fuente del módulo ('<b>%s</b>')."),
+			_T("Module ('<b>%s</b>') source file has been created."))
 LOCALE_END

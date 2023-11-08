@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : System manager
-// Rev.  : 11/3/2023 Fri (clonextop@gmail.com)
+// Rev.  : 11/8/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "BuildAutomation.h"
 #include "Utils.h"
@@ -124,6 +124,15 @@ void BuildAutomation::DoCheck(DWORD command, LPCTSTR sFileName)
 			sNosearchPath	+= _T(".TestDrive.nosearch");
 
 			if(IsFileExisted(sNosearchPath)) return;
+		}
+
+		{
+			// bypass 'TESTDRIVE_WATCHDOG' environment variable
+			TCHAR sWatchdog[MAX_PATH] = _T("1");
+
+			if(GetEnvironmentVariable(_T("TESTDRIVE_WATCHDOG"), sWatchdog, MAX_PATH)) {
+				if(!_tstoi(sWatchdog)) return;
+			}
 		}
 	}
 
