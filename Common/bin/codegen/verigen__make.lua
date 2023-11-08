@@ -144,7 +144,7 @@ function module:make_code(is_top)
 	local	sPorts			= String("")
 	local	sDeclares		= String("")
 	local	sBody			= String("")
-	local	sGraphviz		= String("URL=\"html/" .. self.name .. ".sv.html\" target=\"_" .. self.name:upper() .. "\" label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><tr><td><b>" .. self.name .. "</b></td></tr><tr><td align=\"left\">__PARAM__</td></tr><tr><td align=\"left\">__PORT__</td></tr></table>>, fillcolor=\"#__FILL_COLOR__\", shape=plain")
+	local	sGraphviz		= String("URL=\"html/" .. self.name .. ".sv.html\" target=\"" .. self.name .. ".sv\" label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><tr><td><b>" .. self.name .. "</b></td></tr><tr><td align=\"left\">__PARAM__</td></tr><tr><td align=\"left\">__PORT__</td></tr></table>>, fillcolor=\"#__FILL_COLOR__\", shape=plain")
 	
 	if is_top then
 		sGraphviz:Replace("__FILL_COLOR__", "ff880022")
@@ -568,7 +568,7 @@ function module:make_code(is_top)
 						sHtml:erase(iPos, iSize)
 						
 						-- insert link
-						local	sLink	= "<a href=\"" .. module.__top.name .. "_defines.vh.html#" .. i_name .. "\"  target=\"_" .. module.__top.name:upper() ..  "_DEFINES\"><font color=\"#F00000\"><b>" .. i_name .. "</font></b></a>"
+						local	sLink	= "<a href=\"" .. module.__top.name .. "_defines.vh.html#" .. i_name .. "\"  target=\"" .. module.__top.name ..  "_defines.vh\"><font color=\"#F00000\"><b>" .. i_name .. "</font></b></a>"
 						sHtml:insert(iPos, sLink)
 						iPos	= iPos + #sLink
 					else
@@ -711,7 +711,7 @@ function module:make_code(is_top)
 				end
 			end
 			
-			__graphviz:Append("\t\"" .. self.name .. "_defines\" [URL=\"html/" .. self.name .. "_defines.vh.html\" target=\"_" .. self.name:upper() ..  "_DEFINES\" fillcolor=\"#D0FFD0\"];\n")
+			__graphviz:Append("\t\"" .. self.name .. "_defines\" [URL=\"html/" .. self.name .. "_defines.vh.html\" target=\"" .. self.name ..  "_defines.vh\" fillcolor=\"#D0FFD0\"];\n")
 			__graphviz:Append("\t\"" .. self.name .. "\" -> \"" .. self.name .. "_defines\" [fillcolor=\"#F0C0C0\" style=dotted];\n")
 		end
 		
