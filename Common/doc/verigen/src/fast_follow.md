@@ -142,27 +142,27 @@ only the module is added and the port is not described, so a warning is generate
 module test_wrapper ();
 
 
-/* no ports module. (commented out for DRC.)
+/* no ports in module. (commented out for DRC.)
 mem_ctrl mem_ctrl (
 );*/
 
-/* no ports module. (commented out for DRC.)
+/* no ports in module. (commented out for DRC.)
 slave_ctrl slave_ctrl (
 );*/
 
-/* no ports module. (commented out for DRC.)
+/* no ports in module. (commented out for DRC.)
 test_core test_core_0 (
 );*/
 
-/* no ports module. (commented out for DRC.)
+/* no ports in module. (commented out for DRC.)
 test_core test_core_1 (
 );*/
 
-/* no ports module. (commented out for DRC.)
+/* no ports in module. (commented out for DRC.)
 test_core test_core_2 (
 );*/
 
-/* no ports module. (commented out for DRC.)
+/* no ports in module. (commented out for DRC.)
 test_core test_core_3 (
 );*/
 endmodule

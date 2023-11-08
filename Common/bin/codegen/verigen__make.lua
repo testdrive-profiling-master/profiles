@@ -316,7 +316,7 @@ function module:make_code(is_top)
 		
 		if no_ports then
 			sModule:Trim(" \r\n")
-			sBody:Append("\n/* no ports module. (commented out for DRC.)\n" .. sModule.s .. "*/\n")
+			sBody:Append("\n/* no ports in module. (commented out for DRC.)\n" .. sModule.s .. "*/\n")
 		else
 			sBody:Append(sModule.s)
 		end
