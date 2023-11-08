@@ -272,7 +272,7 @@ the same interfaces declared in two different modules are automatically connecte
 module test_wrapper
 wire	$RANGE(config.core_size)	core_busy_all;
 
-${
+${	-- It's Lua codes
 	for i = 1, config.core_size, 1 do
 	   core.inst[i]:set_param("CORE_ID", i)
 	   core.inst[i]:set_port("core_busy", "core_busy_all[" .. (i-1) .. "]")
