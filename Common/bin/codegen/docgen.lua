@@ -124,7 +124,7 @@ function GenerateChapter(level, title)
 	-- make log title
 	local sChapterTitle = String(title)
 	sChapterTitle:Trim(" \t")
-	sChapterTitle:ChangeCharsetToUTF8()
+	sChapterTitle:ChangeCharsetToANSI()
 	for i=3,level do
 		sChapterTitle:insert(0, "    ")
 	end
