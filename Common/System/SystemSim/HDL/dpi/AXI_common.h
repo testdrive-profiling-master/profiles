@@ -31,12 +31,11 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 10/19/2023 Thu (clonextop@gmail.com)
+// Rev.  : 11/9/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __AXI_COMMON_H__
 #define __AXI_COMMON_H__
-#include "dpi_common.h"
-#include "TD_Semaphore.h"
+#include "dpi_lib.h"
 
 typedef enum {
 	AXI_RESP_OKAY,

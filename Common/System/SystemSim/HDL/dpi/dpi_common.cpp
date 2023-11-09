@@ -33,7 +33,7 @@
 // Title : Common DPI
 // Rev.  : 12/30/2021 Thu (clonextop@gmail.com)
 //================================================================================
-#include "dpi_common.h"
+#include "dpi_lib.h"
 #include <stdarg.h>
 
 SystemLog::SystemLog(const char* sTitle)

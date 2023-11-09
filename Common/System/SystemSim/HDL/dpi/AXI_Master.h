@@ -31,13 +31,11 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 10/19/2023 Thu (clonextop@gmail.com)
+// Rev.  : 11/9/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __AXI_MASTER_H__
 #define __AXI_MASTER_H__
-#include "dpi_common.h"
-#include "RoundQueue.h"
-#include "ChainList.h"
+#include "dpi_lib.h"
 
 #define	MAXI_TIMEOUT_COUNT		100000
 

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Simulation HDL module
-// Rev.  : 10/19/2023 Thu (clonextop@gmail.com)
+// Rev.  : 11/9/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
 #include "TestDriver.inl"
@@ -296,32 +296,32 @@ void RegisterDriverCommand(DRIVER_COMMAND func)
 	__pSimControl->RegisterDriverCommand(func);
 }
 
-void MemoryRead32(int ID, UINT64 ADDR, unsigned int* DATA)
+DPI_FUNCTION void MemoryRead32(int ID, UINT64 ADDR, unsigned int* DATA)
 {
 	__pSimControl->MemoryRead32(ID, ADDR, *(DWORD*)DATA);
 }
 
-void MemoryWrite32(int ID, UINT64 ADDR, unsigned int DATA)
+DPI_FUNCTION void MemoryWrite32(int ID, UINT64 ADDR, unsigned int DATA)
 {
 	__pSimControl->MemoryWrite32(ID, ADDR, DATA);
 }
 
-void MemoryRead16(int ID, UINT64 ADDR, unsigned short int* DATA)
+DPI_FUNCTION void MemoryRead16(int ID, UINT64 ADDR, unsigned short int* DATA)
 {
 	__pSimControl->MemoryRead16(ID, ADDR, *(WORD*)DATA);
 }
 
-void MemoryWrite16(int ID, UINT64 ADDR, unsigned short int DATA)
+DPI_FUNCTION void MemoryWrite16(int ID, UINT64 ADDR, unsigned short int DATA)
 {
 	__pSimControl->MemoryWrite16(ID, ADDR, DATA);
 }
 
-void MemoryRead8(int ID, UINT64 ADDR, unsigned char* DATA)
+DPI_FUNCTION void MemoryRead8(int ID, UINT64 ADDR, unsigned char* DATA)
 {
 	__pSimControl->MemoryRead8(ID, ADDR, *(BYTE*)DATA);
 }
 
-void MemoryWrite8(int ID, UINT64 ADDR, unsigned char DATA)
+DPI_FUNCTION void MemoryWrite8(int ID, UINT64 ADDR, unsigned char DATA)
 {
 	__pSimControl->MemoryWrite8(ID, ADDR, DATA);
 }
