@@ -231,7 +231,7 @@ Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph 의 인자 @<c
  
 ## 속성(Property) 참조
 @<size:30>@<b>표현식 : @@<property:@<color:FF0000>속성이름@</color>>@</b>@</size>
-'@<bookmark:Lua 표현>' 중 '@<bookmark:property[] 속성 객체>'로 다양한 이름의 속성을 만들 수 있으며, 이를 본문에서 사용하는 방법을 제공한다.
+'@<bookmark:Lua 표현>' 중 '@<bookmark:property[] 속성 객체 (기본)>'로 다양한 이름의 속성을 만들 수 있으며, 이를 본문에서 사용하는 방법을 제공한다.
 예)
 ```html
 @<property:Main_Title>, @<property:Ownership>

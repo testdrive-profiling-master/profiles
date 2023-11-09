@@ -1,9 +1,9 @@
 -- 문서 속성들
 property["Document_Name"]			= "TestDoc"
 property["IP_Version"]				= "1.00"
-property["Comprehensive_IP_Title"]	= "Some Title"
+property["Main_Title"]				= "Some Title"
+property["Sub_Title"]				= "Some Title"
 property["IP_Name_First_Page"]		= "Name_blabla~"
-property["Business_Unit"]			= "foundry"
 property["IP_Name_Header"]			= "Header_blabla~"
 property["Ownership"]				= "TESTDRIVE"
 property["Document_Name_Header"]	= "User guide"

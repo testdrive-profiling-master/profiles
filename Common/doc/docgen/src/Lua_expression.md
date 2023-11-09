@@ -16,11 +16,12 @@ docgen 역시 '@<bookmark:@실행 방법>'에서 나열한 것과 같이 docgen.
 
 
 ;;;
-## property[] 속성 객체
+## property[] 속성 객체 (기본)
 ```lua
 property["Document_Name"]			-- 문서 이름
 property["IP_Version"]				-- IP 버전 (예:"1.00")
-property["Main_Title"]				-- 문서 첫장의 타이틀 이름
+property["Main_Title"]				-- 문서 첫장의 메인 타이틀 이름
+property["Sub_Title"]				-- 문서 첫장의 서브 타이틀 이름 (생략 가능)
 property["IP_Name_First_Page"]		-- 문서 첫장의 이름
 property["IP_Name_Header"]			-- 해더 및 파일 상의 이름 (예 : "doc_guide")
 property["Ownership"]				-- 오너쉽 명
@@ -32,8 +33,8 @@ property["Water_Mark"]				-- 워터마킹 문구 (사용하지 않을 경우 비
 
 @<img:#media/word_property.png;0.4;WORD 속성 탭>
 
-이 메뉴에서 사용자가 원하는 Field 속성을 추가할 수 있으며, 이 값이 변경되면 문서 전체의 Field 정보를 같이 변경할 수 있습니다.
-이걸 lua 코드 내에서 아래와 같은 방법으로 템플릿 문서에 이미 존재하는 필드 값을 변경 할 수 있습니다.
+이 메뉴에서 사용자가 원하는 Field 속성을 추가하거나, 기존 Property를 변경할 수 있습니다. 선언된 Property 는 문서 전체의 Field 정보에 반영됩니다.
+이걸 lua 코드 내에서는 아래와 같은 방법으로 템플릿 문서에 이미 존재하는 필드 값을 변경 가능합니다.
 
 예) 이 문서의 Field 지정 예시 ("--" 로 시작하는 문장은 Lua에서 '주석' 표기를 의미합니다.)
 ```lua
@@ -44,7 +45,6 @@ property["IP_Name_First_Page"]		= "User Guide"
 property["IP_Name_Header"]			= "document_generator"
 property["Ownership"]				= "TestDrive"
 property["Document_Name_Header"]	= "userguide"
--- 워터마크를 쓰지 않으려면 이부분을 주석 처리 합니다.
 property["Water_Mark"]				= "TESTDRIVE CONFIDENTIAL"
 ```
 
