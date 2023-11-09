@@ -79,6 +79,11 @@ int main(int argc, const char* argv[])
 	if(!main_arg_table.DoParse(arg_size, argv))
 		return 1;
 
+#ifdef WIN32
+	// set UTF-8 mode
+	SetConsoleOutputCP(65001);
+#endif
+
 	// get options
 	__sLuaFileName	= main_arg_table.GetOptionFile("lua_file");
 	LuaFile::SetKeyCode(main_arg_table.GetOptionString("key"));
