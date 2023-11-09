@@ -121,6 +121,15 @@ do	-- delete latest "paragraph"
 end
 
 function GenerateChapter(level, title)
+	-- make log title
+	local sChapterTitle = String(title)
+	sChapterTitle:Trim(" \t")
+	sChapterTitle:ChangeCharsetToUTF8()
+	for i=3,level do
+		sChapterTitle:insert(0, "    ")
+	end
+	sChapterTitle	= sChapterTitle.s
+
 	do	-- trim off space
 		local	sTitle	= String(title)
 		sTitle:Trim(" \t")
@@ -140,7 +149,16 @@ function GenerateChapter(level, title)
 		table_id		= 1
 		figure_id		= 1
 		reference_id	= 70000000 + (chapture_id*1000000)
+		
+		print(chapture_id .. ". " .. sChapterTitle)
 	else
+		local sNum		= "" .. chapture_id .. ". "
+		local sSpace	= ""
+		for i = 1,#sNum do
+			sSpace	= sSpace .. " "
+		end
+		print(sSpace .. sChapterTitle)
+		
 		reference_id	= 70000000 + (chapture_id*1000000) + (chapture_sid*10)
 	end
 	
@@ -1559,6 +1577,7 @@ if term_count == 0 then
 end
 
 -- 북마크 갱신
+LOGI("Build all bookmarks.")
 while true do
 	local	bookmark_node	= doc_node:child_in_depth("w:instrText", "BOOKMARK")
 	

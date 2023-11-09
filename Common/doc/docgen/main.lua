@@ -1,7 +1,8 @@
 -- 문서 속성들
 property["Document_Name"]			= "UserGuide"
 property["IP_Version"]				= "1.00"
-property["Main_Title"]				= "Document Generator"
+property["Main_Title"]				= "Docgen"
+property["Sub_Title"]				= "(Document Generator)"
 property["IP_Name_First_Page"]		= "User Guide"
 property["IP_Name_Header"]			= "document_generator"
 property["Ownership"]				= "clonextop@gmail.com"
