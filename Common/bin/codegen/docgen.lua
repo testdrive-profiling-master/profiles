@@ -1577,7 +1577,7 @@ if term_count == 0 then
 end
 
 -- 북마크 갱신
-LOGI("Build all bookmarks.")
+LOGI("Link all bookmarks.")
 while true do
 	local	bookmark_node	= doc_node:child_in_depth("w:instrText", "BOOKMARK")
 	
