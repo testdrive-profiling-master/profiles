@@ -297,13 +297,29 @@ bool DocWord::ReplaceSubDocument(const char* sPrevName, const char* sFileName)
 
 bool DocWord::SetProperty(const char* sID, const char* sValue)
 {
-	DocXML node = m_Properties.find_child_by_attribute("name", sID);
+	if(sID) {
+		DocXML node = m_Properties.find_child_by_attribute("name", sID);
 
-	if(!node.empty()) {
-		node.child("vt:lpwstr").text().set(sValue);
-		return true;
-	} else {
-		LOGW("Property '%s' is not existed.", sID);
+		if(!node.empty()) {	// already existed.
+			node.child("vt:lpwstr").text().set(sValue ? sValue : "");
+			return true;
+		} else {
+			// find last PID first
+			int iLastPID = 2;
+			m_Properties.Enumerate("property", &iLastPID, [](DocXML node, void* pPrivate) -> bool {
+				int iPID		= node.attribute("pid").as_int();
+				int& iLastPID	= *(int*)pPrivate;
+				if(iPID > iLastPID) iLastPID	= iPID;
+				return true;
+			});
+
+			// add new property and data
+			node = m_Properties.append_child("property");
+			node.append_attribute("fmtid").set_value("{D5CDD505-2E9C-101B-9397-08002B2CF9AE}");
+			node.append_attribute("pid").set_value(iLastPID + 1);
+			node.append_attribute("name").set_value(sID);
+			node.append_child("vt:lpwstr").set_value(sValue ? sValue : "");
+		}
 	}
 
 	return false;

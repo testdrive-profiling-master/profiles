@@ -160,7 +160,7 @@ endif
 %.o: %.c
 	@echo '- Compiling... : $<'
 	@ccache $(CC) $(CDEFS) $(CFLAGS) $(INC) -MD -c $< -o $@
-	# ccache bug fix "D\:/" -> "D:/"
+# ccache bug fix "D\:/" -> "D:/"
 	@sed -i 's/\\\:/\:/g' $*.d
 
 %.o: %.cpp

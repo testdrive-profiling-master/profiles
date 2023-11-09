@@ -234,9 +234,9 @@ Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph 의 인자 @<c
 '@<bookmark:Lua 표현>' 중 '@<bookmark:property[] 속성 객체>'로 다양한 이름의 속성을 만들 수 있으며, 이를 본문에서 사용하는 방법을 제공한다.
 예)
 ```html
-@<property:Comprehensive_IP_Title>, @<property:Ownership>
+@<property:Main_Title>, @<property:Ownership>
 ```
-결과 : @<property:Comprehensive_IP_Title>, @<property:Ownership>
+결과 : @<property:Main_Title>, @<property:Ownership>
 
 
  

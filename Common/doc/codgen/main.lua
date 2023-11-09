@@ -1,10 +1,10 @@
 -- 문서 속성들
 property["Document_Name"]			= "UserGuide"
 property["IP_Version"]				= "1.00"
-property["Comprehensive_IP_Title"]	= "Code Generator"
+property["Main_Title"]				= "Codegen"
+property["Sub_Title"]				= "(Code Generator)"
 property["IP_Name_First_Page"]		= "User Guide"
-property["Business_Unit"]			= "sw"
-property["IP_Name_Header"]			= "document_generator"
+property["IP_Name_Header"]			= "code generator"
 property["Ownership"]				= "clonextop@gmail.com"
 property["Document_Name_Header"]	= "userguide"
 property["Security_Level"]			= "BSD License."

@@ -20,9 +20,8 @@ docgen 역시 '@<bookmark:@실행 방법>'에서 나열한 것과 같이 docgen.
 ```lua
 property["Document_Name"]			-- 문서 이름
 property["IP_Version"]				-- IP 버전 (예:"1.00")
-property["Comprehensive_IP_Title"]	-- 문서 첫장의 타이틀 이름
+property["Main_Title"]				-- 문서 첫장의 타이틀 이름
 property["IP_Name_First_Page"]		-- 문서 첫장의 이름
-property["Business_Unit"]			-- 비지니스 유닛 (예:"hw")
 property["IP_Name_Header"]			-- 해더 및 파일 상의 이름 (예 : "doc_guide")
 property["Ownership"]				-- 오너쉽 명
 property["Document_Name_Header"]	-- 해더 이름 (...)
@@ -40,9 +39,8 @@ property["Water_Mark"]				-- 워터마킹 문구 (사용하지 않을 경우 비
 ```lua
 property["Document_Name"]			= "UserGuide"
 property["IP_Version"]				= "1.00"
-property["Comprehensive_IP_Title"]	= "Document Generator"
+property["Main_Title"]				= "Document Generator"
 property["IP_Name_First_Page"]		= "User Guide"
-property["Business_Unit"]			= "sw"
 property["IP_Name_Header"]			= "document_generator"
 property["Ownership"]				= "TestDrive"
 property["Document_Name_Header"]	= "userguide"

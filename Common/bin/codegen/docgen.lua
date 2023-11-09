@@ -70,18 +70,16 @@ local	sDate = String(nil)
 property = {}
 sDate:FormatDate("%Y", 0)
 property["Year"]					= sDate.s		-- 라이센스 연도 반영
-property["Document_Name"]			= "-"
+property["Document_Name"]			= ""
 sDate:FormatDate("%B %d, %Y", 0)
 property["Revision_Date"]			= sDate.s
-property["IP_Version"]				= "-"
-property["Doc_Version"]				= "-"
-property["Comprehensive_IP_Title"]	= "-"
-property["IP_Name_First_Page"]		= "-"
-property["Business_Unit"]			= "-"
-property["IP_Name_Header"]			= "-"
-property["Ownership"]				= "-"
-property["Document_Name_Header"]	= "-"
-property["Water_Mark"]				= ""
+property["Doc_Version"]				= ""
+property["Main_Title"]				= ""
+property["Sub_Title"]				= ""
+property["IP_Name_Header"]			= ""
+property["Ownership"]				= ""
+property["Document_Name_Header"]	= ""
+property["Water_Mark"]				= ""			-- 지정할 경우 워터마크가 overlay 된다.
 
 -- Revision 추가 함수
 local	doc_node					= doc:GetNode("word/document.xml", false):child("w:document"):child("w:body")
@@ -1415,7 +1413,7 @@ function EncodeParagraph(sText, sExtra)
 							local	sName	= sVar:Tokenize("")
 							sName:TrimLeft(" :")
 							sName:TrimRight(" ")
-							sLine:insert(sLine.TokenizePos, String(property[sName.s]).s)
+							sLine:insert(sLine.TokenizePos, property[sName.s] and String(property[sName.s]).s or "")
 						elseif sTag.s == "bookmark" then
 							local	sBookmark	= sVar:Tokenize("")
 							sBookmark:TrimLeft(" :")
@@ -1593,7 +1591,34 @@ end
 do
 	-- 저장 이름 없을 시 생성
 	if #sOutFilename == 0 then
-		sOutFilename	= property["Ownership"] .. "_" .. property["Business_Unit"] .. "_" .. property["IP_Name_Header"]  .. "_" .. property["Document_Name_Header"] .. "_rev" .. property["Doc_Version"] .. ".docx"
+		if(#property["Ownership"] > 0) then
+			sOutFilename	= property["Ownership"] .. "_"
+		end
+
+		if(#property["IP_Name_Header"] > 0) then
+			sOutFilename	= sOutFilename .. property["IP_Name_Header"] .. "_"
+		end
+
+		if(#property["Document_Name_Header"] > 0) then
+			sOutFilename	= sOutFilename .. property["Document_Name_Header"] .. "_"
+		end
+
+		if(#property["Doc_Version"] > 0) then
+			sOutFilename	= sOutFilename .. "rev" .. property["Doc_Version"]
+		end
+		
+		do	-- cut last '_' charactor
+			local s = String(sOutFilename)
+			s:Replace(" ", "_", true)
+			s:TrimRight("_")
+			sOutFilename = s.s
+		end
+		
+		if(#sOutFilename == 0)  then
+			sOutFilename = "untitled_document"
+		end
+		
+		sOutFilename	= sOutFilename .. ".docx"
 	end
 
 	sOutFilename	= String(sOutFilename)
