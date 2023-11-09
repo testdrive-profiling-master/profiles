@@ -1,8 +1,8 @@
 -- document properties
-property["Document_Name"]			= "UserGuide"
-property["IP_Version"]				= "1.00"
-property["Comprehensive_IP_Title"]	= "Verilog Generator"
-property["IP_Name_First_Page"]		= "User Guide"
+property["Document_Name"]			= "Verigen user guide"
+property["IP_Version"]				= "1.03"
+property["Comprehensive_IP_Title"]	= "Verigen"
+property["IP_Name_First_Page"]		= "Verilog Generator User Guide"
 property["Business_Unit"]			= "sw"
 property["IP_Name_Header"]			= "document_generator"
 property["Ownership"]				= "clonextop@gmail.com"
