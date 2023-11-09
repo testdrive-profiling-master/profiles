@@ -1,1 +1,1 @@
-system.shell	"explorer", "https://code.google.com/p/istyle-verilog-formatter/"
+system.shell	"explorer", "https://github.com/thomasrussellmurphy/istyle-verilog-formatter"
