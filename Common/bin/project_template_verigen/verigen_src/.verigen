@@ -1,0 +1,103 @@
+local	Arg				= ArgTable("Processor Generator. v1.0")
+
+-- check arguments
+Arg:AddOptionFile	("config", nil, nil, nil, "excel_config_file", "set configuration excel file")
+
+if (Arg:DoParse() == false) then
+	os.exit(0)
+end
+
+-- set target file and folder
+sInFilename			= "main.lua"
+sOutPath			= "../rtl"
+
+-- setup configurations
+config	= {}
+
+do
+	-- default value
+	config.core_size		= 4
+	config.m_addr_width		= 32
+	config.m_data_width		= 512
+	config.s_base_addr		= "32'h10000000"
+
+	local	config_file_name	= Arg:GetOptionFile("config", 0)
+	
+	if config_file_name ~= nil then
+		local	xls		= DocExcel()
+		if xls:Open(config_file_name) then
+			local sheet	= xls:GetSheet("configuration")
+			
+			if sheet == nil then
+				LOGE("Can't open Excel sheet 'configuration'")
+				os.exit(1)
+			end
+			
+			-- core count
+			sheet:SetPosition("B2")
+			sheet:GetRow(false)
+			sheet:GetColumn(false)
+			config.core_size		= tonumber(sheet:GetValue())
+			-- main memory address bit size
+			sheet:SetPosition("B3")
+			sheet:GetRow(false)
+			sheet:GetColumn(false)
+			config.m_addr_width		= tonumber(sheet:GetValue())
+			-- required clock speed
+			sheet:SetPosition("B4")
+			sheet:GetRow(false)
+			sheet:GetColumn(false)
+			config.clock_speed		= tonumber(sheet:GetValue())
+			
+			xls:Close()
+		else
+			LOGE("Can't load EXCEL configuration file.")
+			os.exit(1)
+		end
+	end
+	
+	-- check environment variable override
+	do
+		local sEnv = String("")
+		sEnv:GetEnvironment("SIM_DEFINITION")
+		
+		while sEnv.TokenizePos >= 0 do
+			local	sTok	= sEnv:Tokenize(" ")
+			
+			if sEnv.TokenizePos < 0 then
+				break
+			end
+			
+			if sTok:CompareFront("-D") then
+				sTok:erase(0, 2)
+				
+				local	sID		= sTok:Tokenize("=")
+				local	sVal	= sTok:Tokenize("=")
+				
+				if sID ~= nil and sVal ~= nil then
+					if sID.s == "CORE_SIZE" then
+						config.core_size	= tonumber(sVal.s)
+					end
+				end
+			end
+		end
+	end
+end
+
+
+-- show up configurations
+LOGI("Current configuration")
+print("\t- CORE_SIZE           : " .. config.core_size)
+print("\t- M_ADDR_WIDTH        : " .. config.m_addr_width)
+print("\t- M_DATA_WIDTH        : " .. config.m_data_width)
+print("")
+
+
+-- delete previous codes
+exec("rm -f ../rtl/*.sv")
+exec("rm -f ../rtl/*.vh")
+exec("rm -f ../rtl/*.f")
+exec("rm -f ../rtl/*.svg")
+exec("rm -f ../rtl/html/*.html")
+
+LOGI("Now verilog code generation in progress...\n")

@@ -253,6 +253,9 @@ System::System(ITDDocument* pDoc) :
 		m_pPropertySim[SIM_PROPERTY_TRACE_START_TIME]	= pProperty;
 	}
 	UpdateEnvironments();
+	{	// setup global environment file
+		g_pSystem->SetConfigString(_T("RECENT_PROJECT"),g_pSystem->RetrieveFullPath(_T("%PROJECT%")));
+	}
 	{
 		BOOL	bFirstRunToday	= FALSE;
 		BOOL	bMonthlyUpdate	= FALSE;

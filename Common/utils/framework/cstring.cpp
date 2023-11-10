@@ -758,16 +758,53 @@ int cstring::CheckFileExtension(const char** sExtList)
 	return -1;
 }
 
+static const char* __sEnvDelim		= "@";
+#ifdef WIN32
+#include <windows.h>
+static const char* __sEnvFileName	= "testdrive.ini";
+
+static bool __GetEnvString(cstring sKey, cstring& sAppName, cstring& sKeyName, cstring& sEnvPath) {
+	if(!sEnvPath.GetEnvironment(_T("TESTDRIVE_DIR"))) return false;
+	sEnvPath.Append(__sEnvFileName);
+
+	int iPos = 0;
+	sKeyName	= sKey.Tokenize(iPos, __sEnvDelim);
+	sAppName	= sKey.Tokenize(iPos, __sEnvDelim);
+	if(sKeyName.IsEmpty() || sAppName.IsEmpty()) return false;
+
+	return true;
+}
+#endif
+
 bool cstring::GetEnvironment(const char* sKey)
 {
 	if(sKey) {
-		char* sEnv = getenv(sKey);
-
-		if(sEnv) {
-			m_sStr	= sEnv;
-			return true;
-		} else {
+		if(strstr(sKey, __sEnvDelim)) {
+#ifdef WIN32
+			// in testdrive.ini
 			m_sStr.clear();
+			cstring sAppName, sKeyName, sEnvPath;
+			if(!__GetEnvString(sKey, sAppName, sKeyName, sEnvPath)) return false;
+			{
+				char* sData = new char[1024 * 64];
+				*sData	= 0;
+				if(GetPrivateProfileString(sAppName, sKeyName, NULL, sData, 1024 * 64, sEnvPath))
+					m_sStr	= sData;
+				delete [] sData;
+			}
+			return true;
+#else
+			return false;
+#endif
+		} else {
+			char* sEnv = getenv(sKey);
+
+			if(sEnv) {
+				m_sStr	= sEnv;
+				return true;
+			} else {
+				m_sStr.clear();
+			}
 		}
 	}
 
@@ -786,7 +823,16 @@ static void setenv(const char* sKey, const char* sData, int replace)
 void cstring::SetEnvironment(const char* sKey)
 {
 	if(sKey) {
-		setenv(sKey, m_sStr.c_str(), 1);
+		if(strstr(sKey, __sEnvDelim)) {
+#ifdef WIN32
+			// in testdrive.ini
+			cstring sAppName, sKeyName, sEnvPath;
+			if(!__GetEnvString(sKey, sAppName, sKeyName, sEnvPath)) return;
+			WritePrivateProfileString(sAppName, sKeyName, m_sStr.c_str(), sEnvPath);
+#endif
+		} else {
+			setenv(sKey, m_sStr.c_str(), 1);
+		}
 	}
 }
 

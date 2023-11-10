@@ -1,0 +1,20 @@
+-- check verilator simulation definition
+local f = TextFile()
+
+local sEnv = String("")
+sEnv:GetEnvironment("SIM_DEFINITION")
+
+local sSim = ""
+if f:Open("../rtl/.verilator.config") then
+	sSim	= f:GetAll()
+	f:Close()
+end
+
+if sSim ~= sEnv.s then
+	if f:Create("../rtl/.verilator.config") then
+		f:Put(sEnv.s)
+		f:Close()
+	end
+	
+	exec("touch .TestDrive.verilator")	-- touch myself
+end
