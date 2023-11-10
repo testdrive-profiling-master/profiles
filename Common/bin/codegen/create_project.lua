@@ -54,6 +54,8 @@ function MakeDir(folder_name)
 		LOGE("Can't create project directory '" .. folder_name .. "'")
 		os.exit(1)
 	end
+	
+	return folder_name .. "/"
 end
 
 function MakeDirForVerilog(folder_name)
@@ -80,16 +82,20 @@ function MakeDirForVerilog(folder_name)
 end
 
 
+local sProjectPath = ""
+
 if (sType == "c" or sType == "c++" or sType == "cpp") then
-	MakeDir(sProjectName)
+	sProjectPath	= MakeDir(sProjectName)
 	LOGI("Create C++ project : '" .. sProjectName .. "'")
 	
 	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_cpp/.\" " .. sProjectName .. "/")
 	os.execute("sed \"s/Test/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/.project")
 	os.execute("sed \"s/Test/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/Makefile")
 	os.execute("sed \"s/Test/" .. sProjectName .. " project/\" -i ./" .. sProjectName .. "/.inception")
+	
+	os.execute("explorer " .. sProjectName)
 elseif (sType == "v" or sType == "verilog") then
-	local sProjectPath	= MakeDirForVerilog(sProjectName)
+	sProjectPath	= MakeDirForVerilog(sProjectName)
 	LOGI("Create Verilog project : '" .. sProjectName .. "'(" .. sProjectPath .. ")")
 	
 	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_verilog/.\" \"" .. sProjectPath .. "/\"")
@@ -99,7 +105,7 @@ elseif (sType == "v" or sType == "verilog") then
 	
 	os.execute("explorer " .. sProjectPath)
 elseif (sType == "v_bare" or sType == "verilog_bare") then
-	local sProjectPath	= MakeDirForVerilog(sProjectName)
+	sProjectPath	= MakeDirForVerilog(sProjectName)
 	LOGI("Create Bared-Verilog project : '" .. sProjectName .. "'(" .. sProjectPath .. ")")
 
 	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_verilog_bare/.\" \"" .. sProjectPath .. "/\"")
@@ -114,7 +120,7 @@ elseif (sType == "v_gen" or sType == "verigen") then
 		os.exit(1)
 	end
 
-	local sProjectPath	= MakeDirForVerilog(sProjectName)
+	sProjectPath	= MakeDirForVerilog(sProjectName)
 	LOGI("Create Verigen project : '" .. sProjectName .. "'(" .. sProjectPath .. ")")
 	
 	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_verigen/.\" \"" .. sProjectPath .. "/\"")
@@ -131,4 +137,28 @@ elseif (sType == "v_gen" or sType == "verigen") then
 	os.execute("explorer " .. sProjectPath)
 else
 	LOGE("Invalid project type : '" .. sType .. "'. Please refer 'help' with \"create_project --help\" command.")
+	os.exit(1)
 end
+
+do	-- delete previous eclipse workspace to avoid conflict
+	lfs.chdir(sProjectPath)
+	sProjectPath	= lfs.currentdir()
+	local sWorkspacePath = String(sProjectPath)
+	
+	while(sWorkspacePath:find("\\", 0) > 0) do
+		sWorkspacePath:CutBack("\\")
+		
+		if lfs.attributes(sWorkspacePath.s .. "/.workspace/") ~= nil then
+			local sFindPath = String(sProjectPath)
+			sFindPath:erase(0, sWorkspacePath:Length())
+			sWorkspacePath	= sWorkspacePath.s .. "/.workspace" .. sFindPath.s
+
+			if lfs.attributes(sWorkspacePath) ~= nil then
+				os.execute("rm -rf \"" .. sWorkspacePath .. "\"")
+			end
+			break
+		end
+	end
+end
+
+print("\nRun '.eclipse' to open your project's IDE environment.")
