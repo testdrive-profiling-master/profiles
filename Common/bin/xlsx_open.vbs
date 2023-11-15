@@ -57,10 +57,10 @@ If WScript.Arguments.Count > 0 Then
 		Wscript.Echo "*E: Not a Excel file."
 	End If
 
-	Set objBooks	= NoThing
-	Set objExcel	= NoThing
+	Set objBooks	= Nothing
+	Set objExcel	= Nothing
 Else
 	Wscript.Echo "Usage : xlsx_open  source_excel_file  [sheet_name]"
 End If
 
-Set fso		= NoThing
+Set fso		= Nothing

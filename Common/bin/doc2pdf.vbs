@@ -174,10 +174,10 @@ If WScript.Arguments.Count > 0 Then
 	Else
 		Wscript.Echo "Not a Word file."
 	End If
-	Set objDoc		= NoThing
-	Set objWord		= NoThing
+	Set objDoc		= Nothing
+	Set objWord		= Nothing
 Else
 	Wscript.Echo "Usage : doc2pdf  source_doc_file  [water_mark_text]"
 End If
 
-Set fso		= NoThing
+Set fso		= Nothing

@@ -58,8 +58,8 @@ If WScript.Arguments.Count > 0 Then
 		End If
 		
 		objVisio.Quit
-		objDraw			= NoThing
-		Set objVisio	= NoThing
+		objDraw			= Nothing
+		Set objVisio	= Nothing
 	Else
 		Wscript.Echo "Not a Visio file."
 	End If
@@ -67,4 +67,4 @@ Else
 	Wscript.Echo "Usage : vsd2svg  source_vsd_file [page_name]"
 End If
 
-Set fso		= NoThing
+Set fso		= Nothing
