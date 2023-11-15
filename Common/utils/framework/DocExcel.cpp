@@ -2,22 +2,22 @@
 // Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
-// 
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -29,9 +29,9 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : utility framework
-// Rev.  : 4/10/2023 Mon (clonextop@gmail.com)
+// Rev.  : 11/15/2023 Wed (clonextop@gmail.com)
 //================================================================================
 #include "DocExcel.h"
 
@@ -279,8 +279,7 @@ double DocExcelSheet::GetColumnWidth(void)
 		int	iMin	= node.attribute("min").as_int(0);
 		int	iMax	= node.attribute("max").as_int(0);
 
-		if(p.iCol >= iMin && p.iCol <= iMax)
-		{
+		if(p.iCol >= iMin && p.iCol <= iMax) {
 			p.fWidth	= node.attribute("width").as_double(8.5);
 			return false;
 		}
@@ -343,6 +342,7 @@ string DocExcelSheet::GetValue(void)
 
 		if(bString) {
 			sValue	= m_pExcel->GetString(atoi(sValue.c_str()));
+			sValue.ChangeCharsetToANSI();
 		} else {
 			double	v	= atof(sValue.c_str());
 			/*
@@ -380,10 +380,11 @@ string DocExcelSheet::GetValue(void)
 			*/
 			v	+= 0.00000000000001;
 			sValue.Format("%.13f", v);
-			sValue.TrimRight(".0");
-		}
 
-		sValue.ChangeCharsetToANSI();
+			while(sValue.rfind('0') == (sValue.Length() - 1)) sValue.DeleteBack("0");
+
+			if(sValue.rfind('.') == (sValue.Length() - 1)) sValue.DeleteBack(".");
+		}
 	}
 
 	return sValue.c_str();
@@ -779,8 +780,7 @@ bool DocExcelSheet::OnSave(void)
 	// delete value on function cell to recompute all value
 	if(m_bRecompute) {
 		m_SheetData.EnumerateInDepth("c", NULL, [](DocXML node, void* pPrivate) -> bool {
-			if(!node.child("f").empty())
-			{
+			if(!node.child("f").empty()) {
 				node.remove_child("v");
 			}
 			return true;
@@ -999,8 +999,7 @@ void DocExcel::AddCalChain(DocExcelSheet* pSheet)
 	m_CalcChain.Enumerate("c", &p, [](DocXML node, void* pPrivate) -> bool{
 		private_data*	p	= (private_data*)pPrivate;
 
-		if(p->sPos == node.attribute("r").as_string() && p->sID == node.attribute("i").as_string())
-		{
+		if(p->sPos == node.attribute("r").as_string() && p->sID == node.attribute("i").as_string()) {
 			p->bFound	= true;
 			return false;
 		}
@@ -1059,8 +1058,7 @@ int DocExcel::StyleFont(const char* sFontName, int iFontSize, bool bBold, bool b
 		if(p->sFontName == node.child("name").attribute("val").as_string() &&
 		   p->iFontSize == node.child("sz").attribute("val").as_int() &&
 		   p->bBold == node.Size("b") &&
-		   p->bItalic == node.Size("i"))
-		{
+		   p->bItalic == node.Size("i")) {
 			if(p->dwColorARGB) {
 				cstring sARGB;
 				sARGB.Format("%08X", p->dwColorARGB);
@@ -1118,8 +1116,7 @@ int DocExcel::StyleFill(unsigned int dwColorARGB)
 		node	= node.child("patternFill");
 		p->iIndex++;
 
-		if(!node.empty() && !strcmp(node.attribute("patternType").as_string(), "solid") && !strcmp(node.child("fgColor").attribute("rgb").as_string(), p->sColorValue))
-		{
+		if(!node.empty() && !strcmp(node.attribute("patternType").as_string(), "solid") && !strcmp(node.child("fgColor").attribute("rgb").as_string(), p->sColorValue)) {
 			p->iRet	= p->iIndex;
 			return false;
 		}
@@ -1213,8 +1210,7 @@ int DocExcel::StyleBorder(const char* sBorderStyle)
 		   (p->sBottom == node.child("bottom").attribute("style").value() && !node.child("bottom").first_child()) &&
 		   (p->bDiagonalUp == node.attribute("diagonalUp").as_bool() && !node.child("diagonalUp").first_child()) &&
 		   (p->bDiagonalDown == node.attribute("diagonalDown").as_bool() && !node.child("diagonalDown").first_child()) &&
-		   (p->sDiagonal == node.child("diagonal").attribute("style").as_string() && !node.child("diagonal").first_child()))
-		{
+		   (p->sDiagonal == node.child("diagonal").attribute("style").as_string() && !node.child("diagonal").first_child())) {
 			p->iRet	= p->iIndex;
 			return false;
 		}
@@ -1389,8 +1385,7 @@ int DocExcel::StyleCell(int iStyleFont, int iStyleFill, int iStyleBorder, int iS
 		   (p->iFill != 0) == node.attribute("applyFill").as_int() &&
 		   (p->iBorder != 0) == node.attribute("applyBorder").as_int() &&
 		   ((p->iNumberFormat != 0) ? 1 : 0) == node.attribute("applyNumberFormat").as_int() &&
-		   (p->alignment.bEnable) == node.attribute("applyAlignment").as_int())
-		{
+		   (p->alignment.bEnable) == node.attribute("applyAlignment").as_int()) {
 			bool	bMatched	= true;
 
 			if(p->alignment.bEnable) {
@@ -1521,8 +1516,7 @@ int DocExcel::StyleFormat(const char* sFormat)
 		private_data* p = (private_data*)pPrivate;
 		p->iIndex++;
 
-		if(p->bg_color.size())
-		{
+		if(p->bg_color.size()) {
 			if(p->bg_color != node.child("fill").child("patternFill").child("bgColor").attribute("rgb").as_string())
 				return true;
 		} else if(node.Size("fill")) return true;
@@ -1700,8 +1694,7 @@ void DocExcel::DeleteSheet(DocExcelSheet* pSheet)	//@FIXME : not working
 			m_Workbook.Enumerate("sheet", &iSheetID, [](DocXML node, void* pPrivate) -> bool {
 				int	iSheetID	= *(int*)pPrivate;
 
-				if(node.attribute("sheetId").as_int() > iSheetID)
-				{
+				if(node.attribute("sheetId").as_int() > iSheetID) {
 					node.attribute("sheetId").set_value(node.attribute("sheetId").as_int() - 1);
 				}
 				return true;
