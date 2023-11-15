@@ -354,7 +354,9 @@ LPCTSTR CDesignMap::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 
 					}
 
-					g_pSystem->ExecuteFile(_T("%TESTDRIVE_PROFILE%common\\bin\\xlsx_open.bat"), sArg, TRUE, NULL, _T("%TESTDRIVE_PROFILE%common\\bin"), NULL);
+					g_pSystem->ExecuteFile(_T("%TESTDRIVE_PROFILE%common\\bin\\xlsx_open.bat"), sArg, TRUE, NULL, _T("%TESTDRIVE_PROFILE%common\\bin"),
+							_T("*E: "), -1,
+							NULL);
 				}
 			}
 			break;

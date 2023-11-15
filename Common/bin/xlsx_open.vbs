@@ -11,7 +11,7 @@ If WScript.Arguments.Count > 0 Then
 
 		If Err.Number <> 0 or objBooks Is Nothing Then
 			Err.Clear
-			Wscript.Echo "Excel is not installed."
+			Wscript.Echo "*E: Excel is not installed."
 			WScript.Quit(1)
 		End If
 
@@ -20,7 +20,7 @@ If WScript.Arguments.Count > 0 Then
 			Set objExcel			= CreateObject("Excel.Application")
 			
 			If Err.Number <> 0 Then
-				Wscript.Echo "Microsoft Excel is not installed."
+				Wscript.Echo "*E: Microsoft Excel is not installed."
 				Err.Clear
 				WScript.Quit(1)
 			End If
@@ -36,10 +36,10 @@ If WScript.Arguments.Count > 0 Then
 				sheet_name		= WScript.Arguments(1)
 				set ws			= objBooks.Worksheets(sheet_name)
 				
-				if Not ws Is Nothing Then
+				if Not IsEmpty(ws) Then
 					ws.Activate
 				Else
-					Wscript.Echo "Can't open sheet : " + sheet_name
+					Wscript.Echo "*E: Can't open sheet : '" + sheet_name + "'"
 				End if
 			End if
 			
@@ -47,13 +47,14 @@ If WScript.Arguments.Count > 0 Then
 			Dim ObjShell
 			Set ObjShell = CreateObject("Wscript.Shell")
 			ObjShell.AppActivate(objBooks.Application.ActiveWindow.Caption)
+			ObjShell.sendkeys "% r"	'handle minimized windows
 		Else
-			Wscript.Echo "Can't open file : " + excel_path
+			Wscript.Echo "*E: Can't open file : '" + excel_path + "'"
 			objExcel.Quit
 		End if
 
 	Else
-		Wscript.Echo "Not a Word file."
+		Wscript.Echo "*E: Not a Excel file."
 	End If
 
 	Set objBooks	= NoThing
