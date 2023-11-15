@@ -231,11 +231,11 @@ ex) Example of adding signal to interface object
 ```lua
 i_axi3	= interface:new("AXI3")
 
--- parameter 설정
+-- parameter setting
 i_axi3:set_param("ADDR_WIDTH", 16)
 i_axi3:set_param("DATA_WIDTH", 128)
 
--- signal 설정
+-- signal setting
 i_axi3:set_signal("AWVALID")
 i_axi3:set_signal("AWREADY")
 i_axi3:set_signal("AWADDR", "ADDR_WIDTH")
@@ -621,6 +621,18 @@ endmodule
 ```
 ;;;
 
+### module:set_document
+@<tbl:media/instruction_module.xlsx;set_document>
+ 
+This function only affects "Design map". Display it as a hyperlink in "Design map" so that users can click to edit it.
+
+ex) set_document example
+```lua
+top	= module:new("top")		-- Module creation example
+top:set_document("Configuration", "configuration@config.xlsx")
+```
+;;;
+
 ### module:get_inception
 @<tbl:media/instruction_module.xlsx;get_inception>
 ;;;
@@ -636,14 +648,14 @@ endmodule
 ### module:set_param
 @<tbl:media/instruction_module.xlsx;set_param>
  
-ex) module:set_param 예시
+ex) module:set_param example
 ```lua
 top	= module:new("top")		-- Module creation example
 
--- port parameter 설정
+-- port parameter setting
 top:set_param("DATA_WIDTH", 32)
 
--- local parameter 설정
+-- local parameter setting
 top:set_param("BYTE_WIDTH", "DATA_WIDTH/8", true)
 ```
 ;;;
