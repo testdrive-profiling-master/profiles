@@ -9,7 +9,7 @@ module.__title		= "no title"
 module.__top		= nil
 module.__inception	= ""
 
-__m				= nil
+__m				= nil	-- current module instance
 
 -- find module
 function module.find(name)
@@ -55,6 +55,7 @@ function module:new(name)
 	t.clocks		= {}
 	t.interfaces	= {}
 	t.constraint	= {}
+	t.document		= {}
 	t.fill_color	= "00000010"
 	t.code			= String("")
 	t.enable		= true
@@ -97,6 +98,10 @@ end
 
 function module:get_interface(name)
 	return self.interfaces[name]
+end
+
+function module:set_document(name, filename)
+	self.document[name] = filename
 end
 
 function module:get_port(name)
@@ -445,6 +450,7 @@ vfunction("set_inception", "__m:set_inception")
 vfunction("set_param", "__m:set_param")
 vfunction("add_clock", "__m:add_clock")
 vfunction("add_interface", "__m:add_interface")
+vfunction("set_document", "__m:set_document")
 
 -- module instance
 function module_i:get_param(name)

@@ -140,16 +140,27 @@ function module:make_code(is_top)
 	-- module declaration
 	f:Put("module " .. self.name)
 	
+	local	sDocuments		= String("")
 	local	sParameters		= String("")
 	local	sPorts			= String("")
 	local	sDeclares		= String("")
 	local	sBody			= String("")
-	local	sGraphviz		= String("URL=\"html/" .. self.name .. ".sv.html\" target=\"" .. self.name .. ".sv\" label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><tr><td><b>" .. self.name .. "</b></td></tr><tr><td align=\"left\">__PARAM__</td></tr><tr><td align=\"left\">__PORT__</td></tr></table>>, fillcolor=\"#__FILL_COLOR__\", shape=plain")
+	local	sGraphviz		= String("URL=\"html/" .. self.name .. ".sv.html\" tooltip = \"" .. self.name .. "\" target=\"" .. self.name .. ".sv\" label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><tr><td><b>" .. self.name .. "</b></td></tr>__DOC____PARAM__<tr><td align='left' SIDES='LRB'>__PORT__</td></tr></table>>, fillcolor=\"#__FILL_COLOR__\", shape=plain")
+	
+	-- document
+	if self.document ~= nil then
+		for doc_name, doc_file in key_pairs(self.document) do
+			sDocuments:Append("<tr><td href='cmd://DOC/" .. doc_file .. "' cellborder='0' SIDES='LRB' cellspacing='1' CELLPADDING='1' tooltip='" .. doc_name .. "'><font color=\"#0000FF\" point-size=\"9\"><b><u>[ " .. doc_name .. " ]</u></b></font></td></tr>\n")
+		end
+	end
 	
 	if is_top then
 		sGraphviz:Replace("__FILL_COLOR__", "ff880022")
 	else
 		sGraphviz:Replace("__FILL_COLOR__", self.fill_color)
+
+		-- documents
+		sGraphviz:Replace("__DOC__", (#sDocuments.s ~= 0) and sDocuments.s or "")
 
 		-- original parameters
 		do
@@ -162,7 +173,7 @@ function module:make_code(is_top)
 			end
 			
 			sParam:Replace("\n", "<br align=\"left\"/>", true)
-			sGraphviz:Replace("__PARAM__", sParam.s)
+			sGraphviz:Replace("__PARAM__", (#sParam.s ~= 0) and ("<tr><td align='left' SIDES='LRB'>" .. sParam.s .. "</td></tr>") or "")
 		end
 		
 		-- original ports
@@ -599,6 +610,9 @@ function module:make_code(is_top)
 	
 	-- graphivz : top final parameters and ports
 	if is_top then
+		-- documents
+		sGraphviz:Replace("__DOC__", (#sDocuments.s ~= 0) and sDocuments.s or "")
+
 		-- original parameters
 		do
 			local	sParam	= String("")
@@ -612,7 +626,7 @@ function module:make_code(is_top)
 			sParam:Trim(" \n")
 			sParam:Replace("\n", "<br align=\"left\"/>", true)
 			
-			sGraphviz:Replace("__PARAM__", sParam.s)
+			sGraphviz:Replace("__PARAM__", (#sParam.s ~= 0) and ("<tr><td align='left' SIDES='LRB'>" .. sParam.s .. "</td></tr>") or "")
 		end
 		
 		-- original ports

@@ -93,6 +93,7 @@ static bool __ReadSVG(CString& sContents, LPCTSTR sFilename)
 		sContents.Replace(_T("\n"), _T(""));
 		sContents.Replace(_T("<svg"), _T("<svg id='svg_object'"));
 		sContents.Replace(_T("xlink:href='"), _T("xlink:href='cmd://URL/"));
+		sContents.Replace(_T("cmd://URL/cmd://"), _T("cmd://"));				// cut off duplication of 'cmd://'
 		fclose(fp);
 		return true;
 	}
@@ -248,12 +249,14 @@ void CDesignMap::OnSize(int width, int height)
 
 static LPCTSTR __sCommandID[CMD_ID_SIZE] = {
 	_T("URL"),
+	_T("DOC"),
 	_T("MANUAL"),
 	_T("NEW_MODULE_FILE"),
 };
 
 static LPCTSTR __sCommandDeli	= _T("/?");
 static LPCTSTR __sTokenDeli		= _T("?");
+static LPCTSTR __sExcelDeli		= _T("@");
 
 // Search string line from text file
 int GetFileSearchLine(LPCTSTR sFileName, LPCTSTR sSearch)
@@ -333,6 +336,26 @@ LPCTSTR CDesignMap::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 				}
 				// open with HTML verilog output page
 				g_pHtml->CallJScript(_T("OpenURL('%s', '%s');"), (LPCTSTR)sSource, (LPCTSTR)sTarget);
+			}
+			break;
+
+			case CMD_ID_DOC: {
+				CString sDoc		= cmd.Tokenize(_T(""), iStart);
+
+				if(sDoc.rfind(_T(".xlsx")) == (sDoc.length() - 5)) {	// open excel
+					CString sArg;
+					if(sDoc.Find(_T('@')) < 0) {
+						sArg.Format(_T("%s\\%s"), (LPCTSTR)m_sWorkPath, (LPCTSTR)sDoc);
+					} else {	// open excel with worksheet
+						iStart = 0;
+						CString sSheet = sDoc.Tokenize(__sExcelDeli, iStart);
+						CString sFileName = sDoc.Tokenize(_T(""), iStart);
+						sArg.Format(_T("\"%s\\%s\" %s"), (LPCTSTR)m_sWorkPath, (LPCTSTR)sFileName, (LPCTSTR)sSheet);
+
+					}
+
+					g_pSystem->ExecuteFile(_T("%TESTDRIVE_PROFILE%common\\bin\\xlsx_open.bat"), sArg, TRUE, NULL, _T("%TESTDRIVE_PROFILE%common\\bin"), NULL);
+				}
 			}
 			break;
 

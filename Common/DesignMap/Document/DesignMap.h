@@ -43,6 +43,7 @@ using namespace std;
 
 typedef enum {
 	CMD_ID_URL,
+	CMD_ID_DOC,
 	CMD_ID_MANUAL,
 	CMD_ID_NEW_MODULE_FILE,
 	CMD_ID_SIZE
