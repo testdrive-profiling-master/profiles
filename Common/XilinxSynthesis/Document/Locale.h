@@ -100,10 +100,10 @@ LOCALE_TEXT(TARGET_SPEED,
 			_T("Velocidad objetivo(MHz)"),
 			_T("Target speed(MHz)"))
 LOCALE_TEXT(DESC_TARGET_SPEED,
-			_T("합상의 목표 속도(MHz)를 지정합니다.\n(이값은 FPGA가 달성할 수있는 최대 속도보다 높게 설정하는 것이 좋습니다.)"),
-			_T("合計上の目標速度(MHz)を指定します。\n(この値は、FPGAが達成できる最大速度よりも高く設定することをお勧めします。)"),
-			_T("Especificar la velocidad objetivo (MHz) en la síntesis.\n(Se recomienda que este valor se establezca por encima de la velocidad máxima que puede alcanzar la FPGA.)"),
-			_T("Specify the target speed(MHz) on the synthesis.\n(It is recommended that this value be set higher than the maximum speed that the FPGA can achieve.)"))
+			_T("합상의 목표 속도(MHz)를 지정합니다.\n(이값은 올바른 slack timing 을 추출하기 위해서, 당신의 디자인이 달성할 수 있는 최대 속도보다 약간 높게 설정하는 것이 좋습니다.)"),
+			_T("合計上の目標速度(MHz)を指定します。\n(この値は正しいスラックタイミングを抽出するために、あなたのデザインが達成できる最大速度より少し高く設定することをお勧めします。)"),
+			_T("Especificar la velocidad objetivo (MHz) en la síntesis.\n(Se recomienda que este valor se establezca ligeramente por encima de la velocidad máxima que su diseño puede alcanzar, para poder extraer el tiempo de holgura correcto.)"),
+			_T("Specify the target speed(MHz) on the synthesis.\n(It is recommended that this value be set slightly higher than the maximum speed your design can achieve, in order to extract the correct slack timing.)"))
 LOCALE_TEXT(LIST_CLOCKS,
 			_T("클럭 신호"),
 			_T("クロック信号"),

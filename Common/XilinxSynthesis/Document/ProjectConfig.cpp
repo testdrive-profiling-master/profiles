@@ -139,7 +139,7 @@ BOOL ProjectConfig::UpdateConfig(CONFIG_ID id, BOOL bUpdate)
 
 	case CONFIG_ID_TARGET_SPEED:
 		sTarget	= m_Config.spec.sTargetSpeed;
-		sDefault = _T("2000");
+		sDefault = _T("1000");
 		break;
 
 	case CONFIG_ID_CLOCKS:
