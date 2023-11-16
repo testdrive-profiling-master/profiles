@@ -2,22 +2,22 @@
 // Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
-// 
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -29,9 +29,9 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : Xilinx synthesis
-// Rev.  : 8/3/2023 Thu (clonextop@gmail.com)
+// Rev.  : 11/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "SourceList.h"
 #include <tchar.h>
@@ -525,7 +525,7 @@ BOOL SourceVector::Synthesis_Vivado(void)
 										hFind	= FindFirstFile(sFullPath, &FindFileData);
 
 										if(hFind != INVALID_HANDLE_VALUE) {
-											TCHAR sDirPath[MAX_PATH], *pFilePart;
+											TCHAR sDirPath[MAX_PATH], * pFilePart;
 											GetFullPathName(sFullPath, MAX_PATH, sDirPath, &pFilePart);
 
 											if(pFilePart) *pFilePart = _T('\0');
@@ -804,9 +804,9 @@ BOOL SourceVector::Synthesis_Vivado(void)
 			sFileName.Format(_T("%s\\timing_setup_%s.rpt"), (LPCTSTR)sWorkDir, (LPCTSTR)sName);
 
 			if((fp = _tfopen(sFileName, _T("rt")))) {
-				TCHAR sLine[1024];
+				TCHAR sLine[4096];
 
-				while(_fgetts(sLine, 1024, fp)) {
+				while(_fgetts(sLine, 4096, fp)) {
 					TCHAR* sTok;
 
 					if((sTok = _tcsstr(sLine, _T("Data Path Delay:")))) {
@@ -825,9 +825,9 @@ BOOL SourceVector::Synthesis_Vivado(void)
 			sFileName.Format(_T("%s\\timing_hold_%s.rpt"), (LPCTSTR)sWorkDir, (LPCTSTR)sName);
 
 			if((fp = _tfopen(sFileName, _T("rt")))) {
-				TCHAR sLine[1024];
+				TCHAR sLine[4096];
 
-				while(_fgetts(sLine, 1024, fp)) {
+				while(_fgetts(sLine, 4096, fp)) {
 					TCHAR* sTok;
 
 					if((sTok = _tcsstr(sLine, _T("Data Path Delay:")))) {
@@ -846,25 +846,77 @@ BOOL SourceVector::Synthesis_Vivado(void)
 			sFileName.Format(_T("%s\\timing_clock_%s.rpt"), (LPCTSTR)sWorkDir, (LPCTSTR)sName);
 
 			if((fp = _tfopen(sFileName, _T("rt")))) {
-				TCHAR sLine[1024];
-				float	fSlack			= 0.f;
+				TCHAR	sTemp[4096];
+				bool	bFound			= false;
+				float	fSlack			= 0;
+				float	fRequirement	= 0;
+				float	fDataPathDelay	= 0;
+				CString	sPathGroup, sPathType;
 
-				while(_fgetts(sLine, 1024, fp)) {
+				// get first pulse width
+				while(_fgetts(sTemp, 4096, fp)) {
+					CString	sLine(sTemp);
 					TCHAR* sTok;
+					sLine.TrimRight(_T(" \r\n"));
 
-					if(sLine == _tcsstr(sLine, _T("Slack ("))) {
+					if((LPCTSTR)sLine == _tcsstr((LPCTSTR)sLine, _T("Slack ("))) {
+						if(bFound) break;
+
 						sTok	= _tcsstr(sLine, _T(":")) + 1;
 						_stscanf(sTok, _T("%f"), &fSlack);
-						float fTotal	= (fClockLatency - fSlack);
+						bFound	= true;
+					}
 
-						if(fTotal) {
-							m_Info.timing.frequency	= 1000.f / fTotal;
-							break;
-						}
+					sLine.TrimLeft();
+
+					if(sPathGroup.IsEmpty() && ((LPCTSTR)sLine == _tcsstr((LPCTSTR)sLine, _T("Path Group:")))) {
+						sPathGroup	= sLine.c_str() + 11;
+						sPathGroup.Trim();
+						continue;
+					}
+
+					if(sPathType.IsEmpty() && ((LPCTSTR)sLine == _tcsstr((LPCTSTR)sLine, _T("Path Type:")))) {
+						sPathType	= sLine.c_str() + 10;
+						sPathType.TrimLeft();
+						int iPos = sPathType.find(_T(" "));
+
+						if(iPos > 0) sPathType.Delete(iPos, -1);
+
+						continue;
+					}
+
+					if(!fRequirement && ((LPCTSTR)sLine == _tcsstr((LPCTSTR)sLine, _T("Requirement:")))) {
+						_stscanf((LPCTSTR)sLine + 12, _T("%f"), &fRequirement);
+						continue;
+					}
+
+					if(!fDataPathDelay && ((LPCTSTR)sLine == _tcsstr((LPCTSTR)sLine, _T("Data Path Delay:")))) {
+						_stscanf((LPCTSTR)sLine + 16, _T("%f"), &fDataPathDelay);
+						continue;
 					}
 				}
 
 				fclose(fp);
+
+				if(bFound) {
+					if(sPathGroup == _T("main_clk") && sPathType == _T("Setup") &&
+					   fRequirement > 0 && fDataPathDelay > 0 && fClockLatency != fRequirement) {
+						//  muti-cycled clock frequency
+						float fCycles	= fRequirement / fClockLatency;
+
+						if(fCycles) {
+							float fTotal	= (fRequirement - fSlack) / fCycles;
+							m_Info.timing.frequency	= 1000.f / fTotal;
+						}
+					} else if(fRequirement > 0) {
+						// normal clock frequency
+						float fTotal	= (fRequirement - fSlack);
+
+						if(fTotal) {
+							m_Info.timing.frequency	= 1000.f / fTotal;
+						}
+					}
+				}
 			}
 		}
 		{
@@ -873,9 +925,9 @@ BOOL SourceVector::Synthesis_Vivado(void)
 			sFileName.Format(_T("%s\\timing_port_%s.rpt"), (LPCTSTR)sWorkDir, (LPCTSTR)sName);
 
 			if((fp = _tfopen(sFileName, _T("rt")))) {
-				TCHAR sLine[1024];
+				TCHAR sLine[4096];
 
-				while(_fgetts(sLine, 1024, fp)) {
+				while(_fgetts(sLine, 4096, fp)) {
 					TCHAR* sTok;
 
 					if((sTok = _tcsstr(sLine, _T("Data Path Delay:")))) {

@@ -99,7 +99,7 @@ function interface:set_multicycle(modport_name, cycle, inst_count)
 	
 	if cycle <= 1 then
 		error("Multicycle interface[" .. i.name .. "]'s cycle(required : " .. cycle .. ") must greater than 2.", 2)
-	elseif cycle > 12 then
+	elseif cycle > 32 then
 		error("Multicycle interface[" .. i.name .. "]'s cycle(required : " .. cycle .. ") is too high.", 2)
 	end
 	

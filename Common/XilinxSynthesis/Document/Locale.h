@@ -1,23 +1,23 @@
-﻿//================================================================================
+//================================================================================
 // Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
-// 
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -29,7 +29,42 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
+// Title : Xilinx synthesis
+// Rev.  : 11/16/2023 Thu (clonextop@gmail.com)
+//================================================================================
+﻿//================================================================================
+// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
+//
+// Redistribution and use in source and binary forms,
+// with or without modification, are permitted provided
+// that the following conditions are met:
+//
+// 1. Redistributions of source code must retain the above copyright notice,
+//    this list of conditions and the following disclaimer.
+//
+// 2. Redistributions in binary form must reproduce the above copyright notice,
+//    this list of conditions and the following disclaimer in the documentation
+//    and/or other materials provided with the distribution.
+//
+// 3. Neither the name of the copyright holder nor the names of its contributors
+//    may be used to endorse or promote products derived from this software
+//    without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+// OF SUCH DAMAGE.
+//
 // Title : Xilinx synthesis
 // Rev.  : 4/25/2023 Tue (clonextop@gmail.com)
 //================================================================================
@@ -100,10 +135,10 @@ LOCALE_TEXT(TARGET_SPEED,
 			_T("Velocidad objetivo(MHz)"),
 			_T("Target speed(MHz)"))
 LOCALE_TEXT(DESC_TARGET_SPEED,
-			_T("합상의 목표 속도(MHz)를 지정합니다."),
-			_T("合計上の目標速度(MHz)を指定します。"),
-			_T("Especificar la velocidad objetivo (MHz) en la síntesis."),
-			_T("Specify the target speed(MHz) on the synthesis."))
+			_T("합상의 목표 속도(MHz)를 지정합니다.\n(이값은 FPGA가 달성할 수있는 최대 속도보다 높게 설정하는 것이 좋습니다.)"),
+			_T("合計上の目標速度(MHz)を指定します。\n(この値は、FPGAが達成できる最大速度よりも高く設定することをお勧めします。)"),
+			_T("Especificar la velocidad objetivo (MHz) en la síntesis.\n(Se recomienda que este valor se establezca por encima de la velocidad máxima que puede alcanzar la FPGA.)"),
+			_T("Specify the target speed(MHz) on the synthesis.\n(It is recommended that this value be set higher than the maximum speed that the FPGA can achieve.)"))
 LOCALE_TEXT(LIST_CLOCKS,
 			_T("클럭 신호"),
 			_T("クロック信号"),

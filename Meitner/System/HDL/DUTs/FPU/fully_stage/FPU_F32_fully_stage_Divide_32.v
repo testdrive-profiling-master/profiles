@@ -33,21 +33,33 @@
 // Title : FPU 32bit(IEEE-754) unit
 // Rev.  : 11/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
-`include "FPU.vh"
+`include "testdrive_system.vh"
 
-/* HIDDEN */
-module FPU_INT_to_F32 (
-	input	[31:0]				A,
-	output	[31:0]				O
-);
+module FPU_F32_fully_stage_Divide_32 (
+		input					CLK,		// clock
+		input					nRST,		// reset (active low)
+		input					IE,			// input enable
+		input	[31:0]			A,			// A
+		input	[31:0]			B,			// B
+		output					OE,			// output enable
+		output					EXCEPTION,	// EXCEPTION
+		output	[31:0]			O			// output
+	);
 
-// definition & assignment ---------------------------------------------------
-// implementation ------------------------------------------------------------
-`ifdef SW_FPU_MODE
-`DPI_FUNCTION void FPU_32f_int2float(input bit [31:0] A, output bit [31:0] O);
-always@(A) FPU_32f_int2float(A, O);
-`else
-//@TODO : do something!!!
-`endif
+	// definition & assignment ---------------------------------------------------
+
+	// implementation ------------------------------------------------------------
+	FPU_F32_fully_stage_Divide #(
+		.CYCLE		(32)
+	) multi_pipe (
+		.CLK		(CLK),
+		.nRST		(nRST),
+		.IE			(IE),
+		.A			(A),
+		.B			(B),
+		.OE			(OE),
+		.EXCEPTION	(EXCEPTION),
+		.O			(O)
+	);
 
 endmodule

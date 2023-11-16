@@ -41,3 +41,83 @@ set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen
 # multicycle path #12
 set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_12.i_*"}] 11
 set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_12.i_*"}] 12
+
+# multicycle path #13
+set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_13.i_*"}] 12
+set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_13.i_*"}] 13
+
+# multicycle path #14
+set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_14.i_*"}] 13
+set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_14.i_*"}] 14
+
+# multicycle path #15
+set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_15.i_*"}] 14
+set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_15.i_*"}] 15
+
+# multicycle path #16
+set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_16.i_*"}] 15
+set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_16.i_*"}] 16
+
+# multicycle path #17
+set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_17.i_*"}] 16
+set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_17.i_*"}] 17
+
+# multicycle path #18
+set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_18.i_*"}] 17
+set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_18.i_*"}] 18
+
+# multicycle path #19
+set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_19.i_*"}] 18
+set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_19.i_*"}] 19
+
+# multicycle path #20
+set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_20.i_*"}] 19
+set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_20.i_*"}] 20
+
+# multicycle path #21
+set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_21.i_*"}] 20
+set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_21.i_*"}] 21
+
+# multicycle path #22
+set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_22.i_*"}] 21
+set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_22.i_*"}] 22
+
+# multicycle path #23
+set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_23.i_*"}] 22
+set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_23.i_*"}] 23
+
+# multicycle path #24
+set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_24.i_*"}] 23
+set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_24.i_*"}] 24
+
+# multicycle path #25
+set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_25.i_*"}] 24
+set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_25.i_*"}] 25
+
+# multicycle path #26
+set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_26.i_*"}] 25
+set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_26.i_*"}] 26
+
+# multicycle path #27
+set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_27.i_*"}] 26
+set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_27.i_*"}] 27
+
+# multicycle path #28
+set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_28.i_*"}] 27
+set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_28.i_*"}] 28
+
+# multicycle path #29
+set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_29.i_*"}] 28
+set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_29.i_*"}] 29
+
+# multicycle path #30
+set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_30.i_*"}] 29
+set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_30.i_*"}] 30
+
+# multicycle path #31
+set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_31.i_*"}] 30
+set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_31.i_*"}] 31
+
+# multicycle path #32
+set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_32.i_*"}] 31
+set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_32.i_*"}] 32
