@@ -726,7 +726,7 @@ function module:make_code(is_top)
 			end
 			
 			__graphviz:Append("\t\"" .. self.name .. "_defines\" [URL=\"html/" .. self.name .. "_defines.vh.html\" target=\"" .. self.name ..  "_defines.vh\" fillcolor=\"#D0FFD0\"];\n")
-			__graphviz:Append("\t\"" .. self.name .. "\" -> \"" .. self.name .. "_defines\" [fillcolor=\"#F0C0C0\" style=dotted];\n")
+			__graphviz:Append("\t\"MAIN_SCRIPT\" -> \"" .. self.name .. "_defines\" [fillcolor=\"#F0C0C0\" style=dotted];\n")
 		end
 		
 		-- Lua scripts list
