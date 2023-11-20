@@ -1,4 +1,6 @@
- RunScript("test_definition.lua")
+verigen_description("Test project")
+
+RunScript("test_definition.lua")
 
  -- modules
  core_wrapper = module:new("test_wrapper") -- top

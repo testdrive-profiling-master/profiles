@@ -5,7 +5,7 @@ module.__author		= "testdrive profiling master - verigen"
 module.__date		= os.date("%B/%d/%Y %a")
 module.__year		= os.date("%Y")
 module.__time		= os.date("%X")
-module.__title		= "no title"
+module.__title		= nil
 module.__top		= nil
 module.__inception	= ""
 
@@ -88,7 +88,7 @@ end
 function module:get_inception(void)
 	local code_inception = String(self.__inception)
 	code_inception:Replace("__YEAR__", self.__year)
-	code_inception:Replace("__TITLE__", self.__title)
+	code_inception:Replace("__TITLE__", (self.__title == nil) and "no title" or self.__title)
 	code_inception:Replace("__DATE__", self.__date)
 	code_inception:Replace("__TIME__", self.__time)
 	code_inception:Replace("__AUTHOR__", self.__author)

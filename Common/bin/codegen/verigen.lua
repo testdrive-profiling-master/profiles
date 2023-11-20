@@ -223,6 +223,33 @@ RunScript("verigen__interface.lua")
 RunScript("verigen__module.lua")
 RunScript("verigen__make.lua")
 
+-- hooking RunScript
+local hook		= require("hook")
+__verigen_lua_files	= {}
+function __RunScript(filename)
+	for i, v in ipairs(__verigen_lua_files) do	-- delete already existed file name = push back to end reference
+		if v.filename == filename then
+			v.filename	= nil
+		end
+	end
+	
+	local id = #__verigen_lua_files + 1
+	
+	__verigen_lua_files[id]				= {}
+	__verigen_lua_files[id].filename	= filename
+	__verigen_lua_files[id].desc		= nil
+end
+
+RunScript = hook.add(RunScript, __RunScript)
+
+function verigen_description(desc)
+	for i, v in ipairs(__verigen_lua_files) do	-- delete already existed file name = push back to end reference
+		if v.filename ~= nil and v.filename == codegen.current_file then
+			v.desc	= desc
+		end
+	end
+end
+
 -- 사용자 소스 실행
 if RunScript(sInFilename) == false then
 	return

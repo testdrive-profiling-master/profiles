@@ -12,6 +12,8 @@ Generate and run the script code as shown below.
 
 @<b>[main.lua file]@</b>
 ```#lua
+verigen_description("Test project")
+
 -- modules
 core_wrapper	= module:new("test_wrapper")		-- top
 core			= {}
@@ -71,6 +73,8 @@ Modify and run the Lua script as shown below.
 
 @<b>[main.lua file]@</b>
 ```#lua
+verigen_description("Test project")
+
 RunScript("test_definition.lua")
 
 -- modules
@@ -104,8 +108,8 @@ end
 -- make code
 core_wrapper:make_code()
 ```
-Now, in the added lines 15 to 29, each module is connected with the @<bookmark:module:add_module> function, and four modules are also created and connected to the core. \
-Include "@<bookmark:Appendix : test_definition.lua>" at the top (line #1) to use the predefined config.core_size value.
+Now, in the added lines 17 to 31, each module is connected with the @<bookmark:module:add_module> function, and four modules are also created and connected to the core. \
+Include "@<bookmark:Appendix : test_definition.lua>" at the top (line #3) to use the predefined config.core_size value.
 
 @<b>[Run command]@</b>
 ```txt
@@ -183,6 +187,8 @@ Modify and run the Lua script as shown below.
 
 @<b>[main.lua file]@</b>
 ```#lua
+verigen_description("Test project")
+
 RunScript("test_definition.lua")
 
 -- modules
@@ -232,7 +238,7 @@ end
 -- make code
 core_wrapper:make_code()
 ```
-The code added to the existing Lua script is line #15~21 and #39~45.
+The code added to the existing Lua script is line #17~23 and #41~47.
 The first changes the bit width of data and address of axi4, \
 and the second one adds the two files below through the module.apply_code() function to all *.sv files in the subfolder "./src".
  
@@ -273,6 +279,8 @@ module test_wrapper
 wire	$RANGE(config.core_size)	core_busy_all;
 
 ${	-- It's Lua codes
+	module:set_title("Fast Follow")
+
 	for i = 1, config.core_size, 1 do
 	   core.inst[i]:set_param("CORE_ID", i)
 	   core.inst[i]:set_port("core_busy", "core_busy_all[" .. (i-1) .. "]")

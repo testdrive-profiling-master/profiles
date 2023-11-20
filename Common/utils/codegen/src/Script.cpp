@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 11/7/2023 Tue (clonextop@gmail.com)
+// Rev.  : 11/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -676,6 +676,7 @@ static bool __PostToDocument(const char* sName, int iMsg, const char* sMsg)  	//
 
 #ifdef WIN32
 	cstring sMemName;
+
 	if(sMemName.GetEnvironment("TESTDRIVE_MEMORY")) {
 		// find memory
 		sMemName	+= "_";
@@ -691,12 +692,14 @@ static bool __PostToDocument(const char* sName, int iMsg, const char* sMsg)  	//
 			((char*)pMem->GetPointer())[0]	= 0;
 		}
 
-		{	// send to document
+		{
+			// send to document
 			HWND hWnd	= *(HWND*)(pMem->GetConfig()->UserConfig);
 			SendMessage(hWnd, WM_USER, iMsg, 0);
 			pMem->Release();
 		}
 	}
+
 	return true;
 #else
 	return false;
@@ -1057,6 +1060,10 @@ Script::Script(void)
 			.addProperty("warning_count", &g_log_warning_count)
 			.addProperty("pause_on_error", &__bPause_on_error)
 			.endNamespace()
+			.beginNamespace("codegen")
+			.addProperty("current_file", &m_sLuaFileName.c_string(), false)
+			.addProperty("work_path", &m_sWorkPath.c_string(), false)
+			.endNamespace()
 			.beginClass<minGit>("Git")
 			.addConstructor<void(*)(void)>()
 			.addFunction("Clone", &minGit::Clone)
@@ -1112,6 +1119,7 @@ bool Script::Run(const char* sFileName)
 	bool	bRet		= false;
 	Script*	pPrevScript	= m_pScript;
 	cstring	sPrevWorkPath(m_sWorkPath);
+	cstring sPrevLuaFileName(m_sLuaFileName);
 	m_pScript			= this;
 	// get work path
 	m_sWorkPath	= sLuaFilePath;
@@ -1160,6 +1168,9 @@ bool Script::Run(const char* sFileName)
 
 	// loading & run!
 	LuaFile	f;
+	m_sLuaFileName	= sLuaFilePath;
+	m_sLuaFileName.CutFront(_T("/"));
+	m_sLuaFileName.CutFront(_T("\\"));
 
 	if(f.Load(sLuaFilePath.c_str())) {
 		cstring	sShortenFilePath	= sLuaFilePath;
@@ -1185,6 +1196,7 @@ bool Script::Run(const char* sFileName)
 
 	m_pScript		= pPrevScript;
 	m_sWorkPath		= sPrevWorkPath;
+	m_sLuaFileName	= sPrevLuaFileName;
 	return bRet;
 }
 

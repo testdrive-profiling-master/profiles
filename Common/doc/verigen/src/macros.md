@@ -46,6 +46,16 @@ wire	[63:32]		T;
 ```
 ;;;
 
+### verigen_description
+@<tbl:media/instruction_macros.xlsx;verigen_description>
+ 
+ex) verigen_description macro example
+```lua
+verigen_description("Your description")
+end)
+```
+;;;
+
 ## $LOG2 function
 @<tbl:media/instruction_macros.xlsx;LOG2>
  

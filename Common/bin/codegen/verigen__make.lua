@@ -150,7 +150,7 @@ function module:make_code(is_top)
 	-- document
 	if self.document ~= nil then
 		for doc_name, doc_file in key_pairs(self.document) do
-			sDocuments:Append("<tr><td href='cmd://DOC/" .. doc_file .. "' cellborder='0' SIDES='LRB' cellspacing='1' CELLPADDING='1' tooltip='" .. doc_name .. "'><font color=\"#0000FF\" point-size=\"9\"><b><u>[ " .. doc_name .. " ]</u></b></font></td></tr>\n")
+			sDocuments:Append("<tr><td href='cmd://DOC/" .. doc_file .. "' SIDES='LRB' cellspacing='1' cellpadding='1' tooltip='" .. doc_name .. "'><font color=\"#0000FF\" point-size=\"9\"><b><u>[ " .. doc_name .. " ]</u></b></font></td></tr>\n")
 		end
 	end
 	
@@ -207,7 +207,7 @@ function module:make_code(is_top)
 		
 		sModule:Append("\n" .. m.module.name)
 		
-		__graphviz:Append("\t" .. self.name .. " -> " .. m.module.name .. " [label=<<table border='0' cellborder='0' cellspacing='0' cellpadding='0'><tr><td><b>"..
+		__graphviz:Append("\t" .. self.name .. " -> " .. m.module.name .. " [label=<<table border='0' cellspacing='0' cellpadding='0'><tr><td><b>"..
 			((m.graphviz.name_prefix ~= nil) and m.graphviz.name_prefix or "") ..
 			m.name ..
 			((m.graphviz.name_postfix ~= nil) and m.graphviz.name_postfix or "") .. 
@@ -727,6 +727,29 @@ function module:make_code(is_top)
 			
 			__graphviz:Append("\t\"" .. self.name .. "_defines\" [URL=\"html/" .. self.name .. "_defines.vh.html\" target=\"" .. self.name ..  "_defines.vh\" fillcolor=\"#D0FFD0\"];\n")
 			__graphviz:Append("\t\"" .. self.name .. "\" -> \"" .. self.name .. "_defines\" [fillcolor=\"#F0C0C0\" style=dotted];\n")
+		end
+		
+		-- Lua scripts list
+		do
+			__graphviz:Append("\t\"MAIN_SCRIPT\" [URL=\"cmd://PROJECT\" tooltip = \"Project folder\" label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='2'><tr><td><b>" .. ((self.__title == nil) and "Project" or self.__title) .. "</b></td></tr>\n");
+			
+			for i, v in ipairs(__verigen_lua_files) do
+				if v.filename ~= nil then
+					local sFileName = String(v.filename)
+					sFileName:CutFront("\\")
+					
+					if v.desc ~= nil then
+						local sName = sFileName.s
+						sFileName.s = v.desc .. " (" .. sName .. ")"
+					end
+					
+					__graphviz:Append("<tr><td href='cmd://LUA/" .. v.filename .. "' align='left' SIDES='LR" .. ((i == #__verigen_lua_files) and "B" or "") .. "' cellspacing='0' cellpadding='3' tooltip='" .. ((v.desc ~= nil) and v.desc or sFileName.s) .. "'><font color='#2020AF' point-size='10'>" .. sFileName.s .. "</font></td></tr>")
+				end
+			end
+			
+			__graphviz:Append("</table>>, fillcolor=\"#F7F7F0\", shape=plain];");
+			__graphviz:Append("	\"MAIN_SCRIPT\" -> \"" .. self.name .. "\" [fillcolor=\"#FFC0C0\" style=dotted];\n")
+	
 		end
 		
 		-- graphviz

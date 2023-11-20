@@ -45,6 +45,8 @@ typedef enum {
 	CMD_ID_URL,
 	CMD_ID_DOC,
 	CMD_ID_MANUAL,
+	CMD_ID_LUA,
+	CMD_ID_PROJECT,
 	CMD_ID_NEW_MODULE_FILE,
 	CMD_ID_SIZE
 } CMD_ID;
@@ -82,7 +84,8 @@ public:
 
 	int CheckModuleFile(LPCTSTR sFileName, LPCTSTR sModuleName);
 	void UpdateSourceViews(bool bNewProject);
-	bool OpenSourceFile(LPCTSTR sModuleName, BOOL bMustOpen = false);
+	bool OpenSourceFile(LPCTSTR sModuleName, BOOL bMustOpen = FALSE);
+	void OpenEditFile(LPCTSTR sFileName);
 
 
 protected:

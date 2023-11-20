@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : System map
-// Rev.  : 11/8/2023 Wed (clonextop@gmail.com)
+// Rev.  : 11/20/2023 Mon (clonextop@gmail.com)
 //================================================================================
 #include "DesignMap.h"
 #include "testdrive_document.inl"
@@ -251,6 +251,8 @@ static LPCTSTR __sCommandID[CMD_ID_SIZE] = {
 	_T("URL"),
 	_T("DOC"),
 	_T("MANUAL"),
+	_T("LUA"),
+	_T("PROJECT"),
 	_T("NEW_MODULE_FILE"),
 };
 
@@ -344,6 +346,7 @@ LPCTSTR CDesignMap::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 
 				if(sDoc.rfind(_T(".xlsx")) == (sDoc.length() - 5)) {	// open excel
 					CString sArg;
+
 					if(sDoc.Find(_T('@')) < 0) {
 						sArg.Format(_T("%s\\%s"), (LPCTSTR)m_sWorkPath, (LPCTSTR)sDoc);
 					} else {	// open excel with worksheet
@@ -351,18 +354,28 @@ LPCTSTR CDesignMap::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 						CString sSheet = sDoc.Tokenize(__sExcelDeli, iStart);
 						CString sFileName = sDoc.Tokenize(_T(""), iStart);
 						sArg.Format(_T("\"%s\\%s\" %s"), (LPCTSTR)m_sWorkPath, (LPCTSTR)sFileName, (LPCTSTR)sSheet);
-
 					}
 
 					g_pSystem->ExecuteFile(_T("%TESTDRIVE_PROFILE%common\\bin\\xlsx_open.bat"), sArg, TRUE, NULL, _T("%TESTDRIVE_PROFILE%common\\bin"),
-							_T("*E: "), -1,
-							NULL);
+										   _T("*E: "), -1,
+										   NULL);
 				}
 			}
 			break;
 
 			case CMD_ID_MANUAL: {
 				ShellExecute(NULL, _T("open"), _T("https://testdrive-profiling-master.github.io/download/verigen_userguide.pdf"), NULL, NULL, SW_SHOWDEFAULT);
+			}
+			break;
+
+			case CMD_ID_LUA: {
+				CString sFileName		= cmd.Tokenize(__sCommandDeli, iStart);
+				OpenEditFile(sFileName);
+			}
+			break;
+
+			case CMD_ID_PROJECT: {
+				ShellExecute(NULL, _T("open"), _T("explorer"), m_sWorkPath, NULL, SW_SHOWDEFAULT);
 			}
 			break;
 
@@ -523,6 +536,14 @@ bool CDesignMap::OpenSourceFile(LPCTSTR sModuleName, BOOL bMustOpen)
 	}
 
 	return false;
+}
+
+void CDesignMap::OpenEditFile(LPCTSTR sFileName)
+{
+	CString notepad_path	= g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_DIR%bin\\notepad\\notepad++.exe"));
+	CString sArg;
+	sArg.Format(_T("\"%s\\%s\""), (LPCTSTR)m_sWorkPath, sFileName);
+	ShellExecute(NULL, _T("open"), notepad_path, sArg, NULL, SW_SHOWDEFAULT);
 }
 
 LPCTSTR CDesignMap::OnHtmlNewWindowRequest(DWORD dwID, LPCTSTR lpszURL, BOOL bUserInitiated)
