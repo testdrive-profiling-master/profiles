@@ -1,3 +1,3 @@
 @echo off
-verigen test.lua
+verigen test_3.lua
 pause

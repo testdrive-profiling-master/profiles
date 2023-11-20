@@ -61,7 +61,7 @@ endmodule
 The resulting design is literally an empty module file, and the hierarchy diagram(test_wrapper_hierarchy.svg) is also empty.
 
 @<b>[Result : test_wrapper_hierarchy.svg]@</b>
-@<img:#media/step1_test_wrapper_hierarchy.svg;0.3;Step #1 Hierarchy Diagram>
+@<img:#media/step1_test_wrapper_hierarchy.svg;0.6;Step #1 Hierarchy Diagram>
 
 :::NoteHeading
 You can view the actual verilog codes by clicking on the module name in this image.
@@ -312,7 +312,7 @@ In addition, if you want to directly access a Lua variable or function, you can 
 
 
 @<b>[Result : test_wrapper_hierarchy.svg]@</b>
-@<img:#media/step3_test_wrapper_hierarchy.svg;1.0;Step #3 Hierarchy Diagram>
+@<img:#media/step3_test_wrapper_hierarchy.svg;0.8;Step #3 Hierarchy Diagram>
 
 Below is the output of the top design.
 
