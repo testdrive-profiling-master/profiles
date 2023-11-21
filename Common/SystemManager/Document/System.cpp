@@ -269,9 +269,10 @@ System::System(ITDDocument* pDoc) :
 				{
 					// first run check on today
 					CString	last_time;
+					CString	local_last_time;
 					last_time		= g_pSystem->GetConfigString(__sLastLunchTime);
-					MessageBox(NULL, last_time.c_str(), _T(""), MB_OK);
-					bFirstRunToday	= (cur_time.Compare(last_time) != 0);
+					pDoc->GetConfigString(__sLastLunchTime, local_last_time.GetBuffer(1024), 1024);
+					bFirstRunToday	= (cur_time.Compare(local_last_time) != 0);
 
 					// check monthly update
 					if(last_time.GetLength()) {
@@ -283,6 +284,7 @@ System::System(ITDDocument* pDoc) :
 				}
 
 				if(bFirstRunToday) {
+					pDoc->SetConfigString(__sLastLunchTime, cur_time);
 					g_pSystem->SetConfigString(__sLastLunchTime, cur_time);
 
 					if(wday == 1) {	// we will run cppcheck once on every monday...
