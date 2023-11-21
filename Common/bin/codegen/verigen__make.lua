@@ -145,7 +145,7 @@ function module:make_code(is_top)
 	local	sPorts			= String("")
 	local	sDeclares		= String("")
 	local	sBody			= String("")
-	local	sGraphviz		= String("URL=\"html/" .. self.name .. ".sv.html\" tooltip = \"" .. self.name .. "\" target=\"" .. self.name .. ".sv\" label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='4'><tr><td><b>" .. self.name .. "</b></td></tr>__DOC____PARAM__<tr><td align='left' SIDES='LRB'>__PORT__</td></tr></table>>, fillcolor=\"#__FILL_COLOR__\", shape=plain")
+	local	sGraphviz		= String("URL=\"html/" .. self.name .. ".sv.html\" tooltip = \"" .. self.name .. "\" target=\"" .. self.name .. ".sv\" label=<<table border='" .. (is_top and "1" or "0") .. "' cellborder='1' cellspacing='0' cellpadding='4'><tr><td><b>" .. self.name .. "</b></td></tr>__DOC____PARAM__<tr><td align='left' SIDES='LRB'>__PORT__</td></tr></table>>, fillcolor=\"#__FILL_COLOR__\", shape=plain")
 	
 	-- document
 	if self.document ~= nil then
