@@ -9,6 +9,7 @@ sProfilePath	= sProfilePath.s
 local Arg = ArgTable("Template project generator with TestDrive Profiling Master.")
 
 Arg:AddOptionString		("type", nil, nil, nil, "type", "Template project type")
+Arg:AddRemark			(nil, "'td', 'testdrive'        : TestDrive project")
 Arg:AddRemark			(nil, "'c', 'c++', 'cpp'        : C++ project")
 Arg:AddRemark			(nil, "'v', 'verilog'           : verilog project")
 Arg:AddRemark			(nil, "'v_bare', 'verilog_bare' : bared verilog project")
@@ -30,8 +31,12 @@ sType:MakeLower()
 sType				= sType.s
 sProjectName		= String(Arg:GetOptionString("project_name", 0))
 sProjectName:Replace(" ", "_", true)
-sProjectName:Trim("_")
+sProjectName:Trim("_.#@$%^&*()~|\\")
 sProjectName		= sProjectName.s
+
+if #sProjectName == 0 then
+	LOGE("Invalid project name.")
+end
 
 
 sProjectType		= sType
@@ -56,6 +61,24 @@ function MakeDir(folder_name)
 	end
 	
 	return folder_name .. "/"
+end
+
+function MakeDirForTestDrive(folder_name)
+	local folder_path = sProfilePath .. folder_name
+
+	local attr = lfs.attributes(folder_path)
+	
+	if attr ~= nil then
+		LOGE("Can't create project, '" .. folder_name .. "'(" .. folder_path .. ") " .. attr.mode .. " is already existed. Please specify a different project name.")
+		os.exit(1)
+	end
+	
+	if lfs.mkdir(folder_path) == false then
+		LOGE("Can't create project directory '" .. folder_name .. "'(" .. folder_path .. ")")
+		os.exit(1)
+	end
+	
+	return folder_path
 end
 
 function MakeDirForVerilog(folder_name)
@@ -84,7 +107,26 @@ end
 
 local sProjectPath = ""
 
-if (sType == "c" or sType == "c++" or sType == "cpp") then
+if (sType == "td" or sType == "testdrive") then
+	local sProjectNameUp	= String(sProjectName)
+	sProjectPath			= MakeDirForTestDrive(sProjectName)	-- make folder
+	
+	sProjectNameUp:MakeUpper()
+	
+	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_testdrive/.\" " .. sProjectPath .. "/")
+	
+	os.execute("mv \"" .. sProjectPath .. "/Application/include/SystemConfigPROJECT.h\" \"" .. sProjectPath .. "/Application/include/SystemConfig" .. sProjectNameUp.s .. ".h\"")
+	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/g\" -i \"" .. sProjectPath .. "/project.profile\"")
+	os.execute("sed \"s/PROJECT/" .. sProjectNameUp.s .. "/g\" -i \"" .. sProjectPath .. "/Application/include/SystemConfig" .. sProjectNameUp.s .. ".h\"")
+	
+	
+	-- open folder
+	print("\nRun 'project.profile' to open your project.")
+	sProjectPath	= String(sProjectPath)
+	sProjectPath:Replace("/", "\\", true)
+	os.execute("explorer " .. sProjectPath.s)
+	os.exit(0)
+elseif (sType == "c" or sType == "c++" or sType == "cpp") then
 	sProjectPath	= MakeDir(sProjectName)
 	LOGI("Create C++ project : '" .. sProjectName .. "'")
 	

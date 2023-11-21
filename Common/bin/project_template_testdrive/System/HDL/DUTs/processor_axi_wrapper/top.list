@@ -1,0 +1,2 @@
+TOP_DESIGN	= top.sv
+	OPTION	= TEST_DESIGN

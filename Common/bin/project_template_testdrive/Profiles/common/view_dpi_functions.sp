@@ -1,0 +1,1 @@
+system.call	"view_dpi_functions.bat"
