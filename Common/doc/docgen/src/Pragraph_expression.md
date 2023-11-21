@@ -430,12 +430,19 @@ Visio 파일일 경우는 "@<color:FF0000>파일명@</color>[@<color:FF0000>페�
 결과)
 @<img:media/awesome_svg.svg;0.7;SVG 벡터 그림 예시>
 
-예2) Visio 특정 page를 벡터 이미지로 삽입
+예3) Visio 특정 page를 벡터 이미지로 삽입
 ```html
 @<img:media/test.vsdx[test_sample];0.8;SVG 벡터 그림 예시>
 ```
 결과)
 @<img:media/test.vsdx[test_sample];0.8;SVG 벡터 그림 예시>
+
+예4) 그림 없이 캡션만 삽입
+```html
+@<img:nil;0;그림 내용 없이 캡션만 삽입>
+```
+결과)
+@<img:nil;0;그림 내용 없이 캡션만 삽입>
 
 
  
@@ -450,17 +457,26 @@ Visio 파일일 경우는 "@<color:FF0000>파일명@</color>[@<color:FF0000>페�
 표 삽입의 경우 엑셀에서 작상된 내용을 옮겨 넣을 수 있으며, 엑셀상 Merge 된 셀들과 폭은 최대한 동일하게 적용됩니다.
 표의 첫 줄은 상단 제목이며, 하위 데이터 열을 가운데 정렬을 하고자 할 때에는 제목 이름 앞에 '*'문자를 삽입합니다.
 
-예) 입력 엑셀 파일 : "media/table_sample.xlsx"
+예1) 입력 엑셀 파일 : "media/table_sample.xlsx"
 ```html
 @<tbl:media/table_sample.xlsx;Sheet1;엑셀 표 예시>
 ```
  
-@<img:#media/table_sample.png;1;"media/table_sample.xlsx" 파일 예시>
+@<img:#media/table_sample.png;1;"media/table_sample.xlsx" 실제 엑셀 파일>
 
 결과)
 @<tbl:media/table_sample.xlsx;Sheet1;엑셀 표 예시>
 
  
+
+예2) 테이블 내용 없이 갭션만 삽입
+```html
+@<tbl:nil;nil;표 내용 없이 캡션만 삽입>
+```
+결과)
+@<tbl:nil;nil;표 내용 없이 캡션만 삽입>
+ 
+
 ### Lua 표현으로부터 표 삽입
 @<size:30>@<b>표현식 : @@<tbl:lua;@<color:FF0000>테이블_변수명@</color>;@<color:FF0000>캡션@</color>>@</b>@</size>
 

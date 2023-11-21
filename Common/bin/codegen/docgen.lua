@@ -1400,7 +1400,9 @@ function EncodeParagraph(sText, sExtra)
 								fRatio	= 1.0
 							end
 							sResult:CutBack("<w:p>", false)
-							sResult:Append(GenerateFigure(sFileName.s, fRatio))
+							if sFileName.s ~= "nil" then
+								sResult:Append(GenerateFigure(sFileName.s, fRatio))
+							end
 							
 							if sCaption ~= nil and sCaption ~= "" then
 								sResult:Append(GenerateCaption("Figure", sCaption))
@@ -1421,10 +1423,12 @@ function EncodeParagraph(sText, sExtra)
 								sResult:Append(GenerateCaption("Table", sCaption))
 							end
 							
-							if sMainName.s == "lua" then
-								sResult:Append(GenerateTableFromLua(sSubName.s))
-							else
-								sResult:Append(GenerateTable(sMainName.s, sSubName.s))	-- file_name, sheet_name
+							if sMainName.s ~= "nil" then
+								if sMainName.s == "lua" then
+									sResult:Append(GenerateTableFromLua(sSubName.s))
+								else
+									sResult:Append(GenerateTable(sMainName.s, sSubName.s))	-- file_name, sheet_name
+								end
 							end
 							goto continue
 						elseif sTag.s == "property" then
