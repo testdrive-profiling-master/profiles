@@ -731,19 +731,21 @@ function module:make_code(is_top)
 		
 		-- Lua source list
 		do
-			__graphviz:Append("\t\"MAIN_SCRIPT\" [URL=\"cmd://PROJECT\" tooltip = \"Project folder\" label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='2'><tr><td><b>" .. ((self.__title == nil) and "Project" or self.__title) .. "</b></td></tr>\n");
+			__graphviz:Append("\t\"MAIN_SCRIPT\" [URL=\"cmd://PROJECT\" tooltip = \"Project folder\" label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='2'><tr><td colspan='2'><b>" .. ((self.__title == nil) and "Project" or self.__title) .. "</b></td></tr>\n");
 			
 			for i, v in ipairs(__verigen_lua_files) do
 				if v.filename ~= nil then
 					local sFileName = String(v.filename)
+					local sToolTip	= (v.desc ~= nil) and v.desc or sFileName.s
 					sFileName:CutFront("\\")
 					
 					if v.desc ~= nil then
 						local sName = sFileName.s
-						sFileName.s = "<b>" .. v.desc .. " </b>[" .. sName .. "]"
+						sFileName.s = "[" .. sName .. "]"
 					end
 					
-					__graphviz:Append("<tr><td href='cmd://LUA/" .. v.filename .. "' align='left' SIDES='LR" .. ((i == #__verigen_lua_files) and "B" or "") .. "' cellspacing='0' cellpadding='3' tooltip='" .. ((v.desc ~= nil) and v.desc or sFileName.s) .. "'><font color='#2020AF' point-size='10'>" .. sFileName.s .. "</font></td></tr>")
+					__graphviz:Append("<tr><td href='cmd://LUA/" .. v.filename .. "' align='right' SIDES='L" .. ((i == #__verigen_lua_files) and "B" or "") .. "' cellspacing='0' cellpadding='3' tooltip='" .. sToolTip .. "'><font color='#2020AF' point-size='10'>" .. ((v.desc == nil) and "" or v.desc) .. "</font></td>")
+					__graphviz:Append("<td href='cmd://LUA/" .. v.filename .. "' align='left' SIDES='R" .. ((i == #__verigen_lua_files) and "B" or "") .. "' cellspacing='0' cellpadding='3' tooltip='" .. sToolTip .. "'><font color='#A0A0AF' point-size='10'>" .. sFileName.s .. "</font></td></tr>")
 				end
 			end
 			

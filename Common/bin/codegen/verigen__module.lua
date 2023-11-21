@@ -445,6 +445,7 @@ function module_i:new(name, m, parent)
 end
 
 -- verilog inline function
+vfunction("set_title", "__m:set_title")
 vfunction("set_author", "__m:set_author")
 vfunction("set_inception", "__m:set_inception")
 vfunction("set_param", "__m:set_param")
