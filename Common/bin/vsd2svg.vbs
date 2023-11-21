@@ -32,9 +32,7 @@ If WScript.Arguments.Count > 0 Then
 			Err.Clear
 			WScript.Quit(1)
 		End If
-		
-		objVisio.Visible		= False
-		
+
 		Set objDraw = objVisio.documents.open(vsdPath)
 
 		'SVG 로 저장
@@ -57,6 +55,7 @@ If WScript.Arguments.Count > 0 Then
 			End If
 		End If
 		
+		objVisio.Close 0
 		objVisio.Quit
 		objDraw			= Nothing
 		Set objVisio	= Nothing
