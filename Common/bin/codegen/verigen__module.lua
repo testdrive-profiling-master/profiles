@@ -451,6 +451,7 @@ vfunction("set_inception", "__m:set_inception")
 vfunction("set_param", "__m:set_param")
 vfunction("add_clock", "__m:add_clock")
 vfunction("add_interface", "__m:add_interface")
+vfunction("add_code", "__m:add_code")
 vfunction("set_document", "__m:set_document")
 
 -- module instance

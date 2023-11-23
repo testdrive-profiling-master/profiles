@@ -149,8 +149,9 @@ function vfunction(name, func)
 end
 
 function __build_code(s)
-	local	sSrc	= String(s.s)
-	local	sOut	= String("")
+	local 	org_size	= #s.s
+	local	sSrc		= String(s.s)
+	local	sOut		= String("")
 
 	-- lua vfunction call
 	for name, func in pairs(__vfunctions) do
@@ -214,7 +215,8 @@ function __build_code(s)
 	sOut:TrimLeft(" \t\r\n")
 	sOut:Replace("\r", "", true)	-- linux style only
 
-	s.s	= sOut.s
+	s:erase(0, org_size)
+	s:insert(0, sOut.s)
 end
 
 -- default script libraries
