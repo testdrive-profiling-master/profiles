@@ -364,7 +364,10 @@ LPCTSTR CDesignMap::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 			break;
 
 			case CMD_ID_MANUAL: {
-				ShellExecute(NULL, _T("open"), _T("https://testdrive-profiling-master.github.io/download/verigen_userguide.pdf"), NULL, NULL, SW_SHOWDEFAULT);
+				CString sName		= cmd.Tokenize(_T(""), iStart);
+				CString sLink;
+				sLink.Format(_T("https://testdrive-profiling-master.github.io/download/%s_userguide.pdf"), (LPCTSTR)sName);
+				ShellExecute(NULL, _T("open"), sLink, NULL, NULL, SW_SHOWDEFAULT);
 			}
 			break;
 
