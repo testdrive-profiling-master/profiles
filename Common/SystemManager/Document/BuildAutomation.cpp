@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : System manager
-// Rev.  : 11/8/2023 Wed (clonextop@gmail.com)
+// Rev.  : 11/23/2023 Thu (clonextop@gmail.com)
 //================================================================================
 #include "BuildAutomation.h"
 #include "Utils.h"
@@ -124,6 +124,11 @@ void BuildAutomation::DoCheck(DWORD command, LPCTSTR sFileName)
 			sNosearchPath	+= _T(".TestDrive.nosearch");
 
 			if(IsFileExisted(sNosearchPath)) return;
+
+			if(GetKeyState(VK_LSHIFT) < 0) {
+				g_pSystem->LogInfo(_L(CHECK_CANCELED_BY_USER));
+				return;
+			}
 		}
 
 		{
