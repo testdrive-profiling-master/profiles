@@ -215,6 +215,10 @@ function __build_code(s)
 	sOut:TrimLeft(" \t\r\n")
 	sOut:Replace("\r", "", true)	-- linux style only
 
+	if #sSrc.s ~= org_size then		-- seperate from additional codes
+		sOut:Append("\n")
+	end
+
 	s:erase(0, org_size)
 	s:insert(0, sOut.s)
 end
