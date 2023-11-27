@@ -6,12 +6,13 @@ wire	$RANGE(config.core_size)	core_busy_all;
 ${	-- It's Lua codes
 	module:set_title("Fast Follow")
 	
-	for i = 1, config.core_size, 1 do
-		core.inst[i]:set_param("CORE_ID", i)
-		core.inst[i]:set_port("core_busy", "core_busy_all[" .. (i-1) .. "]")
+	for i = 0, (config.core_size-1) do
+		local core	= sub_module["test_core_" .. i]
+		core:set_param("CORE_ID", i)
+		core:set_port("core_busy", "core_busy_all[" .. i .. "]")
 	end
 
-	__m:get_module("slave_ctrl"):set_port("core_busy", "|core_busy_all")
+	sub_module["slave_ctrl"]:set_port("core_busy", "|core_busy_all")
 }
 
 //#---------------------------------------------------------------------

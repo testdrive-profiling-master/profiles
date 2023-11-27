@@ -3,7 +3,7 @@ verigen_description("Test project")
 RunScript("test_definition.lua")
 
 -- modules
-core_wrapper = module:new("test_wrapper") -- top
+core_wrapper = module:new("test_wrapper")	-- top
 core = {}
 core.top = module:new("test_core")
 core.slave_ctrl = module:new("slave_ctrl")
@@ -34,9 +34,8 @@ core.top:add_module(core.core_wb)
 core.slave_ctrl:add_module(core.reg_ctrl)
 
 -- multi-core genration
-core.inst = {}
-for i = 1, config.core_size, 1 do
-	core.inst[i] = core_wrapper:add_module(core.top)
+for i = 1, config.core_size do
+	core_wrapper:add_module(core.top)
 end
 
  -- add verilog codes

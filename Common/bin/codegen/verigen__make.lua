@@ -69,7 +69,7 @@ local	__FileList		= String("")
 local	__IncludeList	= String("")
 
 function module:find_sub_module_matched_interface(cur_m, cur_i, cur_i_name)
-	for name, m in key_pairs(self.modules) do
+	for name, m in key_pairs(self.sub_module) do
 		if m ~= cur_m then
 			for i_name, i in key_pairs(m.module.interfaces) do
 				if i_name == cur_i_name and i.interface == cur_i then
@@ -103,7 +103,7 @@ function module:make_code(is_top)
 	end
 	
 	-- make leaf module first
-	for name, m in key_pairs(self.modules) do
+	for name, m in key_pairs(self.sub_module) do
 		m.module:make_code(false)
 	end
 	
@@ -118,7 +118,7 @@ function module:make_code(is_top)
 	end
 
 	-- create top design file
-	__m		= self
+	self:set_current_design()
 	local	f	= TextFile()
 	if f:Create(sOutPath .. "/" .. self.name .. ".sv") == false then
 		error("Can't create top design file.", 2)
@@ -199,7 +199,7 @@ function module:make_code(is_top)
 
 	-------------------------------------------------------------------
 	-- module instances
-	for m_name, m in key_pairs(self.modules) do
+	for m_name, m in key_pairs(self.sub_module) do
 		local	sModule		= String("")
 		local	no_ports	= true
 		
@@ -744,7 +744,7 @@ function module:make_code(is_top)
 						sFileName.s = "[" .. sName .. "]"
 					end
 					
-					__graphviz:Append("<tr><td href='cmd://LUA/" .. v.filename .. "' align='right' SIDES='L" .. ((i == #__verigen_lua_files) and "B" or "") .. "' cellspacing='0' cellpadding='3' tooltip='" .. sToolTip .. "'><font color='#2020AF' point-size='10'>" .. ((v.desc == nil) and "" or v.desc) .. "</font></td>")
+					__graphviz:Append("<tr><td href='cmd://LUA/" .. v.filename .. "' align='right' SIDES='L" .. ((i == #__verigen_lua_files) and "B" or "") .. "' cellspacing='0' cellpadding='3' tooltip='" .. sToolTip .. "'><font color='#2020AF' point-size='10'>" .. ((v.desc == nil) and " " or v.desc) .. "</font></td>")
 					__graphviz:Append("<td href='cmd://LUA/" .. v.filename .. "' align='left' SIDES='R" .. ((i == #__verigen_lua_files) and "B" or "") .. "' cellspacing='0' cellpadding='3' tooltip='" .. sToolTip .. "'><font color='#A0A0AF' point-size='10'>" .. sFileName.s .. "</font></td></tr>")
 				end
 			end

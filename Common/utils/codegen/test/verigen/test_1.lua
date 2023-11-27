@@ -1,7 +1,7 @@
 verigen_description("Test project")
 
 -- modules
-core_wrapper = module:new("test_wrapper") -- top
+core_wrapper = module:new("test_wrapper")	-- top
 core = {}
 core.top = module:new("test_core")
 core.slave_ctrl = module:new("slave_ctrl")

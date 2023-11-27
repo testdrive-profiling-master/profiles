@@ -15,18 +15,19 @@ Generate and run the script code as shown below.
 verigen_description("Test project")
 
 -- modules
-core_wrapper	= module:new("test_wrapper")		-- top
-core			= {}
-core.top		= module:new("test_core")
-core.slave_ctrl	= module:new("slave_ctrl")
-core.core_if	= module:new("core_if")
-core.core_ex	= module:new("core_ex")
-core.core_wb	= module:new("core_wb")
-core.mem_ctrl	= module:new("mem_ctrl")
-core.reg_ctrl	= module:new("reg_ctrl")
+core_wrapper = module:new("test_wrapper")	-- top
+core = {}
+core.top = module:new("test_core")
+core.slave_ctrl = module:new("slave_ctrl")
+core.core_if = module:new("core_if")
+core.core_ex = module:new("core_ex")
+core.core_wb = module:new("core_wb")
+core.mem_ctrl = module:new("mem_ctrl")
+core.reg_ctrl = module:new("reg_ctrl")
 
 -- make code
 core_wrapper:make_code()
+
 ```
 It was created by putting the core_wrapper module and core related modules in @<link:https://www.lua.org/pil/3.6.html;lua table>.
 
@@ -78,16 +79,16 @@ verigen_description("Test project")
 RunScript("test_definition.lua")
 
 -- modules
-core_wrapper	= module:new("test_wrapper")		-- top
-core			= {}
-core.top		= module:new("test_core")
-core.slave_ctrl	= module:new("slave_ctrl")
-core.core_if	= module:new("core_if")
-core.core_ex	= module:new("core_ex")
-core.core_wb	= module:new("core_wb")
-core.mem_ctrl	= module:new("mem_ctrl")
-core.reg_ctrl	= module:new("reg_ctrl")
-core.busy_ctrl	= module:new("busy_ctrl")
+core_wrapper = module:new("test_wrapper")	-- top
+core = {}
+core.top = module:new("test_core")
+core.slave_ctrl = module:new("slave_ctrl")
+core.core_if = module:new("core_if")
+core.core_ex = module:new("core_ex")
+core.core_wb = module:new("core_wb")
+core.mem_ctrl = module:new("mem_ctrl")
+core.reg_ctrl = module:new("reg_ctrl")
+core.busy_ctrl = module:new("busy_ctrl")
 
 -- module connection
 core_wrapper:add_module(core.mem_ctrl)
@@ -100,15 +101,15 @@ core.top:add_module(core.core_wb)
 core.slave_ctrl:add_module(core.reg_ctrl)
 
 -- multi-core genration
-core.inst	= {}
-for i = 1, config.core_size, 1 do
-   core.inst[i]	= core_wrapper:add_module(core.top)
+for i = 1, config.core_size do
+	core_wrapper:add_module(core.top)
 end
 
 -- make code
 core_wrapper:make_code()
+
 ```
-Now, in the added lines 17 to 31, each module is connected with the @<bookmark:module:add_module> function, and four modules are also created and connected to the core. \
+Now, in the added lines 17 to 30, each module is connected with the @<bookmark:module:add_module> function, and four modules are also created and connected to the core. \
 Include "@<bookmark:Appendix : test_definition.lua>" at the top (line #3) to use the predefined config.core_size value.
 
 @<b>[Run command]@</b>
@@ -175,7 +176,7 @@ endmodule
 In the code above, since the submodule has no input/output at all, it is commented out to avoid 'DRC (Design Rule Check)' errors.
  
 @<b>[Result : test_wrapper_hierarchy.svg]@</b>
-@<img:#media/step2_test_wrapper_hierarchy.svg;0.8;Step #2 Hierarchy Diagram>
+@<img:#media/step2_test_wrapper_hierarchy.svg;0.85;Step #2 Hierarchy Diagram>
 
 In addition to test_wrapper.sv, other slave_ctrl.sv and test_core.sv also contain submodules, \
 as seen in @<bookmark:Step #2 Hierarchy Diagram>.
@@ -192,16 +193,17 @@ verigen_description("Test project")
 RunScript("test_definition.lua")
 
 -- modules
-core_wrapper	= module:new("test_wrapper")		-- top
-core			= {}
-core.top		= module:new("test_core")
-core.slave_ctrl	= module:new("slave_ctrl")
-core.core_if	= module:new("core_if")
-core.core_ex	= module:new("core_ex")
-core.core_wb	= module:new("core_wb")
-core.mem_ctrl	= module:new("mem_ctrl")
-core.reg_ctrl	= module:new("reg_ctrl")
-core.busy_ctrl	= module:new("busy_ctrl")
+core_wrapper = module:new("test_wrapper")	-- top
+core = {}
+core.top = module:new("test_core")
+core.slave_ctrl = module:new("slave_ctrl")
+ 
+core.core_if = module:new("core_if")
+core.core_ex = module:new("core_ex")
+core.core_wb = module:new("core_wb")
+core.mem_ctrl = module:new("mem_ctrl")
+core.reg_ctrl = module:new("reg_ctrl")
+core.busy_ctrl = module:new("busy_ctrl")
 
 -- add master bus
 bus.maxi4:set_param("DATA_WIDTH", 512)
@@ -209,7 +211,7 @@ bus.maxi4:set_param("ADDR_WIDTH", 36)
 bus.maxi4:set_prefix("M#")
 
 -- add busy
-core_busy		= new_signal("core_busy")
+core_busy = new_signal("core_busy")
 
 -- module connection
 core_wrapper:add_module(core.mem_ctrl)
@@ -222,14 +224,13 @@ core.top:add_module(core.core_wb)
 core.slave_ctrl:add_module(core.reg_ctrl)
 
 -- multi-core genration
-core.inst	= {}
-for i = 1, config.core_size, 1 do
-   core.inst[i]	= core_wrapper:add_module(core.top)
+for i = 1, config.core_size do
+	core_wrapper:add_module(core.top)
 end
 
--- add verilog codes
+ -- add verilog codes
 for entry in lfs.dir("src/") do
-	local	s	= String(entry)
+	local s = String(entry)
 	if s:CompareBack(".sv") then
 		module.apply_code("src/" .. entry)
 	end
@@ -238,7 +239,7 @@ end
 -- make code
 core_wrapper:make_code()
 ```
-The code added to the existing Lua script is line #17~23 and #41~47.
+The code added to the existing Lua script is line #18~24 and #41~47.
 The first changes the bit width of data and address of axi4, \
 and the second one adds the two files below through the module.apply_code() function to all *.sv files in the subfolder "./src".
  
@@ -280,13 +281,14 @@ wire	$RANGE(config.core_size)	core_busy_all;
 
 ${	-- It's Lua codes
 	module:set_title("Fast Follow")
-
-	for i = 1, config.core_size, 1 do
-	   core.inst[i]:set_param("CORE_ID", i)
-	   core.inst[i]:set_port("core_busy", "core_busy_all[" .. (i-1) .. "]")
-	end
 	
-	__m:get_module("slave_ctrl"):set_port("core_busy", "|core_busy_all")
+	for i = 0, (config.core_size-1) do
+		local core	= sub_module["test_core_" .. i]
+		core:set_param("CORE_ID", i)
+		core:set_port("core_busy", "core_busy_all[" .. i .. "]")
+	end
+
+	sub_module["slave_ctrl"]:set_port("core_busy", "|core_busy_all")
 }
 
 //#---------------------------------------------------------------------
@@ -312,7 +314,7 @@ In addition, if you want to directly access a Lua variable or function, you can 
 
 
 @<b>[Result : test_wrapper_hierarchy.svg]@</b>
-@<img:#media/step3_test_wrapper_hierarchy.svg;0.8;Step #3 Hierarchy Diagram>
+@<img:#media/step3_test_wrapper_hierarchy.svg;0.75;Step #3 Hierarchy Diagram>
 
 Below is the output of the top design.
 

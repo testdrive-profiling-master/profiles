@@ -9,7 +9,8 @@ module.__title		= nil
 module.__top		= nil
 module.__inception	= ""
 
-__m				= nil	-- current module instance
+__m					= nil	-- current module instance
+sub_module			= nil	-- current sub module instance
 
 -- find module
 function module.find(name)
@@ -50,7 +51,7 @@ function module:new(name)
 	t.name			= name.s
 	
 	-- construction
-	t.modules		= {}
+	t.sub_module	= {}
 	t.params		= {}
 	t.clocks		= {}
 	t.interfaces	= {}
@@ -61,6 +62,11 @@ function module:new(name)
 	t.enable		= true
 	
 	return t
+end
+
+function module:set_current_design()	-- internal use only
+	__m				= self
+	sub_module		= self.sub_module
 end
 
 function module:set_title(title)
@@ -176,12 +182,12 @@ end
 
 function module:get_module(name, nilAsError)
 	if nilAsError == nil or nilAsError == true then
-		if self.modules[name] == nil then
+		if self.sub_module[name] == nil then
 			error("Can't find submodule '" .. name .. "' in module '" .. self.name .. "'", 2)
 		end
 	end
 
-	return self.modules[name]
+	return self.sub_module[name]
 end
 
 function module:add_module(m, name)
@@ -193,13 +199,26 @@ function module:add_module(m, name)
 		error("Can't include self module instance : '" .. self.name .. "'", 2)
 	end
 
+	-- no name, so find new name
 	if name == nil then
 		name	= m.name
 		
+		-- check first item conflict : (rename first item's name)
 		local	conflict_module	= self:get_module(name, false)
-		if conflict_module ~= nil then
+		-- name conflict!
+		if conflict_module ~= nil then	-- first item
 			conflict_module.name	= name .. "_0"
 			
+			if self:get_module(conflict_module.name, false) ~= nil then
+				error("Already submodule '" .. conflict_module.name .. "' is existed.", 2)
+			end
+			self.sub_module[conflict_module.name]	= conflict_module
+			self.sub_module[name]					= nil				-- delete previous first item
+		end
+		
+		-- check second items conflict
+		conflict_module		= self:get_module(name .. "_0", false)
+		if conflict_module ~= nil then
 			local	i = 1
 			
 			while self:get_module(name .. "_" .. tostring(i), false) ~= nil do
@@ -219,7 +238,7 @@ function module:add_module(m, name)
 	end
 
 	local	moudule_inst	= module_i:new(name, m, self)
-	self.modules[name]		= moudule_inst
+	self.sub_module[name]	= moudule_inst
 	
 	return moudule_inst
 end

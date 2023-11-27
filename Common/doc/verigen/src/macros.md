@@ -2,7 +2,7 @@
 
 Provides macro functions useful for organizing your code.
 
-@<tbl:media/instruction_macros.xlsx;summary;Macro function summary>
+@<tbl:media/instruction_macros.xlsx;summary;Macro function/data summary>
 
  
 The functions below are predefined functions as vfunction available in verilog. It can be used as "$function_name(~)".
