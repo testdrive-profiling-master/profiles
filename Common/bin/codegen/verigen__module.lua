@@ -8,6 +8,7 @@ module.__time		= os.date("%X")
 module.__title		= nil
 module.__top		= nil
 module.__inception	= ""
+module.document		= {}
 
 __m					= nil	-- current module instance
 sub_module			= nil	-- current sub module instance

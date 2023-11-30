@@ -4,6 +4,9 @@ RunScript("defines_PROJECT.lua")
 -- IP design
 RunScript("design_hierarchy.lua")
 
+-- add eclipse project link
+module:add_document("img/eclipse_ide.png", "../.eclipse.bat")
+
 ----------------------------------------------------------------
 -- add all code details
 ----------------------------------------------------------------

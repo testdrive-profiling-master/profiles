@@ -6,6 +6,11 @@ function set_constraint(name, constraint)
 	end
 end
 
+local function IsImageFileName(filename)
+	local fname = String(filename)
+	return fname:CompareBack(".png") or fname:CompareFront(".jpg") or fname:CompareBack(".svg") or fname:CompareBack(".gif") or fname:CompareBack(".webp")
+end
+
 function module:make_constraint()
 	local	f = TextFile()
 	if f:Create(sOutPath .. "/" .. self.name .. "_constraint.xdc") == false then
@@ -150,7 +155,11 @@ function module:make_code(is_top)
 	-- document
 	if self.document ~= nil then
 		for doc_name, doc_file in key_pairs(self.document) do
-			sDocuments:Append("<tr><td href='cmd://DOC/" .. doc_file .. "' SIDES='LRB' cellspacing='1' cellpadding='1' tooltip='" .. doc_name .. "'><font color=\"#0000FF\" point-size=\"9\"><b><u>[ " .. doc_name .. " ]</u></b></font></td></tr>\n")
+			if IsImageFileName(doc_name) then
+				sDocuments:Append("<tr><td href='cmd://DOC/" .. doc_file .. "' SIDES='LRB' cellspacing='1' cellpadding='1'><img src='" .. codegen.work_path .. doc_name .. "' /></td></tr>\n")
+			else
+				sDocuments:Append("<tr><td href='cmd://DOC/" .. doc_file .. "' SIDES='LRB' cellspacing='1' cellpadding='1' tooltip='" .. doc_name .. "'><font color=\"#0000FF\" point-size=\"9\"><b><u>[ " .. doc_name .. " ]</u></b></font></td></tr>\n")
+			end
 		end
 	end
 	
@@ -731,7 +740,18 @@ function module:make_code(is_top)
 		
 		-- Lua source list
 		do
-			__graphviz:Append("\t\"MAIN_SCRIPT\" [URL=\"cmd://PROJECT\" tooltip = \"Project folder\" label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='2'><tr><td colspan='2'><b>" .. ((self.__title == nil) and "Project" or self.__title) .. "</b></td></tr>\n");
+			__graphviz:Append("\t\"MAIN_SCRIPT\" [URL=\"cmd://PROJECT\" tooltip = \"Project\" label=<<table border='0' cellborder='1' cellspacing='0' cellpadding='2'><tr><td colspan='2'><b>" .. ((self.__title == nil) and "Project" or self.__title) .. "</b></td></tr>\n");
+			
+			-- document
+			if module.document ~= nil then
+				for doc_name, doc_file in key_pairs(module.document) do
+					if IsImageFileName(doc_name) then
+						__graphviz:Append("<tr><td href='cmd://DOC/" .. doc_file .. "' align='left' SIDES='LR' colspan='2' cellspacing='0' cellpadding='3'><img src='" .. codegen.work_path .. doc_name .. "' /></td></tr>\n")
+					else
+						__graphviz:Append("<tr><td href='cmd://DOC/" .. doc_file .. "' align='center' SIDES='LR' colspan='2' cellspacing='0' cellpadding='3' tooltip='" .. doc_name .. "'><font color=\"#0000FF\" point-size=\"9\"><b><u>[ " .. doc_name .. " ]</u></b></font></td></tr>\n")
+					end
+				end
+			end
 			
 			for i, v in ipairs(__verigen_lua_files) do
 				if v.filename ~= nil then

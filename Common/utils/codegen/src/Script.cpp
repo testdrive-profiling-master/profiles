@@ -39,6 +39,7 @@
 #include "DocExcel.h"
 #include "minGit.h"
 #include <tuple>
+#include <filesystem>
 
 static bool		__bPause_on_error	= false;
 static bool		__bUseTraceBack		= false;
@@ -1164,6 +1165,15 @@ bool Script::Run(const char* sFileName)
 		} else {
 			m_sWorkPath.clear();
 		}
+	}
+
+	// work path (absolute)
+	{
+		if(m_sWorkPath.IsEmpty()) m_sWorkPath = ".";
+		filesystem::path	p(m_sWorkPath.c_str());
+		m_sWorkPath	= filesystem::absolute(p).string();
+		m_sWorkPath.Replace(_T("\\"), _T("/"), true);
+		if(!m_sWorkPath.CompareBack(_T("/"))) m_sWorkPath	+= "/";
 	}
 
 	// loading & run!

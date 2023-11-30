@@ -92,7 +92,7 @@ static bool __ReadSVG(CString& sContents, LPCTSTR sFilename)
 		sContents.Replace(_T("\r"), _T(""));
 		sContents.Replace(_T("\n"), _T(""));
 		sContents.Replace(_T("<svg"), _T("<svg id='svg_object'"));
-		sContents.Replace(_T("xlink:href='"), _T("xlink:href='cmd://URL/"));
+		sContents.Replace(_T("<a xlink:href='"), _T("<a xlink:href='cmd://URL/"));
 		sContents.Replace(_T("cmd://URL/cmd://"), _T("cmd://"));				// cut off duplication of 'cmd://'
 		fclose(fp);
 		return true;
@@ -359,6 +359,16 @@ LPCTSTR CDesignMap::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 					g_pSystem->ExecuteFile(_T("%TESTDRIVE_PROFILE%common\\bin\\xlsx_open.bat"), sArg, TRUE, NULL, _T("%TESTDRIVE_PROFILE%common\\bin"),
 										   _T("*E: "), -1,
 										   NULL);
+				} else {
+					CString sExe;
+					CString sWorkPath;
+					sExe.Format(_T("%s\\%s"), (LPCTSTR)m_sWorkPath, (LPCTSTR)sDoc);
+					sExe.Replace(_T("/"), _T("\\"));
+					sWorkPath	= sExe;
+					int iPos = sWorkPath.rfind(_T("\\"));
+					if(iPos>0)sWorkPath.erase(iPos+1, -1);
+
+					g_pSystem->ExecuteFile(sExe, NULL, TRUE, NULL, sWorkPath, NULL);
 				}
 			}
 			break;
