@@ -343,7 +343,7 @@ string DocExcelSheet::GetValue(void)
 		if(bString) {
 			sValue	= m_pExcel->GetString(atoi(sValue.c_str()));
 			sValue.ChangeCharsetToANSI();
-		} else {
+		} else if(!sValue.IsEmpty()) {
 			double	v	= atof(sValue.c_str());
 			/*
 			1 0
