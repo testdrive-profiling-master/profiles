@@ -5,7 +5,7 @@ RunScript("defines_PROJECT.lua")
 RunScript("design_hierarchy.lua")
 
 -- add eclipse project link
-module:add_document("img/eclipse_ide.png", "../.eclipse.bat")
+module:add_document("img/simulation_top.png", "../.eclipse.bat")
 
 ----------------------------------------------------------------
 -- add all code details
