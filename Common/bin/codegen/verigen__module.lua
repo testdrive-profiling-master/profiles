@@ -106,7 +106,7 @@ function module:get_interface(name)
 	return self.interfaces[name]
 end
 
-function module:set_document(name, filename)
+function module:add_document(name, filename)
 	self.document[name] = filename
 end
 
@@ -471,7 +471,7 @@ vfunction("set_param", "__m:set_param")
 vfunction("add_clock", "__m:add_clock")
 vfunction("add_interface", "__m:add_interface")
 vfunction("add_code", "__m:add_code")
-vfunction("set_document", "__m:set_document")
+vfunction("add_document", "__m:add_document")
 
 -- module instance
 function module_i:get_param(name)

@@ -621,15 +621,15 @@ endmodule
 ```
 ;;;
 
-### module:set_document
-@<tbl:media/instruction_module.xlsx;set_document>
+### module:add_document
+@<tbl:media/instruction_module.xlsx;add_document>
  
 This function only affects "Design map". Display it as a hyperlink in "Design map" so that users can click to edit it.
 
-ex) set_document example
+ex) add_document example
 ```lua
 top	= module:new("top")		-- Module creation example
-top:set_document("Configuration", "configuration@config.xlsx")
+top:add_document("Configuration", "configuration@config.xlsx")
 ```
 ;;;
 
