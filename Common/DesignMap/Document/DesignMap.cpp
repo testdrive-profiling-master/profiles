@@ -426,6 +426,7 @@ void CDesignMap::OnHtmlDocumentComplete(DWORD dwID, LPCTSTR lpszURL)
 			CString sContents;
 			__ReadSVG(sContents, m_sDesignFilePath);
 			g_pHtml->CallJScript(_T("SetContent(\"%s\");"), (LPCTSTR)sContents);
+			g_pHtml->CallJScript(_T("PopupLog(\"info\", \"%s\");"), _L(CAN_EDIT_CONTROL));
 		}
 	}
 }
