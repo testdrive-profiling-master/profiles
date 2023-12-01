@@ -908,6 +908,7 @@ Script::Script(void)
 			.addFunction("GetColumn", &DocExcelSheet::GetColumn)
 			.addFunction("GetValue", &DocExcelSheet::GetValue)
 			.addFunction("GetColumnWidth", &DocExcelSheet::GetColumnWidth)
+			.addFunction("IsMergedCell", &DocExcelSheet::IsMergedCell)
 			.addFunction("GetMergeCellPos", std::function<string(DocExcelSheet* pSheet)>([](DocExcelSheet * pSheet) -> string {
 				int tx, ty, width, height;
 

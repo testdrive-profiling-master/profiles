@@ -96,8 +96,9 @@ public:
 	bool IsEmpty(void);
 	int GetInt(int iDefault = -1);
 	double GetDouble(int fDefault = -1);
-	string GetValue(void);
+	string GetValue(bool bUseMergedData = false);
 	struct tm* GetDate(int iDateOverride = -1);
+	bool IsMergedCell(void);
 	DocExcelStyle* GetStyle(void);
 	bool SetDate(int iYear, int iMonth, int iDay);
 	bool SetInt(int iValue);
@@ -111,7 +112,7 @@ public:
 	bool SetConditionalFormatting(const char* sFomula, int iStyleFormat);
 	void Hide(bool bHide = true);
 	bool MergeCells(const char* sBegin, const char* sEnd);
-	bool GetMergeCellPos(int& tx, int& ty, int& width, int& height);
+	bool GetMergeCellPos(int& delta_x, int& delta_y, int& width, int& height);
 	bool HideColumn(bool bHide = true);
 	void SetProtection(const char* sHash, const char* sSalt, const char* sExceptionRangeList);
 

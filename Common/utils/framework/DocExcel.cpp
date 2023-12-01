@@ -332,7 +332,7 @@ double DocExcelSheet::GetDouble(int fDefault)
 	return fData;
 }
 
-string DocExcelSheet::GetValue(void)
+string DocExcelSheet::GetValue(bool bUseMergedData)
 {
 	cstring	sValue;
 
@@ -384,10 +384,39 @@ string DocExcelSheet::GetValue(void)
 			while(sValue.rfind('0') == (sValue.Length() - 1)) sValue.DeleteBack("0");
 
 			if(sValue.rfind('.') == (sValue.Length() - 1)) sValue.DeleteBack(".");
+		} else if(bUseMergedData) {
+			int delta_x, delta_y, width, height;
+			// get merged top data
+			if(GetMergeCellPos(delta_x, delta_y, width, height)) {
+				if(delta_x || delta_y) {
+					int iCurX	= GetPosX();
+					int iCurY	= GetPosY();
+					int iOrgX	= m_Origin.x;
+					int iOrgY	= m_Origin.y;
+					SetPos(iCurX - delta_x, iCurY - delta_y);
+					GetRow();
+					GetColumn();
+					sValue	= GetValue();
+					SetPos(iCurX, iCurY);
+					GetRow();
+					GetColumn();
+					// restore original base
+					m_Origin.x	= iOrgX;
+					m_Origin.y	= iOrgY;
+				}
+			}
 		}
 	}
 
 	return sValue.c_str();
+}
+
+bool DocExcelSheet::IsMergedCell(void){
+	int delta_x, delta_y, width, height;
+	if(GetMergeCellPos(delta_x, delta_y, width, height)) {
+		return true;
+	}
+	return false;
 }
 
 struct tm* DocExcelSheet::GetDate(int iDateOverride)
@@ -594,12 +623,12 @@ bool DocExcelSheet::MergeCells(const char* sBegin, const char* sEnd)
 	return true;
 }
 
-bool DocExcelSheet::GetMergeCellPos(int& tx, int& ty, int& width, int& height)
+bool DocExcelSheet::GetMergeCellPos(int& delta_x, int& delta_y, int& width, int& height)
 {
 	typedef struct {
 		bool	bMerge;
 		int		x, y;
-		int		tx, ty;
+		int		delta_x, delta_y;
 		int		width, height;
 	} __private_data;
 	__private_data	p = {false, m_CurPos.x - 1, m_CurPos.y, 0, 0, 1, 1};
@@ -622,17 +651,17 @@ bool DocExcelSheet::GetMergeCellPos(int& tx, int& ty, int& width, int& height)
 			p.bMerge	= true;
 			p.width		= ex - sx + 1;
 			p.height	= ey - sy + 1;
-			p.tx		= p.x - sx;
-			p.ty		= p.y - sy;
+			p.delta_x	= p.x - sx;
+			p.delta_y	= p.y - sy;
 			return false;
 		}
 
 		return true;
 	});
-	tx		= p.tx;
-	ty		= p.ty;
-	width	= p.width;
-	height	= p.height;
+	delta_x		= p.delta_x;
+	delta_y		= p.delta_y;
+	width		= p.width;
+	height		= p.height;
 	return p.bMerge;
 }
 
