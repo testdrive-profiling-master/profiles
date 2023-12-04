@@ -46,12 +46,23 @@ wire	[63:32]		T;
 ```
 ;;;
 
-### verigen_description
+## verigen_description function
 @<tbl:media/instruction_macros.xlsx;verigen_description>
  
 ex) verigen_description macro example
 ```lua
 verigen_description("Your description")
+```
+;;;
+
+## read_excel_table function
+@<tbl:media/instruction_macros.xlsx;read_excel_table>
+ 
+ex) read_excel_table macro example
+```lua
+read_excel_table("a.xlsx", "Sheet1")
+read_excel_table("a.xlsx", "Sheet1", nil, "A5")
+read_excel_table("a.xlsx", "Sheet1", nil, 1, 5)
 end)
 ```
 ;;;
