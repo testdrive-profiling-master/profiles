@@ -336,13 +336,16 @@ string DocExcelSheet::GetValue(bool bUseMergedData)
 {
 	cstring	sValue;
 
+
 	if(!IsEmpty()) {
-		bool	bString	= !strcmp(m_Column.attribute("t").value(), "s");
+		cstring sType	= m_Column.attribute("t").value();
 		sValue			= m_Column.child("v").text().get();
 
-		if(bString) {
+		if(sType == "s") {			// string
 			sValue	= m_pExcel->GetString(atoi(sValue.c_str()));
 			sValue.ChangeCharsetToANSI();
+		} else if(sType == "b") {	// boolean
+			sValue	= atoi(sValue.c_str()) ? "TRUE" : "FALSE";
 		} else if(!sValue.IsEmpty()) {
 			double	v	= atof(sValue.c_str());
 			/*
