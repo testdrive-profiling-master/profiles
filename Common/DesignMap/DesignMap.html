@@ -20,6 +20,7 @@
 			position: absolute;
 			top: 0;
 			left: 0;
+			#transition: transform 0.1s cubic-bezier(0, 0, 0.58, 1);
 		}
 		.logo {
 		  position: absolute;
@@ -48,6 +49,7 @@
 	<!-- jQuery -->
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script src='dist/panzoom.min.js' name='pz'></script>
+	<script src="dist/popper.min.js"></script>
 	<!-- Bootstrap  -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
@@ -81,27 +83,24 @@
 		};
 		
 		function InitializePanZoom() {
-			var area = document.getElementById('svg_object')
+			//var area = document.getElementById('svg_object')
+			var area = document.getElementById('svg_view')
 			window.pz = panzoom(area, {
 				autocenter: true, 
-				bounds: false,
+				animate   : true,
+				bounds: true,
+				zoomSpeed: 0.3,
 				smoothScroll: true
 			})
 			
 			bPanZoomed	= false;
 			
-			function fanzoom_moved() {
+			window.pz.on('transform', function(e) {
 				if(!bPanZoomed) {
 					bPanZoomed	= true;
 					document.getElementById("fit_on_screen_button").style.display = "block";
 				}
-			}
-			
-			window.pz.on('panstart', function(e) {
-				fanzoom_moved();
-			});
-			window.pz.on('zoom', function(e) {
-				fanzoom_moved();
+				$('[data-toggle="tooltip"]').tooltip('update');
 			});
 			
 			document.getElementById("fit_on_screen_button").style.display = "none";
@@ -116,6 +115,7 @@
 			}
 			
 			RefreshView(bPreserveTransform);
+			$('[data-toggle="tooltip"]').tooltip();
 		}
 		
 		function OpenURL(url, target) {
@@ -160,6 +160,10 @@
 			link.href	= "cmd://NEW_MODULE_FILE/" + module_name;
 			link.click();
 		}
+		
+		$(function () {
+			$('[data-toggle="tooltip"]').tooltip()
+		})
 	</SCRIPT>
 </head>
 <body>
@@ -167,13 +171,13 @@
 		<img src="img/title.png" class="logo"/>
 	</div>
 	<div id="fit_on_screen_button" style="display: none;">
-		<a href="javascript:FitOnScreen()"><img style="position: absolute; bottom: 0; right: 0; border: 0;" src="img/expand.png" title="Fit on screen"></a>
+		<a href="javascript:FitOnScreen()"><img style="position: absolute; bottom: 0; right: 0; border: 0;" src="img/expand.png" data-toggle="tooltip" data-placement="bottom" title="Fit on screen"></a>
 	</div>
 	<div id="verigen_link" class="maual_link">
-		<a href="cmd://MANUAL/verigen"><img style="position: absolute; top: 3px; left: 3px; border: 0;" src="img/verigen_link.png" title="Verigen Manual"></a>
+		<a href="cmd://MANUAL/verigen"><img style="position: absolute; top: 3px; left: 3px; border: 0;" src="img/verigen_link.png" data-toggle="tooltip" data-placement="bottom" title="Verigen Manual"></a>
 	</div>
 	<div id="codgen_link" class="maual_link">
-		<a href="cmd://MANUAL/codegen"><img style="position: absolute; top: 3px; left: 103px; border: 0;" src="img/codegen_link.png" title="Codegen Manual"></a>
+		<a href="cmd://MANUAL/codegen"><img style="position: absolute; top: 3px; left: 103px; border: 0;" src="img/codegen_link.png" data-toggle="tooltip" data-placement="bottom" title="Codegen Manual"></a>
 	</div>
 </body>
 

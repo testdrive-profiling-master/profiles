@@ -1,1 +1,2 @@
 panzoom.min.js : https://github.com/anvaka/panzoom
+popper.min.js : https://getbootstrap.com/docs/4.0/components/tooltips/

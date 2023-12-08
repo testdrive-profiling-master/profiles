@@ -88,6 +88,17 @@ static bool __ReadSVG(CString& sContents, LPCTSTR sFilename)
 			}
 		}
 
+		{	// delete all 'title' tags
+			int ipos = 0;
+			while((ipos = sContents.Find(_T("<title>"), ipos)) > 0) {
+				int endpos = sContents.Find(_T("</title>"), ipos + 7);
+				if(endpos>0) {
+					sContents.erase(ipos, endpos - ipos + 8);
+				} else break;
+			}
+			// apply all popper tooltip
+			sContents.Replace(_T("xlink:title="), _T("data-toggle='tooltip' title="));
+		}
 		sContents.Replace(_T("\""), _T("'"));
 		sContents.Replace(_T("\r"), _T(""));
 		sContents.Replace(_T("\n"), _T(""));
