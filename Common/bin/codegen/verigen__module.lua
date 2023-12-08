@@ -401,8 +401,9 @@ function module.apply_code(filename)
 					
 					if bEnable then
 						cur_module	= module.find(s.s)
-						if cur_module == nil then
-							error("module[" .. s.s .. "] is not found.", 2)
+
+						if cur_module == nil then	-- add automatically, if not existed
+							cur_module	= module:new(s.s)
 						end
 					else
 						cur_module	= nil
