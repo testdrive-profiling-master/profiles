@@ -162,6 +162,13 @@
 		
 		$(function () {
 			$('[data-toggle="tooltip"]').tooltip()
+			
+			document.addEventListener('keydown', (e) => {
+				e = e || window.event;
+				if(e.keyCode == 116 || (e.keyCode == '82' && e.ctrlKey)){	// prevent 'F5' or CTRL+R
+					e.preventDefault();
+				}
+			});
 		})
 	</SCRIPT>
 </head>
