@@ -133,8 +133,19 @@ else
 	@cppcheck -j $(NUMBER_OF_PROCESSORS) --suppress=*:*/msys64/* --suppress=*:*/lib_src/* $(INC) $(CDEFS) $(CPPCHECK_ARG) -D__MINGW32__ -D__MINGW64__ -D__GNUC__ --platform=win64 --inline-suppr $(CPPCHECK_SRCS)
 endif
 
+
+# for simulation build sequence
+ifdef SIMPATH
+SIM_DEPS	:= $(filter-out ../verilator/%,$(DEPS))
+SIM_OBJS	:= $(filter-out ../verilator/%,$(OBJS_LIB))
+endif
+
 dep:
+ifdef SIMPATH
+	@DependencyPrepare -s $(SIM_DEPS)
+else
 	@DependencyPrepare -s $(DEPS)
+endif
 
 #-------------------------------------------------
 # dependencies
@@ -197,8 +208,13 @@ $(TARGET_A):$(OBJS_LIB) $(OBJS_RES) $(TARGET_DEP)
 $(TARGET_SO):$(OBJS_LIB) $(OBJS_RES) $(TARGET_DEP)
 	@echo
 ifeq ($(BUILD_TARGET), $(TARGET_SO_A))
+ifdef SIMPATH
+	@echo '*** Build HDL Simulation Shared (+implib) Library ***'
+	$(CXX) $(LDFLAGS) -shared -o $@ $(SIM_OBJS) ../verilator/\*.o $(OBJS_RES) $(LIBDIR) -Wl,--out-implib,$(LIBPATH)/lib$(TARGETNAME).a
+else
 	@echo '*** Build Shared (+implib) Library ***'
 	$(CXX) $(LDFLAGS) -shared -o $@ $(OBJS_LIB) $(OBJS_RES) $(LIBDIR) -Wl,--out-implib,$(LIBPATH)/lib$(TARGETNAME).a
+endif
 else
 	@echo '*** Build Shared Library ***'
 	$(CXX) $(LDFLAGS) -shared -o $@ $(OBJS_LIB) $(OBJS_RES) $(LIBDIR)
