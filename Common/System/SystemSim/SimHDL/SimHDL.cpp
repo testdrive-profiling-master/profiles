@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Simulation HDL module
-// Rev.  : 11/9/2023 Thu (clonextop@gmail.com)
+// Rev.  : 12/15/2023 Fri (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
 #include "TestDriver.inl"
@@ -49,6 +49,8 @@ static SimControl*			__pSimControl			= NULL;
 static VerilatedContext*	__pContext				= NULL;
 static SimTop*				__pSimTop				= NULL;
 static char					__sEnvName[MAX_PATH]	= "SimHDL";
+static bool					__bStopSimulation		= false;
+static bool					__bFlushSimulation		= false;
 bool (*DPI_Initialize)(void)						= NULL;
 void (*DPI_Finalize)(void)							= NULL;
 #ifndef SIMULATION_TOP_EX
@@ -229,6 +231,21 @@ public:
 			}
 
 #endif
+
+			if(__bFlushSimulation) {
+				Verilated::flushCall();
+				fflush(stdout);
+				__bFlushSimulation	= false;
+
+				if(__bStopSimulation && !__pContext->gotFinish()) {
+					while(GetKeyState(VK_SPACE) >= 0 && GetKeyState(VK_ESCAPE) >= 0) Sleep(10);	// wait key down
+
+					while(GetKeyState(VK_SPACE) < 0 || GetKeyState(VK_ESCAPE) < 0) Sleep(10);	// wait key up
+
+					__bStopSimulation	= false;
+				}
+			}
+
 			return !__pContext->gotFinish();
 		}
 
@@ -400,22 +417,19 @@ void SimulationQuit(bool bError)
 	if(__pSimControl) __pSimControl->SetError();
 
 	SimulationFlush();
+	__bStopSimulation	= false;
 	__pContext->gotFinish(true);
 }
 
 void SimulationStop(void)
 {
 	SimulationFlush();
-
-	while(GetKeyState(VK_SPACE) >= 0 && GetKeyState(VK_ESCAPE) >= 0) Sleep(10);	// wait key down
-
-	while(GetKeyState(VK_SPACE) < 0 || GetKeyState(VK_ESCAPE) < 0) Sleep(10);	// wait key up
+	__bStopSimulation	= true;
 }
 
 void SimulationFlush(void)
 {
-	Verilated::flushCall();
-	fflush(stdout);
+	__bFlushSimulation	= true;
 }
 
 UINT64 SimulationTime(void)
