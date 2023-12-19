@@ -75,8 +75,8 @@ LOCALE_TEXT(MODULE_SOURCE_FILE_CREATED,
 			_T("Se ha creado el archivo fuente del módulo ('<b>%s</b>')."),
 			_T("Module ('<b>%s</b>') source file has been created."))
 LOCALE_TEXT(CAN_EDIT_CONTROL,
-			_T("「CTRL」키를 누른 상태에서 모듈을 클릭하면, 소스 원본은 편집할 수 있습니다."),
-			_T("「CTRL」キーを押しながらモジュールをクリックすると、元のソースを編集できます。"),
-			_T("Si hace clic en un módulo mientras mantiene presionada la tecla 「CTRL」, puede editar la fuente original."),
-			_T("If you click a module while holding down the 「CTRL」key, you can edit the original source."))
+			_T("「CTRL」키를 누른 상태에서 모듈을 클릭하면, 소스 코드를 편집할 수 있습니다."),
+			_T("「CTRL」キーを押しながらモジュールをクリックすると、ソースコードを編集できます。"),
+			_T("Puede editar el código fuente manteniendo presionada la tecla 「CTRL」y haciendo clic en el módulo."),
+			_T("You can edit the source code by holding down the 「CTRL」key and clicking on the module."))
 LOCALE_END
