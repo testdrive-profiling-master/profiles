@@ -99,7 +99,6 @@ public:
 #ifdef SIM_TRACE
 
 		if(__pWaveDump)
-			__pWaveDump->flush();
 			__pWaveDump->close();
 
 		SAFE_DELETE(__pWaveDump);

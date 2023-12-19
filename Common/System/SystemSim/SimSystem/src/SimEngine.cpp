@@ -174,7 +174,10 @@ void SimEngine::MonitorThread(void)
 	TRACE_LOG("End thread")
 	VerilatorFlush();
 
-	if(IsGotError()) exit(1);
+	if(IsGotError()) {
+		SAFE_RELEASE(m_pSimHDL);
+		exit(1);
+	}
 }
 
 void SimEngine::OnThreadKill(bool bForced)
