@@ -63,11 +63,11 @@ void DelayLock::Lock(int iDelayTime)
 		m_DelaySemaphore.Up();
 
 		if(bLock) {
-			SimulationFlush();
+			VerilatorFlush();
 			m_Lock.Down();
 		}
 	} else {
-		SimulationFlush();
+		VerilatorFlush();
 		m_Lock.Down();
 		m_DelaySemaphore.Down();
 		m_iLock--;

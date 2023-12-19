@@ -172,7 +172,7 @@ void SimEngine::MonitorThread(void)
 	m_Interrupt.Enable(false);
 	LOGI("Simulation H/W daemon is down.\n");
 	TRACE_LOG("End thread")
-	SimulationFlush();
+	VerilatorFlush();
 
 	if(IsGotError()) exit(1);
 }

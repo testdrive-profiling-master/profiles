@@ -80,6 +80,7 @@ struct SimHDL {
 
 extern "C" SimHDL* CreateSimHDL(SimControl* pControl);
 extern "C" void SimulationFlush(void);
+extern "C" void VerilatorFlush(void);
 extern "C" UINT64 SimulationTime(void);
 extern "C" void AdvenceSimulationTime(DWORD dwTime);
 

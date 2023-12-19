@@ -99,6 +99,7 @@ public:
 #ifdef SIM_TRACE
 
 		if(__pWaveDump)
+			__pWaveDump->flush();
 			__pWaveDump->close();
 
 		SAFE_DELETE(__pWaveDump);
@@ -233,9 +234,7 @@ public:
 #endif
 
 			if(__bFlushSimulation) {
-				Verilated::flushCall();
-				fflush(stdout);
-				__bFlushSimulation	= false;
+				VerilatorFlush();
 
 				if(__bStopSimulation && !__pContext->gotFinish()) {
 					while(GetKeyState(VK_SPACE) >= 0 && GetKeyState(VK_ESCAPE) >= 0) Sleep(10);	// wait key down
@@ -425,6 +424,12 @@ void SimulationStop(void)
 {
 	SimulationFlush();
 	__bStopSimulation	= true;
+}
+
+void VerilatorFlush(void){
+	Verilated::flushCall();
+	fflush(stdout);
+	__bFlushSimulation	= false;
 }
 
 void SimulationFlush(void)
