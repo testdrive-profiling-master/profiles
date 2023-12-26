@@ -1015,7 +1015,7 @@ vfunction("MULTICYCLE", function(module_inst_name, if_name, cycle_count, instanc
 		");\n\n"..
 		"assign	{" .. sOutput.s .. "}	= __o;\n\n" ..
 		"for(i=0; i<" .. instance_count .. "; i=i+1) begin\n"..
-		"i_" .. _i.interface.name .. "		__temp;" ..
+		"i_" .. _i.interface.name .. "		__temp();" ..
 		"assign	{" .. sInput_temp.s .. "}	= pipe_i[`BUS_RANGE(" .. input_size .. ", i)];\n" ..
 		"assign	pipe_o[`BUS_RANGE(" .. output_size .. ",i)]	= {" .. sOutput_temp.s .. "};\n"
 
