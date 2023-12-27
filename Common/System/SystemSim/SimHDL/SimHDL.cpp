@@ -74,6 +74,9 @@ static bool		g_bSimOutEnable			= true;
 #define DEFAULT_INITIAL_CLOCK_VALUE		0			// start default clock width '0'
 #endif
 
+#ifndef DEFAULT_INITIAL_RESET_VALUE
+#define DEFAULT_INITIAL_RESET_VALUE		2			// randomize all bits
+#endif
 
 static const char* GetCurrentFileName(void)
 {
@@ -122,7 +125,7 @@ public:
 			srand(time(NULL));			// randomize seed
 			__pSimHDL		= this;
 			__pContext		= new VerilatedContext;
-			__pContext->randReset(2);	// randomize all bits
+			__pContext->randReset(DEFAULT_INITIAL_RESET_VALUE);
 			__pSimTop		= new SimTop(__pContext);
 		} else {
 			LOGI("'SimProcessor' At least one more instances has been created.\n");
