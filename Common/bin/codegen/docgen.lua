@@ -300,7 +300,10 @@ function GenerateFigure(sFileName, fRatio)
 	sExt		= sExt.s
 	
 	do	-- get image width & height
-		local sInfo		= String((sExt == "wmf") and exec("magick identify " .. sFileName) or exec("magick identify -size x " .. sFileName))
+		-- not working now, imagestick is unstable...
+		--local sInfo		= String((sExt == "wmf") and exec("magick identify " .. sFileName) or exec("magick identify -size x " .. sFileName))
+		-- working wrapper execution
+		local sInfo		= String(exec("ImageIdentify " .. sFileName))
 
 		sInfo:CutFront(sFileName, false)
 		sInfo:CutFront(" ", false)
