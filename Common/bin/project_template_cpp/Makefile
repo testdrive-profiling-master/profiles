@@ -3,6 +3,7 @@
 #-------------------------------------------------
 SRC_PATH		:= .
 TARGETPATH		:= .
+INSTALL_PATH	:= .
 TARGETNAME		:= Test
 
 SRCS			:= \
