@@ -300,10 +300,7 @@ function GenerateFigure(sFileName, fRatio)
 	sExt		= sExt.s
 	
 	do	-- get image width & height
-		-- not working now, imagestick is unstable...
-		--local sInfo		= String((sExt == "wmf") and exec("magick identify " .. sFileName) or exec("magick identify -size x " .. sFileName))
-		-- working wrapper execution
-		local sInfo		= String(exec("ImageIdentify " .. sFileName))
+		local sInfo		= String((sExt == "wmf") and exec("magick identify " .. sFileName) or exec("magick identify -size x " .. sFileName))
 
 		sInfo:CutFront(sFileName, false)
 		sInfo:CutFront(" ", false)
@@ -317,7 +314,7 @@ function GenerateFigure(sFileName, fRatio)
 		height	= tonumber(sy.s)
 		
 		if height == nil then
-			error("Invalid image : \"" .. sFileName .. "\"")
+			error("[ImageMagick] Invalid image : \"" .. sFileName .. "\"")
 		end
 		
 		cx	= math.floor(fRatio * 6400000)
