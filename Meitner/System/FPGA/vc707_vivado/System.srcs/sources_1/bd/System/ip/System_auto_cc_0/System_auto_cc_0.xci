@@ -4,7 +4,7 @@
     "xci_name": "System_auto_cc_0",
     "cell_name": "from_pcie/m00_couplers/auto_cc",
     "component_reference": "xilinx.com:ip:axi_clock_converter:2.1",
-    "ip_revision": "26",
+    "ip_revision": "27",
     "gen_directory": ".",
     "parameters": {
       "component_parameters": {
@@ -53,18 +53,16 @@
         "SIMULATOR_LANGUAGE": [ { "value": "VERILOG" } ],
         "SPEEDGRADE": [ { "value": "-2" } ],
         "STATIC_POWER": [ { "value": "" } ],
-        "TEMPERATURE_GRADE": [ { "value": "" } ],
-        "USE_RDI_CUSTOMIZATION": [ { "value": "TRUE" } ],
-        "USE_RDI_GENERATION": [ { "value": "TRUE" } ]
+        "TEMPERATURE_GRADE": [ { "value": "" } ]
       },
       "runtime_parameters": {
         "IPCONTEXT": [ { "value": "IP_Integrator" } ],
-        "IPREVISION": [ { "value": "26" } ],
+        "IPREVISION": [ { "value": "27" } ],
         "MANAGED": [ { "value": "TRUE" } ],
         "OUTPUTDIR": [ { "value": "." } ],
         "SELECTEDSIMMODEL": [ { "value": "rtl" } ],
         "SHAREDDIR": [ { "value": "../../../../../../System.gen/sources_1/bd/System/ipshared" } ],
-        "SWVERSION": [ { "value": "2022.2" } ],
+        "SWVERSION": [ { "value": "2023.1.1" } ],
         "SYNTHESISFLOW": [ { "value": "GLOBAL" } ]
       }
     },

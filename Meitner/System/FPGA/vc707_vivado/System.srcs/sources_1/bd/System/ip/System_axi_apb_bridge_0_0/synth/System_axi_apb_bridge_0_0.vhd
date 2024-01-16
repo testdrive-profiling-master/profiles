@@ -1,21 +1,21 @@
--- (c) Copyright 1995-2023 Xilinx, Inc. All rights reserved.
+-- (c) Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+-- (c) Copyright 2022-2024 Advanced Micro Devices, Inc. All rights reserved.
 -- 
 -- This file contains confidential and proprietary information
--- of Xilinx, Inc. and is protected under U.S. and
--- international copyright and other intellectual property
--- laws.
+-- of AMD and is protected under U.S. and international copyright
+-- and other intellectual property laws.
 -- 
 -- DISCLAIMER
 -- This disclaimer is not a license and does not grant any
 -- rights to the materials distributed herewith. Except as
 -- otherwise provided in a valid license issued to you by
--- Xilinx, and to the maximum extent permitted by applicable
+-- AMD, and to the maximum extent permitted by applicable
 -- law: (1) THESE MATERIALS ARE MADE AVAILABLE "AS IS" AND
 -- WITH ALL FAULTS, AND XILINX HEREBY DISCLAIMS ALL WARRANTIES
 -- AND CONDITIONS, EXPRESS, IMPLIED, OR STATUTORY, INCLUDING
 -- BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, NON-
 -- INFRINGEMENT, OR FITNESS FOR ANY PARTICULAR PURPOSE; and
--- (2) Xilinx shall not be liable (whether in contract or tort,
+-- (2) AMD shall not be liable (whether in contract or tort,
 -- including negligence, or under any other theory of
 -- liability) for any loss or damage of any kind or nature
 -- related to, arising under or in connection with these
@@ -24,11 +24,11 @@
 -- (including loss of data, profits, goodwill, or any type of
 -- loss or damage suffered as a result of any action brought
 -- by a third party) even if such damage or loss was
--- reasonably foreseeable or Xilinx had been advised of the
+-- reasonably foreseeable or AMD had been advised of the
 -- possibility of the same.
 -- 
 -- CRITICAL APPLICATIONS
--- Xilinx products are not designed or intended to be fail-
+-- AMD products are not designed or intended to be fail-
 -- safe, or for use in any application requiring fail-safe
 -- performance, such as life-support or safety devices or
 -- systems, Class III medical devices, nuclear facilities,
@@ -37,7 +37,7 @@
 -- injury, or severe property or environmental damage
 -- (individually and collectively, "Critical
 -- Applications"). Customer assumes the sole risk and
--- liability of any use of Xilinx products in Critical
+-- liability of any use of AMD products in Critical
 -- Applications, subject only to applicable laws and
 -- regulations governing limitations on product liability.
 -- 
@@ -47,14 +47,14 @@
 -- DO NOT MODIFY THIS FILE.
 
 -- IP VLNV: xilinx.com:ip:axi_apb_bridge:3.0
--- IP Revision: 17
+-- IP Revision: 18
 
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
-LIBRARY axi_apb_bridge_v3_0_17;
-USE axi_apb_bridge_v3_0_17.axi_apb_bridge;
+LIBRARY axi_apb_bridge_v3_0_18;
+USE axi_apb_bridge_v3_0_18.axi_apb_bridge;
 
 ENTITY System_axi_apb_bridge_0_0 IS
   PORT (
@@ -185,25 +185,25 @@ ARCHITECTURE System_axi_apb_bridge_0_0_arch OF System_axi_apb_bridge_0_0 IS
     );
   END COMPONENT axi_apb_bridge;
   ATTRIBUTE X_CORE_INFO : STRING;
-  ATTRIBUTE X_CORE_INFO OF System_axi_apb_bridge_0_0_arch: ARCHITECTURE IS "axi_apb_bridge,Vivado 2022.2";
+  ATTRIBUTE X_CORE_INFO OF System_axi_apb_bridge_0_0_arch: ARCHITECTURE IS "axi_apb_bridge,Vivado 2023.1.1";
   ATTRIBUTE CHECK_LICENSE_TYPE : STRING;
   ATTRIBUTE CHECK_LICENSE_TYPE OF System_axi_apb_bridge_0_0_arch : ARCHITECTURE IS "System_axi_apb_bridge_0_0,axi_apb_bridge,{}";
   ATTRIBUTE CORE_GENERATION_INFO : STRING;
-  ATTRIBUTE CORE_GENERATION_INFO OF System_axi_apb_bridge_0_0_arch: ARCHITECTURE IS "System_axi_apb_bridge_0_0,axi_apb_bridge,{x_ipProduct=Vivado 2022.2,x_ipVendor=xilinx.com,x_ipLibrary=ip,x_ipName=axi_apb_bridge,x_ipVersion=3.0,x_ipCoreRevision=17,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,C_FAMILY=virtex7,C_INSTANCE=axi_apb_bridge_inst,C_S_AXI_ADDR_WIDTH=32,C_S_AXI_DATA_WIDTH=32,C_M_APB_ADDR_WIDTH=32,C_M_APB_DATA_WIDTH=32,C_APB_NUM_SLAVES=2,C_M_APB_PROTOCOL=apb3,C_BASEADDR=0x0000000000010000,C_HIGHADDR=0x000000000001FFFF,C_S_AXI_RNG2_BASEADDR=0x0000000000020000,C_S_AXI_RNG2" & 
-"_HIGHADDR=0x000000000002FFFF,C_S_AXI_RNG3_BASEADDR=0x0000000020000000,C_S_AXI_RNG3_HIGHADDR=0x000000002FFFFFFF,C_S_AXI_RNG4_BASEADDR=0x0000000030000000,C_S_AXI_RNG4_HIGHADDR=0x000000003FFFFFFF,C_S_AXI_RNG5_BASEADDR=0x0000000040000000,C_S_AXI_RNG5_HIGHADDR=0x000000004FFFFFFF,C_S_AXI_RNG6_BASEADDR=0x0000000050000000,C_S_AXI_RNG6_HIGHADDR=0x000000005FFFFFFF,C_S_AXI_RNG7_BASEADDR=0x0000000060000000,C_S_AXI_RNG7_HIGHADDR=0x000000006FFFFFFF,C_S_AXI_RNG8_BASEADDR=0x0000000070000000,C_S_AXI_RNG8_HIGHADD" & 
-"R=0x000000007FFFFFFF,C_S_AXI_RNG9_BASEADDR=0x0000000080000000,C_S_AXI_RNG9_HIGHADDR=0x000000008FFFFFFF,C_S_AXI_RNG10_BASEADDR=0x0000000090000000,C_S_AXI_RNG10_HIGHADDR=0x000000009FFFFFFF,C_S_AXI_RNG11_BASEADDR=0x00000000A0000000,C_S_AXI_RNG11_HIGHADDR=0x00000000AFFFFFFF,C_S_AXI_RNG12_BASEADDR=0x00000000B0000000,C_S_AXI_RNG12_HIGHADDR=0x00000000BFFFFFFF,C_S_AXI_RNG13_BASEADDR=0x00000000C0000000,C_S_AXI_RNG13_HIGHADDR=0x00000000CFFFFFFF,C_S_AXI_RNG14_BASEADDR=0x00000000D0000000,C_S_AXI_RNG14_HIGHA" & 
-"DDR=0x00000000DFFFFFFF,C_S_AXI_RNG15_BASEADDR=0x00000000E0000000,C_S_AXI_RNG15_HIGHADDR=0x00000000EFFFFFFF,C_S_AXI_RNG16_BASEADDR=0x00000000F0000000,C_S_AXI_RNG16_HIGHADDR=0x00000000FFFFFFFF,C_DPHASE_TIMEOUT=0}";
+  ATTRIBUTE CORE_GENERATION_INFO OF System_axi_apb_bridge_0_0_arch: ARCHITECTURE IS "System_axi_apb_bridge_0_0,axi_apb_bridge,{x_ipProduct=Vivado 2023.1.1,x_ipVendor=xilinx.com,x_ipLibrary=ip,x_ipName=axi_apb_bridge,x_ipVersion=3.0,x_ipCoreRevision=18,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,C_FAMILY=virtex7,C_INSTANCE=axi_apb_bridge_inst,C_S_AXI_ADDR_WIDTH=32,C_S_AXI_DATA_WIDTH=32,C_M_APB_ADDR_WIDTH=32,C_M_APB_DATA_WIDTH=32,C_APB_NUM_SLAVES=2,C_M_APB_PROTOCOL=apb3,C_BASEADDR=0x0000000000010000,C_HIGHADDR=0x000000000001FFFF,C_S_AXI_RNG2_BASEADDR=0x0000000000020000,C_S_AXI_RN" & 
+"G2_HIGHADDR=0x000000000002FFFF,C_S_AXI_RNG3_BASEADDR=0x0000000020000000,C_S_AXI_RNG3_HIGHADDR=0x000000002FFFFFFF,C_S_AXI_RNG4_BASEADDR=0x0000000030000000,C_S_AXI_RNG4_HIGHADDR=0x000000003FFFFFFF,C_S_AXI_RNG5_BASEADDR=0x0000000040000000,C_S_AXI_RNG5_HIGHADDR=0x000000004FFFFFFF,C_S_AXI_RNG6_BASEADDR=0x0000000050000000,C_S_AXI_RNG6_HIGHADDR=0x000000005FFFFFFF,C_S_AXI_RNG7_BASEADDR=0x0000000060000000,C_S_AXI_RNG7_HIGHADDR=0x000000006FFFFFFF,C_S_AXI_RNG8_BASEADDR=0x0000000070000000,C_S_AXI_RNG8_HIGHA" & 
+"DDR=0x000000007FFFFFFF,C_S_AXI_RNG9_BASEADDR=0x0000000080000000,C_S_AXI_RNG9_HIGHADDR=0x000000008FFFFFFF,C_S_AXI_RNG10_BASEADDR=0x0000000090000000,C_S_AXI_RNG10_HIGHADDR=0x000000009FFFFFFF,C_S_AXI_RNG11_BASEADDR=0x00000000A0000000,C_S_AXI_RNG11_HIGHADDR=0x00000000AFFFFFFF,C_S_AXI_RNG12_BASEADDR=0x00000000B0000000,C_S_AXI_RNG12_HIGHADDR=0x00000000BFFFFFFF,C_S_AXI_RNG13_BASEADDR=0x00000000C0000000,C_S_AXI_RNG13_HIGHADDR=0x00000000CFFFFFFF,C_S_AXI_RNG14_BASEADDR=0x00000000D0000000,C_S_AXI_RNG14_HIG" & 
+"HADDR=0x00000000DFFFFFFF,C_S_AXI_RNG15_BASEADDR=0x00000000E0000000,C_S_AXI_RNG15_HIGHADDR=0x00000000EFFFFFFF,C_S_AXI_RNG16_BASEADDR=0x00000000F0000000,C_S_AXI_RNG16_HIGHADDR=0x00000000FFFFFFFF,C_DPHASE_TIMEOUT=0}";
   ATTRIBUTE X_INTERFACE_INFO : STRING;
   ATTRIBUTE X_INTERFACE_PARAMETER : STRING;
-  ATTRIBUTE X_INTERFACE_INFO OF m_apb_paddr: SIGNAL IS "xilinx.com:interface:apb:1.0 APB_M PADDR, xilinx.com:interface:apb:1.0 APB_M2 PADDR";
-  ATTRIBUTE X_INTERFACE_INFO OF m_apb_penable: SIGNAL IS "xilinx.com:interface:apb:1.0 APB_M PENABLE, xilinx.com:interface:apb:1.0 APB_M2 PENABLE";
+  ATTRIBUTE X_INTERFACE_INFO OF m_apb_paddr: SIGNAL IS "xilinx.com:interface:apb:1.0 APB_M2 PADDR, xilinx.com:interface:apb:1.0 APB_M PADDR";
+  ATTRIBUTE X_INTERFACE_INFO OF m_apb_penable: SIGNAL IS "xilinx.com:interface:apb:1.0 APB_M2 PENABLE, xilinx.com:interface:apb:1.0 APB_M PENABLE";
   ATTRIBUTE X_INTERFACE_INFO OF m_apb_prdata: SIGNAL IS "xilinx.com:interface:apb:1.0 APB_M PRDATA";
   ATTRIBUTE X_INTERFACE_INFO OF m_apb_prdata2: SIGNAL IS "xilinx.com:interface:apb:1.0 APB_M2 PRDATA";
-  ATTRIBUTE X_INTERFACE_INFO OF m_apb_pready: SIGNAL IS "xilinx.com:interface:apb:1.0 APB_M PREADY, xilinx.com:interface:apb:1.0 APB_M2 PREADY";
-  ATTRIBUTE X_INTERFACE_INFO OF m_apb_psel: SIGNAL IS "xilinx.com:interface:apb:1.0 APB_M PSEL, xilinx.com:interface:apb:1.0 APB_M2 PSEL";
-  ATTRIBUTE X_INTERFACE_INFO OF m_apb_pslverr: SIGNAL IS "xilinx.com:interface:apb:1.0 APB_M PSLVERR, xilinx.com:interface:apb:1.0 APB_M2 PSLVERR";
-  ATTRIBUTE X_INTERFACE_INFO OF m_apb_pwdata: SIGNAL IS "xilinx.com:interface:apb:1.0 APB_M PWDATA, xilinx.com:interface:apb:1.0 APB_M2 PWDATA";
-  ATTRIBUTE X_INTERFACE_INFO OF m_apb_pwrite: SIGNAL IS "xilinx.com:interface:apb:1.0 APB_M PWRITE, xilinx.com:interface:apb:1.0 APB_M2 PWRITE";
+  ATTRIBUTE X_INTERFACE_INFO OF m_apb_pready: SIGNAL IS "xilinx.com:interface:apb:1.0 APB_M2 PREADY, xilinx.com:interface:apb:1.0 APB_M PREADY";
+  ATTRIBUTE X_INTERFACE_INFO OF m_apb_psel: SIGNAL IS "xilinx.com:interface:apb:1.0 APB_M2 PSEL, xilinx.com:interface:apb:1.0 APB_M PSEL";
+  ATTRIBUTE X_INTERFACE_INFO OF m_apb_pslverr: SIGNAL IS "xilinx.com:interface:apb:1.0 APB_M2 PSLVERR, xilinx.com:interface:apb:1.0 APB_M PSLVERR";
+  ATTRIBUTE X_INTERFACE_INFO OF m_apb_pwdata: SIGNAL IS "xilinx.com:interface:apb:1.0 APB_M2 PWDATA, xilinx.com:interface:apb:1.0 APB_M PWDATA";
+  ATTRIBUTE X_INTERFACE_INFO OF m_apb_pwrite: SIGNAL IS "xilinx.com:interface:apb:1.0 APB_M2 PWRITE, xilinx.com:interface:apb:1.0 APB_M PWRITE";
   ATTRIBUTE X_INTERFACE_PARAMETER OF s_axi_aclk: SIGNAL IS "XIL_INTERFACENAME ACLK, ASSOCIATED_BUSIF AXI4_LITE:APB_M:APB_M2:APB_M3:APB_M4:APB_M5:APB_M6:APB_M7:APB_M8:APB_M9:APB_M10:APB_M11:APB_M12:APB_M13:APB_M14:APB_M15:APB_M16, ASSOCIATED_RESET s_axi_aresetn, FREQ_HZ 200000000, FREQ_TOLERANCE_HZ 0, PHASE 0, CLK_DOMAIN System_mig_7series_0_0_ui_clk, INSERT_VIP 0";
   ATTRIBUTE X_INTERFACE_INFO OF s_axi_aclk: SIGNAL IS "xilinx.com:signal:clock:1.0 ACLK CLK";
   ATTRIBUTE X_INTERFACE_INFO OF s_axi_araddr: SIGNAL IS "xilinx.com:interface:aximm:1.0 AXI4_LITE ARADDR";

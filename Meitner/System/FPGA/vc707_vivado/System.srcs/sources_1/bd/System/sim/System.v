@@ -1,8 +1,9 @@
 //Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+//Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
 //--------------------------------------------------------------------------------
-//Tool Version: Vivado v.2022.2 (win64) Build 3671981 Fri Oct 14 05:00:03 MDT 2022
-//Date        : Thu Jan  5 21:13:12 2023
-//Host        : CloneX-Main running 64-bit major release  (build 9200)
+//Tool Version: Vivado v.2023.1.1 (win64) Build 3900603 Fri Jun 16 19:31:24 MDT 2023
+//Date        : Tue Jan 16 15:41:00 2024
+//Host        : MOBILINT-HYUNGKI running 64-bit major release  (build 9200)
 //Command     : generate_target System.bd
 //Design      : System
 //Purpose     : IP block netlist
@@ -1869,7 +1870,7 @@ module System_axi_interconnect_0_0
         .S_AXI_wready(from_pcie_to_s00_couplers_WREADY),
         .S_AXI_wstrb(from_pcie_to_s00_couplers_WSTRB),
         .S_AXI_wvalid(from_pcie_to_s00_couplers_WVALID));
-  System_xbar_4 xbar
+  System_xbar_6 xbar
        (.aclk(from_pcie_ACLK_net),
         .aresetn(from_pcie_ARESETN_net),
         .m_axi_araddr({xbar_to_m02_couplers_ARADDR,xbar_to_m01_couplers_ARADDR,xbar_to_m00_couplers_ARADDR}),
@@ -3263,7 +3264,7 @@ module System_axi_interconnect_0_1
         .S_AXI_wready(to_memory_to_s02_couplers_WREADY),
         .S_AXI_wstrb(to_memory_to_s02_couplers_WSTRB),
         .S_AXI_wvalid(to_memory_to_s02_couplers_WVALID));
-  System_xbar_5 xbar
+  System_xbar_7 xbar
        (.aclk(to_memory_ACLK_net),
         .aresetn(to_memory_ARESETN_net),
         .m_axi_araddr({xbar_to_m01_couplers_ARADDR,xbar_to_m00_couplers_ARADDR}),

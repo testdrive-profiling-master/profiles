@@ -1,22 +1,23 @@
 {
   "design": {
     "design_info": {
-      "boundary_crc": "0x1E4859E01A7BB3BF",
+      "boundary_crc": "0x1E4859E036E1E7A5",
       "device": "xc7vx485tffg1761-2",
       "name": "System",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
       "synth_flow_mode": "None",
-      "tool_version": "2022.2",
+      "tool_version": "2023.1.1",
       "validated": "true"
     },
     "design_tree": {
-      "axi_apb_bridge_0": "",
       "DDR3_SDRAM": "",
       "pcie_reset_0": "",
       "bus_reset_0": "",
       "dut_wrapper_0": "",
       "hdmi_controller_0": "",
       "MSI_Generator_0": "",
+      "util_vector_logic_0": "",
+      "axi_apb_bridge_0": "",
       "from_pcie": {
         "xbar": "",
         "s00_couplers": {},
@@ -54,8 +55,7 @@
         }
       },
       "AXI_PCIe": "",
-      "PCIe_diff_clk_I": "",
-      "util_vector_logic_0": ""
+      "PCIe_diff_clk_I": ""
     },
     "interface_ports": {
       "pcie": {
@@ -344,6 +344,93 @@
       }
     },
     "components": {
+      "DDR3_SDRAM": {
+        "vlnv": "xilinx.com:ip:mig_7series:4.2",
+        "xci_name": "System_mig_7series_0_0",
+        "xci_path": "ip\\System_mig_7series_0_0\\System_mig_7series_0_0.xci",
+        "inst_hier_path": "DDR3_SDRAM",
+        "parameters": {
+          "BOARD_MIG_PARAM": {
+            "value": "Custom"
+          },
+          "RESET_BOARD_INTERFACE": {
+            "value": "Custom"
+          },
+          "XML_INPUT_FILE": {
+            "value": "mig_a.prj"
+          }
+        }
+      },
+      "pcie_reset_0": {
+        "vlnv": "xilinx.com:ip:proc_sys_reset:5.0",
+        "xci_name": "System_proc_sys_reset_0_0",
+        "xci_path": "ip\\System_proc_sys_reset_0_0\\System_proc_sys_reset_0_0.xci",
+        "inst_hier_path": "pcie_reset_0",
+        "parameters": {
+          "C_EXT_RST_WIDTH": {
+            "value": "16"
+          }
+        }
+      },
+      "bus_reset_0": {
+        "vlnv": "xilinx.com:ip:proc_sys_reset:5.0",
+        "xci_name": "System_rst_DDR3_SDRAM_200M_0",
+        "xci_path": "ip\\System_rst_DDR3_SDRAM_200M_0\\System_rst_DDR3_SDRAM_200M_0.xci",
+        "inst_hier_path": "bus_reset_0",
+        "parameters": {
+          "C_EXT_RST_WIDTH": {
+            "value": "16"
+          }
+        }
+      },
+      "dut_wrapper_0": {
+        "vlnv": "xilinx.com:user:dut_wrapper:1.0",
+        "xci_name": "System_dut_wrapper_0_0",
+        "xci_path": "ip\\System_dut_wrapper_0_0\\System_dut_wrapper_0_0.xci",
+        "inst_hier_path": "dut_wrapper_0",
+        "interface_ports": {
+          "S_APB": {
+            "vlnv": "xilinx.com:interface:apb_rtl:1.0",
+            "mode": "Slave",
+            "memory_map_ref": "S_APB"
+          }
+        }
+      },
+      "hdmi_controller_0": {
+        "vlnv": "xilinx.com:user:hdmi_controller:1.0",
+        "xci_name": "System_hdmi_controller_0_1",
+        "xci_path": "ip\\System_hdmi_controller_0_1\\System_hdmi_controller_0_1.xci",
+        "inst_hier_path": "hdmi_controller_0",
+        "interface_ports": {
+          "S_APB": {
+            "vlnv": "xilinx.com:interface:apb_rtl:1.0",
+            "mode": "Slave",
+            "memory_map_ref": "S_APB"
+          }
+        }
+      },
+      "MSI_Generator_0": {
+        "vlnv": "xilinx.com:user:MSI_Generator:1.0",
+        "xci_name": "System_MSI_Generator_0_0",
+        "xci_path": "ip\\System_MSI_Generator_0_0\\System_MSI_Generator_0_0.xci",
+        "inst_hier_path": "MSI_Generator_0",
+        "parameters": {
+          "INTERRUPT_SIZE": {
+            "value": "2"
+          }
+        }
+      },
+      "util_vector_logic_0": {
+        "vlnv": "xilinx.com:ip:util_vector_logic:2.0",
+        "xci_name": "System_util_vector_logic_0_1",
+        "xci_path": "ip\\System_util_vector_logic_0_1\\System_util_vector_logic_0_1.xci",
+        "inst_hier_path": "util_vector_logic_0",
+        "parameters": {
+          "C_SIZE": {
+            "value": "1"
+          }
+        }
+      },
       "axi_apb_bridge_0": {
         "vlnv": "xilinx.com:ip:axi_apb_bridge:3.0",
         "xci_name": "System_axi_apb_bridge_0_0",
@@ -446,82 +533,6 @@
               "APB_M",
               "APB_M2"
             ]
-          }
-        }
-      },
-      "DDR3_SDRAM": {
-        "vlnv": "xilinx.com:ip:mig_7series:4.2",
-        "xci_name": "System_mig_7series_0_0",
-        "xci_path": "ip\\System_mig_7series_0_0\\System_mig_7series_0_0.xci",
-        "inst_hier_path": "DDR3_SDRAM",
-        "parameters": {
-          "BOARD_MIG_PARAM": {
-            "value": "Custom"
-          },
-          "RESET_BOARD_INTERFACE": {
-            "value": "Custom"
-          },
-          "XML_INPUT_FILE": {
-            "value": "mig_a.prj"
-          }
-        }
-      },
-      "pcie_reset_0": {
-        "vlnv": "xilinx.com:ip:proc_sys_reset:5.0",
-        "xci_name": "System_proc_sys_reset_0_0",
-        "xci_path": "ip\\System_proc_sys_reset_0_0\\System_proc_sys_reset_0_0.xci",
-        "inst_hier_path": "pcie_reset_0",
-        "parameters": {
-          "C_EXT_RST_WIDTH": {
-            "value": "16"
-          }
-        }
-      },
-      "bus_reset_0": {
-        "vlnv": "xilinx.com:ip:proc_sys_reset:5.0",
-        "xci_name": "System_rst_DDR3_SDRAM_200M_0",
-        "xci_path": "ip\\System_rst_DDR3_SDRAM_200M_0\\System_rst_DDR3_SDRAM_200M_0.xci",
-        "inst_hier_path": "bus_reset_0",
-        "parameters": {
-          "C_EXT_RST_WIDTH": {
-            "value": "16"
-          }
-        }
-      },
-      "dut_wrapper_0": {
-        "vlnv": "xilinx.com:user:dut_wrapper:1.0",
-        "xci_name": "System_dut_wrapper_0_0",
-        "xci_path": "ip\\System_dut_wrapper_0_0\\System_dut_wrapper_0_0.xci",
-        "inst_hier_path": "dut_wrapper_0",
-        "interface_ports": {
-          "S_APB": {
-            "vlnv": "xilinx.com:interface:apb_rtl:1.0",
-            "mode": "Slave",
-            "memory_map_ref": "S_APB"
-          }
-        }
-      },
-      "hdmi_controller_0": {
-        "vlnv": "xilinx.com:user:hdmi_controller:1.0",
-        "xci_name": "System_hdmi_controller_0_1",
-        "xci_path": "ip\\System_hdmi_controller_0_1\\System_hdmi_controller_0_1.xci",
-        "inst_hier_path": "hdmi_controller_0",
-        "interface_ports": {
-          "S_APB": {
-            "vlnv": "xilinx.com:interface:apb_rtl:1.0",
-            "mode": "Slave",
-            "memory_map_ref": "S_APB"
-          }
-        }
-      },
-      "MSI_Generator_0": {
-        "vlnv": "xilinx.com:user:MSI_Generator:1.0",
-        "xci_name": "System_MSI_Generator_0_0",
-        "xci_path": "ip\\System_MSI_Generator_0_0\\System_MSI_Generator_0_0.xci",
-        "inst_hier_path": "MSI_Generator_0",
-        "parameters": {
-          "INTERRUPT_SIZE": {
-            "value": "2"
           }
         }
       },
@@ -651,8 +662,8 @@
         "components": {
           "xbar": {
             "vlnv": "xilinx.com:ip:axi_crossbar:2.1",
-            "xci_name": "System_xbar_4",
-            "xci_path": "ip\\System_xbar_4\\System_xbar_4.xci",
+            "xci_name": "System_xbar_6",
+            "xci_path": "ip\\System_xbar_6\\System_xbar_6.xci",
             "inst_hier_path": "from_pcie/xbar",
             "parameters": {
               "DATA_WIDTH": {
@@ -1034,8 +1045,8 @@
               },
               "m01_regslice_to_m01_couplers": {
                 "interface_ports": [
-                  "M_AXI",
-                  "m01_regslice/M_AXI"
+                  "m01_regslice/M_AXI",
+                  "M_AXI"
                 ]
               }
             },
@@ -1254,20 +1265,20 @@
           },
           "m00_couplers_to_from_pcie": {
             "interface_ports": [
-              "M00_AXI",
-              "m00_couplers/M_AXI"
+              "m00_couplers/M_AXI",
+              "M00_AXI"
             ]
           },
           "m01_couplers_to_from_pcie": {
             "interface_ports": [
-              "M01_AXI",
-              "m01_couplers/M_AXI"
+              "m01_couplers/M_AXI",
+              "M01_AXI"
             ]
           },
           "m02_couplers_to_from_pcie": {
             "interface_ports": [
-              "M02_AXI",
-              "m02_couplers/M_AXI"
+              "m02_couplers/M_AXI",
+              "M02_AXI"
             ]
           },
           "s00_couplers_to_xbar": {
@@ -1531,8 +1542,8 @@
         "components": {
           "xbar": {
             "vlnv": "xilinx.com:ip:axi_crossbar:2.1",
-            "xci_name": "System_xbar_5",
-            "xci_path": "ip\\System_xbar_5\\System_xbar_5.xci",
+            "xci_name": "System_xbar_7",
+            "xci_path": "ip\\System_xbar_7\\System_xbar_7.xci",
             "inst_hier_path": "to_memory/xbar",
             "parameters": {
               "NUM_MI": {
@@ -1645,8 +1656,8 @@
               },
               "s00_data_fifo_to_s00_couplers": {
                 "interface_ports": [
-                  "M_AXI",
-                  "s00_data_fifo/M_AXI"
+                  "s00_data_fifo/M_AXI",
+                  "M_AXI"
                 ]
               }
             },
@@ -1738,8 +1749,8 @@
               },
               "s01_data_fifo_to_s01_couplers": {
                 "interface_ports": [
-                  "M_AXI",
-                  "s01_data_fifo/M_AXI"
+                  "s01_data_fifo/M_AXI",
+                  "M_AXI"
                 ]
               }
             },
@@ -1831,8 +1842,8 @@
               },
               "s02_data_fifo_to_s02_couplers": {
                 "interface_ports": [
-                  "M_AXI",
-                  "s02_data_fifo/M_AXI"
+                  "s02_data_fifo/M_AXI",
+                  "M_AXI"
                 ]
               }
             },
@@ -2047,14 +2058,14 @@
         "interface_nets": {
           "m00_couplers_to_to_memory": {
             "interface_ports": [
-              "M00_AXI",
-              "m00_couplers/M_AXI"
+              "m00_couplers/M_AXI",
+              "M00_AXI"
             ]
           },
           "m01_couplers_to_to_memory": {
             "interface_ports": [
-              "M01_AXI",
-              "m01_couplers/M_AXI"
+              "m01_couplers/M_AXI",
+              "M01_AXI"
             ]
           },
           "s00_couplers_to_xbar": {
@@ -2348,17 +2359,6 @@
             "value": "Custom"
           }
         }
-      },
-      "util_vector_logic_0": {
-        "vlnv": "xilinx.com:ip:util_vector_logic:2.0",
-        "xci_name": "System_util_vector_logic_0_1",
-        "xci_path": "ip\\System_util_vector_logic_0_1\\System_util_vector_logic_0_1.xci",
-        "inst_hier_path": "util_vector_logic_0",
-        "parameters": {
-          "C_SIZE": {
-            "value": "1"
-          }
-        }
       }
     },
     "interface_nets": {
@@ -2497,10 +2497,10 @@
       "DDR3_SDRAM_ui_clk": {
         "ports": [
           "DDR3_SDRAM/ui_clk",
-          "axi_apb_bridge_0/s_axi_aclk",
           "bus_reset_0/slowest_sync_clk",
           "dut_wrapper_0/ACLK",
           "hdmi_controller_0/ACLK",
+          "axi_apb_bridge_0/s_axi_aclk",
           "from_pcie/M00_ACLK",
           "from_pcie/M01_ACLK",
           "to_memory/ACLK",
@@ -2639,10 +2639,10 @@
       "rst_DDR3_SDRAM_200M_peripheral_aresetn": {
         "ports": [
           "bus_reset_0/peripheral_aresetn",
-          "axi_apb_bridge_0/s_axi_aresetn",
           "DDR3_SDRAM/aresetn",
           "dut_wrapper_0/nRST",
           "hdmi_controller_0/nRST",
+          "axi_apb_bridge_0/s_axi_aresetn",
           "from_pcie/M00_ARESETN",
           "from_pcie/M01_ARESETN",
           "to_memory/S00_ARESETN",

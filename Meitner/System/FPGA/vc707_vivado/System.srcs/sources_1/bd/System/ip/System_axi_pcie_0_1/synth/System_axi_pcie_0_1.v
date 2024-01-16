@@ -1,21 +1,21 @@
-// (c) Copyright 1995-2023 Xilinx, Inc. All rights reserved.
+// (c) Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+// (c) Copyright 2022-2024 Advanced Micro Devices, Inc. All rights reserved.
 // 
 // This file contains confidential and proprietary information
-// of Xilinx, Inc. and is protected under U.S. and
-// international copyright and other intellectual property
-// laws.
+// of AMD and is protected under U.S. and international copyright
+// and other intellectual property laws.
 // 
 // DISCLAIMER
 // This disclaimer is not a license and does not grant any
 // rights to the materials distributed herewith. Except as
 // otherwise provided in a valid license issued to you by
-// Xilinx, and to the maximum extent permitted by applicable
+// AMD, and to the maximum extent permitted by applicable
 // law: (1) THESE MATERIALS ARE MADE AVAILABLE "AS IS" AND
 // WITH ALL FAULTS, AND XILINX HEREBY DISCLAIMS ALL WARRANTIES
 // AND CONDITIONS, EXPRESS, IMPLIED, OR STATUTORY, INCLUDING
 // BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, NON-
 // INFRINGEMENT, OR FITNESS FOR ANY PARTICULAR PURPOSE; and
-// (2) Xilinx shall not be liable (whether in contract or tort,
+// (2) AMD shall not be liable (whether in contract or tort,
 // including negligence, or under any other theory of
 // liability) for any loss or damage of any kind or nature
 // related to, arising under or in connection with these
@@ -24,11 +24,11 @@
 // (including loss of data, profits, goodwill, or any type of
 // loss or damage suffered as a result of any action brought
 // by a third party) even if such damage or loss was
-// reasonably foreseeable or Xilinx had been advised of the
+// reasonably foreseeable or AMD had been advised of the
 // possibility of the same.
 // 
 // CRITICAL APPLICATIONS
-// Xilinx products are not designed or intended to be fail-
+// AMD products are not designed or intended to be fail-
 // safe, or for use in any application requiring fail-safe
 // performance, such as life-support or safety devices or
 // systems, Class III medical devices, nuclear facilities,
@@ -37,7 +37,7 @@
 // injury, or severe property or environmental damage
 // (individually and collectively, "Critical
 // Applications"). Customer assumes the sole risk and
-// liability of any use of Xilinx products in Critical
+// liability of any use of AMD products in Critical
 // Applications, subject only to applicable laws and
 // regulations governing limitations on product liability.
 // 
@@ -48,15 +48,15 @@
 
 
 // IP VLNV: xilinx.com:ip:axi_pcie:2.9
-// IP Revision: 8
+// IP Revision: 9
 
-(* X_CORE_INFO = "axi_pcie,Vivado 2022.2" *)
+(* X_CORE_INFO = "axi_pcie,Vivado 2023.1.1" *)
 (* CHECK_LICENSE_TYPE = "System_axi_pcie_0_1,axi_pcie,{}" *)
-(* CORE_GENERATION_INFO = "System_axi_pcie_0_1,axi_pcie,{x_ipProduct=Vivado 2022.2,x_ipVendor=xilinx.com,x_ipLibrary=ip,x_ipName=axi_pcie,x_ipVersion=2.9,x_ipCoreRevision=8,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,C_FAMILY=virtex7,C_INSTANCE=System_axi_pcie_0_1,C_S_AXI_ID_WIDTH=3,C_S_AXI_ADDR_WIDTH=32,C_S_AXI_DATA_WIDTH=128,C_M_AXI_ADDR_WIDTH=32,C_M_AXI_DATA_WIDTH=128,C_NO_OF_LANES=4,C_MAX_LINK_SPEED=1,C_PCIE_USE_MODE=3.0,C_DEVICE_ID=0x7022,C_VENDOR_ID=0x10EE,C_CLASS_CODE=0x058000,C_REF_CLK_FREQ=0,C_REV_ID=0x00,C_SUBS\
-YSTEM_ID=0x2D3D,C_SUBSYSTEM_VENDOR_ID=0xC10E,C_PCIE_CAP_SLOT_IMPLEMENTED=0,C_SLOT_CLOCK_CONFIG=TRUE,C_MSI_DECODE_ENABLE=TRUE,C_INT_FIFO_DEPTH=0,C_NUM_MSI_REQ=3,C_INTERRUPT_PIN=0,C_COMP_TIMEOUT=0,C_INCLUDE_RC=0,C_S_AXI_SUPPORTS_NARROW_BURST=1,C_INCLUDE_BAROFFSET_REG=1,C_BASEADDR=0x00000000,C_HIGHADDR=0x00000FFF,C_AXIBAR_NUM=2,C_AXIBAR2PCIEBAR_0=0xD0000000,C_AXIBAR2PCIEBAR_1=0xD2000000,C_AXIBAR2PCIEBAR_2=0x00000000,C_AXIBAR2PCIEBAR_3=0x00000000,C_AXIBAR2PCIEBAR_4=0x00000000,C_AXIBAR2PCIEBAR_5=0x00\
-000000,C_AXIBAR_AS_0=1,C_AXIBAR_AS_1=1,C_AXIBAR_AS_2=0,C_AXIBAR_AS_3=0,C_AXIBAR_AS_4=0,C_AXIBAR_AS_5=0,C_AXIBAR_0=0x40000000,C_AXIBAR_HIGHADDR_0=0x41FFFFFF,C_AXIBAR_1=0x42000000,C_AXIBAR_HIGHADDR_1=0x43FFFFFF,C_AXIBAR_2=0xFFFFFFFF,C_AXIBAR_HIGHADDR_2=0x00000000,C_AXIBAR_3=0xFFFFFFFF,C_AXIBAR_HIGHADDR_3=0x00000000,C_AXIBAR_4=0xFFFFFFFF,C_AXIBAR_HIGHADDR_4=0x00000000,C_AXIBAR_5=0xFFFFFFFF,C_AXIBAR_HIGHADDR_5=0x00000000,C_PCIEBAR_NUM=2,C_PCIEBAR_AS=1,C_PCIEBAR_LEN_0=20,C_PCIEBAR2AXIBAR_0=0x00000000\
-,C_PCIEBAR2AXIBAR_0_SEC=1,C_PCIEBAR_LEN_1=30,C_PCIEBAR2AXIBAR_1=0x80000000,C_PCIEBAR2AXIBAR_1_SEC=1,C_PCIEBAR_LEN_2=16,C_PCIEBAR2AXIBAR_2=0xFFFFFFFF,C_PCIEBAR2AXIBAR_2_SEC=1,C_PCIE_BLK_LOCN=3,C_XLNX_REF_BOARD=VC707,PCIE_EXT_CLK=FALSE,PCIE_EXT_GT_COMMON=FALSE,EXT_CH_GT_DRP=FALSE,SHARED_LOGIC_IN_CORE=FALSE,TRANSCEIVER_CTRL_STATUS_PORTS=FALSE,EXT_PIPE_INTERFACE=FALSE,C_DEVICE=xc7vx485t,C_SPEED=-2,AXI_ACLK_LOOPBACK=FALSE,NO_SLV_ERR=FALSE,C_RP_BAR_HIDE=FALSE,ENABLE_JTAG_DBG=FALSE,C_AXIBAR_CHK_SLV_ERR\
-=FALSE,REDUCE_OOB_FREQ=FALSE}" *)
+(* CORE_GENERATION_INFO = "System_axi_pcie_0_1,axi_pcie,{x_ipProduct=Vivado 2023.1.1,x_ipVendor=xilinx.com,x_ipLibrary=ip,x_ipName=axi_pcie,x_ipVersion=2.9,x_ipCoreRevision=9,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,C_FAMILY=virtex7,C_INSTANCE=System_axi_pcie_0_1,C_S_AXI_ID_WIDTH=3,C_S_AXI_ADDR_WIDTH=32,C_S_AXI_DATA_WIDTH=128,C_M_AXI_ADDR_WIDTH=32,C_M_AXI_DATA_WIDTH=128,C_NO_OF_LANES=4,C_MAX_LINK_SPEED=1,C_PCIE_USE_MODE=3.0,C_DEVICE_ID=0x7022,C_VENDOR_ID=0x10EE,C_CLASS_CODE=0x058000,C_REF_CLK_FREQ=0,C_REV_ID=0x00,C_SU\
+BSYSTEM_ID=0x2D3D,C_SUBSYSTEM_VENDOR_ID=0xC10E,C_PCIE_CAP_SLOT_IMPLEMENTED=0,C_SLOT_CLOCK_CONFIG=TRUE,C_MSI_DECODE_ENABLE=TRUE,C_INT_FIFO_DEPTH=0,C_NUM_MSI_REQ=3,C_INTERRUPT_PIN=0,C_COMP_TIMEOUT=0,C_INCLUDE_RC=0,C_S_AXI_SUPPORTS_NARROW_BURST=1,C_INCLUDE_BAROFFSET_REG=1,C_BASEADDR=0x00000000,C_HIGHADDR=0x00000FFF,C_AXIBAR_NUM=2,C_AXIBAR2PCIEBAR_0=0xD0000000,C_AXIBAR2PCIEBAR_1=0xD2000000,C_AXIBAR2PCIEBAR_2=0x00000000,C_AXIBAR2PCIEBAR_3=0x00000000,C_AXIBAR2PCIEBAR_4=0x00000000,C_AXIBAR2PCIEBAR_5=0x\
+00000000,C_AXIBAR_AS_0=1,C_AXIBAR_AS_1=1,C_AXIBAR_AS_2=0,C_AXIBAR_AS_3=0,C_AXIBAR_AS_4=0,C_AXIBAR_AS_5=0,C_AXIBAR_0=0x40000000,C_AXIBAR_HIGHADDR_0=0x41FFFFFF,C_AXIBAR_1=0x42000000,C_AXIBAR_HIGHADDR_1=0x43FFFFFF,C_AXIBAR_2=0xFFFFFFFF,C_AXIBAR_HIGHADDR_2=0x00000000,C_AXIBAR_3=0xFFFFFFFF,C_AXIBAR_HIGHADDR_3=0x00000000,C_AXIBAR_4=0xFFFFFFFF,C_AXIBAR_HIGHADDR_4=0x00000000,C_AXIBAR_5=0xFFFFFFFF,C_AXIBAR_HIGHADDR_5=0x00000000,C_PCIEBAR_NUM=2,C_PCIEBAR_AS=1,C_PCIEBAR_LEN_0=20,C_PCIEBAR2AXIBAR_0=0x000000\
+00,C_PCIEBAR2AXIBAR_0_SEC=1,C_PCIEBAR_LEN_1=30,C_PCIEBAR2AXIBAR_1=0x80000000,C_PCIEBAR2AXIBAR_1_SEC=1,C_PCIEBAR_LEN_2=16,C_PCIEBAR2AXIBAR_2=0xFFFFFFFF,C_PCIEBAR2AXIBAR_2_SEC=1,C_PCIE_BLK_LOCN=3,C_XLNX_REF_BOARD=VC707,PCIE_EXT_CLK=FALSE,PCIE_EXT_GT_COMMON=FALSE,EXT_CH_GT_DRP=FALSE,SHARED_LOGIC_IN_CORE=FALSE,TRANSCEIVER_CTRL_STATUS_PORTS=FALSE,EXT_PIPE_INTERFACE=FALSE,C_DEVICE=xc7vx485t,C_SPEED=-2,AXI_ACLK_LOOPBACK=FALSE,NO_SLV_ERR=FALSE,C_RP_BAR_HIDE=FALSE,ENABLE_JTAG_DBG=FALSE,C_AXIBAR_CHK_SLV_E\
+RR=FALSE,REDUCE_OOB_FREQ=FALSE}" *)
 (* DowngradeIPIdentifiedWarnings = "yes" *)
 module System_axi_pcie_0_1 (
   axi_aresetn,
