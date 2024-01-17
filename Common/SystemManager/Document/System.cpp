@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : System manager
-// Rev.  : 11/21/2023 Tue (HyungKi)
+// Rev.  : 1/17/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include "System.h"
 #include "Utils.h"
@@ -395,7 +395,7 @@ void System::UpdateEnvironments(void)
 		{
 			// normal C++ defines
 			if(m_BuildAutomation.UseDebug())
-				WriteConfiguration(_T("EXTRA_CFLAGS"),	m_BuildAutomation.UseDebug() ? _T("-g -O0") : _T("-O3 -DNDEBUG"));
+				WriteConfiguration(_T("USE_DEBUG"),	m_BuildAutomation.UseDebug() ? _T("1") : NULL);
 		}
 	}
 	WriteConfiguration(_T("SIM_MULTITHREADING"), m_sSimMultithreading);
