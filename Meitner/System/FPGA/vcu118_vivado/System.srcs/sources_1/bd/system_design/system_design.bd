@@ -20,11 +20,15 @@
       "ddr4_1_reset": "",
       "axi_interconnect_0": {
         "xbar": "",
-        "s00_couplers": {},
+        "s00_couplers": {
+          "s00_regslice": ""
+        },
         "m00_couplers": {
+          "m00_regslice": "",
           "auto_cc": ""
         },
         "m01_couplers": {
+          "m01_regslice": "",
           "auto_cc": ""
         }
       }
@@ -632,10 +636,13 @@
             "value": "0"
           },
           "M00_HAS_REGSLICE": {
-            "value": "3"
+            "value": "1"
           },
           "M01_HAS_REGSLICE": {
-            "value": "3"
+            "value": "1"
+          },
+          "S00_HAS_REGSLICE": {
+            "value": "1"
           }
         },
         "interface_ports": {
@@ -793,11 +800,48 @@
                 "direction": "I"
               }
             },
+            "components": {
+              "s00_regslice": {
+                "vlnv": "xilinx.com:ip:axi_register_slice:2.1",
+                "xci_name": "system_design_s00_regslice_0",
+                "xci_path": "ip\\system_design_s00_regslice_0\\system_design_s00_regslice_0.xci",
+                "inst_hier_path": "axi_interconnect_0/s00_couplers/s00_regslice",
+                "interface_ports": {
+                  "S_AXI": {
+                    "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
+                    "mode": "Slave",
+                    "bridges": [
+                      "M_AXI"
+                    ]
+                  }
+                }
+              }
+            },
             "interface_nets": {
-              "s00_couplers_to_s00_couplers": {
+              "s00_couplers_to_s00_regslice": {
                 "interface_ports": [
                   "S_AXI",
+                  "s00_regslice/S_AXI"
+                ]
+              },
+              "s00_regslice_to_s00_couplers": {
+                "interface_ports": [
+                  "s00_regslice/M_AXI",
                   "M_AXI"
+                ]
+              }
+            },
+            "nets": {
+              "S_ACLK_1": {
+                "ports": [
+                  "S_ACLK",
+                  "s00_regslice/aclk"
+                ]
+              },
+              "S_ARESETN_1": {
+                "ports": [
+                  "S_ARESETN",
+                  "s00_regslice/aresetn"
                 ]
               }
             }
@@ -850,6 +894,21 @@
               }
             },
             "components": {
+              "m00_regslice": {
+                "vlnv": "xilinx.com:ip:axi_register_slice:2.1",
+                "xci_name": "system_design_m00_regslice_0",
+                "xci_path": "ip\\system_design_m00_regslice_0\\system_design_m00_regslice_0.xci",
+                "inst_hier_path": "axi_interconnect_0/m00_couplers/m00_regslice",
+                "interface_ports": {
+                  "S_AXI": {
+                    "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
+                    "mode": "Slave",
+                    "bridges": [
+                      "M_AXI"
+                    ]
+                  }
+                }
+              },
               "auto_cc": {
                 "vlnv": "xilinx.com:ip:axi_clock_converter:2.1",
                 "xci_name": "system_design_auto_cc_0",
@@ -867,9 +926,9 @@
               }
             },
             "interface_nets": {
-              "auto_cc_to_m00_couplers": {
+              "auto_cc_to_m00_regslice": {
                 "interface_ports": [
-                  "M_AXI",
+                  "m00_regslice/S_AXI",
                   "auto_cc/M_AXI"
                 ]
               },
@@ -878,18 +937,26 @@
                   "S_AXI",
                   "auto_cc/S_AXI"
                 ]
+              },
+              "m00_regslice_to_m00_couplers": {
+                "interface_ports": [
+                  "m00_regslice/M_AXI",
+                  "M_AXI"
+                ]
               }
             },
             "nets": {
               "M_ACLK_1": {
                 "ports": [
                   "M_ACLK",
+                  "m00_regslice/aclk",
                   "auto_cc/m_axi_aclk"
                 ]
               },
               "M_ARESETN_1": {
                 "ports": [
                   "M_ARESETN",
+                  "m00_regslice/aresetn",
                   "auto_cc/m_axi_aresetn"
                 ]
               },
@@ -955,6 +1022,21 @@
               }
             },
             "components": {
+              "m01_regslice": {
+                "vlnv": "xilinx.com:ip:axi_register_slice:2.1",
+                "xci_name": "system_design_m01_regslice_0",
+                "xci_path": "ip\\system_design_m01_regslice_0\\system_design_m01_regslice_0.xci",
+                "inst_hier_path": "axi_interconnect_0/m01_couplers/m01_regslice",
+                "interface_ports": {
+                  "S_AXI": {
+                    "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
+                    "mode": "Slave",
+                    "bridges": [
+                      "M_AXI"
+                    ]
+                  }
+                }
+              },
               "auto_cc": {
                 "vlnv": "xilinx.com:ip:axi_clock_converter:2.1",
                 "xci_name": "system_design_auto_cc_1",
@@ -972,9 +1054,9 @@
               }
             },
             "interface_nets": {
-              "auto_cc_to_m01_couplers": {
+              "auto_cc_to_m01_regslice": {
                 "interface_ports": [
-                  "M_AXI",
+                  "m01_regslice/S_AXI",
                   "auto_cc/M_AXI"
                 ]
               },
@@ -983,18 +1065,26 @@
                   "S_AXI",
                   "auto_cc/S_AXI"
                 ]
+              },
+              "m01_regslice_to_m01_couplers": {
+                "interface_ports": [
+                  "m01_regslice/M_AXI",
+                  "M_AXI"
+                ]
               }
             },
             "nets": {
               "M_ACLK_1": {
                 "ports": [
                   "M_ACLK",
+                  "m01_regslice/aclk",
                   "auto_cc/m_axi_aclk"
                 ]
               },
               "M_ARESETN_1": {
                 "ports": [
                   "M_ARESETN",
+                  "m01_regslice/aresetn",
                   "auto_cc/m_axi_aresetn"
                 ]
               },
