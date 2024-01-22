@@ -3,34 +3,35 @@
 -- util_ds_buf.vhd - Entity and architecture
 -------------------------------------------------------------------------------
 --
---  ***************************************************************************
---  **  Copyright(C) 2007 by Xilinx, Inc. All rights reserved.               **
---  **                                                                       **
---  **  This text contains proprietary, confidential                         **
---  **  information of Xilinx, Inc. , is distributed by                      **
---  **  under license from Xilinx, Inc., and may be used,                    **
---  **  copied and/or disclosed only pursuant to the terms                   **
---  **  of a valid license agreement with Xilinx, Inc.                       **
---  **                                                                       **
---  **  Unmodified source code is guaranteed to place and route,             **
---  **  function and run at speed according to the datasheet                 **
---  **  specification. Source code is provided "as-is", with no              **
---  **  obligation on the part of Xilinx to provide support.                 **
---  **                                                                       **
---  **  Xilinx Hotline support of source code IP shall only include          **
---  **  standard level Xilinx Hotline support, and will only address         **
---  **  issues and questions related to the standard released Netlist        **
---  **  version of the core (and thus indirectly, the original core source). **
---  **                                                                       **
---  **  The Xilinx Support Hotline does not have access to source            **
---  **  code and therefore cannot answer specific questions related          **
---  **  to source HDL. The Xilinx Support Hotline will only be able          **
---  **  to confirm the problem in the Netlist version of the core.           **
---  **                                                                       **
---  **  This copyright and support notice must be retained as part           **
---  **  of this text at all times.                                           **
---  ***************************************************************************
+--  *********************************************************************************
+--  **  (c) Copyright 2012, 2023 Advanced Micro Devices, Inc. All rights reserved. **
+--  **                                                                             **
+--  **  This text contains proprietary, confidential                               **
+--  **  information of AMD, Inc. , is distributed by                               **
+--  **  under license from AMD, Inc., and may be used,                             **
+--  **  copied and/or disclosed only pursuant to the terms                         **
+--  **  of a valid license agreement with AMD, Inc.                                **
+--  **                                                                             **
+--  **  Unmodified source code is guaranteed to place and route,                   **
+--  **  function and run at speed according to the datasheet                       **
+--  **  specification. Source code is provided "as-is", with no                    **
+--  **  obligation on the part of AMD to provide support.                          **
+--  **                                                                             **
+--  **  AMD Hotline support of source code IP shall only include                   **
+--  **  standard level AMD Hotline support, and will only address                  **
+--  **  issues and questions related to the standard released Netlist              **
+--  **  version of the core (and thus indirectly, the original core source).       **
+--  **                                                                             **
+--  **  The AMD Support Hotline does not have access to source                     **
+--  **  code and therefore cannot answer specific questions related                **
+--  **  to source HDL. The AMD Support Hotline will only be able                   **
+--  **  to confirm the problem in the Netlist version of the core.                 **
+--  **                                                                             **
+--  **  This copyright and support notice must be retained as part                 **
+--  **  of this text at all times.                                                 **
+--  *********************************************************************************
 --
+-- family = virtex7
 -------------------------------------------------------------------------------
 -- Filename:        util_ds_buf.vhd
 --

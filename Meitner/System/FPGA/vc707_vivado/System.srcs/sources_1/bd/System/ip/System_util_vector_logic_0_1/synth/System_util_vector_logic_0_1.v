@@ -11,7 +11,7 @@
 // otherwise provided in a valid license issued to you by
 // AMD, and to the maximum extent permitted by applicable
 // law: (1) THESE MATERIALS ARE MADE AVAILABLE "AS IS" AND
-// WITH ALL FAULTS, AND XILINX HEREBY DISCLAIMS ALL WARRANTIES
+// WITH ALL FAULTS, AND AMD HEREBY DISCLAIMS ALL WARRANTIES
 // AND CONDITIONS, EXPRESS, IMPLIED, OR STATUTORY, INCLUDING
 // BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, NON-
 // INFRINGEMENT, OR FITNESS FOR ANY PARTICULAR PURPOSE; and
@@ -48,11 +48,11 @@
 
 
 // IP VLNV: xilinx.com:ip:util_vector_logic:2.0
-// IP Revision: 2
+// IP Revision: 3
 
-(* X_CORE_INFO = "util_vector_logic_v2_0_2_util_vector_logic,Vivado 2023.1.1" *)
-(* CHECK_LICENSE_TYPE = "System_util_vector_logic_0_1,util_vector_logic_v2_0_2_util_vector_logic,{}" *)
-(* CORE_GENERATION_INFO = "System_util_vector_logic_0_1,util_vector_logic_v2_0_2_util_vector_logic,{x_ipProduct=Vivado 2023.1.1,x_ipVendor=xilinx.com,x_ipLibrary=ip,x_ipName=util_vector_logic,x_ipVersion=2.0,x_ipCoreRevision=2,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,C_OPERATION=and,C_SIZE=1}" *)
+(* X_CORE_INFO = "util_vector_logic_v2_0_3_util_vector_logic,Vivado 2023.2" *)
+(* CHECK_LICENSE_TYPE = "System_util_vector_logic_0_1,util_vector_logic_v2_0_3_util_vector_logic,{}" *)
+(* CORE_GENERATION_INFO = "System_util_vector_logic_0_1,util_vector_logic_v2_0_3_util_vector_logic,{x_ipProduct=Vivado 2023.2,x_ipVendor=xilinx.com,x_ipLibrary=ip,x_ipName=util_vector_logic,x_ipVersion=2.0,x_ipCoreRevision=3,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,C_OPERATION=and,C_SIZE=1}" *)
 (* DowngradeIPIdentifiedWarnings = "yes" *)
 module System_util_vector_logic_0_1 (
   Op1,
@@ -64,7 +64,7 @@ input wire [0 : 0] Op1;
 input wire [0 : 0] Op2;
 output wire [0 : 0] Res;
 
-  util_vector_logic_v2_0_2_util_vector_logic #(
+  util_vector_logic_v2_0_3_util_vector_logic #(
     .C_OPERATION("and"),
     .C_SIZE(1)
   ) inst (

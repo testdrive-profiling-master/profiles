@@ -1,8 +1,8 @@
 //Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 //Copyright 2022-2023 Advanced Micro Devices, Inc. All Rights Reserved.
 //--------------------------------------------------------------------------------
-//Tool Version: Vivado v.2023.1.1 (win64) Build 3900603 Fri Jun 16 19:31:24 MDT 2023
-//Date        : Tue Jan 16 15:41:00 2024
+//Tool Version: Vivado v.2023.2 (win64) Build 4029153 Fri Oct 13 20:14:34 MDT 2023
+//Date        : Mon Jan 22 18:37:28 2024
 //Host        : MOBILINT-HYUNGKI running 64-bit major release  (build 9200)
 //Command     : generate_target System.bd
 //Design      : System
@@ -10,7 +10,7 @@
 //--------------------------------------------------------------------------------
 `timescale 1 ps / 1 ps
 
-(* CORE_GENERATION_INFO = "System,IP_Integrator,{x_ipVendor=xilinx.com,x_ipLibrary=BlockDiagram,x_ipName=System,x_ipVersion=1.00.a,x_ipLanguage=VERILOG,numBlks=37,numReposBlks=26,numNonXlnxBlks=0,numHierBlks=11,maxHierDepth=0,numSysgenBlks=0,numHlsBlks=0,numHdlrefBlks=0,numPkgbdBlks=0,bdsource=USER,da_axi4_cnt=1,da_board_cnt=2,synth_mode=Global}" *) (* HW_HANDOFF = "System.hwdef" *) 
+(* CORE_GENERATION_INFO = "System,IP_Integrator,{x_ipVendor=xilinx.com,x_ipLibrary=BlockDiagram,x_ipName=System,x_ipVersion=1.00.a,x_ipLanguage=VERILOG,numBlks=37,numReposBlks=26,numNonXlnxBlks=0,numHierBlks=11,maxHierDepth=0,numSysgenBlks=0,numHlsBlks=0,numHdlrefBlks=0,numPkgbdBlks=0,bdsource=USER,da_axi4_cnt=1,da_board_cnt=2,synth_mode=None}" *) (* HW_HANDOFF = "System.hwdef" *) 
 module System
    (HDMI_CLK,
     HDMI_DATA,
@@ -1870,7 +1870,7 @@ module System_axi_interconnect_0_0
         .S_AXI_wready(from_pcie_to_s00_couplers_WREADY),
         .S_AXI_wstrb(from_pcie_to_s00_couplers_WSTRB),
         .S_AXI_wvalid(from_pcie_to_s00_couplers_WVALID));
-  System_xbar_6 xbar
+  System_xbar_8 xbar
        (.aclk(from_pcie_ACLK_net),
         .aresetn(from_pcie_ARESETN_net),
         .m_axi_araddr({xbar_to_m02_couplers_ARADDR,xbar_to_m01_couplers_ARADDR,xbar_to_m00_couplers_ARADDR}),
@@ -3264,7 +3264,7 @@ module System_axi_interconnect_0_1
         .S_AXI_wready(to_memory_to_s02_couplers_WREADY),
         .S_AXI_wstrb(to_memory_to_s02_couplers_WSTRB),
         .S_AXI_wvalid(to_memory_to_s02_couplers_WVALID));
-  System_xbar_7 xbar
+  System_xbar_9 xbar
        (.aclk(to_memory_ACLK_net),
         .aresetn(to_memory_ARESETN_net),
         .m_axi_araddr({xbar_to_m01_couplers_ARADDR,xbar_to_m00_couplers_ARADDR}),

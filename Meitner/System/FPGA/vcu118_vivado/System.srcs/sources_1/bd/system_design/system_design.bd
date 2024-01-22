@@ -1,13 +1,13 @@
 {
   "design": {
     "design_info": {
-      "boundary_crc": "0xC0A3EA9BAB0287B4",
+      "boundary_crc": "0xC0A3EA9B84B32BD3",
       "device": "xcvu9p-flga2104-2L-e",
       "gen_directory": "../../../../System.gen/sources_1/bd/system_design",
       "name": "system_design",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
       "synth_flow_mode": "Hierarchical",
-      "tool_version": "2023.1.1",
+      "tool_version": "2023.2",
       "validated": "true"
     },
     "design_tree": {
@@ -435,6 +435,7 @@
     "components": {
       "pcie_xdma": {
         "vlnv": "xilinx.com:ip:xdma:4.1",
+        "ip_revision": "26",
         "xci_name": "system_design_xdma_0_0",
         "xci_path": "ip\\system_design_xdma_0_0\\system_design_xdma_0_0.xci",
         "inst_hier_path": "pcie_xdma",
@@ -442,8 +443,26 @@
           "PCIE_BOARD_INTERFACE": {
             "value": "pci_express_x16"
           },
+          "PF0_DEVICE_ID_mqdma": {
+            "value": "903F"
+          },
+          "PF0_SRIOV_VF_DEVICE_ID": {
+            "value": "A03F"
+          },
+          "PF2_DEVICE_ID_mqdma": {
+            "value": "923F"
+          },
+          "PF3_DEVICE_ID_mqdma": {
+            "value": "933F"
+          },
           "SYS_RST_N_BOARD_INTERFACE": {
             "value": "pcie_perstn"
+          },
+          "axi_data_width": {
+            "value": "512_bit"
+          },
+          "axisten_freq": {
+            "value": "250"
           },
           "cfg_mgmt_if": {
             "value": "false"
@@ -453,6 +472,15 @@
           },
           "pf0_base_class_menu": {
             "value": "Memory_controller"
+          },
+          "pf0_class_code_base": {
+            "value": "05"
+          },
+          "pf0_class_code_interface": {
+            "value": "00"
+          },
+          "pf0_class_code_sub": {
+            "value": "80"
           },
           "pf0_device_id": {
             "value": "7022"
@@ -471,6 +499,9 @@
           },
           "pl_link_cap_max_link_speed": {
             "value": "8.0_GT/s"
+          },
+          "plltype": {
+            "value": "QPLL1"
           },
           "xdma_pcie_64bit_en": {
             "value": "true"
@@ -499,6 +530,7 @@
       },
       "pcie_clock_buffer": {
         "vlnv": "xilinx.com:ip:util_ds_buf:2.2",
+        "ip_revision": "31",
         "xci_name": "system_design_util_ds_buf_0_0",
         "xci_path": "ip\\system_design_util_ds_buf_0_0\\system_design_util_ds_buf_0_0.xci",
         "inst_hier_path": "pcie_clock_buffer",
@@ -513,6 +545,7 @@
       },
       "constant_0": {
         "vlnv": "xilinx.com:ip:xlconstant:1.1",
+        "ip_revision": "8",
         "xci_name": "system_design_xlconstant_0_0",
         "xci_path": "ip\\system_design_xlconstant_0_0\\system_design_xlconstant_0_0.xci",
         "inst_hier_path": "constant_0",
@@ -524,12 +557,19 @@
       },
       "ddr4_0": {
         "vlnv": "xilinx.com:ip:ddr4:2.2",
+        "ip_revision": "20",
         "xci_name": "system_design_ddr4_0_0",
         "xci_path": "ip\\system_design_ddr4_0_0\\system_design_ddr4_0_0.xci",
         "inst_hier_path": "ddr4_0",
         "parameters": {
           "ADDN_UI_CLKOUT1_FREQ_HZ": {
             "value": "None"
+          },
+          "C0.BANK_GROUP_WIDTH": {
+            "value": "1"
+          },
+          "C0.DDR4_AxiAddressWidth": {
+            "value": "31"
           },
           "C0.DDR4_SAVE_RESTORE": {
             "value": "false"
@@ -573,18 +613,26 @@
       },
       "ddr4_0_reset": {
         "vlnv": "xilinx.com:ip:proc_sys_reset:5.0",
+        "ip_revision": "14",
         "xci_name": "system_design_proc_sys_reset_0_0",
         "xci_path": "ip\\system_design_proc_sys_reset_0_0\\system_design_proc_sys_reset_0_0.xci",
         "inst_hier_path": "ddr4_0_reset"
       },
       "ddr4_1": {
         "vlnv": "xilinx.com:ip:ddr4:2.2",
+        "ip_revision": "20",
         "xci_name": "system_design_ddr4_1_0",
         "xci_path": "ip\\system_design_ddr4_1_0\\system_design_ddr4_1_0.xci",
         "inst_hier_path": "ddr4_1",
         "parameters": {
           "ADDN_UI_CLKOUT1_FREQ_HZ": {
             "value": "None"
+          },
+          "C0.BANK_GROUP_WIDTH": {
+            "value": "1"
+          },
+          "C0.DDR4_AxiAddressWidth": {
+            "value": "31"
           },
           "C0_CLOCK_BOARD_INTERFACE": {
             "value": "default_250mhz_clk2"
@@ -622,6 +670,7 @@
       },
       "ddr4_1_reset": {
         "vlnv": "xilinx.com:ip:proc_sys_reset:5.0",
+        "ip_revision": "14",
         "xci_name": "system_design_proc_sys_reset_0_1",
         "xci_path": "ip\\system_design_proc_sys_reset_0_1\\system_design_proc_sys_reset_0_1.xci",
         "inst_hier_path": "ddr4_1_reset"
@@ -728,6 +777,7 @@
         "components": {
           "xbar": {
             "vlnv": "xilinx.com:ip:axi_crossbar:2.1",
+            "ip_revision": "30",
             "xci_name": "system_design_xbar_0",
             "xci_path": "ip\\system_design_xbar_0\\system_design_xbar_0.xci",
             "inst_hier_path": "axi_interconnect_0/xbar",
@@ -803,6 +853,7 @@
             "components": {
               "s00_regslice": {
                 "vlnv": "xilinx.com:ip:axi_register_slice:2.1",
+                "ip_revision": "29",
                 "xci_name": "system_design_s00_regslice_0",
                 "xci_path": "ip\\system_design_s00_regslice_0\\system_design_s00_regslice_0.xci",
                 "inst_hier_path": "axi_interconnect_0/s00_couplers/s00_regslice",
@@ -896,6 +947,7 @@
             "components": {
               "m00_regslice": {
                 "vlnv": "xilinx.com:ip:axi_register_slice:2.1",
+                "ip_revision": "29",
                 "xci_name": "system_design_m00_regslice_0",
                 "xci_path": "ip\\system_design_m00_regslice_0\\system_design_m00_regslice_0.xci",
                 "inst_hier_path": "axi_interconnect_0/m00_couplers/m00_regslice",
@@ -911,6 +963,7 @@
               },
               "auto_cc": {
                 "vlnv": "xilinx.com:ip:axi_clock_converter:2.1",
+                "ip_revision": "28",
                 "xci_name": "system_design_auto_cc_0",
                 "xci_path": "ip\\system_design_auto_cc_0\\system_design_auto_cc_0.xci",
                 "inst_hier_path": "axi_interconnect_0/m00_couplers/auto_cc",
@@ -1024,6 +1077,7 @@
             "components": {
               "m01_regslice": {
                 "vlnv": "xilinx.com:ip:axi_register_slice:2.1",
+                "ip_revision": "29",
                 "xci_name": "system_design_m01_regslice_0",
                 "xci_path": "ip\\system_design_m01_regslice_0\\system_design_m01_regslice_0.xci",
                 "inst_hier_path": "axi_interconnect_0/m01_couplers/m01_regslice",
@@ -1039,6 +1093,7 @@
               },
               "auto_cc": {
                 "vlnv": "xilinx.com:ip:axi_clock_converter:2.1",
+                "ip_revision": "28",
                 "xci_name": "system_design_auto_cc_1",
                 "xci_path": "ip\\system_design_auto_cc_1\\system_design_auto_cc_1.xci",
                 "inst_hier_path": "axi_interconnect_0/m01_couplers/auto_cc",
@@ -1265,8 +1320,8 @@
       "ddr4_0_c0_ddr4_ui_clk": {
         "ports": [
           "ddr4_0/c0_ddr4_ui_clk",
-          "ddr4_0_reset/slowest_sync_clk",
-          "axi_interconnect_0/M00_ACLK"
+          "axi_interconnect_0/M00_ACLK",
+          "ddr4_0_reset/slowest_sync_clk"
         ]
       },
       "ddr4_0_c0_ddr4_ui_clk_sync_rst": {
@@ -1284,8 +1339,8 @@
       "ddr4_1_c0_ddr4_ui_clk": {
         "ports": [
           "ddr4_1/c0_ddr4_ui_clk",
-          "ddr4_1_reset/slowest_sync_clk",
-          "axi_interconnect_0/M01_ACLK"
+          "axi_interconnect_0/M01_ACLK",
+          "ddr4_1_reset/slowest_sync_clk"
         ]
       },
       "ddr4_1_c0_ddr4_ui_clk_sync_rst": {
@@ -1321,23 +1376,23 @@
       "pcie_perstn_1": {
         "ports": [
           "pcie_perstn",
-          "pcie_xdma/sys_rst_n",
           "ddr4_0_reset/aux_reset_in",
-          "ddr4_1_reset/aux_reset_in"
+          "ddr4_1_reset/aux_reset_in",
+          "pcie_xdma/sys_rst_n"
         ]
       },
       "pcie_xdma_axi_aclk": {
         "ports": [
           "pcie_xdma/axi_aclk",
-          "axi_interconnect_0/S00_ACLK",
-          "axi_interconnect_0/ACLK"
+          "axi_interconnect_0/ACLK",
+          "axi_interconnect_0/S00_ACLK"
         ]
       },
       "pcie_xdma_axi_aresetn": {
         "ports": [
           "pcie_xdma/axi_aresetn",
-          "axi_interconnect_0/S00_ARESETN",
-          "axi_interconnect_0/ARESETN"
+          "axi_interconnect_0/ARESETN",
+          "axi_interconnect_0/S00_ARESETN"
         ]
       },
       "reset_1": {

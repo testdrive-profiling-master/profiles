@@ -4,7 +4,7 @@
     "xci_name": "system_design_xlconstant_0_0",
     "cell_name": "constant_0",
     "component_reference": "xilinx.com:ip:xlconstant:1.1",
-    "ip_revision": "7",
+    "ip_revision": "8",
     "gen_directory": "../../../../../../System.gen/sources_1/bd/system_design/ip/system_design_xlconstant_0_0",
     "parameters": {
       "component_parameters": {
@@ -31,12 +31,12 @@
       },
       "runtime_parameters": {
         "IPCONTEXT": [ { "value": "IP_Integrator" } ],
-        "IPREVISION": [ { "value": "7" } ],
+        "IPREVISION": [ { "value": "8" } ],
         "MANAGED": [ { "value": "TRUE" } ],
         "OUTPUTDIR": [ { "value": "../../../../../../System.gen/sources_1/bd/system_design/ip/system_design_xlconstant_0_0" } ],
         "SELECTEDSIMMODEL": [ { "value": "" } ],
         "SHAREDDIR": [ { "value": "../../ipshared" } ],
-        "SWVERSION": [ { "value": "2023.1.1" } ],
+        "SWVERSION": [ { "value": "2023.2" } ],
         "SYNTHESISFLOW": [ { "value": "GLOBAL" } ]
       }
     },

@@ -4,7 +4,7 @@
     "xci_name": "System_auto_ds_2",
     "cell_name": "to_memory/m01_couplers/auto_ds",
     "component_reference": "xilinx.com:ip:axi_dwidth_converter:2.1",
-    "ip_revision": "28",
+    "ip_revision": "29",
     "gen_directory": ".",
     "parameters": {
       "component_parameters": {
@@ -55,12 +55,12 @@
       },
       "runtime_parameters": {
         "IPCONTEXT": [ { "value": "IP_Integrator" } ],
-        "IPREVISION": [ { "value": "28" } ],
+        "IPREVISION": [ { "value": "29" } ],
         "MANAGED": [ { "value": "TRUE" } ],
         "OUTPUTDIR": [ { "value": "." } ],
         "SELECTEDSIMMODEL": [ { "value": "rtl" } ],
         "SHAREDDIR": [ { "value": "../../../../../../System.gen/sources_1/bd/System/ipshared" } ],
-        "SWVERSION": [ { "value": "2023.1.1" } ],
+        "SWVERSION": [ { "value": "2023.2" } ],
         "SYNTHESISFLOW": [ { "value": "GLOBAL" } ]
       }
     },

@@ -11,7 +11,7 @@
 -- otherwise provided in a valid license issued to you by
 -- AMD, and to the maximum extent permitted by applicable
 -- law: (1) THESE MATERIALS ARE MADE AVAILABLE "AS IS" AND
--- WITH ALL FAULTS, AND XILINX HEREBY DISCLAIMS ALL WARRANTIES
+-- WITH ALL FAULTS, AND AMD HEREBY DISCLAIMS ALL WARRANTIES
 -- AND CONDITIONS, EXPRESS, IMPLIED, OR STATUTORY, INCLUDING
 -- BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, NON-
 -- INFRINGEMENT, OR FITNESS FOR ANY PARTICULAR PURPOSE; and
@@ -47,7 +47,7 @@
 -- DO NOT MODIFY THIS FILE.
 
 -- IP VLNV: xilinx.com:ip:util_ds_buf:2.2
--- IP Revision: 30
+-- IP Revision: 31
 
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
@@ -186,11 +186,11 @@ ARCHITECTURE System_util_ds_buf_0_0_arch OF System_util_ds_buf_0_0 IS
     );
   END COMPONENT util_ds_buf;
   ATTRIBUTE X_CORE_INFO : STRING;
-  ATTRIBUTE X_CORE_INFO OF System_util_ds_buf_0_0_arch: ARCHITECTURE IS "util_ds_buf,Vivado 2023.1.1";
+  ATTRIBUTE X_CORE_INFO OF System_util_ds_buf_0_0_arch: ARCHITECTURE IS "util_ds_buf,Vivado 2023.2";
   ATTRIBUTE CHECK_LICENSE_TYPE : STRING;
   ATTRIBUTE CHECK_LICENSE_TYPE OF System_util_ds_buf_0_0_arch : ARCHITECTURE IS "System_util_ds_buf_0_0,util_ds_buf,{}";
   ATTRIBUTE CORE_GENERATION_INFO : STRING;
-  ATTRIBUTE CORE_GENERATION_INFO OF System_util_ds_buf_0_0_arch: ARCHITECTURE IS "System_util_ds_buf_0_0,util_ds_buf,{x_ipProduct=Vivado 2023.1.1,x_ipVendor=xilinx.com,x_ipLibrary=ip,x_ipName=util_ds_buf,x_ipVersion=2.2,x_ipCoreRevision=30,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,C_BUF_TYPE=ibufdsgte2,C_SIZE=1,C_BUFGCE_DIV=1,C_BUFG_GT_SYNC=0,C_SIM_DEVICE=VERSAL_AI_CORE_ES1,C_OBUFDS_GTE5_ADV=00,C_REFCLK_ICNTL_TX=00000}";
+  ATTRIBUTE CORE_GENERATION_INFO OF System_util_ds_buf_0_0_arch: ARCHITECTURE IS "System_util_ds_buf_0_0,util_ds_buf,{x_ipProduct=Vivado 2023.2,x_ipVendor=xilinx.com,x_ipLibrary=ip,x_ipName=util_ds_buf,x_ipVersion=2.2,x_ipCoreRevision=31,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,C_BUF_TYPE=ibufdsgte2,C_SIZE=1,C_BUFGCE_DIV=1,C_BUFG_GT_SYNC=0,C_SIM_DEVICE=VERSAL_AI_CORE_ES1,C_OBUFDS_GTE5_ADV=00,C_REFCLK_ICNTL_TX=00000}";
   ATTRIBUTE X_INTERFACE_INFO : STRING;
   ATTRIBUTE X_INTERFACE_PARAMETER : STRING;
   ATTRIBUTE X_INTERFACE_INFO OF IBUF_DS_N: SIGNAL IS "xilinx.com:interface:diff_clock:1.0 CLK_IN_D CLK_N";

@@ -1,12 +1,12 @@
 {
   "design": {
     "design_info": {
-      "boundary_crc": "0x1E4859E036E1E7A5",
+      "boundary_crc": "0x1E4859E0D98B2732",
       "device": "xc7vx485tffg1761-2",
       "name": "System",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
       "synth_flow_mode": "None",
-      "tool_version": "2023.1.1",
+      "tool_version": "2023.2",
       "validated": "true"
     },
     "design_tree": {
@@ -346,6 +346,7 @@
     "components": {
       "DDR3_SDRAM": {
         "vlnv": "xilinx.com:ip:mig_7series:4.2",
+        "ip_revision": "1",
         "xci_name": "System_mig_7series_0_0",
         "xci_path": "ip\\System_mig_7series_0_0\\System_mig_7series_0_0.xci",
         "inst_hier_path": "DDR3_SDRAM",
@@ -363,6 +364,7 @@
       },
       "pcie_reset_0": {
         "vlnv": "xilinx.com:ip:proc_sys_reset:5.0",
+        "ip_revision": "14",
         "xci_name": "System_proc_sys_reset_0_0",
         "xci_path": "ip\\System_proc_sys_reset_0_0\\System_proc_sys_reset_0_0.xci",
         "inst_hier_path": "pcie_reset_0",
@@ -374,6 +376,7 @@
       },
       "bus_reset_0": {
         "vlnv": "xilinx.com:ip:proc_sys_reset:5.0",
+        "ip_revision": "14",
         "xci_name": "System_rst_DDR3_SDRAM_200M_0",
         "xci_path": "ip\\System_rst_DDR3_SDRAM_200M_0\\System_rst_DDR3_SDRAM_200M_0.xci",
         "inst_hier_path": "bus_reset_0",
@@ -385,6 +388,7 @@
       },
       "dut_wrapper_0": {
         "vlnv": "xilinx.com:user:dut_wrapper:1.0",
+        "ip_revision": "14",
         "xci_name": "System_dut_wrapper_0_0",
         "xci_path": "ip\\System_dut_wrapper_0_0\\System_dut_wrapper_0_0.xci",
         "inst_hier_path": "dut_wrapper_0",
@@ -398,6 +402,7 @@
       },
       "hdmi_controller_0": {
         "vlnv": "xilinx.com:user:hdmi_controller:1.0",
+        "ip_revision": "17",
         "xci_name": "System_hdmi_controller_0_1",
         "xci_path": "ip\\System_hdmi_controller_0_1\\System_hdmi_controller_0_1.xci",
         "inst_hier_path": "hdmi_controller_0",
@@ -411,6 +416,7 @@
       },
       "MSI_Generator_0": {
         "vlnv": "xilinx.com:user:MSI_Generator:1.0",
+        "ip_revision": "17",
         "xci_name": "System_MSI_Generator_0_0",
         "xci_path": "ip\\System_MSI_Generator_0_0\\System_MSI_Generator_0_0.xci",
         "inst_hier_path": "MSI_Generator_0",
@@ -422,6 +428,7 @@
       },
       "util_vector_logic_0": {
         "vlnv": "xilinx.com:ip:util_vector_logic:2.0",
+        "ip_revision": "3",
         "xci_name": "System_util_vector_logic_0_1",
         "xci_path": "ip\\System_util_vector_logic_0_1\\System_util_vector_logic_0_1.xci",
         "inst_hier_path": "util_vector_logic_0",
@@ -433,6 +440,7 @@
       },
       "axi_apb_bridge_0": {
         "vlnv": "xilinx.com:ip:axi_apb_bridge:3.0",
+        "ip_revision": "19",
         "xci_name": "System_axi_apb_bridge_0_0",
         "xci_path": "ip\\System_axi_apb_bridge_0_0\\System_axi_apb_bridge_0_0.xci",
         "inst_hier_path": "axi_apb_bridge_0",
@@ -662,8 +670,9 @@
         "components": {
           "xbar": {
             "vlnv": "xilinx.com:ip:axi_crossbar:2.1",
-            "xci_name": "System_xbar_6",
-            "xci_path": "ip\\System_xbar_6\\System_xbar_6.xci",
+            "ip_revision": "30",
+            "xci_name": "System_xbar_8",
+            "xci_path": "ip\\System_xbar_8\\System_xbar_8.xci",
             "inst_hier_path": "from_pcie/xbar",
             "parameters": {
               "DATA_WIDTH": {
@@ -797,6 +806,7 @@
             "components": {
               "auto_us": {
                 "vlnv": "xilinx.com:ip:axi_dwidth_converter:2.1",
+                "ip_revision": "29",
                 "xci_name": "System_auto_us_0",
                 "xci_path": "ip\\System_auto_us_0\\System_auto_us_0.xci",
                 "inst_hier_path": "from_pcie/m00_couplers/auto_us",
@@ -820,6 +830,7 @@
               },
               "auto_cc": {
                 "vlnv": "xilinx.com:ip:axi_clock_converter:2.1",
+                "ip_revision": "28",
                 "xci_name": "System_auto_cc_0",
                 "xci_path": "ip\\System_auto_cc_0\\System_auto_cc_0.xci",
                 "inst_hier_path": "from_pcie/m00_couplers/auto_cc",
@@ -938,6 +949,7 @@
             "components": {
               "m01_regslice": {
                 "vlnv": "xilinx.com:ip:axi_register_slice:2.1",
+                "ip_revision": "29",
                 "xci_name": "System_m01_regslice_0",
                 "xci_path": "ip\\System_m01_regslice_0\\System_m01_regslice_0.xci",
                 "inst_hier_path": "from_pcie/m01_couplers/m01_regslice",
@@ -953,6 +965,7 @@
               },
               "auto_cc": {
                 "vlnv": "xilinx.com:ip:axi_clock_converter:2.1",
+                "ip_revision": "28",
                 "xci_name": "System_auto_cc_1",
                 "xci_path": "ip\\System_auto_cc_1\\System_auto_cc_1.xci",
                 "inst_hier_path": "from_pcie/m01_couplers/auto_cc",
@@ -973,6 +986,7 @@
               },
               "auto_ds": {
                 "vlnv": "xilinx.com:ip:axi_dwidth_converter:2.1",
+                "ip_revision": "29",
                 "xci_name": "System_auto_ds_0",
                 "xci_path": "ip\\System_auto_ds_0\\System_auto_ds_0.xci",
                 "inst_hier_path": "from_pcie/m01_couplers/auto_ds",
@@ -996,6 +1010,7 @@
               },
               "auto_pc": {
                 "vlnv": "xilinx.com:ip:axi_protocol_converter:2.1",
+                "ip_revision": "29",
                 "xci_name": "System_auto_pc_0",
                 "xci_path": "ip\\System_auto_pc_0\\System_auto_pc_0.xci",
                 "inst_hier_path": "from_pcie/m01_couplers/auto_pc",
@@ -1133,6 +1148,7 @@
             "components": {
               "auto_cc": {
                 "vlnv": "xilinx.com:ip:axi_clock_converter:2.1",
+                "ip_revision": "28",
                 "xci_name": "System_auto_cc_2",
                 "xci_path": "ip\\System_auto_cc_2\\System_auto_cc_2.xci",
                 "inst_hier_path": "from_pcie/m02_couplers/auto_cc",
@@ -1153,6 +1169,7 @@
               },
               "auto_ds": {
                 "vlnv": "xilinx.com:ip:axi_dwidth_converter:2.1",
+                "ip_revision": "29",
                 "xci_name": "System_auto_ds_1",
                 "xci_path": "ip\\System_auto_ds_1\\System_auto_ds_1.xci",
                 "inst_hier_path": "from_pcie/m02_couplers/auto_ds",
@@ -1176,6 +1193,7 @@
               },
               "auto_pc": {
                 "vlnv": "xilinx.com:ip:axi_protocol_converter:2.1",
+                "ip_revision": "29",
                 "xci_name": "System_auto_pc_1",
                 "xci_path": "ip\\System_auto_pc_1\\System_auto_pc_1.xci",
                 "inst_hier_path": "from_pcie/m02_couplers/auto_pc",
@@ -1542,8 +1560,9 @@
         "components": {
           "xbar": {
             "vlnv": "xilinx.com:ip:axi_crossbar:2.1",
-            "xci_name": "System_xbar_7",
-            "xci_path": "ip\\System_xbar_7\\System_xbar_7.xci",
+            "ip_revision": "30",
+            "xci_name": "System_xbar_9",
+            "xci_path": "ip\\System_xbar_9\\System_xbar_9.xci",
             "inst_hier_path": "to_memory/xbar",
             "parameters": {
               "NUM_MI": {
@@ -1633,6 +1652,7 @@
             "components": {
               "s00_data_fifo": {
                 "vlnv": "xilinx.com:ip:axi_data_fifo:2.1",
+                "ip_revision": "28",
                 "xci_name": "System_s00_data_fifo_0",
                 "xci_path": "ip\\System_s00_data_fifo_0\\System_s00_data_fifo_0.xci",
                 "inst_hier_path": "to_memory/s00_couplers/s00_data_fifo",
@@ -1726,6 +1746,7 @@
             "components": {
               "s01_data_fifo": {
                 "vlnv": "xilinx.com:ip:axi_data_fifo:2.1",
+                "ip_revision": "28",
                 "xci_name": "System_s01_data_fifo_0",
                 "xci_path": "ip\\System_s01_data_fifo_0\\System_s01_data_fifo_0.xci",
                 "inst_hier_path": "to_memory/s01_couplers/s01_data_fifo",
@@ -1819,6 +1840,7 @@
             "components": {
               "s02_data_fifo": {
                 "vlnv": "xilinx.com:ip:axi_data_fifo:2.1",
+                "ip_revision": "28",
                 "xci_name": "System_s02_data_fifo_0",
                 "xci_path": "ip\\System_s02_data_fifo_0\\System_s02_data_fifo_0.xci",
                 "inst_hier_path": "to_memory/s02_couplers/s02_data_fifo",
@@ -1968,6 +1990,7 @@
             "components": {
               "auto_cc": {
                 "vlnv": "xilinx.com:ip:axi_clock_converter:2.1",
+                "ip_revision": "28",
                 "xci_name": "System_auto_cc_3",
                 "xci_path": "ip\\System_auto_cc_3\\System_auto_cc_3.xci",
                 "inst_hier_path": "to_memory/m01_couplers/auto_cc",
@@ -1983,6 +2006,7 @@
               },
               "auto_ds": {
                 "vlnv": "xilinx.com:ip:axi_dwidth_converter:2.1",
+                "ip_revision": "29",
                 "xci_name": "System_auto_ds_2",
                 "xci_path": "ip\\System_auto_ds_2\\System_auto_ds_2.xci",
                 "inst_hier_path": "to_memory/m01_couplers/auto_ds",
@@ -2204,6 +2228,7 @@
       },
       "AXI_PCIe": {
         "vlnv": "xilinx.com:ip:axi_pcie:2.9",
+        "ip_revision": "10",
         "xci_name": "System_axi_pcie_0_1",
         "xci_path": "ip\\System_axi_pcie_0_1\\System_axi_pcie_0_1.xci",
         "inst_hier_path": "AXI_PCIe",
@@ -2348,6 +2373,7 @@
       },
       "PCIe_diff_clk_I": {
         "vlnv": "xilinx.com:ip:util_ds_buf:2.2",
+        "ip_revision": "31",
         "xci_name": "System_util_ds_buf_0_0",
         "xci_path": "ip\\System_util_ds_buf_0_0\\System_util_ds_buf_0_0.xci",
         "inst_hier_path": "PCIe_diff_clk_I",
@@ -2478,8 +2504,8 @@
       "AXI_PCIe_axi_ctl_aclk_out": {
         "ports": [
           "AXI_PCIe/axi_ctl_aclk_out",
-          "pcie_reset_0/slowest_sync_clk",
-          "from_pcie/M02_ACLK"
+          "from_pcie/M02_ACLK",
+          "pcie_reset_0/slowest_sync_clk"
         ]
       },
       "AXI_PCIe_mmcm_lock": {
@@ -2497,7 +2523,6 @@
       "DDR3_SDRAM_ui_clk": {
         "ports": [
           "DDR3_SDRAM/ui_clk",
-          "bus_reset_0/slowest_sync_clk",
           "dut_wrapper_0/ACLK",
           "hdmi_controller_0/ACLK",
           "axi_apb_bridge_0/s_axi_aclk",
@@ -2507,7 +2532,8 @@
           "to_memory/S00_ACLK",
           "to_memory/S01_ACLK",
           "to_memory/S02_ACLK",
-          "to_memory/M00_ACLK"
+          "to_memory/M00_ACLK",
+          "bus_reset_0/slowest_sync_clk"
         ]
       },
       "DDR3_SDRAM_ui_clk_sync_rst": {

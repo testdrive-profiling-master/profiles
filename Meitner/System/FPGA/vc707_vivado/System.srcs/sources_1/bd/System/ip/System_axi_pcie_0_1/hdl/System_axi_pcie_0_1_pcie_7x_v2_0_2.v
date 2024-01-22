@@ -1,9 +1,10 @@
+
 //-----------------------------------------------------------------------------
 //
-// (c) Copyright 2010-2011 Xilinx, Inc. All rights reserved.
+// (c) Copyright 2020-2024 Advanced Micro Devices, Inc. All rights reserved.
 //
 // This file contains confidential and proprietary information
-// of Xilinx, Inc. and is protected under U.S. and
+// of AMD and is protected under U.S. and
 // international copyright and other intellectual property
 // laws.
 //
@@ -11,13 +12,13 @@
 // This disclaimer is not a license and does not grant any
 // rights to the materials distributed herewith. Except as
 // otherwise provided in a valid license issued to you by
-// Xilinx, and to the maximum extent permitted by applicable
+// AMD, and to the maximum extent permitted by applicable
 // law: (1) THESE MATERIALS ARE MADE AVAILABLE "AS IS" AND
-// WITH ALL FAULTS, AND XILINX HEREBY DISCLAIMS ALL WARRANTIES
+// WITH ALL FAULTS, AND AMD HEREBY DISCLAIMS ALL WARRANTIES
 // AND CONDITIONS, EXPRESS, IMPLIED, OR STATUTORY, INCLUDING
 // BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, NON-
 // INFRINGEMENT, OR FITNESS FOR ANY PARTICULAR PURPOSE; and
-// (2) Xilinx shall not be liable (whether in contract or tort,
+// (2) AMD shall not be liable (whether in contract or tort,
 // including negligence, or under any other theory of
 // liability) for any loss or damage of any kind or nature
 // related to, arising under or in connection with these
@@ -26,11 +27,11 @@
 // (including loss of data, profits, goodwill, or any type of
 // loss or damage suffered as a result of any action brought
 // by a third party) even if such damage or loss was
-// reasonably foreseeable or Xilinx had been advised of the
+// reasonably foreseeable or AMD had been advised of the
 // possibility of the same.
 //
 // CRITICAL APPLICATIONS
-// Xilinx products are not designed or intended to be fail-
+// AMD products are not designed or intended to be fail-
 // safe, or for use in any application requiring fail-safe
 // performance, such as life-support or safety devices or
 // systems, Class III medical devices, nuclear facilities,
@@ -39,7 +40,7 @@
 // injury, or severe property or environmental damage
 // (individually and collectively, "Critical
 // Applications"). Customer assumes the sole risk and
-// liability of any use of Xilinx products in Critical
+// liability of any use of AMD products in Critical
 // Applications, subject only to applicable laws and
 // regulations governing limitations on product liability.
 //
@@ -56,7 +57,7 @@
 
 (* CORE_GENERATION_INFO = "pcie_7x_v2_0_2,pcie_7x_v2_0_2,{LINK_CAP_MAX_LINK_SPEED=2,LINK_CAP_MAX_LINK_WIDTH=08,PCIE_CAP_DEVICE_PORT_TYPE=0000,DEV_CAP_MAX_PAYLOAD_SUPPORTED=1,USER_CLK_FREQ=4,REF_CLK_FREQ=0,MSI_CAP_ON=TRUE,MSI_CAP_MULTIMSGCAP=0,MSI_CAP_MULTIMSG_EXTENSION=0,MSIX_CAP_ON=FALSE,TL_TX_RAM_RADDR_LATENCY=0,TL_TX_RAM_RDATA_LATENCY=2,TL_RX_RAM_RADDR_LATENCY=0,TL_RX_RAM_RDATA_LATENCY=2,TL_RX_RAM_WRITE_LATENCY=0,VC0_TX_LASTPACKET=29,VC0_RX_RAM_LIMIT=7FF,VC0_TOTAL_CREDITS_PH=32,VC0_TOTAL_CREDITS_PD=308,VC0_TOTAL_CREDITS_NPH=12,VC0_TOTAL_CREDITS_NPD=24,VC0_TOTAL_CREDITS_CH=36,VC0_TOTAL_CREDITS_CD=308,VC0_CPL_INFINITE=TRUE,DEV_CAP_PHANTOM_FUNCTIONS_SUPPORT=0,DEV_CAP_EXT_TAG_SUPPORTED=FALSE,LINK_STATUS_SLOT_CLOCK_CONFIG=TRUE,ENABLE_RX_TD_ECRC_TRIM=FALSE,DISABLE_LANE_REVERSAL=TRUE,DISABLE_SCRAMBLING=FALSE,DSN_CAP_ON=TRUE,REVISION_ID=00,VC_CAP_ON=FALSE}" *)
 
-module axi_pcie_v2_9_9_pcie_7x_v2_0_2 # (
+module axi_pcie_v2_9_10_pcie_7x_v2_0_2 # (
   parameter         CFG_VEND_ID        = 16'h10EE,
   parameter         CFG_DEV_ID         = 16'h6111,
   parameter         CFG_REV_ID         =  8'h00,
@@ -1125,7 +1126,7 @@ assign user_lnk_up = user_lnk_up_mux;
   //--------------------------------------------------------------------------------------------------------------------//
 generate
   if (EXT_PIPE_INTERFACE == "FALSE") begin : pcie_top_with_gt_top 
-  axi_pcie_v2_9_9_pcie_7x_v2_0_2_pcie_top # (
+  axi_pcie_v2_9_10_pcie_7x_v2_0_2_pcie_top # (
     .PIPE_PIPELINE_STAGES                     ( PIPE_PIPELINE_STAGES ),
     .AER_BASE_PTR                             ( AER_BASE_PTR ),
     .AER_CAP_ECRC_CHECK_CAPABLE               ( AER_CAP_ECRC_CHECK_CAPABLE ),
@@ -1872,7 +1873,7 @@ generate
   if ((PCIE_USE_MODE == "1.0" || PCIE_USE_MODE == "1.1") && (PCIE_GT_DEVICE == "GTX") ) begin : gt_ies
 //  if ((PCIE_USE_MODE == "1.0" || PCIE_USE_MODE == "1.1") && (C_FAMILY == "kintex7" || C_FAMILY == "virtex7" || C_FAMILY == "zynq") ) begin : gt_ies
 //  if (PCIE_USE_MODE == "1.0" || PCIE_USE_MODE == "1.1") begin : gt_ies
-  axi_pcie_v2_9_9_pcie_7x_v1_6_gt_top_ies #(
+  axi_pcie_v2_9_10_pcie_7x_v1_6_gt_top_ies #(
     .LINK_CAP_MAX_LINK_WIDTH       ( LINK_CAP_MAX_LINK_WIDTH ),
     .REF_CLK_FREQ                  ( REF_CLK_FREQ ),
     .USER_CLK_FREQ                 ( USER_CLK_FREQ ),
@@ -2051,7 +2052,7 @@ generate
   );
   end // gt_ies
   else begin : gt_ges
-  axi_pcie_v2_9_9_pcie_7x_v2_0_2_gt_top #(
+  axi_pcie_v2_9_10_pcie_7x_v2_0_2_gt_top #(
     .LINK_CAP_MAX_LINK_WIDTH       ( LINK_CAP_MAX_LINK_WIDTH ),
     .REF_CLK_FREQ                  ( REF_CLK_FREQ ),
     .USER_CLK_FREQ                 ( USER_CLK_FREQ ),
@@ -2402,17 +2403,17 @@ generate
   wire clk_125;
   wire clk_62_5;
  
-  axi_pcie_v2_9_9_pcie_7x_v2_0_2_sys_clk_gen_ps 	#(.offset(7000),.halfcycle(1000)) clk_gen_500  (.sys_clk(clk_500));
-  axi_pcie_v2_9_9_pcie_7x_v2_0_2_sys_clk_gen_ps 	#(.offset(6000),.halfcycle(2000)) clk_gen_250  (.sys_clk(clk_250));
-  axi_pcie_v2_9_9_pcie_7x_v2_0_2_sys_clk_gen_ps 	#(.offset(4000),.halfcycle(4000)) clk_gen_125  (.sys_clk(clk_125));
-  axi_pcie_v2_9_9_pcie_7x_v2_0_2_sys_clk_gen_ps 	#(.offset(0000),.halfcycle(8000)) clk_gen_62_5 (.sys_clk(clk_62_5));
+  axi_pcie_v2_9_10_pcie_7x_v2_0_2_sys_clk_gen_ps 	#(.offset(7000),.halfcycle(1000)) clk_gen_500  (.sys_clk(clk_500));
+  axi_pcie_v2_9_10_pcie_7x_v2_0_2_sys_clk_gen_ps 	#(.offset(6000),.halfcycle(2000)) clk_gen_250  (.sys_clk(clk_250));
+  axi_pcie_v2_9_10_pcie_7x_v2_0_2_sys_clk_gen_ps 	#(.offset(4000),.halfcycle(4000)) clk_gen_125  (.sys_clk(clk_125));
+  axi_pcie_v2_9_10_pcie_7x_v2_0_2_sys_clk_gen_ps 	#(.offset(0000),.halfcycle(8000)) clk_gen_62_5 (.sys_clk(clk_62_5));
  
 
   assign pipe_clk  = (common_commands_out[1] == 1'b0)? clk_125 : clk_250;
   assign user_clk = (USER_CLK_FREQ == 4) ? clk_500 : (USER_CLK_FREQ == 3) ? clk_250 : (USER_CLK_FREQ == 2) ? clk_125 : clk_62_5;
   assign user_clk2 = (USERCLK2_FREQ == 4) ? clk_500 : (USERCLK2_FREQ == 3) ? clk_250 : (USERCLK2_FREQ == 2) ? clk_125 : clk_62_5;
 
-  axi_pcie_v2_9_9_pcie_7x_v2_0_2_pcie_top # (
+  axi_pcie_v2_9_10_pcie_7x_v2_0_2_pcie_top # (
     .PIPE_PIPELINE_STAGES                     ( PIPE_PIPELINE_STAGES ),
     .AER_BASE_PTR                             ( AER_BASE_PTR ),
     .AER_CAP_ECRC_CHECK_CAPABLE               ( AER_CAP_ECRC_CHECK_CAPABLE ),

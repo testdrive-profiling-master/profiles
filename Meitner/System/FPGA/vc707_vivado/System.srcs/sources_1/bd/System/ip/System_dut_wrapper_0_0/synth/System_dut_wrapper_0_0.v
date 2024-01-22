@@ -11,7 +11,7 @@
 // otherwise provided in a valid license issued to you by
 // AMD, and to the maximum extent permitted by applicable
 // law: (1) THESE MATERIALS ARE MADE AVAILABLE "AS IS" AND
-// WITH ALL FAULTS, AND XILINX HEREBY DISCLAIMS ALL WARRANTIES
+// WITH ALL FAULTS, AND AMD HEREBY DISCLAIMS ALL WARRANTIES
 // AND CONDITIONS, EXPRESS, IMPLIED, OR STATUTORY, INCLUDING
 // BUT NOT LIMITED TO WARRANTIES OF MERCHANTABILITY, NON-
 // INFRINGEMENT, OR FITNESS FOR ANY PARTICULAR PURPOSE; and
@@ -50,9 +50,9 @@
 // IP VLNV: xilinx.com:user:dut_wrapper:1.0
 // IP Revision: 14
 
-(* X_CORE_INFO = "dut_wrapper_v1_0,Vivado 2023.1.1" *)
+(* X_CORE_INFO = "dut_wrapper_v1_0,Vivado 2023.2" *)
 (* CHECK_LICENSE_TYPE = "System_dut_wrapper_0_0,dut_wrapper_v1_0,{}" *)
-(* CORE_GENERATION_INFO = "System_dut_wrapper_0_0,dut_wrapper_v1_0,{x_ipProduct=Vivado 2023.1.1,x_ipVendor=xilinx.com,x_ipLibrary=user,x_ipName=dut_wrapper,x_ipVersion=1.0,x_ipCoreRevision=14,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,C_M_AXI_ID_WIDTH=1,C_M_AXI_ADDR_WIDTH=32,C_M_AXI_DATA_WIDTH=512}" *)
+(* CORE_GENERATION_INFO = "System_dut_wrapper_0_0,dut_wrapper_v1_0,{x_ipProduct=Vivado 2023.2,x_ipVendor=xilinx.com,x_ipLibrary=user,x_ipName=dut_wrapper,x_ipVersion=1.0,x_ipCoreRevision=14,x_ipLanguage=VERILOG,x_ipSimLanguage=VERILOG,C_M_AXI_ID_WIDTH=1,C_M_AXI_ADDR_WIDTH=32,C_M_AXI_DATA_WIDTH=512}" *)
 (* DowngradeIPIdentifiedWarnings = "yes" *)
 module System_dut_wrapper_0_0 (
   ACLK,
