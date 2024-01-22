@@ -190,6 +190,24 @@
             },
             "V3": {
                 "VT": "AC",
+                "BA": "0x0000000000010000",
+                "HA": "0x000000000001FFFF",
+                "BP": "C_BASEADDR",
+                "HP": "C_HIGHADDR",
+                "MA": "M_AXI",
+                "MX": "/pcie_xdma",
+                "MI": "M_AXI",
+                "MS": "SEG_hdmi_controller_S_APB",
+                "MV": "xilinx.com:ip:xdma:4.1",
+                "SX": "/hdmi_controller",
+                "SI": "S_APB",
+                "SS": "S_APB",
+                "SV": "xilinx.com:user:hdmi_sil9134_controller:1.0",
+                "TM": "both",
+                "TU": "register"
+            },
+            "V4": {
+                "VT": "AC",
                 "BA": "0x0000000100000000",
                 "HA": "0x00000001FFFFFFFF",
                 "BP": "C0_DDR4_MEMORY_MAP_BASEADDR",
@@ -207,7 +225,7 @@
                 "TM": "both",
                 "TU": "memory"
             },
-            "V4": {
+            "V5": {
                 "VT": "AC",
                 "BA": "0x0000000200000000",
                 "HA": "0x00000002FFFFFFFF",
@@ -243,6 +261,11 @@
             },
             {
                 "src": "V4",
+                "trg": "V2",
+                "EH": "2"
+            },
+            {
+                "src": "V5",
                 "trg": "V2",
                 "EH": "2"
             }
