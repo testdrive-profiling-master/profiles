@@ -18,7 +18,7 @@ module hdmi_controller_v1_0 #(
 	input									S_PENABLE,
 	input									S_PWRITE,
 	input	[15:0]							S_PADDR,
-	input	[31:0]							S_PWDATA,
+	// input	[31:0]							S_PWDATA,
 	output	[31:0]							S_PRDATA,
 	output									S_PREADY,
 	output									S_PSLVERR,
@@ -186,8 +186,12 @@ hdmi_controller #(
 	.HDMI_DE				(HDMI_DE),
 	.HDMI_HSYNC				(HDMI_HSYNC),
 	.HDMI_VSYNC				(HDMI_VSYNC),
-	.HDMI_DATA				(HDMI_DATA),
+	.HDMI_DATA				({HDMI_DATA[11:4], HDMI_DATA[23:16], HDMI_DATA[35:28]}),
 	.HDMI_SPDIF				(HDMI_SPDIF)
 );
+
+assign	HDMI_DATA[ 3: 0]		= 4'd0;
+assign	HDMI_DATA[15:12]		= 4'd0;
+assign	HDMI_DATA[27:24]		= 4'd0;
 
 endmodule

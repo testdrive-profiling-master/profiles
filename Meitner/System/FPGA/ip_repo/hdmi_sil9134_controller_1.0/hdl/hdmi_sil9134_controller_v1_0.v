@@ -86,41 +86,42 @@ module hdmi_sil9134_controller_v1_0 #(
 );
 
 // definition & assignment ---------------------------------------------------
-wire	I2C_SCL_I, I2C_SCL_O, I2C_SCL_T;
-wire	I2C_SDA_I, I2C_SDA_O, I2C_SDA_T;
-
+wire			I2C_SCL_I, I2C_SCL_O, I2C_SCL_T;
+wire			I2C_SDA_I, I2C_SDA_O, I2C_SDA_T;
+wire	[35:0]	hdmi_out;
 // implementation ------------------------------------------------------------
 // for i2c io buffer
 IOBUF #(
 	.DRIVE			(8),
 	.SLEW			("SLOW"),
-	.IOSTANDARD		("LVDS")
+	.IOSTANDARD		("LVCMOS18")
 ) scl_buf (
 	.T		(I2C_SCL_T),
 	.I		(I2C_SCL_O),
 	.O		(I2C_SCL_I),
-	.IO		(HMDI_I2C_SCL)
+	.IO		(HDMI_I2C_SCL)
 );
 
 IOBUF #(
 	.DRIVE			(8),
 	.SLEW			("SLOW"),
-	.IOSTANDARD		("LVDS")
+	.IOSTANDARD		("LVCMOS18")
 ) sda_buf (
 	.T		(I2C_SDA_T),
 	.I		(I2C_SDA_O),
 	.O		(I2C_SDA_I),
-	.IO		(HMDI_I2C_SDA)
+	.IO		(HDMI_I2C_SDA)
 );
 
-/*
 // HDMI controller
 hdmi_controller #(
 	.C_S_AXI_DATA_WIDTH		(C_S_AXI_DATA_WIDTH),
 	.C_S_AXI_ADDR_WIDTH		(C_S_AXI_ADDR_WIDTH),
 	.C_M_AXI_ID_WIDTH		(C_M_AXI_ID_WIDTH),
 	.C_M_AXI_ADDR_WIDTH		(C_M_AXI_ADDR_WIDTH),
-	.C_M_AXI_DATA_WIDTH		(C_M_AXI_DATA_WIDTH)
+	.C_M_AXI_DATA_WIDTH		(C_M_AXI_DATA_WIDTH),
+	.C_CLKIN_PERIOD			(3.3333333333333333),
+	.C_DEFAULT_BASE_ADDR	(64'h00000001_00000000)
 ) hdmi_ctrl (
 	.ACLK					(ACLK),
 	.nRST					(nRST),
@@ -190,8 +191,7 @@ hdmi_controller #(
 	.HDMI_HSYNC				(HDMI_HSYNC),
 	.HDMI_VSYNC				(HDMI_VSYNC),
 	.HDMI_DATA				(HDMI_DATA),
-	.HDMI_SPDIF				(HDMI_SPDIF)
+	.HDMI_SPDIF				()
 );
-*/
 
 endmodule

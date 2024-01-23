@@ -1,24 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
-// 
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -30,9 +29,9 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : Testbench
-// Rev.  : 3/31/2021 Wed (clonextop@gmail.com)
+// Rev.  : 1/23/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __HDMI_CONTROLLER_H__
 #define __HDMI_CONTROLLER_H__
@@ -48,7 +47,7 @@ public:
 
 	void Reset(void);
 	BOOL SetScreen(int iWidth, int iHeight, int iRefreshFreq = 60, BOOL bReducedBlank = FALSE);
-	void SetBaseAddress(DWORD dwFrameBaseAddress);
+	void SetBaseAddress(uint64_t lFrameBaseAddress);
 
 protected:
 	void SetFrameSize(DWORD dwSize);
@@ -59,19 +58,19 @@ protected:
 	virtual void MMCM_Get(DWORD dwID, MMCM_READ& info);
 
 private:
-	struct{
-		union{
+	struct {
+		union {
 			DWORD	all;
-			struct{
+			struct {
 				DWORD	SDA			: 1;
 				DWORD	SCL			: 1;
 				DWORD	nRST		: 1;
 				DWORD	/*dummy*/	: 0;
 			};
-		}i2c;
-		union{
+		} i2c;
+		union {
 			DWORD	all;
-			struct{
+			struct {
 				DWORD	DATA		: 16;
 				DWORD	ADDR		: 7;
 				DWORD	WE			: 1;
@@ -80,8 +79,8 @@ private:
 				DWORD	/*dummy*/	: 5;
 				DWORD	HDMI_nEN	: 1;
 			};
-		}mmcm;
-	}m_Reg;
+		} mmcm;
+	} m_Reg;
 
 	DWORD		m_dwBaseAddress;
 	DDK*		m_pDDK;

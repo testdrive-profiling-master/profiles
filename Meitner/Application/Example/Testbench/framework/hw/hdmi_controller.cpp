@@ -1,24 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
-// 
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -30,9 +29,9 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 1/23/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #include "hdmi_controller.h"
 #include "CVT.h"
@@ -124,15 +123,16 @@ BOOL HDMI_Controller::SetScreen(int iWidth, int iHeight, int iRefreshFreq, BOOL 
 	return TRUE;
 }
 
-void HDMI_Controller::SetBaseAddress(DWORD dwFrameBaseAddress)
+void HDMI_Controller::SetBaseAddress(uint64_t lFrameBaseAddress)
 {
-	m_pDDK->RegWrite(m_dwBaseAddress + (3 << 2), dwFrameBaseAddress);
+	m_pDDK->RegWrite(m_dwBaseAddress + (3 << 2), (DWORD)(lFrameBaseAddress));
+	m_pDDK->RegWrite(m_dwBaseAddress + (4 << 2), (DWORD)(lFrameBaseAddress >> 32));
 }
 
 
 void HDMI_Controller::SetFrameSize(DWORD dwSize)
 {
-	SetBaseAddress(dwSize);	// if(!(dwSize&0x80000000)) set frame size;
+	m_pDDK->RegWrite(m_dwBaseAddress + (5 << 2), dwSize);
 }
 
 void HDMI_Controller::VideoEnable(BOOL bEnable)
