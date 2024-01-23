@@ -86,7 +86,7 @@ ifneq ($(BUILD_TARGET), $(TARGET_EXE))
 	endif
 endif
 
-OPTFLAGS		:= -w -Wall -Wextra -m64 -mfpmath=sse -mieee-fp -mmmx -msse -msse2
+OPTFLAGS		:= -w -Wall -Wextra -m64 -mfpmath=sse -mieee-fp -mmmx -msse -msse2 -mavx -mavx2 -march=native
 CFLAGS			:= $(CFLAGS) $(OPTFLAGS) $(INCDIR) $(EXTRA_CFLAGS)
 CPPFLAGS		:= $(CFLAGS)
 CFLAGS			:= $(subst -std=c++11,,$(CFLAGS))
