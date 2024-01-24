@@ -93,10 +93,10 @@ set_false_path -from [get_clocks hdmi_pclk] -to [get_clocks hdmi_aclk]
 set_false_path -from [get_clocks hdmi_aclk] -to [get_cells -hierarchical -filter {NAME =~  "*/HDMI_CLK_ODDR"}]
 
 ## for processor
-create_clock -name proc_clk -period 5.0 [get_pins -hierarchical -filter {NAME =~  "*testdrive_clock_gen/mmcm_inst/CLKOUT0"}]
+create_clock -name proc_clk -period 5.0 [get_pins -hierarchical -filter {NAME =~  "*testdrive_dut_clock_gen/CLK_OUT"}]
 set_false_path -from [get_clocks hdmi_aclk] -to [get_clocks proc_clk]
 set_false_path -from [get_clocks proc_clk] -to [get_clocks hdmi_aclk]
-set_false_path -from [get_pins -hierarchical -filter {NAME =~  "*testdrive_clock_gen/mmcm_inst/LOCKED"}]
+set_false_path -from [get_pins -hierarchical -filter {NAME =~  "*testdrive_dut_clock_gen/mmcm_inst/LOCKED"}]
 
 # multicycle path #2
 set_multicycle_path -hold   1 -to [get_cells -hierarchical -filter {NAME =~  "*gen_multicycle.path_2.o_data_reg[*]"}]

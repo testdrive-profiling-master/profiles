@@ -1,4 +1,4 @@
-call D:\\Xilinx\\Vivado\\2023.1\\bin\\vivado.bat -mode batch -source program_spi.tcl
+call D:\\Xilinx\\Vivado\\2023.2\\bin\\vivado.bat -mode batch -source program_spi.tcl
 if exist *isWriteableTest*.tmp del /F *isWriteableTest*.tmp
 if exist *pid*.* del /F *pid*.*
 if exist vivado_*.str del /F vivado_*.str

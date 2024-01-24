@@ -8,7 +8,7 @@ module hdmi_sil9134_controller_v1_0 #(
 	parameter integer	C_M_AXI_ID_WIDTH	= 1,
 	parameter integer	C_M_AXI_ADDR_WIDTH	= 32,
 	parameter integer	C_M_AXI_DATA_WIDTH	= 512
-)(
+) (
 	// system
 	input									ACLK,			// clock
 	input									nRST,			// reset (active low)
@@ -120,7 +120,7 @@ hdmi_controller #(
 	.C_M_AXI_ID_WIDTH		(C_M_AXI_ID_WIDTH),
 	.C_M_AXI_ADDR_WIDTH		(C_M_AXI_ADDR_WIDTH),
 	.C_M_AXI_DATA_WIDTH		(C_M_AXI_DATA_WIDTH),
-	.C_CLKIN_PERIOD			(3.3333333333333333),
+	.C_CLKIN_PERIOD			(4),
 	.C_DEFAULT_BASE_ADDR	(64'h00000001_00000000)
 ) hdmi_ctrl (
 	.ACLK					(ACLK),
@@ -177,7 +177,7 @@ hdmi_controller #(
 	.M_BVALID				(M_BVALID),
 	.M_BREADY				(M_BREADY),
 
-	.I2C_nRST				(HMDI_nRST),
+	.I2C_nRST				(HDMI_nRST),
 	.I2C_SCL_I				(I2C_SCL_I),
 	.I2C_SCL_O				(I2C_SCL_O),
 	.I2C_SCL_T				(I2C_SCL_T),

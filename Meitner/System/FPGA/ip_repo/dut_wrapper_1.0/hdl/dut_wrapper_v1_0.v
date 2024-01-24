@@ -4,6 +4,7 @@
 `include "DUTs/processor_axi_wrapper/processor_top.v"
 
 module dut_wrapper_v1_0 #(
+	parameter			C_CLKIN_PERIOD			= 5,
 	// M_AXI
 	parameter integer	C_M_AXI_ID_WIDTH		= 1,
 	parameter integer	C_M_AXI_ADDR_WIDTH		= 32,
@@ -75,6 +76,7 @@ module dut_wrapper_v1_0 #(
 // implementation ------------------------------------------------------------
 // DUT processor
 processor_axi_wrapper #(
+	.C_CLKIN_PERIOD			(C_CLKIN_PERIOD),
 	.C_M_AXI_ID_WIDTH		(C_M_AXI_ID_WIDTH),
 	.C_M_AXI_ADDR_WIDTH		(C_M_AXI_ADDR_WIDTH),
 	.C_M_AXI_DATA_WIDTH		(C_M_AXI_DATA_WIDTH)

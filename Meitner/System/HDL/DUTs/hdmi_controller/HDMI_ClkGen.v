@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : HDMI controller
-// Rev.  : 1/23/2024 Tue (clonextop@gmail.com)
+// Rev.  : 1/24/2024 Wed (clonextop@gmail.com)
 //================================================================================
 `timescale 1 ns / 100 ps
 module HDMI_ClkGen #(
@@ -40,15 +40,15 @@ module HDMI_ClkGen #(
 	) (
 		// port list -----------------------------------------------------------------
 		// clock in/out
-		input				REF_CLK,
-		output				CLK_OUT,
+		input							REF_CLK,
+		(* keep="true" *)   output		CLK_OUT,
 
 		// control signals
-		input				EN, WE, RST,
-		input	[6:0]		ADDR,
-		input	[15:0]		WDATA,
-		output	[15:0]		RDATA,
-		output				READY, LOCKED
+		input							EN, WE, RST,
+		input	[6:0]					ADDR,
+		input	[15:0]					WDATA,
+		output	[15:0]					RDATA,
+		output							READY, LOCKED
 	);
 
 	// definition & assignment ---------------------------------------------------
@@ -67,117 +67,117 @@ module HDMI_ClkGen #(
 		if (MMCM_TYPE == 1) begin
 			// Xilinx MMCM clock instance "MMCM_ADV"
 			MMCM_ADV #(
-				.BANDWIDTH				("OPTIMIZED"),
-				.CLKOUT4_CASCADE		("FALSE"),
-				.CLOCK_HOLD				("FALSE"),
-				.COMPENSATION			("ZHOLD"),
-				.STARTUP_WAIT			("FALSE"),
-				.DIVCLK_DIVIDE			(1),
-				.CLKFBOUT_MULT_F		(4),
-				.CLKFBOUT_PHASE			(0),
-				.CLKFBOUT_USE_FINE_PS	("FALSE"),
-				.CLKOUT0_DIVIDE_F		(4),
-				.CLKOUT0_PHASE			(0),
-				.CLKOUT0_DUTY_CYCLE		(0.5),
-				.CLKOUT0_USE_FINE_PS	("FALSE"),
-				.CLKIN1_PERIOD			(C_CLKIN_PERIOD),
-				.REF_JITTER1			(0.01))
+			    .BANDWIDTH				("OPTIMIZED"),
+			    .CLKOUT4_CASCADE		("FALSE"),
+			    .CLOCK_HOLD				("FALSE"),
+			    .COMPENSATION			("ZHOLD"),
+			    .STARTUP_WAIT			("FALSE"),
+			    .DIVCLK_DIVIDE			(1),
+			    .CLKFBOUT_MULT_F		(4),
+			    .CLKFBOUT_PHASE			(0),
+			    .CLKFBOUT_USE_FINE_PS	("FALSE"),
+			    .CLKOUT0_DIVIDE_F		(4),
+			    .CLKOUT0_PHASE			(0),
+			    .CLKOUT0_DUTY_CYCLE		(0.5),
+			    .CLKOUT0_USE_FINE_PS	("FALSE"),
+			    .CLKIN1_PERIOD			(C_CLKIN_PERIOD),
+			    .REF_JITTER1			(0.01))
 			mmcm_inst (
-				.CLKFBOUT				(fb_clk),
-				.CLKFBIN				(fb_clk_buf),
-				.CLKFBOUTB				(),
-				.CLKOUT0				(clk_out_0),
-				.CLKOUT0B				(),
-				.CLKOUT1				(),
-				.CLKOUT1B				(),
-				.CLKOUT2				(),
-				.CLKOUT2B				(),
-				.CLKOUT3				(),
-				.CLKOUT3B				(),
-				.CLKOUT4				(),
-				.CLKOUT5				(),
-				.CLKOUT6				(),
-				.CLKIN1					(REF_CLK),
-				.CLKIN2					(1'b0),
-				.CLKINSEL				(1'b1),
-				.DCLK					(REF_CLK),
-				.DADDR					(ADDR),
-				.DEN					(EN),
-				.DI						(WDATA),
-				.DO						(RDATA),
-				.DRDY					(READY),
-				.DWE					(WE),
-				.PSCLK					(1'b0),
-				.PSEN					(1'b0),
-				.PSINCDEC				(1'b0),
-				.PSDONE					(),
-				.LOCKED					(LOCKED),
-				.CLKINSTOPPED			(),
-				.CLKFBSTOPPED			(),
-				.PWRDWN					(1'b0),
-				.RST					(RST));
+			    .CLKFBOUT				(fb_clk),
+			    .CLKFBIN				(fb_clk_buf),
+			    .CLKFBOUTB				(),
+			    .CLKOUT0				(clk_out_0),
+			    .CLKOUT0B				(),
+			    .CLKOUT1				(),
+			    .CLKOUT1B				(),
+			    .CLKOUT2				(),
+			    .CLKOUT2B				(),
+			    .CLKOUT3				(),
+			    .CLKOUT3B				(),
+			    .CLKOUT4				(),
+			    .CLKOUT5				(),
+			    .CLKOUT6				(),
+			    .CLKIN1					(REF_CLK),
+			    .CLKIN2					(1'b0),
+			    .CLKINSEL				(1'b1),
+			    .DCLK					(REF_CLK),
+			    .DADDR					(ADDR),
+			    .DEN					(EN),
+			    .DI						(WDATA),
+			    .DO						(RDATA),
+			    .DRDY					(READY),
+			    .DWE					(WE),
+			    .PSCLK					(1'b0),
+			    .PSEN					(1'b0),
+			    .PSINCDEC				(1'b0),
+			    .PSDONE					(),
+			    .LOCKED					(LOCKED),
+			    .CLKINSTOPPED			(),
+			    .CLKFBSTOPPED			(),
+			    .PWRDWN					(1'b0),
+			    .RST					(RST));
 		end
 		else begin
 			// Xilinx MMCM clock instance "MMCME2_ADV"
 			MMCME2_ADV #(
-				.BANDWIDTH				("OPTIMIZED"),
-				.CLKOUT4_CASCADE		("FALSE"),
-				.COMPENSATION			("ZHOLD"),
-				.STARTUP_WAIT			("FALSE"),
-				.DIVCLK_DIVIDE			(1),
-				.CLKFBOUT_MULT_F		(4),
-				.CLKFBOUT_PHASE			(0),
-				.CLKFBOUT_USE_FINE_PS	("FALSE"),
-				.CLKOUT0_DIVIDE_F		(4),
-				.CLKOUT0_PHASE			(0),
-				.CLKOUT0_DUTY_CYCLE		(0.5),
-				.CLKOUT0_USE_FINE_PS	("FALSE"),
-				.CLKIN1_PERIOD			(C_CLKIN_PERIOD),
-				.REF_JITTER1			(0.01))
+			    .BANDWIDTH				("OPTIMIZED"),
+			    .CLKOUT4_CASCADE		("FALSE"),
+			    .COMPENSATION			("ZHOLD"),
+			    .STARTUP_WAIT			("FALSE"),
+			    .DIVCLK_DIVIDE			(1),
+			    .CLKFBOUT_MULT_F		(4),
+			    .CLKFBOUT_PHASE			(0),
+			    .CLKFBOUT_USE_FINE_PS	("FALSE"),
+			    .CLKOUT0_DIVIDE_F		(4),
+			    .CLKOUT0_PHASE			(0),
+			    .CLKOUT0_DUTY_CYCLE		(0.5),
+			    .CLKOUT0_USE_FINE_PS	("FALSE"),
+			    .CLKIN1_PERIOD			(C_CLKIN_PERIOD),
+			    .REF_JITTER1			(0.01))
 			mmcm_inst (
-				.CLKFBOUT				(fb_clk),
-				.CLKFBIN				(fb_clk_buf),
-				.CLKFBOUTB				(),
-				.CLKOUT0				(clk_out_0),
-				.CLKOUT0B				(),
-				.CLKOUT1				(),
-				.CLKOUT1B				(),
-				.CLKOUT2				(),
-				.CLKOUT2B				(),
-				.CLKOUT3				(),
-				.CLKOUT3B				(),
-				.CLKOUT4				(),
-				.CLKOUT5				(),
-				.CLKOUT6				(),
-				.CLKIN1					(REF_CLK),
-				.CLKIN2					(1'b0),
-				.CLKINSEL				(1'b1),
-				.DCLK					(REF_CLK),
-				.DADDR					(ADDR),
-				.DEN					(EN),
-				.DI						(WDATA),
-				.DO						(RDATA),
-				.DRDY					(READY),
-				.DWE					(WE),
-				.PSCLK					(1'b0),
-				.PSEN					(1'b0),
-				.PSINCDEC				(1'b0),
-				.PSDONE					(),
-				.LOCKED					(LOCKED),
-				.CLKINSTOPPED			(),
-				.CLKFBSTOPPED			(),
-				.PWRDWN					(1'b0),
-				.RST					(RST));
+			    .CLKFBOUT				(fb_clk),
+			    .CLKFBIN				(fb_clk_buf),
+			    .CLKFBOUTB				(),
+			    .CLKOUT0				(clk_out_0),
+			    .CLKOUT0B				(),
+			    .CLKOUT1				(),
+			    .CLKOUT1B				(),
+			    .CLKOUT2				(),
+			    .CLKOUT2B				(),
+			    .CLKOUT3				(),
+			    .CLKOUT3B				(),
+			    .CLKOUT4				(),
+			    .CLKOUT5				(),
+			    .CLKOUT6				(),
+			    .CLKIN1					(REF_CLK),
+			    .CLKIN2					(1'b0),
+			    .CLKINSEL				(1'b1),
+			    .DCLK					(REF_CLK),
+			    .DADDR					(ADDR),
+			    .DEN					(EN),
+			    .DI						(WDATA),
+			    .DO						(RDATA),
+			    .DRDY					(READY),
+			    .DWE					(WE),
+			    .PSCLK					(1'b0),
+			    .PSEN					(1'b0),
+			    .PSINCDEC				(1'b0),
+			    .PSDONE					(),
+			    .LOCKED					(LOCKED),
+			    .CLKINSTOPPED			(),
+			    .CLKFBSTOPPED			(),
+			    .PWRDWN					(1'b0),
+			    .RST					(RST));
 		end
 	endgenerate
 
 	BUFG fb_bufg_inst (
-		.I (fb_clk),
-		.O (fb_clk_buf));
+	    .I (fb_clk),
+	    .O (fb_clk_buf));
 
 	BUFG bufg_inst (
-		.I (clk_out_0),
-		.O (CLK_OUT));
+	    .I (clk_out_0),
+	    .O (CLK_OUT));
 `endif
 
 endmodule

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : HDMI controller
-// Rev.  : 1/23/2024 Tue (clonextop@gmail.com)
+// Rev.  : 1/24/2024 Wed (clonextop@gmail.com)
 //================================================================================
 module HDMI_Slave # (
 		parameter			C_DEFAULT_BASE_ADDR	= 64'h00000000_80000000,
@@ -137,7 +137,7 @@ module HDMI_Slave # (
 	// ClkGen
 	HDMI_ClkGen #(
 		.C_CLKIN_PERIOD	(C_CLKIN_PERIOD)
-	) ClkGen_inst (
+	) testdrive_hdmi_clock_gen (
 		// clock in/out
 		.REF_CLK		(CLK),
 		.CLK_OUT		(HDMI_CLK),

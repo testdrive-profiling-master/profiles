@@ -208,6 +208,24 @@
             },
             "V4": {
                 "VT": "AC",
+                "BA": "0x00020000",
+                "HA": "0x0002FFFF",
+                "BP": "C_BASEADDR",
+                "HP": "C_HIGHADDR",
+                "MA": "M_AXI_LITE",
+                "MX": "/pcie_xdma",
+                "MI": "M_AXI_LITE",
+                "MS": "SEG_dut_wrapper_0_S_APB",
+                "MV": "xilinx.com:ip:xdma:4.1",
+                "SX": "/dut_wrapper_0",
+                "SI": "S_APB",
+                "SS": "S_APB",
+                "SV": "xilinx.com:user:dut_wrapper:1.0",
+                "TM": "both",
+                "TU": "register"
+            },
+            "V5": {
+                "VT": "AC",
                 "BA": "0x0000000100000000",
                 "HA": "0x00000001FFFFFFFF",
                 "BP": "C0_DDR4_MEMORY_MAP_BASEADDR",
@@ -225,7 +243,7 @@
                 "TM": "both",
                 "TU": "memory"
             },
-            "V5": {
+            "V6": {
                 "VT": "AC",
                 "BA": "0x0000000200000000",
                 "HA": "0x00000002FFFFFFFF",
@@ -266,6 +284,11 @@
             },
             {
                 "src": "V5",
+                "trg": "V2",
+                "EH": "2"
+            },
+            {
+                "src": "V6",
                 "trg": "V2",
                 "EH": "2"
             }

@@ -75,7 +75,7 @@
         "xdma_rnum_chnl": [ { "value": "1", "resolve_type": "user", "usage": "all" } ],
         "xdma_wnum_chnl": [ { "value": "1", "resolve_type": "user", "usage": "all" } ],
         "xdma_axilite_slave": [ { "value": "false", "resolve_type": "user", "usage": "all" } ],
-        "xdma_num_usr_irq": [ { "value": "1", "resolve_type": "user", "usage": "all" } ],
+        "xdma_num_usr_irq": [ { "value": "1", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
         "xdma_rnum_rids": [ { "value": "32", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "xdma_wnum_rids": [ { "value": "16", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "SYS_RST_N_BOARD_INTERFACE": [ { "value": "pcie_perstn", "value_src": "user", "resolve_type": "user", "usage": "all" } ],
