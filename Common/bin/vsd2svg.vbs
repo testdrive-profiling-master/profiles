@@ -54,10 +54,9 @@ If WScript.Arguments.Count > 0 Then
 				Wscript.Echo "*E: Visio('" & vsdPath & "') page('" & page_name & "') is not found."
 			End If
 		End If
-		
-		objVisio.Close 0
-		objVisio.Quit
-		objDraw			= Nothing
+		objDraw.Close 0
+		objVisio.Application.Quit
+		set objDraw		= Nothing
 		Set objVisio	= Nothing
 	Else
 		Wscript.Echo "Not a Visio file."
