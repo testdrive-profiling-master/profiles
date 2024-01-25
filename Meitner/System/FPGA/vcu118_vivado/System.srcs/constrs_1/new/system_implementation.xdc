@@ -1,9 +1,4 @@
 ###############################################################################
-# APB bus (out-of-context synthesis bug?)
-###############################################################################
-create_clock -name apb_aclk -period 4.0 [get_pins system_design_i/axi_apb_bridge/s_axi_aclk] -quiet
-
-###############################################################################
 # PCIe XDMA
 ###############################################################################
 create_clock -name pcie_aclk -period 4.0 [get_pins system_design_i/pcie_xdma/axi_aclk] -quiet

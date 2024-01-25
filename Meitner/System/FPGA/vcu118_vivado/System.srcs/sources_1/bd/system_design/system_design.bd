@@ -22,6 +22,7 @@
         "s00_couplers": {
           "s00_regslice": "",
           "s00_data_fifo": "",
+          "auto_us": "",
           "auto_cc": ""
         },
         "s01_couplers": {
@@ -47,7 +48,8 @@
       "hdmi_controller": "",
       "axi_apb_bridge": "",
       "dut_wrapper_0": "",
-      "util_vector_logic_0": ""
+      "util_vector_logic_0": "",
+      "smartconnect_pcie": ""
     },
     "interface_ports": {
       "pcie_refclk": {
@@ -506,6 +508,9 @@
           "SYS_RST_N_BOARD_INTERFACE": {
             "value": "pcie_perstn"
           },
+          "axi_bypass_64bit_en": {
+            "value": "true"
+          },
           "axi_data_width": {
             "value": "512_bit"
           },
@@ -518,6 +523,15 @@
           "axilite_master_size": {
             "value": "1"
           },
+          "axist_bypass_en": {
+            "value": "true"
+          },
+          "axist_bypass_scale": {
+            "value": "Megabytes"
+          },
+          "axist_bypass_size": {
+            "value": "32"
+          },
           "axisten_freq": {
             "value": "250"
           },
@@ -526,6 +540,9 @@
           },
           "mode_selection": {
             "value": "Advanced"
+          },
+          "pciebar2axibar_axist_bypass": {
+            "value": "0x0000000400000000"
           },
           "pf0_base_class_menu": {
             "value": "Memory_controller"
@@ -565,6 +582,12 @@
           },
           "xdma_pcie_64bit_en": {
             "value": "true"
+          },
+          "xdma_rnum_chnl": {
+            "value": "4"
+          },
+          "xdma_wnum_chnl": {
+            "value": "4"
           }
         },
         "interface_ports": {
@@ -576,6 +599,26 @@
               "minimum": "0x00000000",
               "maximum": "0xFFFFFFFFFFFFFFFF",
               "width": "64"
+            },
+            "parameters": {
+              "master_id": {
+                "value": "2"
+              }
+            }
+          },
+          "M_AXI_BYPASS": {
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
+            "mode": "Master",
+            "address_space_ref": "M_AXI_BYPASS",
+            "base_address": {
+              "minimum": "0x00000000",
+              "maximum": "0xFFFFFFFFFFFFFFFF",
+              "width": "64"
+            },
+            "parameters": {
+              "master_id": {
+                "value": "1"
+              }
             }
           },
           "M_AXI_LITE": {
@@ -592,6 +635,10 @@
         "addressing": {
           "address_spaces": {
             "M_AXI": {
+              "range": "16E",
+              "width": "64"
+            },
+            "M_AXI_BYPASS": {
               "range": "16E",
               "width": "64"
             },
@@ -1030,6 +1077,30 @@
                   }
                 }
               },
+              "auto_us": {
+                "vlnv": "xilinx.com:ip:axi_dwidth_converter:2.1",
+                "ip_revision": "29",
+                "xci_name": "system_design_auto_us_0",
+                "xci_path": "ip\\system_design_auto_us_0\\system_design_auto_us_0.xci",
+                "inst_hier_path": "axi_interconnect_mem/s00_couplers/auto_us",
+                "parameters": {
+                  "MI_DATA_WIDTH": {
+                    "value": "512"
+                  },
+                  "SI_DATA_WIDTH": {
+                    "value": "32"
+                  }
+                },
+                "interface_ports": {
+                  "S_AXI": {
+                    "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
+                    "mode": "Slave",
+                    "bridges": [
+                      "M_AXI"
+                    ]
+                  }
+                }
+              },
               "auto_cc": {
                 "vlnv": "xilinx.com:ip:axi_clock_converter:2.1",
                 "ip_revision": "28",
@@ -1054,6 +1125,12 @@
                   "auto_cc/M_AXI"
                 ]
               },
+              "auto_us_to_auto_cc": {
+                "interface_ports": [
+                  "auto_us/M_AXI",
+                  "auto_cc/S_AXI"
+                ]
+              },
               "s00_couplers_to_s00_regslice": {
                 "interface_ports": [
                   "S_AXI",
@@ -1066,10 +1143,10 @@
                   "M_AXI"
                 ]
               },
-              "s00_regslice_to_auto_cc": {
+              "s00_regslice_to_auto_us": {
                 "interface_ports": [
                   "s00_regslice/M_AXI",
-                  "auto_cc/S_AXI"
+                  "auto_us/S_AXI"
                 ]
               }
             },
@@ -1092,6 +1169,7 @@
                 "ports": [
                   "S_ACLK",
                   "s00_regslice/aclk",
+                  "auto_us/s_axi_aclk",
                   "auto_cc/s_axi_aclk"
                 ]
               },
@@ -1099,6 +1177,7 @@
                 "ports": [
                   "S_ARESETN",
                   "s00_regslice/aresetn",
+                  "auto_us/s_axi_aresetn",
                   "auto_cc/s_axi_aresetn"
                 ]
               }
@@ -1922,6 +2001,78 @@
             "value": "1"
           }
         }
+      },
+      "smartconnect_pcie": {
+        "vlnv": "xilinx.com:ip:smartconnect:1.0",
+        "ip_revision": "21",
+        "xci_name": "system_design_smartconnect_0_0",
+        "xci_path": "ip\\system_design_smartconnect_0_0\\system_design_smartconnect_0_0.xci",
+        "inst_hier_path": "smartconnect_pcie",
+        "interface_ports": {
+          "S00_AXI": {
+            "mode": "Slave",
+            "vlnv_bus_definition": "xilinx.com:interface:aximm:1.0",
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
+            "parameters": {
+              "NUM_READ_OUTSTANDING": {
+                "value": "32"
+              },
+              "NUM_WRITE_OUTSTANDING": {
+                "value": "16"
+              }
+            },
+            "bridges": [
+              "M00_AXI"
+            ]
+          },
+          "S01_AXI": {
+            "mode": "Slave",
+            "vlnv_bus_definition": "xilinx.com:interface:aximm:1.0",
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
+            "parameters": {
+              "NUM_READ_OUTSTANDING": {
+                "value": "8"
+              },
+              "NUM_WRITE_OUTSTANDING": {
+                "value": "8"
+              }
+            },
+            "bridges": [
+              "M00_AXI"
+            ]
+          },
+          "M00_AXI": {
+            "mode": "Master",
+            "vlnv_bus_definition": "xilinx.com:interface:aximm:1.0",
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
+            "parameters": {
+              "MAX_BURST_LENGTH": {
+                "value": "256"
+              },
+              "NUM_READ_OUTSTANDING": {
+                "value": "32"
+              },
+              "NUM_READ_THREADS": {
+                "value": "1"
+              },
+              "NUM_WRITE_OUTSTANDING": {
+                "value": "16"
+              },
+              "NUM_WRITE_THREADS": {
+                "value": "1"
+              },
+              "RUSER_BITS_PER_BYTE": {
+                "value": "0"
+              },
+              "SUPPORTS_NARROW_BURST": {
+                "value": "0"
+              },
+              "WUSER_BITS_PER_BYTE": {
+                "value": "0"
+              }
+            }
+          }
+        }
       }
     },
     "interface_nets": {
@@ -1994,7 +2145,13 @@
       "pcie_xdma_M_AXI": {
         "interface_ports": [
           "pcie_xdma/M_AXI",
-          "axi_interconnect_mem/S00_AXI"
+          "smartconnect_pcie/S00_AXI"
+        ]
+      },
+      "pcie_xdma_M_AXI_BYPASS": {
+        "interface_ports": [
+          "pcie_xdma/M_AXI_BYPASS",
+          "smartconnect_pcie/S01_AXI"
         ]
       },
       "pcie_xdma_M_AXI_LITE": {
@@ -2007,6 +2164,12 @@
         "interface_ports": [
           "pci_express_x16",
           "pcie_xdma/pcie_mgt"
+        ]
+      },
+      "smartconnect_0_M00_AXI": {
+        "interface_ports": [
+          "smartconnect_pcie/M00_AXI",
+          "axi_interconnect_mem/S00_AXI"
         ]
       }
     },
@@ -2151,7 +2314,8 @@
           "axi_interconnect_mem/S01_ACLK",
           "axi_interconnect_mem/S02_ACLK",
           "hdmi_controller/ACLK",
-          "dut_wrapper_0/ACLK"
+          "dut_wrapper_0/ACLK",
+          "smartconnect_pcie/aclk"
         ]
       },
       "pcie_xdma_axi_aresetn": {
@@ -2162,7 +2326,8 @@
           "axi_interconnect_mem/S01_ARESETN",
           "axi_interconnect_mem/S02_ARESETN",
           "hdmi_controller/nRST",
-          "dut_wrapper_0/nRST"
+          "dut_wrapper_0/nRST",
+          "smartconnect_pcie/aresetn"
         ]
       },
       "reset_1": {
@@ -2193,14 +2358,32 @@
             "segments": {
               "SEG_ddr4_0_C0_DDR4_ADDRESS_BLOCK": {
                 "address_block": "/ddr4_0/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
-                "offset": "0x0000000100000000",
+                "offset": "0x0000000400000000",
                 "range": "4G",
                 "offset_base_param": "C0_DDR4_MEMORY_MAP_BASEADDR",
                 "offset_high_param": "C0_DDR4_MEMORY_MAP_HIGHADDR"
               },
               "SEG_ddr4_1_C0_DDR4_ADDRESS_BLOCK": {
                 "address_block": "/ddr4_1/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
-                "offset": "0x0000000200000000",
+                "offset": "0x0000000500000000",
+                "range": "4G",
+                "offset_base_param": "C0_DDR4_MEMORY_MAP_BASEADDR",
+                "offset_high_param": "C0_DDR4_MEMORY_MAP_HIGHADDR"
+              }
+            }
+          },
+          "M_AXI_BYPASS": {
+            "segments": {
+              "SEG_ddr4_0_C0_DDR4_ADDRESS_BLOCK": {
+                "address_block": "/ddr4_0/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
+                "offset": "0x0000000400000000",
+                "range": "4G",
+                "offset_base_param": "C0_DDR4_MEMORY_MAP_BASEADDR",
+                "offset_high_param": "C0_DDR4_MEMORY_MAP_HIGHADDR"
+              },
+              "SEG_ddr4_1_C0_DDR4_ADDRESS_BLOCK": {
+                "address_block": "/ddr4_1/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
+                "offset": "0x0000000500000000",
                 "range": "4G",
                 "offset_base_param": "C0_DDR4_MEMORY_MAP_BASEADDR",
                 "offset_high_param": "C0_DDR4_MEMORY_MAP_HIGHADDR"

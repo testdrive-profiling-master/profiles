@@ -56,3 +56,8 @@ set_property slew "fast" [get_ports HDMI_CLK]
 set_property IOSTANDARD LVCMOS18 [get_ports -filter {NAME =~  "HDMI_*"}]
 set_false_path -from [get_ports -filter {NAME =~  "HDMI_I2C_*"}]
 set_false_path -to   [get_ports -filter {NAME =~  "HDMI_I2C_*"}]
+
+###############################################################################
+# APB bus (out-of-context synthesis bug?)
+###############################################################################
+create_clock -name apb_aclk -period 4.0 [get_pins system_design_i/axi_apb_bridge/s_axi_aclk] -quiet

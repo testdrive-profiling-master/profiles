@@ -1,8 +1,0 @@
-TARGETNAME=testdrive
-TARGETTYPE=DRIVER
-
-
-MSC_WARNING_LEVEL=/W4 /WX
-
-
-SOURCES=driver_control.c driver_entry_unload.c driver_entry_unload.c driver_create_close.c driver_pnp.c driver.rc
