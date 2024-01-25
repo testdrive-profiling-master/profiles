@@ -88,7 +88,7 @@ typedef struct TD_DEVICE_INFO_t {
 		struct {
 			unsigned int	gen				: 4;	// gen number
 			unsigned int	lanes			: 4;	// lane count
-			unsigned int	bars			: 2;	// BAR count
+			unsigned int	bars			: 3;	// BAR count
 			unsigned int	/*reserved*/	: 0;
 		};
 	} pcie;
