@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : WDM PCIe Driver for TestDrive
-// Rev.  : 1/25/2024 Thu (clonextop@gmail.com)
+// Rev.  : 1/26/2024 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __DRIVER_TESTDRIVE_H__
 #define __DRIVER_TESTDRIVE_H__
@@ -43,6 +43,7 @@
 
 #define DEV_NAME					"testdrive_pcie"			// driver name
 #define DEV_PATH					"\\\\.\\" DEV_NAME
+#define MAX_BAR_SIZE				4
 #define TD_MAX_DEVICE_COUNT			64						// maximum device stack count
 
 // I/O command list
@@ -55,6 +56,7 @@ typedef enum {
 	IOCTL_COMMAND_TRANSACTION_DMA		= CTL_CODE(FILE_DEVICE_UNKNOWN, 0x806, METHOD_OUT_DIRECT, FILE_ANY_ACCESS),
 	IOCTL_COMMAND_INTERRUPT_LOCK		= CTL_CODE(FILE_DEVICE_UNKNOWN, 0x807, METHOD_OUT_DIRECT, FILE_ANY_ACCESS),
 	IOCTL_COMMAND_INTERRUPT_FREE		= CTL_CODE(FILE_DEVICE_UNKNOWN, 0x808, METHOD_OUT_DIRECT, FILE_ANY_ACCESS),
+	IOCTL_COMMAND_COMMAND_POST			= CTL_CODE(FILE_DEVICE_UNKNOWN, 0x809, METHOD_OUT_DIRECT, FILE_ANY_ACCESS),
 } IOCTL_COMMAND;
 
 // device IDs
@@ -87,9 +89,10 @@ typedef struct TD_DEVICE_INFO_t {
 		unsigned int		m;
 		struct {
 			unsigned int	gen				: 4;	// gen number
-			unsigned int	lanes			: 4;	// lane count
+			unsigned int	lanes			: 6;	// lane count
 			unsigned int	bars			: 3;	// BAR count
-			unsigned int	/*reserved*/	: 0;
+			unsigned int	/*reserved*/	: 11;
+			unsigned int	revision_id		: 8;	// revision ID
 		};
 	} pcie;
 } TD_DEVICE_INFO;
@@ -150,5 +153,13 @@ typedef struct TD_TRANSACTION_DMA_t {
 	unsigned int	offset;					// DMA memory address offset
 	unsigned int	size;					// transaction size
 } TD_TRANSACTION_DMA;
+
+typedef struct TD_COMMAND_POST_t {
+	struct {
+		unsigned int	dev_id			: 8;	// device ID
+		unsigned int	/*reserved*/	: 0;
+	};
+	unsigned int	cmd_data;				// command data
+} TD_COMMAND_POST;
 
 #endif//__DRIVER_TESTDRIVE_H__

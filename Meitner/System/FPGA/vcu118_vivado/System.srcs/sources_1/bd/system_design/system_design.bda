@@ -226,8 +226,8 @@
             },
             "V5": {
                 "VT": "AC",
-                "BA": "0x0000000400000000",
-                "HA": "0x00000004FFFFFFFF",
+                "BA": "0x0000000800000000",
+                "HA": "0x00000008FFFFFFFF",
                 "BP": "C0_DDR4_MEMORY_MAP_BASEADDR",
                 "HP": "C0_DDR4_MEMORY_MAP_HIGHADDR",
                 "MA": "M_AXI",
@@ -245,8 +245,8 @@
             },
             "V6": {
                 "VT": "AC",
-                "BA": "0x0000000400000000",
-                "HA": "0x00000004FFFFFFFF",
+                "BA": "0x0000000800000000",
+                "HA": "0x00000008FFFFFFFF",
                 "BP": "C0_DDR4_MEMORY_MAP_BASEADDR",
                 "HP": "C0_DDR4_MEMORY_MAP_HIGHADDR",
                 "MA": "M_AXI_BYPASS",
@@ -264,8 +264,8 @@
             },
             "V7": {
                 "VT": "AC",
-                "BA": "0x0000000500000000",
-                "HA": "0x00000005FFFFFFFF",
+                "BA": "0x0000000900000000",
+                "HA": "0x00000009FFFFFFFF",
                 "BP": "C0_DDR4_MEMORY_MAP_BASEADDR",
                 "HP": "C0_DDR4_MEMORY_MAP_HIGHADDR",
                 "MA": "M_AXI",
@@ -283,8 +283,8 @@
             },
             "V8": {
                 "VT": "AC",
-                "BA": "0x0000000500000000",
-                "HA": "0x00000005FFFFFFFF",
+                "BA": "0x0000000900000000",
+                "HA": "0x00000009FFFFFFFF",
                 "BP": "C0_DDR4_MEMORY_MAP_BASEADDR",
                 "HP": "C0_DDR4_MEMORY_MAP_HIGHADDR",
                 "MA": "M_AXI_BYPASS",

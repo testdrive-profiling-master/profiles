@@ -542,7 +542,7 @@
             "value": "Advanced"
           },
           "pciebar2axibar_axist_bypass": {
-            "value": "0x0000000400000000"
+            "value": "0x0000000800000000"
           },
           "pf0_base_class_menu": {
             "value": "Memory_controller"
@@ -2358,14 +2358,14 @@
             "segments": {
               "SEG_ddr4_0_C0_DDR4_ADDRESS_BLOCK": {
                 "address_block": "/ddr4_0/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
-                "offset": "0x0000000400000000",
+                "offset": "0x0000000800000000",
                 "range": "4G",
                 "offset_base_param": "C0_DDR4_MEMORY_MAP_BASEADDR",
                 "offset_high_param": "C0_DDR4_MEMORY_MAP_HIGHADDR"
               },
               "SEG_ddr4_1_C0_DDR4_ADDRESS_BLOCK": {
                 "address_block": "/ddr4_1/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
-                "offset": "0x0000000500000000",
+                "offset": "0x0000000900000000",
                 "range": "4G",
                 "offset_base_param": "C0_DDR4_MEMORY_MAP_BASEADDR",
                 "offset_high_param": "C0_DDR4_MEMORY_MAP_HIGHADDR"
@@ -2376,14 +2376,14 @@
             "segments": {
               "SEG_ddr4_0_C0_DDR4_ADDRESS_BLOCK": {
                 "address_block": "/ddr4_0/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
-                "offset": "0x0000000400000000",
+                "offset": "0x0000000800000000",
                 "range": "4G",
                 "offset_base_param": "C0_DDR4_MEMORY_MAP_BASEADDR",
                 "offset_high_param": "C0_DDR4_MEMORY_MAP_HIGHADDR"
               },
               "SEG_ddr4_1_C0_DDR4_ADDRESS_BLOCK": {
                 "address_block": "/ddr4_1/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
-                "offset": "0x0000000500000000",
+                "offset": "0x0000000900000000",
                 "range": "4G",
                 "offset_base_param": "C0_DDR4_MEMORY_MAP_BASEADDR",
                 "offset_high_param": "C0_DDR4_MEMORY_MAP_HIGHADDR"

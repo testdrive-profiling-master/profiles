@@ -3,7 +3,7 @@
 #-------------------------------------------------
 TARGETNAME		:= PCIeDriverSystem
 
-INC				:= -I../../../Driver/windows/inc
+INC				:= -I../../../Driver/windows/inc -I../../../Application/include
 
 #-------------------------------------------------
 # common document config

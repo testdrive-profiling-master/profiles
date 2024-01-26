@@ -30,37 +30,21 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 //
-// Title : Driver(PCIe) sub-system
+// Title : Global system configuration
 // Rev.  : 1/26/2024 Fri (clonextop@gmail.com)
 //================================================================================
-#ifndef __PCIE_DRIVER_H__
-#define __PCIE_DRIVER_H__
-#include "SystemDriverInterface.h"
-#include "driver_testdrive.h"
+#ifndef __DRIVER_COMMAND_H__
+#define __DRIVER_COMMAND_H__
 
-class PCIeDriver : public SystemDriverInterface {
-public:
-	PCIeDriver(void);
-	virtual ~PCIeDriver(void);
+typedef enum {
+	DRIVER_COMMAND_ID_SELECT_BAR,		// data:id(BAR#)
+} DRIVER_COMMAND_ID;
 
-	// native driver interfaces
-	virtual bool Initialize(const char* sDeviceName = NULL);
-	virtual void Release(void);
-	virtual void SetCurrentCard(DWORD dwIndex);
-	virtual void RegWrite(UINT64 dwAddress, DWORD dwData);
-	virtual DWORD RegRead(UINT64 dwAddress);
-	virtual void MemoryWrite(NativeMemory* pNative, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize);
-	virtual void MemoryRead(NativeMemory* pNative, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize);
-	virtual void MemoryCreate(NativeMemory* pNative, UINT64 dwByteSize, UINT64 dwAlignment, bool bDMA);
-	virtual void MemoryFree(NativeMemory* pNative);
-	virtual void InterruptLock(void);
-	virtual void InterruptFree(void);
-	virtual DWORD Command(void* pCommand);
+typedef struct {
+	DRIVER_COMMAND_ID	command_id;
+	union {
+		unsigned int		id;
+	} data;
+} DRIVER_COMMAND;
 
-private:
-	OVERLAPPED			m_OverlappedIO;
-	DWORD				m_dwCurrentCardID;
-	int					m_iBarID;				// BAR# of RegWrite/RegRead
-};
-
-#endif//__PCIE_DRIVER_H__
+#endif//__DRIVER_COMMAND_H__
