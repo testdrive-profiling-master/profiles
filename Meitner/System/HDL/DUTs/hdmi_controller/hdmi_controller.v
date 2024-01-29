@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : HDMI controller
-// Rev.  : 1/23/2024 Tue (clonextop@gmail.com)
+// Rev.  : 1/29/2024 Mon (clonextop@gmail.com)
 //================================================================================
 module hdmi_controller #(
 		// S_AXI
@@ -43,7 +43,7 @@ module hdmi_controller #(
 		parameter integer	C_M_AXI_DATA_WIDTH	= 512,
 		// HDMI parameters
 		parameter			C_CLKIN_PERIOD		= 5,
-		parameter			C_DEFAULT_BASE_ADDR	= 64'h00000000_80000000
+		parameter			C_DEFAULT_BASE_ADDR	= 64'h00000008_00000000
 	) (
 		//// AXI slave interface
 		// system

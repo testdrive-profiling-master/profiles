@@ -31,10 +31,10 @@
 // OF SUCH DAMAGE.
 //
 // Title : HDMI controller
-// Rev.  : 1/24/2024 Wed (clonextop@gmail.com)
+// Rev.  : 1/29/2024 Mon (clonextop@gmail.com)
 //================================================================================
 module HDMI_Slave # (
-		parameter			C_DEFAULT_BASE_ADDR	= 64'h00000000_80000000,
+		parameter			C_DEFAULT_BASE_ADDR	= 64'h00000008_00000000,
 		parameter			C_CLKIN_PERIOD		= 5
 	) (
 		// port list -----------------------------------------------------------------
@@ -73,6 +73,7 @@ module HDMI_Slave # (
 	reg							clkgen_EN, clkgen_WE, clkgen_RST;
 	reg		[6:0]				clkgen_ADDR;
 	reg		[15:0]				clkgen_WDATA;
+	reg		[31:0]				video_hi_addr;
 	wire	[15:0]				clkgen_RDATA;
 	wire						clkgen_READY, clkgen_LOCKED;
 
@@ -102,6 +103,7 @@ module HDMI_Slave # (
 			I2C_nRST			<= 1'b0;
 			I2C_SCL_T			<= 1'b1;
 			I2C_SDA_T			<= 1'b1;
+			video_hi_addr		<= 32'h8;
 			VIDEO_BASE			<= C_DEFAULT_BASE_ADDR;
 			VIDEO_FRAME			<= 'd1;		// minimum count
 		end
@@ -122,10 +124,10 @@ module HDMI_Slave # (
 					clkgen_WDATA	<= S_WDATA[15:0];
 				end
 				if(S_ADDR=='d3) begin
-					VIDEO_BASE[31:0]	<= S_WDATA;
+					VIDEO_BASE			<= {video_hi_addr, S_WDATA};
 				end
 				if(S_ADDR=='d4) begin
-					VIDEO_BASE[63:32]	<= S_WDATA;
+					video_hi_addr		<= S_WDATA;
 				end
 				if(S_ADDR=='d5) begin
 					VIDEO_FRAME			<= S_WDATA[15:0];

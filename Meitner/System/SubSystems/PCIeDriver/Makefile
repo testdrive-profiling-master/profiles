@@ -1,7 +1,7 @@
 #-------------------------------------------------
 # Project
 #-------------------------------------------------
-TARGETNAME		:= PCIeDriverSystem
+TARGETNAME		:= testdrive_pcie
 
 INC				:= -I../../../Driver/windows/inc -I../../../Application/include
 

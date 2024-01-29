@@ -31,11 +31,11 @@
 // OF SUCH DAMAGE.
 //
 // Title : HDMI controller
-// Rev.  : 1/23/2024 Tue (clonextop@gmail.com)
+// Rev.  : 1/29/2024 Mon (clonextop@gmail.com)
 //================================================================================
 
 module HDMI_TOP #(
-		parameter			C_DEFAULT_BASE_ADDR	= 64'h00000000_80000000,
+		parameter			C_DEFAULT_BASE_ADDR	= 64'h00000008_00000000,
 		parameter integer	C_ADDR_WIDTH		= 32,
 		parameter			C_CLKIN_PERIOD		= 5
 	) (

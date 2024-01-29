@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Testbench
-// Rev.  : 1/23/2024 Tue (clonextop@gmail.com)
+// Rev.  : 1/29/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #include "hdmi_controller.h"
 #include "CVT.h"
@@ -66,8 +66,8 @@ BOOL HDMI_Controller::SetScreen(int iWidth, int iHeight, int iRefreshFreq, BOOL 
 {
 	printf("HDMI(%dx%dx%d-'%s') initialization sequencing...\n", iWidth, iHeight, iRefreshFreq, bReducedBlank ? "Reduced Blank" : "Normal CVT");
 	Reset();
-	m_I2C.Write8Direct(0xE8, 0x20);	// set switch to HDMI
-	{
+	//m_I2C.Write8Direct(0xE8, 0x20);	// set switch to HDMI (vc707)
+	/*{	// (vc707)
 		printf("\tWaiting for HDMI's HPD...\n");
 		BYTE				data;
 
@@ -77,13 +77,13 @@ BOOL HDMI_Controller::SetScreen(int iWidth, int iHeight, int iRefreshFreq, BOOL 
 
 				if((data & 0x80)) break;
 			}
-	}
-	m_I2C.Set8(0x72, 0x96, 0);
+	}*/
+	//m_I2C.Set8(0x72, 0x96, 0);	// (vc707)
 	{
 		CVT	cvt;
 		CVT_MODE* pMode = cvt.Refresh(iWidth, iHeight, iRefreshFreq, bReducedBlank);
 		printf("\tSetup video timing.\n");
-		m_I2C.Set8(0x72, 0x41, 0x50);	// all circuits powered down
+		//m_I2C.Set8(0x72, 0x41, 0x50);	// all circuits powered down (vc707)
 		Sleep(10);
 		// update video timing...
 		m_pDDK->RegWrite(m_dwBaseAddress + 4, pMode->v.sync + pMode->v.back + pMode->v.active);		// V_END
@@ -96,28 +96,48 @@ BOOL HDMI_Controller::SetScreen(int iWidth, int iHeight, int iRefreshFreq, BOOL 
 		m_pDDK->RegWrite(m_dwBaseAddress + 4, pMode->h.total - 1);									// H_SYNC
 		// setup video clock
 		printf("\tSetup video clock to %.2fMhz(actual %.2fMHz)\n\t", cvt.Get()->pixel_clk, m_MMCM.SetClock(0, cvt.Get()->pixel_clk));
-		m_I2C.Set8(0x72, 0x41, 0x10);	// all circuits powered up
-		Sleep(10);
-		// must be set
-		m_I2C.Set8(0x72, 0x98, 0x03);	// Must be set for proper operation
-		m_I2C.Set8(0x72, 0x9A, 0xE0);	// Must be set for proper operation
-		m_I2C.Set8(0x72, 0x9C, 0x30);	// Must be set for proper operation
-		m_I2C.Set8(0x72, 0x9D, 0x61);	// Must be set for proper operation, no clock divide
-		m_I2C.Set8(0x72, 0xA2, 0xA4);	// Must be set for proper operation
-		m_I2C.Set8(0x72, 0xA3, 0xA4);	// Must be set for proper operation
-		m_I2C.Set8(0x72, 0xE0, 0xD0);	// Must be set for proper operation
-		m_I2C.Set8(0x72, 0xF9, 0x00);	// Fixed I2C address : 0x00
-		// set up the video input mode
-		m_I2C.Set8(0x72, 0x15, 0x00);	// I2S Sampling Frequency (44.1Khz), Input Video Format(24 bit RGB 4:4:4 or YCbCr 4:4:4 (separate syncs))
-		m_I2C.Set8(0x72, 0x16, 0x30);	// 4:4:4 8bit color RGB mode
-		m_I2C.Set8(0x72, 0x17, 0x02);	// Aspect ratio of input video : 16:9
-		// set up video output mode
-		m_I2C.Set8(0x72, 0x18, 0x46);	// disable CSC(color space converter)
-		m_I2C.Set8(0x72, 0xAF, 0x04);	// DVI mode
-		m_I2C.Set8(0x72, 0x40, 0x00);	// all packet disable
-		m_I2C.Set8(0x72, 0x4C, 0x04);	// Color Depth : 24bits/Pixel
+		{
+			/* (vc707)
+			m_I2C.Set8(0x72, 0x41, 0x10);	// all circuits powered up
+			Sleep(10);
+			// must be set
+			m_I2C.Set8(0x72, 0x98, 0x03);	// Must be set for proper operation
+			m_I2C.Set8(0x72, 0x9A, 0xE0);	// Must be set for proper operation
+			m_I2C.Set8(0x72, 0x9C, 0x30);	// Must be set for proper operation
+			m_I2C.Set8(0x72, 0x9D, 0x61);	// Must be set for proper operation, no clock divide
+			m_I2C.Set8(0x72, 0xA2, 0xA4);	// Must be set for proper operation
+			m_I2C.Set8(0x72, 0xA3, 0xA4);	// Must be set for proper operation
+			m_I2C.Set8(0x72, 0xE0, 0xD0);	// Must be set for proper operation
+			m_I2C.Set8(0x72, 0xF9, 0x00);	// Fixed I2C address : 0x00
+			// set up the video input mode
+			m_I2C.Set8(0x72, 0x15, 0x00);	// I2S Sampling Frequency (44.1Khz), Input Video Format(24 bit RGB 4:4:4 or YCbCr 4:4:4 (separate syncs))
+			m_I2C.Set8(0x72, 0x16, 0x30);	// 4:4:4 8bit color RGB mode
+			m_I2C.Set8(0x72, 0x17, 0x02);	// Aspect ratio of input video : 16:9
+			// set up video output mode
+			m_I2C.Set8(0x72, 0x18, 0x46);	// disable CSC(color space converter)
+			m_I2C.Set8(0x72, 0xAF, 0x04);	// DVI mode
+			m_I2C.Set8(0x72, 0x40, 0x00);	// all packet disable
+			m_I2C.Set8(0x72, 0x4C, 0x04);	// Color Depth : 24bits/Pixel
+			*/
+		}
 		SetFrameSize((iWidth * iHeight) / 256);			// set buffer size
 		VideoEnable();
+		{
+			m_I2C.Set8(0x72, 0x05, 0xFF);		// Software reset
+			m_I2C.Set8(0x7A, 0x05, 0xFF);		// Software reset
+			Sleep(1);
+			m_I2C.Set8(0x72, 0x05, 0x00);
+			m_I2C.Set8(0x7A, 0x05, 0x00);
+			Sleep(1);
+			m_I2C.Set8(0x72, 0x08, 0x37);
+			m_I2C.Set8(0x72, 0x49, 0x00);
+			m_I2C.Set8(0x72, 0x4A, 0x00);
+			m_I2C.Set8(0x72, 0x82, 0x25);
+			m_I2C.Set8(0x72, 0x83, 0x1b);
+			m_I2C.Set8(0x72, 0x84, 0x30);
+			m_I2C.Set8(0x72, 0x85, 0x02);
+			m_I2C.Set8(0x7A, 0x2F, 0x00);		// audio disable
+		}
 		printf("\tDone!\n\n");
 	}
 	return TRUE;
@@ -125,8 +145,8 @@ BOOL HDMI_Controller::SetScreen(int iWidth, int iHeight, int iRefreshFreq, BOOL 
 
 void HDMI_Controller::SetBaseAddress(uint64_t lFrameBaseAddress)
 {
-	m_pDDK->RegWrite(m_dwBaseAddress + (3 << 2), (DWORD)(lFrameBaseAddress));
 	m_pDDK->RegWrite(m_dwBaseAddress + (4 << 2), (DWORD)(lFrameBaseAddress >> 32));
+	m_pDDK->RegWrite(m_dwBaseAddress + (3 << 2), (DWORD)(lFrameBaseAddress));
 }
 
 

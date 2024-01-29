@@ -16,7 +16,7 @@ set_false_path -to [get_ports ddr4_sdram_c2_062_reset_n]
 ###############################################################################
 # HDMI controller
 ###############################################################################
-set_property PACKAGE_PIN L36 [get_ports HDMI_CLK]
+set_property PACKAGE_PIN AW10 [get_ports HDMI_CLK]
 set_property PACKAGE_PIN AJ12 [get_ports HDMI_VSYNC]
 set_property PACKAGE_PIN AK13 [get_ports HDMI_HSYNC]
 set_property PACKAGE_PIN AJ13 [get_ports HDMI_DE]

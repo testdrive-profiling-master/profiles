@@ -227,7 +227,7 @@
             "V5": {
                 "VT": "AC",
                 "BA": "0x0000000800000000",
-                "HA": "0x00000008FFFFFFFF",
+                "HA": "0x000000087FFFFFFF",
                 "BP": "C0_DDR4_MEMORY_MAP_BASEADDR",
                 "HP": "C0_DDR4_MEMORY_MAP_HIGHADDR",
                 "MA": "M_AXI",
@@ -245,51 +245,13 @@
             },
             "V6": {
                 "VT": "AC",
-                "BA": "0x0000000800000000",
+                "BA": "0x0000000880000000",
                 "HA": "0x00000008FFFFFFFF",
-                "BP": "C0_DDR4_MEMORY_MAP_BASEADDR",
-                "HP": "C0_DDR4_MEMORY_MAP_HIGHADDR",
-                "MA": "M_AXI_BYPASS",
-                "MX": "/pcie_xdma",
-                "MI": "M_AXI_BYPASS",
-                "MS": "SEG_ddr4_0_C0_DDR4_ADDRESS_BLOCK",
-                "MV": "xilinx.com:ip:xdma:4.1",
-                "SX": "/ddr4_0",
-                "SI": "C0_DDR4_S_AXI",
-                "MM": "C0_DDR4_MEMORY_MAP",
-                "SS": "C0_DDR4_ADDRESS_BLOCK",
-                "SV": "xilinx.com:ip:ddr4:2.2",
-                "TM": "both",
-                "TU": "memory"
-            },
-            "V7": {
-                "VT": "AC",
-                "BA": "0x0000000900000000",
-                "HA": "0x00000009FFFFFFFF",
                 "BP": "C0_DDR4_MEMORY_MAP_BASEADDR",
                 "HP": "C0_DDR4_MEMORY_MAP_HIGHADDR",
                 "MA": "M_AXI",
                 "MX": "/pcie_xdma",
                 "MI": "M_AXI",
-                "MS": "SEG_ddr4_1_C0_DDR4_ADDRESS_BLOCK",
-                "MV": "xilinx.com:ip:xdma:4.1",
-                "SX": "/ddr4_1",
-                "SI": "C0_DDR4_S_AXI",
-                "MM": "C0_DDR4_MEMORY_MAP",
-                "SS": "C0_DDR4_ADDRESS_BLOCK",
-                "SV": "xilinx.com:ip:ddr4:2.2",
-                "TM": "both",
-                "TU": "memory"
-            },
-            "V8": {
-                "VT": "AC",
-                "BA": "0x0000000900000000",
-                "HA": "0x00000009FFFFFFFF",
-                "BP": "C0_DDR4_MEMORY_MAP_BASEADDR",
-                "HP": "C0_DDR4_MEMORY_MAP_HIGHADDR",
-                "MA": "M_AXI_BYPASS",
-                "MX": "/pcie_xdma",
-                "MI": "M_AXI_BYPASS",
                 "MS": "SEG_ddr4_1_C0_DDR4_ADDRESS_BLOCK",
                 "MV": "xilinx.com:ip:xdma:4.1",
                 "SX": "/ddr4_1",
@@ -327,16 +289,6 @@
             },
             {
                 "src": "V6",
-                "trg": "V2",
-                "EH": "2"
-            },
-            {
-                "src": "V7",
-                "trg": "V2",
-                "EH": "2"
-            },
-            {
-                "src": "V8",
                 "trg": "V2",
                 "EH": "2"
             }

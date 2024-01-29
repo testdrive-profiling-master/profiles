@@ -1,7 +1,7 @@
 {
   "design": {
     "design_info": {
-      "boundary_crc": "0xAC8F1FE56E09BDAC",
+      "boundary_crc": "0xAC6C514DAB156B99",
       "device": "xcvu9p-flga2104-2L-e",
       "gen_directory": "../../../../System.gen/sources_1/bd/system_design",
       "name": "system_design",
@@ -22,7 +22,6 @@
         "s00_couplers": {
           "s00_regslice": "",
           "s00_data_fifo": "",
-          "auto_us": "",
           "auto_cc": ""
         },
         "s01_couplers": {
@@ -48,8 +47,7 @@
       "hdmi_controller": "",
       "axi_apb_bridge": "",
       "dut_wrapper_0": "",
-      "util_vector_logic_0": "",
-      "smartconnect_pcie": ""
+      "util_vector_logic_0": ""
     },
     "interface_ports": {
       "pcie_refclk": {
@@ -107,139 +105,6 @@
           }
         }
       },
-      "ddr4_sdram_c1_062": {
-        "mode": "Master",
-        "vlnv_bus_definition": "xilinx.com:interface:ddr4:1.0",
-        "vlnv": "xilinx.com:interface:ddr4_rtl:1.0",
-        "parameters": {
-          "AXI_ARBITRATION_SCHEME": {
-            "value": "RD_PRI_REG",
-            "value_src": "default"
-          },
-          "BURST_LENGTH": {
-            "value": "8",
-            "value_src": "default"
-          },
-          "CAN_DEBUG": {
-            "value": "false",
-            "value_src": "default"
-          },
-          "CAS_LATENCY": {
-            "value": "18",
-            "value_src": "default"
-          },
-          "CAS_WRITE_LATENCY": {
-            "value": "12",
-            "value_src": "default"
-          },
-          "CS_ENABLED": {
-            "value": "true",
-            "value_src": "default"
-          },
-          "CUSTOM_PARTS": {
-            "value": "no_file_loaded",
-            "value_src": "default"
-          },
-          "DATA_MASK_ENABLED": {
-            "value": "DM_NO_DBI",
-            "value_src": "default"
-          },
-          "DATA_WIDTH": {
-            "value": "64",
-            "value_src": "default"
-          },
-          "MEMORY_PART": {
-            "value": "MT40A256M16LY-062E",
-            "value_src": "default"
-          },
-          "MEMORY_TYPE": {
-            "value": "Components",
-            "value_src": "default"
-          },
-          "MEM_ADDR_MAP": {
-            "value": "ROW_COLUMN_BANK",
-            "value_src": "default"
-          },
-          "SLOT": {
-            "value": "Single",
-            "value_src": "default"
-          },
-          "TIMEPERIOD_PS": {
-            "value": "833",
-            "value_src": "default"
-          }
-        },
-        "port_maps": {
-          "ACT_N": {
-            "physical_name": "ddr4_sdram_c1_062_act_n",
-            "direction": "O"
-          },
-          "ADR": {
-            "physical_name": "ddr4_sdram_c1_062_adr",
-            "direction": "O",
-            "left": "16",
-            "right": "0"
-          },
-          "BA": {
-            "physical_name": "ddr4_sdram_c1_062_ba",
-            "direction": "O",
-            "left": "1",
-            "right": "0"
-          },
-          "BG": {
-            "physical_name": "ddr4_sdram_c1_062_bg",
-            "direction": "O"
-          },
-          "CK_C": {
-            "physical_name": "ddr4_sdram_c1_062_ck_c",
-            "direction": "O"
-          },
-          "CK_T": {
-            "physical_name": "ddr4_sdram_c1_062_ck_t",
-            "direction": "O"
-          },
-          "CKE": {
-            "physical_name": "ddr4_sdram_c1_062_cke",
-            "direction": "O"
-          },
-          "CS_N": {
-            "physical_name": "ddr4_sdram_c1_062_cs_n",
-            "direction": "O"
-          },
-          "DM_N": {
-            "physical_name": "ddr4_sdram_c1_062_dm_n",
-            "direction": "IO",
-            "left": "7",
-            "right": "0"
-          },
-          "DQ": {
-            "physical_name": "ddr4_sdram_c1_062_dq",
-            "direction": "IO",
-            "left": "63",
-            "right": "0"
-          },
-          "DQS_C": {
-            "physical_name": "ddr4_sdram_c1_062_dqs_c",
-            "direction": "IO",
-            "left": "7",
-            "right": "0"
-          },
-          "DQS_T": {
-            "physical_name": "ddr4_sdram_c1_062_dqs_t",
-            "direction": "IO",
-            "left": "7",
-            "right": "0"
-          },
-          "ODT": {
-            "physical_name": "ddr4_sdram_c1_062_odt",
-            "direction": "O"
-          },
-          "RESET_N": {
-            "physical_name": "ddr4_sdram_c1_062_reset_n",
-            "direction": "O"
-          }
-        }
-      },
       "default_250mhz_clk1": {
         "mode": "Slave",
         "vlnv_bus_definition": "xilinx.com:interface:diff_clock:1.0",
@@ -264,139 +129,6 @@
           }
         }
       },
-      "ddr4_sdram_c2_062": {
-        "mode": "Master",
-        "vlnv_bus_definition": "xilinx.com:interface:ddr4:1.0",
-        "vlnv": "xilinx.com:interface:ddr4_rtl:1.0",
-        "parameters": {
-          "AXI_ARBITRATION_SCHEME": {
-            "value": "RD_PRI_REG",
-            "value_src": "default"
-          },
-          "BURST_LENGTH": {
-            "value": "8",
-            "value_src": "default"
-          },
-          "CAN_DEBUG": {
-            "value": "false",
-            "value_src": "default"
-          },
-          "CAS_LATENCY": {
-            "value": "18",
-            "value_src": "default"
-          },
-          "CAS_WRITE_LATENCY": {
-            "value": "12",
-            "value_src": "default"
-          },
-          "CS_ENABLED": {
-            "value": "true",
-            "value_src": "default"
-          },
-          "CUSTOM_PARTS": {
-            "value": "no_file_loaded",
-            "value_src": "default"
-          },
-          "DATA_MASK_ENABLED": {
-            "value": "DM_NO_DBI",
-            "value_src": "default"
-          },
-          "DATA_WIDTH": {
-            "value": "64",
-            "value_src": "default"
-          },
-          "MEMORY_PART": {
-            "value": "MT40A256M16LY-062E",
-            "value_src": "default"
-          },
-          "MEMORY_TYPE": {
-            "value": "Components",
-            "value_src": "default"
-          },
-          "MEM_ADDR_MAP": {
-            "value": "ROW_COLUMN_BANK",
-            "value_src": "default"
-          },
-          "SLOT": {
-            "value": "Single",
-            "value_src": "default"
-          },
-          "TIMEPERIOD_PS": {
-            "value": "833",
-            "value_src": "default"
-          }
-        },
-        "port_maps": {
-          "ACT_N": {
-            "physical_name": "ddr4_sdram_c2_062_act_n",
-            "direction": "O"
-          },
-          "ADR": {
-            "physical_name": "ddr4_sdram_c2_062_adr",
-            "direction": "O",
-            "left": "16",
-            "right": "0"
-          },
-          "BA": {
-            "physical_name": "ddr4_sdram_c2_062_ba",
-            "direction": "O",
-            "left": "1",
-            "right": "0"
-          },
-          "BG": {
-            "physical_name": "ddr4_sdram_c2_062_bg",
-            "direction": "O"
-          },
-          "CK_C": {
-            "physical_name": "ddr4_sdram_c2_062_ck_c",
-            "direction": "O"
-          },
-          "CK_T": {
-            "physical_name": "ddr4_sdram_c2_062_ck_t",
-            "direction": "O"
-          },
-          "CKE": {
-            "physical_name": "ddr4_sdram_c2_062_cke",
-            "direction": "O"
-          },
-          "CS_N": {
-            "physical_name": "ddr4_sdram_c2_062_cs_n",
-            "direction": "O"
-          },
-          "DM_N": {
-            "physical_name": "ddr4_sdram_c2_062_dm_n",
-            "direction": "IO",
-            "left": "7",
-            "right": "0"
-          },
-          "DQ": {
-            "physical_name": "ddr4_sdram_c2_062_dq",
-            "direction": "IO",
-            "left": "63",
-            "right": "0"
-          },
-          "DQS_C": {
-            "physical_name": "ddr4_sdram_c2_062_dqs_c",
-            "direction": "IO",
-            "left": "7",
-            "right": "0"
-          },
-          "DQS_T": {
-            "physical_name": "ddr4_sdram_c2_062_dqs_t",
-            "direction": "IO",
-            "left": "7",
-            "right": "0"
-          },
-          "ODT": {
-            "physical_name": "ddr4_sdram_c2_062_odt",
-            "direction": "O"
-          },
-          "RESET_N": {
-            "physical_name": "ddr4_sdram_c2_062_reset_n",
-            "direction": "O"
-          }
-        }
-      },
       "default_250mhz_clk2": {
         "mode": "Slave",
         "vlnv_bus_definition": "xilinx.com:interface:diff_clock:1.0",
@@ -418,6 +150,272 @@
           "CLK_P": {
             "physical_name": "default_250mhz_clk2_clk_p",
             "direction": "I"
+          }
+        }
+      },
+      "ddr4_sdram_c1_083": {
+        "mode": "Master",
+        "vlnv_bus_definition": "xilinx.com:interface:ddr4:1.0",
+        "vlnv": "xilinx.com:interface:ddr4_rtl:1.0",
+        "parameters": {
+          "AXI_ARBITRATION_SCHEME": {
+            "value": "RD_PRI_REG",
+            "value_src": "user_prop"
+          },
+          "BURST_LENGTH": {
+            "value": "8",
+            "value_src": "user_prop"
+          },
+          "CAN_DEBUG": {
+            "value": "false",
+            "value_src": "default"
+          },
+          "CAS_LATENCY": {
+            "value": "18",
+            "value_src": "user_prop"
+          },
+          "CAS_WRITE_LATENCY": {
+            "value": "12",
+            "value_src": "user_prop"
+          },
+          "CS_ENABLED": {
+            "value": "true",
+            "value_src": "user_prop"
+          },
+          "CUSTOM_PARTS": {
+            "value": "no_file_loaded",
+            "value_src": "user_prop"
+          },
+          "DATA_MASK_ENABLED": {
+            "value": "DM_NO_DBI",
+            "value_src": "user_prop"
+          },
+          "DATA_WIDTH": {
+            "value": "64",
+            "value_src": "user_prop"
+          },
+          "MEMORY_PART": {
+            "value": "MT40A256M16GE-083E",
+            "value_src": "user_prop"
+          },
+          "MEMORY_TYPE": {
+            "value": "Components",
+            "value_src": "user_prop"
+          },
+          "MEM_ADDR_MAP": {
+            "value": "ROW_COLUMN_BANK",
+            "value_src": "user_prop"
+          },
+          "SLOT": {
+            "value": "Single",
+            "value_src": "user_prop"
+          },
+          "TIMEPERIOD_PS": {
+            "value": "833",
+            "value_src": "user_prop"
+          }
+        },
+        "port_maps": {
+          "ACT_N": {
+            "physical_name": "ddr4_sdram_c1_083_act_n",
+            "direction": "O"
+          },
+          "ADR": {
+            "physical_name": "ddr4_sdram_c1_083_adr",
+            "direction": "O",
+            "left": "16",
+            "right": "0"
+          },
+          "BA": {
+            "physical_name": "ddr4_sdram_c1_083_ba",
+            "direction": "O",
+            "left": "1",
+            "right": "0"
+          },
+          "BG": {
+            "physical_name": "ddr4_sdram_c1_083_bg",
+            "direction": "O"
+          },
+          "CK_C": {
+            "physical_name": "ddr4_sdram_c1_083_ck_c",
+            "direction": "O"
+          },
+          "CK_T": {
+            "physical_name": "ddr4_sdram_c1_083_ck_t",
+            "direction": "O"
+          },
+          "CKE": {
+            "physical_name": "ddr4_sdram_c1_083_cke",
+            "direction": "O"
+          },
+          "CS_N": {
+            "physical_name": "ddr4_sdram_c1_083_cs_n",
+            "direction": "O"
+          },
+          "DM_N": {
+            "physical_name": "ddr4_sdram_c1_083_dm_n",
+            "direction": "IO",
+            "left": "7",
+            "right": "0"
+          },
+          "DQ": {
+            "physical_name": "ddr4_sdram_c1_083_dq",
+            "direction": "IO",
+            "left": "63",
+            "right": "0"
+          },
+          "DQS_C": {
+            "physical_name": "ddr4_sdram_c1_083_dqs_c",
+            "direction": "IO",
+            "left": "7",
+            "right": "0"
+          },
+          "DQS_T": {
+            "physical_name": "ddr4_sdram_c1_083_dqs_t",
+            "direction": "IO",
+            "left": "7",
+            "right": "0"
+          },
+          "ODT": {
+            "physical_name": "ddr4_sdram_c1_083_odt",
+            "direction": "O"
+          },
+          "RESET_N": {
+            "physical_name": "ddr4_sdram_c1_083_reset_n",
+            "direction": "O"
+          }
+        }
+      },
+      "ddr4_sdram_c2_083": {
+        "mode": "Master",
+        "vlnv_bus_definition": "xilinx.com:interface:ddr4:1.0",
+        "vlnv": "xilinx.com:interface:ddr4_rtl:1.0",
+        "parameters": {
+          "AXI_ARBITRATION_SCHEME": {
+            "value": "RD_PRI_REG",
+            "value_src": "user_prop"
+          },
+          "BURST_LENGTH": {
+            "value": "8",
+            "value_src": "user_prop"
+          },
+          "CAN_DEBUG": {
+            "value": "false",
+            "value_src": "default"
+          },
+          "CAS_LATENCY": {
+            "value": "18",
+            "value_src": "user_prop"
+          },
+          "CAS_WRITE_LATENCY": {
+            "value": "12",
+            "value_src": "user_prop"
+          },
+          "CS_ENABLED": {
+            "value": "true",
+            "value_src": "user_prop"
+          },
+          "CUSTOM_PARTS": {
+            "value": "no_file_loaded",
+            "value_src": "user_prop"
+          },
+          "DATA_MASK_ENABLED": {
+            "value": "DM_NO_DBI",
+            "value_src": "user_prop"
+          },
+          "DATA_WIDTH": {
+            "value": "64",
+            "value_src": "user_prop"
+          },
+          "MEMORY_PART": {
+            "value": "MT40A256M16GE-083E",
+            "value_src": "user_prop"
+          },
+          "MEMORY_TYPE": {
+            "value": "Components",
+            "value_src": "user_prop"
+          },
+          "MEM_ADDR_MAP": {
+            "value": "ROW_COLUMN_BANK",
+            "value_src": "user_prop"
+          },
+          "SLOT": {
+            "value": "Single",
+            "value_src": "user_prop"
+          },
+          "TIMEPERIOD_PS": {
+            "value": "833",
+            "value_src": "user_prop"
+          }
+        },
+        "port_maps": {
+          "ACT_N": {
+            "physical_name": "ddr4_sdram_c2_083_act_n",
+            "direction": "O"
+          },
+          "ADR": {
+            "physical_name": "ddr4_sdram_c2_083_adr",
+            "direction": "O",
+            "left": "16",
+            "right": "0"
+          },
+          "BA": {
+            "physical_name": "ddr4_sdram_c2_083_ba",
+            "direction": "O",
+            "left": "1",
+            "right": "0"
+          },
+          "BG": {
+            "physical_name": "ddr4_sdram_c2_083_bg",
+            "direction": "O"
+          },
+          "CK_C": {
+            "physical_name": "ddr4_sdram_c2_083_ck_c",
+            "direction": "O"
+          },
+          "CK_T": {
+            "physical_name": "ddr4_sdram_c2_083_ck_t",
+            "direction": "O"
+          },
+          "CKE": {
+            "physical_name": "ddr4_sdram_c2_083_cke",
+            "direction": "O"
+          },
+          "CS_N": {
+            "physical_name": "ddr4_sdram_c2_083_cs_n",
+            "direction": "O"
+          },
+          "DM_N": {
+            "physical_name": "ddr4_sdram_c2_083_dm_n",
+            "direction": "IO",
+            "left": "7",
+            "right": "0"
+          },
+          "DQ": {
+            "physical_name": "ddr4_sdram_c2_083_dq",
+            "direction": "IO",
+            "left": "63",
+            "right": "0"
+          },
+          "DQS_C": {
+            "physical_name": "ddr4_sdram_c2_083_dqs_c",
+            "direction": "IO",
+            "left": "7",
+            "right": "0"
+          },
+          "DQS_T": {
+            "physical_name": "ddr4_sdram_c2_083_dqs_t",
+            "direction": "IO",
+            "left": "7",
+            "right": "0"
+          },
+          "ODT": {
+            "physical_name": "ddr4_sdram_c2_083_odt",
+            "direction": "O"
+          },
+          "RESET_N": {
+            "physical_name": "ddr4_sdram_c2_083_reset_n",
+            "direction": "O"
           }
         }
       }
@@ -508,9 +506,6 @@
           "SYS_RST_N_BOARD_INTERFACE": {
             "value": "pcie_perstn"
           },
-          "axi_bypass_64bit_en": {
-            "value": "true"
-          },
           "axi_data_width": {
             "value": "512_bit"
           },
@@ -524,13 +519,7 @@
             "value": "1"
           },
           "axist_bypass_en": {
-            "value": "true"
-          },
-          "axist_bypass_scale": {
-            "value": "Megabytes"
-          },
-          "axist_bypass_size": {
-            "value": "32"
+            "value": "false"
           },
           "axisten_freq": {
             "value": "250"
@@ -540,9 +529,6 @@
           },
           "mode_selection": {
             "value": "Advanced"
-          },
-          "pciebar2axibar_axist_bypass": {
-            "value": "0x0000000800000000"
           },
           "pf0_base_class_menu": {
             "value": "Memory_controller"
@@ -599,26 +585,6 @@
               "minimum": "0x00000000",
               "maximum": "0xFFFFFFFFFFFFFFFF",
               "width": "64"
-            },
-            "parameters": {
-              "master_id": {
-                "value": "2"
-              }
-            }
-          },
-          "M_AXI_BYPASS": {
-            "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
-            "mode": "Master",
-            "address_space_ref": "M_AXI_BYPASS",
-            "base_address": {
-              "minimum": "0x00000000",
-              "maximum": "0xFFFFFFFFFFFFFFFF",
-              "width": "64"
-            },
-            "parameters": {
-              "master_id": {
-                "value": "1"
-              }
             }
           },
           "M_AXI_LITE": {
@@ -690,7 +656,7 @@
             "value": "default_250mhz_clk1"
           },
           "C0_DDR4_BOARD_INTERFACE": {
-            "value": "ddr4_sdram_c1_062"
+            "value": "ddr4_sdram_c1_083"
           },
           "RESET_BOARD_INTERFACE": {
             "value": "reset"
@@ -747,7 +713,7 @@
             "value": "default_250mhz_clk2"
           },
           "C0_DDR4_BOARD_INTERFACE": {
-            "value": "ddr4_sdram_c2_062"
+            "value": "ddr4_sdram_c2_083"
           },
           "RESET_BOARD_INTERFACE": {
             "value": "reset"
@@ -1077,30 +1043,6 @@
                   }
                 }
               },
-              "auto_us": {
-                "vlnv": "xilinx.com:ip:axi_dwidth_converter:2.1",
-                "ip_revision": "29",
-                "xci_name": "system_design_auto_us_0",
-                "xci_path": "ip\\system_design_auto_us_0\\system_design_auto_us_0.xci",
-                "inst_hier_path": "axi_interconnect_mem/s00_couplers/auto_us",
-                "parameters": {
-                  "MI_DATA_WIDTH": {
-                    "value": "512"
-                  },
-                  "SI_DATA_WIDTH": {
-                    "value": "32"
-                  }
-                },
-                "interface_ports": {
-                  "S_AXI": {
-                    "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
-                    "mode": "Slave",
-                    "bridges": [
-                      "M_AXI"
-                    ]
-                  }
-                }
-              },
               "auto_cc": {
                 "vlnv": "xilinx.com:ip:axi_clock_converter:2.1",
                 "ip_revision": "28",
@@ -1125,12 +1067,6 @@
                   "auto_cc/M_AXI"
                 ]
               },
-              "auto_us_to_auto_cc": {
-                "interface_ports": [
-                  "auto_us/M_AXI",
-                  "auto_cc/S_AXI"
-                ]
-              },
               "s00_couplers_to_s00_regslice": {
                 "interface_ports": [
                   "S_AXI",
@@ -1143,10 +1079,10 @@
                   "M_AXI"
                 ]
               },
-              "s00_regslice_to_auto_us": {
+              "s00_regslice_to_auto_cc": {
                 "interface_ports": [
                   "s00_regslice/M_AXI",
-                  "auto_us/S_AXI"
+                  "auto_cc/S_AXI"
                 ]
               }
             },
@@ -1169,7 +1105,6 @@
                 "ports": [
                   "S_ACLK",
                   "s00_regslice/aclk",
-                  "auto_us/s_axi_aclk",
                   "auto_cc/s_axi_aclk"
                 ]
               },
@@ -1177,7 +1112,6 @@
                 "ports": [
                   "S_ARESETN",
                   "s00_regslice/aresetn",
-                  "auto_us/s_axi_aresetn",
                   "auto_cc/s_axi_aresetn"
                 ]
               }
@@ -2001,78 +1935,6 @@
             "value": "1"
           }
         }
-      },
-      "smartconnect_pcie": {
-        "vlnv": "xilinx.com:ip:smartconnect:1.0",
-        "ip_revision": "21",
-        "xci_name": "system_design_smartconnect_0_0",
-        "xci_path": "ip\\system_design_smartconnect_0_0\\system_design_smartconnect_0_0.xci",
-        "inst_hier_path": "smartconnect_pcie",
-        "interface_ports": {
-          "S00_AXI": {
-            "mode": "Slave",
-            "vlnv_bus_definition": "xilinx.com:interface:aximm:1.0",
-            "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
-            "parameters": {
-              "NUM_READ_OUTSTANDING": {
-                "value": "32"
-              },
-              "NUM_WRITE_OUTSTANDING": {
-                "value": "16"
-              }
-            },
-            "bridges": [
-              "M00_AXI"
-            ]
-          },
-          "S01_AXI": {
-            "mode": "Slave",
-            "vlnv_bus_definition": "xilinx.com:interface:aximm:1.0",
-            "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
-            "parameters": {
-              "NUM_READ_OUTSTANDING": {
-                "value": "8"
-              },
-              "NUM_WRITE_OUTSTANDING": {
-                "value": "8"
-              }
-            },
-            "bridges": [
-              "M00_AXI"
-            ]
-          },
-          "M00_AXI": {
-            "mode": "Master",
-            "vlnv_bus_definition": "xilinx.com:interface:aximm:1.0",
-            "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
-            "parameters": {
-              "MAX_BURST_LENGTH": {
-                "value": "256"
-              },
-              "NUM_READ_OUTSTANDING": {
-                "value": "32"
-              },
-              "NUM_READ_THREADS": {
-                "value": "1"
-              },
-              "NUM_WRITE_OUTSTANDING": {
-                "value": "16"
-              },
-              "NUM_WRITE_THREADS": {
-                "value": "1"
-              },
-              "RUSER_BITS_PER_BYTE": {
-                "value": "0"
-              },
-              "SUPPORTS_NARROW_BURST": {
-                "value": "0"
-              },
-              "WUSER_BITS_PER_BYTE": {
-                "value": "0"
-              }
-            }
-          }
-        }
       }
     },
     "interface_nets": {
@@ -2102,13 +1964,13 @@
       },
       "ddr4_0_C0_DDR4": {
         "interface_ports": [
-          "ddr4_sdram_c1_062",
+          "ddr4_sdram_c1_083",
           "ddr4_0/C0_DDR4"
         ]
       },
       "ddr4_1_C0_DDR4": {
         "interface_ports": [
-          "ddr4_sdram_c2_062",
+          "ddr4_sdram_c2_083",
           "ddr4_1/C0_DDR4"
         ]
       },
@@ -2145,13 +2007,7 @@
       "pcie_xdma_M_AXI": {
         "interface_ports": [
           "pcie_xdma/M_AXI",
-          "smartconnect_pcie/S00_AXI"
-        ]
-      },
-      "pcie_xdma_M_AXI_BYPASS": {
-        "interface_ports": [
-          "pcie_xdma/M_AXI_BYPASS",
-          "smartconnect_pcie/S01_AXI"
+          "axi_interconnect_mem/S00_AXI"
         ]
       },
       "pcie_xdma_M_AXI_LITE": {
@@ -2164,12 +2020,6 @@
         "interface_ports": [
           "pci_express_x16",
           "pcie_xdma/pcie_mgt"
-        ]
-      },
-      "smartconnect_0_M00_AXI": {
-        "interface_ports": [
-          "smartconnect_pcie/M00_AXI",
-          "axi_interconnect_mem/S00_AXI"
         ]
       }
     },
@@ -2313,9 +2163,8 @@
           "axi_apb_bridge/s_axi_aclk",
           "axi_interconnect_mem/S01_ACLK",
           "axi_interconnect_mem/S02_ACLK",
-          "hdmi_controller/ACLK",
           "dut_wrapper_0/ACLK",
-          "smartconnect_pcie/aclk"
+          "hdmi_controller/ACLK"
         ]
       },
       "pcie_xdma_axi_aresetn": {
@@ -2325,9 +2174,8 @@
           "axi_apb_bridge/s_axi_aresetn",
           "axi_interconnect_mem/S01_ARESETN",
           "axi_interconnect_mem/S02_ARESETN",
-          "hdmi_controller/nRST",
           "dut_wrapper_0/nRST",
-          "smartconnect_pcie/aresetn"
+          "hdmi_controller/nRST"
         ]
       },
       "reset_1": {
@@ -2359,14 +2207,14 @@
               "SEG_ddr4_0_C0_DDR4_ADDRESS_BLOCK": {
                 "address_block": "/ddr4_0/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
                 "offset": "0x0000000800000000",
-                "range": "4G",
+                "range": "2G",
                 "offset_base_param": "C0_DDR4_MEMORY_MAP_BASEADDR",
                 "offset_high_param": "C0_DDR4_MEMORY_MAP_HIGHADDR"
               },
               "SEG_ddr4_1_C0_DDR4_ADDRESS_BLOCK": {
                 "address_block": "/ddr4_1/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
-                "offset": "0x0000000900000000",
-                "range": "4G",
+                "offset": "0x0000000880000000",
+                "range": "2G",
                 "offset_base_param": "C0_DDR4_MEMORY_MAP_BASEADDR",
                 "offset_high_param": "C0_DDR4_MEMORY_MAP_HIGHADDR"
               }
@@ -2377,14 +2225,14 @@
               "SEG_ddr4_0_C0_DDR4_ADDRESS_BLOCK": {
                 "address_block": "/ddr4_0/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
                 "offset": "0x0000000800000000",
-                "range": "4G",
+                "range": "2G",
                 "offset_base_param": "C0_DDR4_MEMORY_MAP_BASEADDR",
                 "offset_high_param": "C0_DDR4_MEMORY_MAP_HIGHADDR"
               },
               "SEG_ddr4_1_C0_DDR4_ADDRESS_BLOCK": {
                 "address_block": "/ddr4_1/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
-                "offset": "0x0000000900000000",
-                "range": "4G",
+                "offset": "0x0000000880000000",
+                "range": "2G",
                 "offset_base_param": "C0_DDR4_MEMORY_MAP_BASEADDR",
                 "offset_high_param": "C0_DDR4_MEMORY_MAP_HIGHADDR"
               }

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Global system configuration
-// Rev.  : 1/26/2024 Fri (clonextop@gmail.com)
+// Rev.  : 1/29/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __DRIVER_COMMAND_H__
 #define __DRIVER_COMMAND_H__
@@ -43,7 +43,9 @@ typedef enum {
 typedef struct {
 	DRIVER_COMMAND_ID	command_id;
 	union {
-		unsigned int		id;
+		struct {	// DRIVER_COMMAND_ID_SELECT_BAR
+			unsigned int		id;
+		} select_bar;
 	} data;
 } DRIVER_COMMAND;
 

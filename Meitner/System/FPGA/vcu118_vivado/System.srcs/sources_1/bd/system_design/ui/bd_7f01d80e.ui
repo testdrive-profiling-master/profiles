@@ -1,86 +1,83 @@
 {
    "ActiveEmotionalView":"Default View",
-   "Default View_ScaleFactor":"0.478571",
-   "Default View_TopLeft":"-226,0",
+   "Default View_ScaleFactor":"0.446324",
+   "Default View_TopLeft":"-318,0",
    "ExpandedHierarchyInLayout":"",
    "guistr":"# # String gsaved with Nlview 7.5.8 2022-09-21 7111 VDI=41 GEI=38 GUI=JA:10.0
 #  -string -flagsOSRD
-preplace port pcie_refclk -pg 1 -lvl 0 -x -10 -y 600 -defaultsOSRD
-preplace port pci_express_x16 -pg 1 -lvl 7 -x 2160 -y 910 -defaultsOSRD
-preplace port ddr4_sdram_c1_062 -pg 1 -lvl 7 -x 2160 -y 430 -defaultsOSRD
-preplace port default_250mhz_clk1 -pg 1 -lvl 0 -x -10 -y 450 -defaultsOSRD
-preplace port ddr4_sdram_c2_062 -pg 1 -lvl 7 -x 2160 -y 210 -defaultsOSRD
-preplace port default_250mhz_clk2 -pg 1 -lvl 0 -x -10 -y 410 -defaultsOSRD
-preplace port port-id_pcie_perstn -pg 1 -lvl 0 -x -10 -y 530 -defaultsOSRD
-preplace port port-id_reset -pg 1 -lvl 0 -x -10 -y 430 -defaultsOSRD
-preplace port port-id_HDMI_INTR -pg 1 -lvl 0 -x -10 -y 660 -defaultsOSRD
-preplace port port-id_HDMI_HPD -pg 1 -lvl 0 -x -10 -y 680 -defaultsOSRD
-preplace port port-id_HDMI_nRST -pg 1 -lvl 7 -x 2160 -y 710 -defaultsOSRD
-preplace port port-id_HDMI_I2C_SCL -pg 1 -lvl 7 -x 2160 -y 730 -defaultsOSRD
-preplace port port-id_HDMI_I2C_SDA -pg 1 -lvl 7 -x 2160 -y 750 -defaultsOSRD
-preplace port port-id_HDMI_CLK -pg 1 -lvl 7 -x 2160 -y 770 -defaultsOSRD
-preplace port port-id_HDMI_DE -pg 1 -lvl 7 -x 2160 -y 790 -defaultsOSRD
-preplace port port-id_HDMI_HSYNC -pg 1 -lvl 7 -x 2160 -y 810 -defaultsOSRD
-preplace port port-id_HDMI_VSYNC -pg 1 -lvl 7 -x 2160 -y 830 -defaultsOSRD
-preplace portBus HDMI_DATA -pg 1 -lvl 7 -x 2160 -y 850 -defaultsOSRD
-preplace inst pcie_xdma -pg 1 -lvl 2 -x 490 -y 810 -defaultsOSRD
-preplace inst pcie_clock_buffer -pg 1 -lvl 1 -x 170 -y 600 -defaultsOSRD
-preplace inst ddr4_0 -pg 1 -lvl 6 -x 1940 -y 480 -defaultsOSRD
-preplace inst ddr4_0_reset -pg 1 -lvl 4 -x 1130 -y 570 -defaultsOSRD
-preplace inst ddr4_1 -pg 1 -lvl 6 -x 1940 -y 260 -defaultsOSRD
-preplace inst ddr4_1_reset -pg 1 -lvl 4 -x 1130 -y 230 -defaultsOSRD
-preplace inst axi_interconnect_mem -pg 1 -lvl 5 -x 1540 -y 210 -defaultsOSRD
-preplace inst hdmi_controller -pg 1 -lvl 6 -x 1940 -y 760 -defaultsOSRD
-preplace inst axi_apb_bridge -pg 1 -lvl 3 -x 800 -y 880 -defaultsOSRD
-preplace inst dut_wrapper_0 -pg 1 -lvl 4 -x 1130 -y 970 -defaultsOSRD
-preplace inst util_vector_logic_0 -pg 1 -lvl 1 -x 170 -y 1040 -defaultsOSRD
-preplace inst smartconnect_pcie -pg 1 -lvl 4 -x 1130 -y 740 -defaultsOSRD
-preplace netloc HDMI_HPD_0_1 1 0 6 NJ 680 NJ 680 NJ 680 920J 840 NJ 840 1770J
-preplace netloc HDMI_INTR_0_1 1 0 6 10J 670 NJ 670 NJ 670 940J 830 NJ 830 1750J
-preplace netloc Net 1 6 1 NJ 730
-preplace netloc Net1 1 6 1 NJ 750
-preplace netloc ddr4_0_c0_ddr4_ui_clk 1 3 4 940 420 1380 420 1710J 150 2120
-preplace netloc ddr4_0_c0_ddr4_ui_clk_sync_rst 1 3 4 960 430 NJ 430 1690J 140 2130
-preplace netloc ddr4_1_c0_ddr4_ui_clk 1 3 4 960 130 1360 440 1740J 370 2110
-preplace netloc ddr4_1_c0_ddr4_ui_clk_sync_rst 1 3 4 950 450 NJ 450 1730J 130 2140
-preplace netloc ddr4_1_reset_interconnect_aresetn 1 4 1 1310 150n
-preplace netloc ddr4_1_reset_peripheral_aresetn 1 4 2 1320 10 1770J
-preplace netloc dut_wrapper_0_INTR 1 0 5 20 1110 NJ 1110 NJ 1110 NJ 1110 1300
-preplace netloc hdmi_controller_HDMI_CLK 1 6 1 NJ 770
-preplace netloc hdmi_controller_HDMI_DATA 1 6 1 NJ 850
-preplace netloc hdmi_controller_HDMI_DE 1 6 1 NJ 790
-preplace netloc hdmi_controller_HDMI_HSYNC 1 6 1 NJ 810
-preplace netloc hdmi_controller_HDMI_VSYNC 1 6 1 NJ 830
-preplace netloc hdmi_controller_HDMI_nRST 1 6 1 NJ 710
-preplace netloc hdmi_controller_INTR 1 0 7 10 970 NJ 970 640J 1050 NJ 1050 NJ 1050 NJ 1050 2110
-preplace netloc pcie_clock_buffer_IBUF_DS_ODIV2 1 1 1 320 610n
-preplace netloc pcie_clock_buffer_IBUF_OUT 1 1 1 330 590n
-preplace netloc pcie_perstn_1 1 0 4 NJ 530 340 530 NJ 530 930
-preplace netloc pcie_xdma_axi_aclk 1 2 4 660 970 930 850 1330 810 1720J
-preplace netloc pcie_xdma_axi_aresetn 1 2 4 650 980 950 860 1370 820 1740J
-preplace netloc reset_1 1 0 6 10J 470 NJ 470 NJ 470 NJ 470 NJ 470 1700
-preplace netloc system_reset_peripheral_aresetn 1 4 2 1350 490 NJ
-preplace netloc util_vector_logic_0_Res 1 1 1 320 840n
-preplace netloc axi_apb_bridge_0_APB_M 1 3 3 NJ 870 1390J 800 1690
-preplace netloc axi_apb_bridge_APB_M2 1 3 1 920 890n
-preplace netloc axi_interconnect_0_M00_AXI 1 5 1 1750 200n
-preplace netloc axi_interconnect_0_M01_AXI 1 5 1 1760 220n
-preplace netloc ddr4_0_C0_DDR4 1 6 1 NJ 430
-preplace netloc ddr4_1_C0_DDR4 1 6 1 NJ 210
-preplace netloc default_250mhz_clk1_1 1 0 6 NJ 450 NJ 450 NJ 450 920J 460 NJ 460 1770J
-preplace netloc default_250mhz_clk2_1 1 0 6 NJ 410 NJ 410 NJ 410 NJ 410 NJ 410 1720J
-preplace netloc dut_wrapper_0_M_AXI 1 4 1 1340 110n
-preplace netloc hdmi_controller_M_AXI 1 4 3 1390 590 NJ 590 2110
-preplace netloc pcie_refclk_1 1 0 1 NJ 600
-preplace netloc pcie_xdma_M_AXI 1 2 2 650 710 NJ
-preplace netloc pcie_xdma_M_AXI_BYPASS 1 2 2 680 730 NJ
-preplace netloc pcie_xdma_M_AXI_LITE 1 2 1 680 780n
-preplace netloc pcie_xdma_pcie_mgt 1 2 5 670J 960 940J 890 1300J 910 NJ 910 NJ
-preplace netloc smartconnect_0_M00_AXI 1 4 1 1300 70n
-levelinfo -pg 1 -10 170 490 800 1130 1540 1940 2160
-pagesize -pg 1 -db -bbox -sgen -200 0 2350 1120
+preplace port pcie_refclk -pg 1 -lvl 0 -x 0 -y 1150 -defaultsOSRD
+preplace port pci_express_x16 -pg 1 -lvl 7 -x 2110 -y 1030 -defaultsOSRD
+preplace port default_250mhz_clk1 -pg 1 -lvl 0 -x 0 -y 640 -defaultsOSRD
+preplace port default_250mhz_clk2 -pg 1 -lvl 0 -x 0 -y 210 -defaultsOSRD
+preplace port ddr4_sdram_c1_083 -pg 1 -lvl 7 -x 2110 -y 620 -defaultsOSRD
+preplace port ddr4_sdram_c2_083 -pg 1 -lvl 7 -x 2110 -y 190 -defaultsOSRD
+preplace port port-id_pcie_perstn -pg 1 -lvl 0 -x 0 -y 1260 -defaultsOSRD
+preplace port port-id_reset -pg 1 -lvl 0 -x 0 -y 1240 -defaultsOSRD
+preplace port port-id_HDMI_INTR -pg 1 -lvl 0 -x 0 -y 1220 -defaultsOSRD
+preplace port port-id_HDMI_HPD -pg 1 -lvl 0 -x 0 -y 1080 -defaultsOSRD
+preplace port port-id_HDMI_nRST -pg 1 -lvl 7 -x 2110 -y 1150 -defaultsOSRD
+preplace port port-id_HDMI_I2C_SCL -pg 1 -lvl 7 -x 2110 -y 1170 -defaultsOSRD
+preplace port port-id_HDMI_I2C_SDA -pg 1 -lvl 7 -x 2110 -y 1190 -defaultsOSRD
+preplace port port-id_HDMI_CLK -pg 1 -lvl 7 -x 2110 -y 1210 -defaultsOSRD
+preplace port port-id_HDMI_DE -pg 1 -lvl 7 -x 2110 -y 1230 -defaultsOSRD
+preplace port port-id_HDMI_HSYNC -pg 1 -lvl 7 -x 2110 -y 1250 -defaultsOSRD
+preplace port port-id_HDMI_VSYNC -pg 1 -lvl 7 -x 2110 -y 1270 -defaultsOSRD
+preplace portBus HDMI_DATA -pg 1 -lvl 7 -x 2110 -y 1290 -defaultsOSRD
+preplace inst pcie_xdma -pg 1 -lvl 2 -x 490 -y 960 -defaultsOSRD
+preplace inst pcie_clock_buffer -pg 1 -lvl 1 -x 170 -y 1150 -defaultsOSRD
+preplace inst ddr4_0 -pg 1 -lvl 6 -x 1900 -y 670 -defaultsOSRD
+preplace inst ddr4_0_reset -pg 1 -lvl 4 -x 1130 -y 760 -defaultsOSRD
+preplace inst ddr4_1 -pg 1 -lvl 6 -x 1900 -y 240 -defaultsOSRD
+preplace inst ddr4_1_reset -pg 1 -lvl 4 -x 1130 -y 110 -defaultsOSRD
+preplace inst axi_interconnect_mem -pg 1 -lvl 5 -x 1530 -y 420 -defaultsOSRD
+preplace inst hdmi_controller -pg 1 -lvl 6 -x 1900 -y 1200 -defaultsOSRD
+preplace inst axi_apb_bridge -pg 1 -lvl 3 -x 780 -y 1050 -defaultsOSRD
+preplace inst dut_wrapper_0 -pg 1 -lvl 4 -x 1130 -y 920 -defaultsOSRD
+preplace inst util_vector_logic_0 -pg 1 -lvl 1 -x 170 -y 990 -defaultsOSRD
+preplace netloc HDMI_HPD_0_1 1 0 6 NJ 1080 340J 1210 NJ 1210 NJ 1210 NJ 1210 1730J
+preplace netloc HDMI_INTR_0_1 1 0 6 NJ 1220 NJ 1220 NJ 1220 NJ 1220 NJ 1220 NJ
+preplace netloc Net 1 6 1 NJ 1170
+preplace netloc Net1 1 6 1 NJ 1190
+preplace netloc ddr4_0_c0_ddr4_ui_clk 1 3 4 960 650 1330 630 1730J 560 2070
+preplace netloc ddr4_0_c0_ddr4_ui_clk_sync_rst 1 3 4 940 620 NJ 620 1700J 550 2090
+preplace netloc ddr4_1_c0_ddr4_ui_clk 1 3 4 950 220 1340 220 1720J 350 2080
+preplace netloc ddr4_1_c0_ddr4_ui_clk_sync_rst 1 3 4 960 10 NJ 10 NJ 10 2070
+preplace netloc ddr4_1_reset_interconnect_aresetn 1 4 1 1330 130n
+preplace netloc ddr4_1_reset_peripheral_aresetn 1 4 2 1310 200 1730
+preplace netloc dut_wrapper_0_INTR 1 0 5 20 840 NJ 840 NJ 840 930J 1010 1300
+preplace netloc hdmi_controller_HDMI_CLK 1 6 1 NJ 1210
+preplace netloc hdmi_controller_HDMI_DATA 1 6 1 NJ 1290
+preplace netloc hdmi_controller_HDMI_DE 1 6 1 NJ 1230
+preplace netloc hdmi_controller_HDMI_HSYNC 1 6 1 NJ 1250
+preplace netloc hdmi_controller_HDMI_VSYNC 1 6 1 NJ 1270
+preplace netloc hdmi_controller_HDMI_nRST 1 6 1 NJ 1150
+preplace netloc hdmi_controller_INTR 1 0 7 20 1350 NJ 1350 NJ 1350 NJ 1350 NJ 1350 NJ 1350 2070
+preplace netloc pcie_clock_buffer_IBUF_DS_ODIV2 1 1 1 320 930n
+preplace netloc pcie_clock_buffer_IBUF_OUT 1 1 1 330 950n
+preplace netloc pcie_perstn_1 1 0 4 NJ 1260 350 1080 660J 970 910
+preplace netloc pcie_xdma_axi_aclk 1 2 4 640 950 950 1000 1350 1180 NJ
+preplace netloc pcie_xdma_axi_aresetn 1 2 4 650 960 940 1020 1360 1200 NJ
+preplace netloc reset_1 1 0 6 NJ 1240 NJ 1240 NJ 1240 NJ 1240 NJ 1240 1710
+preplace netloc system_reset_peripheral_aresetn 1 4 2 1370 680 NJ
+preplace netloc util_vector_logic_0_Res 1 1 1 N 990
+preplace netloc axi_apb_bridge_0_APB_M 1 3 3 NJ 1040 NJ 1040 1680
+preplace netloc axi_apb_bridge_APB_M2 1 3 1 920 900n
+preplace netloc axi_interconnect_0_M00_AXI 1 5 1 1690 410n
+preplace netloc axi_interconnect_0_M01_AXI 1 5 1 1680 230n
+preplace netloc ddr4_0_C0_DDR4 1 6 1 NJ 620
+preplace netloc ddr4_1_C0_DDR4 1 6 1 NJ 190
+preplace netloc default_250mhz_clk1_1 1 0 6 NJ 640 NJ 640 NJ 640 NJ 640 NJ 640 NJ
+preplace netloc default_250mhz_clk2_1 1 0 6 NJ 210 NJ 210 NJ 210 NJ 210 NJ 210 NJ
+preplace netloc dut_wrapper_0_M_AXI 1 4 1 1320 320n
+preplace netloc hdmi_controller_M_AXI 1 4 3 1380 1050 NJ 1050 2080
+preplace netloc pcie_refclk_1 1 0 1 NJ 1150
+preplace netloc pcie_xdma_M_AXI_LITE 1 2 1 630 920n
+preplace netloc pcie_xdma_pcie_mgt 1 2 5 NJ 940 900J 1030 NJ 1030 NJ 1030 NJ
+preplace netloc pcie_xdma_M_AXI 1 2 3 630J 660 NJ 660 1300
+levelinfo -pg 1 0 170 490 780 1130 1530 1900 2110
+pagesize -pg 1 -db -bbox -sgen -190 0 2300 1360
 "
 }
 {
-   "da_board_cnt":"8"
+   "da_board_cnt":"10"
 }

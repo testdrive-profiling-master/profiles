@@ -258,10 +258,10 @@ DWORD PCIeDriver::Command(void* pCommand)
 
 		switch(pCom->command_id) {
 		case DRIVER_COMMAND_ID_SELECT_BAR:
-			if(pCom->data.id < 3) {
-				m_iBarID		= pCom->data.id;
+			if(pCom->data.select_bar.id < 3) {
+				m_iBarID		= pCom->data.select_bar.id;
 			} else {
-				LOGE("Invalid BAR# : %d", pCom->data.id);
+				LOGE("Invalid BAR# : %d", pCom->data.select_bar.id);
 				exit(1);
 			}
 
