@@ -46,8 +46,7 @@
       },
       "hdmi_controller": "",
       "axi_apb_bridge": "",
-      "dut_wrapper_0": "",
-      "util_vector_logic_0": ""
+      "dut_wrapper_0": ""
     },
     "interface_ports": {
       "pcie_refclk": {
@@ -160,11 +159,11 @@
         "parameters": {
           "AXI_ARBITRATION_SCHEME": {
             "value": "RD_PRI_REG",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "BURST_LENGTH": {
             "value": "8",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "CAN_DEBUG": {
             "value": "false",
@@ -172,47 +171,47 @@
           },
           "CAS_LATENCY": {
             "value": "18",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "CAS_WRITE_LATENCY": {
             "value": "12",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "CS_ENABLED": {
             "value": "true",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "CUSTOM_PARTS": {
             "value": "no_file_loaded",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "DATA_MASK_ENABLED": {
             "value": "DM_NO_DBI",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "DATA_WIDTH": {
             "value": "64",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "MEMORY_PART": {
             "value": "MT40A256M16GE-083E",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "MEMORY_TYPE": {
             "value": "Components",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "MEM_ADDR_MAP": {
             "value": "ROW_COLUMN_BANK",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "SLOT": {
             "value": "Single",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "TIMEPERIOD_PS": {
             "value": "833",
-            "value_src": "user_prop"
+            "value_src": "default"
           }
         },
         "port_maps": {
@@ -293,11 +292,11 @@
         "parameters": {
           "AXI_ARBITRATION_SCHEME": {
             "value": "RD_PRI_REG",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "BURST_LENGTH": {
             "value": "8",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "CAN_DEBUG": {
             "value": "false",
@@ -305,47 +304,47 @@
           },
           "CAS_LATENCY": {
             "value": "18",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "CAS_WRITE_LATENCY": {
             "value": "12",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "CS_ENABLED": {
             "value": "true",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "CUSTOM_PARTS": {
             "value": "no_file_loaded",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "DATA_MASK_ENABLED": {
             "value": "DM_NO_DBI",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "DATA_WIDTH": {
             "value": "64",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "MEMORY_PART": {
             "value": "MT40A256M16GE-083E",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "MEMORY_TYPE": {
             "value": "Components",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "MEM_ADDR_MAP": {
             "value": "ROW_COLUMN_BANK",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "SLOT": {
             "value": "Single",
-            "value_src": "user_prop"
+            "value_src": "default"
           },
           "TIMEPERIOD_PS": {
             "value": "833",
-            "value_src": "user_prop"
+            "value_src": "default"
           }
         },
         "port_maps": {
@@ -604,13 +603,13 @@
               "range": "16E",
               "width": "64"
             },
-            "M_AXI_BYPASS": {
-              "range": "16E",
-              "width": "64"
-            },
             "M_AXI_LITE": {
               "range": "4G",
               "width": "32"
+            },
+            "M_AXI_BYPASS": {
+              "range": "16E",
+              "width": "64"
             }
           }
         }
@@ -1920,21 +1919,6 @@
             "memory_map_ref": "S_APB"
           }
         }
-      },
-      "util_vector_logic_0": {
-        "vlnv": "xilinx.com:ip:util_vector_logic:2.0",
-        "ip_revision": "3",
-        "xci_name": "system_design_util_vector_logic_0_1",
-        "xci_path": "ip\\system_design_util_vector_logic_0_1\\system_design_util_vector_logic_0_1.xci",
-        "inst_hier_path": "util_vector_logic_0",
-        "parameters": {
-          "C_OPERATION": {
-            "value": "or"
-          },
-          "C_SIZE": {
-            "value": "1"
-          }
-        }
       }
     },
     "interface_nets": {
@@ -2091,7 +2075,7 @@
       "dut_wrapper_0_INTR": {
         "ports": [
           "dut_wrapper_0/INTR",
-          "util_vector_logic_0/Op1"
+          "pcie_xdma/usr_irq_req"
         ]
       },
       "hdmi_controller_HDMI_CLK": {
@@ -2128,12 +2112,6 @@
         "ports": [
           "hdmi_controller/HDMI_nRST",
           "HDMI_nRST"
-        ]
-      },
-      "hdmi_controller_INTR": {
-        "ports": [
-          "hdmi_controller/INTR",
-          "util_vector_logic_0/Op2"
         ]
       },
       "pcie_clock_buffer_IBUF_DS_ODIV2": {
@@ -2191,36 +2169,12 @@
           "ddr4_0/c0_ddr4_aresetn",
           "axi_interconnect_mem/M00_ARESETN"
         ]
-      },
-      "util_vector_logic_0_Res": {
-        "ports": [
-          "util_vector_logic_0/Res",
-          "pcie_xdma/usr_irq_req"
-        ]
       }
     },
     "addressing": {
       "/pcie_xdma": {
         "address_spaces": {
           "M_AXI": {
-            "segments": {
-              "SEG_ddr4_0_C0_DDR4_ADDRESS_BLOCK": {
-                "address_block": "/ddr4_0/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
-                "offset": "0x0000000800000000",
-                "range": "2G",
-                "offset_base_param": "C0_DDR4_MEMORY_MAP_BASEADDR",
-                "offset_high_param": "C0_DDR4_MEMORY_MAP_HIGHADDR"
-              },
-              "SEG_ddr4_1_C0_DDR4_ADDRESS_BLOCK": {
-                "address_block": "/ddr4_1/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
-                "offset": "0x0000000880000000",
-                "range": "2G",
-                "offset_base_param": "C0_DDR4_MEMORY_MAP_BASEADDR",
-                "offset_high_param": "C0_DDR4_MEMORY_MAP_HIGHADDR"
-              }
-            }
-          },
-          "M_AXI_BYPASS": {
             "segments": {
               "SEG_ddr4_0_C0_DDR4_ADDRESS_BLOCK": {
                 "address_block": "/ddr4_0/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
@@ -2249,6 +2203,24 @@
                 "address_block": "/hdmi_controller/S_APB/S_APB",
                 "offset": "0x00010000",
                 "range": "64K"
+              }
+            }
+          },
+          "M_AXI_BYPASS": {
+            "segments": {
+              "SEG_ddr4_0_C0_DDR4_ADDRESS_BLOCK": {
+                "address_block": "/ddr4_0/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
+                "offset": "0x0000000800000000",
+                "range": "2G",
+                "offset_base_param": "C0_DDR4_MEMORY_MAP_BASEADDR",
+                "offset_high_param": "C0_DDR4_MEMORY_MAP_HIGHADDR"
+              },
+              "SEG_ddr4_1_C0_DDR4_ADDRESS_BLOCK": {
+                "address_block": "/ddr4_1/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
+                "offset": "0x0000000880000000",
+                "range": "2G",
+                "offset_base_param": "C0_DDR4_MEMORY_MAP_BASEADDR",
+                "offset_high_param": "C0_DDR4_MEMORY_MAP_HIGHADDR"
               }
             }
           }

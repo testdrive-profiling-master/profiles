@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Driver(PCIe) sub-system
-// Rev.  : 1/26/2024 Fri (clonextop@gmail.com)
+// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __PCIE_DRIVER_H__
 #define __PCIE_DRIVER_H__
@@ -51,7 +51,7 @@ public:
 	virtual DWORD RegRead(UINT64 dwAddress);
 	virtual void MemoryWrite(NativeMemory* pNative, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize);
 	virtual void MemoryRead(NativeMemory* pNative, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize);
-	virtual void MemoryCreate(NativeMemory* pNative, UINT64 dwByteSize, UINT64 dwAlignment, bool bDMA);
+	virtual void MemoryCreate(NativeMemory* pNative, UINT64 dwByteSize, UINT64 dwAlignment);
 	virtual void MemoryFree(NativeMemory* pNative);
 	virtual void InterruptLock(void);
 	virtual void InterruptFree(void);

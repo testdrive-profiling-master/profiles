@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Driver(PCIe) sub-system
-// Rev.  : 1/26/2024 Fri (clonextop@gmail.com)
+// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include "PCIeDriver.h"
 #include "DriverCommand.h"
@@ -39,18 +39,15 @@
 
 DECLARE_NATIVE_DRIVER(PCIeDriver)
 
-static TD_TRANSACTION_MEM	__TranMem;
-
 PCIeDriver::PCIeDriver(void)
 {
-	memset(&__TranMem, 0, sizeof(TD_TRANSACTION_MEM));
 	memset(&m_OverlappedIO, 0, sizeof(OVERLAPPED));
 	m_dwCurrentCardID		= 0;
 	m_iBarID				= 0;
 	{
 		// vcu118 FPGA : DDR4 4GBx2
 		m_TotalMemory.base_address		= 0x8'0000'0000ULL;			// base address
-		m_TotalMemory.byte_size			= 0x2'0000'0000ULL;			// 8GB
+		m_TotalMemory.byte_size			= 0x1'0000'0000ULL;			// 4GB
 	}
 	SetSystemDescription("TestDrive PCIe driver");
 }
@@ -122,7 +119,6 @@ void PCIeDriver::Release(void)
 void PCIeDriver::SetCurrentCard(DWORD dwIndex)
 {
 	m_dwCurrentCardID	= dwIndex;
-	__TranMem.dev_id	= dwIndex;
 }
 
 void PCIeDriver::RegWrite(UINT64 dwAddress, DWORD dwData)
@@ -170,12 +166,6 @@ void PCIeDriver::MemoryWrite(NativeMemory* pNative, UINT64 dwAddress, UINT64 dwO
 		DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_DMA, &TranDMA, sizeof(TD_TRANSACTION_DMA), NULL, 0, &dwReadSize, &OverlappedIO);
 		WaitForSingleObject(OverlappedIO.hEvent, INFINITE);
 		CloseHandle(OverlappedIO.hEvent);
-	} else {
-		BYTE*	pData					= (pNative->Virtual() + dwOffset);
-		__TranMem.is_write				= 1;
-		__TranMem.phy_address			= dwAddress - m_TotalMemory.base_address;
-		__TranMem.byte_size				= dwByteSize;
-		DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_MEM, &__TranMem, sizeof(TD_TRANSACTION_MEM), pData, dwByteSize, &dwReadSize, NULL);
 	}
 }
 
@@ -199,16 +189,10 @@ void PCIeDriver::MemoryRead(NativeMemory* pNative, UINT64 dwAddress, UINT64 dwOf
 		DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_DMA, &TranDMA, sizeof(TD_TRANSACTION_DMA), NULL, 0, &dwReadSize, &OverlappedIO);
 		WaitForSingleObject(OverlappedIO.hEvent, INFINITE);
 		CloseHandle(OverlappedIO.hEvent);
-	} else {
-		BYTE*	pData					= (pNative->Virtual() + dwOffset);
-		__TranMem.is_write				= 0;
-		__TranMem.phy_address			= dwAddress - m_TotalMemory.base_address;
-		__TranMem.byte_size				= dwByteSize;
-		DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_MEM, &__TranMem, sizeof(TD_TRANSACTION_MEM), pData, dwByteSize, &dwReadSize, NULL);
 	}
 }
 
-void PCIeDriver::MemoryCreate(NativeMemory* pNative, UINT64 dwByteSize, UINT64 dwAlignment, bool bDMA)
+void PCIeDriver::MemoryCreate(NativeMemory* pNative, UINT64 dwByteSize, UINT64 dwAlignment)
 {
 	DWORD dwReadSize;
 	TD_DMA_MEMORY*	pDma	= new TD_DMA_MEMORY;

@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 10/23/2023 Mon (clonextop@gmail.com)
+// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include <assert.h>
 #include <stdio.h>
@@ -84,7 +84,7 @@ static void __ShowByteSize(UINT64 dwSize)
 	}
 }
 
-MemoryHeap::MemoryHeap(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress, bool bDMA) : MemoryHeap()
+MemoryHeap::MemoryHeap(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress) : MemoryHeap()
 {
 	assert(dwByteSize != 0);
 	assert(dwByteAlignment != 0);
@@ -93,7 +93,7 @@ MemoryHeap::MemoryHeap(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAd
 		FreeLink*		pFree	= m_Free.Head();
 
 		while(pFree) {
-			if(pFree->Item()->Alloc(this, dwByteSize, dwByteAlignment, dwPhyAddress, bDMA)) return;
+			if(pFree->Item()->Alloc(this, dwByteSize, dwByteAlignment, dwPhyAddress)) return;
 
 			pFree	= pFree->Next();
 		}
@@ -130,7 +130,7 @@ MemoryHeap::MemoryHeap(UINT64 dwPhysical, UINT64 dwByteSize) : MemoryHeap()
 	m_dwByteSize		= dwByteSize;
 }
 
-bool MemoryHeap::Alloc(MemoryHeap* pHeap, UINT64 dwAllocByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress, bool bDMA)
+bool MemoryHeap::Alloc(MemoryHeap* pHeap, UINT64 dwAllocByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress)
 {
 	// adjust align size
 	dwAllocByteSize			+= (m_dwPhysical + m_dwByteSize - dwAllocByteSize) & (dwByteAlignment - 1);
@@ -143,7 +143,7 @@ bool MemoryHeap::Alloc(MemoryHeap* pHeap, UINT64 dwAllocByteSize, UINT64 dwByteA
 
 	if(!__bInaccessibleMemory) {
 		// create native first
-		pHeap->m_pNative		= __pMemoryManager->CreateMemory(dwAllocByteSize, dwByteAlignment, bDMA);
+		pHeap->m_pNative		= __pMemoryManager->CreateMemory(dwAllocByteSize, dwByteAlignment);
 
 		if(!pHeap->m_pNative) return false;
 	} else {
@@ -285,12 +285,12 @@ void MemoryHeap::PhysicalOverride(UINT64 dwPhysical)
 	m_dwPhysicalOverride	= dwPhysical;
 }
 
-IMemory* CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress, bool bDMA)
+IMemory* CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress)
 {
 	IMemory* pMem	= NULL;
 	__SemaAlloc.Down();
 	{
-		pMem = new MemoryHeap(dwByteSize, dwByteAlignment, dwPhyAddress, bDMA);
+		pMem = new MemoryHeap(dwByteSize, dwByteAlignment, dwPhyAddress);
 
 		if(__bInaccessibleMemory) {
 			__bInaccessibleMemory	= false;

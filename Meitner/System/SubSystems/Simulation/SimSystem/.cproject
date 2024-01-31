@@ -28,8 +28,6 @@
 									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_DIR}include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_PROFILE}common/include&quot;"/>
 									<listOptionValue builtIn="false" value="../../../../../Application/include"/>
-									<listOptionValue builtIn="false" value="../src"/>
-									<listOptionValue builtIn="false" value=".././"/>
 									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_PROFILE}common/System/SystemSim/SimHDL&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_PROFILE}common/System/SystemSim/HDL/dpi&quot;"/>
 								</option>
@@ -85,8 +83,6 @@
 									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_DIR}include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_PROFILE}common/include&quot;"/>
 									<listOptionValue builtIn="false" value="../../../../../Application/include"/>
-									<listOptionValue builtIn="false" value="../src"/>
-									<listOptionValue builtIn="false" value=".././"/>
 									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_PROFILE}common/System/SystemSim/SimHDL&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${TESTDRIVE_PROFILE}common/System/SystemSim/HDL/dpi&quot;"/>
 								</option>
