@@ -226,6 +226,44 @@
             },
             "V5": {
                 "VT": "AC",
+                "BA": "0x800000000",
+                "HA": "0x87FFFFFFF",
+                "BP": "C0_DDR4_MEMORY_MAP_BASEADDR",
+                "HP": "C0_DDR4_MEMORY_MAP_HIGHADDR",
+                "MA": "M_AXI",
+                "MX": "/dut_wrapper_0",
+                "MI": "M_AXI",
+                "MS": "SEG_ddr4_0_C0_DDR4_ADDRESS_BLOCK",
+                "MV": "xilinx.com:user:dut_wrapper:1.0",
+                "SX": "/ddr4_0",
+                "SI": "C0_DDR4_S_AXI",
+                "MM": "C0_DDR4_MEMORY_MAP",
+                "SS": "C0_DDR4_ADDRESS_BLOCK",
+                "SV": "xilinx.com:ip:ddr4:2.2",
+                "TM": "both",
+                "TU": "memory"
+            },
+            "V6": {
+                "VT": "AC",
+                "BA": "0x800000000",
+                "HA": "0x87FFFFFFF",
+                "BP": "C0_DDR4_MEMORY_MAP_BASEADDR",
+                "HP": "C0_DDR4_MEMORY_MAP_HIGHADDR",
+                "MA": "M_AXI",
+                "MX": "/hdmi_controller",
+                "MI": "M_AXI",
+                "MS": "SEG_ddr4_0_C0_DDR4_ADDRESS_BLOCK",
+                "MV": "xilinx.com:user:hdmi_sil9134_controller:1.0",
+                "SX": "/ddr4_0",
+                "SI": "C0_DDR4_S_AXI",
+                "MM": "C0_DDR4_MEMORY_MAP",
+                "SS": "C0_DDR4_ADDRESS_BLOCK",
+                "SV": "xilinx.com:ip:ddr4:2.2",
+                "TM": "both",
+                "TU": "memory"
+            },
+            "V7": {
+                "VT": "AC",
                 "BA": "0x0000000800000000",
                 "HA": "0x000000087FFFFFFF",
                 "BP": "C0_DDR4_MEMORY_MAP_BASEADDR",
@@ -243,7 +281,45 @@
                 "TM": "both",
                 "TU": "memory"
             },
-            "V6": {
+            "V8": {
+                "VT": "AC",
+                "BA": "0x880000000",
+                "HA": "0x8FFFFFFFF",
+                "BP": "C0_DDR4_MEMORY_MAP_BASEADDR",
+                "HP": "C0_DDR4_MEMORY_MAP_HIGHADDR",
+                "MA": "M_AXI",
+                "MX": "/dut_wrapper_0",
+                "MI": "M_AXI",
+                "MS": "SEG_ddr4_1_C0_DDR4_ADDRESS_BLOCK",
+                "MV": "xilinx.com:user:dut_wrapper:1.0",
+                "SX": "/ddr4_1",
+                "SI": "C0_DDR4_S_AXI",
+                "MM": "C0_DDR4_MEMORY_MAP",
+                "SS": "C0_DDR4_ADDRESS_BLOCK",
+                "SV": "xilinx.com:ip:ddr4:2.2",
+                "TM": "both",
+                "TU": "memory"
+            },
+            "V9": {
+                "VT": "AC",
+                "BA": "0x880000000",
+                "HA": "0x8FFFFFFFF",
+                "BP": "C0_DDR4_MEMORY_MAP_BASEADDR",
+                "HP": "C0_DDR4_MEMORY_MAP_HIGHADDR",
+                "MA": "M_AXI",
+                "MX": "/hdmi_controller",
+                "MI": "M_AXI",
+                "MS": "SEG_ddr4_1_C0_DDR4_ADDRESS_BLOCK",
+                "MV": "xilinx.com:user:hdmi_sil9134_controller:1.0",
+                "SX": "/ddr4_1",
+                "SI": "C0_DDR4_S_AXI",
+                "MM": "C0_DDR4_MEMORY_MAP",
+                "SS": "C0_DDR4_ADDRESS_BLOCK",
+                "SV": "xilinx.com:ip:ddr4:2.2",
+                "TM": "both",
+                "TU": "memory"
+            },
+            "V10": {
                 "VT": "AC",
                 "BA": "0x0000000880000000",
                 "HA": "0x00000008FFFFFFFF",
@@ -289,6 +365,26 @@
             },
             {
                 "src": "V6",
+                "trg": "V2",
+                "EH": "2"
+            },
+            {
+                "src": "V7",
+                "trg": "V2",
+                "EH": "2"
+            },
+            {
+                "src": "V8",
+                "trg": "V2",
+                "EH": "2"
+            },
+            {
+                "src": "V9",
+                "trg": "V2",
+                "EH": "2"
+            },
+            {
+                "src": "V10",
                 "trg": "V2",
                 "EH": "2"
             }

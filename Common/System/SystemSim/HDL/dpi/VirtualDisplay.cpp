@@ -1,23 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
-// 
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -29,9 +29,9 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : Common DPI
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include "VirtualDisplay.h"
 #include "SelfDestory.h"
@@ -55,12 +55,12 @@ void VirtualDisplay::Initialize(bool bReverse)
 	m_pConfig			= GetDisplayConfig();
 	m_pConfig->bReverse	= bReverse;
 }
-void VirtualDisplay::SetBaseAddress(DWORD dwBaseAddress, bool bFront)
+void VirtualDisplay::SetBaseAddress(uint64_t lBaseAddress, bool bFront)
 {
 	if(!m_pConfig) return;
 
 	DisplayBuffer* pBuffer	= bFront ? &m_pConfig->Front : &m_pConfig->Back;
-	pBuffer->dwAddress	= dwBaseAddress - GetMemoryBaseAddress();
+	pBuffer->dwAddress	= lBaseAddress - GetMemoryBaseAddress();
 	pBuffer->bUpdate	= true;
 	UpdateMemoryRange();
 }
@@ -126,11 +126,11 @@ DPI_FUNCTION void VirtualDisplayInitialize(int bReverse)
 	__VirtualDisplay->Initialize(bReverse);
 }
 
-DPI_FUNCTION void VirtualDisplayBaseAddress(unsigned int dwBaseAddress, int bFront)
+DPI_FUNCTION void VirtualDisplayBaseAddress(unsigned long long lBaseAddress, int bFront)
 {
 	if(!__VirtualDisplay) return;
 
-	__VirtualDisplay->SetBaseAddress(dwBaseAddress, bFront);
+	__VirtualDisplay->SetBaseAddress(lBaseAddress, bFront);
 }
 
 DPI_FUNCTION void VirtualDisplayFormat(int iWidth, int iHeight, unsigned int dwByteStride, unsigned int Format)

@@ -68,7 +68,9 @@ module dut_wrapper_v1_0 #(
 	input	[C_M_AXI_ID_WIDTH-1 : 0]		M_BID,
 	input	[1 : 0]							M_BRESP,
 	input									M_BVALID,
-	output									M_BREADY
+	output									M_BREADY,
+	// extra
+	output	[C_M_AXI_ADDR_WIDTH-1 : 0]		FRAME_BASE
 );
 
 // definition & assignment ---------------------------------------------------
@@ -134,7 +136,9 @@ processor_axi_wrapper #(
 	.M_RRESP		(M_RRESP),
 	.M_RLAST		(M_RLAST),
 	.M_RVALID		(M_RVALID),
-	.M_RREADY		(M_RREADY)
+	.M_RREADY		(M_RREADY),
+	//// EXTRA interface -------------------
+	.FRAME_BASE		(FRAME_BASE)
 );
 
 endmodule

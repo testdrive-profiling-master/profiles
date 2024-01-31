@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 11/9/2023 Thu (clonextop@gmail.com)
+// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __VIRTUAL_DISPLAY_H__
 #define __VIRTUAL_DISPLAY_H__
@@ -43,7 +43,7 @@ public:
 	virtual ~VirtualDisplay(void);
 
 	void Initialize(bool bReverse = FALSE);
-	void SetBaseAddress(DWORD dwBaseAddress, bool bFront = FALSE);
+	void SetBaseAddress(uint64_t lBaseAddress, bool bFront = FALSE);
 	void SetFormat(int iWidth, int iHeight, DWORD dwByteStride = 0, DISPLAY_FORMAT Format = DISPLAY_FORMAT_ARGB_8888);
 	void Update(bool bFront = FALSE);
 
@@ -61,7 +61,7 @@ private:
 };
 
 DPI_FUNCTION void VirtualDisplayInitialize(int bReverse = FALSE);
-DPI_FUNCTION void VirtualDisplayBaseAddress(unsigned int dwBaseAddress, int bFront = FALSE);
+DPI_FUNCTION void VirtualDisplayBaseAddress(unsigned long long lBaseAddress, int bFront = FALSE);
 DPI_FUNCTION void VirtualDisplayFormat(int iWidth, int iHeight, unsigned int dwByteStride, unsigned int Format);
 DPI_FUNCTION void VirtualDisplayUpdate(int bFront = FALSE);
 

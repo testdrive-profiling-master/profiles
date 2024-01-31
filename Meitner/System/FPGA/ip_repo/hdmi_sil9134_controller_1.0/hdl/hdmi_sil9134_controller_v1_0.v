@@ -73,16 +73,17 @@ module hdmi_sil9134_controller_v1_0 #(
 	// HDMI interface
 	output									HDMI_nRST,
 	// I2C interface
-	inout									HDMI_I2C_SCL,	// i2c SCL
-	inout									HDMI_I2C_SDA,	// i2c SDA
+	inout									HDMI_I2C_SCL,		// i2c SCL
+	inout									HDMI_I2C_SDA,		// i2c SDA
 	// HDMI SIGNALS
-	input									HDMI_INTR,		// hdmi interrupt input
-	input									HDMI_HPD,		// hdmi hot plug-in detect
-	output									HDMI_CLK,		// hdmi clock
-	output									HDMI_DE,		// data enable
-	output									HDMI_HSYNC,		// horizontal sync.
-	output									HDMI_VSYNC,		// vertical sync.
-	output	[23:0]							HDMI_DATA		// data output
+	input	[C_M_AXI_ADDR_WIDTH-1 : 0]		HDMI_FRAME_BASE,	// framebuffer base override
+	input									HDMI_INTR,			// hdmi interrupt input
+	input									HDMI_HPD,			// hdmi hot plug-in detect
+	output									HDMI_CLK,			// hdmi clock
+	output									HDMI_DE,			// data enable
+	output									HDMI_HSYNC,			// horizontal sync.
+	output									HDMI_VSYNC,			// vertical sync.
+	output	[23:0]							HDMI_DATA			// data output
 );
 
 // definition & assignment ---------------------------------------------------
@@ -185,6 +186,7 @@ hdmi_controller #(
 	.I2C_SDA_O				(I2C_SDA_O),
 	.I2C_SDA_T				(I2C_SDA_T),
 
+	.HDMI_FRAME_BASE		(HDMI_FRAME_BASE),
 	.HDMI_INTR				(HDMI_INTR),
 	.HDMI_CLK				(HDMI_CLK),
 	.HDMI_DE				(HDMI_DE),

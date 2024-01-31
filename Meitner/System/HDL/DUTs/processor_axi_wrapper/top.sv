@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : processor AXI wrapper
-// Rev.  : 1/24/2024 Wed (clonextop@gmail.com)
+// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 
@@ -130,6 +130,8 @@ module top (
 	wire									M_RLAST;
 	wire									M_RVALID;
 	wire									M_RREADY;
+
+	wire	[C_M_AXI_ADDR_WIDTH-1:0]		frame_base;
 
 	// implementation ------------------------------------------------------------
 	// APB bus implementation
@@ -270,12 +272,17 @@ module top (
 		.M_RRESP			(M_RRESP),
 		.M_RLAST			(M_RLAST),
 		.M_RVALID			(M_RVALID),
-		.M_RREADY			(M_RREADY)
+		.M_RREADY			(M_RREADY),
+		//// Extra -----------------------------
+		.FRAME_BASE			(frame_base)
 	);
 
-	hdmi_controller	hdmi (
+	hdmi_controller	#(
+		.M_AXI_ADDR_WIDTH	(C_M_AXI_ADDR_WIDTH)
+	) hdmi (
 		.CLK				(MCLK),
-		.nRST				(nRST)
+		.nRST				(nRST),
+		.FRAME_BASE			(frame_base)
 	);
 
 endmodule

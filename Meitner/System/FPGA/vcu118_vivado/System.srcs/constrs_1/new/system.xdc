@@ -10,8 +10,8 @@ set_property CFGBVS GND [current_design]
 
 set_false_path -from [get_ports pcie_perstn]
 set_false_path -from [get_ports reset]
-set_false_path -to [get_ports ddr4_sdram_c1_062_reset_n]
-set_false_path -to [get_ports ddr4_sdram_c2_062_reset_n]
+set_false_path -to [get_ports ddr4_sdram_c1_083_reset_n]
+set_false_path -to [get_ports ddr4_sdram_c2_083_reset_n]
 
 ###############################################################################
 # HDMI controller

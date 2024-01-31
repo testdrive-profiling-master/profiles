@@ -1,7 +1,7 @@
 {
   "design": {
     "design_info": {
-      "boundary_crc": "0xAC6C514DAB156B99",
+      "boundary_crc": "0xAC6C514D539E5340",
       "device": "xcvu9p-flga2104-2L-e",
       "gen_directory": "../../../../System.gen/sources_1/bd/system_design",
       "name": "system_design",
@@ -447,7 +447,13 @@
         }
       },
       "HDMI_INTR": {
-        "direction": "I"
+        "direction": "I",
+        "parameters": {
+          "PortWidth": {
+            "value": "1",
+            "value_src": "default_prop"
+          }
+        }
       },
       "HDMI_HPD": {
         "direction": "I"
@@ -462,7 +468,21 @@
         "direction": "IO"
       },
       "HDMI_CLK": {
-        "direction": "O"
+        "direction": "O",
+        "parameters": {
+          "CLK_DOMAIN": {
+            "value": "system_design_hdmi_sil9134_control_0_0_HDMI_CLK",
+            "value_src": "default_prop"
+          },
+          "FREQ_HZ": {
+            "value": "100000000",
+            "value_src": "default_prop"
+          },
+          "PHASE": {
+            "value": "0.0",
+            "value_src": "default_prop"
+          }
+        }
       },
       "HDMI_DE": {
         "direction": "O"
@@ -1856,7 +1876,7 @@
       },
       "hdmi_controller": {
         "vlnv": "xilinx.com:user:hdmi_sil9134_controller:1.0",
-        "ip_revision": "17",
+        "ip_revision": "18",
         "xci_name": "system_design_hdmi_sil9134_control_0_0",
         "xci_path": "ip\\system_design_hdmi_sil9134_control_0_0\\system_design_hdmi_sil9134_control_0_0.xci",
         "inst_hier_path": "hdmi_controller",
@@ -1866,10 +1886,28 @@
           }
         },
         "interface_ports": {
+          "M_AXI": {
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
+            "mode": "Master",
+            "address_space_ref": "M_AXI",
+            "base_address": {
+              "minimum": "0x00000000",
+              "maximum": "0x000FFFFFFFFF",
+              "width": "36"
+            }
+          },
           "S_APB": {
             "vlnv": "xilinx.com:interface:apb_rtl:1.0",
             "mode": "Slave",
             "memory_map_ref": "S_APB"
+          }
+        },
+        "addressing": {
+          "address_spaces": {
+            "M_AXI": {
+              "range": "64G",
+              "width": "36"
+            }
           }
         }
       },
@@ -1913,10 +1951,28 @@
           }
         },
         "interface_ports": {
+          "M_AXI": {
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
+            "mode": "Master",
+            "address_space_ref": "M_AXI",
+            "base_address": {
+              "minimum": "0x00000000",
+              "maximum": "0x000FFFFFFFFF",
+              "width": "36"
+            }
+          },
           "S_APB": {
             "vlnv": "xilinx.com:interface:apb_rtl:1.0",
             "mode": "Slave",
             "memory_map_ref": "S_APB"
+          }
+        },
+        "addressing": {
+          "address_spaces": {
+            "M_AXI": {
+              "range": "64G",
+              "width": "36"
+            }
           }
         }
       }
@@ -2072,6 +2128,12 @@
           "axi_interconnect_mem/M01_ARESETN"
         ]
       },
+      "dut_wrapper_0_FRAME_BASE": {
+        "ports": [
+          "dut_wrapper_0/FRAME_BASE",
+          "hdmi_controller/HDMI_FRAME_BASE"
+        ]
+      },
       "dut_wrapper_0_INTR": {
         "ports": [
           "dut_wrapper_0/INTR",
@@ -2141,8 +2203,8 @@
           "axi_apb_bridge/s_axi_aclk",
           "axi_interconnect_mem/S01_ACLK",
           "axi_interconnect_mem/S02_ACLK",
-          "dut_wrapper_0/ACLK",
-          "hdmi_controller/ACLK"
+          "hdmi_controller/ACLK",
+          "dut_wrapper_0/ACLK"
         ]
       },
       "pcie_xdma_axi_aresetn": {
@@ -2152,8 +2214,8 @@
           "axi_apb_bridge/s_axi_aresetn",
           "axi_interconnect_mem/S01_ARESETN",
           "axi_interconnect_mem/S02_ARESETN",
-          "dut_wrapper_0/nRST",
-          "hdmi_controller/nRST"
+          "hdmi_controller/nRST",
+          "dut_wrapper_0/nRST"
         ]
       },
       "reset_1": {
@@ -2218,6 +2280,50 @@
               "SEG_ddr4_1_C0_DDR4_ADDRESS_BLOCK": {
                 "address_block": "/ddr4_1/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
                 "offset": "0x0000000880000000",
+                "range": "2G",
+                "offset_base_param": "C0_DDR4_MEMORY_MAP_BASEADDR",
+                "offset_high_param": "C0_DDR4_MEMORY_MAP_HIGHADDR"
+              }
+            }
+          }
+        }
+      },
+      "/hdmi_controller": {
+        "address_spaces": {
+          "M_AXI": {
+            "segments": {
+              "SEG_ddr4_0_C0_DDR4_ADDRESS_BLOCK": {
+                "address_block": "/ddr4_0/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
+                "offset": "0x800000000",
+                "range": "2G",
+                "offset_base_param": "C0_DDR4_MEMORY_MAP_BASEADDR",
+                "offset_high_param": "C0_DDR4_MEMORY_MAP_HIGHADDR"
+              },
+              "SEG_ddr4_1_C0_DDR4_ADDRESS_BLOCK": {
+                "address_block": "/ddr4_1/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
+                "offset": "0x880000000",
+                "range": "2G",
+                "offset_base_param": "C0_DDR4_MEMORY_MAP_BASEADDR",
+                "offset_high_param": "C0_DDR4_MEMORY_MAP_HIGHADDR"
+              }
+            }
+          }
+        }
+      },
+      "/dut_wrapper_0": {
+        "address_spaces": {
+          "M_AXI": {
+            "segments": {
+              "SEG_ddr4_0_C0_DDR4_ADDRESS_BLOCK": {
+                "address_block": "/ddr4_0/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
+                "offset": "0x800000000",
+                "range": "2G",
+                "offset_base_param": "C0_DDR4_MEMORY_MAP_BASEADDR",
+                "offset_high_param": "C0_DDR4_MEMORY_MAP_HIGHADDR"
+              },
+              "SEG_ddr4_1_C0_DDR4_ADDRESS_BLOCK": {
+                "address_block": "/ddr4_1/C0_DDR4_MEMORY_MAP/C0_DDR4_ADDRESS_BLOCK",
+                "offset": "0x880000000",
                 "range": "2G",
                 "offset_base_param": "C0_DDR4_MEMORY_MAP_BASEADDR",
                 "offset_high_param": "C0_DDR4_MEMORY_MAP_HIGHADDR"

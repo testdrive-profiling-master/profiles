@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Processor
-// Rev.  : 1/24/2024 Wed (clonextop@gmail.com)
+// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
 //================================================================================
 `include "DUTs/meitner/includes.vh"
 `define NO_TEST_DESIGN		// overriding test top design
@@ -82,7 +82,9 @@ module processor_top #(
 		output	[M_DATA_WIDTH-1:0]		MW_DATA,			// write data
 		output							MW_VALID,			// write validation
 		input							MW_READY,			// write ready
-		input							MW_LAST				// write last
+		input							MW_LAST,			// write last
+		//// extra interface
+		output	[M_ADDR_WIDTH-1:0]		FRAME_BASE			// override frame buffer base address
 	);
 
 	// definition & assignment ---------------------------------------------------
@@ -104,6 +106,8 @@ module processor_top #(
 	assign	MR_READY		= `FALSE;
 	assign	MW_REQ			= `FALSE;
 	assign	MW_VALID		= `FALSE;
+
+	assign	FRAME_BASE		= 'd0;
 
 	// implementation ------------------------------------------------------------
 	// slave counter up design

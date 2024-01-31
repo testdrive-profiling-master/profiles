@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : HDMI controller
-// Rev.  : 1/29/2024 Mon (clonextop@gmail.com)
+// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
 //================================================================================
 
 module HDMI_TOP #(
@@ -40,37 +40,38 @@ module HDMI_TOP #(
 		parameter			C_CLKIN_PERIOD		= 5
 	) (
 		//// system
-		input							ACLK,			// clock
-		input							nRST,			// reset (active low)
+		input							ACLK,				// clock
+		input							nRST,				// reset (active low)
 		//// Simplified slave interface
-		input							S_EN,			// enable
-		input							S_WE,			// write enable
-		input	[3:0]					S_ADDR,			// address
-		input	[31:0]					S_WDATA,		// write data
-		output	[31:0]					S_RDATA,		// read data
+		input							S_EN,				// enable
+		input							S_WE,				// write enable
+		input	[3:0]					S_ADDR,				// address
+		input	[31:0]					S_WDATA,			// write data
+		output	[31:0]					S_RDATA,			// read data
 		//// Simplified master interface
-		output							MR_REQ,			// read request
-		input							MR_GRANT,		// read grant
-		output	[C_ADDR_WIDTH-1:0]		MR_ADDR,		// read address
-		output	[7:0]					MR_SIZE,		// read size
-		input	[512-1:0]				MR_DATA,		// read data
-		input							MR_VALID,		// read validation
-		output							MR_READY,		// read ready
-		input							MR_LAST,		// last read
+		output							MR_REQ,				// read request
+		input							MR_GRANT,			// read grant
+		output	[C_ADDR_WIDTH-1:0]		MR_ADDR,			// read address
+		output	[7:0]					MR_SIZE,			// read size
+		input	[512-1:0]				MR_DATA,			// read data
+		input							MR_VALID,			// read validation
+		output							MR_READY,			// read ready
+		input							MR_LAST,			// last read
 
 		//// Outputs
 		// I2C interface
-		output							I2C_nRST,		// i2c reset (active low)
-		input							I2C_SCL_I,		// i2c SCL input
-		output							I2C_SCL_T,		// i2c SCL tri-state enable
-		input							I2C_SDA_I,		// i2c SDA input
-		output							I2C_SDA_T,		// i2c SDA tri-state enable
+		output							I2C_nRST,			// i2c reset (active low)
+		input							I2C_SCL_I,			// i2c SCL input
+		output							I2C_SCL_T,			// i2c SCL tri-state enable
+		input							I2C_SDA_I,			// i2c SDA input
+		output							I2C_SDA_T,			// i2c SDA tri-state enable
 		// HDMI SIGNALS
-		output							HDMI_CLK,		// hdmi clock
-		output							HDMI_DE,		// data enable
-		output							HDMI_HSYNC,		// horizontal sync.
-		output							HDMI_VSYNC,		// vertical sync.
-		output	[23:0]					HDMI_DATA		// data output
+		input	[C_ADDR_WIDTH-1:0]		HDMI_FRAME_BASE,	// override frame buffer base address
+		output							HDMI_CLK,			// hdmi clock
+		output							HDMI_DE,			// data enable
+		output							HDMI_HSYNC,			// horizontal sync.
+		output							HDMI_VSYNC,			// vertical sync.
+		output	[23:0]					HDMI_DATA			// data output
 	);
 
 	// definition & assignment ---------------------------------------------------
@@ -139,6 +140,7 @@ module HDMI_TOP #(
 		.MR_READY			(MR_READY),
 		.MR_LAST			(MR_LAST),
 		// video configuration
+		.FRAME_BASE			(HDMI_FRAME_BASE),
 		.VIDEO_BASE			(video_BASE),
 		.VIDEO_FRAME		(video_FRAME),
 		// pixel operation

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : processor AXI wrapper
-// Rev.  : 1/24/2024 Wed (clonextop@gmail.com)
+// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
 //================================================================================
 `include "testdrive_system.vh"
 
@@ -74,7 +74,9 @@ module processor_top #(
 		output	reg [M_DATA_WIDTH-1:0]	MW_DATA,			// write data
 		output							MW_VALID,			// write validation
 		input							MW_READY,			// write ready
-		input							MW_LAST				// write last
+		input							MW_LAST,			// write last
+		//// extra interface
+		output	[M_ADDR_WIDTH-1:0]		FRAME_BASE			// framebuffer override address
 	);
 
 	// definition & assignment ---------------------------------------------------
@@ -105,6 +107,8 @@ module processor_top #(
 
 	//// test design! for ProcessorTest app.
 	assign	P_READY			= ~master_en;				// slave operation will be blocking when master bus is walking
+
+	assign	FRAME_BASE			= 'd0;
 
 	wire	data_trans		= bWrite ? (MW_VALID & MW_READY) : (MR_VALID & MR_READY);
 

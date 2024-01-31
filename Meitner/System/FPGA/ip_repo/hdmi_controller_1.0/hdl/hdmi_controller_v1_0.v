@@ -181,6 +181,7 @@ hdmi_controller #(
 	.I2C_SDA_O				(I2C_SDA_O),
 	.I2C_SDA_T				(I2C_SDA_T),
 
+	.HDMI_FRAME_BASE		('d0),
 	.HDMI_INTR				(HDMI_INTR),
 	.HDMI_CLK				(HDMI_CLK),
 	.HDMI_DE				(HDMI_DE),

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : HDMI controller
-// Rev.  : 1/29/2024 Mon (clonextop@gmail.com)
+// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
 //================================================================================
 module hdmi_controller #(
 		// S_AXI
@@ -107,21 +107,22 @@ module hdmi_controller #(
 		output									M_BREADY,
 
 		// I2C interface
-		output									I2C_nRST,		// i2c reset (active low)
-		input									I2C_SCL_I,		// i2c SCL input
-		output									I2C_SCL_O,		// i2c SCL output
-		output									I2C_SCL_T,		// i2c SCL tri-state enable
-		input									I2C_SDA_I,		// i2c SDA input
-		output									I2C_SDA_O,		// i2c SDA output
-		output									I2C_SDA_T,		// i2c SDA tri-state enable
+		output									I2C_nRST,			// i2c reset (active low)
+		input									I2C_SCL_I,			// i2c SCL input
+		output									I2C_SCL_O,			// i2c SCL output
+		output									I2C_SCL_T,			// i2c SCL tri-state enable
+		input									I2C_SDA_I,			// i2c SDA input
+		output									I2C_SDA_O,			// i2c SDA output
+		output									I2C_SDA_T,			// i2c SDA tri-state enable
 		// HDMI SIGNALS
-		input									HDMI_INTR,		// hdmi interrupt input
-		output									HDMI_CLK,		// hdmi clock
-		output									HDMI_DE,		// data enable
-		output									HDMI_HSYNC,		// horizontal sync.
-		output									HDMI_VSYNC,		// vertical sync.
-		output	[23:0]							HDMI_DATA,		// data output
-		output									HDMI_SPDIF		// sony & philips digital interconnect format, sound output
+		input	[C_M_AXI_ADDR_WIDTH-1 : 0]		HDMI_FRAME_BASE,	// override frame buffer base address
+		input									HDMI_INTR,			// hdmi interrupt input
+		output									HDMI_CLK,			// hdmi clock
+		output									HDMI_DE,			// data enable
+		output									HDMI_HSYNC,			// horizontal sync.
+		output									HDMI_VSYNC,			// vertical sync.
+		output	[23:0]							HDMI_DATA,			// data output
+		output									HDMI_SPDIF			// sony & philips digital interconnect format, sound output
 	);
 
 	// definition & assignment ---------------------------------------------------
@@ -272,6 +273,7 @@ module hdmi_controller #(
 		.I2C_SDA_I				(I2C_SDA_I),
 		.I2C_SDA_T				(I2C_SDA_T),
 		// HDMI SIGNALS
+		.HDMI_FRAME_BASE		(HDMI_FRAME_BASE),
 		.HDMI_CLK				(HDMI_CLK),
 		.HDMI_DE				(HDMI_DE),
 		.HDMI_HSYNC				(HDMI_HSYNC),

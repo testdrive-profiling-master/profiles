@@ -4,7 +4,7 @@
     "xci_name": "system_design_hdmi_sil9134_control_0_0",
     "cell_name": "hdmi_controller",
     "component_reference": "xilinx.com:user:hdmi_sil9134_controller:1.0",
-    "ip_revision": "17",
+    "ip_revision": "18",
     "gen_directory": "../../../../../../System.gen/sources_1/bd/system_design/ip/system_design_hdmi_sil9134_control_0_0",
     "parameters": {
       "component_parameters": {
@@ -37,7 +37,7 @@
       },
       "runtime_parameters": {
         "IPCONTEXT": [ { "value": "IP_Integrator" } ],
-        "IPREVISION": [ { "value": "17" } ],
+        "IPREVISION": [ { "value": "18" } ],
         "MANAGED": [ { "value": "TRUE" } ],
         "OUTPUTDIR": [ { "value": "../../../../../../System.gen/sources_1/bd/system_design/ip/system_design_hdmi_sil9134_control_0_0" } ],
         "SELECTEDSIMMODEL": [ { "value": "" } ],
@@ -50,6 +50,15 @@
       "ports": {
         "ACLK": [ { "direction": "in" } ],
         "nRST": [ { "direction": "in" } ],
+        "INTR": [ { "direction": "out" } ],
+        "S_PSEL": [ { "direction": "in" } ],
+        "S_PENABLE": [ { "direction": "in" } ],
+        "S_PWRITE": [ { "direction": "in" } ],
+        "S_PADDR": [ { "direction": "in", "size_left": "15", "size_right": "0" } ],
+        "S_PWDATA": [ { "direction": "in", "size_left": "31", "size_right": "0" } ],
+        "S_PRDATA": [ { "direction": "out", "size_left": "31", "size_right": "0" } ],
+        "S_PREADY": [ { "direction": "out" } ],
+        "S_PSLVERR": [ { "direction": "out" } ],
         "M_AWID": [ { "direction": "out", "size_left": "0", "size_right": "0" } ],
         "M_AWADDR": [ { "direction": "out", "size_left": "35", "size_right": "0" } ],
         "M_AWLEN": [ { "direction": "out", "size_left": "7", "size_right": "0" } ],
@@ -90,18 +99,10 @@
         "M_BRESP": [ { "direction": "in", "size_left": "1", "size_right": "0" } ],
         "M_BVALID": [ { "direction": "in" } ],
         "M_BREADY": [ { "direction": "out" } ],
-        "INTR": [ { "direction": "out" } ],
-        "S_PSEL": [ { "direction": "in" } ],
-        "S_PENABLE": [ { "direction": "in" } ],
-        "S_PWRITE": [ { "direction": "in" } ],
-        "S_PADDR": [ { "direction": "in", "size_left": "15", "size_right": "0" } ],
-        "S_PWDATA": [ { "direction": "in", "size_left": "31", "size_right": "0" } ],
-        "S_PRDATA": [ { "direction": "out", "size_left": "31", "size_right": "0" } ],
-        "S_PREADY": [ { "direction": "out" } ],
-        "S_PSLVERR": [ { "direction": "out" } ],
         "HDMI_nRST": [ { "direction": "out" } ],
         "HDMI_I2C_SCL": [ { "direction": "inout" } ],
         "HDMI_I2C_SDA": [ { "direction": "inout" } ],
+        "HDMI_FRAME_BASE": [ { "direction": "in", "size_left": "35", "size_right": "0" } ],
         "HDMI_INTR": [ { "direction": "in" } ],
         "HDMI_HPD": [ { "direction": "in" } ],
         "HDMI_CLK": [ { "direction": "out" } ],
@@ -145,6 +146,7 @@
           "vlnv": "xilinx.com:interface:aximm:1.0",
           "abstraction_type": "xilinx.com:interface:aximm_rtl:1.0",
           "mode": "master",
+          "address_space_ref": "M_AXI",
           "parameters": {
             "DATA_WIDTH": [ { "value": "512", "value_src": "auto", "value_permission": "bd", "resolve_type": "generated", "format": "long", "is_ips_inferred": true, "is_static_object": false } ],
             "PROTOCOL": [ { "value": "AXI4", "value_src": "constant", "value_permission": "bd", "resolve_type": "generated", "is_ips_inferred": true, "is_static_object": false } ],
@@ -236,6 +238,55 @@
             "PWDATA": [ { "physical_name": "S_PWDATA" } ],
             "PSEL": [ { "physical_name": "S_PSEL" } ]
           }
+        },
+        "HDMI_CLK": {
+          "vlnv": "xilinx.com:signal:clock:1.0",
+          "abstraction_type": "xilinx.com:signal:clock_rtl:1.0",
+          "mode": "master",
+          "parameters": {
+            "FREQ_HZ": [ { "value": "100000000", "value_permission": "bd", "resolve_type": "generated", "format": "long", "is_ips_inferred": true, "is_static_object": false } ],
+            "FREQ_TOLERANCE_HZ": [ { "value": "0", "value_permission": "bd", "resolve_type": "generated", "format": "long", "is_ips_inferred": true, "is_static_object": false } ],
+            "PHASE": [ { "value": "0.0", "value_permission": "bd", "resolve_type": "generated", "format": "float", "is_ips_inferred": true, "is_static_object": false } ],
+            "CLK_DOMAIN": [ { "value": "system_design_hdmi_sil9134_control_0_0_HDMI_CLK", "value_permission": "bd", "resolve_type": "generated", "is_ips_inferred": true, "is_static_object": false } ],
+            "ASSOCIATED_BUSIF": [ { "value": "", "value_permission": "bd", "resolve_type": "generated", "is_ips_inferred": true, "is_static_object": false } ],
+            "ASSOCIATED_PORT": [ { "value": "", "value_permission": "bd", "resolve_type": "generated", "is_ips_inferred": true, "is_static_object": false } ],
+            "ASSOCIATED_RESET": [ { "value": "", "value_permission": "bd", "resolve_type": "generated", "is_ips_inferred": true, "is_static_object": false } ],
+            "INSERT_VIP": [ { "value": "0", "resolve_type": "user", "format": "long", "usage": "simulation.rtl", "is_ips_inferred": true, "is_static_object": false } ]
+          },
+          "port_maps": {
+            "CLK": [ { "physical_name": "HDMI_CLK" } ]
+          }
+        },
+        "HDMI_INTR": {
+          "vlnv": "xilinx.com:signal:interrupt:1.0",
+          "abstraction_type": "xilinx.com:signal:interrupt_rtl:1.0",
+          "mode": "slave",
+          "parameters": {
+            "SENSITIVITY": [ { "value": "LEVEL_HIGH", "value_src": "constant", "value_permission": "bd", "usage": "all" } ],
+            "PortWidth": [ { "value": "1", "value_src": "default_prop", "value_permission": "bd", "resolve_type": "generated", "format": "long", "is_ips_inferred": true, "is_static_object": false } ]
+          },
+          "port_maps": {
+            "INTERRUPT": [ { "physical_name": "HDMI_INTR" } ]
+          }
+        },
+        "INTR": {
+          "vlnv": "xilinx.com:signal:interrupt:1.0",
+          "abstraction_type": "xilinx.com:signal:interrupt_rtl:1.0",
+          "mode": "master",
+          "parameters": {
+            "SENSITIVITY": [ { "value": "LEVEL_HIGH", "value_src": "constant", "value_permission": "bd", "usage": "all" } ],
+            "PortWidth": [ { "value": "1", "value_permission": "bd", "resolve_type": "generated", "format": "long", "is_ips_inferred": true, "is_static_object": false } ]
+          },
+          "port_maps": {
+            "INTERRUPT": [ { "physical_name": "INTR" } ]
+          }
+        }
+      },
+      "address_spaces": {
+        "M_AXI": {
+          "range": "68719476736",
+          "display_name": "M_AXI",
+          "width": "512"
         }
       },
       "memory_maps": {

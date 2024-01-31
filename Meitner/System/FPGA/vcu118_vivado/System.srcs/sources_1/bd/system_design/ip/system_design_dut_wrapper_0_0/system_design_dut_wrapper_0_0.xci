@@ -17,7 +17,8 @@
       "model_parameters": {
         "C_M_AXI_ID_WIDTH": [ { "value": "1", "resolve_type": "generated", "format": "long", "usage": "all" } ],
         "C_M_AXI_ADDR_WIDTH": [ { "value": "36", "resolve_type": "generated", "format": "long", "usage": "all" } ],
-        "C_M_AXI_DATA_WIDTH": [ { "value": "512", "resolve_type": "generated", "format": "long", "usage": "all" } ]
+        "C_M_AXI_DATA_WIDTH": [ { "value": "512", "resolve_type": "generated", "format": "long", "usage": "all" } ],
+        "C_CLKIN_PERIOD": [ { "value": "5", "resolve_type": "generated", "format": "long", "usage": "all" } ]
       },
       "project_parameters": {
         "ARCHITECTURE": [ { "value": "virtexuplus" } ],
@@ -93,13 +94,15 @@
         "M_BID": [ { "direction": "in", "size_left": "0", "size_right": "0" } ],
         "M_BRESP": [ { "direction": "in", "size_left": "1", "size_right": "0" } ],
         "M_BVALID": [ { "direction": "in" } ],
-        "M_BREADY": [ { "direction": "out" } ]
+        "M_BREADY": [ { "direction": "out" } ],
+        "FRAME_BASE": [ { "direction": "out", "size_left": "35", "size_right": "0" } ]
       },
       "interfaces": {
         "M_AXI": {
           "vlnv": "xilinx.com:interface:aximm:1.0",
           "abstraction_type": "xilinx.com:interface:aximm_rtl:1.0",
           "mode": "master",
+          "address_space_ref": "M_AXI",
           "parameters": {
             "DATA_WIDTH": [ { "value": "512", "value_src": "auto", "value_permission": "bd", "resolve_type": "generated", "format": "long", "is_ips_inferred": true, "is_static_object": false } ],
             "PROTOCOL": [ { "value": "AXI4", "value_src": "constant", "value_permission": "bd", "resolve_type": "generated", "is_ips_inferred": true, "is_static_object": false } ],
@@ -181,11 +184,11 @@
           "parameters": {
             "ASSOCIATED_BUSIF": [ { "value": "M_AXI:S_APB", "value_src": "constant", "value_permission": "bd", "usage": "all" } ],
             "FREQ_HZ": [ { "value": "", "value_src": "constant", "value_permission": "bd", "usage": "all" } ],
+            "ASSOCIATED_RESET": [ { "value": "nRST", "value_src": "constant", "value_permission": "bd", "usage": "all" } ],
             "FREQ_TOLERANCE_HZ": [ { "value": "0", "value_permission": "bd", "resolve_type": "generated", "format": "long", "is_ips_inferred": true, "is_static_object": false } ],
             "PHASE": [ { "value": "0.0", "value_permission": "bd", "resolve_type": "generated", "format": "float", "is_ips_inferred": true, "is_static_object": false } ],
             "CLK_DOMAIN": [ { "value": "system_design_xdma_0_0_axi_aclk", "value_src": "default_prop", "value_permission": "bd", "resolve_type": "generated", "is_ips_inferred": true, "is_static_object": false } ],
             "ASSOCIATED_PORT": [ { "value": "", "value_permission": "bd", "resolve_type": "generated", "is_ips_inferred": true, "is_static_object": false } ],
-            "ASSOCIATED_RESET": [ { "value": "", "value_permission": "bd", "resolve_type": "generated", "is_ips_inferred": true, "is_static_object": false } ],
             "INSERT_VIP": [ { "value": "0", "resolve_type": "user", "format": "long", "usage": "simulation.rtl", "is_ips_inferred": true, "is_static_object": false } ]
           },
           "port_maps": {
@@ -219,6 +222,25 @@
             "PWDATA": [ { "physical_name": "S_PWDATA" } ],
             "PSEL": [ { "physical_name": "S_PSEL" } ]
           }
+        },
+        "INTR": {
+          "vlnv": "xilinx.com:signal:interrupt:1.0",
+          "abstraction_type": "xilinx.com:signal:interrupt_rtl:1.0",
+          "mode": "master",
+          "parameters": {
+            "SENSITIVITY": [ { "value": "LEVEL_HIGH", "value_src": "constant", "value_permission": "bd", "usage": "all" } ],
+            "PortWidth": [ { "value": "1", "value_src": "default_prop", "value_permission": "bd", "resolve_type": "generated", "format": "long", "is_ips_inferred": true, "is_static_object": false } ]
+          },
+          "port_maps": {
+            "INTERRUPT": [ { "physical_name": "INTR" } ]
+          }
+        }
+      },
+      "address_spaces": {
+        "M_AXI": {
+          "range": "68719476736",
+          "display_name": "M_AXI",
+          "width": "512"
         }
       },
       "memory_maps": {

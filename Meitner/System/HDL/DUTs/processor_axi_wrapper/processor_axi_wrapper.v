@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : processor AXI wrapper
-// Rev.  : 1/24/2024 Wed (clonextop@gmail.com)
+// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 `include "testdrive_system.vh"
@@ -103,7 +103,9 @@ module processor_axi_wrapper #(
 		input	[1:0]							M_RRESP,		// Read response. b00(OKAY), b01(EXOKAY), b10(SLVERR), b11(DECERR)
 		input									M_RLAST,		// Read last. This signal indicates the last transfer in a read burst.
 		input									M_RVALID,		// Read valid (1 = read data available, 0 = read data not available)
-		output									M_RREADY		// Read ready (1= master ready 0 = master not ready)
+		output									M_RREADY,		// Read ready (1= master ready 0 = master not ready)
+		//// Extra interface -------------------
+		output	reg [C_M_AXI_ADDR_WIDTH-1:0]	FRAME_BASE
 	);
 
 	/*verilator tracing_off*/
@@ -144,6 +146,9 @@ module processor_axi_wrapper #(
 	// async slave
 	wire										S_PREADY_async;
 	wire	[31:0]								S_PRDATA_clkgen, S_PRDATA_async;
+
+	// frame buffer address
+	wire	[C_M_AXI_ADDR_WIDTH-1:0]			processor_frame_buffer;
 
 	// APB slave interface
 	assign	S_PRDATA	= clkgen_en ? S_PRDATA_clkgen : S_PRDATA_async;
@@ -332,7 +337,24 @@ module processor_axi_wrapper #(
 		.MW_DATA		(p_mw_data),
 		.MW_VALID		(p_mw_valid),
 		.MW_READY		(p_mw_ready),
-		.MW_LAST		(p_mw_last)
+		.MW_LAST		(p_mw_last),
+		// extra
+		.FRAME_BASE		(processor_frame_buffer)
 	);
+
+	wire	frame_base_change	= FRAME_BASE != processor_frame_buffer;
+	reg		frame_base_change_pipe;
+	always@(posedge CLK) begin
+		if(!nRST) begin
+			FRAME_BASE				<= 'd0;
+			frame_base_change_pipe	<= 1'b0;
+		end
+		else begin
+			frame_base_change_pipe	<= frame_base_change;
+			if(frame_base_change && frame_base_change_pipe) begin
+				FRAME_BASE	<= processor_frame_buffer;
+			end
+		end
+	end
 
 endmodule
