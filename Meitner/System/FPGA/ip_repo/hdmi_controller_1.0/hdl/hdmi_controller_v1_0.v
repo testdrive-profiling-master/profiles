@@ -8,7 +8,7 @@ module hdmi_controller_v1_0 #(
 	parameter integer	C_M_AXI_ID_WIDTH	= 1,
 	parameter integer	C_M_AXI_ADDR_WIDTH	= 32,
 	parameter integer	C_M_AXI_DATA_WIDTH	= 512
-)(
+) (
 	// system
 	input									ACLK,			// clock
 	input									nRST,			// reset (active low)
@@ -18,7 +18,7 @@ module hdmi_controller_v1_0 #(
 	input									S_PENABLE,
 	input									S_PWRITE,
 	input	[15:0]							S_PADDR,
-	// input	[31:0]							S_PWDATA,
+	input	[31:0]							S_PWDATA,
 	output	[31:0]							S_PRDATA,
 	output									S_PREADY,
 	output									S_PSLVERR,
@@ -69,24 +69,27 @@ module hdmi_controller_v1_0 #(
 	input									M_BVALID,
 	output									M_BREADY,
 	
+	//--------------------------------------------------------
+	// HDMI interface
+	output									HDMI_nRST,
 	// I2C interface
-	output									I2C_nRST,		// i2c reset (active low)
-	inout									I2C_SCL,		// i2c SCL
-	inout									I2C_SDA,		// i2c SDA
+	inout									HDMI_I2C_SCL,		// i2c SCL
+	inout									HDMI_I2C_SDA,		// i2c SDA
 	// HDMI SIGNALS
-	input									HDMI_INTR,		// hdmi interrupt input
-	output									HDMI_CLK,		// hdmi clock
-	output									HDMI_DE,		// data enable
-	output									HDMI_HSYNC,		// horizontal sync.
-	output									HDMI_VSYNC,		// vertical sync.
-	output	[35:0]							HDMI_DATA,		// data output
-	output									HDMI_SPDIF		// sony & philips digital interconnect format, sound output
+	input	[C_M_AXI_ADDR_WIDTH-1 : 0]		HDMI_FRAME_BASE,	// framebuffer base override
+	input									HDMI_INTR,			// hdmi interrupt input
+	input									HDMI_HPD,			// hdmi hot plug-in detect
+	output									HDMI_CLK,			// hdmi clock
+	output									HDMI_DE,			// data enable
+	output									HDMI_HSYNC,			// horizontal sync.
+	output									HDMI_VSYNC,			// vertical sync.
+	output	[23:0]							HDMI_DATA			// data output
 );
 
 // definition & assignment ---------------------------------------------------
-wire	I2C_SCL_I, I2C_SCL_O, I2C_SCL_T;
-wire	I2C_SDA_I, I2C_SDA_O, I2C_SDA_T;
-
+wire			I2C_SCL_I, I2C_SCL_O, I2C_SCL_T;
+wire			I2C_SDA_I, I2C_SDA_O, I2C_SDA_T;
+wire	[35:0]	hdmi_out;
 // implementation ------------------------------------------------------------
 // for i2c io buffer
 IOBUF #(
@@ -97,7 +100,7 @@ IOBUF #(
 	.T		(I2C_SCL_T),
 	.I		(I2C_SCL_O),
 	.O		(I2C_SCL_I),
-	.IO		(I2C_SCL)
+	.IO		(HDMI_I2C_SCL)
 );
 
 IOBUF #(
@@ -108,7 +111,7 @@ IOBUF #(
 	.T		(I2C_SDA_T),
 	.I		(I2C_SDA_O),
 	.O		(I2C_SDA_I),
-	.IO		(I2C_SDA)
+	.IO		(HDMI_I2C_SDA)
 );
 
 // HDMI controller
@@ -117,7 +120,9 @@ hdmi_controller #(
 	.C_S_AXI_ADDR_WIDTH		(C_S_AXI_ADDR_WIDTH),
 	.C_M_AXI_ID_WIDTH		(C_M_AXI_ID_WIDTH),
 	.C_M_AXI_ADDR_WIDTH		(C_M_AXI_ADDR_WIDTH),
-	.C_M_AXI_DATA_WIDTH		(C_M_AXI_DATA_WIDTH)
+	.C_M_AXI_DATA_WIDTH		(C_M_AXI_DATA_WIDTH),
+	.C_CLKIN_PERIOD			(4),
+	.C_DEFAULT_BASE_ADDR	(64'h00000008_00000000)
 ) hdmi_ctrl (
 	.ACLK					(ACLK),
 	.nRST					(nRST),
@@ -173,7 +178,7 @@ hdmi_controller #(
 	.M_BVALID				(M_BVALID),
 	.M_BREADY				(M_BREADY),
 
-	.I2C_nRST				(I2C_nRST),
+	.I2C_nRST				(HDMI_nRST),
 	.I2C_SCL_I				(I2C_SCL_I),
 	.I2C_SCL_O				(I2C_SCL_O),
 	.I2C_SCL_T				(I2C_SCL_T),
@@ -181,18 +186,14 @@ hdmi_controller #(
 	.I2C_SDA_O				(I2C_SDA_O),
 	.I2C_SDA_T				(I2C_SDA_T),
 
-	.HDMI_FRAME_BASE		('d0),
+	.HDMI_FRAME_BASE		(HDMI_FRAME_BASE),
 	.HDMI_INTR				(HDMI_INTR),
 	.HDMI_CLK				(HDMI_CLK),
 	.HDMI_DE				(HDMI_DE),
 	.HDMI_HSYNC				(HDMI_HSYNC),
 	.HDMI_VSYNC				(HDMI_VSYNC),
-	.HDMI_DATA				({HDMI_DATA[11:4], HDMI_DATA[23:16], HDMI_DATA[35:28]}),
-	.HDMI_SPDIF				(HDMI_SPDIF)
+	.HDMI_DATA				(HDMI_DATA),
+	.HDMI_SPDIF				()
 );
-
-assign	HDMI_DATA[ 3: 0]		= 4'd0;
-assign	HDMI_DATA[15:12]		= 4'd0;
-assign	HDMI_DATA[27:24]		= 4'd0;
 
 endmodule

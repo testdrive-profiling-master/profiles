@@ -63,3 +63,8 @@ proc update_MODELPARAM_VALUE.C_M_AXI_DATA_WIDTH { MODELPARAM_VALUE.C_M_AXI_DATA_
 	set_property value [get_property value ${PARAM_VALUE.C_M_AXI_DATA_WIDTH}] ${MODELPARAM_VALUE.C_M_AXI_DATA_WIDTH}
 }
 
+proc update_MODELPARAM_VALUE.C_CLKIN_PERIOD { MODELPARAM_VALUE.C_CLKIN_PERIOD PARAM_VALUE.C_CLKIN_PERIOD } {
+	# Procedure called to set VHDL generic/Verilog parameter value(s) based on TCL parameter value
+	set_property value [get_property value ${PARAM_VALUE.C_CLKIN_PERIOD}] ${MODELPARAM_VALUE.C_CLKIN_PERIOD}
+}
+

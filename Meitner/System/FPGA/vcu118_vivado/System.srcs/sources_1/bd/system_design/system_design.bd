@@ -1,14 +1,13 @@
 {
   "design": {
     "design_info": {
-      "boundary_crc": "0xAC6C514D539E5340",
+      "boundary_crc": "0xAC6C514D608A8630",
       "device": "xcvu9p-flga2104-2L-e",
       "gen_directory": "../../../../System.gen/sources_1/bd/system_design",
       "name": "system_design",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
       "synth_flow_mode": "Hierarchical",
-      "tool_version": "2023.2",
-      "validated": "true"
+      "tool_version": "2023.2"
     },
     "design_tree": {
       "pcie_xdma": "",
@@ -42,11 +41,12 @@
         "m01_couplers": {
           "m01_data_fifo": "",
           "m01_regslice": ""
-        }
+        },
+        "s01_mmu": ""
       },
-      "hdmi_controller": "",
       "axi_apb_bridge": "",
-      "dut_wrapper_0": ""
+      "dut_wrapper_0": "",
+      "hdmi_controller": ""
     },
     "interface_ports": {
       "pcie_refclk": {
@@ -159,11 +159,11 @@
         "parameters": {
           "AXI_ARBITRATION_SCHEME": {
             "value": "RD_PRI_REG",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "BURST_LENGTH": {
             "value": "8",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "CAN_DEBUG": {
             "value": "false",
@@ -171,47 +171,47 @@
           },
           "CAS_LATENCY": {
             "value": "18",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "CAS_WRITE_LATENCY": {
             "value": "12",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "CS_ENABLED": {
             "value": "true",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "CUSTOM_PARTS": {
             "value": "no_file_loaded",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "DATA_MASK_ENABLED": {
             "value": "DM_NO_DBI",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "DATA_WIDTH": {
             "value": "64",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "MEMORY_PART": {
             "value": "MT40A256M16GE-083E",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "MEMORY_TYPE": {
             "value": "Components",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "MEM_ADDR_MAP": {
             "value": "ROW_COLUMN_BANK",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "SLOT": {
             "value": "Single",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "TIMEPERIOD_PS": {
             "value": "833",
-            "value_src": "default"
+            "value_src": "user_prop"
           }
         },
         "port_maps": {
@@ -292,11 +292,11 @@
         "parameters": {
           "AXI_ARBITRATION_SCHEME": {
             "value": "RD_PRI_REG",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "BURST_LENGTH": {
             "value": "8",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "CAN_DEBUG": {
             "value": "false",
@@ -304,47 +304,47 @@
           },
           "CAS_LATENCY": {
             "value": "18",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "CAS_WRITE_LATENCY": {
             "value": "12",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "CS_ENABLED": {
             "value": "true",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "CUSTOM_PARTS": {
             "value": "no_file_loaded",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "DATA_MASK_ENABLED": {
             "value": "DM_NO_DBI",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "DATA_WIDTH": {
             "value": "64",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "MEMORY_PART": {
             "value": "MT40A256M16GE-083E",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "MEMORY_TYPE": {
             "value": "Components",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "MEM_ADDR_MAP": {
             "value": "ROW_COLUMN_BANK",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "SLOT": {
             "value": "Single",
-            "value_src": "default"
+            "value_src": "user_prop"
           },
           "TIMEPERIOD_PS": {
             "value": "833",
-            "value_src": "default"
+            "value_src": "user_prop"
           }
         },
         "port_maps": {
@@ -424,10 +424,6 @@
         "type": "rst",
         "direction": "I",
         "parameters": {
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
           "POLARITY": {
             "value": "ACTIVE_LOW"
           }
@@ -437,23 +433,13 @@
         "type": "rst",
         "direction": "I",
         "parameters": {
-          "INSERT_VIP": {
-            "value": "0",
-            "value_src": "default"
-          },
           "POLARITY": {
             "value": "ACTIVE_HIGH"
           }
         }
       },
       "HDMI_INTR": {
-        "direction": "I",
-        "parameters": {
-          "PortWidth": {
-            "value": "1",
-            "value_src": "default_prop"
-          }
-        }
+        "direction": "I"
       },
       "HDMI_HPD": {
         "direction": "I"
@@ -468,21 +454,7 @@
         "direction": "IO"
       },
       "HDMI_CLK": {
-        "direction": "O",
-        "parameters": {
-          "CLK_DOMAIN": {
-            "value": "system_design_hdmi_sil9134_control_0_0_HDMI_CLK",
-            "value_src": "default_prop"
-          },
-          "FREQ_HZ": {
-            "value": "100000000",
-            "value_src": "default_prop"
-          },
-          "PHASE": {
-            "value": "0.0",
-            "value_src": "default_prop"
-          }
-        }
+        "direction": "O"
       },
       "HDMI_DE": {
         "direction": "O"
@@ -1065,8 +1037,8 @@
               "auto_cc": {
                 "vlnv": "xilinx.com:ip:axi_clock_converter:2.1",
                 "ip_revision": "28",
-                "xci_name": "system_design_auto_cc_1",
-                "xci_path": "ip\\system_design_auto_cc_1\\system_design_auto_cc_1.xci",
+                "xci_name": "system_design_auto_cc_0",
+                "xci_path": "ip\\system_design_auto_cc_0\\system_design_auto_cc_0.xci",
                 "inst_hier_path": "axi_interconnect_mem/s00_couplers/auto_cc",
                 "interface_ports": {
                   "S_AXI": {
@@ -1219,8 +1191,8 @@
               "auto_cc": {
                 "vlnv": "xilinx.com:ip:axi_clock_converter:2.1",
                 "ip_revision": "28",
-                "xci_name": "system_design_auto_cc_2",
-                "xci_path": "ip\\system_design_auto_cc_2\\system_design_auto_cc_2.xci",
+                "xci_name": "system_design_auto_cc_1",
+                "xci_path": "ip\\system_design_auto_cc_1\\system_design_auto_cc_1.xci",
                 "inst_hier_path": "axi_interconnect_mem/s01_couplers/auto_cc",
                 "interface_ports": {
                   "S_AXI": {
@@ -1373,8 +1345,8 @@
               "auto_cc": {
                 "vlnv": "xilinx.com:ip:axi_clock_converter:2.1",
                 "ip_revision": "28",
-                "xci_name": "system_design_auto_cc_3",
-                "xci_path": "ip\\system_design_auto_cc_3\\system_design_auto_cc_3.xci",
+                "xci_name": "system_design_auto_cc_2",
+                "xci_path": "ip\\system_design_auto_cc_2\\system_design_auto_cc_2.xci",
                 "inst_hier_path": "axi_interconnect_mem/s02_couplers/auto_cc",
                 "interface_ports": {
                   "S_AXI": {
@@ -1527,8 +1499,8 @@
               "auto_cc": {
                 "vlnv": "xilinx.com:ip:axi_clock_converter:2.1",
                 "ip_revision": "28",
-                "xci_name": "system_design_auto_cc_0",
-                "xci_path": "ip\\system_design_auto_cc_0\\system_design_auto_cc_0.xci",
+                "xci_name": "system_design_auto_cc_3",
+                "xci_path": "ip\\system_design_auto_cc_3\\system_design_auto_cc_3.xci",
                 "inst_hier_path": "axi_interconnect_mem/m00_couplers/auto_cc",
                 "interface_ports": {
                   "S_AXI": {
@@ -1725,19 +1697,35 @@
                 ]
               }
             }
+          },
+          "s01_mmu": {
+            "vlnv": "xilinx.com:ip:axi_mmu:2.1",
+            "ip_revision": "27",
+            "xci_name": "system_design_s01_mmu_0",
+            "xci_path": "ip\\system_design_s01_mmu_0\\system_design_s01_mmu_0.xci",
+            "inst_hier_path": "axi_interconnect_mem/s01_mmu",
+            "interface_ports": {
+              "S_AXI": {
+                "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
+                "mode": "Slave",
+                "bridges": [
+                  "M_AXI"
+                ]
+              }
+            }
           }
         },
         "interface_nets": {
+          "S01_AXI_1": {
+            "interface_ports": [
+              "s01_mmu/S_AXI",
+              "S01_AXI"
+            ]
+          },
           "axi_interconnect_mem_to_s00_couplers": {
             "interface_ports": [
               "S00_AXI",
               "s00_couplers/S_AXI"
-            ]
-          },
-          "axi_interconnect_mem_to_s01_couplers": {
-            "interface_ports": [
-              "S01_AXI",
-              "s01_couplers/S_AXI"
             ]
           },
           "axi_interconnect_mem_to_s02_couplers": {
@@ -1768,6 +1756,12 @@
             "interface_ports": [
               "s01_couplers/M_AXI",
               "xbar/S01_AXI"
+            ]
+          },
+          "s01_mmu_M_AXI": {
+            "interface_ports": [
+              "s01_mmu/M_AXI",
+              "s01_couplers/S_AXI"
             ]
           },
           "s02_couplers_to_xbar": {
@@ -1829,13 +1823,15 @@
           "S01_ACLK_1": {
             "ports": [
               "S01_ACLK",
-              "s01_couplers/S_ACLK"
+              "s01_couplers/S_ACLK",
+              "s01_mmu/aclk"
             ]
           },
           "S01_ARESETN_1": {
             "ports": [
               "S01_ARESETN",
-              "s01_couplers/S_ARESETN"
+              "s01_couplers/S_ARESETN",
+              "s01_mmu/aresetn"
             ]
           },
           "S02_ACLK_1": {
@@ -1874,43 +1870,6 @@
           }
         }
       },
-      "hdmi_controller": {
-        "vlnv": "xilinx.com:user:hdmi_sil9134_controller:1.0",
-        "ip_revision": "18",
-        "xci_name": "system_design_hdmi_sil9134_control_0_0",
-        "xci_path": "ip\\system_design_hdmi_sil9134_control_0_0\\system_design_hdmi_sil9134_control_0_0.xci",
-        "inst_hier_path": "hdmi_controller",
-        "parameters": {
-          "C_M_AXI_ADDR_WIDTH": {
-            "value": "36"
-          }
-        },
-        "interface_ports": {
-          "M_AXI": {
-            "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
-            "mode": "Master",
-            "address_space_ref": "M_AXI",
-            "base_address": {
-              "minimum": "0x00000000",
-              "maximum": "0x000FFFFFFFFF",
-              "width": "36"
-            }
-          },
-          "S_APB": {
-            "vlnv": "xilinx.com:interface:apb_rtl:1.0",
-            "mode": "Slave",
-            "memory_map_ref": "S_APB"
-          }
-        },
-        "addressing": {
-          "address_spaces": {
-            "M_AXI": {
-              "range": "64G",
-              "width": "36"
-            }
-          }
-        }
-      },
       "axi_apb_bridge": {
         "vlnv": "xilinx.com:ip:axi_apb_bridge:3.0",
         "ip_revision": "19",
@@ -1938,7 +1897,7 @@
       },
       "dut_wrapper_0": {
         "vlnv": "xilinx.com:user:dut_wrapper:1.0",
-        "ip_revision": "17",
+        "ip_revision": "18",
         "xci_name": "system_design_dut_wrapper_0_0",
         "xci_path": "ip\\system_design_dut_wrapper_0_0\\system_design_dut_wrapper_0_0.xci",
         "inst_hier_path": "dut_wrapper_0",
@@ -1975,10 +1934,53 @@
             }
           }
         }
+      },
+      "hdmi_controller": {
+        "vlnv": "xilinx.com:user:hdmi_controller:1.0",
+        "ip_revision": "22",
+        "xci_name": "system_design_hdmi_controller_0_0",
+        "xci_path": "ip\\system_design_hdmi_controller_0_0\\system_design_hdmi_controller_0_0.xci",
+        "inst_hier_path": "hdmi_controller",
+        "parameters": {
+          "C_M_AXI_ADDR_WIDTH": {
+            "value": "36"
+          }
+        },
+        "interface_ports": {
+          "M_AXI": {
+            "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
+            "mode": "Master",
+            "address_space_ref": "M_AXI",
+            "base_address": {
+              "minimum": "0x00000000",
+              "maximum": "0x000FFFFFFFFF",
+              "width": "36"
+            }
+          },
+          "S_APB": {
+            "vlnv": "xilinx.com:interface:apb_rtl:1.0",
+            "mode": "Slave",
+            "memory_map_ref": "S_APB"
+          }
+        },
+        "addressing": {
+          "address_spaces": {
+            "M_AXI": {
+              "range": "64G",
+              "width": "36"
+            }
+          }
+        }
       }
     },
     "interface_nets": {
-      "axi_apb_bridge_0_APB_M": {
+      "S01_AXI_1": {
+        "interface_ports": [
+          "axi_interconnect_mem/S01_AXI",
+          "hdmi_controller/M_AXI"
+        ]
+      },
+      "axi_apb_bridge_APB_M": {
         "interface_ports": [
           "axi_apb_bridge/APB_M",
           "hdmi_controller/S_APB"
@@ -2030,12 +2032,6 @@
         "interface_ports": [
           "dut_wrapper_0/M_AXI",
           "axi_interconnect_mem/S02_AXI"
-        ]
-      },
-      "hdmi_controller_M_AXI": {
-        "interface_ports": [
-          "hdmi_controller/M_AXI",
-          "axi_interconnect_mem/S01_AXI"
         ]
       },
       "pcie_refclk_1": {
@@ -2203,8 +2199,8 @@
           "axi_apb_bridge/s_axi_aclk",
           "axi_interconnect_mem/S01_ACLK",
           "axi_interconnect_mem/S02_ACLK",
-          "hdmi_controller/ACLK",
-          "dut_wrapper_0/ACLK"
+          "dut_wrapper_0/ACLK",
+          "hdmi_controller/ACLK"
         ]
       },
       "pcie_xdma_axi_aresetn": {
@@ -2214,8 +2210,8 @@
           "axi_apb_bridge/s_axi_aresetn",
           "axi_interconnect_mem/S01_ARESETN",
           "axi_interconnect_mem/S02_ARESETN",
-          "hdmi_controller/nRST",
-          "dut_wrapper_0/nRST"
+          "dut_wrapper_0/nRST",
+          "hdmi_controller/nRST"
         ]
       },
       "reset_1": {
@@ -2288,7 +2284,7 @@
           }
         }
       },
-      "/hdmi_controller": {
+      "/dut_wrapper_0": {
         "address_spaces": {
           "M_AXI": {
             "segments": {
@@ -2310,7 +2306,7 @@
           }
         }
       },
-      "/dut_wrapper_0": {
+      "/hdmi_controller": {
         "address_spaces": {
           "M_AXI": {
             "segments": {

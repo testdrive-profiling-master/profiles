@@ -3,12 +3,9 @@ proc init_gui { IPINST } {
   ipgui::add_param $IPINST -name "Component_Name"
   #Adding Page
   set Page_0 [ipgui::add_page $IPINST -name "Page 0"]
-  set C_M_AXI_ID_WIDTH [ipgui::add_param $IPINST -name "C_M_AXI_ID_WIDTH" -parent ${Page_0}]
-  set_property tooltip {Master AXI ID width} ${C_M_AXI_ID_WIDTH}
-  set C_M_AXI_DATA_WIDTH [ipgui::add_param $IPINST -name "C_M_AXI_DATA_WIDTH" -parent ${Page_0} -widget comboBox]
-  set_property tooltip {Master AXI data width} ${C_M_AXI_DATA_WIDTH}
-  set C_M_AXI_ADDR_WIDTH [ipgui::add_param $IPINST -name "C_M_AXI_ADDR_WIDTH" -parent ${Page_0}]
-  set_property tooltip {Master AXI address width} ${C_M_AXI_ADDR_WIDTH}
+  ipgui::add_param $IPINST -name "C_M_AXI_ID_WIDTH" -parent ${Page_0}
+  ipgui::add_param $IPINST -name "C_M_AXI_DATA_WIDTH" -parent ${Page_0} -widget comboBox
+  ipgui::add_param $IPINST -name "C_M_AXI_ADDR_WIDTH" -parent ${Page_0}
 
 
 }
