@@ -11,6 +11,7 @@ local Arg = ArgTable("Template project generator with TestDrive Profiling Master
 Arg:AddOptionString		("type", nil, nil, nil, "type", "Template project type")
 Arg:AddRemark			(nil, "'td', 'testdrive'        : TestDrive project")
 Arg:AddRemark			(nil, "'c', 'c++', 'cpp'        : C++ project")
+Arg:AddRemark			(nil, "'util'                   : C++(Util) project")
 Arg:AddRemark			(nil, "'v', 'verilog'           : verilog project")
 Arg:AddRemark			(nil, "'v_bare', 'verilog_bare' : bared verilog project")
 Arg:AddRemark			(nil, "'v_gen', 'verigen'       : verigen project")
@@ -20,8 +21,8 @@ Arg:AddOptionString		("project_name", nil, nil, nil, "project_name", "Project na
 if (Arg:DoParse() == false) then
 	print("\n  ex) create_project cpp test")
 	print("")
-	print("  ('Verilog' and 'Verigen' H/W projects are required at least")
-	print("   one TestDrive project run!)")
+	print("  * To create a H/W(verilog, verigen...) project,")
+	print("    you must run the TestDrive project at least once.")
 	return
 end
 
@@ -111,6 +112,9 @@ if (sType == "td" or sType == "testdrive") then
 	local sProjectNameUp	= String(sProjectName)
 	sProjectPath			= MakeDirForTestDrive(sProjectName)	-- make folder
 	
+	local	sYear = String(nil)
+	sYear:FormatDate("%Y", 0)	-- get year
+	
 	sProjectNameUp:MakeUpper()
 	
 	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_testdrive/.\" " .. sProjectPath .. "/")
@@ -118,19 +122,31 @@ if (sType == "td" or sType == "testdrive") then
 	os.execute("mv \"" .. sProjectPath .. "/Application/include/SystemConfigPROJECT.h\" \"" .. sProjectPath .. "/Application/include/SystemConfig" .. sProjectNameUp.s .. ".h\"")
 	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/g\" -i \"" .. sProjectPath .. "/project.profile\"")
 	os.execute("sed \"s/PROJECT/" .. sProjectNameUp.s .. "/g\" -i \"" .. sProjectPath .. "/Application/include/SystemConfig" .. sProjectNameUp.s .. ".h\"")
-	
+	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/g\" -i \"" .. sProjectPath .. "/Profiles/code_inception.txt\"")
+	os.execute("sed \"s/INITIAL_YEAR/" .. sYear.s .. "/g\" -i \"" .. sProjectPath .. "/Profiles/code_inception.txt\"")
 	
 	-- open folder
 	print("\nRun 'project.profile' to open your project.")
 	sProjectPath	= String(sProjectPath)
 	sProjectPath:Replace("/", "\\", true)
 	os.execute("explorer " .. sProjectPath.s)
+	os.execute(sProjectPath.s .."/Profiles/code_inception.txt")
 	os.exit(0)
 elseif (sType == "c" or sType == "c++" or sType == "cpp") then
 	sProjectPath	= MakeDir(sProjectName)
 	LOGI("Create C++ project : '" .. sProjectName .. "'")
 	
 	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_cpp/.\" " .. sProjectName .. "/")
+	os.execute("sed \"s/Test/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/.project")
+	os.execute("sed \"s/Test/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/Makefile")
+	os.execute("sed \"s/Test/" .. sProjectName .. " project/\" -i ./" .. sProjectName .. "/.inception")
+	
+	os.execute("explorer " .. sProjectName)
+elseif (sType == "util") then
+	sProjectPath	= MakeDir(sProjectName)
+	LOGI("Create C++(Util) project : '" .. sProjectName .. "'")
+	
+	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_cpp_util/.\" " .. sProjectName .. "/")
 	os.execute("sed \"s/Test/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/.project")
 	os.execute("sed \"s/Test/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/Makefile")
 	os.execute("sed \"s/Test/" .. sProjectName .. " project/\" -i ./" .. sProjectName .. "/.inception")
