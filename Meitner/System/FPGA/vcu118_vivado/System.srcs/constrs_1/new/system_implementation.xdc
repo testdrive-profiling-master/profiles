@@ -9,7 +9,6 @@ create_clock -name pcie_aclk -period 4.0 [get_pins system_design_i/pcie_xdma/axi
 create_clock -name proc_clk -period 4.0 [get_pins -hierarchical -filter {NAME =~ "*dut_clock_gen/CLK_OUT"}]
 set_false_path -from [get_clocks proc_clk] -to [get_clocks pcie_aclk]
 set_false_path -from [get_clocks pcie_aclk] -to [get_clocks proc_clk]
-set_false_path -to [get_nets -hierarchical -filter {NAME =~ "*dut_wrapper_0/FRAME_BASE"}]
 
 # multicycle path #2
 set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ "*gen_multicycle.path_2.i_*"}] 1 -quiet

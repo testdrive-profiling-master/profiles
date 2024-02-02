@@ -31,11 +31,12 @@
 // OF SUCH DAMAGE.
 //
 // Title : processor AXI wrapper
-// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
+// Rev.  : 2/2/2024 Fri (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 
 `include "template/testdrive_apb_slave_bfm.sv"
+`include "template/testdrive_axi4_lite_master_bfm.sv"
 `include "template/testdrive_axi4_master_bfm.sv"
 `include "DUTs/processor_axi_wrapper/includes.vh"
 `include "DUTs/processor_axi_wrapper/hdmi_controller.sv"
@@ -63,6 +64,7 @@ module top (
 		output								INTR				// interrupt signal
 	);
 
+	localparam	C_M_AXILITE_ADDR_WIDTH		= 20;
 	localparam	C_M_AXI_ID_WIDTH			= `MAXI_ID_WIDTH;
 	localparam	C_M_AXI_ADDR_WIDTH			= 36;
 	localparam	C_M_AXI_DATA_WIDTH			= `MAXI_DATA_WIDTH;
@@ -83,60 +85,128 @@ module top (
 	wire									S_PREADY;
 	wire									S_PSLVERR;
 
-	//// AXI master interface --------------
+	//// AXI-LITE master  ------------------
 	// write address
-	wire	[C_M_AXI_ID_WIDTH-1:0]			M_AWID;
-	wire	[C_M_AXI_ADDR_WIDTH-1:0]		M_AWADDR;
-	wire	[7:0]							M_AWLEN;
-	wire	[2:0]							M_AWSIZE;
-	wire	[1:0]							M_AWBURST;
-	wire									M_AWLOCK;
-	wire	[3:0]							M_AWCACHE;
-	wire	[2:0]							M_AWPROT;
-	wire	[3:0]							M_AWREGION;
-	wire	[3:0]							M_AWQOS;
-	wire									M_AWVALID;
-	wire									M_AWREADY;
-
+	wire	[C_M_AXILITE_ADDR_WIDTH-1:0]	EX_AWADDR;
+	wire									EX_AWVALID;
+	wire									EX_AWREADY;
 	// write data
-	wire	[C_M_AXI_ID_WIDTH-1:0]			M_WID;
-	wire	[C_M_AXI_DATA_WIDTH-1:0]		M_WDATA;
-	wire	[(C_M_AXI_DATA_WIDTH/8)-1:0]	M_WSTRB;
-	wire									M_WLAST;
-	wire									M_WVALID;
-	wire									M_WREADY;
-	// bus interaction
-	wire	[C_M_AXI_ID_WIDTH-1:0]			M_BID;
-	wire	[1:0]							M_BRESP;
-	wire									M_BVALID;
-	wire									M_BREADY;
+	wire	[31:0]							EX_WDATA;
+	wire	[3:0]							EX_WSTRB;
+	wire									EX_WVALID;
+	wire									EX_WREADY;
+	// bus
+	wire	[1:0]							EX_BRESP;
+	wire									EX_BVALID;
+	wire									EX_BREADY;
 	// read address
-	wire	[C_M_AXI_ID_WIDTH-1:0]			M_ARID;
-	wire	[C_M_AXI_ADDR_WIDTH-1:0]		M_ARADDR;
-	wire	[7:0]							M_ARLEN;
-	wire	[2:0]							M_ARSIZE;
-	wire	[1:0]							M_ARBURST;
-	wire									M_ARLOCK;
-	wire	[3:0]							M_ARCACHE;
-	wire	[2:0]							M_ARPROT;
-	wire	[3:0]							M_ARREGION;
-	wire	[3:0]							M_ARQOS;
-	wire									M_ARVALID;
-	wire									M_ARREADY;
+	wire	[C_M_AXILITE_ADDR_WIDTH-1:0]	EX_ARADDR;
+	wire									EX_ARVALID;
+	wire									EX_ARREADY;
 	// read data
-	wire	[C_M_AXI_ID_WIDTH-1:0]			M_RID;
-	wire	[C_M_AXI_DATA_WIDTH-1:0]		M_RDATA;
-	wire	[1:0]							M_RRESP;
-	wire									M_RLAST;
-	wire									M_RVALID;
-	wire									M_RREADY;
+	wire	[31:0]							EX_RDATA;
+	wire	[1:0]							EX_RRESP;
+	wire									EX_RVALID;
+	wire									EX_RREADY;
 
-	wire	[C_M_AXI_ADDR_WIDTH-1:0]		frame_base;
+	//// AXI master #0 interface -----------
+	// write address
+	wire	[C_M_AXI_ID_WIDTH-1:0]			M0_AWID;
+	wire	[C_M_AXI_ADDR_WIDTH-1:0]		M0_AWADDR;
+	wire	[7:0]							M0_AWLEN;
+	wire	[2:0]							M0_AWSIZE;
+	wire	[1:0]							M0_AWBURST;
+	wire									M0_AWLOCK;
+	wire	[3:0]							M0_AWCACHE;
+	wire	[2:0]							M0_AWPROT;
+	wire	[3:0]							M0_AWREGION;
+	wire	[3:0]							M0_AWQOS;
+	wire									M0_AWVALID;
+	wire									M0_AWREADY;
+	// write data
+	wire	[C_M_AXI_ID_WIDTH-1:0]			M0_WID;
+	wire	[C_M_AXI_DATA_WIDTH-1:0]		M0_WDATA;
+	wire	[(C_M_AXI_DATA_WIDTH/8)-1:0]	M0_WSTRB;
+	wire									M0_WLAST;
+	wire									M0_WVALID;
+	wire									M0_WREADY;
+	// bus interaction
+	wire	[C_M_AXI_ID_WIDTH-1:0]			M0_BID;
+	wire	[1:0]							M0_BRESP;
+	wire									M0_BVALID;
+	wire									M0_BREADY;
+	// read address
+	wire	[C_M_AXI_ID_WIDTH-1:0]			M0_ARID;
+	wire	[C_M_AXI_ADDR_WIDTH-1:0]		M0_ARADDR;
+	wire	[7:0]							M0_ARLEN;
+	wire	[2:0]							M0_ARSIZE;
+	wire	[1:0]							M0_ARBURST;
+	wire									M0_ARLOCK;
+	wire	[3:0]							M0_ARCACHE;
+	wire	[2:0]							M0_ARPROT;
+	wire	[3:0]							M0_ARREGION;
+	wire	[3:0]							M0_ARQOS;
+	wire									M0_ARVALID;
+	wire									M0_ARREADY;
+	// read data
+	wire	[C_M_AXI_ID_WIDTH-1:0]			M0_RID;
+	wire	[C_M_AXI_DATA_WIDTH-1:0]		M0_RDATA;
+	wire	[1:0]							M0_RRESP;
+	wire									M0_RLAST;
+	wire									M0_RVALID;
+	wire									M0_RREADY;
+
+	//// AXI master #1 interface -----------
+	// write address
+	wire	[C_M_AXI_ID_WIDTH-1:0]			M1_AWID;
+	wire	[C_M_AXI_ADDR_WIDTH-1:0]		M1_AWADDR;
+	wire	[7:0]							M1_AWLEN;
+	wire	[2:0]							M1_AWSIZE;
+	wire	[1:0]							M1_AWBURST;
+	wire									M1_AWLOCK;
+	wire	[3:0]							M1_AWCACHE;
+	wire	[2:0]							M1_AWPROT;
+	wire	[3:0]							M1_AWREGION;
+	wire	[3:0]							M1_AWQOS;
+	wire									M1_AWVALID;
+	wire									M1_AWREADY;
+	// write data
+	wire	[C_M_AXI_ID_WIDTH-1:0]			M1_WID;
+	wire	[C_M_AXI_DATA_WIDTH-1:0]		M1_WDATA;
+	wire	[(C_M_AXI_DATA_WIDTH/8)-1:0]	M1_WSTRB;
+	wire									M1_WLAST;
+	wire									M1_WVALID;
+	wire									M1_WREADY;
+	// bus interaction
+	wire	[C_M_AXI_ID_WIDTH-1:0]			M1_BID;
+	wire	[1:0]							M1_BRESP;
+	wire									M1_BVALID;
+	wire									M1_BREADY;
+	// read address
+	wire	[C_M_AXI_ID_WIDTH-1:0]			M1_ARID;
+	wire	[C_M_AXI_ADDR_WIDTH-1:0]		M1_ARADDR;
+	wire	[7:0]							M1_ARLEN;
+	wire	[2:0]							M1_ARSIZE;
+	wire	[1:0]							M1_ARBURST;
+	wire									M1_ARLOCK;
+	wire	[3:0]							M1_ARCACHE;
+	wire	[2:0]							M1_ARPROT;
+	wire	[3:0]							M1_ARREGION;
+	wire	[3:0]							M1_ARQOS;
+	wire									M1_ARVALID;
+	wire									M1_ARREADY;
+	// read data
+	wire	[C_M_AXI_ID_WIDTH-1:0]			M1_RID;
+	wire	[C_M_AXI_DATA_WIDTH-1:0]		M1_RDATA;
+	wire	[1:0]							M1_RRESP;
+	wire									M1_RLAST;
+	wire									M1_RVALID;
+	wire									M1_RREADY;
 
 	// implementation ------------------------------------------------------------
 	// APB bus implementation
 	testdrive_apb_slave_bfm #(
-		.C_BUS_TITLE		("APB slave"),
+		.C_BUS_TITLE		("APB"),
 		.C_BASE_ADDR		(`SAXI_BASE_ADDR),
 		.C_ADDR_BITS		(`SAXI_ADDR_BITS)
 	) apb_slave_bfm (
@@ -155,56 +225,135 @@ module top (
 		.PSLVERR			(S_PSLVERR)
 	);
 
-	// AXI4 bus implementation
+	testdrive_axi4_lite_master_bfm #(
+		.C_BUS_TITLE		("AXI-LITE"),
+		.C_ADDR_WIDTH		(C_M_AXILITE_ADDR_WIDTH)
+	) axi4_lite_master_bfm (
+		.CLK				(MCLK),
+		.nRST				(nRST),
+		.AWADDR				(EX_AWADDR),
+		.AWVALID			(EX_AWVALID),
+		.AWREADY			(EX_AWREADY),
+		.WDATA				(EX_WDATA),
+		.WSTRB				(EX_WSTRB),
+		.WVALID				(EX_WVALID),
+		.WREADY				(EX_WREADY),
+		.BRESP				(EX_BRESP),
+		.BVALID				(EX_BVALID),
+		.BREADY				(EX_BREADY),
+		.ARADDR				(EX_ARADDR),
+		.ARVALID			(EX_ARVALID),
+		.ARREADY			(EX_ARREADY),
+		.RDATA				(EX_RDATA),
+		.RRESP				(EX_RRESP),
+		.RVALID				(EX_RVALID),
+		.RREADY				(EX_RREADY)
+	);
+
+	// AXI4 #0 bus implementation
 	testdrive_axi4_master_bfm #(
-		.C_THREAD_ID_WIDTH			(C_M_AXI_ID_WIDTH),
-		.C_ADDR_WIDTH				(C_M_AXI_ADDR_WIDTH),
-		.C_DATA_WIDTH				(C_M_AXI_DATA_WIDTH)
-	) axi4_master_bfm (
+		.C_BUS_TITLE		("AXIM#0"),
+		.C_THREAD_ID_WIDTH	(C_M_AXI_ID_WIDTH),
+		.C_ADDR_WIDTH		(C_M_AXI_ADDR_WIDTH),
+		.C_DATA_WIDTH		(C_M_AXI_DATA_WIDTH)
+	) axi4_master_0_bfm (
 		// system
 		.CLK				(MCLK),
 		.nRST				(nRST),
 		// mAXI
-		.AWID				(M_AWID),
-		.AWADDR				(M_AWADDR),
-		.AWLEN				(M_AWLEN),
-		.AWSIZE				(M_AWSIZE),
-		.AWBURST			(M_AWBURST),
-		.AWLOCK				(M_AWLOCK),
-		.AWCACHE			(M_AWCACHE),
-		.AWPROT				(M_AWPROT),
-		.AWREGION			(M_AWREGION),
-		.AWQOS				(M_AWQOS),
-		.AWVALID			(M_AWVALID),
-		.AWREADY			(M_AWREADY),
-		.WID				(M_WID),
-		.WDATA				(M_WDATA),
-		.WSTRB				(M_WSTRB),
-		.WLAST				(M_WLAST),
-		.WVALID				(M_WVALID),
-		.WREADY				(M_WREADY),
-		.BID				(M_BID),
-		.BRESP				(M_BRESP),
-		.BVALID				(M_BVALID),
-		.BREADY				(M_BREADY),
-		.ARID				(M_ARID),
-		.ARADDR				(M_ARADDR),
-		.ARLEN				(M_ARLEN),
-		.ARSIZE				(M_ARSIZE),
-		.ARBURST			(M_ARBURST),
-		.ARLOCK				(M_ARLOCK),
-		.ARCACHE			(M_ARCACHE),
-		.ARPROT				(M_ARPROT),
-		.ARREGION			(M_ARREGION),
-		.ARQOS				(M_ARQOS),
-		.ARVALID			(M_ARVALID),
-		.ARREADY			(M_ARREADY),
-		.RID				(M_RID),
-		.RDATA				(M_RDATA),
-		.RRESP				(M_RRESP),
-		.RLAST				(M_RLAST),
-		.RVALID				(M_RVALID),
-		.RREADY				(M_RREADY)
+		.AWID				(M0_AWID),
+		.AWADDR				(M0_AWADDR),
+		.AWLEN				(M0_AWLEN),
+		.AWSIZE				(M0_AWSIZE),
+		.AWBURST			(M0_AWBURST),
+		.AWLOCK				(M0_AWLOCK),
+		.AWCACHE			(M0_AWCACHE),
+		.AWPROT				(M0_AWPROT),
+		.AWREGION			(M0_AWREGION),
+		.AWQOS				(M0_AWQOS),
+		.AWVALID			(M0_AWVALID),
+		.AWREADY			(M0_AWREADY),
+		.WID				(M0_WID),
+		.WDATA				(M0_WDATA),
+		.WSTRB				(M0_WSTRB),
+		.WLAST				(M0_WLAST),
+		.WVALID				(M0_WVALID),
+		.WREADY				(M0_WREADY),
+		.BID				(M0_BID),
+		.BRESP				(M0_BRESP),
+		.BVALID				(M0_BVALID),
+		.BREADY				(M0_BREADY),
+		.ARID				(M0_ARID),
+		.ARADDR				(M0_ARADDR),
+		.ARLEN				(M0_ARLEN),
+		.ARSIZE				(M0_ARSIZE),
+		.ARBURST			(M0_ARBURST),
+		.ARLOCK				(M0_ARLOCK),
+		.ARCACHE			(M0_ARCACHE),
+		.ARPROT				(M0_ARPROT),
+		.ARREGION			(M0_ARREGION),
+		.ARQOS				(M0_ARQOS),
+		.ARVALID			(M0_ARVALID),
+		.ARREADY			(M0_ARREADY),
+		.RID				(M0_RID),
+		.RDATA				(M0_RDATA),
+		.RRESP				(M0_RRESP),
+		.RLAST				(M0_RLAST),
+		.RVALID				(M0_RVALID),
+		.RREADY				(M0_RREADY)
+	);
+
+	// AXI4 #1 bus implementation
+	testdrive_axi4_master_bfm #(
+		.C_BUS_TITLE		("AXIM#1"),
+		.C_THREAD_ID_WIDTH	(C_M_AXI_ID_WIDTH),
+		.C_ADDR_WIDTH		(C_M_AXI_ADDR_WIDTH),
+		.C_DATA_WIDTH		(C_M_AXI_DATA_WIDTH)
+	) axi4_master_1_bfm (
+		// system
+		.CLK				(MCLK),
+		.nRST				(nRST),
+		// mAXI
+		.AWID				(M1_AWID),
+		.AWADDR				(M1_AWADDR),
+		.AWLEN				(M1_AWLEN),
+		.AWSIZE				(M1_AWSIZE),
+		.AWBURST			(M1_AWBURST),
+		.AWLOCK				(M1_AWLOCK),
+		.AWCACHE			(M1_AWCACHE),
+		.AWPROT				(M1_AWPROT),
+		.AWREGION			(M1_AWREGION),
+		.AWQOS				(M1_AWQOS),
+		.AWVALID			(M1_AWVALID),
+		.AWREADY			(M1_AWREADY),
+		.WID				(M1_WID),
+		.WDATA				(M1_WDATA),
+		.WSTRB				(M1_WSTRB),
+		.WLAST				(M1_WLAST),
+		.WVALID				(M1_WVALID),
+		.WREADY				(M1_WREADY),
+		.BID				(M1_BID),
+		.BRESP				(M1_BRESP),
+		.BVALID				(M1_BVALID),
+		.BREADY				(M1_BREADY),
+		.ARID				(M1_ARID),
+		.ARADDR				(M1_ARADDR),
+		.ARLEN				(M1_ARLEN),
+		.ARSIZE				(M1_ARSIZE),
+		.ARBURST			(M1_ARBURST),
+		.ARLOCK				(M1_ARLOCK),
+		.ARCACHE			(M1_ARCACHE),
+		.ARPROT				(M1_ARPROT),
+		.ARREGION			(M1_ARREGION),
+		.ARQOS				(M1_ARQOS),
+		.ARVALID			(M1_ARVALID),
+		.ARREADY			(M1_ARREADY),
+		.RID				(M1_RID),
+		.RDATA				(M1_RDATA),
+		.RRESP				(M1_RRESP),
+		.RLAST				(M1_RLAST),
+		.RVALID				(M1_RVALID),
+		.RREADY				(M1_RREADY)
 	);
 
 	processor_axi_wrapper #(
@@ -217,7 +366,7 @@ module top (
 		.CLK				(MCLK),
 		.nRST				(nRST),
 		.INTR				(INTR),
-		//// slave APB -------------------------
+		//// slave APB
 		.S_PSEL				(S_PSEL),
 		.S_PENABLE			(S_PENABLE),
 		.S_PWRITE			(S_PWRITE),
@@ -226,63 +375,113 @@ module top (
 		.S_PRDATA			(S_PRDATA),
 		.S_PREADY			(S_PREADY),
 		.S_PSLVERR			(S_PSLVERR),
-		//// AXI master interface --------------
-		// write address
-		.M_AWID				(M_AWID),
-		.M_AWADDR			(M_AWADDR),
-		.M_AWLEN			(M_AWLEN),
-		.M_AWSIZE			(M_AWSIZE),
-		.M_AWBURST			(M_AWBURST),
-		.M_AWLOCK			(M_AWLOCK),
-		.M_AWCACHE			(M_AWCACHE),
-		.M_AWPROT			(M_AWPROT),
-		.M_AWREGION			(M_AWREGION),
-		.M_AWQOS			(M_AWQOS),
-		.M_AWVALID			(M_AWVALID),
-		.M_AWREADY			(M_AWREADY),
-
-		// write data
-		.M_WID				(M_WID),
-		.M_WDATA			(M_WDATA),
-		.M_WSTRB			(M_WSTRB),
-		.M_WLAST			(M_WLAST),
-		.M_WVALID			(M_WVALID),
-		.M_WREADY			(M_WREADY),
-		// bus interaction
-		.M_BID				(M_BID),
-		.M_BRESP			(M_BRESP),
-		.M_BVALID			(M_BVALID),
-		.M_BREADY			(M_BREADY),
-		// read address
-		.M_ARID				(M_ARID),
-		.M_ARADDR			(M_ARADDR),
-		.M_ARLEN			(M_ARLEN),
-		.M_ARSIZE			(M_ARSIZE),
-		.M_ARBURST			(M_ARBURST),
-		.M_ARLOCK			(M_ARLOCK),
-		.M_ARCACHE			(M_ARCACHE),
-		.M_ARPROT			(M_ARPROT),
-		.M_ARREGION			(M_ARREGION),
-		.M_ARQOS			(M_ARQOS),
-		.M_ARVALID			(M_ARVALID),
-		.M_ARREADY			(M_ARREADY),
-		// read data
-		.M_RID				(M_RID),
-		.M_RDATA			(M_RDATA),
-		.M_RRESP			(M_RRESP),
-		.M_RLAST			(M_RLAST),
-		.M_RVALID			(M_RVALID),
-		.M_RREADY			(M_RREADY),
-		//// Extra -----------------------------
-		.FRAME_BASE			(frame_base)
+		//// AXI-LITE external master interface
+		.EX_AWADDR			(EX_AWADDR),
+		.EX_AWVALID			(EX_AWVALID),
+		.EX_AWREADY			(EX_AWREADY),
+		.EX_WDATA			(EX_WDATA),
+		.EX_WSTRB			(EX_WSTRB),
+		.EX_WVALID			(EX_WVALID),
+		.EX_WREADY			(EX_WREADY),
+		.EX_ARADDR			(EX_ARADDR),
+		.EX_ARVALID			(EX_ARVALID),
+		.EX_ARREADY			(EX_ARREADY),
+		.EX_RDATA			(EX_RDATA),
+		.EX_RRESP			(EX_RRESP),
+		.EX_RVALID			(EX_RVALID),
+		.EX_RREADY			(EX_RREADY),
+		.EX_BRESP			(EX_BRESP),
+		.EX_BVALID			(EX_BVALID),
+		.EX_BREADY			(EX_BREADY),
+		//// AXI master #0 interface
+		.M0_AWID			(M0_AWID),
+		.M0_AWADDR			(M0_AWADDR),
+		.M0_AWLEN			(M0_AWLEN),
+		.M0_AWSIZE			(M0_AWSIZE),
+		.M0_AWBURST			(M0_AWBURST),
+		.M0_AWLOCK			(M0_AWLOCK),
+		.M0_AWCACHE			(M0_AWCACHE),
+		.M0_AWPROT			(M0_AWPROT),
+		.M0_AWREGION		(M0_AWREGION),
+		.M0_AWQOS			(M0_AWQOS),
+		.M0_AWVALID			(M0_AWVALID),
+		.M0_AWREADY			(M0_AWREADY),
+		.M0_WID				(M0_WID),
+		.M0_WDATA			(M0_WDATA),
+		.M0_WSTRB			(M0_WSTRB),
+		.M0_WLAST			(M0_WLAST),
+		.M0_WVALID			(M0_WVALID),
+		.M0_WREADY			(M0_WREADY),
+		.M0_BID				(M0_BID),
+		.M0_BRESP			(M0_BRESP),
+		.M0_BVALID			(M0_BVALID),
+		.M0_BREADY			(M0_BREADY),
+		.M0_ARID			(M0_ARID),
+		.M0_ARADDR			(M0_ARADDR),
+		.M0_ARLEN			(M0_ARLEN),
+		.M0_ARSIZE			(M0_ARSIZE),
+		.M0_ARBURST			(M0_ARBURST),
+		.M0_ARLOCK			(M0_ARLOCK),
+		.M0_ARCACHE			(M0_ARCACHE),
+		.M0_ARPROT			(M0_ARPROT),
+		.M0_ARREGION		(M0_ARREGION),
+		.M0_ARQOS			(M0_ARQOS),
+		.M0_ARVALID			(M0_ARVALID),
+		.M0_ARREADY			(M0_ARREADY),
+		.M0_RID				(M0_RID),
+		.M0_RDATA			(M0_RDATA),
+		.M0_RRESP			(M0_RRESP),
+		.M0_RLAST			(M0_RLAST),
+		.M0_RVALID			(M0_RVALID),
+		.M0_RREADY			(M0_RREADY),
+		//// AXI master #1 interface
+		.M1_AWID			(M1_AWID),
+		.M1_AWADDR			(M1_AWADDR),
+		.M1_AWLEN			(M1_AWLEN),
+		.M1_AWSIZE			(M1_AWSIZE),
+		.M1_AWBURST			(M1_AWBURST),
+		.M1_AWLOCK			(M1_AWLOCK),
+		.M1_AWCACHE			(M1_AWCACHE),
+		.M1_AWPROT			(M1_AWPROT),
+		.M1_AWREGION		(M1_AWREGION),
+		.M1_AWQOS			(M1_AWQOS),
+		.M1_AWVALID			(M1_AWVALID),
+		.M1_AWREADY			(M1_AWREADY),
+		.M1_WID				(M1_WID),
+		.M1_WDATA			(M1_WDATA),
+		.M1_WSTRB			(M1_WSTRB),
+		.M1_WLAST			(M1_WLAST),
+		.M1_WVALID			(M1_WVALID),
+		.M1_WREADY			(M1_WREADY),
+		.M1_BID				(M1_BID),
+		.M1_BRESP			(M1_BRESP),
+		.M1_BVALID			(M1_BVALID),
+		.M1_BREADY			(M1_BREADY),
+		.M1_ARID			(M1_ARID),
+		.M1_ARADDR			(M1_ARADDR),
+		.M1_ARLEN			(M1_ARLEN),
+		.M1_ARSIZE			(M1_ARSIZE),
+		.M1_ARBURST			(M1_ARBURST),
+		.M1_ARLOCK			(M1_ARLOCK),
+		.M1_ARCACHE			(M1_ARCACHE),
+		.M1_ARPROT			(M1_ARPROT),
+		.M1_ARREGION		(M1_ARREGION),
+		.M1_ARQOS			(M1_ARQOS),
+		.M1_ARVALID			(M1_ARVALID),
+		.M1_ARREADY			(M1_ARREADY),
+		.M1_RID				(M1_RID),
+		.M1_RDATA			(M1_RDATA),
+		.M1_RRESP			(M1_RRESP),
+		.M1_RLAST			(M1_RLAST),
+		.M1_RVALID			(M1_RVALID),
+		.M1_RREADY			(M1_RREADY)
 	);
 
 	hdmi_controller	#(
 		.M_AXI_ADDR_WIDTH	(C_M_AXI_ADDR_WIDTH)
 	) hdmi (
 		.CLK				(MCLK),
-		.nRST				(nRST),
-		.FRAME_BASE			(frame_base)
+		.nRST				(nRST)
 	);
 
 endmodule

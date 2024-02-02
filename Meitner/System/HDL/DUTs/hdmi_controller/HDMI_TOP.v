@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : HDMI controller
-// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
+// Rev.  : 2/2/2024 Fri (clonextop@gmail.com)
 //================================================================================
 
 module HDMI_TOP #(
@@ -66,7 +66,6 @@ module HDMI_TOP #(
 		input							I2C_SDA_I,			// i2c SDA input
 		output							I2C_SDA_T,			// i2c SDA tri-state enable
 		// HDMI SIGNALS
-		input	[C_ADDR_WIDTH-1:0]		HDMI_FRAME_BASE,	// override frame buffer base address
 		output							HDMI_CLK,			// hdmi clock
 		output							HDMI_DE,			// data enable
 		output							HDMI_HSYNC,			// horizontal sync.
@@ -140,7 +139,6 @@ module HDMI_TOP #(
 		.MR_READY			(MR_READY),
 		.MR_LAST			(MR_LAST),
 		// video configuration
-		.FRAME_BASE			(HDMI_FRAME_BASE),
 		.VIDEO_BASE			(video_BASE),
 		.VIDEO_FRAME		(video_FRAME),
 		// pixel operation

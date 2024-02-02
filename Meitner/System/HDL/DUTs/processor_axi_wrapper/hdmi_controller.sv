@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : processor AXI wrapper
-// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
+// Rev.  : 2/2/2024 Fri (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 `include "testdrive_system.vh"
@@ -45,8 +45,7 @@ module hdmi_controller #(
 		parameter		M_AXI_ADDR_WIDTH		= 32
 	) (
 		//// system
-		input							CLK, nRST,	// clock & reset (active low)
-		input	[M_AXI_ADDR_WIDTH-1:0]	FRAME_BASE
+		input							CLK, nRST	// clock & reset (active low)
 	);
 
 	// definition & assignment ---------------------------------------------------
@@ -101,7 +100,7 @@ module hdmi_controller #(
 				else
 					if(waddr[9:2] == 'd3) begin
 						if(wdata[31]) begin
-							VirtualDisplayBaseAddress(FRAME_BASE[0] ? {{(64-M_AXI_ADDR_WIDTH){1'b0}}, FRAME_BASE} : {video_base_hi, wdata}, 1/*Front*/);
+							VirtualDisplayBaseAddress({video_base_hi, wdata}, 1/*Front*/);
 						end
 					end
 

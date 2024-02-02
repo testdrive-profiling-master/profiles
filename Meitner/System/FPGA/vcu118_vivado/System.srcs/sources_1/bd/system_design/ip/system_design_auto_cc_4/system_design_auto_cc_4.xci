@@ -1,11 +1,11 @@
 {
   "schema": "xilinx.com:schema:json_instance:1.0",
   "ip_inst": {
-    "xci_name": "system_design_auto_cc_2",
-    "cell_name": "axi_interconnect_mem/s01_couplers/auto_cc",
+    "xci_name": "system_design_auto_cc_4",
+    "cell_name": "axi_interconnect_mem/s03_couplers/auto_cc",
     "component_reference": "xilinx.com:ip:axi_clock_converter:2.1",
     "ip_revision": "28",
-    "gen_directory": "../../../../../../System.gen/sources_1/bd/system_design/ip/system_design_auto_cc_2",
+    "gen_directory": "../../../../../../System.gen/sources_1/bd/system_design/ip/system_design_auto_cc_4",
     "parameters": {
       "component_parameters": {
         "PROTOCOL": [ { "value": "AXI4", "value_src": "propagated", "value_permission": "bd_and_user", "resolve_type": "user", "usage": "all" } ],
@@ -21,7 +21,7 @@
         "ACLK_ASYNC": [ { "value": "1", "value_src": "propagated", "value_permission": "bd_and_user", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "SYNCHRONIZATION_STAGES": [ { "value": "3", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "ACLK_RATIO": [ { "value": "1:2", "value_permission": "bd_and_user", "resolve_type": "user", "usage": "all" } ],
-        "Component_Name": [ { "value": "system_design_auto_cc_2", "resolve_type": "user", "usage": "all" } ]
+        "Component_Name": [ { "value": "system_design_auto_cc_4", "resolve_type": "user", "usage": "all" } ]
       },
       "model_parameters": {
         "C_FAMILY": [ { "value": "virtexuplus", "resolve_type": "generated", "usage": "all" } ],
@@ -59,7 +59,7 @@
         "IPCONTEXT": [ { "value": "IP_Integrator" } ],
         "IPREVISION": [ { "value": "28" } ],
         "MANAGED": [ { "value": "TRUE" } ],
-        "OUTPUTDIR": [ { "value": "../../../../../../System.gen/sources_1/bd/system_design/ip/system_design_auto_cc_2" } ],
+        "OUTPUTDIR": [ { "value": "../../../../../../System.gen/sources_1/bd/system_design/ip/system_design_auto_cc_4" } ],
         "SELECTEDSIMMODEL": [ { "value": "rtl" } ],
         "SHAREDDIR": [ { "value": "../../ipshared" } ],
         "SWVERSION": [ { "value": "2023.2" } ],

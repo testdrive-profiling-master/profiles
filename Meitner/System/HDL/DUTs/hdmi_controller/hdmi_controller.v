@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : HDMI controller
-// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
+// Rev.  : 2/2/2024 Fri (clonextop@gmail.com)
 //================================================================================
 module hdmi_controller #(
 		// S_AXI
@@ -115,20 +115,17 @@ module hdmi_controller #(
 		output									I2C_SDA_O,			// i2c SDA output
 		output									I2C_SDA_T,			// i2c SDA tri-state enable
 		// HDMI SIGNALS
-		input	[C_M_AXI_ADDR_WIDTH-1 : 0]		HDMI_FRAME_BASE,	// override frame buffer base address
 		input									HDMI_INTR,			// hdmi interrupt input
 		output									HDMI_CLK,			// hdmi clock
 		output									HDMI_DE,			// data enable
 		output									HDMI_HSYNC,			// horizontal sync.
 		output									HDMI_VSYNC,			// vertical sync.
-		output	[23:0]							HDMI_DATA,			// data output
-		output									HDMI_SPDIF			// sony & philips digital interconnect format, sound output
+		output	[23:0]							HDMI_DATA			// data output
 	);
 
 	// definition & assignment ---------------------------------------------------
 	// interrupt bypass
 	assign	INTR			= HDMI_INTR;
-	assign	HDMI_SPDIF		= 1'b0;				// sound is not used.
 
 	// i2c output tied to zero when tri-state is enable for valid input handling.
 	assign	I2C_SCL_O		= 1'b0;
@@ -273,7 +270,6 @@ module hdmi_controller #(
 		.I2C_SDA_I				(I2C_SDA_I),
 		.I2C_SDA_T				(I2C_SDA_T),
 		// HDMI SIGNALS
-		.HDMI_FRAME_BASE		(HDMI_FRAME_BASE),
 		.HDMI_CLK				(HDMI_CLK),
 		.HDMI_DE				(HDMI_DE),
 		.HDMI_HSYNC				(HDMI_HSYNC),

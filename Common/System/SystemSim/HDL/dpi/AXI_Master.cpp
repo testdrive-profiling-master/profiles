@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 10/30/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/2/2024 Fri (clonextop@gmail.com)
 //================================================================================
 #include "AXI_common.h"
 #include "AXI_Master.h"
@@ -40,27 +40,36 @@
 
 BandwidthLimiter		MAXI::m_Bandwidth;
 
-MAXI::MAXI(const char* sTitle, int iDataWidth, bool bUseAXI4, int iDebugLevel)
+MAXI::MAXI(const char* sTitle, int iDataWidth, bool bUseAXI4, bool bLite, int iDebugLevel)
 {
-	Log.SetTitle(*sTitle ? "MAXI('%s')" : "MAXI", sTitle);
+	if(bLite)
+		Log.SetTitle(*sTitle ? "MAXI_LITE('%s')" : "MAXI_LITE", sTitle);
+	else
+		Log.SetTitle(*sTitle ? "MAXI('%s')" : "MAXI", sTitle);
+
 	m_bUseAXI4		= bUseAXI4;
 	m_iDebugLevel	= iDebugLevel;
 	m_pWriteSlave	= NULL;
 	m_pReadSlave	= NULL;
 
-	switch(iDataWidth) {
-	case 32:
-	case 64:
-	case 128:
-	case 256:
-	case 512:
-	case 1024:		// max 1024 bit data bus width support
-		m_dwDataBytes	= iDataWidth / 8;
-		break;
+	if(bLite) {
+		if(iDataWidth != 32)
+			LOGE("Requested bit width is not allowed : %d (must be 32 only)", iDataWidth);
+	} else {
+		switch(iDataWidth) {
+		case 32:
+		case 64:
+		case 128:
+		case 256:
+		case 512:
+		case 1024:		// max 1024 bit data bus width support
+			m_dwDataBytes	= iDataWidth / 8;
+			break;
 
-	default:
-		LOGE("Requested bit width is not allowed : %d (must be 32~1024)", iDataWidth);
-		break;
+		default:
+			LOGE("Requested bit width is not allowed : %d (must be 32~1024)", iDataWidth);
+			break;
+		}
 	}
 
 	m_lAddressMask	= ~((UINT64)m_dwDataBytes - 1);
@@ -239,9 +248,9 @@ static const char* __sBURST_MODE[] = {
 	"reserved",
 };
 
-DPI_FUNCTION void* CreateMAXI(const char* sTitle, int iDataWidth, int bUseAXI4, int iDebugLevel)
+DPI_FUNCTION void* CreateMAXI(const char* sTitle, int iDataWidth, int bUseAXI4, int bLite, int iDebugLevel)
 {
-	return (void*)(new MAXI(sTitle, iDataWidth, bUseAXI4, iDebugLevel));
+	return (void*)(new MAXI(sTitle, iDataWidth, bUseAXI4, bLite, iDebugLevel));
 }
 
 void MAXI::BusReadRequest(
@@ -293,6 +302,44 @@ void MAXI::BusReadRequest(
 				}
 
 				DEBUG_LEVEL(1) LOGI("Request(Read : 0x%08llX), ID #%d, %d bit, %d beat, %s mode", ARADDR, ARID, pReqDesc->SIZE * 8, pReqDesc->LEN, __sBURST_MODE[pReqDesc->BURST]);
+				AquireBus();
+			}
+		} else {
+			if(!ReadQ().IsFull())
+				m_Read.ARREADY			= 1;
+		}
+	}
+
+	ARREADY			= m_Read.ARREADY;
+}
+
+
+void MAXI::BusReadRequestLite(
+	BYTE nRST,
+	UINT64 ARADDR, BYTE ARVALID, BYTE& ARREADY)
+{
+	if(!nRST) {
+		m_Read.ARREADY		= 0;
+	} else {
+		if(m_Read.ARREADY) {
+			if(ARVALID) {
+				MAXI_DESC*	pReqDesc	= ReadQ().Push();
+				pReqDesc->ID			= 0;
+				pReqDesc->SIZE			= 4;
+				pReqDesc->ADDR			= ARADDR;
+				pReqDesc->LEN			= 1;
+				pReqDesc->BEAT			= 1;
+				pReqDesc->BURST			= 0;
+				pReqDesc->status		= MAXI_STATUS_INIT;
+				pReqDesc->TimeOut		= MAXI_TIMEOUT_COUNT;
+				m_Read.ARREADY			= 0;
+
+				// 4 byte alignment check
+				if(ARADDR & (4 - 1)) {
+					LOGE("AXI-LITE 4 bytes alignment is failed. (Read 0x%08llX)", ARADDR);
+				}
+
+				DEBUG_LEVEL(1) LOGI("Request(Read : 0x%08llX)", ARADDR);
 				AquireBus();
 			}
 		} else {
@@ -390,7 +437,7 @@ void MAXI::BusReadData(
 
 					if(bTransaction) {		// new transaction is available...
 						if(m_Bandwidth.IsValid()) {
-							if(Read(pDesc, (BYTE *)m_Read.RDATA)) {		// next transaction data
+							if(Read(pDesc, (BYTE*)m_Read.RDATA)) {		// next transaction data
 								m_Read.RVALID			= 1;			// next valid transaction
 								m_Read.RLAST			= !pDesc->BEAT;
 								pDesc->TimeOut			= MAXI_TIMEOUT_COUNT;
@@ -453,6 +500,27 @@ DPI_FUNCTION void MAXIR_Interface(
 	);
 }
 
+DPI_FUNCTION void MAXIR_LITE_Interface(
+	void* hMAXI,
+	unsigned char nRST,
+	unsigned long long ARADDR, unsigned char ARVALID, unsigned char* ARREADY,
+	svBitVecVal* RDATA, svBitVecVal* RRESP, unsigned char* RVALID, unsigned char RREADY)
+{
+	MAXI*	pMAXI		= reinterpret_cast<MAXI*>(hMAXI);
+	int		rid;
+	BYTE	last;
+	// read data transaction
+	pMAXI->BusReadData(
+		nRST,
+		rid, (DWORD*)RDATA, *(DWORD*)RRESP, last, *RVALID, RREADY
+	);
+	// read request
+	pMAXI->BusReadRequestLite(
+		nRST,
+		ARADDR, ARVALID, *(BYTE*)ARREADY
+	);
+}
+
 void MAXI::BusWriteRequest(
 	BYTE nRST,
 	int AWID, UINT64 AWADDR, DWORD AWLEN, DWORD AWSIZE, DWORD AWBURST, BYTE AWLOCK, DWORD AWCACHE, DWORD AWPROT, DWORD AWREGION, DWORD AWQOS,
@@ -502,6 +570,44 @@ void MAXI::BusWriteRequest(
 				}
 
 				DEBUG_LEVEL(1) LOGI("Request(Write : 0x%08llX), ID #%d, %d bit, %d beat, %s mode", AWADDR, AWID, pReqDesc->SIZE * 8, pReqDesc->LEN, __sBURST_MODE[pReqDesc->BURST]);
+				AquireBus();
+			}
+		} else {
+			if(!WriteQ().IsFull())
+				m_Write.AWREADY		= 1;
+		}
+	}
+
+	AWREADY		= m_Write.AWREADY;
+}
+
+void MAXI::BusWriteRequestLite(
+	BYTE nRST,
+	UINT64 AWADDR, BYTE AWVALID, BYTE& AWREADY
+)
+{
+	if(!nRST) {
+		m_Write.AWREADY		= 0;
+	} else {
+		if(m_Write.AWREADY) {
+			if(AWVALID) {	// request
+				MAXI_DESC*	pReqDesc	= WriteQ().Push();
+				pReqDesc->ID			= 0;
+				pReqDesc->SIZE			= 4;
+				pReqDesc->ADDR			= AWADDR;
+				pReqDesc->LEN			= 1;
+				pReqDesc->BEAT			= 1;
+				pReqDesc->BURST			= 0;
+				pReqDesc->status		= MAXI_STATUS_INIT;
+				pReqDesc->TimeOut		= MAXI_TIMEOUT_COUNT;
+				m_Write.AWREADY			= 0;
+
+				// 4 byte alignment check
+				if(AWADDR & (4 - 1)) {
+					LOGE("AXI-LITE 4 bytes alignment is failed. (Write 0x%08llX)", AWADDR);
+				}
+
+				DEBUG_LEVEL(1) LOGI("Request(Write : 0x%08llX)", AWADDR);
 				AquireBus();
 			}
 		} else {
@@ -571,7 +677,7 @@ void MAXI::BusWriteData(
 						break;
 					}
 
-					if(m_pWriteSlave->RequestWrite(pDesc->ADDR, *(DWORD *)WDATA)) {
+					if(m_pWriteSlave->RequestWrite(pDesc->ADDR, *(DWORD*)WDATA)) {
 						m_Write.WREADY	= 1;
 
 						if(!WLAST) LOGE("'WLAST' is not asserted at the last data transaction(WID:#%d).", WID);
@@ -600,7 +706,7 @@ void MAXI::BusWriteData(
 				bool	bTransaction	= m_Write.WREADY && WVALID;
 
 				if(bTransaction) {
-					if(Write(pDesc, (const BYTE *)WDATA, WSTRB)) {
+					if(Write(pDesc, (const BYTE*)WDATA, WSTRB)) {
 						pDesc->TimeOut		= MAXI_TIMEOUT_COUNT;
 					} else {
 						LOGE("Unreachable memory address on write : 0x%08llX", pDesc->ADDR);
@@ -682,5 +788,28 @@ DPI_FUNCTION void MAXIW_Interface(
 		nRST,
 		AWID, AWADDR, *AWLEN, *AWSIZE, *AWBURST, *AWLOCK, *AWCACHE, *AWPROT, *AWREGION, *AWQOS,
 		AWVALID, *AWREADY
+	);
+}
+
+
+DPI_FUNCTION void MAXIW_LITE_Interface(
+	void* hMAXI,
+	unsigned char nRST,
+	unsigned long long AWADDR, unsigned char AWVALID, unsigned char* AWREADY,
+	const svBitVecVal* WDATA, const svBitVecVal* WSTRB, unsigned char WVALID, unsigned char* WREADY,
+	svBitVecVal* BRESP, unsigned char* BVALID, unsigned char BREADY)
+{
+	MAXI*	pMAXI		= reinterpret_cast<MAXI*>(hMAXI);
+	int bid;
+	// write data transaction
+	pMAXI->BusWriteData(
+		nRST,
+		0, (const DWORD*)WDATA, (const DWORD*)WSTRB, 1, WVALID, *WREADY,
+		bid, *(DWORD*)BRESP, *BVALID, BREADY
+	);
+	// write request
+	pMAXI->BusWriteRequestLite(
+		nRST,
+		AWADDR, AWVALID, *AWREADY
 	);
 }

@@ -190,6 +190,24 @@
             },
             "V3": {
                 "VT": "AC",
+                "BA": "0x10000",
+                "HA": "0x1FFFF",
+                "BP": "C_BASEADDR",
+                "HP": "C_HIGHADDR",
+                "MA": "M_AXI_LITE",
+                "MX": "/dut_wrapper_0",
+                "MI": "M_AXI_LITE",
+                "MS": "SEG_hdmi_controller_S_APB",
+                "MV": "xilinx.com:user:dut_wrapper:1.0",
+                "SX": "/hdmi_controller",
+                "SI": "S_APB",
+                "SS": "S_APB",
+                "SV": "xilinx.com:user:hdmi_controller:1.0",
+                "TM": "both",
+                "TU": "register"
+            },
+            "V4": {
+                "VT": "AC",
                 "BA": "0x00010000",
                 "HA": "0x0001FFFF",
                 "BP": "C_BASEADDR",
@@ -206,7 +224,25 @@
                 "TM": "both",
                 "TU": "register"
             },
-            "V4": {
+            "V5": {
+                "VT": "AC",
+                "BA": "0x20000",
+                "HA": "0x2FFFF",
+                "BP": "C_BASEADDR",
+                "HP": "C_HIGHADDR",
+                "MA": "M_AXI_LITE",
+                "MX": "/dut_wrapper_0",
+                "MI": "M_AXI_LITE",
+                "MS": "SEG_dut_wrapper_0_S_APB",
+                "MV": "xilinx.com:user:dut_wrapper:1.0",
+                "SX": "/dut_wrapper_0",
+                "SI": "S_APB",
+                "SS": "S_APB",
+                "SV": "xilinx.com:user:dut_wrapper:1.0",
+                "TM": "both",
+                "TU": "register"
+            },
+            "V6": {
                 "VT": "AC",
                 "BA": "0x00020000",
                 "HA": "0x0002FFFF",
@@ -224,15 +260,15 @@
                 "TM": "both",
                 "TU": "register"
             },
-            "V5": {
+            "V7": {
                 "VT": "AC",
                 "BA": "0x800000000",
                 "HA": "0x87FFFFFFF",
                 "BP": "C0_DDR4_MEMORY_MAP_BASEADDR",
                 "HP": "C0_DDR4_MEMORY_MAP_HIGHADDR",
-                "MA": "M_AXI",
+                "MA": "M0_AXI",
                 "MX": "/dut_wrapper_0",
-                "MI": "M_AXI",
+                "MI": "M0_AXI",
                 "MS": "SEG_ddr4_0_C0_DDR4_ADDRESS_BLOCK",
                 "MV": "xilinx.com:user:dut_wrapper:1.0",
                 "SX": "/ddr4_0",
@@ -243,7 +279,7 @@
                 "TM": "both",
                 "TU": "memory"
             },
-            "V6": {
+            "V8": {
                 "VT": "AC",
                 "BA": "0x800000000",
                 "HA": "0x87FFFFFFF",
@@ -262,7 +298,7 @@
                 "TM": "both",
                 "TU": "memory"
             },
-            "V7": {
+            "V9": {
                 "VT": "AC",
                 "BA": "0x0000000800000000",
                 "HA": "0x000000087FFFFFFF",
@@ -281,15 +317,15 @@
                 "TM": "both",
                 "TU": "memory"
             },
-            "V8": {
+            "V10": {
                 "VT": "AC",
                 "BA": "0x880000000",
                 "HA": "0x8FFFFFFFF",
                 "BP": "C0_DDR4_MEMORY_MAP_BASEADDR",
                 "HP": "C0_DDR4_MEMORY_MAP_HIGHADDR",
-                "MA": "M_AXI",
+                "MA": "M0_AXI",
                 "MX": "/dut_wrapper_0",
-                "MI": "M_AXI",
+                "MI": "M0_AXI",
                 "MS": "SEG_ddr4_1_C0_DDR4_ADDRESS_BLOCK",
                 "MV": "xilinx.com:user:dut_wrapper:1.0",
                 "SX": "/ddr4_1",
@@ -300,7 +336,7 @@
                 "TM": "both",
                 "TU": "memory"
             },
-            "V9": {
+            "V11": {
                 "VT": "AC",
                 "BA": "0x880000000",
                 "HA": "0x8FFFFFFFF",
@@ -319,7 +355,7 @@
                 "TM": "both",
                 "TU": "memory"
             },
-            "V10": {
+            "V12": {
                 "VT": "AC",
                 "BA": "0x0000000880000000",
                 "HA": "0x00000008FFFFFFFF",
@@ -385,6 +421,16 @@
             },
             {
                 "src": "V10",
+                "trg": "V2",
+                "EH": "2"
+            },
+            {
+                "src": "V11",
+                "trg": "V2",
+                "EH": "2"
+            },
+            {
+                "src": "V12",
                 "trg": "V2",
                 "EH": "2"
             }

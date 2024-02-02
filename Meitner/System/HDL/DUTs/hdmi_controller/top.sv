@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : HDMI controller
-// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
+// Rev.  : 2/2/2024 Fri (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 `define	M_AXI_USE_AXI4			1
@@ -295,14 +295,12 @@ module top (
 		.I2C_SDA_O			(),
 		.I2C_SDA_T			(),
 		// HDMI SIGNALS
-		.HDMI_FRAME_BASE	('d0),
 		.HDMI_INTR			(),
 		.HDMI_CLK			(hdmi_clk),
 		.HDMI_DE			(hdmi_de),
 		.HDMI_HSYNC			(hdmi_hsync),
 		.HDMI_VSYNC			(hdmi_vsync),
-		.HDMI_DATA			(hdmi_data),
-		.HDMI_SPDIF			()
+		.HDMI_DATA			(hdmi_data)
 	);
 
 	// dummy connection

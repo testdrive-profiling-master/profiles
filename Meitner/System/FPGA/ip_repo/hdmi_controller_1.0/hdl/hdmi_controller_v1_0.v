@@ -76,7 +76,6 @@ module hdmi_controller_v1_0 #(
 	inout									HDMI_I2C_SCL,		// i2c SCL
 	inout									HDMI_I2C_SDA,		// i2c SDA
 	// HDMI SIGNALS
-	input	[C_M_AXI_ADDR_WIDTH-1 : 0]		HDMI_FRAME_BASE,	// framebuffer base override
 	input									HDMI_INTR,			// hdmi interrupt input
 	input									HDMI_HPD,			// hdmi hot plug-in detect
 	output									HDMI_CLK,			// hdmi clock
@@ -186,14 +185,12 @@ hdmi_controller #(
 	.I2C_SDA_O				(I2C_SDA_O),
 	.I2C_SDA_T				(I2C_SDA_T),
 
-	.HDMI_FRAME_BASE		(HDMI_FRAME_BASE),
 	.HDMI_INTR				(HDMI_INTR),
 	.HDMI_CLK				(HDMI_CLK),
 	.HDMI_DE				(HDMI_DE),
 	.HDMI_HSYNC				(HDMI_HSYNC),
 	.HDMI_VSYNC				(HDMI_VSYNC),
-	.HDMI_DATA				(HDMI_DATA),
-	.HDMI_SPDIF				()
+	.HDMI_DATA				(HDMI_DATA)
 );
 
 endmodule

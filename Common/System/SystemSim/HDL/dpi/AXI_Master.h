@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 11/9/2023 Thu (clonextop@gmail.com)
+// Rev.  : 2/2/2024 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __AXI_MASTER_H__
 #define __AXI_MASTER_H__
@@ -78,7 +78,7 @@ class MAXI : public SelfDestory {
 	MAXI_QUEUE	m_WriteQ;
 	MAXI_QUEUE	m_ReadQ;
 public:
-	MAXI(const char* sTitle, int iDataWidth, bool bUseAXI4 = true, int iDebugLevel = 0);
+	MAXI(const char* sTitle, int iDataWidth, bool bUseAXI4,  bool bLite, int iDebugLevel = 0);
 	virtual ~MAXI(void);
 
 	bool Read(MAXI_DESC* pDesc, BYTE* pData);
@@ -99,6 +99,10 @@ public:
 		int AWID, UINT64 AWADDR, DWORD AWLEN, DWORD AWSIZE, DWORD AWBURST, BYTE AWLOCK, DWORD AWCACHE, DWORD AWPROT, DWORD AWREGION, DWORD AWQOS,
 		BYTE AWVALID, BYTE& AWREADY
 	);
+	void BusWriteRequestLite(
+		BYTE nRST,
+		UINT64 AWADDR, BYTE AWVALID, BYTE& AWREADY
+	);
 	void BusWriteData(
 		BYTE nRST,
 		int WID, const DWORD* WDATA, const DWORD* WSTRB, BYTE WLAST, BYTE WVALID, BYTE& WREADY,
@@ -108,6 +112,10 @@ public:
 		BYTE nRST,
 		int ARID, UINT64 ARADDR, DWORD ARLEN, DWORD ARSIZE, DWORD ARBURST, BYTE ARLOCK, DWORD ARCACHE, DWORD ARPROT, DWORD ARREGION, DWORD ARQOS,
 		BYTE ARVALID, BYTE& ARREADY
+	);
+	void BusReadRequestLite(
+		BYTE nRST,
+		UINT64 ARADDR, BYTE ARVALID, BYTE& ARREADY
 	);
 	void BusReadData(
 		BYTE nRST,

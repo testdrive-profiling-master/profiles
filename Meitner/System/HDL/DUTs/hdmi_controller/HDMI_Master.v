@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : HDMI controller
-// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
+// Rev.  : 2/2/2024 Fri (clonextop@gmail.com)
 //================================================================================
 module HDMI_Master #(
 		parameter integer	C_ADDR_WIDTH		= 32
@@ -53,7 +53,6 @@ module HDMI_Master #(
 		input								MR_LAST,			// last read
 
 		// video configuration
-		input	[C_ADDR_WIDTH-1:0]			FRAME_BASE,			// frame buffer base address override
 		input	[63:0]						VIDEO_BASE,			// base address
 		input	[15:0]						VIDEO_FRAME,		// frame count
 		// pixel operation
@@ -99,7 +98,7 @@ module HDMI_Master #(
 			if(!MR_REQ) begin
 				MR_REQ		<= (!PIXEL_nREQ) | (|frame_count);
 				if(!PIXEL_nREQ) begin
-					MR_ADDR		<= FRAME_BASE[0] ? {FRAME_BASE[C_ADDR_WIDTH-1:1], 1'b0} : VIDEO_BASE[C_ADDR_WIDTH-1:0];
+					MR_ADDR		<= VIDEO_BASE[C_ADDR_WIDTH-1:0];
 					frame_count	<= VIDEO_FRAME;
 				end
 			end

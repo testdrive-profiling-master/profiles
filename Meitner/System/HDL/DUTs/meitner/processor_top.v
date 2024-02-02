@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Processor
-// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
+// Rev.  : 2/2/2024 Fri (clonextop@gmail.com)
 //================================================================================
 `include "DUTs/meitner/includes.vh"
 `define NO_TEST_DESIGN		// overriding test top design
@@ -45,9 +45,10 @@
 // *** Do not modify to here.
 
 module processor_top #(
-		parameter	S_ADDR_WIDTH		= 4,
-		parameter	M_ADDR_WIDTH		= 32,
-		parameter	M_DATA_WIDTH		= 512
+		parameter	S_ADDR_WIDTH		= 4,				// slave address width
+		parameter	M_ADDR_WIDTH		= 32,				// master address width
+		parameter	M_DATA_WIDTH		= 512,				// master data width
+		parameter	MS_ADDR_WIDTH		= 20				// AXI-LITE address width
 	) (
 		//// system
 		input							CLK, nRST,			// clock & reset (active low)
@@ -55,36 +56,74 @@ module processor_top #(
 		output							INTR,				// interrupt signal
 
 		//// slave interface
-		input							P_EN,				// slave enable
-		input							P_WE,				// write enable
-		input	[S_ADDR_WIDTH-1:0]		P_ADDR,				// address
-		input	[`RANGE_DWORD]			P_WDATA,			// write data
-		output	reg [`RANGE_DWORD]		P_RDATA,			// read data
-		output							P_READY,			// data ready
+		input							S_EN,				// slave enable
+		input							S_WE,				// write enable
+		input	[S_ADDR_WIDTH-1:0]		S_ADDR,				// address
+		input	[`RANGE_DWORD]			S_WDATA,			// write data
+		output	reg [`RANGE_DWORD]		S_RDATA,			// read data
+		output							S_READY,			// data ready
 
-		//// master interface
-		// read
-		output							MR_REQ,				// read request
-		output	[M_ADDR_WIDTH-1:0]		MR_ADDR,			// read address
-		output	[`RANGE_BYTE]			MR_SIZE,			// read size
-		input							MR_GRANT,			// read grant
+		//// master for slave output interface
+		// read address
+		output							MS_RREQ,			// request
+		output	[MS_ADDR_WIDTH-1:0]		MS_RADDR,			// address
+		input							MS_RGRANT,			// request grant
 		// read data
-		input	[M_DATA_WIDTH-1:0]		MR_DATA,			// read data
-		input							MR_VALID,			// read validation
-		output							MR_READY,			// read ready
-		input							MR_LAST,			// read last
+		input	[31:0]					MS_RDATA,			// read data
+		input							MS_RVALID,			// read data validation
+		output							MS_RREADY,			// read operation is ready
 		// write address
-		output							MW_REQ,				// write request
-		output	[M_ADDR_WIDTH-1:0]		MW_ADDR,			// write address
-		output	[`RANGE_BYTE]			MW_SIZE,			// write size
-		input							MW_GRANT,			// write grant
+		output							MS_WREQ,			// request
+		output	[MS_ADDR_WIDTH-1:0]		MS_WADDR,			// address
+		input							MS_WGRANT,			// request grant
 		// write data
-		output	[M_DATA_WIDTH-1:0]		MW_DATA,			// write data
-		output							MW_VALID,			// write validation
-		input							MW_READY,			// write ready
-		input							MW_LAST,			// write last
-		//// extra interface
-		output	[M_ADDR_WIDTH-1:0]		FRAME_BASE			// override frame buffer base address
+		output	[31:0]					MS_WDATA,			// write data
+		output							MS_WVALID,			// write data validation
+		input							MS_WREADY,			// write operation is ready
+
+		//// master #0 interface
+		// read
+		output							M0_RREQ,			// read request
+		output	[M_ADDR_WIDTH-1:0]		M0_RADDR,			// read address
+		output	[`RANGE_BYTE]			M0_RSIZE,			// read size
+		input							M0_RGRANT,			// read grant
+		// read data
+		input	[M_DATA_WIDTH-1:0]		M0_RDATA,			// read data
+		input							M0_RVALID,			// read validation
+		output							M0_RREADY,			// read ready
+		input							M0_RLAST,			// read last
+		// write address
+		output							M0_WREQ,			// write request
+		output	[M_ADDR_WIDTH-1:0]		M0_WADDR,			// write address
+		output	[`RANGE_BYTE]			M0_WSIZE,			// write size
+		input							M0_WGRANT,			// write grant
+		// write data
+		output	[M_DATA_WIDTH-1:0]		M0_WDATA,			// write data
+		output							M0_WVALID,			// write validation
+		input							M0_WREADY,			// write ready
+		input							M0_WLAST,			// write last
+
+		//// master #1 interface
+		// read
+		output							M1_RREQ,			// read request
+		output	[M_ADDR_WIDTH-1:0]		M1_RADDR,			// read address
+		output	[`RANGE_BYTE]			M1_RSIZE,			// read size
+		input							M1_RGRANT,			// read grant
+		// read data
+		input	[M_DATA_WIDTH-1:0]		M1_RDATA,			// read data
+		input							M1_RVALID,			// read validation
+		output							M1_RREADY,			// read ready
+		input							M1_RLAST,			// read last
+		// write address
+		output							M1_WREQ,			// write request
+		output	[M_ADDR_WIDTH-1:0]		M1_WADDR,			// write address
+		output	[`RANGE_BYTE]			M1_WSIZE,			// write size
+		input							M1_WGRANT,			// write grant
+		// write data
+		output	[M_DATA_WIDTH-1:0]		M1_WDATA,			// write data
+		output							M1_WVALID,			// write validation
+		input							M1_WREADY,			// write ready
+		input							M1_WLAST			// write last
 	);
 
 	// definition & assignment ---------------------------------------------------
@@ -99,29 +138,37 @@ module processor_top #(
 	assign	INTR			= `FALSE;
 
 	// slave non-blocking Slave2Processor write
-	assign	P_READY			= `TRUE;					// non-blocking for Slave2Processor write
+	assign	S_READY			= `TRUE;					// non-blocking for Slave2Processor write
 
-	// master (not using here... just bypass)
-	assign	MR_REQ			= `FALSE;
-	assign	MR_READY		= `FALSE;
-	assign	MW_REQ			= `FALSE;
-	assign	MW_VALID		= `FALSE;
+	// master (not used in here...)
+	assign	M0_RREQ			= `FALSE;
+	assign	M0_RREADY		= `FALSE;
+	assign	M0_WREQ			= `FALSE;
+	assign	M0_WVALID		= `FALSE;
+	assign	M1_RREQ			= `FALSE;
+	assign	M1_RREADY		= `FALSE;
+	assign	M1_WREQ			= `FALSE;
+	assign	M1_WVALID		= `FALSE;
 
-	assign	FRAME_BASE		= 'd0;
+	// master for slave (not used in here...)
+	assign	MS_RREQ			= `FALSE;
+	assign	MS_RREADY		= `FALSE;
+	assign	MS_WREQ			= `FALSE;
+	assign	MS_WVALID		= `FALSE;
 
 	// implementation ------------------------------------------------------------
 	// slave counter up design
 	always@(posedge CLK, negedge nRST) begin
 		if(!nRST) begin
-			P_RDATA		<= 'd0;
+			S_RDATA		<= 'd0;
 		end
 		else begin
-			if(P_EN) begin
-				if(P_WE) begin
-					P_RDATA		<= P_WDATA;
+			if(S_EN) begin
+				if(S_WE) begin
+					S_RDATA		<= S_WDATA;
 				end
 				else begin
-					P_RDATA		<= P_RDATA + 'd1;
+					S_RDATA		<= S_RDATA + 'd1;
 				end
 			end
 		end
