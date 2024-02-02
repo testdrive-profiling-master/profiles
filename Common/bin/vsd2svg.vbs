@@ -16,7 +16,7 @@ If WScript.Arguments.Count > 0 Then
 	If fso.FileExists(svgPath) Then
 		fso.DeleteFile(svgPath)
 		If fso.FileExists(svgPath) Then
-			Wscript.Echo "SVG file is locked!"
+			Wscript.Echo "*E: SVG file is locked!"
 			WScript.Quit(1)
 		End If
 	End If
@@ -28,7 +28,7 @@ If WScript.Arguments.Count > 0 Then
 		Set objVisio			= CreateObject("Visio.InvisibleApp")
 
 		If Err.Number <> 0 Then
-			Wscript.Echo "Microsoft Visio is not installed."
+			Wscript.Echo "*E: Microsoft Visio is not installed."
 			Err.Clear
 			WScript.Quit(1)
 		End If
@@ -54,12 +54,12 @@ If WScript.Arguments.Count > 0 Then
 				Wscript.Echo "*E: Visio('" & vsdPath & "') page('" & page_name & "') is not found."
 			End If
 		End If
-		objDraw.Close 0
+		objDraw.Close
 		objVisio.Application.Quit
 		set objDraw		= Nothing
 		Set objVisio	= Nothing
 	Else
-		Wscript.Echo "Not a Visio file."
+		Wscript.Echo "*E: Not a Visio file."
 	End If
 Else
 	Wscript.Echo "Usage : vsd2svg  source_vsd_file [page_name]"

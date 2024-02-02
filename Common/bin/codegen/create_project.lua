@@ -10,7 +10,7 @@ local Arg = ArgTable("Template project generator with TestDrive Profiling Master
 
 Arg:AddOptionString		("type", nil, nil, nil, "type", "Template project type")
 Arg:AddRemark			(nil, "'td', 'testdrive'        : TestDrive project")
-Arg:AddRemark			(nil, "'c', 'c++', 'cpp'        : C++ project")
+Arg:AddRemark			(nil, "'c', 'c++', 'cpp'        : C++(Pure) project")
 Arg:AddRemark			(nil, "'util'                   : C++(Util) project")
 Arg:AddRemark			(nil, "'v', 'verilog'           : verilog project")
 Arg:AddRemark			(nil, "'v_bare', 'verilog_bare' : bared verilog project")

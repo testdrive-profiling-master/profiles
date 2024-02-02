@@ -11,7 +11,7 @@ If WScript.Arguments.Count > 0 Then
 	If fso.FileExists(pdfPath) Then
 		fso.DeleteFile(pdfPath)
 		If fso.FileExists(pdfPath) Then
-			Wscript.Echo "PDF file is locked!"
+			Wscript.Echo "*E: PDF file is locked!"
 			WScript.Quit(1)
 		End If
 	End If
@@ -33,7 +33,7 @@ If WScript.Arguments.Count > 0 Then
 		Set objWord				= CreateObject("Word.Application")
 		
 		If Err.Number <> 0 Then
-			Wscript.Echo "Microsoft Word is not installed."
+			Wscript.Echo "*E: Microsoft Word is not installed."
 			Err.Clear
 			WScript.Quit(1)
 		End If
@@ -163,16 +163,12 @@ If WScript.Arguments.Count > 0 Then
 		objDoc.ExportAsFixedFormat pdfPath, 17, False, 1, 0, 1, 1, 0, True, True, 1, True, True, True
 		'objDoc.saveas pdfPath, 17
 
-		if modify_source Then
-			objDoc.Close
-		Else
-			objDoc.Close 0	' close without saving
-		End If
-		'objDoc.Close 0	' close without saving
-		
+		If objDoc.Saved = False Then objDoc.Save
+
+		objDoc.Close
 		objWord.Quit
 	Else
-		Wscript.Echo "Not a Word file."
+		Wscript.Echo "*E: Not a Word file."
 	End If
 	Set objDoc		= Nothing
 	Set objWord		= Nothing

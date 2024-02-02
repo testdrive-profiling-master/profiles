@@ -1614,10 +1614,6 @@ end
 do
 	-- 저장 이름 없을 시 생성
 	if #sOutFilename == 0 then
-		if(#property["Ownership"] > 0) then
-			sOutFilename	= property["Ownership"] .. "_"
-		end
-
 		if(#property["IP_Name_Header"] > 0) then
 			sOutFilename	= sOutFilename .. property["IP_Name_Header"] .. "_"
 		end
