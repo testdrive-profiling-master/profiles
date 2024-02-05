@@ -150,17 +150,19 @@ If WScript.Arguments.Count > 0 Then
 		'PDF 로 저장
 		objDoc.ExportAsFixedFormat pdfPath, 17, False, 1, 0, 1, 1, 0, True, True, 1, True, True, True
 		'objDoc.saveas pdfPath, 17
-
-		If (objDoc.Saved = False) Then
-			objDoc.Save True
-		End If
-		
-		objDoc.Close 0	' close without saving
-		objWord.Quit
 	Else
 		Wscript.Echo "*E: Not a Word file."
 	End If
+
+	If (objDoc.Saved = False) Then
+		objDoc.Save True
+	End If
+	
+	objDoc.Activate	'alternate wait for save done!
+
+	objDoc.Close 0	' close without saving
 	Set objDoc		= Nothing
+	objWord.Quit
 	Set objWord		= Nothing
 Else
 	Wscript.Echo "Usage : doc2pdf  source_doc_file  [water_mark_text]"
