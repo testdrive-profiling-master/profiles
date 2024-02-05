@@ -44,6 +44,7 @@ If WScript.Arguments.Count > 0 Then
 			bFoundPage	= False
 			For Each page in objDraw.Pages
 				If page.Name = page_name Then
+					objDraw.ActivePage	= page
 					page.Export (svgPath)
 					bFoundPage	= True
 					Exit For
@@ -54,9 +55,12 @@ If WScript.Arguments.Count > 0 Then
 				Wscript.Echo "*E: Visio('" & vsdPath & "') page('" & page_name & "') is not found."
 			End If
 		End If
+		
+		objDraw.Activate	'alternate wait for page export done!
+		
 		objDraw.Close 0
-		objVisio.Application.Quit
 		set objDraw		= Nothing
+		objVisio.Quit
 		Set objVisio	= Nothing
 	Else
 		Wscript.Echo "*E: Not a Visio file."

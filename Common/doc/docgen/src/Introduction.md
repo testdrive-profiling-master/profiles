@@ -68,9 +68,15 @@ The document automatedn creation process proceeds in the following steps.
 
 
  
+%%% ko
 ## 실행 방법
 
 docgen 을 실행하기 위해서는 아래와 같이 실행합니다.
+%%% en
+## How to run
+
+To run docgen, run as follows.
+%%%
 
 ```txt
 > docgen
@@ -94,13 +100,30 @@ Usage: docgen  [--help] [-t template] [-l language] input_file [output_file]
 '-l' 옵션은 임의의 언어코드를 지정합니다. Lua 에서는 'docgen_language' 변수로 확인할 수 있고, 문장에서는 @<b>'@<bookmark:@언어코드 변경>'@</b> 표현식을 사용하여, 원하는 언어 코드를 선택할 수 있습니다.
 
 ;;;
+
+
+
+
 ## 사용상 제한 및 라이센스 허가와 선행 과정
+
+
+
+
 
 ### 제한
 WORD의 VBA가 사용되므로 WORD가 설치된 윈도우즈 PC 환경이 필요합니다. 또한 @<bookmark:그림 삽입>에 Visio 파일(vsd/vsdx)을 바로 지정하기 위해서는 Visio 설치가 별도로 필요합니다. 리눅스 상에서도 생성은 가능하나, 문서 전체 필드 업데이트(WORD에서 직접 열어 수동으로 업데이트는 가능)/워터마킹/pdf변환 등의 기능이 수행되지 않습니다.
 
+
+
+
+
 ### 라이센스 허가
 docgen 에 구현된 소스는 BSD 라이센스를 준수하며, 문서 생성에 사용된 사용자의 개별 스크립트나 이미지등의 2차 저작물은 온전히 사용자의 소유입니다.
+
+
+
+
+
  
 ### 선행 과정
 Microsoft Word 의 설정 자동화 제한으로 수식 표현에 대하여 MS 표준 수식 표현인 Unicode로 초기 고정되어 있습니다. 이를 "LaTeX"로 표현하고자 한다면, @<bookmark:LaTeX setting>와 같이 최초 한번 리본 메뉴의 '수식/변환'(먼저 '삽입/수식'으로 수식이 생성한 후 선택되어야 아래 메뉴가 보임.) 탭에서 '@<b>@<u>/유니코드@</u>@</b>' 대신 '@<b>@<u>{} LaTeX@</u>@</b>'를 선택하는 과정이 필요합니다.
@@ -108,4 +131,8 @@ Microsoft Word 의 설정 자동화 제한으로 수식 표현에 대하여 MS �
 @<img:#media/latex_setting.png;0.3;LaTeX setting>
 
 :::NoteHeading
-Microsoft 에서는 현재 이 부분에서 자동 변경 방법을 제공하지 않고 있으며, 왜 변경 기능을 막아놨는지 모르겠음. 단지 LaTeX 표준화를 견제하기 위한 상업적 이유로 추측하고 있습니다.
+%%% ko
+Microsoft 에서는 현재 이 부분에서 자동 변경 방법을 제공하지 않고 있으며, 왜 변경 기능을 막아놨는지 모르겠음.
+%%% en
+Microsoft currently does not provide an automatic change method in this area, and I do not know why the change function is blocked.
+%%%

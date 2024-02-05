@@ -11,10 +11,11 @@ property["Security_Level"]			= "BSD License."
 --property["Water_Mark"]				= "TESTDRIVE OPENSOURCE"		-- 워터마크를 쓰지 않으려면 이부분을 주석 처리 합니다.
 
 -- Revision history (버전, 연도, 월, 일, 설명) : 마지막 버전/날짜가 도큐먼트의 버전/날짜가 됩니다. 날짜 순으로 나열할 것!!!
-AddRevision("1.0",	2020, 1,  1,	"Initial relase")
-AddRevision("1.1",	2022, 1,  2,	"add Visio page to picture & bookmark")
-AddRevision("1.2",	2022, 1,  3,	"add word's @<b>@@<property>@</b> tag variable")
-AddRevision("1.3",	2024, 2,  5,	"add lua function call in paragraph")
+AddRevision("1.0",	2019,  2,  4,	"Initial relase")
+AddRevision("1.1",	2020,  4,  2,	"add Visio page to picture & bookmark automation")
+AddRevision("1.2",	2021,  7,  3,	"add word's @<b>@@<property>@</b> tag variable")
+AddRevision("1.3",	2021, 11, 12,	"support excel table")
+AddRevision("1.4",	2024,  2,  5,	"add lua function call in paragraph")
 
 
 -- Term 추가
