@@ -40,10 +40,12 @@
           "auto_cc": ""
         },
         "m00_couplers": {
+          "m00_data_fifo": "",
           "m00_regslice": "",
           "auto_cc": ""
         },
         "m01_couplers": {
+          "m01_data_fifo": "",
           "m01_regslice": ""
         }
       },
@@ -784,13 +786,13 @@
             "value": "0"
           },
           "M00_HAS_DATA_FIFO": {
-            "value": "0"
+            "value": "1"
           },
           "M00_HAS_REGSLICE": {
             "value": "1"
           },
           "M01_HAS_DATA_FIFO": {
-            "value": "0"
+            "value": "1"
           },
           "M01_HAS_REGSLICE": {
             "value": "1"
@@ -1686,6 +1688,22 @@
               }
             },
             "components": {
+              "m00_data_fifo": {
+                "vlnv": "xilinx.com:ip:axi_data_fifo:2.1",
+                "ip_revision": "28",
+                "xci_name": "system_design_m00_data_fifo_0",
+                "xci_path": "ip\\system_design_m00_data_fifo_0\\system_design_m00_data_fifo_0.xci",
+                "inst_hier_path": "axi_interconnect_mem/m00_couplers/m00_data_fifo",
+                "interface_ports": {
+                  "S_AXI": {
+                    "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
+                    "mode": "Slave",
+                    "bridges": [
+                      "M_AXI"
+                    ]
+                  }
+                }
+              },
               "m00_regslice": {
                 "vlnv": "xilinx.com:ip:axi_register_slice:2.1",
                 "ip_revision": "29",
@@ -1726,9 +1744,15 @@
                   "auto_cc/M_AXI"
                 ]
               },
-              "m00_couplers_to_auto_cc": {
+              "m00_couplers_to_m00_data_fifo": {
                 "interface_ports": [
                   "S_AXI",
+                  "m00_data_fifo/S_AXI"
+                ]
+              },
+              "m00_data_fifo_to_auto_cc": {
+                "interface_ports": [
+                  "m00_data_fifo/M_AXI",
                   "auto_cc/S_AXI"
                 ]
               },
@@ -1757,12 +1781,14 @@
               "S_ACLK_1": {
                 "ports": [
                   "S_ACLK",
+                  "m00_data_fifo/aclk",
                   "auto_cc/s_axi_aclk"
                 ]
               },
               "S_ARESETN_1": {
                 "ports": [
                   "S_ARESETN",
+                  "m00_data_fifo/aresetn",
                   "auto_cc/s_axi_aresetn"
                 ]
               }
@@ -1816,6 +1842,22 @@
               }
             },
             "components": {
+              "m01_data_fifo": {
+                "vlnv": "xilinx.com:ip:axi_data_fifo:2.1",
+                "ip_revision": "28",
+                "xci_name": "system_design_m01_data_fifo_0",
+                "xci_path": "ip\\system_design_m01_data_fifo_0\\system_design_m01_data_fifo_0.xci",
+                "inst_hier_path": "axi_interconnect_mem/m01_couplers/m01_data_fifo",
+                "interface_ports": {
+                  "S_AXI": {
+                    "vlnv": "xilinx.com:interface:aximm_rtl:1.0",
+                    "mode": "Slave",
+                    "bridges": [
+                      "M_AXI"
+                    ]
+                  }
+                }
+              },
               "m01_regslice": {
                 "vlnv": "xilinx.com:ip:axi_register_slice:2.1",
                 "ip_revision": "29",
@@ -1834,9 +1876,15 @@
               }
             },
             "interface_nets": {
-              "m01_couplers_to_m01_regslice": {
+              "m01_couplers_to_m01_data_fifo": {
                 "interface_ports": [
                   "S_AXI",
+                  "m01_data_fifo/S_AXI"
+                ]
+              },
+              "m01_data_fifo_to_m01_regslice": {
+                "interface_ports": [
+                  "m01_data_fifo/M_AXI",
                   "m01_regslice/S_AXI"
                 ]
               },
@@ -1858,6 +1906,18 @@
                 "ports": [
                   "M_ARESETN",
                   "m01_regslice/aresetn"
+                ]
+              },
+              "S_ACLK_1": {
+                "ports": [
+                  "S_ACLK",
+                  "m01_data_fifo/aclk"
+                ]
+              },
+              "S_ARESETN_1": {
+                "ports": [
+                  "S_ARESETN",
+                  "m01_data_fifo/aresetn"
                 ]
               }
             }
