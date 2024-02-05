@@ -33,13 +33,15 @@ docgen 을 실행하기 위해서는 아래와 같이 실행합니다.
 ```txt
 > docgen
 
-Document Generator for TestDrive Profiling Master. v1.01
-Usage: docgen  [--help] [-t template] input_file [output_file]
+Document Generator for TestDrive Profiling Master. v1.3
+Usage: docgen  [--help] [-t template] [-l language] input_file [output_file]
 
       --help                display this help and exit
   -t template               Document template name/file.
                             *** Installed docgen template list ***
                             testdrive      : ** system default template **
+  -l language               Document language code string.
+                            ('docgen_language' variable in Lua)
   input_file                input Lua file
   output_file               output Microsoft Word(.docx) file
 ```
@@ -47,6 +49,7 @@ Usage: docgen  [--help] [-t template] input_file [output_file]
 실행 명령 : @<fixed>docgen @<color:FF0000>INPUT_LUA_FILE@</color>  @<color:FF0000>OUTPUT_DOCX_FILE@</color>@</fixed>
 
 @<color:FF0000>INPUT_LUA_FILE@</color>에 해당하는 Lua 스크립트를 작성하여 실행하게 되며, @<color:FF0000>OUTPUT_DOCX_FILE@</color>을 지정하지 않을 경우 주어진 property를 참조하여 자동으로 알맞게 생성합니다. '-t' 옵션은 기본 바탕이 될 템플릿 문서를 지정하게 되는데, 템플릿 문서를 지정하지 않을 경우 기본 docgen_template.docx로 지정하도록 되어 있으나 이를 참조/변경하여 다양한 문서 형태를 만들 수 있습니다.
+'-l' 옵션은 임의의 언어코드를 지정합니다. Lua 에서는 'docgen_language' 변수로 확인할 수 있고, 문장에서는 @<b>'@<bookmark:@언어코드 변경>'@</b> 표현식을 사용하여, 원하는 언어 코드를 선택할 수 있습니다.
 
 ;;;
 ## 사용상 제한 및 라이센스 허가와 선행 과정

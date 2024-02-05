@@ -9,22 +9,17 @@ SRCS			:= \
 	$(wildcard $(SRC_PATH)/media/*) \
 	$(SRC_PATH)/*.lua
 	
-
 #-------------------------------------------------
 # Build commands
 #-------------------------------------------------
-BUILD_TARGET		:= $(TARGET_NAME).docx
-BUILD_TARGET_PDF	:= $(TARGET_NAME).pdf
-
-all: $(BUILD_TARGET)
+all: $(TARGET_NAME)_ko.docx
 	@echo Document Generation is done!
-	@explorer $(BUILD_TARGET_PDF) &
 
 clean:
-	@rm -f $(BUILD_TARGET)
-	@rm -f $(BUILD_TARGET_PDF)
+	@rm -f $(TARGET_NAME)_ko.docx
+	@rm -f $(TARGET_NAME)_ko.pdf
 	@echo Done!
 
-$(BUILD_TARGET):$(SRCS)
-	@echo '*** DocGen Build *** (Please wait a seconds!!!)'
-	@docgen main.lua $(BUILD_TARGET)
+$(TARGET_NAME)_ko.docx:$(SRCS)
+	@echo '*** DocGen Build (Korean) *** (Please wait a seconds!!!)'
+	@docgen -l ko main.lua $(TARGET_NAME)_ko.docx

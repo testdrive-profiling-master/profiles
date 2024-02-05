@@ -403,8 +403,46 @@ endmodule
 ```
 결과)
 ---
-
  
+
+## 언어코드 변경
+@<size:30>@<b>표현식 : %%%@<color:FF0000>언어_코드명@</color>@</b>@</size>
+'@<bookmark:@실행 방법>'에서 지정한 '-l' 옵션에서 지정한 '언어 코드명'과 비교합니다. \
+만약 같지 않으면, 다시 언어코드를 변경하기 전까지 다음 문장들을 무시합니다. \
+이로써 원하는 언어로 작성된 문장만 문서에 사용할 수 있습니다.
+만약 언어 코드 없이 '%%%' 로 끝났다면, 다음 줄부터 모든 언어코드에 대해서 활성화됩니다.
+
+예)
+```lua
+%%% ko
+한글 출력입니다.
+%%% en
+It's english outputs.
+%%%
+모든 출력입니다.
+```
+결과) '-l ko' 옵션 사용시.
+```txt
+한글 출력입니다.
+모든 출력입니다.
+```
+
+:::NoteHeading
+기본은 모든 언어 코드에 활성된 상태입니다.
+ 
+
+## Lua 함수 호출
+@<size:30>@<b>표현식 : @@<lua:@<color:FF0000>lua_함수@</color>>@</b>@</size>
+Lua 함수를 호출하여, 반환된 문자열을 표현식으로 다시 사용합니다.
+
+예)
+```lua
+Lua 변수 'docgen_language'는 @<lua:docgen_language> 입니다.
+```
+결과)
+Lua 변수 'docgen_language'는 @<lua:docgen_language> 입니다.
+ 
+
 ## 그림 삽입
 
 @<size:30>@<b>표현식 : @@<img:@<color:FF0000>파일명@</color>;@<color:FF0000>스케일@</color>;@<color:FF0000>캡션@</color>>@</b>@</size>

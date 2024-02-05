@@ -37,6 +37,10 @@ do	-- list-up customized document template list
 	end
 end
 
+Arg:AddOptionString	("language", "", "l", nil, "language", "Document language code string.")
+Arg:AddRemark(nil, "('docgen_language' variable in Lua)")
+
+
 Arg:AddOptionFile	("in_file", nil, nil, nil, "input_file", "input Lua file")
 Arg:AddOptionFile	("out_file", "", nil, nil, "output_file", "output Microsoft Word(.docx) file")
 
@@ -48,6 +52,9 @@ end
 local	sInFilename		= Arg:GetOptionFile("in_file", 0)
 local	sDocTemplate	= String(Arg:GetOptionString("template", 0))
 local	sOutFilename	= Arg:GetOptionFile("out_file", 0)
+docgen_language			= String(Arg:GetOptionString("language", 0))
+docgen_language:MakeLower()
+docgen_language			= docgen_language.s
 doc 					= DocWord()
 
 if sDocTemplate.s == "" then
@@ -1022,8 +1029,9 @@ end
 local	bInline		= false
 
 function EncodeParagraph(sText, sExtra)
-	local	sPara	= String(sText)
-	local	sResult	= String("")
+	local	sPara		= String(sText)
+	local	sResult		= String("")
+	local	bBypass		= false				-- 내용 무시, docgen_language 일치하지 않음
 	
 	if sPara:CompareFront("[[") and sPara:CompareBack("]]") then
 		sPara:erase(0,2)
@@ -1052,6 +1060,11 @@ function EncodeParagraph(sText, sExtra)
 		if sPara.TokenizePos < 0 then
 			break
 		end
+		
+		if bBypass and sLine:CompareFront("%%%") == false then	-- bypass : language is not matching
+			goto continue
+		end
+		
 		sResult:Append("<w:p>")
 		if sExtra ~= nil and sExtra.pPr ~= nil then
 			s_pPr	= sExtra.pPr
@@ -1199,6 +1212,17 @@ function EncodeParagraph(sText, sExtra)
 				s_pPr	= s_pPr.s
 				sLine	= sPara:Tokenize("\r\n")
 				goto new_line
+			elseif sLine:CompareFront("%%%") then
+				sLine:CutFront("%", true)
+				sLine:Trim(" ")
+				sLine:MakeLower()
+
+				if #sLine.s ~= 0 then
+					bBypass	= (sLine.s ~= docgen_language)
+				else
+					bBypass	= false
+				end
+				goto continue
 			else	-- intended list
 				local	ilevel			= 0
 				
@@ -1469,6 +1493,14 @@ function EncodeParagraph(sText, sExtra)
 									<w:rPr><w:rStyle w:val=\"af0\"/></w:rPr>\
 									<w:t>"  .. sComment.s ..  "</w:t>\
 								</w:r></w:hyperlink>")
+						elseif sTag.s == "lua" then
+							local	sLuaCode	= sVar:Tokenize("")
+							sLuaCode:TrimLeft(" :")
+							
+							sLine:insert(sLine.TokenizePos, load("return (" .. sLuaCode.s .. ")")())
+							--sPara:erase(0, sPara.TokenizePos)
+							--sPara.TokenizePos	= 0
+							--EncodeParagraph(load("return (" .. sLuaCode.s .. ")")())
 						else
 							error("Can't recognize paragraph command : " .. sTag.s)
 						end
@@ -1480,6 +1512,7 @@ function EncodeParagraph(sText, sExtra)
 		sResult:Append("</w:p>")
 		::continue::
 	end
+	
 	return sResult.s
 end
 
@@ -1673,7 +1706,7 @@ do
 	
 	-- Field 갱신
 	LOGI("Fields calculation & Saving to PDF output : " .. sOutFilename_PDF.s)
-	os.execute("doc2pdf \"" .. sOutFilename.s .. "\" \"" .. property["Water_Mark"] .. "\" True")
+	os.execute("doc2pdf \"" .. sOutFilename.s .. "\" \"" .. property["Water_Mark"] .. "\"")
 	
 	os.exit()
 end

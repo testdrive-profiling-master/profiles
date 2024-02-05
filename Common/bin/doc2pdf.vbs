@@ -5,7 +5,6 @@ If WScript.Arguments.Count > 0 Then
 	docPath			= fso.GetAbsolutePathName(WScript.Arguments(0))
 	pdfPath			= fso.GetParentFolderName(docPath) & "\" & fso.GetBaseName(docpath) & ".pdf"
 	watermark_text	= ""
-	modify_source	= False
 	
 	'PDF 파일이 잠겨 있는지 채크
 	If fso.FileExists(pdfPath) Then
@@ -19,13 +18,6 @@ If WScript.Arguments.Count > 0 Then
 	'Water-mark text
 	If WScript.Arguments.Count > 1 Then
 		watermark_text	= WScript.Arguments(1)
-	End If
-	
-	'Modify source
-	If WScript.Arguments.Count > 2 Then
-		If WScript.Arguments(2) = "True" Then
-			modify_source	= True
-		End If
 	End If
 	
 	If LCase(Right(docPath, 4)) = ".doc" Or LCase(Right(docPath, 5)) = ".docx" Then
@@ -42,11 +34,7 @@ If WScript.Arguments.Count > 0 Then
 		objWord.DisplayAlerts	= 0
 		objWord.OMathAutoCorrect.UseOutsideOMath	= True
 		
-		if modify_source Then
-			Set objDoc = objWord.documents.open(docPath)
-		Else
-			Set objDoc = objWord.documents.open(docPath,, True)	'read-only 로 열기
-		End If
+		Set objDoc = objWord.documents.open(docPath)
 		
 		'sub 도큐먼트 확장
 		If objDoc.Subdocuments.Count >= 1 Then 
@@ -163,9 +151,11 @@ If WScript.Arguments.Count > 0 Then
 		objDoc.ExportAsFixedFormat pdfPath, 17, False, 1, 0, 1, 1, 0, True, True, 1, True, True, True
 		'objDoc.saveas pdfPath, 17
 
-		If objDoc.Saved = False Then objDoc.Save
-
-		objDoc.Close
+		If (objDoc.Saved = False) Then
+			objDoc.Save True
+		End If
+		
+		objDoc.Close 0	' close without saving
 		objWord.Quit
 	Else
 		Wscript.Echo "*E: Not a Word file."
