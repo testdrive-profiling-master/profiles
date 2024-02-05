@@ -18,7 +18,6 @@ BUILD_TARGET_PDF	:= $(TARGET_NAME).pdf
 
 all: $(BUILD_TARGET)
 	@echo Document Generation is done!
-	@explorer $(BUILD_TARGET_PDF) &
 
 clean:
 	@rm -f $(BUILD_TARGET)

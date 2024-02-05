@@ -1,4 +1,4 @@
-local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.3")
+local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.4")
 local	sProfilePath	= String(nil)
 local	sTemplatePath	= String(nil)
 
@@ -1216,6 +1216,7 @@ function EncodeParagraph(sText, sExtra)
 				sLine:CutFront("%", true)
 				sLine:Trim(" ")
 				sLine:MakeLower()
+				sResult:CutBack("<w:p>", false)
 
 				if #sLine.s ~= 0 then
 					bBypass	= (sLine.s ~= docgen_language)

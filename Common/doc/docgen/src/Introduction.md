@@ -1,8 +1,20 @@
+%%% ko
 # 소개
 
 만약 소개 과정을 생략하고 바로 사용하고자 한다면, 반드시 '@<bookmark:@선행 과정>'을 참고하여 진행해 주시기 바랍니다.
 신규 기능이 필요하거나 개선사항이나 버그를 발견하시면, 정형기(@<link:mailto:clonextop@gmail.com;clonextop@gmail.com>)에게 건의 부탁드리며, 이 문서 또한 docgen으로 작성 및 생성 되었음을 알려드립니다.
+%%% en
+# Introduction
 
+If you want to skip the introduction process and use it right away, please be sure to refer to '@<bookmark:@선행 과정>'.
+If you need new features or find improvements or bugs, please make suggestions to Hyunng-Ki Jeong(@<link:mailto:clonextop@gmail.com;clonextop@gmail.com>). Please note that this document was also written and created with docgen.
+%%%
+
+
+
+
+ 
+%%% ko
 ## 주요 기능
 
 docgen 은 Template 워드(.docx) 파일을 참조하여 새로운 WORD 문서(.docx)와 PDF 문서(.pdf)를 자동 생성 해주는 툴입니다.
@@ -10,20 +22,50 @@ docgen 은 Template 워드(.docx) 파일을 참조하여 새로운 WORD 문서(.
 기본적으로 CodeGen을 통해 범용적인 @<link:https://ko.wikipedia.org/wiki/%EB%A3%A8%EC%95%84_(%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D_%EC%96%B8%EC%96%B4);Lua> 프로그래밍 환경과 markdown에 호환되는 문법을 통해 text 형태로 문서를 작성할 수 있습니다. 주요 기능을 나열하면 아래와 같습니다.
 
 * Lua 스크립트를 통해 다양한 문자 변조 기능 지원
-* WORD 및 PDF 파일 생성
+* WORD 및 PDF 파일 자동 생성
 * 자동화된 절/캡션(Caption)/상호참조 생성 기능
 * 그림, 표, 스타일 서식, 코드 인용, 수학 수식 표현 기능
 * 워터마크(water mark) 삽입 기능
 * 워드 템플릿 문서 기반으로 사용자가 손쉽게 다양한 스타일 변경 구축과 일관된 서식 적용
 
+%%% en
+## Main functions
+
+docgen is a tool that automatically creates new WORD documents (.docx) and PDF documents (.pdf) by referring to template word (.docx) files.
+
+Basically, CodeGen allows you to write documents in text format through a grammar compatible with the universal @<link:https://en.wikipedia.org/wiki/Lua_(programming_language);Lua> programming environment and markdown. The main features are listed below.
+
+* Supports various character modulation functions through Lua script
+* Automatic creation of WORD and PDF files
+* Automated clause/caption/cross-reference creation function
+* Picture, table, style formatting, code quotation, and mathematical formula expression functions
+* Watermark insertion function
+* Users can easily change various styles and apply consistent formatting based on Word template documents
+%%%
  
+
+
+
+%%% ko
 ## 문서 자동화 생성 과정
 문서 자동화 생성 과정은 아래와 같은 단계로 진행됩니다.
 
 * >1. 템플릿 문서(template.docx) 열기
 * >2. 사용자 lua 코드로 부터 아래 내용 추가 하기
-* >3. .docx 문서 생성
-* >4. .docx 문서 필드 갱신 및 .pdf 생성
+* >3. 워드(.docx) 문서 생성
+* >4. .docx 문서 필드 갱신 및 PDF(.pdf) 파일 생성
+%%% en
+## Document automated creation process
+The document automatedn creation process proceeds in the following steps.
+
+* >1. Open the template document (template.docx)
+* >2. Add the following from user lua code
+* >3. Create Word(.docx) document
+* >4. Update word (.docx) document fields and create PDF(.pdf) file.
+%%%
+
+
+
 
  
 ## 실행 방법

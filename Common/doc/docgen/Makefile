@@ -18,8 +18,11 @@ all: $(TARGET_NAME)_ko.docx
 clean:
 	@rm -f $(TARGET_NAME)_ko.docx
 	@rm -f $(TARGET_NAME)_ko.pdf
+	@rm -f $(TARGET_NAME)_en.docx
+	@rm -f $(TARGET_NAME)_en.pdf
 	@echo Done!
 
 $(TARGET_NAME)_ko.docx:$(SRCS)
 	@echo '*** DocGen Build (Korean) *** (Please wait a seconds!!!)'
 	@docgen -l ko main.lua $(TARGET_NAME)_ko.docx
+	@docgen -l en main.lua $(TARGET_NAME)_en.docx
