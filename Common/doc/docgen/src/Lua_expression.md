@@ -15,22 +15,25 @@ docgen 역시 '@<bookmark:@실행 방법>'에서 나열한 것과 같이 docgen.
 
 여기서는 docgen 에 추가된 기능만을 설명하고 있으며, Lua 에 대한 학습 없이 최소 template 구현만으로 문서를 생성할 수 있습니다.
 %%% en
-# Lua 표현
+# Lua expression
 
-Lua 스크립트는 매우 가벼고 속도가 빠르며 단순하여, 비-프로그래머를 위해 주로 사용되는 언어입니다. '워크래프트 WoW', '앵그리버드' 등 각종 게임에서 비 프로그래머인 게임 디자이너가 사용한 예시가 있습니다.
-docgen 역시 '@<bookmark:@How to run>'에서 나열한 것과 같이 docgen.lua 파일을 실행하여 동작합니다.
-세부적으로는 범용적인 Lua 의 기본 기능과 codegen에 추가된 기능을 사용하여 docgen을 구현하고, 다시 이 구현을 통해 문서 자동화가 이루어 집니다.
-표현은 범용적인 Lua 문법과 CodeGen의 추가 문법 그리고 아래에서 나열되는 기능들이 추가됩니다.
+Lua scripts are very lightweight, fast, and simple, making them the preferred language for non-programmers. There are examples of non-programmer game designers using it in various games such as 'Warcraft WoW' and 'Angry Birds'.
+docgen also operates by executing the docgen.lua file as listed in '@<bookmark:@How to run>'.
+In detail, docgen is implemented using general-purpose Lua basic functions and functions added to codegen, and document automation is again achieved through this implementation.
+The expression is a general-purpose Lua syntax, CodeGen's additional syntax, and the functions listed below are added.
 
-* 외부 Lua 관련 링크
-** @<link:https://librewiki.net/wiki/%EC%8B%9C%EB%A6%AC%EC%A6%88:%EC%89%BD%EA%B2%8C_%EB%B0%B0%EC%9A%B0%EB%8A%94_%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D_%EC%9E%85%EB%AC%B8/Lua;쉽게 배우는 프로그래밍 입문/Lua>
-** property[] 속성 객체
-** AddRevision() 함수
-** AddTerm() 함수
-** AddParagraph() 함수
+* External Lua-related links
+** @<link:https://en.wikipedia.org/wiki/Lua_(programming_language)/Lua wiki>
+** property[] property object
+** AddRevision() function
+** AddTerm() function
+** AddParagraph() function
 
-여기서는 docgen 에 추가된 기능만을 설명하고 있으며, Lua 에 대한 학습 없이 최소 template 구현만으로 문서를 생성할 수 있습니다.
+Here, only the features added to docgen are explained, and documents can be created with minimal template implementation without learning Lua.
 %%%
+
+
+
 
 
 ;;;

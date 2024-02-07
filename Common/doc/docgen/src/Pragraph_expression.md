@@ -2,6 +2,9 @@
 
 Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph 의 인자 @<color:FF0000>설명@</color> 및 @<color:FF0000>문장@</color>을 기술하는 법을 의미합니다. 표기 방법은 markdown 과 html 표기법과 일부 취하고 있으며, 표현의 다향성을 위해 추가적으로 자체 문법도 가지고 있습니다. 또한 각 수식은 문단, 표등 문장이 쓰이는 어디서든 동등하게 사용할 수 있습니다.
 
+
+
+
  
 ## 문서 제목
 
@@ -13,6 +16,9 @@ Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph 의 인자 @<c
 @<size:30>@<b>        ###### @<color:FF0000>부제목5@</color>@</b>@</size>
 
 문서 제목 표기는 @<color:FF0000>대제목@</color>과 @<color:FF0000>부제목n@</color>까지 '#' 문자를 라인 선두에 두어 제목을 표시합니다. 이는 markdown 과 같습니다. '#' 문자가 라인 선두에 없으면 제목으로 인식하지 않으며, 템플릿 문서의 "텍스트 스타일" 에 영향을 받습니다. 최대 6단 까지 사용 가능.
+
+
+
 
  
 ## 목록화 기능
@@ -56,10 +62,16 @@ Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph 의 인자 @<c
 ** >2-1). 첫번째 번호 요소
 *** >표식 없는 요소 연장 단락
 
+
+
+
  
 ## 문자 수식
 
 문자 수식은 글자의 색상, 굵기, 이텔릭, 밑줄, 크기, 위첨자/아래첨자 등을 지정할 수 있으며, 적용 범위는 한 라인 내에서만 제한되며, 여러 수식 표기법이 중복 표현 될 수 있습니다.
+
+
+
 
  
 ### 굵게 표시
@@ -73,6 +85,9 @@ Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph 의 인자 @<c
 ```
 결과 : @<b>굵은 글씨입니다.@</b> 굵은 글씨가 아닙니다.
 
+
+
+
  
 ### 이텔릭체 표시
 @<size:30>@<b>표현식 : @@<i>@<color:FF0000>표현식@</color>@@</i>@</b>@</size>
@@ -84,6 +99,9 @@ Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph 의 인자 @<c
 @<i>이텔릭체@</i> Non 이텔릭체
 ```
 결과 : @<i>이텔릭체@</i> Non 이텔릭체
+
+
+
 
  
 ### 밑줄 표시
@@ -97,6 +115,9 @@ Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph 의 인자 @<c
 ```
 결과 : @<u>밑줄 글자@</u>
 
+
+
+
  
 ### 취소선 표시
 @<size:30>@<b>표현식 : @@<s>@<color:FF0000>표현식@</color>@@</s>@</b>@</size>
@@ -108,6 +129,9 @@ Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph 의 인자 @<c
 @<s>취소선 글자@</s>
 ```
 결과 : @<s>취소선 글자@</s>
+
+
+
 
  
 ### 위첨자 표시
@@ -121,6 +145,9 @@ Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph 의 인자 @<c
 ```
 결과 : 글씨의@<sup>위첨자@</sup>
 
+
+
+
  
 ### 아래첨자 표시
 @<size:30>@<b>표현식 : @@<sub>@<color:FF0000>표현식@</color>@@</sub>@</b>@</size>
@@ -132,6 +159,9 @@ Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph 의 인자 @<c
 글씨의@<sub>아래첨자@</sub>
 ```
 결과 : 글씨의@<sub>아래첨자@</sub>
+
+
+
 
  
 ### 글자 색상 변경
@@ -145,6 +175,9 @@ Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph 의 인자 @<c
 ```
 결과 : @<color:FF0000>붉은 글씨@</color> 표현
 
+
+
+
  
 ### 글자 크기 변경
 @<size:30>@<b>표현식 : @@<size:@<color:FF0000>크기값@</color>>@<color:FF0000>표현식@</color>@@</size>@</b>@</size>
@@ -156,6 +189,9 @@ Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph 의 인자 @<c
 @<size:30>큰 글씨@</size> @<size:10>작은 글씨@</size>
 ```
 결과 : @<size:30>큰 글씨@</size> @<size:10>작은 글씨@</size>
+
+
+
 
  
 ### 문단 스타일 변경
@@ -172,12 +208,19 @@ Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph 의 인자 @<c
 결과)
 :::NoteHeading
 민간인과 군인 사망자를 모두 합하여 약 6,000만~7,000만 명에 달하는 사람들이 제2차 세계 대전으로 인해 사망했다. 이 전쟁의 여파로 서구권에서는 그동안 사회 주류였던 집단주의 사상이 쇠퇴하고 개인주의 사상이 대두되어 오늘날까지 이어지게 된다.
+
+
+
+
  
 ## 상호 참조
 @<size:30>@<b>표현식 : @@<bookmark:@<color:FF0000>대상@</color>>@</b>@</size>
 
 제목, 그림, 표등의 상호 참조를 구현합니다.
 @<color:FF0000>대상@</color>에 그림, 표의 캡션 내용이나 제목의 내용을 적으면 됩니다.
+
+
+
 
  
 ### 그림의 상호 참조
@@ -188,20 +231,43 @@ Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph 의 인자 @<c
 ```
 결과 : @<bookmark:LaTeX setting>
 
- 
+
+
+
+
+%%% ko 
 ### 제목의 상호 참조
 
-제목의 경우 아래와 같이 Prefix 유무에 따라 상호 참조의 표현은 크게 3가지로 구현 가능합니다.
+제목의 경우 아래와 같이 Prefix 유무에 따라 상호 참조의 표현은 크게 4가지로 구현 가능합니다.
 * >1. 일반 문장 참조 (별도의 prefix 없이 표현)
 ** >: @<b>@<color:FF0000>대상@</color>@</b>
-* >1. 페이지 번호 참조
+* >2. 페이지 번호 참조
 ** >: @<b>@<color:0000FF>&@</color>@<color:FF0000>대상@</color>@</b>
-* >2. 장/절 번호 참조
+* >3. 장/절 번호 참조
 ** >: @<b>@<color:0000FF>#@</color>@<color:FF0000>대상@</color>@</b>
-* >2. 장/절 번호 및 문장 전체 참조
+* >4. 장/절 번호 및 문장 전체 참조
 ** >: @<b>@<color:0000FF>@@@</color>@<color:FF0000>대상@</color>@</b>
 
 아래 예제는 실제 사용 예시를 보이며, 문장 클릭시 현 문서의 링크로 이동 됨을 확인 할 수 있습니다.
+%%% en
+### Cross-reference in title
+
+In the case of titles, cross-references can be expressed in four ways depending on the presence or absence of a prefix, as shown below.
+* >1. Reference to general sentences (expressed without a separate prefix)
+** >: @<b>@<color:FF0000>target@</color>@</b>
+* >2. Page number reference
+** >: @<b>@<color:0000FF>&@</color>@<color:FF0000>target@</color>@</b>
+* >3. Chapter/section number reference
+** >: @<b>@<color:0000FF>#@</color>@<color:FF0000>target@</color>@</b>
+* >4. Chapter/section number and full sentence reference
+** >: @<b>@<color:0000FF>@@@</color>@<color:FF0000>target@</color>@</b>
+
+The example below shows an actual usage example, and you can see that clicking on the sentence moves to the link to the current document.
+%%%
+
+
+
+%%% ko
 예) 일반 문장 참조
 ```html
 @<bookmark:사용상 제한 및 라이센스 허가와 선행 과정>
@@ -225,10 +291,41 @@ Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph 의 인자 @<c
 ```html
 @<bookmark:@사용상 제한 및 라이센스 허가와 선행 과정>
 ```
+
 결과 : @<bookmark:@사용상 제한 및 라이센스 허가와 선행 과정>
+%%% en
+ex) Reference to general sentences
+```html
+@<bookmark:Restrictions on use, licensing and prerequisites>
+```
+Result : @<bookmark:Restrictions on use, licensing and prerequisites>
+
+ex) Page number reference
+```html
+@<bookmark:&Restrictions on use, licensing and prerequisites>
+```
+Result : @<bookmark:&Restrictions on use, licensing and prerequisites>
+
+ex) Chapter/section number reference
+```html
+@<bookmark:#Restrictions on use, licensing and prerequisites>
+```
+Result : @<bookmark:#Restrictions on use, licensing and prerequisites>
+
+
+ex) Chapter/section number and full sentence reference
+```html
+@<bookmark:@Restrictions on use, licensing and prerequisites>
+```
+
+Result : @<bookmark:@Restrictions on use, licensing and prerequisites>
+%%%
+
+
 
 
  
+%%% ko
 ## 속성(Property) 참조
 @<size:30>@<b>표현식 : @@<property:@<color:FF0000>속성이름@</color>>@</b>@</size>
 '@<bookmark:Lua 표현>' 중 '@<bookmark:property[] 속성 객체 (기본)>'로 다양한 이름의 속성을 만들 수 있으며, 이를 본문에서 사용하는 방법을 제공한다.
@@ -237,6 +334,18 @@ Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph 의 인자 @<c
 @<property:Main_Title>, @<property:Ownership>
 ```
 결과 : @<property:Main_Title>, @<property:Ownership>
+%%% en
+## Property reference
+@<size:30>@<b>Expression : @@<property:@<color:FF0000>property_name@</color>>@</b>@</size>
+'@<bookmark:Lua expression>' 중 '@<bookmark:property[] 속성 객체 (기본)>'로 다양한 이름의 속성을 만들 수 있으며, 이를 본문에서 사용하는 방법을 제공한다.
+예)
+```html
+@<property:Main_Title>, @<property:Ownership>
+```
+결과 : @<property:Main_Title>, @<property:Ownership>
+%%%
+
+
 
 
  
@@ -252,13 +361,30 @@ Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph 의 인자 @<c
 결과 : @<link:https://testdrive-profiling-master.github.io/;TestDrive Profiling Master>
 
 
+
+
+
  
+%%% ko
 ## 수학 수식 표현
 @<size:30>@<b>표현식 : \$\$@<color:FF0000>수학수식@</color>\$\$@</b>@</size>
 
 수학 수식의 경우 markdown 과 같게 수학 수식에 "\$$" 로 둘러싸서 표시합니다.
-단! WORD 의 수학 수식은 기본이 "@<color:FF0000>@<b>유니코드@</b>@</color>" 표현식으로 초기 지정되어 있습니다. 때문에 "@<color:0000FF>@<b>LaTeX@</b>@</color>" 수식을 활용하고자 한다면, @<i>@<u>"@<b>@<bookmark:@선행 과정>@</b>"을 참고하여 설정을 변경해야 함을 유의합니다.@</u>@</i>
-수학 수식을 단일로 표현할 경우, 가운데 정렬로 표기 되지만, 문장 중간에 표현할 경우 문장과 어울리도록 표현이 자동 변경되며, 아래의 예제는 LaTeX 표현으로 구현된 내용이므로 만약 결과 표기가 잘못 되어 있다면, 위 "@<bookmark:선행 과정>"을 시도하지 않은 결과입니다.
+단! WORD 의 수학 수식은 기본이 "@<color:FF0000>@<b>유니코드@</b>@</color>" 표현식으로 초기 지정되어 있습니다. \
+때문에 "@<color:0000FF>@<b>LaTeX@</b>@</color>" 수식을 활용하고자 한다면, @<i>@<u>"@<b>@<bookmark:@선행 과정>@</b>"을 참고하여 설정을 변경해야 함을 유의합니다.@</u>@</i>
+수학 수식을 단일로 표현할 경우, 가운데 정렬로 표기 되지만, 문장 중간에 표현할 경우 문장과 어울리도록 표현이 자동 변경되며, \
+아래의 예제는 LaTeX 표현으로 구현된 내용이므로 만약 결과 표기가 잘못 되어 있다면, 위 "@<bookmark:선행 과정>"을 시도하지 않은 결과입니다.
+%%% en
+## 수학 수식 표현
+@<size:30>@<b>표현식 : \$\$@<color:FF0000>수학수식@</color>\$\$@</b>@</size>
+
+수학 수식의 경우 markdown 과 같게 수학 수식에 "\$$" 로 둘러싸서 표시합니다.
+단! WORD 의 수학 수식은 기본이 "@<color:FF0000>@<b>유니코드@</b>@</color>" 표현식으로 초기 지정되어 있습니다. \
+때문에 "@<color:0000FF>@<b>LaTeX@</b>@</color>" 수식을 활용하고자 한다면, @<i>@<u>"@<b>@<bookmark:@Prerequisites>@</b>"을 참고하여 설정을 변경해야 함을 유의합니다.@</u>@</i>
+수학 수식을 단일로 표현할 경우, 가운데 정렬로 표기 되지만, 문장 중간에 표현할 경우 문장과 어울리도록 표현이 자동 변경되며, \
+아래의 예제는 LaTeX 표현으로 구현된 내용이므로 만약 결과 표기가 잘못 되어 있다면, 위 "@<bookmark:Prerequisites>"을 시도하지 않은 결과입니다.
+%%%
+
 
 예) 수학 수식 표현 2가지
 ```docbook
@@ -272,6 +398,9 @@ $$f\left(x\right)=a_0+\sum_{n=1}^{\infty}\left(a_n\cos{\frac{n\pi x}{L}}+b_n\sin
 
 WORD의 수학 수식은 @<bookmark:WORD 수학 수식 LaTeX 변환>처럼 같이 수식을 먼저 만든 후, 메뉴에서 '1차원 형식' 버튼을 눌러 변경 가능합니다. 이 문자열을 양끝단에 "\$$" 문자를 덧붙여 수학 수식으로 작성할 수 있습니다.
 @<img:#media/math_latex.png;0.9;WORD 수학 수식 LaTeX 변환>
+
+
+
 
  
 ## 코드 인용
@@ -347,7 +476,13 @@ endmodule
 `endif//__TESTDRIVE_SRAM_SINGLE_V__
 @```
 ```
+
+%%% ko
 결과)
+%%% en
+Result)
+%%%
+
 ```#verilog
 `ifndef __TESTDRIVE_SRAM_SINGLE_V__
 `define __TESTDRIVE_SRAM_SINGLE_V__
@@ -385,13 +520,26 @@ endmodule
 `endif//__TESTDRIVE_SRAM_SINGLE_V__
 ```
 
+
+
+
  
+%%% ko
 ## 페이지 나눔
 
 @<size:30>@<b>표현식 : ;;;@</b>@</size>
 라인 선두에 ';' 문자를 최소 3개 이상 입력하면, 다음 페이지로 넘깁니다.
+%%% en
+## Seperating page
+
+@<size:30>@<b>Expression : ;;;@</b>@</size>
+If you enter at least three ';' characters at the beginning of a line, it will advance to the next page.
+%%%
+
+
 
  
+%%% ko
 ## 수평선
 
 @<size:30>@<b>표현식 : ---@</b>@</size>
@@ -403,10 +551,26 @@ endmodule
 ```
 결과)
 ---
- 
+%%% en
+## horizontal line
 
+@<size:30>@<b>Expression : ---@</b>@</size>
+If you enter at least three '-' characters at the beginning of a line, a horizontal line will be entered, just like in markdown.
+
+ex)
+```txt
+---
+```
+Result)
+---
+%%%
+
+
+
+
+ 
 %%% ko
-## 언어코드 변경
+## 언어코드 지정
 
 @<size:30>@<b>표현식 : %%%@<color:FF0000>언어_코드명@</color>@</b>@</size>
 '@<bookmark:@실행 방법>'에서 지정한 '-l' 옵션에서 지정한 '언어 코드명'과 비교합니다. \
@@ -414,24 +578,26 @@ endmodule
 이로써 원하는 언어로 작성된 문장만 문서에 사용할 수 있습니다.
 만약 언어 코드 없이 '%%%' 로 끝났다면, 다음 줄부터 모든 언어코드에 대해서 활성화됩니다.
 %%% en
-## 언어코드 변경
+## Specify language code
 
-@<size:30>@<b>표현식 : %%%@<color:FF0000>언어_코드명@</color>@</b>@</size>
-'@<bookmark:@How to run>'에서 지정한 '-l' 옵션에서 지정한 '언어 코드명'과 비교합니다. \
-만약 같지 않으면, 다시 언어코드를 변경하기 전까지 다음 문장들을 무시합니다. \
-이로써 원하는 언어로 작성된 문장만 문서에 사용할 수 있습니다.
-만약 언어 코드 없이 '%%%' 로 끝났다면, 다음 줄부터 모든 언어코드에 대해서 활성화됩니다.
+@<size:30>@<b>Expression : %%%@<color:FF0000>language_code@</color>@</b>@</size>
+Compare 'language_code' with the '-l' option specified one. Refer to '@<bookmark:@How to run>'. \
+If they are not equal, the following sentences are ignored until the language code is changed again. \
+This ensures that only sentences written in your desired language can be used in your document.
+If it ends with '%%%' without a language code, it will be activated for all language codes from the next line.
 %%%
 
+%%% ko
 예)
 ```lua
 %%% ko
 한글 출력입니다.
 %%% en
-It's english outputs.
+It's an english output.
 %%%
 모든 출력입니다.
 ```
+
 결과) '-l ko' 옵션 사용시.
 ```txt
 한글 출력입니다.
@@ -440,6 +606,25 @@ It's english outputs.
 
 :::NoteHeading
 기본은 모든 언어 코드에 활성된 상태입니다.
+%%% en
+ex)
+```lua
+%%% ko
+한글 출력입니다.
+%%% en
+It's an english output.
+%%%
+It's all output.
+```
+ex) When using the '-l en' option.
+```txt
+It's an english output.
+It's all output.
+```
+
+:::NoteHeading
+The default is enabled for all language codes.
+%%%
  
 
 
@@ -458,15 +643,15 @@ Lua 변수 'docgen_language'는 @<lua:docgen_language> 입니다.
 Lua 변수 'docgen_language'는 @<lua:docgen_language> 입니다.
 %%% en
 ## Lua function call
-@<size:30>@<b>표현식 : @@<lua:@<color:FF0000>lua_함수@</color>>@</b>@</size>
-Lua 함수를 호출하여, 반환된 문자열을 표현식으로 다시 사용합니다.
+@<size:30>@<b>Expression : @@<lua:@<color:FF0000>lua_function@</color>>@</b>@</size>
+Call a Lua function and reuse the returned string as an expression.
 
-예)
+ex)
 ```lua
-Lua 변수 'docgen_language'는 @<lua:docgen_language> 입니다.
+Lua variable 'docgen_language' is @<lua:docgen_language>
 ```
-결과)
-Lua 변수 'docgen_language'는 @<lua:docgen_language> 입니다.
+Result)
+Lua variable 'docgen_language' is @<lua:docgen_language>
 %%%
  
 
@@ -488,14 +673,15 @@ Visio 파일일 경우는 "@<color:FF0000>파일명@</color>[@<color:FF0000>페�
 %%% en
 ## Picture insertion
 
-@<size:30>@<b>Expression : @@<img:@<color:FF0000>파일명@</color>;@<color:FF0000>스케일@</color>;@<color:FF0000>캡션@</color>>@</b>@</size>
-그림은 jpg, png, bmp, gif, tif, svg, wmf, vsd/vsdx(Visio 설치 필요) 포멧을 지원하고 있습니다. @<color:FF0000>파일명@</color>은 표시할 파일명을 지정하게 되며, \
-그림에 외각선 경계가 필요할 경우 "@<color:0000FF>#@</color>@<color:FF0000>파일명@</color>"으로 표시합니다. \
-Visio 파일일 경우는 "@<color:FF0000>파일명@</color>[@<color:FF0000>페이지명@</color>]"으로 별도의 페이지 이름을 지정할 수 있으며, \
-@<color:FF0000>페이지명@</color>이 지정되지 않을 때는 첫 페이지로 간주합니다.
-또한 @<color:FF0000>스케일@</color>의 경우, 종이의 폭 기준 최대값 1.0으로 0 초과 1 이하의 값을 넣어 크기를 지정할 수 있습니다. \
-지정되지 않을 경우 기본 1.0으로 간주 합니다.
-@<color:FF0000>캡션@</color>은 말 그대로 캡션 내용을 지정하며, '@<bookmark:@상호 참조>'에서 사용될 수 있습니다. 지정되지 않을 경우 캡션은 삽입되지 않습니다.
+@<size:30>@<b>Expression : @@<img:@<color:FF0000>filename@</color>;@<color:FF0000>scale@</color>;@<color:FF0000>caption@</color>>@</b>@</size>
+Pictures support jpg, png, bmp, gif, tif, svg, wmf, and vsd/vsdx (Visio installation required) formats. @<color:FF0000>file name@</color> specifies the file name to display, \
+if the picture requires an outline border, indicate it as "@<color:0000FF>#@</color>@<color:FF0000>filename@</color>". \
+In the case of a Visio file, a separate page name can be specified as "@<color:FF0000>filename@</color>[@<color:FF0000>page name@</color>]", and \
+if @<color:FF0000>page name@</color> is not specified, it is considered the first page.
+
+Additionally, in the case of @<color:FF0000>scale@</color>, the maximum value based on the width of the paper is 1.0, and you can specify the size by entering a value between 0 and 1. \
+If not specified, the default 1.0 is assumed.
+@<color:FF0000>caption@</color> literally specifies the caption content and can be used in '@<bookmark:@상호 참조>'. If not specified, the caption will not be inserted.
 %%%
  
 예1) $$1/4$$ 크기의 경계선 있는 도넛 그림
@@ -525,6 +711,8 @@ Visio 파일일 경우는 "@<color:FF0000>파일명@</color>[@<color:FF0000>페�
 ```
 결과)
 @<img:nil;0;그림 내용 없이 캡션만 삽입>
+
+
 
 
  
@@ -558,6 +746,9 @@ Visio 파일일 경우는 "@<color:FF0000>파일명@</color>[@<color:FF0000>페�
 결과)
 @<tbl:nil;nil;표 내용 없이 캡션만 삽입>
  
+
+
+
 
 ### Lua 표현으로부터 표 삽입
 @<size:30>@<b>표현식 : @@<tbl:lua;@<color:FF0000>테이블_변수명@</color>;@<color:FF0000>캡션@</color>>@</b>@</size>

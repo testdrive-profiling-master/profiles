@@ -6,7 +6,7 @@
 %%% en
 # Introduction
 
-If you want to skip the introduction process and use it right away, please be sure to refer to '@<bookmark:@선행 과정>'.
+If you want to skip the introduction process and use it right away, please be sure to refer to '@<bookmark:@Prerequisites>'.
 If you need new features or find improvements or bugs, please make suggestions to Hyunng-Ki Jeong(@<link:mailto:clonextop@gmail.com;clonextop@gmail.com>). Please note that this document was also written and created with docgen.
 %%%
 
@@ -94,17 +94,28 @@ Usage: docgen  [--help] [-t template] [-l language] input_file [output_file]
   output_file               output Microsoft Word(.docx) file
 ```
 
+%%% ko
 실행 명령 : @<fixed>docgen @<color:FF0000>INPUT_LUA_FILE@</color>  @<color:FF0000>OUTPUT_DOCX_FILE@</color>@</fixed>
 
-@<color:FF0000>INPUT_LUA_FILE@</color>에 해당하는 Lua 스크립트를 작성하여 실행하게 되며, @<color:FF0000>OUTPUT_DOCX_FILE@</color>을 지정하지 않을 경우 주어진 property를 참조하여 자동으로 알맞게 생성합니다. '-t' 옵션은 기본 바탕이 될 템플릿 문서를 지정하게 되는데, 템플릿 문서를 지정하지 않을 경우 기본 docgen_template.docx로 지정하도록 되어 있으나 이를 참조/변경하여 다양한 문서 형태를 만들 수 있습니다.
-'-l' 옵션은 임의의 언어코드를 지정합니다. Lua 에서는 'docgen_language' 변수로 확인할 수 있고, 문장에서는 @<b>'@<bookmark:@언어코드 변경>'@</b> 표현식을 사용하여, 원하는 언어 코드를 선택할 수 있습니다.
+@<color:FF0000>INPUT_LUA_FILE@</color>에 해당하는 Lua 스크립트를 작성하여 실행하게 되며, @<color:FF0000>OUTPUT_DOCX_FILE@</color>을 지정하지 않을 경우 주어진 property를 참조하여 자동으로 알맞게 생성합니다. \
+'-t' 옵션은 기본 바탕이 될 템플릿 문서를 지정하게 되는데, 템플릿 문서를 지정하지 않을 경우 기본 docgen_template.docx로 지정하도록 되어 있으나 이를 참조/변경하여 다양한 문서 형태를 만들 수 있습니다.
+'-l' 옵션은 임의의 언어코드를 지정합니다. Lua 에서는 'docgen_language' 변수로 확인할 수 있고, 문장에서는 @<b>'@<bookmark:@언어코드 지정>'@</b> 표현식을 사용하여, 원하는 언어 코드를 선택할 수 있습니다.
+%%% en
+command line : @<fixed>docgen @<color:FF0000>INPUT_LUA_FILE@</color>  @<color:FF0000>OUTPUT_DOCX_FILE@</color>@</fixed>
 
+A Lua script corresponding to @<color:FF0000>INPUT_LUA_FILE@</color> is created and executed. If @<color:FF0000>OUTPUT_DOCX_FILE@</color> is not specified, it is automatically created appropriately by referring to the given property. \
+The '-t' option specifies the template document that will be the base. If the template document is not specified, the default docgen_template.docx is specified, but various document types can be created by referencing/changing it.
+The '-l' option specifies an arbitrary language code. In Lua, you can check it with the 'docgen_language' variable, and in sentences, you can use the expression @<b>'@<bookmark:@Specify language code>'@</b> to select the desired language code.
+%%%
 ;;;
 
 
 
-
+%%% ko
 ## 사용상 제한 및 라이센스 허가와 선행 과정
+%%% en
+## Restrictions on use, licensing and prerequisites
+%%%
 
 
 
@@ -120,16 +131,25 @@ Since WORD's VBA is used, a Windows PC environment with WORD installed is requir
 
 
 
+%%% ko
 ### 라이센스 허가
 docgen 에 구현된 소스는 BSD 라이센스를 준수하며, 문서 생성에 사용된 사용자의 개별 스크립트나 이미지등의 2차 저작물은 온전히 사용자의 소유입니다.
+%%% en
+### Licenses
+The source code implemented in docgen complies with the BSD license, and secondary works such as the user's individual scripts or images used to create the document are entirely owned by the user.
+%%%
 
 
 
 
 
- 
+%%% ko 
 ### 선행 과정
 Microsoft Word 의 설정 자동화 제한으로 수식 표현에 대하여 MS 표준 수식 표현인 Unicode로 초기 고정되어 있습니다. 이를 "LaTeX"로 표현하고자 한다면, @<bookmark:LaTeX setting>와 같이 최초 한번 리본 메뉴의 '수식/변환'(먼저 '삽입/수식'으로 수식이 생성한 후 선택되어야 아래 메뉴가 보임.) 탭에서 '@<b>@<u>/유니코드@</u>@</b>' 대신 '@<b>@<u>{} LaTeX@</u>@</b>'를 선택하는 과정이 필요합니다.
+%%% en
+### Prerequisites
+Due to limitations in Microsoft Word's setting automation, the formula expression is initially set to Unicode, the MS standard formula expression. If you want to express this in "LaTeX", tap 'Formula/Conversion' on the ribbon menu (the menu below must be selected after creating the formula with 'Insert/Formula' first) as in @<bookmark:LaTeX setting>. Select '@<b>@<u>{} LaTeX@</u>@</b>' instead of '@<b>@<u>/Unicode@</u>@</b>' A process is required.
+%%%
 
 @<img:#media/latex_setting.png;0.3;LaTeX setting>
 

@@ -1029,9 +1029,10 @@ end
 local	bInline		= false
 
 function EncodeParagraph(sText, sExtra)
-	local	sPara		= String(sText)
-	local	sResult		= String("")
-	local	bBypass		= false				-- 내용 무시, docgen_language 일치하지 않음
+	local	sPara			= String(sText)
+	local	sResult			= String("")
+	local	bBypass			= false				-- 내용 무시, docgen_language 일치하지 않음
+	local	bBypassCodeRef	= false				-- code reference in bypass mode
 	
 	if sPara:CompareFront("[[") and sPara:CompareBack("]]") then
 		sPara:erase(0,2)
@@ -1061,7 +1062,14 @@ function EncodeParagraph(sText, sExtra)
 			break
 		end
 		
-		if bBypass and sLine:CompareFront("%%%") == false then	-- bypass : language is not matching
+		if bBypass and sLine:CompareFront("```") then	-- check in code reference
+			bBypassCodeRef	= (bBypassCodeRef == false)
+			if bBypass then
+				goto continue
+			end
+		end
+		
+		if bBypass and ((sLine:CompareFront("%%%") == false) or bBypassCodeRef) then	-- bypass : language is not matching
 			goto continue
 		end
 		
@@ -1134,7 +1142,13 @@ function EncodeParagraph(sText, sExtra)
 				local	iCodeLen	= 0
 				while sPara.TokenizePos >= 0 do
 					sLine	= sPara:Tokenize("\r\n")
-					if sLine:CompareFront("```") then break end
+					if sLine:CompareFront("```") then
+						sLine:Trim(" \t")
+						if sLine.s ~= "```" then
+							error("Not a end of code reference.")
+						end
+						break
+					end
 					iCodeLen	= sPara.TokenizePos
 				end
 				-- make contents
@@ -1142,6 +1156,9 @@ function EncodeParagraph(sText, sExtra)
 				if iCodeLen == 0 then	-- no contents
 					goto continue
 				else
+					if iCodeLen < 0 then
+						error("Not found of end of code reference \"```\".")
+					end
 					sContent:erase(iCodeLen, -1)
 					sContent:Replace("\r", "", true)
 					sContent:Replace("\n\n", "\n \n", true)
