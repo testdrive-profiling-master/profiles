@@ -139,7 +139,8 @@ Result)
 
 
 
- 
+
+;;;
 %%% ko
 ## AddTerm() 함수
 @<size:30>@<b>함수 원형 : AddTerm(@<color:FF0000>단어@</color>, @<color:FF0000>설명@</color>)@</b>@</size>
