@@ -1231,7 +1231,7 @@ function EncodeParagraph(sText, sExtra)
 				goto new_line
 			elseif sLine:CompareFront("%%%") then
 				sLine:CutFront("%", true)
-				sLine:Trim(" ")
+				sLine:Trim(" \t%-=")
 				sLine:MakeLower()
 				sResult:CutBack("<w:p>", false)
 
@@ -1516,9 +1516,6 @@ function EncodeParagraph(sText, sExtra)
 							sLuaCode:TrimLeft(" :")
 							
 							sLine:insert(sLine.TokenizePos, load("return (" .. sLuaCode.s .. ")")())
-							--sPara:erase(0, sPara.TokenizePos)
-							--sPara.TokenizePos	= 0
-							--EncodeParagraph(load("return (" .. sLuaCode.s .. ")")())
 						else
 							error("Can't recognize paragraph command : " .. sTag.s)
 						end
@@ -1719,10 +1716,10 @@ do
 	
 	-- 중간 생성 파일들 제거
 	for i=1, #temp_visio_file_list do
-		os.execute("rm -f \"" .. temp_visio_file_list[1] .. "\"")
+		os.execute("rm -f \"" .. temp_visio_file_list[i] .. "\"")
 	end	
 	
-	-- Field 갱신
+	-- Field 갱신 및 pdf 생성
 	LOGI("Fields calculation & Saving to PDF output : " .. sOutFilename_PDF.s)
 	os.execute("doc2pdf \"" .. sOutFilename.s .. "\" \"" .. property["Water_Mark"] .. "\"")
 	

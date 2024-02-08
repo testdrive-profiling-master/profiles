@@ -38,7 +38,7 @@ Basically, CodeGen allows you to write documents in text format through a gramma
 * Supports various character modulation functions through Lua script
 * Automatic creation of WORD and PDF files
 * Automated clause/caption/cross-reference creation function
-* Picture, table, style formatting, code quotation, and mathematical formula expression functions
+* Picture, table, style formatting, code quotation, and mathematical equation expression functions
 * Watermark insertion function
 * Users can easily change various styles and apply consistent formatting based on Word template documents
 %%%
@@ -93,7 +93,7 @@ Usage: docgen  [--help] [-t template] [-l language] input_file [output_file]
   input_file                input Lua file
   output_file               output Microsoft Word(.docx) file
 ```
-
+ 
 %%% ko
 실행 명령 : @<fixed>docgen @<color:FF0000>INPUT_LUA_FILE@</color>  @<color:FF0000>OUTPUT_DOCX_FILE@</color>@</fixed>
 
@@ -145,17 +145,43 @@ The source code implemented in docgen complies with the BSD license, and seconda
 
 %%% ko 
 ### 선행 과정
-Microsoft Word 의 설정 자동화 제한으로 수식 표현에 대하여 MS 표준 수식 표현인 Unicode로 초기 고정되어 있습니다. 이를 "LaTeX"로 표현하고자 한다면, @<bookmark:LaTeX setting>와 같이 최초 한번 리본 메뉴의 '수식/변환'(먼저 '삽입/수식'으로 수식이 생성한 후 선택되어야 아래 메뉴가 보임.) 탭에서 '@<b>@<u>/유니코드@</u>@</b>' 대신 '@<b>@<u>{} LaTeX@</u>@</b>'를 선택하는 과정이 필요합니다.
+Microsoft Word 의 설정 자동화 제한으로 수식 표현에 대하여, 초기에 MS 표준 수식 표현인 <b>유니코드</b>로 고정되어 있습니다. \
+이를 "LaTeX"로 표현하고자 한다면, @<bookmark:LaTeX 설정>와 같이 최초 한번 리본 메뉴의 '수식/변환'(먼저 '삽입/수식'으로 수식이 생성한 후 선택되어야 아래 메뉴가 보임.) 탭에서 '@<b>@<u>/유니코드@</u>@</b>' 대신 '@<b>@<u>{} LaTeX@</u>@</b>'를 선택하는 과정이 필요합니다.
+
+@<img:#media/latex_setting.png;0.3;LaTeX 설정>
 %%% en
 ### Prerequisites
-Due to limitations in Microsoft Word's setting automation, the formula expression is initially set to Unicode, the MS standard formula expression. If you want to express this in "LaTeX", tap 'Formula/Conversion' on the ribbon menu (the menu below must be selected after creating the formula with 'Insert/Formula' first) as in @<bookmark:LaTeX setting>. Select '@<b>@<u>{} LaTeX@</u>@</b>' instead of '@<b>@<u>/Unicode@</u>@</b>' A process is required.
+Due to limitations in Microsoft Word's setting automation, the math equation expression is initially set to <b>Unicode</b>, the MS standard math equation expression. \
+If you want to express this in "LaTeX", tab 'Equation/Conversions' on the ribbon menu (the menu below must be selected after creating the math equation with 'Insert/Equation' first) as in @<bookmark:LaTeX setting>. Select '@<b>@<u>{} LaTeX@</u>@</b>' instead of '@<b>@<u>/Unicode@</u>@</b>' A process is required.
+
+@<img:#media/latex_setting_en.png;0.3;LaTeX setting>
 %%%
 
-@<img:#media/latex_setting.png;0.3;LaTeX setting>
-
-:::NoteHeading
 %%% ko
+:::NoteHeading
 Microsoft 에서는 현재 이 부분에서 자동 변경 방법을 제공하지 않고 있으며, 왜 변경 기능을 막아놨는지 모르겠음.
 %%% en
+:::NoteHeading
 Microsoft currently does not provide an automatic change method in this area, and I do not know why the change function is blocked.
+%%%
+
+
+
+
+ 
+%%% ko
+## 알려진 문제들
+
+### Excel 테이블에서 number format 문제
+
+엑셀의 숫자 데이터의 표현에 대해서, 'number format'을 이용한 표현이 현재는 불가능합니다. \
+작업중이며, 향후 적절한 시간을 투자하여 테스트 후 지원할 예정입니다.
+
+%%% en
+## Knwon issues
+
+### Number format issue in Excel table 
+
+Regarding the expression of numerical data in Excel, expression using 'number format' is currently not possible. \
+I'm working on it and will invest appropriate time to test & support it in the future.
 %%%
