@@ -155,7 +155,7 @@ If WScript.Arguments.Count > 0 Then
 	End If
 
 	If (objDoc.Saved = False) Then
-		objDoc.Save True
+		objDoc.Save
 	End If
 	
 	objDoc.Activate	'alternate wait for save done!
