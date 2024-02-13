@@ -199,10 +199,21 @@ elseif (sType == "docgen") then
 	LOGI("Create DocGen project : '" .. sProjectName .. "'")
 	
 	MakeDir(sProjectName .. "/template")
-	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_docgen/.\" " .. sProjectName .. "/")
-	os.execute("cp -f \"" .. sProfilePath .. "Common/bin/codegen/docgen_template_testdrive.docx\" " .. sProjectName .. "/template/docgen_template.docx")
-	os.execute("sed \"s/TITLE/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/Makefile")
-	os.execute("sed \"s/TITLE/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/main.lua")
+	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_docgen/.\" " .. sProjectPath .. "/")
+	os.execute("cp -f \"" .. sProfilePath .. "Common/bin/codegen/docgen_template_testdrive.docx\" " .. sProjectPath .. "/template/docgen_template.docx")
+	os.execute("sed \"s/TITLE/" .. sProjectName .. "/\" -i ./" .. sProjectPath .. "/Makefile")
+	os.execute("sed \"s/TITLE/" .. sProjectName .. "/\" -i ./" .. sProjectPath .. "/main.lua")
+	
+	local	sYear = String(nil)
+	sYear:FormatDate("%Y", 0)	-- get year
+	local	sMonth = String(nil)
+	sMonth:FormatDate("%m", 0)	-- get month
+	local	sDay = String(nil)
+	sDay:FormatDate("%d", 0)	-- get day
+	
+	os.execute("sed \"s/INITIAL_YEAR/" .. sYear.s .. "/\" -i ./" .. sProjectPath .. "/main.lua")
+	os.execute("sed \"s/INITIAL_MONTH/" .. sMonth.s .. "/\" -i ./" .. sProjectPath .. "/main.lua")
+	os.execute("sed \"s/INITIAL_DAY/" .. sDay.s .. "/\" -i ./" .. sProjectPath .. "/main.lua")
 	
 	os.execute("explorer " .. sProjectName)
 	print("Run 'make' to build document.")

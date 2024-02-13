@@ -11,7 +11,7 @@ property["Security_Level"]			= "BSD License."
 --property["Water_Mark"]				= "TESTDRIVE OPENSOURCE"		-- If you do not want to use a watermark, comment out this part.
 
 -- Revision history
-AddRevision("1.0",	2019,  2,  4,	"Initial relase")
+AddRevision("1.0",	INITIAL_YEAR,  INITIAL_MONTH,  INITIAL_DAY,	"Initial relase")
 
 
 
