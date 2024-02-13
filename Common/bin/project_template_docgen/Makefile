@@ -7,6 +7,7 @@ TARGET_NAME		:=TITLE_userguide
 SRCS			:= \
 	$(wildcard $(SRC_PATH)/src/*) \
 	$(wildcard $(SRC_PATH)/media/*) \
+	$(wildcard $(SRC_PATH)/template/*) \
 	$(SRC_PATH)/*.lua
 	
 #-------------------------------------------------
