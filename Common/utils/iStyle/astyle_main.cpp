@@ -363,7 +363,7 @@ void printTitle()
     cout << endl;
 
     SetColor(10,0);
-    cout << "iStyle " << _version << endl;
+    cout << "iStyle for TestDrive Profiling Master " << _version << endl;
 
     SetColor(2,0);
     cout << "  Fast and Free Automatic Formatter for Verilog Source Code\n";

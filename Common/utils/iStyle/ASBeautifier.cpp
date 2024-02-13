@@ -1,3 +1,38 @@
+//================================================================================
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
+//
+// Redistribution and use in source and binary forms,
+// with or without modification, are permitted provided
+// that the following conditions are met:
+//
+// 1. Redistributions of source code must retain the above copyright notice,
+//    this list of conditions and the following disclaimer.
+//
+// 2. Redistributions in binary form must reproduce the above copyright notice,
+//    this list of conditions and the following disclaimer in the documentation
+//    and/or other materials provided with the distribution.
+//
+// 3. Neither the name of the copyright holder nor the names of its contributors
+//    may be used to endorse or promote products derived from this software
+//    without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS
+// BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
+// OF SUCH DAMAGE.
+//
+// Title : Common profiles
+// Rev.  : 2/13/2024 Tue (clonextop@gmail.com)
+//================================================================================
 // $Id: ASBeautifier.cpp,v 1.4 2004/02/06 08:37:56 devsolar Exp $
 // --------------------------------------------------------------------------
 //
@@ -48,8 +83,7 @@ using namespace std;
 #endif
 
 #ifdef USES_NAMESPACE
-namespace astyle
-{
+namespace astyle {
 #endif
 
 bool ASBeautifier::calledInitStatic = false;
@@ -66,68 +100,63 @@ vector<const string*> ASBeautifier::preprocessorHeaders;
 */
 void ASBeautifier::initStatic()
 {
-    if (calledInitStatic)
-        return;
+	if(calledInitStatic)
+		return;
 
-    calledInitStatic = true;
-
-    headers.push_back(&AS_IF);
-    headers.push_back(&AS_ELSE);
-    headers.push_back(&AS_FOR);
-    headers.push_back(&AS_WHILE);
-    headers.push_back(&AS_INITIAL);
-    headers.push_back(&AS_FOREVER);
-    headers.push_back(&AS_ALWAYS);
-    headers.push_back(&AS_REPEAT);
-
-    nonParenHeaders.push_back(&AS_ELSE);
-    nonParenHeaders.push_back(&AS_INITIAL);
-    nonParenHeaders.push_back(&AS_FOREVER);
-    nonParenHeaders.push_back(&AS_ALWAYS);
-    nonParenHeaders.push_back(&AS_REPEAT);
-
-    verilogBlockBegin.push_back(&AS_CASE      );
-    verilogBlockBegin.push_back(&AS_CASEX     );
-    verilogBlockBegin.push_back(&AS_CASEZ     );
-	verilogBlockBegin.push_back(&AS_GENERATE  );
-    verilogBlockBegin.push_back(&AS_FUNCTION  );
-    verilogBlockBegin.push_back(&AS_FORK      );
-    verilogBlockBegin.push_back(&AS_TABLE     );
-    verilogBlockBegin.push_back(&AS_TASK      );
-    verilogBlockBegin.push_back(&AS_SPECIFY   );
-    verilogBlockBegin.push_back(&AS_PRIMITIVE );
-    verilogBlockBegin.push_back(&AS_MODULE    );
-    verilogBlockBegin.push_back(&AS_BEGIN     );
-    verilogBlockBegin.push_back(&AS_DO        );
-
-    verilogBlockEnd.push_back(&AS_ENDCASE      );
-	verilogBlockEnd.push_back(&AS_ENDGENERATE  );
-    verilogBlockEnd.push_back(&AS_ENDFUNCTION  );
-    verilogBlockEnd.push_back(&AS_JOIN         );
-    verilogBlockEnd.push_back(&AS_ENDTASK      );
-    verilogBlockEnd.push_back(&AS_ENDTABLE     );
-    verilogBlockEnd.push_back(&AS_ENDSPECIFY   );
-    verilogBlockEnd.push_back(&AS_ENDPRIMITIVE );
-    verilogBlockEnd.push_back(&AS_ENDMODULE    );
-    verilogBlockEnd.push_back(&AS_END          );
-
-    preprocessorHeaders.push_back(&PRO_CELLDEFINE           );
-    preprocessorHeaders.push_back(&PRO_DEFAULT_NETTYPE      );
-    preprocessorHeaders.push_back(&PRO_DEFINE               );
-    preprocessorHeaders.push_back(&PRO_ELSE                 );
-    preprocessorHeaders.push_back(&PRO_ELSIF                );
-    preprocessorHeaders.push_back(&PRO_ENDCELLDEFINE        );
-    preprocessorHeaders.push_back(&PRO_ENDIF                );
-    preprocessorHeaders.push_back(&PRO_ENDPROTECT           );
-    preprocessorHeaders.push_back(&PRO_IFDEF                );
-    preprocessorHeaders.push_back(&PRO_IFNDEF               );
-    preprocessorHeaders.push_back(&PRO_INCLUDE              );
-    preprocessorHeaders.push_back(&PRO_NOUNCONNECTED_DRIVE  );
-    preprocessorHeaders.push_back(&PRO_PROTECT              );
-    preprocessorHeaders.push_back(&PRO_RESETALL             );
-    preprocessorHeaders.push_back(&PRO_TIMESCALE            );
-    preprocessorHeaders.push_back(&PRO_UNCONNECTED_DRIVE    );
-    preprocessorHeaders.push_back(&PRO_UNDEF                );
+	calledInitStatic = true;
+	headers.push_back(&AS_IF);
+	headers.push_back(&AS_ELSE);
+	headers.push_back(&AS_FOR);
+	headers.push_back(&AS_WHILE);
+	headers.push_back(&AS_INITIAL);
+	headers.push_back(&AS_FOREVER);
+	headers.push_back(&AS_ALWAYS);
+	headers.push_back(&AS_REPEAT);
+	nonParenHeaders.push_back(&AS_ELSE);
+	nonParenHeaders.push_back(&AS_INITIAL);
+	nonParenHeaders.push_back(&AS_FOREVER);
+	nonParenHeaders.push_back(&AS_ALWAYS);
+	nonParenHeaders.push_back(&AS_REPEAT);
+	verilogBlockBegin.push_back(&AS_CASE);
+	verilogBlockBegin.push_back(&AS_CASEX);
+	verilogBlockBegin.push_back(&AS_CASEZ);
+	verilogBlockBegin.push_back(&AS_GENERATE);
+	verilogBlockBegin.push_back(&AS_FUNCTION);
+	verilogBlockBegin.push_back(&AS_FORK);
+	verilogBlockBegin.push_back(&AS_TABLE);
+	verilogBlockBegin.push_back(&AS_TASK);
+	verilogBlockBegin.push_back(&AS_SPECIFY);
+	verilogBlockBegin.push_back(&AS_PRIMITIVE);
+	//verilogBlockBegin.push_back(&AS_MODULE    );
+	verilogBlockBegin.push_back(&AS_BEGIN);
+	verilogBlockBegin.push_back(&AS_DO);
+	verilogBlockEnd.push_back(&AS_ENDCASE);
+	verilogBlockEnd.push_back(&AS_ENDGENERATE);
+	verilogBlockEnd.push_back(&AS_ENDFUNCTION);
+	verilogBlockEnd.push_back(&AS_JOIN);
+	verilogBlockEnd.push_back(&AS_ENDTASK);
+	verilogBlockEnd.push_back(&AS_ENDTABLE);
+	verilogBlockEnd.push_back(&AS_ENDSPECIFY);
+	verilogBlockEnd.push_back(&AS_ENDPRIMITIVE);
+	//verilogBlockEnd.push_back(&AS_ENDMODULE    );
+	verilogBlockEnd.push_back(&AS_END);
+	preprocessorHeaders.push_back(&PRO_CELLDEFINE);
+	preprocessorHeaders.push_back(&PRO_DEFAULT_NETTYPE);
+	preprocessorHeaders.push_back(&PRO_DEFINE);
+	preprocessorHeaders.push_back(&PRO_ELSE);
+	preprocessorHeaders.push_back(&PRO_ELSIF);
+	preprocessorHeaders.push_back(&PRO_ENDCELLDEFINE);
+	preprocessorHeaders.push_back(&PRO_ENDIF);
+	preprocessorHeaders.push_back(&PRO_ENDPROTECT);
+	preprocessorHeaders.push_back(&PRO_IFDEF);
+	preprocessorHeaders.push_back(&PRO_IFNDEF);
+	preprocessorHeaders.push_back(&PRO_INCLUDE);
+	preprocessorHeaders.push_back(&PRO_NOUNCONNECTED_DRIVE);
+	preprocessorHeaders.push_back(&PRO_PROTECT);
+	preprocessorHeaders.push_back(&PRO_RESETALL);
+	preprocessorHeaders.push_back(&PRO_TIMESCALE);
+	preprocessorHeaders.push_back(&PRO_UNCONNECTED_DRIVE);
+	preprocessorHeaders.push_back(&PRO_UNDEF);
 }
 
 /**
@@ -135,108 +164,95 @@ void ASBeautifier::initStatic()
 */
 ASBeautifier::ASBeautifier()
 {
-    initStatic();
-
-    waitingBeautifierStack = NULL;
-    activeBeautifierStack = NULL;
-    waitingBeautifierStackLengthStack = NULL;
-    activeBeautifierStackLengthStack = NULL;
-
-    headerStack  = NULL;
-    tempStacks = NULL;
-    blockParenDepthStack = NULL;
-
-    inStatementIndentStack = NULL;
-    inStatementIndentStackSizeStack = NULL;
-    parenIndentStack = NULL;
-    sourceIterator = NULL;
-
-    isMinimalConditinalIndentSet = false;
-    shouldForceTabIndentation = false;
-
-    setSpaceIndentation(4);
-    setMaxInStatementIndentLength(40);
-
-    setSwitchIndent(false);
-
-    setBlockIndent(false);
-    setBracketIndent(false);
-
-    setLabelIndent(false);
-    setEmptyLineFill(false);
-    //setCStyle();
-    setPreprocessorIndent(false);
+	initStatic();
+	waitingBeautifierStack = NULL;
+	activeBeautifierStack = NULL;
+	waitingBeautifierStackLengthStack = NULL;
+	activeBeautifierStackLengthStack = NULL;
+	headerStack  = NULL;
+	tempStacks = NULL;
+	blockParenDepthStack = NULL;
+	inStatementIndentStack = NULL;
+	inStatementIndentStackSizeStack = NULL;
+	parenIndentStack = NULL;
+	sourceIterator = NULL;
+	isMinimalConditinalIndentSet = false;
+	shouldForceTabIndentation = false;
+	setSpaceIndentation(4);
+	setMaxInStatementIndentLength(40);
+	setSwitchIndent(false);
+	setBlockIndent(false);
+	setBracketIndent(false);
+	setLabelIndent(false);
+	setEmptyLineFill(false);
+	//setCStyle();
+	setPreprocessorIndent(false);
 }
 
-ASBeautifier::ASBeautifier(const ASBeautifier &other)
+ASBeautifier::ASBeautifier(const ASBeautifier& other)
 {
-    waitingBeautifierStack = NULL;
-    activeBeautifierStack = NULL;
-    waitingBeautifierStackLengthStack = NULL;
-    activeBeautifierStackLengthStack = NULL;
+	waitingBeautifierStack = NULL;
+	activeBeautifierStack = NULL;
+	waitingBeautifierStackLengthStack = NULL;
+	activeBeautifierStackLengthStack = NULL;
+	headerStack  = new vector<const string*>;
+	*headerStack = *other.headerStack;
+	tempStacks = new vector< vector<const string*>* >;
+	vector< vector<const string*>* >::iterator iter;
 
-    headerStack  = new vector<const string*>;
-    *headerStack = *other.headerStack;
+	for(iter = other.tempStacks->begin();
+		iter != other.tempStacks->end();
+		++iter) {
+		vector<const string*>* newVec = new vector<const string*>;
+		*newVec = **iter;
+		tempStacks->push_back(newVec);
+	}
 
-    tempStacks = new vector< vector<const string*>* >;
-    vector< vector<const string*>* >::iterator iter;
-    for (iter = other.tempStacks->begin();
-            iter != other.tempStacks->end();
-            ++iter)
-    {
-        vector<const string*> *newVec = new vector<const string*>;
-        *newVec = **iter;
-        tempStacks->push_back(newVec);
-    }
-    blockParenDepthStack = new vector<int>;
-    *blockParenDepthStack = *other.blockParenDepthStack;
-
-    inStatementIndentStack = new vector<int>;
-    *inStatementIndentStack = *other.inStatementIndentStack;
-
-    inStatementIndentStackSizeStack = new vector<unsigned int>;
-    *inStatementIndentStackSizeStack = *other.inStatementIndentStackSizeStack;
-
-    parenIndentStack = new vector<int>;
-    *parenIndentStack = *other.parenIndentStack;
-
-    sourceIterator = other.sourceIterator;
-
-    indentString = other.indentString;
-    currentHeader = other.currentHeader;
-    previousLastLineHeader = other.previousLastLineHeader;
-
-    isInQuote = other.isInQuote;
-    isInComment = other.isInComment;
-    isInCase = other.isInCase;
-    isInQuestion = other.isInQuestion;
-    isInStatement =other. isInStatement;
-    isInHeader = other.isInHeader;
-
-    bracketIndent = other.bracketIndent;
-    blockIndent = other.blockIndent;
-    labelIndent = other.labelIndent;
-    preprocessorIndent = other.preprocessorIndent;
-    parenDepth = other.parenDepth;
-    indentLength = other.indentLength;
-
-    leadingWhiteSpaces = other.leadingWhiteSpaces;
-    maxInStatementIndent = other.maxInStatementIndent;
-    quoteChar = other.quoteChar;
-    prevNonSpaceCh = other.prevNonSpaceCh;
-    currentNonSpaceCh = other.currentNonSpaceCh;
-    currentNonLegalCh = other.currentNonLegalCh;
-    prevNonLegalCh = other.prevNonLegalCh;
-    isInConditional = other.isInConditional;
-    minConditionalIndent = other.minConditionalIndent;
-    prevFinalLineSpaceTabCount = other.prevFinalLineSpaceTabCount;
-    prevFinalLineTabCount = other.prevFinalLineTabCount;
-    emptyLineFill = other.emptyLineFill;
-
-    isInDefine = other.isInDefine;
-    isInDefineDefinition = other.isInDefineDefinition;
-    backslashEndsPrevLine = other.backslashEndsPrevLine;
-    defineTabCount = other.defineTabCount;
+	blockParenDepthStack = new vector<int>;
+	*blockParenDepthStack = *other.blockParenDepthStack;
+	inStatementIndentStack = new vector<int>;
+	*inStatementIndentStack = *other.inStatementIndentStack;
+	inStatementIndentStackSizeStack = new vector<unsigned int>;
+	*inStatementIndentStackSizeStack = *other.inStatementIndentStackSizeStack;
+	parenIndentStack = new vector<int>;
+	*parenIndentStack = *other.parenIndentStack;
+	sourceIterator = other.sourceIterator;
+	indentString = other.indentString;
+	currentHeader = other.currentHeader;
+	previousLastLineHeader = other.previousLastLineHeader;
+	isInQuote = other.isInQuote;
+	isInComment = other.isInComment;
+	isInCase = other.isInCase;
+	isInQuestion = other.isInQuestion;
+	isInStatement = other. isInStatement;
+	isInHeader = other.isInHeader;
+	bracketIndent = other.bracketIndent;
+	blockIndent = other.blockIndent;
+	labelIndent = other.labelIndent;
+	preprocessorIndent = other.preprocessorIndent;
+	parenDepth = other.parenDepth;
+	indentLength = other.indentLength;
+	leadingWhiteSpaces = other.leadingWhiteSpaces;
+	maxInStatementIndent = other.maxInStatementIndent;
+	quoteChar = other.quoteChar;
+	prevNonSpaceCh = other.prevNonSpaceCh;
+	currentNonSpaceCh = other.currentNonSpaceCh;
+	currentNonLegalCh = other.currentNonLegalCh;
+	prevNonLegalCh = other.prevNonLegalCh;
+	isInConditional = other.isInConditional;
+	minConditionalIndent = other.minConditionalIndent;
+	prevFinalLineSpaceTabCount = other.prevFinalLineSpaceTabCount;
+	prevFinalLineTabCount = other.prevFinalLineTabCount;
+	emptyLineFill = other.emptyLineFill;
+	isInDefine = other.isInDefine;
+	isInDefineDefinition = other.isInDefineDefinition;
+	backslashEndsPrevLine = other.backslashEndsPrevLine;
+	defineTabCount = other.defineTabCount;
+	// uninitialized values are fixed
+	isMinimalConditinalIndentSet = other.isMinimalConditinalIndentSet;
+	caseIndent = other.caseIndent;
+	namespaceIndent = other.namespaceIndent;
+	shouldForceTabIndentation = other.shouldForceTabIndentation;
 }
 
 /**
@@ -244,13 +260,12 @@ ASBeautifier::ASBeautifier(const ASBeautifier &other)
 */
 ASBeautifier::~ASBeautifier()
 {
-    DELETE_CONTAINER( headerStack );
-    DELETE_CONTAINER( tempStacks );
-    DELETE_CONTAINER( blockParenDepthStack );
-
-    DELETE_CONTAINER( inStatementIndentStack );
-    DELETE_CONTAINER( inStatementIndentStackSizeStack );
-    DELETE_CONTAINER( parenIndentStack );
+	DELETE_CONTAINER(headerStack);
+	DELETE_CONTAINER(tempStacks);
+	DELETE_CONTAINER(blockParenDepthStack);
+	DELETE_CONTAINER(inStatementIndentStack);
+	DELETE_CONTAINER(inStatementIndentStackSizeStack);
+	DELETE_CONTAINER(parenIndentStack);
 }
 
 /**
@@ -265,10 +280,10 @@ ASBeautifier::~ASBeautifier()
 *
 * @param iter     a pointer to the DYNAMICALLY CREATED ASStreamIterator object.
 */
-void ASBeautifier::init(ASStreamIterator *iter)
+void ASBeautifier::init(ASStreamIterator* iter)
 {
-    sourceIterator = iter;
-    init();
+	sourceIterator = iter;
+	init();
 }
 
 /**
@@ -276,48 +291,38 @@ void ASBeautifier::init(ASStreamIterator *iter)
 */
 void ASBeautifier::init()
 {
-    INIT_CONTAINER( waitingBeautifierStack,  new vector<ASBeautifier*> );
-    INIT_CONTAINER( activeBeautifierStack,  new vector<ASBeautifier*> );
-
-    INIT_CONTAINER( waitingBeautifierStackLengthStack, new vector<int> );
-    INIT_CONTAINER( activeBeautifierStackLengthStack, new vector<int> );
-
-    INIT_CONTAINER( headerStack,  new vector<const string*> );
-    INIT_CONTAINER( tempStacks, new vector< vector<const string*>* > );
-    tempStacks->push_back(new vector<const string*>);
-
-    INIT_CONTAINER( blockParenDepthStack, new vector<int> );
-
-    INIT_CONTAINER( inStatementIndentStack, new vector<int> );
-    INIT_CONTAINER( inStatementIndentStackSizeStack, new vector<unsigned int> );
-    inStatementIndentStackSizeStack->push_back(0);
-    INIT_CONTAINER( parenIndentStack, new vector<int> );
-
-    previousLastLineHeader = NULL;
-
-    isInQuote = false;
-    isInComment = false;
-    isInStatement = false;
-    isInCase = 0;
-    isInQuestion = false;
-    isInHeader = false;
-
-    isInConditional = false;
-    parenDepth=0;
-
-    leadingWhiteSpaces = 0;
-    prevNonSpaceCh = '{';
-    currentNonSpaceCh = '{';
-    prevNonLegalCh = '{';
-    currentNonLegalCh = '{';
-    prevFinalLineSpaceTabCount = 0;
-    prevFinalLineTabCount = 0;
-
-    backslashEndsPrevLine = false;
-    isInDefine = false;
-    isInDefineDefinition = false;
-    defineTabCount = 0;
-
+	INIT_CONTAINER(waitingBeautifierStack,  new vector<ASBeautifier*>);
+	INIT_CONTAINER(activeBeautifierStack,  new vector<ASBeautifier*>);
+	INIT_CONTAINER(waitingBeautifierStackLengthStack, new vector<int>);
+	INIT_CONTAINER(activeBeautifierStackLengthStack, new vector<int>);
+	INIT_CONTAINER(headerStack,  new vector<const string*>);
+	INIT_CONTAINER(tempStacks, new vector< vector<const string*>* >);
+	tempStacks->push_back(new vector<const string*>);
+	INIT_CONTAINER(blockParenDepthStack, new vector<int>);
+	INIT_CONTAINER(inStatementIndentStack, new vector<int>);
+	INIT_CONTAINER(inStatementIndentStackSizeStack, new vector<unsigned int>);
+	inStatementIndentStackSizeStack->push_back(0);
+	INIT_CONTAINER(parenIndentStack, new vector<int>);
+	previousLastLineHeader = NULL;
+	isInQuote = false;
+	isInComment = false;
+	isInStatement = false;
+	isInCase = 0;
+	isInQuestion = false;
+	isInHeader = false;
+	isInConditional = false;
+	parenDepth = 0;
+	leadingWhiteSpaces = 0;
+	prevNonSpaceCh = '{';
+	currentNonSpaceCh = '{';
+	prevNonLegalCh = '{';
+	currentNonLegalCh = '{';
+	prevFinalLineSpaceTabCount = 0;
+	prevFinalLineTabCount = 0;
+	backslashEndsPrevLine = false;
+	isInDefine = false;
+	isInDefineDefinition = false;
+	defineTabCount = 0;
 }
 
 /**
@@ -325,12 +330,12 @@ void ASBeautifier::init()
 */
 void ASBeautifier::setTabIndentation(int length, bool forceTabs)
 {
-    indentString = "\t";
-    indentLength = length;
-    shouldForceTabIndentation = forceTabs;
+	indentString = "\t";
+	indentLength = length;
+	shouldForceTabIndentation = forceTabs;
 
-    if (!isMinimalConditinalIndentSet)
-        minConditionalIndent = indentLength * 2;
+	if(!isMinimalConditinalIndentSet)
+		minConditionalIndent = indentLength * 2;
 }
 
 /**
@@ -340,11 +345,11 @@ void ASBeautifier::setTabIndentation(int length, bool forceTabs)
 */
 void ASBeautifier::setSpaceIndentation(int length)
 {
-    indentString=string(length, ' ');
-    indentLength = length;
+	indentString = string(length, ' ');
+	indentLength = length;
 
-    if (!isMinimalConditinalIndentSet)
-        minConditionalIndent = indentLength * 2;
+	if(!isMinimalConditinalIndentSet)
+		minConditionalIndent = indentLength * 2;
 }
 
 /**
@@ -354,7 +359,7 @@ void ASBeautifier::setSpaceIndentation(int length)
 */
 void ASBeautifier::setMaxInStatementIndentLength(int max)
 {
-    maxInStatementIndent = max;
+	maxInStatementIndent = max;
 }
 
 /**
@@ -364,8 +369,8 @@ void ASBeautifier::setMaxInStatementIndentLength(int max)
 */
 void ASBeautifier::setMinConditionalIndentLength(int min)
 {
-    minConditionalIndent = min;
-    isMinimalConditinalIndentSet = true;
+	minConditionalIndent = min;
+	isMinimalConditinalIndentSet = true;
 }
 
 /**
@@ -376,7 +381,7 @@ void ASBeautifier::setMinConditionalIndentLength(int min)
 */
 void ASBeautifier::setBracketIndent(bool state)
 {
-    bracketIndent = state;
+	bracketIndent = state;
 }
 
 /**
@@ -387,9 +392,10 @@ void ASBeautifier::setBracketIndent(bool state)
 */
 void ASBeautifier::setBlockIndent(bool state)
 {
-    if (state)
-        setBracketIndent(false); // so that we don't have both bracket and block indent
-    blockIndent = state;
+	if(state)
+		setBracketIndent(false); // so that we don't have both bracket and block indent
+
+	blockIndent = state;
 }
 
 /**
@@ -411,7 +417,7 @@ void ASBeautifier::setBlockIndent(bool state)
 */
 void ASBeautifier::setSwitchIndent(bool state)
 {
-    ;//switchIndent = state;
+	;//switchIndent = state;
 }
 
 /**
@@ -422,7 +428,7 @@ void ASBeautifier::setSwitchIndent(bool state)
 */
 void ASBeautifier::setCaseIndent(bool state)
 {
-    ;//caseIndent = state;
+	;//caseIndent = state;
 }
 
 /**
@@ -436,7 +442,7 @@ void ASBeautifier::setCaseIndent(bool state)
 */
 void ASBeautifier::setLabelIndent(bool state)
 {
-    labelIndent = state;
+	labelIndent = state;
 }
 
 /**
@@ -447,7 +453,7 @@ void ASBeautifier::setLabelIndent(bool state)
 */
 void ASBeautifier::setPreprocessorIndent(bool state)
 {
-    preprocessorIndent = state;
+	preprocessorIndent = state;
 }
 
 /**
@@ -460,7 +466,7 @@ void ASBeautifier::setPreprocessorIndent(bool state)
 */
 void ASBeautifier::setEmptyLineFill(bool state)
 {
-    emptyLineFill = state;
+	emptyLineFill = state;
 }
 
 /**
@@ -470,7 +476,7 @@ void ASBeautifier::setEmptyLineFill(bool state)
 */
 bool ASBeautifier::hasMoreLines() const
 {
-    return sourceIterator->hasMoreLines();
+	return sourceIterator->hasMoreLines();
 }
 
 /**
@@ -480,7 +486,7 @@ bool ASBeautifier::hasMoreLines() const
 */
 string ASBeautifier::nextLine()
 {
-    return beautify(sourceIterator->nextLine());
+	return beautify(sourceIterator->nextLine());
 }
 
 /**
@@ -491,755 +497,678 @@ string ASBeautifier::nextLine()
 * @return      the indented line.
 * @param originalLine       the original unindented line.
 */
-string ASBeautifier::beautify(const string &originalLine)
+string ASBeautifier::beautify(const string& originalLine)
 {
-    string line;
-    bool isInLineComment = false;
-    bool lineStartsInComment = false;
-    bool isSpecialChar = false;
-    char ch = ' ';
-    char prevCh;
-    string outBuffer; // the newly idented line is bufferd here
-    int tabCount = 0;
-    const string *lastLineHeader = NULL;
-    bool closingBracketReached = false;
-    int spaceTabCount = 0;
-    char tempCh;
-    int headerStackSize = headerStack->size();
+	string line;
+	bool isInLineComment = false;
+	bool lineStartsInComment = false;
+	bool isSpecialChar = false;
+	char ch = ' ';
+	char prevCh;
+	string outBuffer; // the newly idented line is bufferd here
+	int tabCount = 0;
+	const string* lastLineHeader = NULL;
+	bool closingBracketReached = false;
+	int spaceTabCount = 0;
+	char tempCh;
+	int headerStackSize = headerStack->size();
+	bool shouldIndentBrackettedLine = true;
+	int lineOpeningBlocksNum = 0;
+	int lineClosingBlocksNum = 0;
+	int i;
+	currentHeader = NULL;
+	lineStartsInComment = isInComment;
+	//+ renqh
+	const string* vBlockBegin;
+	const string* vBlockEnd;
+	vBlockBegin = NULL;
+	vBlockEnd   = NULL;
 
-    bool shouldIndentBrackettedLine = true;
-    int lineOpeningBlocksNum = 0;
-    int lineClosingBlocksNum = 0;
-    int i;
+	// handle and remove white spaces around the line:
+	// If not in comment, first find out size of white space before line,
+	// so that possible comments starting in the line continue in
+	// relation to the preliminary white-space.
+	if(!isInComment) {
+		leadingWhiteSpaces = 0;
 
-    currentHeader = NULL;
+		while(leadingWhiteSpaces < originalLine.length() && originalLine[leadingWhiteSpaces] <= 0x20)
+			leadingWhiteSpaces++;
 
-    lineStartsInComment = isInComment;
+		line = trim(originalLine);
+	} else {
+		// Search to determine the size to trim
+		unsigned int trimSize;
 
-    //+ renqh
-    const string *vBlockBegin;
-    const string *vBlockEnd;
+		for(trimSize = 0;
+			trimSize < originalLine.length() && trimSize < leadingWhiteSpaces && originalLine[trimSize] <= 0x20 ;
+			trimSize++)
+			;
 
-    vBlockBegin = NULL;
-    vBlockEnd   = NULL;
+		line = originalLine.substr(trimSize);
+	}
 
-    // handle and remove white spaces around the line:
-    // If not in comment, first find out size of white space before line,
-    // so that possible comments starting in the line continue in
-    // relation to the preliminary white-space.
-    if (!isInComment)
-    {
-        leadingWhiteSpaces = 0;
-        while (leadingWhiteSpaces<originalLine.length() && originalLine[leadingWhiteSpaces] <= 0x20)
-            leadingWhiteSpaces++;
+	if(line.length() == 0) {
+		if(emptyLineFill)
+			return preLineWS(prevFinalLineSpaceTabCount, prevFinalLineTabCount);
+		else
+			return line;
+	}
 
-        line = trim(originalLine);
-    }
-    else
-    {
-        // Search to determine the size to trim
-        unsigned int trimSize;
+	// handle preprocessor commands
+	bool isPreprocesor = false;
 
-        for (trimSize=0;
-                trimSize < originalLine.length() && trimSize<leadingWhiteSpaces && originalLine[trimSize] <= 0x20 ;
-                trimSize++)
-            ;
-        line = originalLine.substr(trimSize);
-    }
+	if(line[0] == PREPROCESSOR_CHAR)  isPreprocesor = (findHeader(line, 0, preprocessorHeaders) != NULL);
 
-    if (line.length() == 0)
-    {
-        if (emptyLineFill)
-            return preLineWS(prevFinalLineSpaceTabCount, prevFinalLineTabCount);
-        else
-            return line;
-    }
+	if(!isInComment && (isPreprocesor || backslashEndsPrevLine)) {
+		if(line[0] == PREPROCESSOR_CHAR) {
+			string preproc = trim(string(line.c_str() + 1));
 
-    // handle preprocessor commands
-    bool isPreprocesor = false;
-    if(line[0] == PREPROCESSOR_CHAR)  isPreprocesor= (findHeader(line, 0, preprocessorHeaders)!=NULL);
-    if ( !isInComment && (isPreprocesor || backslashEndsPrevLine))
-    {
-        if (line[0] == PREPROCESSOR_CHAR)
-        {
-            string preproc = trim(string(line.c_str() + 1));
+			// When finding a multi-lined #define statement, the original beautifier
+			// 1. sets its isInDefineDefinition flag
+			// 2. clones a new beautifier that will be used for the actual indentation
+			//    of the #define. This clone is put into the activeBeautifierStack in order
+			//    to be called for the actual indentation.
+			// The original beautifier will have isInDefineDefinition = true, isInDefine = false
+			// The cloned beautifier will have   isInDefineDefinition = true, isInDefine = true
+			if(preprocessorIndent && preproc.COMPARE(0, 6, string("define")) == 0 &&  line[line.length() - 1] == '\\') {
+				if(!isInDefineDefinition) {
+					ASBeautifier* defineBeautifier;
+					// this is the original beautifier
+					isInDefineDefinition = true;
+					// push a new beautifier into the active stack
+					// this breautifier will be used for the indentation of this define
+					defineBeautifier = new ASBeautifier(*this);
+					//defineBeautifier->init();
+					//defineBeautifier->isInDefineDefinition = true;
+					//defineBeautifier->beautify("");
+					activeBeautifierStack->push_back(defineBeautifier);
+				} else {
+					// the is the cloned beautifier that is in charge of indenting the #define.
+					isInDefine = true;
+				}
+			} else if(preproc.COMPARE(0, 2, string("if")) == 0) {
+				// push a new beautifier into the stack
+				waitingBeautifierStackLengthStack->push_back(waitingBeautifierStack->size());
+				activeBeautifierStackLengthStack->push_back(activeBeautifierStack->size());
+				waitingBeautifierStack->push_back(new ASBeautifier(*this));
+			} else if(preproc.COMPARE(0, 4/*2*/, string("else")) == 0) {
+				if(!waitingBeautifierStack->empty()) {
+					// MOVE current waiting beautifier to active stack.
+					activeBeautifierStack->push_back(waitingBeautifierStack->back());
+					waitingBeautifierStack->pop_back();
+				}
+			} else if(preproc.COMPARE(0, 5, string("endif")) == 0) {
+				unsigned int stackLength;
+				ASBeautifier* beautifier;
 
-            // When finding a multi-lined #define statement, the original beautifier
-            // 1. sets its isInDefineDefinition flag
-            // 2. clones a new beautifier that will be used for the actual indentation
-            //    of the #define. This clone is put into the activeBeautifierStack in order
-            //    to be called for the actual indentation.
-            // The original beautifier will have isInDefineDefinition = true, isInDefine = false
-            // The cloned beautifier will have   isInDefineDefinition = true, isInDefine = true
-            if (preprocessorIndent && preproc.COMPARE(0, 6, string("define")) == 0 &&  line[line.length() - 1] == '\\')
-            {
-                if (!isInDefineDefinition)
-                {
-                    ASBeautifier *defineBeautifier;
+				if(!waitingBeautifierStackLengthStack->empty()) {
+					stackLength = waitingBeautifierStackLengthStack->back();
+					waitingBeautifierStackLengthStack->pop_back();
 
-                    // this is the original beautifier
-                    isInDefineDefinition = true;
+					while(waitingBeautifierStack->size() > stackLength) {
+						beautifier = waitingBeautifierStack->back();
+						waitingBeautifierStack->pop_back();
+						delete beautifier;
+					}
+				}
 
-                    // push a new beautifier into the active stack
-                    // this breautifier will be used for the indentation of this define
-                    defineBeautifier = new ASBeautifier(*this);
-                    //defineBeautifier->init();
-                    //defineBeautifier->isInDefineDefinition = true;
-                    //defineBeautifier->beautify("");
-                    activeBeautifierStack->push_back(defineBeautifier);
-                }
-                else
-                {
-                    // the is the cloned beautifier that is in charge of indenting the #define.
-                    isInDefine = true;
-                }
-            }
-            else if (preproc.COMPARE(0, 2, string("if")) == 0)
-            {
-                // push a new beautifier into the stack
-                waitingBeautifierStackLengthStack->push_back(waitingBeautifierStack->size());
-                activeBeautifierStackLengthStack->push_back(activeBeautifierStack->size());
-                waitingBeautifierStack->push_back(new ASBeautifier(*this));
-            }
-            else if (preproc.COMPARE(0, 4/*2*/, string("else")) == 0)
-            {
-                if (!waitingBeautifierStack->empty())
-                {
-                    // MOVE current waiting beautifier to active stack.
-                    activeBeautifierStack->push_back(waitingBeautifierStack->back());
-                    waitingBeautifierStack->pop_back();
-                }
-            }
+				if(!activeBeautifierStackLengthStack->empty()) {
+					stackLength = activeBeautifierStackLengthStack->back();
+					activeBeautifierStackLengthStack->pop_back();
 
-            else if (preproc.COMPARE(0, 5, string("endif")) == 0)
-            {
-                unsigned int stackLength;
-                ASBeautifier *beautifier;
-
-                if (!waitingBeautifierStackLengthStack->empty())
-                {
-                    stackLength = waitingBeautifierStackLengthStack->back();
-                    waitingBeautifierStackLengthStack->pop_back();
-                    while (waitingBeautifierStack->size() > stackLength)
-                    {
-                        beautifier = waitingBeautifierStack->back();
-                        waitingBeautifierStack->pop_back();
-                        delete beautifier;
-                    }
-                }
-
-                if (!activeBeautifierStackLengthStack->empty())
-                {
-                    stackLength = activeBeautifierStackLengthStack->back();
-                    activeBeautifierStackLengthStack->pop_back();
-                    while (activeBeautifierStack->size() > stackLength)
-                    {
-                        beautifier = activeBeautifierStack->back();
-                        activeBeautifierStack->pop_back();
-                        delete beautifier;
-                    }
-                }
-            }
-        }
-
-        // check if the last char is a backslash
-        if(line.length() > 0)
-            backslashEndsPrevLine = (line[line.length() - 1] == '\\');
-        else
-            backslashEndsPrevLine = false;
-
-        // check if this line ends a multi-line #define
-        // if so, use the #define's cloned beautifier for the line's indentation
-        // and then remove it from the active beautifier stack and delete it.
-        if (!backslashEndsPrevLine && isInDefineDefinition && !isInDefine)
-        {
-            string beautifiedLine;
-            ASBeautifier *defineBeautifier;
-
-            isInDefineDefinition = false;
-            defineBeautifier = activeBeautifierStack->back();
-            activeBeautifierStack->pop_back();
-
-            beautifiedLine = defineBeautifier->beautify(line);
-            delete defineBeautifier;
-            return beautifiedLine;
-        }
-
-        // unless this is a multi-line #define, return this precompiler line as is.
-
-        if (!isInDefine && !isInDefineDefinition )
-            return originalLine;
-    }
-
-    // if there exists any worker beautifier in the activeBeautifierStack,
-    // then use it instead of me to indent the current line.
-    if (!isInDefine && activeBeautifierStack != NULL && !activeBeautifierStack->empty())
-    {
-        return activeBeautifierStack->back()->beautify(line);
-    }
-
-    // calculate preliminary indentation based on data from past lines
-    if (!inStatementIndentStack->empty())
-        spaceTabCount = inStatementIndentStack->back();
-
-    for (i=0; i<headerStackSize; i++)
-    {
-        if (blockIndent || (!(i>0 && (*headerStack)[i-1] != &AS_OPEN_BRACKET
-                              && (*headerStack)[i] == &AS_OPEN_BRACKET)))
-            ++tabCount;
-    }
-
-    if (isInConditional)
-    {
-        --tabCount;
-    }
-
-    // parse characters in the current line.
-    bool isFirstLoop = true ;
-    int  iLength = line.length();
-    for (i=0; i<iLength; (i=i+1,isFirstLoop=false))
-    {
-        tempCh = line[i];
-
-        prevCh = ch;
-        ch = tempCh;
-
-        outBuffer.append(1, ch);
-
-        if (isWhiteSpace(ch))
-            continue;
-
-        // handle special characters (i.e. backslash+character such as \n, \t, ...)
-        if (isSpecialChar)
-        {
-            isSpecialChar = false;
-            continue;
-        }
-        if (!(isInComment || isInLineComment) && line.COMPARE(i, 2, string("\\\\")) == 0)
-        {
-            outBuffer.append(1, '\\');
-            i++;
-            continue;
-        }
-        if (!(isInComment || isInLineComment) && ch=='\\')
-        {
-            isSpecialChar = true;
-            continue;
-        }
-
-        // handle quotes (such as 'x' and "Hello Dolly")
-        if (!(isInComment || isInLineComment) && (ch=='"' ))
-        {
-            if (!isInQuote)
-            {
-                quoteChar = ch;
-                isInQuote = true;
-            }
-            else if (quoteChar == ch)
-            {
-                isInQuote = false;
-                continue;
-            }
-        }
-        if (isInQuote)
-            continue;
-
-        // handle comments
-
-        if ( !(isInComment || isInLineComment) && line.COMPARE(i, 2, AS_OPEN_LINE_COMMENT) == 0 )
-        {
-            isInLineComment = true;
-            outBuffer.append(1, '/');
-            i++;
-            continue;
-        }
-        else if ( !(isInComment || isInLineComment) && line.COMPARE(i, 2, AS_OPEN_COMMENT) == 0 )
-        {
-            isInComment = true;
-            outBuffer.append(1, '*');
-            i++;
-            continue;
-        }
-        else if ( (isInComment || isInLineComment) && line.COMPARE(i, 2, AS_CLOSE_COMMENT) == 0 )
-        {
-            isInComment = false;
-            outBuffer.append(1, '/');
-            i++;
-            continue;
-        }
-
-        if (isInComment||isInLineComment)
-            continue;
-
-        //renqh+ find the statements grouped  keywords begin and end.
-        vBlockBegin = NULL;
-        vBlockEnd   = NULL;
-
-        // join end endtable endspecify
-        if(ch == '{')        ch = '[';
-        else if(ch == '}')   ch = ']';
-        else {
-              vBlockEnd   = findHeader(line, i, verilogBlockEnd);
-              vBlockBegin = findHeader(line, i, verilogBlockBegin);
+					while(activeBeautifierStack->size() > stackLength) {
+						beautifier = activeBeautifierStack->back();
+						activeBeautifierStack->pop_back();
+						delete beautifier;
+					}
+				}
+			}
 		}
 
-        if(vBlockEnd != NULL)
-        {
-            outBuffer.append(vBlockEnd->substr(1));
-            i = i+ vBlockEnd->length()-1;
-            ch = '}';
-            if(vBlockEnd==&AS_ENDCASE)
-                isInCase--;
-        }
-        else if(vBlockBegin   != NULL)
-        {
-            outBuffer.append(vBlockBegin->substr(1));
-            i = i+ vBlockBegin->length()-1;
-            ch = '{';
-            if(vBlockBegin==&AS_CASE || vBlockBegin==&AS_CASEZ ||vBlockBegin==&AS_CASEX )
-                isInCase++;
-        }
+		// check if the last char is a backslash
+		if(line.length() > 0)
+			backslashEndsPrevLine = (line[line.length() - 1] == '\\');
+		else
+			backslashEndsPrevLine = false;
 
-        //renqh
+		// check if this line ends a multi-line #define
+		// if so, use the #define's cloned beautifier for the line's indentation
+		// and then remove it from the active beautifier stack and delete it.
+		if(!backslashEndsPrevLine && isInDefineDefinition && !isInDefine) {
+			string beautifiedLine;
+			ASBeautifier* defineBeautifier;
+			isInDefineDefinition = false;
+			defineBeautifier = activeBeautifierStack->back();
+			activeBeautifierStack->pop_back();
+			beautifiedLine = defineBeautifier->beautify(line);
+			delete defineBeautifier;
+			return beautifiedLine;
+		}
 
-        prevNonSpaceCh = currentNonSpaceCh;
-        currentNonSpaceCh = ch;
-        if (!isLegalNameChar(ch) && ch != ',' && ch != ';' )
-        {
-            prevNonLegalCh = currentNonLegalCh;
-            currentNonLegalCh = ch;
-        }
-        if (isInHeader)
-        {
-            isInHeader = false;
-            currentHeader = headerStack->back();
-        }
-        else
-            currentHeader = NULL;
+		// unless this is a multi-line #define, return this precompiler line as is.
 
-        // handle parenthesies
-        if (ch == '(' || ch == '[' || ch == ')' || ch == ']')
-        {
-            if (ch == '(' || ch == '[')
-            {
-                parenDepth++;
+		if(!isInDefine && !isInDefineDefinition)
+			return originalLine;
+	}
 
-                inStatementIndentStackSizeStack->push_back(inStatementIndentStack->size());
+	// if there exists any worker beautifier in the activeBeautifierStack,
+	// then use it instead of me to indent the current line.
+	if(!isInDefine && activeBeautifierStack != NULL && !activeBeautifierStack->empty()) {
+		return activeBeautifierStack->back()->beautify(line);
+	}
 
-                if (currentHeader != NULL)
-                    registerInStatementIndent(line, i, spaceTabCount, minConditionalIndent/*indentLength*2*/, true);
-                else
-                    registerInStatementIndent(line, i, spaceTabCount, 0, true);
-            }
-            else if (ch == ')' || ch == ']')
-            {
-                parenDepth--;
-                if (parenDepth == 0)
-                {
+	// calculate preliminary indentation based on data from past lines
+	if(!inStatementIndentStack->empty())
+		spaceTabCount = inStatementIndentStack->back();
 
-                    ch = ' ';
-                    isInConditional = false;
-                }
+	for(i = 0; i < headerStackSize; i++) {
+		if(blockIndent || (!(i > 0 && (*headerStack)[i - 1] != &AS_OPEN_BRACKET
+							 && (*headerStack)[i] == &AS_OPEN_BRACKET)))
+			++tabCount;
+	}
 
-                if (!inStatementIndentStackSizeStack->empty())
-                {
-                    unsigned int previousIndentStackSize = inStatementIndentStackSizeStack->back();
-                    inStatementIndentStackSizeStack->pop_back();
-                    while (previousIndentStackSize < inStatementIndentStack->size())
-                        inStatementIndentStack->pop_back();
+	if(isInConditional) {
+		--tabCount;
+	}
 
-                    if (!parenIndentStack->empty())
-                    {
-                        int poppedIndent = parenIndentStack->back();
-                        parenIndentStack->pop_back();
+	// parse characters in the current line.
+	bool isFirstLoop = true ;
+	int  iLength = line.length();
 
-                        if (i == 0||isFirstLoop)
-                            spaceTabCount = poppedIndent;
-                    }
-                }
-            }
-            continue;
-        }
+	for(i = 0; i < iLength; (i = i + 1, isFirstLoop = false)) {
+		tempCh = line[i];
+		prevCh = ch;
+		ch = tempCh;
+		outBuffer.append(1, ch);
 
-        if (ch == '{')
-        {
-            // this bracket is a block opener...
-            ++lineOpeningBlocksNum;
+		if(isWhiteSpace(ch))
+			continue;
 
-            blockParenDepthStack->push_back(parenDepth);
-            inStatementIndentStackSizeStack->push_back(inStatementIndentStack->size());
+		// handle special characters (i.e. backslash+character such as \n, \t, ...)
+		if(isSpecialChar) {
+			isSpecialChar = false;
+			continue;
+		}
 
-            parenDepth = 0;
-            isInStatement = false;
+		if(!(isInComment || isInLineComment) && line.COMPARE(i, 2, string("\\\\")) == 0) {
+			outBuffer.append(1, '\\');
+			i++;
+			continue;
+		}
 
-            tempStacks->push_back(new vector<const string*>);
-            headerStack->push_back(&AS_OPEN_BRACKET);
-            lastLineHeader = &AS_OPEN_BRACKET; // <------
-            continue;
-        }
+		if(!(isInComment || isInLineComment) && ch == '\\') {
+			isSpecialChar = true;
+			continue;
+		}
 
-        //check if a header has been reached
-        if (prevCh == ' ')
-        {
-            const string *newHeader = findHeader(line, i, headers);
-            if (newHeader != NULL)
-            {
-                // if we reached here, then this is a header...
-                isInHeader = true;
+		// handle quotes (such as 'x' and "Hello Dolly")
+		if(!(isInComment || isInLineComment) && (ch == '"')) {
+			if(!isInQuote) {
+				quoteChar = ch;
+				isInQuote = true;
+			} else if(quoteChar == ch) {
+				isInQuote = false;
+				continue;
+			}
+		}
 
-                vector<const string*> *lastTempStack;
-                if (tempStacks->empty())
-                    lastTempStack = NULL;
-                else
-                    lastTempStack = tempStacks->back();
+		if(isInQuote)
+			continue;
 
-                // take care of the special case: 'else if (...)'
-                if (newHeader == &AS_IF && lastLineHeader == &AS_ELSE)
-                {
-                    headerStack->pop_back();
-                }
-                // take care of 'else'
-                else if (newHeader == &AS_ELSE)
-                {
-                    if (lastTempStack != NULL)
-                    {
-                        int indexOfIf = indexOf(*lastTempStack, &AS_IF); // <---
-                        if (indexOfIf != -1)
-                        {
-                            // recreate the header list in headerStack up to the previous 'if'
-                            // from the temporary snapshot stored in lastTempStack.
-                            int restackSize = lastTempStack->size() - indexOfIf - 1;
-                            for (int r=0; r<restackSize; r++)
-                            {
-                                headerStack->push_back(lastTempStack->back());
-                                lastTempStack->pop_back();
-                            }
-                            if (!closingBracketReached)
-                                tabCount += restackSize;
-                        }
-                    }
-                }
+		// handle comments
 
-                headerStack->push_back(newHeader);
-                if (indexOf(nonParenHeaders, newHeader) == -1)
-                {
-                    isInConditional = true;
-                }
-                lastLineHeader = newHeader;
+		if(!(isInComment || isInLineComment) && line.COMPARE(i, 2, AS_OPEN_LINE_COMMENT) == 0) {
+			isInLineComment = true;
+			outBuffer.append(1, '/');
+			i++;
+			continue;
+		} else if(!(isInComment || isInLineComment) && line.COMPARE(i, 2, AS_OPEN_COMMENT) == 0) {
+			isInComment = true;
+			outBuffer.append(1, '*');
+			i++;
+			continue;
+		} else if((isInComment || isInLineComment) && line.COMPARE(i, 2, AS_CLOSE_COMMENT) == 0) {
+			isInComment = false;
+			outBuffer.append(1, '/');
+			i++;
+			continue;
+		}
 
-                outBuffer.append(newHeader->substr(1));
-                i += newHeader->length() - 1;
-                continue;
-            }
-        }
+		if(isInComment || isInLineComment)
+			continue;
 
-        if (ch == '?')
-            isInQuestion = true;
+		//renqh+ find the statements grouped  keywords begin and end.
+		vBlockBegin = NULL;
+		vBlockEnd   = NULL;
 
-        // special handling of 'case' statements
-        if (ch == ':')
-        {
-            // found a '[10:0] [`para:0] #(1:2:3)
-            if (parenDepth!=0  || prevNonSpaceCh== '}'|| prevNonSpaceCh == '{')
-            {}
-            else
-            {
-                currentNonSpaceCh = ';'; // so that brackets after the ':' will appear as block-openers
-                if (isInCase>0 )
-                {
-                    //ch = ';' ;
-                    isInHeader = true;
-                    headerStack->push_back(&AS_CASE);
-                    lastLineHeader = &AS_CASE;
-                }
-                else if (isInQuestion)
-                {
-                    isInQuestion = false;
-                }
-                else //if(!isInStatement) // is in a label (e.g. 'label1:')
-                {
-                    if (labelIndent)
-                        --tabCount; // unindent label by one indent
-                    else
-                        tabCount = 0; // completely flush indent to left
-                }
-            }
-        }
+		// join end endtable endspecify
+		if(ch == '{')        ch = '[';
+		else if(ch == '}')   ch = ']';
+		else {
+			vBlockEnd   = findHeader(line, i, verilogBlockEnd);
+			vBlockBegin = findHeader(line, i, verilogBlockBegin);
+		}
 
-        if ((ch == ';'  || (parenDepth>0 && ch == ','))  && !inStatementIndentStackSizeStack->empty())
-            while (inStatementIndentStackSizeStack->back() + (parenDepth>0 ? 1 : 0)  < inStatementIndentStack->size())
-                inStatementIndentStack->pop_back();
+		if(vBlockEnd != NULL) {
+			outBuffer.append(vBlockEnd->substr(1));
+			i = i + vBlockEnd->length() - 1;
+			ch = '}';
 
-        // handle ends of statements
-        if ( (ch == ';' && parenDepth == 0) || ch == '}'/* || (ch == ',' && parenDepth == 0)*/)
-        {
-            isInQuestion = false;
-            if (ch == '}')
-            {
-                // this bracket is block closer...
-                ++lineClosingBlocksNum;
+			if(vBlockEnd == &AS_ENDCASE)
+				isInCase--;
+		} else if(vBlockBegin   != NULL) {
+			outBuffer.append(vBlockBegin->substr(1));
+			i = i + vBlockBegin->length() - 1;
+			ch = '{';
 
-                if(!inStatementIndentStackSizeStack->empty())
-                    inStatementIndentStackSizeStack->pop_back();
+			if(vBlockBegin == &AS_CASE || vBlockBegin == &AS_CASEZ || vBlockBegin == &AS_CASEX)
+				isInCase++;
+		}
 
-                if (!blockParenDepthStack->empty())
-                {
-                    parenDepth = blockParenDepthStack->back();
-                    blockParenDepthStack->pop_back();
+		//renqh
+		prevNonSpaceCh = currentNonSpaceCh;
+		currentNonSpaceCh = ch;
 
-                }
+		if(!isLegalNameChar(ch) && ch != ',' && ch != ';') {
+			prevNonLegalCh = currentNonLegalCh;
+			currentNonLegalCh = ch;
+		}
 
-                closingBracketReached = true;
-                int headerPlace = indexOf(*headerStack, &AS_OPEN_BRACKET); // <---
-                if (headerPlace != -1)
-                {
-                    const string *popped = headerStack->back();
-                    while (popped != &AS_OPEN_BRACKET)
-                    {
-                        headerStack->pop_back();
-                        popped = headerStack->back();
-                    }
-                    headerStack->pop_back();
+		if(isInHeader) {
+			isInHeader = false;
+			currentHeader = headerStack->back();
+		} else
+			currentHeader = NULL;
 
-                    if (!tempStacks->empty())
-                    {
-                        vector<const string*> *temp =  tempStacks->back();
-                        tempStacks->pop_back();
-                        delete temp;
-                    }
-                }
+		// handle parenthesies
+		if(ch == '(' || ch == '[' || ch == ')' || ch == ']') {
+			if(ch == '(' || ch == '[') {
+				parenDepth++;
+				inStatementIndentStackSizeStack->push_back(inStatementIndentStack->size());
 
-                ch = ' '; // needed due to cases such as '}else{', so that headers ('else' tn tih case) will be identified...
-            }
+				if(currentHeader != NULL)
+					registerInStatementIndent(line, i, spaceTabCount, minConditionalIndent/*indentLength*2*/, true);
+				else
+					registerInStatementIndent(line, i, spaceTabCount, 0, true);
+			} else if(ch == ')' || ch == ']') {
+				parenDepth--;
 
-            /*
-            * Create a temporary snapshot of the current block's header-list in the
-            * uppermost inner stack in tempStacks, and clear the headerStack up to
-            * the begining of the block.
-            * Thus, the next future statement will think it comes one indent past
-            * the block's '{' unless it specifically checks for a companion-header
-            * (such as a previous 'if' for an 'else' header) within the tempStacks,
-            * and recreates the temporary snapshot by manipulating the tempStacks.
-            */
-            if (!tempStacks->back()->empty())
-                while (!tempStacks->back()->empty())
-                    tempStacks->back()->pop_back();
-            while (!headerStack->empty() && headerStack->back() != &AS_OPEN_BRACKET)
-            {
-                tempStacks->back()->push_back(headerStack->back());
-                headerStack->pop_back();
-            }
+				if(parenDepth == 0) {
+					ch = ' ';
+					isInConditional = false;
+				}
 
-            if (ch == ';')
-                isInStatement=false;
-            continue;
-        }
-        // Handle mult line assign : Unnecessary line spacing...!!!
-        /*if (!isInStatement && i==0 && parenDepth == 0 && isInCase==0)
-        {
-            int pos =0;
-            while (pos < iLength)
-            {
-                if( !isLegalNameChar(line[pos]) )
-                    break;
-                ++pos;
-            }
-            if (pos >= iLength)
-                pos--;
-            while (pos < iLength)
-            {
-                if( !isWhiteSpace(line[pos]) )
-                    break;
-                ++pos;
-            }
-            if (pos >= iLength)
-                pos--;
+				if(!inStatementIndentStackSizeStack->empty()) {
+					unsigned int previousIndentStackSize = inStatementIndentStackSizeStack->back();
+					inStatementIndentStackSizeStack->pop_back();
 
-            registerInStatementIndent(string(line.c_str()+pos), 0, spaceTabCount, pos, false);
-            isInStatement = true;
-        }*/
-    }
+					while(previousIndentStackSize < inStatementIndentStack->size())
+						inStatementIndentStack->pop_back();
 
-    // indent #define lines with one less tab
-    //if (isInDefine)
-    //    tabCount -= defineTabCount-1;
+					if(!parenIndentStack->empty()) {
+						int poppedIndent = parenIndentStack->back();
+						parenIndentStack->pop_back();
 
-    vBlockBegin = findHeader(outBuffer, 0, verilogBlockBegin);
-    vBlockEnd   = findHeader(outBuffer, 0, verilogBlockEnd);
+						if(i == 0 || isFirstLoop)
+							spaceTabCount = poppedIndent;
+					}
+				}
+			}
 
-    if (!lineStartsInComment
-            && !blockIndent
-            && outBuffer.length()>0
-            && ( vBlockBegin!=NULL)
-            && !(lineOpeningBlocksNum > 0 && lineOpeningBlocksNum == lineClosingBlocksNum)
-            && !(headerStack->size() > 1 && (*headerStack)[headerStack->size()-2] == &AS_OPEN_BRACKET)
-            && shouldIndentBrackettedLine)
-        --tabCount;
+			continue;
+		}
 
-    else if (!lineStartsInComment
-             && outBuffer.length()>0
-             && ( vBlockEnd!=NULL)
-             && shouldIndentBrackettedLine )
-        --tabCount;
+		if(ch == '{') {
+			// this bracket is a block opener...
+			++lineOpeningBlocksNum;
+			blockParenDepthStack->push_back(parenDepth);
+			inStatementIndentStackSizeStack->push_back(inStatementIndentStack->size());
+			parenDepth = 0;
+			isInStatement = false;
+			tempStacks->push_back(new vector<const string*>);
+			headerStack->push_back(&AS_OPEN_BRACKET);
+			lastLineHeader = &AS_OPEN_BRACKET; // <------
+			continue;
+		}
 
-    // correctly indent one-line-blocks...
-    else if (!lineStartsInComment
-             && outBuffer.length()>0
-             && lineOpeningBlocksNum > 0
-             && lineOpeningBlocksNum == lineClosingBlocksNum
-             && previousLastLineHeader != NULL
-             && previousLastLineHeader != &AS_OPEN_BRACKET)
-        tabCount -= 1; //lineOpeningBlocksNum - (blockIndent ? 1 : 0);
+		//check if a header has been reached
+		if(prevCh == ' ') {
+			const string* newHeader = findHeader(line, i, headers);
 
-    if (tabCount < 0)
-        tabCount = 0;
+			if(newHeader != NULL) {
+				// if we reached here, then this is a header...
+				isInHeader = true;
+				vector<const string*>* lastTempStack;
 
-    // take care of extra bracket indentatation option...
-    if (bracketIndent && outBuffer.length()>0 && shouldIndentBrackettedLine)
-        if (vBlockEnd!=NULL||vBlockBegin!=NULL)
-            tabCount++;
+				if(tempStacks->empty())
+					lastTempStack = NULL;
+				else
+					lastTempStack = tempStacks->back();
 
-    if (isInDefine)
-    {
-        if (outBuffer[0] == PREPROCESSOR_CHAR)
-        {
-            string preproc = trim(string(outBuffer.c_str() + 1));
-            if (preproc.COMPARE(0, 6, string("define")) == 0)
-            {
-                if (!inStatementIndentStack->empty()
-                        && inStatementIndentStack->back() > 0)
-                {
-                    defineTabCount = tabCount;
-                }
-                else
-                {
-                    defineTabCount = tabCount - 1;
-                    tabCount--;
-                }
-            }
-        }
+				// take care of the special case: 'else if (...)'
+				if(newHeader == &AS_IF && lastLineHeader == &AS_ELSE) {
+					headerStack->pop_back();
+				}
+				// take care of 'else'
+				else if(newHeader == &AS_ELSE) {
+					if(lastTempStack != NULL) {
+						int indexOfIf = indexOf(*lastTempStack, &AS_IF); // <---
 
-        tabCount -= defineTabCount;
-    }
+						if(indexOfIf != -1) {
+							// recreate the header list in headerStack up to the previous 'if'
+							// from the temporary snapshot stored in lastTempStack.
+							int restackSize = lastTempStack->size() - indexOfIf - 1;
 
-    if (tabCount < 0)
-        tabCount = 0;
+							for(int r = 0; r < restackSize; r++) {
+								headerStack->push_back(lastTempStack->back());
+								lastTempStack->pop_back();
+							}
 
-    // finally, insert indentations into begining of line
+							if(!closingBracketReached)
+								tabCount += restackSize;
+						}
+					}
+				}
 
-    prevFinalLineSpaceTabCount = spaceTabCount;
-    prevFinalLineTabCount = tabCount;
+				headerStack->push_back(newHeader);
 
-    if (shouldForceTabIndentation)
-    {
-        tabCount += spaceTabCount / indentLength;
-        spaceTabCount = spaceTabCount % indentLength;
-    }
+				if(indexOf(nonParenHeaders, newHeader) == -1) {
+					isInConditional = true;
+				}
 
-    outBuffer = preLineWS(spaceTabCount,tabCount) + outBuffer;
+				lastLineHeader = newHeader;
+				outBuffer.append(newHeader->substr(1));
+				i += newHeader->length() - 1;
+				continue;
+			}
+		}
 
-    if (lastLineHeader != NULL)
-        previousLastLineHeader = lastLineHeader;
+		if(ch == '?')
+			isInQuestion = true;
 
-    return outBuffer;
+		// special handling of 'case' statements
+		if(ch == ':') {
+			// found a '[10:0] [`para:0] #(1:2:3)
+			if(parenDepth != 0  || prevNonSpaceCh == '}' || prevNonSpaceCh == '{')
+			{}
+			else {
+				currentNonSpaceCh = ';'; // so that brackets after the ':' will appear as block-openers
+
+				if(isInCase > 0) {
+					//ch = ';' ;
+					isInHeader = true;
+					headerStack->push_back(&AS_CASE);
+					lastLineHeader = &AS_CASE;
+				} else if(isInQuestion) {
+					isInQuestion = false;
+				} else { //if(!isInStatement) // is in a label (e.g. 'label1:')
+					if(labelIndent)
+						--tabCount; // unindent label by one indent
+					else
+						tabCount = 0; // completely flush indent to left
+				}
+			}
+		}
+
+		if((ch == ';'  || (parenDepth > 0 && ch == ','))  && !inStatementIndentStackSizeStack->empty())
+			while(inStatementIndentStackSizeStack->back() + (parenDepth > 0 ? 1 : 0)  < inStatementIndentStack->size())
+				inStatementIndentStack->pop_back();
+
+		// handle ends of statements
+		if((ch == ';' && parenDepth == 0) || ch == '}'/* || (ch == ',' && parenDepth == 0)*/) {
+			isInQuestion = false;
+
+			if(ch == '}') {
+				// this bracket is block closer...
+				++lineClosingBlocksNum;
+
+				if(!inStatementIndentStackSizeStack->empty())
+					inStatementIndentStackSizeStack->pop_back();
+
+				if(!blockParenDepthStack->empty()) {
+					parenDepth = blockParenDepthStack->back();
+					blockParenDepthStack->pop_back();
+				}
+
+				closingBracketReached = true;
+				int headerPlace = indexOf(*headerStack, &AS_OPEN_BRACKET); // <---
+
+				if(headerPlace != -1) {
+					const string* popped = headerStack->back();
+
+					while(popped != &AS_OPEN_BRACKET) {
+						headerStack->pop_back();
+						popped = headerStack->back();
+					}
+
+					headerStack->pop_back();
+
+					if(!tempStacks->empty()) {
+						vector<const string*>* temp =  tempStacks->back();
+						tempStacks->pop_back();
+						delete temp;
+					}
+				}
+
+				ch = ' '; // needed due to cases such as '}else{', so that headers ('else' tn tih case) will be identified...
+			}
+
+			/*
+			* Create a temporary snapshot of the current block's header-list in the
+			* uppermost inner stack in tempStacks, and clear the headerStack up to
+			* the begining of the block.
+			* Thus, the next future statement will think it comes one indent past
+			* the block's '{' unless it specifically checks for a companion-header
+			* (such as a previous 'if' for an 'else' header) within the tempStacks,
+			* and recreates the temporary snapshot by manipulating the tempStacks.
+			*/
+			if(!tempStacks->back()->empty())
+				while(!tempStacks->back()->empty())
+					tempStacks->back()->pop_back();
+
+			while(!headerStack->empty() && headerStack->back() != &AS_OPEN_BRACKET) {
+				tempStacks->back()->push_back(headerStack->back());
+				headerStack->pop_back();
+			}
+
+			if(ch == ';')
+				isInStatement = false;
+
+			continue;
+		}
+
+		// Handle mult line assign : Unnecessary line spacing...!!!
+		/*if (!isInStatement && i==0 && parenDepth == 0 && isInCase==0)
+		{
+		    int pos =0;
+		    while (pos < iLength)
+		    {
+		        if( !isLegalNameChar(line[pos]) )
+		            break;
+		        ++pos;
+		    }
+		    if (pos >= iLength)
+		        pos--;
+		    while (pos < iLength)
+		    {
+		        if( !isWhiteSpace(line[pos]) )
+		            break;
+		        ++pos;
+		    }
+		    if (pos >= iLength)
+		        pos--;
+
+		    registerInStatementIndent(string(line.c_str()+pos), 0, spaceTabCount, pos, false);
+		    isInStatement = true;
+		}*/
+	}
+
+	// indent #define lines with one less tab
+	//if (isInDefine)
+	//    tabCount -= defineTabCount-1;
+	vBlockBegin = findHeader(outBuffer, 0, verilogBlockBegin);
+	vBlockEnd   = findHeader(outBuffer, 0, verilogBlockEnd);
+
+	if(!lineStartsInComment
+	   && !blockIndent
+	   && outBuffer.length() > 0
+	   && (vBlockBegin != NULL)
+	   && !(lineOpeningBlocksNum > 0 && lineOpeningBlocksNum == lineClosingBlocksNum)
+	   && !(headerStack->size() > 1 && (*headerStack)[headerStack->size() - 2] == &AS_OPEN_BRACKET)
+	   && shouldIndentBrackettedLine)
+		--tabCount;
+	else if(!lineStartsInComment
+			&& outBuffer.length() > 0
+			&& (vBlockEnd != NULL)
+			&& shouldIndentBrackettedLine)
+		--tabCount;
+	// correctly indent one-line-blocks...
+	else if(!lineStartsInComment
+			&& outBuffer.length() > 0
+			&& lineOpeningBlocksNum > 0
+			&& lineOpeningBlocksNum == lineClosingBlocksNum
+			&& previousLastLineHeader != NULL
+			&& previousLastLineHeader != &AS_OPEN_BRACKET)
+		tabCount -= 1; //lineOpeningBlocksNum - (blockIndent ? 1 : 0);
+
+	if(tabCount < 0)
+		tabCount = 0;
+
+	// take care of extra bracket indentatation option...
+	if(bracketIndent && outBuffer.length() > 0 && shouldIndentBrackettedLine)
+		if(vBlockEnd != NULL || vBlockBegin != NULL)
+			tabCount++;
+
+	if(isInDefine) {
+		if(outBuffer[0] == PREPROCESSOR_CHAR) {
+			string preproc = trim(string(outBuffer.c_str() + 1));
+
+			if(preproc.COMPARE(0, 6, string("define")) == 0) {
+				if(!inStatementIndentStack->empty()
+				   && inStatementIndentStack->back() > 0) {
+					defineTabCount = tabCount;
+				} else {
+					defineTabCount = tabCount - 1;
+					tabCount--;
+				}
+			}
+		}
+
+		tabCount -= defineTabCount;
+	}
+
+	if(tabCount < 0)
+		tabCount = 0;
+
+	// finally, insert indentations into begining of line
+	prevFinalLineSpaceTabCount = spaceTabCount;
+	prevFinalLineTabCount = tabCount;
+
+	if(shouldForceTabIndentation) {
+		tabCount += spaceTabCount / indentLength;
+		spaceTabCount = spaceTabCount % indentLength;
+	}
+
+	outBuffer = preLineWS(spaceTabCount, tabCount) + outBuffer;
+
+	if(lastLineHeader != NULL)
+		previousLastLineHeader = lastLineHeader;
+
+	return outBuffer;
 }
 
 string ASBeautifier::preLineWS(int spaceTabCount, int tabCount)
 {
-    string ws;
+	string ws;
 
-    for (int i=0; i<tabCount; i++)
-        ws += indentString;
+	for(int i = 0; i < tabCount; i++)
+		ws += indentString;
 
-    while ((spaceTabCount--) > 0)
-        ws += string(" ");
+	while((spaceTabCount--) > 0)
+		ws += string(" ");
 
-    return ws;
+	return ws;
 }
 
 /**
 * register an in-statement indent.
 */
-void ASBeautifier::registerInStatementIndent(const string &line, int i, int spaceTabCount,
-        int minIndent, bool updateParenStack)
+void ASBeautifier::registerInStatementIndent(const string& line, int i, int spaceTabCount,
+		int minIndent, bool updateParenStack)
 {
-    int inStatementIndent;
-    int remainingCharNum = line.length() - i;
-    int nextNonWSChar = 1;
+	int inStatementIndent;
+	int remainingCharNum = line.length() - i;
+	int nextNonWSChar = 1;
+	nextNonWSChar = getNextProgramCharDistance(line, i);
 
-    nextNonWSChar = getNextProgramCharDistance(line, i);
+	// if indent is around the last char in the line, indent instead 2 spaces from the previous indent
+	if(nextNonWSChar == remainingCharNum) {
+		int previousIndent = spaceTabCount;
 
-    // if indent is around the last char in the line, indent instead 2 spaces from the previous indent
-    if (nextNonWSChar == remainingCharNum)
-    {
-        int previousIndent = spaceTabCount;
-        if (!inStatementIndentStack->empty())
-            previousIndent = inStatementIndentStack->back();
+		if(!inStatementIndentStack->empty())
+			previousIndent = inStatementIndentStack->back();
 
-        inStatementIndentStack->push_back(/*2*/ indentLength + previousIndent );
-        if (updateParenStack)
-            parenIndentStack->push_back( previousIndent );
-        return;
-    }
+		inStatementIndentStack->push_back(/*2*/ indentLength + previousIndent);
 
-    if (updateParenStack)
-        parenIndentStack->push_back(i+spaceTabCount);
+		if(updateParenStack)
+			parenIndentStack->push_back(previousIndent);
 
-    inStatementIndent = i + nextNonWSChar + spaceTabCount;
+		return;
+	}
 
-    if (i + nextNonWSChar < minIndent)
-        inStatementIndent = minIndent + spaceTabCount;
+	if(updateParenStack)
+		parenIndentStack->push_back(i + spaceTabCount);
 
-    if (i + nextNonWSChar > maxInStatementIndent)
-        inStatementIndent =  indentLength*2 + spaceTabCount;
+	inStatementIndent = i + nextNonWSChar + spaceTabCount;
 
-    if (!inStatementIndentStack->empty() &&
-            inStatementIndent < inStatementIndentStack->back())
-        inStatementIndent = inStatementIndentStack->back();
+	if(i + nextNonWSChar < minIndent)
+		inStatementIndent = minIndent + spaceTabCount;
 
-    inStatementIndentStack->push_back(inStatementIndent);
+	if(i + nextNonWSChar > maxInStatementIndent)
+		inStatementIndent =  indentLength * 2 + spaceTabCount;
+
+	if(!inStatementIndentStack->empty() &&
+	   inStatementIndent < inStatementIndentStack->back())
+		inStatementIndent = inStatementIndentStack->back();
+
+	inStatementIndentStack->push_back(inStatementIndent);
 }
 
 /**
 * get distance to the next non-white sspace, non-comment character in the line.
 * if no such character exists, return the length remaining to the end of the line.
 */
-int ASBeautifier::getNextProgramCharDistance(const string &line, int i)
+int ASBeautifier::getNextProgramCharDistance(const string& line, int i)
 {
-    bool inComment = false;
-    int remainingCharNum = line.length() - i;
-    int charDistance = 1;
-    int ch;
+	bool inComment = false;
+	int remainingCharNum = line.length() - i;
+	int charDistance = 1;
+	int ch;
 
-    for (charDistance = 1; charDistance < remainingCharNum; charDistance++)
-    {
-        ch = line[i + charDistance];
-        if (inComment)
-        {
-            if (line.COMPARE(i + charDistance, 2, AS_CLOSE_COMMENT) == 0)
-            {
-                charDistance++;
-                inComment = false;
-            }
-            continue;
-        }
-        else if (isWhiteSpace(ch))
-            continue;
-        else if (ch == '/')
-        {
-            if (line.COMPARE(i + charDistance, 2, AS_OPEN_LINE_COMMENT) == 0)
-                return remainingCharNum;
-            else if (line.COMPARE(i + charDistance, 2, AS_OPEN_COMMENT) == 0)
-            {
-                charDistance++;
-                inComment = true;
-            }
-        }
-        else
-            return charDistance;
-    }
+	for(charDistance = 1; charDistance < remainingCharNum; charDistance++) {
+		ch = line[i + charDistance];
 
-    return charDistance;
+		if(inComment) {
+			if(line.COMPARE(i + charDistance, 2, AS_CLOSE_COMMENT) == 0) {
+				charDistance++;
+				inComment = false;
+			}
+
+			continue;
+		} else if(isWhiteSpace(ch))
+			continue;
+		else if(ch == '/') {
+			if(line.COMPARE(i + charDistance, 2, AS_OPEN_LINE_COMMENT) == 0)
+				return remainingCharNum;
+			else if(line.COMPARE(i + charDistance, 2, AS_OPEN_COMMENT) == 0) {
+				charDistance++;
+				inComment = true;
+			}
+		} else
+			return charDistance;
+	}
+
+	return charDistance;
 }
 
 /**
@@ -1250,8 +1179,8 @@ int ASBeautifier::getNextProgramCharDistance(const string &line, int i)
 */
 bool ASBeautifier::isLegalNameChar(char ch) const
 {
-    return (isalnum(ch) //(ch>='a' && ch<='z') || (ch>='A' && ch<='Z') || (ch>='0' && ch<='9') ||
-            || ch=='.' || ch=='_' || ( ch=='$') || (ch=='`'));
+	return (isalnum(ch) //(ch>='a' && ch<='z') || (ch>='A' && ch<='Z') || (ch>='0' && ch<='9') ||
+			|| ch == '.' || ch == '_' || (ch == '$') || (ch == '`'));
 }
 /**
 * check the char '?' is  a verilog number
@@ -1260,25 +1189,27 @@ bool ASBeautifier::isLegalNameChar(char ch) const
 * @param i         '?' in the position in string line
 */
 
-bool ASBeautifier::isInVerilogNum(const string &line,int i) const
+bool ASBeautifier::isInVerilogNum(const string& line, int i) const
 {
-    bool isNum = false;
-    char ch = line[i];
-    int  pos =i;
-    while(pos>=0 && !isWhiteSpace(ch))
-    {
-        if(ch== '0' || ch=='1'||ch =='x' ||ch =='X'||
-                ch =='z' ||ch =='Z'||ch =='_'||ch =='?' )
-        {
-            pos--;
-            ch= line[pos];
-            continue;
-        }
-        if( (ch=='b' ||ch =='B') && (pos >0 &&line[pos-1]=='\''))
-            isNum = true;
-        break;
-    }
-    return isNum;
+	bool isNum = false;
+	char ch = line[i];
+	int  pos = i;
+
+	while(pos >= 0 && !isWhiteSpace(ch)) {
+		if(ch == '0' || ch == '1' || ch == 'x' || ch == 'X' ||
+		   ch == 'z' || ch == 'Z' || ch == '_' || ch == '?') {
+			pos--;
+			ch = line[pos];
+			continue;
+		}
+
+		if((ch == 'b' || ch == 'B') && (pos > 0 && line[pos - 1] == '\''))
+			isNum = true;
+
+		break;
+	}
+
+	return isNum;
 }
 
 /**
@@ -1286,60 +1217,49 @@ bool ASBeautifier::isInVerilogNum(const string &line,int i) const
 *
 * @return    a pointer to the found header. if no header was found then return NULL.
 */
-const string *ASBeautifier::findHeader(const string &line, int i, const vector<const string*> &possibleHeaders, bool checkBoundry)
+const string* ASBeautifier::findHeader(const string& line, int i, const vector<const string*>& possibleHeaders, bool checkBoundry)
 {
-    int maxHeaders = possibleHeaders.size();
-    const string *header = NULL;
-    int p;
+	int maxHeaders = possibleHeaders.size();
+	const string* header = NULL;
+	int p;
 
-    for (p=0; p < maxHeaders; p++)
-    {
-        header = possibleHeaders[p];
+	for(p = 0; p < maxHeaders; p++) {
+		header = possibleHeaders[p];
 
-        if (line.COMPARE(i, header->length(), *header) == 0)
-        {
-            // check that this is a header and not a part of a longer word
-            // (e.g. not at its begining, not at its middle...)
+		if(line.COMPARE(i, header->length(), *header) == 0) {
+			// check that this is a header and not a part of a longer word
+			// (e.g. not at its begining, not at its middle...)
+			int lineLength = line.length();
+			int headerEnd = i + header->length();
+			char startCh = (*header)[0];   // first char of header
+			char endCh = 0;                // char just after header
+			char prevCh = 0;               // char just before header
 
-            int lineLength = line.length();
-            int headerEnd = i + header->length();
-            char startCh = (*header)[0];   // first char of header
-            char endCh = 0;                // char just after header
-            char prevCh = 0;               // char just before header
+			if(headerEnd < lineLength) {
+				endCh = line[headerEnd];
+			}
 
-            if (headerEnd < lineLength)
-            {
-                endCh = line[headerEnd];
-            }
-            if (i > 0)
-            {
-                prevCh = line[i-1];
-            }
+			if(i > 0) {
+				prevCh = line[i - 1];
+			}
 
-            if (!checkBoundry)
-            {
-                return header;
-            }
-            else if (prevCh != 0
-                     && isLegalNameChar(startCh)
-                     && isLegalNameChar(prevCh))
-            {
-                continue;
-            }
-            else if (headerEnd >= lineLength
-                     || !isLegalNameChar(startCh)
-                     || !isLegalNameChar(endCh))
-            {
-                return header;
-            }
-            else
-            {
-                continue;
-            }
-        }
-    }
+			if(!checkBoundry) {
+				return header;
+			} else if(prevCh != 0
+					  && isLegalNameChar(startCh)
+					  && isLegalNameChar(prevCh)) {
+				continue;
+			} else if(headerEnd >= lineLength
+					  || !isLegalNameChar(startCh)
+					  || !isLegalNameChar(endCh)) {
+				return header;
+			} else {
+				continue;
+			}
+		}
+	}
 
-    return NULL;
+	return NULL;
 }
 
 /**
@@ -1350,7 +1270,7 @@ const string *ASBeautifier::findHeader(const string &line, int i, const vector<c
 */
 bool ASBeautifier::isWhiteSpace(char ch) const
 {
-    return (ch == ' ' || ch == '\t');
+	return (ch == ' ' || ch == '\t');
 }
 
 /**
@@ -1360,15 +1280,15 @@ bool ASBeautifier::isWhiteSpace(char ch) const
 * @param container     a vector of strings.
 * @param element       the element to find .
 */
-int ASBeautifier::indexOf(vector<const string*> &container, const string *element)
+int ASBeautifier::indexOf(vector<const string*>& container, const string* element)
 {
-    vector<const string*>::const_iterator where;
+	vector<const string*>::const_iterator where;
+	where = find(container.begin(), container.end(), element);
 
-    where= find(container.begin(), container.end(), element);
-    if (where == container.end())
-        return -1;
-    else
-        return where - container.begin();
+	if(where == container.end())
+		return -1;
+	else
+		return where - container.begin();
 }
 
 /**
@@ -1377,20 +1297,19 @@ int ASBeautifier::indexOf(vector<const string*> &container, const string *elemen
 * @return          the trimmed line.
 * @param str       the line to trim.
 */
-string ASBeautifier::trim(const string &str)
+string ASBeautifier::trim(const string& str)
 {
+	int start = 0;
+	int end = str.length() - 1;
 
-    int start = 0;
-    int end = str.length() - 1;
+	while(start < end && isWhiteSpace(str[start]))
+		start++;
 
-    while (start < end && isWhiteSpace(str[start]))
-        start++;
+	while(start <= end && isWhiteSpace(str[end]))
+		end--;
 
-    while (start <= end && isWhiteSpace(str[end]))
-        end--;
-
-    string returnStr(str, start, end+1-start);
-    return returnStr;
+	string returnStr(str, start, end + 1 - start);
+	return returnStr;
 }
 
 #ifdef USES_NAMESPACE
