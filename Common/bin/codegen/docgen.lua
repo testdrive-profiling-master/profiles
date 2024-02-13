@@ -1477,7 +1477,14 @@ function EncodeParagraph(sText, sExtra)
 							local	sName	= sVar:Tokenize("")
 							sName:TrimLeft(" :")
 							sName:TrimRight(" ")
-							sLine:insert(sLine.TokenizePos, property[sName.s] and String(property[sName.s]).s or "")
+							do
+								local sProperty = property[sName.s]
+								if sProperty == nil then
+									LOGW("property[" .. sName.s .. "] is not found.")
+									sProperty	= ""
+								end
+								sLine:insert(sLine.TokenizePos, sProperty)
+							end
 						elseif sTag.s == "bookmark" then
 							local	sBookmark	= sVar:Tokenize("")
 							sBookmark:TrimLeft(" :")

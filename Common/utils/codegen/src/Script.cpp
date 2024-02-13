@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 11/20/2023 Mon (clonextop@gmail.com)
+// Rev.  : 2/13/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -1170,12 +1170,13 @@ bool Script::Run(const char* sFileName)
 	// work path (absolute)
 	{
 		if(m_sWorkPath.IsEmpty()) m_sWorkPath = ".";
+
 		filesystem::path	p(m_sWorkPath.c_str());
 		m_sWorkPath	= filesystem::absolute(p).string();
 		m_sWorkPath.Replace(_T("\\"), _T("/"), true);
+
 		if(!m_sWorkPath.CompareBack(_T("/"))) m_sWorkPath	+= "/";
 	}
-
 	// loading & run!
 	LuaFile	f;
 	m_sLuaFileName	= sLuaFilePath;
@@ -1185,8 +1186,10 @@ bool Script::Run(const char* sFileName)
 	if(f.Load(sLuaFilePath.c_str())) {
 		cstring	sShortenFilePath	= sLuaFilePath;
 		sShortenFilePath.Replace(m_sEnvPath, "[TOOL_PATH]/");
+		cstring sBuffer(f.Buffer(), f.Size());	// automatic change to UTF-8 format
+		sBuffer.ChangeCharsetToUTF8();
 
-		if(luaL_loadbuffer(m_pLua, f.Buffer(), f.Size(), sShortenFilePath.c_str()) || lua_pcall(m_pLua, 0, LUA_MULTRET, 0)) {
+		if(luaL_loadbuffer(m_pLua, sBuffer.c_str(), sBuffer.Length(), sShortenFilePath.c_str()) || lua_pcall(m_pLua, 0, LUA_MULTRET, 0)) {
 			const char* sError	= luaL_checkstring(m_pLua, -1);
 			LOGE("Error on running script : %s", sError);
 			lua_pop(m_pLua, 1); // pop out error message

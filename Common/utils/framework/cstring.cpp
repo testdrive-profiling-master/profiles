@@ -1,23 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
-// 
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -29,9 +29,9 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : utility framework
-// Rev.  : 8/8/2023 Tue (clonextop@gmail.com)
+// Rev.  : 2/13/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #include "UtilFramework.h"
 #include <stdarg.h>
@@ -50,6 +50,10 @@ cstring::cstring(const string& s)
 cstring::cstring(const char* s)
 {
 	if(s) m_sStr	= s;
+}
+
+cstring::cstring(const char* s, size_t size) : m_sStr(s, size)	// specific size setup
+{
 }
 
 cstring::~cstring(void)
@@ -763,13 +767,15 @@ static const char* __sEnvDelim		= "@";
 #include <windows.h>
 static const char* __sEnvFileName	= "testdrive.ini";
 
-static bool __GetEnvString(cstring sKey, cstring& sAppName, cstring& sKeyName, cstring& sEnvPath) {
+static bool __GetEnvString(cstring sKey, cstring& sAppName, cstring& sKeyName, cstring& sEnvPath)
+{
 	if(!sEnvPath.GetEnvironment(_T("TESTDRIVE_DIR"))) return false;
-	sEnvPath.Append(__sEnvFileName);
 
+	sEnvPath.Append(__sEnvFileName);
 	int iPos = 0;
 	sKeyName	= sKey.Tokenize(iPos, __sEnvDelim);
 	sAppName	= sKey.Tokenize(iPos, __sEnvDelim);
+
 	if(sKeyName.IsEmpty() || sAppName.IsEmpty()) return false;
 
 	return true;
@@ -784,12 +790,16 @@ bool cstring::GetEnvironment(const char* sKey)
 			// in testdrive.ini
 			m_sStr.clear();
 			cstring sAppName, sKeyName, sEnvPath;
+
 			if(!__GetEnvString(sKey, sAppName, sKeyName, sEnvPath)) return false;
+
 			{
 				char* sData = new char[1024 * 64];
 				*sData	= 0;
+
 				if(GetPrivateProfileString(sAppName, sKeyName, NULL, sData, 1024 * 64, sEnvPath))
 					m_sStr	= sData;
+
 				delete [] sData;
 			}
 			return true;
@@ -827,7 +837,9 @@ void cstring::SetEnvironment(const char* sKey)
 #ifdef WIN32
 			// in testdrive.ini
 			cstring sAppName, sKeyName, sEnvPath;
+
 			if(!__GetEnvString(sKey, sAppName, sKeyName, sEnvPath)) return;
+
 			WritePrivateProfileString(sAppName, sKeyName, m_sStr.c_str(), sEnvPath);
 #endif
 		} else {
