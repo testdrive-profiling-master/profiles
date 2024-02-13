@@ -15,6 +15,7 @@ Arg:AddRemark			(nil, "'util'                   : C++(Util) project")
 Arg:AddRemark			(nil, "'v', 'verilog'           : verilog project")
 Arg:AddRemark			(nil, "'v_bare', 'verilog_bare' : bared verilog project")
 Arg:AddRemark			(nil, "'v_gen', 'verigen'       : verigen project")
+Arg:AddRemark			(nil, "'docgen'                 : docgen project")
 Arg:AddOptionString		("project_name", nil, nil, nil, "project_name", "Project name")
 
 	
@@ -193,6 +194,19 @@ elseif (sType == "v_gen" or sType == "verigen") then
 	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/g\" -i \"" .. sProjectPath .. "/verigen_src/defines_" .. sProjectName .. ".lua\"")
 	
 	os.execute("explorer " .. sProjectPath)
+elseif (sType == "docgen") then
+	sProjectPath	= MakeDir(sProjectName)
+	LOGI("Create DocGen project : '" .. sProjectName .. "'")
+	
+	MakeDir(sProjectName .. "/template")
+	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_docgen/.\" " .. sProjectName .. "/")
+	os.execute("cp -f \"" .. sProfilePath .. "Common/bin/codegen/docgen_template_testdrive.docx\" " .. sProjectName .. "/template/docgen_template.docx")
+	os.execute("sed \"s/TITLE/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/Makefile")
+	os.execute("sed \"s/TITLE/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/main.lua")
+	
+	os.execute("explorer " .. sProjectName)
+	print("Run 'make' to build document.")
+	os.exit(1)
 else
 	LOGE("Invalid project type : '" .. sType .. "'. Please refer 'help' with \"create_project --help\" command.")
 	os.exit(1)
