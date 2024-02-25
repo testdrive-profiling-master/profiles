@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,10 +31,10 @@
 // OF SUCH DAMAGE.
 //
 // Title : System manager
-// Rev.  : 2/28/2023 Tue (clonextop@gmail.com)
+// Rev.  : 2/26/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #include "LocaleString.h"
-
+/* clang-format off */
 LOCALE_DEFINE(4, LANG_KOREAN, LANG_JAPANESE, LANG_SPANISH, LANG_ENGLISH)
 
 LOCALE_TEXT(DOCUMENT_TITLE,
@@ -102,26 +102,26 @@ LOCALE_TEXT(DESC_AUTO_UPDATE,
 			_T("自動更新を有効にします。(MinGW)"),
 			_T("Habilite las actualizaciones automáticas. (MinGW)"),
 			_T("Enable automatic updates. (MinGW)"))
-LOCALE_TEXT(CODING_A_STYLE,
-			_T("코딩 A-스타일"),
-			_T("コーディングA-スタイル"),
-			_T("Codificación A-style"),
-			_T("Coding A-style"))
-LOCALE_TEXT(DESC_CODING_A_STYLE,
-			_T("A-Style을 사용하여, C/C++ 코딩 스타일을 체크하고 보정합니다."),
-			_T("A-Styleを使用して、C/C++ コーディングスタイルをチェックして補正します。"),
-			_T("Usando A-Style, verifique y corrija el estilo de codificación para C/C ++."),
-			_T("Using A-Style, check and correct the coding style for C/C++."))
+LOCALE_TEXT(CODING_STYLE,
+			_T("코딩 스타일"),
+			_T("コーディングスタイル"),
+			_T("Codificación style"),
+			_T("Coding style"))
+LOCALE_TEXT(DESC_CODING_STYLE,
+			_T("clang-format을 사용하여, C/C++ 코딩 스타일을 체크하고 보정합니다.\n(변경된 소스 파일로 부터 상위 프로젝트 root 까지 경로 중, '.clang-format' 이 존재하면 이 설정이 대체되어 사용됩니다.)"),
+			_T("clang-format を使用して、C/C++ コーディングスタイルをチェックして校正します。\n(変更されたソースファイルから親プロジェクトrootまでのパスの中に '.clang-format'が存在する場合、この設定は置き換えられ使用されます。)"),
+			_T("Utilice clang-format para comprobar y corregir el estilo de codificación C/C++.\n(Si existe '.clang-format' en la ruta desde el archivo fuente modificado hasta la raíz del proyecto principal, se utiliza esta configuración.)"),
+			_T("Use clang-format to check and correct C/C++ coding style.\n(If '.clang-format' exists in the path from the changed source file to the parent project root, this setting is used instead.)"))
 LOCALE_TEXT(CODING_I_STYLE,
 			_T("코딩 I-스타일"),
 			_T("コーディングI-スタイル"),
 			_T("Codificación I-style"),
 			_T("Coding I-style"))
 LOCALE_TEXT(DESC_CODING_I_STYLE,
-			_T("i-Style을 사용하여, Verilog/VHDL 코딩 스타일을 체크하고 보정합니다."),
-			_T("i-Styleを使用して、Verilog/VHDL コーディングスタイルをチェックして補正します。"),
-			_T("Con i-Style, verifique y corrija el estilo de codificación para Verilog/VHDL."),
-			_T("Using i-Style, check and correct the coding style for Verilog/VHDL."))
+			_T("i-Style을 사용하여, Verilog/VHDL 코딩 스타일을 체크하고 보정합니다.\n(이 설정이 비워져 있다면, clang-format 설정이 사용됩니다.)"),
+			_T("i-Styleを使用して、Verilog/VHDL コーディングスタイルをチェックして補正します。\n(この設定が空の場合、clang-format設定が使用されます。)"),
+			_T("Con i-Style, verifique y corrija el estilo de codificación para Verilog/VHDL.\n(Si esta configuración se deja en blanco, se utilizará la configuración de formato clang.)"),
+			_T("Using i-Style, check and correct the coding style for Verilog/VHDL.\n(If this setting is left blank, the clang-format setting will be used.)"))
 LOCALE_TEXT(STRICT_BUILD,
 			_T("엄격한 빌드"),
 			_T("厳しいビルド"),
@@ -307,4 +307,5 @@ LOCALE_TEXT(MONTHLY_UPDATE,
 			_T("Linuxシステムの更新をしようとします。"),
 			_T("Intentando actualizar su sistema Linux."),
 			_T("Trying to update your Linux system."))
+/* clang-format on */
 LOCALE_END

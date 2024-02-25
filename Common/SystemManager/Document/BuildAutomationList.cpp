@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,16 +31,14 @@
 // OF SUCH DAMAGE.
 //
 // Title : System manager
-// Rev.  : 11/23/2023 Thu (clonextop@gmail.com)
+// Rev.  : 2/26/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #include "BuildAutomationList.h"
 
-extern LPCTSTR		g_sConfigPath;
-static LPCTSTR		__sAppName	= _T("Build Automation");
+extern LPCTSTR g_sConfigPath;
+static LPCTSTR __sAppName = _T("Build Automation");
 
-BuildAutomationList::BuildAutomationList(void)
-{
-}
+BuildAutomationList::BuildAutomationList(void) {}
 
 BuildAutomationList::~BuildAutomationList(void)
 {
@@ -49,17 +47,17 @@ BuildAutomationList::~BuildAutomationList(void)
 
 void BuildAutomationList::DeleteAll(void)
 {
-	for(auto& i : m_List) delete i.second;
+	for (auto &i : m_List) delete i.second;
 
 	m_List.clear();
 }
 
-BuildAutomationItem* BuildAutomationList::Item(int index)
+BuildAutomationItem *BuildAutomationList::Item(int index)
 {
 	return m_List[index];
 }
 
-int	BuildAutomationList::Size(void)
+int BuildAutomationList::Size(void)
 {
 	return m_List.size();
 }
@@ -68,37 +66,38 @@ void BuildAutomationList::Initialize(void)
 {
 	DeleteAll();
 	{
-		CString	sConfigPath	= g_pSystem->RetrieveFullPath(g_sConfigPath);
+		CString sConfigPath = g_pSystem->RetrieveFullPath(g_sConfigPath);
 		CString sItem;
 		TCHAR	sStr[MAX_PATH];
 
-		for(int i = 0;; i++) {
+		for (int i = 0;; i++) {
 			sItem.Format(_T("Item[%d]."), i);
 			GetPrivateProfileString(__sAppName, sItem + _T("title"), _T(""), sStr, MAX_PATH, sConfigPath);
 
-			if(!*sStr) break;
+			if (!*sStr)
+				break;
 
 			{
-				BuildAutomationItem* pItem	= new BuildAutomationItem;
-				pItem->sTitle			= sStr;
+				BuildAutomationItem *pItem = new BuildAutomationItem;
+				pItem->sTitle			   = sStr;
 				GetPrivateProfileString(__sAppName, sItem + _T("extensions"), _T(""), sStr, MAX_PATH, sConfigPath);
 				pItem->sExtensions.Format(_T(";%s;"), sStr);
 				pItem->sExtensions.MakeLower();
 				GetPrivateProfileString(__sAppName, sItem + _T("inception"), _T(""), sStr, MAX_PATH, sConfigPath);
-				pItem->sInceptionFile	= sStr;
+				pItem->sInceptionFile = sStr;
 				GetPrivateProfileString(__sAppName, sItem + _T("error_string"), _T(""), sStr, MAX_PATH, sConfigPath);
-				pItem->sErrorString	= sStr;
+				pItem->sErrorString = sStr;
 				pItem->iLinkItem	= GetPrivateProfileInt(__sAppName, sItem + _T("link_item"), -1, sConfigPath);
 				GetPrivateProfileString(__sAppName, sItem + _T("watch_path"), _T(""), sStr, MAX_PATH, sConfigPath);
-				pItem->sWatchPath	= sStr;
-				pItem->bSearchSubDir	= GetPrivateProfileInt(__sAppName, sItem + _T("search_subdir"), 0, sConfigPath);
+				pItem->sWatchPath	 = sStr;
+				pItem->bSearchSubDir = GetPrivateProfileInt(__sAppName, sItem + _T("search_subdir"), 0, sConfigPath);
 				GetPrivateProfileString(__sAppName, sItem + _T("work_path"), _T(""), sStr, MAX_PATH, sConfigPath);
-				pItem->sWorkPath	= *sStr ? sStr : pItem->sWatchPath;
+				pItem->sWorkPath = *sStr ? sStr : pItem->sWatchPath;
 				GetPrivateProfileString(__sAppName, sItem + _T("target"), _T(""), sStr, MAX_PATH, sConfigPath);
-				pItem->sExecuteFile	= sStr;
+				pItem->sExecuteFile = sStr;
 				GetPrivateProfileString(__sAppName, sItem + _T("argument"), _T(""), sStr, MAX_PATH, sConfigPath);
-				pItem->sArgument	= sStr;
-				m_List[i]			= pItem;
+				pItem->sArgument = sStr;
+				m_List[i]		 = pItem;
 			}
 		}
 	}
