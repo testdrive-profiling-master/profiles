@@ -185,13 +185,13 @@ void BuildAutomation::DoCheck(DWORD command, LPCTSTR sFileName)
 					sArg.Format(_T("-i --style=%s \"%s\""), (LPCTSTR)sStyleFormat, sFileName);
 
 					g_pSystem->ExecuteFile(sClangFormatPath, sArg, TRUE, NULL, NULL, NULL);
-				} else if (m_siStyle.GetAt(0) && (sName.Find(_T(".v"), sName.GetAllocLength() - 2) > 0 ||
-												  sName.Find(_T(".sv"), sName.GetAllocLength() - 3) > 0 ||
-												  sName.Find(_T(".vh"), sName.GetAllocLength() - 3) > 0 ||
-												  sName.Find(_T(".svh"), sName.GetAllocLength() - 4) > 0)) {
+				} else if (sName.Find(_T(".v"), sName.GetAllocLength() - 2) > 0 ||
+						   sName.Find(_T(".sv"), sName.GetAllocLength() - 3) > 0 ||
+						   sName.Find(_T(".vh"), sName.GetAllocLength() - 3) > 0 ||
+						   sName.Find(_T(".svh"), sName.GetAllocLength() - 4) > 0) {
 					SetDirtySystem();
 
-					if (m_siStyle.GetAt(0))
+					if (!m_siStyle.GetAt(0))
 						goto USE_CLANG_FORMAT;
 					{
 						CString sArg;
