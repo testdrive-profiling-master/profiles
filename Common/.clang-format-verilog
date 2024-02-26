@@ -1,0 +1,41 @@
+BasedOnStyle: LLVM
+IndentWidth: 4
+TabWidth: 4
+UseTab: Always
+ColumnLimit: 0
+
+Language: Verilog
+LineEnding: LF
+BreakBeforeBraces: Attach
+AlignConsecutiveAssignments: Consecutive
+AlignConsecutiveBitFields: Consecutive
+AlignConsecutiveDeclarations:
+    Enabled: true
+    AcrossEmptyLines: true
+    AcrossComments: true
+AccessModifierOffset: -4
+AlignConsecutiveMacros:
+    Enabled: true
+    AcrossEmptyLines: true
+    AcrossComments: true
+AlignTrailingComments:
+    Kind: Always
+    OverEmptyLines: 2
+AlignAfterOpenBracket: AlwaysBreak
+AllowAllArgumentsOnNextLine: false
+AllowAllConstructorInitializersOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLambdasOnASingleLine: Empty
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakBeforeMultilineStrings: false
+BinPackArguments: false
+BinPackParameters: false
+CommentPragmas: '^#'
+IndentCaseLabels: false
+IndentPPDirectives: BeforeHash
+VerilogBreakBetweenInstancePorts: true
+ForEachMacros:
+  - foreach
+  - FOREACH_CHILD

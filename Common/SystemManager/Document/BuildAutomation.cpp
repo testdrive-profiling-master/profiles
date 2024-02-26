@@ -191,14 +191,27 @@ void BuildAutomation::DoCheck(DWORD command, LPCTSTR sFileName)
 						   sName.Find(_T(".svh"), sName.GetAllocLength() - 4) > 0) {
 					SetDirtySystem();
 
-					if (!m_siStyle.GetAt(0))
-						goto USE_CLANG_FORMAT;
-					{
+					if (m_siStyle.GetAt(0)) {
 						CString sArg;
 						CString sIstylePath =
 							g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_PROFILE%Common\\bin\\iStyle.exe"));
 						sArg.Format(_T("%s \"%s\""), m_siStyle, sFileName);
 						g_pSystem->ExecuteFile(sIstylePath, sArg, TRUE, NULL, NULL, NULL);
+					} else {
+						CString sStyleFormat(sDir);
+						if (IsFileExistedNested(_T(".clang-format-verilog"),
+												sStyleFormat)) { // search ".clang-format-verilog" file.
+							sStyleFormat.Insert(0, _T("file:"));
+							sStyleFormat.Append(_T("\\.clang-format-verilog"));
+
+							CString sArg;
+							CString sClangFormatPath = g_pSystem->RetrieveFullPath(
+								_T("%TESTDRIVE_DIR%bin\\msys64\\ucrt64\\bin\\clang-format.exe"));
+
+							sArg.Format(_T("-i --style=%s \"%s\""), (LPCTSTR)sStyleFormat, sFileName);
+
+							g_pSystem->ExecuteFile(sClangFormatPath, sArg, TRUE, NULL, NULL, NULL);
+						}
 					}
 
 				} else if (sName.Find(_T(".do"), sName.GetAllocLength() - 3) > 0) {
