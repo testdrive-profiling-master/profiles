@@ -21,6 +21,7 @@
 * z
 * argtable3
 * pugixml
+* ncurses
 
 
  
