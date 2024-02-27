@@ -1,8 +1,30 @@
-# 소개
+# Introduction
 
-...
+'@<i>codegen@</i>' supports the following functions.
 
-## 사용상 제한 및 라이센스 허가와 선행 과정
+* Lua basic libraries (@<link:https://www.tutorialspoint.com/lua/lua_standard_libraries.htm;https://www.tutorialspoint.com/lua/lua_standard_libraries.htm>)
+* Additional Lua libraries
+** LuaFileSystem (@<link:http://lunarmodules.github.io/luafilesystem/;http://lunarmodules.github.io/luafilesystem/>)
+** hook.lua (@<link:https://github.com/vallentin/hook.lua;https://github.com/vallentin/hook.lua>)
+* Microsft WORD/Excel manipulation
+* Git manipulation
+* Lua code encryption & decription
 
-### 라이센스 허가
-codegen 에 구현된 소스는 BSD 라이센스를 준수하며, 사용자에 의해 생성된 개별 스크립트나 2차 저작물은 온전히 사용자의 소유입니다.
+ 
+## Libraries in use
+
+* Lua 5.4.6
+* LuaBridge 3.0
+* minizip
+* SSL
+* libgit2
+* z
+* argtable3
+* pugixml
+
+
+ 
+## License
+
+The source code implemented in codegen complies with the BSD license, \
+and individual scripts or derivative works created by users are entirely owned by the user.
