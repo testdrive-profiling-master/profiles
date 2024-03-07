@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 3/5/2024 Tue (clonextop@gmail.com)
+// Rev.  : 3/7/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -1038,6 +1038,7 @@ Script::Script(void)
 				.addFunction("GetRow", &DocExcelSheet::GetRow)
 				.addFunction("GetColumn", &DocExcelSheet::GetColumn)
 				.addFunction("GetValue", &DocExcelSheet::GetValue)
+				.addFunction("GetLatestValueColor", &DocExcelSheet::GetLatestValueColor)
 				.addFunction("GetColumnWidth", &DocExcelSheet::GetColumnWidth)
 				.addFunction("IsMergedCell", &DocExcelSheet::IsMergedCell)
 				.addFunction("GetMergeCellPos",
@@ -1052,6 +1053,7 @@ Script::Script(void)
 								 return "";
 							 }))
 				.addFunction("GetStyle", &DocExcelSheet::GetStyle)
+				.addFunction("GetNumberFormat", &DocExcelSheet::GetNumberFormat)
 				.addFunction("SetString", &DocExcelSheet::SetString)
 				.addFunction("SetInt", &DocExcelSheet::SetInt)
 				.addFunction("SetDouble", &DocExcelSheet::SetDouble)
@@ -1067,7 +1069,6 @@ Script::Script(void)
 				.addFunction("HideColumn", &DocExcelSheet::HideColumn)
 				.addFunction("Hide", &DocExcelSheet::Hide)
 				.addProperty("name", &DocExcelSheet::GetName, &DocExcelSheet::SetName)
-				.addProperty("debug", &DocExcelSheet::m_bDebugMode)
 				.endClass()
 				.deriveClass<DocExcel, DocFile>("DocExcel")
 				.addConstructor<void (*)(void)>()

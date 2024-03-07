@@ -31,9 +31,10 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 3/5/2024 Tue (clonextop@gmail.com)
+// Rev.  : 3/7/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "DocExcel.h"
+#include "ExcelNumFormat/ExcelNumFormat.h"
 
 typedef struct {
 	int			id;
@@ -56,7 +57,7 @@ static DEFAULT_NUMFORMAT	__default_number_formats[] = {
 	{EXCEL_NUMBER_FORMAT_SCIENTIFIC_D2,				"0.00E+00"},
 	{EXCEL_NUMBER_FORMAT_FRACTION_ONEDIG,			"# ?/?"},
 	{EXCEL_NUMBER_FORMAT_FRACTION_TWODIG,			"# ??/??"},
-	{EXCEL_NUMBER_FORMAT_DATE,						"M/D/YY"},
+	{EXCEL_NUMBER_FORMAT_DATE,						"M/D/YYYY"},
 	{EXCEL_NUMBER_FORMAT_DATE_D_MON_YY,				"D-MMM-YY"},
 	{EXCEL_NUMBER_FORMAT_DATE_D_MON,				"D-MMM"},
 	{EXCEL_NUMBER_FORMAT_DATE_MON_YY,				"MMM-YY"},
@@ -64,7 +65,7 @@ static DEFAULT_NUMFORMAT	__default_number_formats[] = {
 	{EXCEL_NUMBER_FORMAT_TIME_HMMSS_AM,				"h:mm:ss AM/PM"},
 	{EXCEL_NUMBER_FORMAT_TIME_HMM,					"h:mm"},
 	{EXCEL_NUMBER_FORMAT_TIME_HMMSS,				"h:mm:ss"},
-	{EXCEL_NUMBER_FORMAT_DATE_TIME,					"M/D/YY h:mm"},
+	{EXCEL_NUMBER_FORMAT_DATE_TIME,					"M/D/YYYY h:mm"},
 	{EXCEL_NUMBER_FORMAT_NUMBER_SEP_NEGBRA,			"_(#,##0_);(#,##0)"},
 	{EXCEL_NUMBER_FORMAT_NUMBER_SEP_NEGBRARED,		"_(#,##0_);[Red](#,##0)"},
 	{EXCEL_NUMBER_FORMAT_NUMBER_D2_SEP_NEGBRA,		"_(#,##0.00_);(#,##0.00)"},
@@ -198,7 +199,6 @@ DocExcelSheet::DocExcelSheet(const char *sName, const char *sEntryPath, DocExcel
 	m_pExcel	 = pExcel;
 	m_iID		 = iID;
 	m_bRecompute = false;
-	m_bDebugMode = false;
 	{
 		// get dimension
 		memset(&m_Dimension, 0, sizeof(m_Dimension));
@@ -393,84 +393,58 @@ double DocExcelSheet::GetDouble(int fDefault)
 string DocExcelSheet::GetValue(bool bUseMergedData)
 {
 	cstring sValue;
+	bool	bUseMergedCell = false;
+
+	m_sLatestValueColor.clear();
 
 	if (!IsEmpty()) {
-		cstring sType = m_Column.attribute("t").value();
-		sValue		  = m_Column.child("v").text().get();
+		cstring sType	= m_Column.attribute("t").value();
+		cstring sFormat = GetNumberFormat();
+		sValue			= m_Column.child("v").text().get();
 
 		if (sType == "s") { // string
 			sValue = m_pExcel->GetString(atoi(sValue.c_str()));
 			sValue.ChangeCharsetToANSI();
+
+			if (!sFormat.IsEmpty() && sFormat != "@") {
+				excel_number_format::ExcelNumFormat num_fmt(sFormat);
+				sValue				= num_fmt.Format(0, sValue.c_str());
+				m_sLatestValueColor = num_fmt.Color();
+			}
 		} else if (sType == "b") { // boolean
 			sValue = atoi(sValue.c_str()) ? "TRUE" : "FALSE";
-		} else if (!sValue.IsEmpty()) {
-			if (m_bDebugMode) {
-				string sFormat = GetNumberFormat();
-				if (sFormat.length()) {
-					printf("Number format = '%s'\n", sFormat.c_str());
-				}
-			}
-			double v = atof(sValue.c_str());
-			/*
-			1 0
-			2 0.00
-			3 #,##0
-			4 #,##0.00
-			5 $#,##0_);($#,##0)
-			6 $#,##0_);[Red]($#,##0)
-			7 $#,##0.00_);($#,##0.00)
-			8 $#,##0.00_);[Red]($#,##0.00)
-			9 0%
-			10 0.00%
-			11 0.00E+00
-			12 # ?/?
-			13 # ??/??
-			14 m/d/yyyy
-			15 d-mmm-yy
-			16 d-mmm
-			17 mmm-yy
-			18 h:mm AM/PM
-			19 h:mm:ss AM/PM
-			20 h:mm
-			21 h:mm:ss
-			22 m/d/yyyy h:mm
-			37 #,##0_);(#,##0)
-			38 #,##0_);[Red](#,##0)
-			39 #,##0.00_);(#,##0.00)
-			40 #,##0.00_);[Red](#,##0.00)
-			45 mm:ss
-			46 [h]:mm:ss
-			47 mm:ss.0
-			48 ##0.0E+0
-			49 @
-			*/
-			v += 0.00000000000001;
-			sValue.Format("%.13f", v);
-
-			while (sValue.rfind('0') == (sValue.Length() - 1)) sValue.DeleteBack("0");
-
-			if (sValue.rfind('.') == (sValue.Length() - 1))
-				sValue.DeleteBack(".");
+		} else if (!sValue.IsEmpty()) { // double
+			if (sFormat.IsEmpty())
+				sFormat = "General";
+			excel_number_format::ExcelNumFormat num_fmt(sFormat);
+			sValue				= num_fmt.Format(atof(sValue.c_str()));
+			m_sLatestValueColor = num_fmt.Color();
 		} else if (bUseMergedData) {
-			int delta_x, delta_y, width, height;
-			// get merged top data
-			if (GetMergeCellPos(delta_x, delta_y, width, height)) {
-				if (delta_x || delta_y) {
-					int iCurX = GetPosX();
-					int iCurY = GetPosY();
-					int iOrgX = m_Origin.x;
-					int iOrgY = m_Origin.y;
-					SetPos(iCurX - delta_x, iCurY - delta_y);
-					GetRow();
-					GetColumn();
-					sValue = GetValue();
-					SetPos(iCurX, iCurY);
-					GetRow();
-					GetColumn();
-					// restore original base
-					m_Origin.x = iOrgX;
-					m_Origin.y = iOrgY;
-				}
+			bUseMergedCell = true;
+		}
+	} else {
+		bUseMergedCell = true;
+	}
+
+	if (bUseMergedCell) {
+		int delta_x, delta_y, width, height;
+		// get merged top data
+		if (GetMergeCellPos(delta_x, delta_y, width, height)) {
+			if (delta_x || delta_y) {
+				int iCurX = GetPosX();
+				int iCurY = GetPosY();
+				int iOrgX = m_Origin.x;
+				int iOrgY = m_Origin.y;
+				SetPos(iCurX - delta_x, iCurY - delta_y);
+				GetRow();
+				GetColumn();
+				sValue = GetValue();
+				SetPos(iCurX, iCurY);
+				GetRow();
+				GetColumn();
+				// restore original base
+				m_Origin.x = iOrgX;
+				m_Origin.y = iOrgY;
 			}
 		}
 	}

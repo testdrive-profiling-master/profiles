@@ -31,8 +31,8 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 1/17/2024 Wed (clonextop@gmail.com)
+// Rev.  : 3/7/2024 Thu (clonextop@gmail.com)
 //================================================================================
-#define		CODE_GEN_VERSION_MAJOR		1
-#define		CODE_GEN_VERSION_MINOR		0
-#define		CODE_GEN_BUILD_COUNT		44
+#define CODE_GEN_VERSION_MAJOR 1
+#define CODE_GEN_VERSION_MINOR 0
+#define CODE_GEN_BUILD_COUNT   45

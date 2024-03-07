@@ -14,6 +14,7 @@ ifndef BUILD_TARGET
 BUILD_TARGET	= $(TARGET_EXE)
 endif
 
+TARGET_DEP		:= $(TARGET_DEP) $(TESTDRIVE_PROFILE)Common/utils/lib/libUtilFramework.a
 INC				:= $(INC) -I$(TESTDRIVE_PROFILE)Common/utils/framework -I-I$(TESTDRIVE_PROFILE)Common/utils/include -I-I$(TESTDRIVE_PROFILE)Common/utils/lib_src
 LIBDIR			:= -L$(TESTDRIVE_PROFILE)Common/utils/lib -lUtilFramework -liconv $(LIBDIR)
 

@@ -56,7 +56,7 @@ static string ReadToken(Tokenizer& reader, bool& syntaxError)
 		reader.ReadEnclosed('[', ']') ||
 
 		// Symbols
-		reader.ReadOneOf("#?,!&%+-$â‚¬Â£0123456789{}():;/.@ ") ||
+		reader.ReadOneOf("#?,!&%+-$¢æ¡Ì0123456789{}():;/.@ ") ||
 		reader.ReadString("e+", true) ||
 		reader.ReadString("e-", true) ||
 		reader.ReadString("General", true) ||
@@ -89,7 +89,6 @@ static string ReadToken(Tokenizer& reader, bool& syntaxError)
 
 static bool ReadConditionValue(Tokenizer& tokenizer)
 {
-	// NFPartCondNum = [ASCII-HYPHEN-MINUS] NFPartIntNum [INTL-CHAR-DECIMAL-SEP NFPartIntNum] [NFPartExponential NFPartIntNum]
 	tokenizer.ReadString("-");
 	while (tokenizer.ReadOneOf("0123456789"))
 	{
@@ -248,7 +247,6 @@ bool ExcelNumFormat::ParseSections(const char* sFormat)
 
 	while(1) {
 		Section*	pSection	= new Section;
-		pSection->section_index = -1;
 
         if (!ParseSection(pSection, tokenizer)) {
         	delete pSection;
@@ -259,10 +257,8 @@ bool ExcelNumFormat::ParseSections(const char* sFormat)
         	delete pSection;
             break;
         }
-
         m_Sections.push_back(pSection);
 	}
-
 	return true;
 }
 

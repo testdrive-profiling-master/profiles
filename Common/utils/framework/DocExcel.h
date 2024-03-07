@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 3/5/2024 Tue (clonextop@gmail.com)
+// Rev.  : 3/7/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __DOC_EXCEL_H__
 #define __DOC_EXCEL_H__
@@ -134,6 +134,10 @@ public:
 	{
 		return m_pExcel;
 	}
+	inline string GetLatestValueColor(void)
+	{
+		return m_sLatestValueColor;
+	}
 	bool		   GetRow(bool bAutoCreate = false);
 	bool		   GetColumn(bool bAutoCreate = false);
 	bool		   ValidateColumn(void);
@@ -173,7 +177,6 @@ public:
 		return m_sEntryPath.c_str();
 	}
 
-	bool m_bDebugMode; // TODO : delete me! It's temporary.
 protected:
 	void ExpandDimension(int x, int y);
 
@@ -183,6 +186,7 @@ private:
 	DocXML	  m_SheetData;
 	DocXML	  m_Row, m_Column;
 	string	  m_sName;
+	string	  m_sLatestValueColor;
 	string	  m_sEntryPath;
 	bool	  m_bRecompute;
 	struct {

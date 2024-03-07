@@ -258,7 +258,15 @@ public:
 	}
 };
 
-typedef struct {
+class Section
+{
+public:
+	Section(void)
+	{
+		section_index = -1;
+		type		  = SECTION_TYPE_GENERAL;
+	}
+	~Section(void) {}
 	int				   section_index;
 	SectionType		   type;
 	string			   color;
@@ -267,7 +275,7 @@ typedef struct {
 	FractionSection	   Fraction;
 	DecimalSection	   Number;
 	list<string>	   GeneralTextDateDurationParts;
-} Section;
+};
 
 class ExcelNumFormat
 {

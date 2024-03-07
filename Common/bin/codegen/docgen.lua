@@ -441,12 +441,13 @@ function GenerateTable(sExcelFileName, sSheetName)
 		while sheet:GetColumn(false) do
 			local	width			= sheet:GetColumnWidth()
 			local	sName			= String(sheet:GetValue())
+			local	sColor			= sheet:GetLatestValueColor()
 			local	bCenter			= sName:CompareFront("*")
 			if bCenter then
 				sName:erase(0, 1)
 			end
 			col_count				= col_count + 1
-			col_list[col_count]		= {sName.s, width, bCenter, ""}		-- sValue, column width, center style, merge
+			col_list[col_count]		= {sName.s, width, bCenter, "", sColor}		-- sValue, column width, center style, merge, text color
 			col_total_width			= col_total_width + width
 		end
 		
@@ -604,6 +605,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 				col_list[i][1]	= sheet:GetValue()
 				col_list[i][4]	= sheet:GetMergeCellPos()
 				col_list[i][5]	= sheet:GetStyle()
+				col_list[i][6]	= sheet:GetLatestValueColor()
 				if #(col_list[i][1]) == 0 then col_list[i][1] = " " end	-- cell must be filled
 			end
 			bLast	= (sheet:GetRow(false) == false)

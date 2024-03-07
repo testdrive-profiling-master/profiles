@@ -5,14 +5,20 @@ if xlsx:Open("input.xlsx") then
 
 	-- sheet 출력
 	if (sheet1 ~= nil) then
-		sheet1.debug = true
 		while(sheet1:GetRow(false)) do
-			local s = "\t";
+			local	s		= "\t"
+			local	iCol	= 0
+			local	sFormat	= ""
 			while(sheet1:GetColumn(false)) do
-				s	= s .. string.format("%-30s", sheet1:GetValue())
+				s		= s .. string.format("%-30s", sheet1:GetValue())
+				if iCol == 1 then
+					sFormat	= sheet1:GetNumberFormat()
+				end
+				
+				iCol	= iCol + 1
 			end
 			
-			print(s)
+			print("Number format = '" .. sFormat .. "'\n" .. s)
 		end
 	else
 		LOGE("Can't open the sheet.")

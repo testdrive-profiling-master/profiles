@@ -57,6 +57,10 @@ void ExcelNumFormat::Release(void)
 Section *ExcelNumFormat::GetSection(double fValue, const char *sValue)
 {
 	bool bText = (sValue != NULL);
+
+	if (!m_Sections.size())
+		return NULL;
+
 	if (bText) { // get text section
 		if (m_Sections.size() >= 4) {
 			auto it = m_Sections.begin();
@@ -83,9 +87,6 @@ Section *ExcelNumFormat::GetSection(double fValue, const char *sValue)
 		// - There is 1 section, or
 		// - There are 2 sections, and the value is 0 or positive, or
 		// - There are >2 sections, and the value is positive
-		if (!m_Sections.size())
-			return NULL;
-
 		auto	 it		  = m_Sections.begin();
 		Section *section0 = *it;
 
