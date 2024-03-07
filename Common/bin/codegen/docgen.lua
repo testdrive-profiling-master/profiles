@@ -689,13 +689,19 @@ function GenerateTable(sExcelFileName, sSheetName)
 					table_alignment		= "TableTextCenter"
 				end
 				
+				local color_field	= ""
+				
+				if #col_list[i][6] > 0 then	--FIXME : color 설정 추가하기
+					color_field		= "<w:color w:val=\"" .. "FF0000" .. "\"/>"
+				end
+				
 				table_code:Append("\
 						</w:tcBorders>\
 					</w:tcPr>"
 					.. EncodeParagraph(col_list[i][1],
 					{
 						pPr=("<w:pStyle w:val=\"" .. table_alignment .. "\"/>"),
-						rPr="<w:rFonts w:hint=\"eastAsia\"/>"
+						rPr="<w:rFonts w:hint=\"eastAsia\"/>" .. color_field
 					}) .. 
 				"</w:tc>")
 			end
