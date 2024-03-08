@@ -4,7 +4,7 @@ local	iVersionMinor	= 0
 local	iBuildCount		= 0
 
 -- get version number
-f:Open("src\\code_gen_version.h")
+f:Open("src\\.code_gen_version.inl")
 while f:IsEOF() == false do
 	local	s = String(f:Get(true))
 	if s:CompareFront("#define") then
@@ -24,7 +24,7 @@ end
 f:Close()
 
 -- save version number
-f:Create("src\\code_gen_version.h")
+f:Create("src\\.code_gen_version.inl")
 f:Put("#define		CODE_GEN_VERSION_MAJOR		" .. tostring(iVersionMajor) .. "\n")
 f:Put("#define		CODE_GEN_VERSION_MINOR		" .. tostring(iVersionMinor) .. "\n")
 f:Put("#define		CODE_GEN_BUILD_COUNT		" .. tostring(iBuildCount + 1) .. "\n")

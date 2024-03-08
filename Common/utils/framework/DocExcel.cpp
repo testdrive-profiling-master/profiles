@@ -390,7 +390,7 @@ double DocExcelSheet::GetDouble(int fDefault)
 	return fData;
 }
 
-string DocExcelSheet::GetValue(bool bUseMergedData)
+string DocExcelSheet::GetValue(bool bUseMergedData, bool bIgnoreFormat)
 {
 	cstring sValue;
 	bool	bUseMergedCell = false;
@@ -399,7 +399,7 @@ string DocExcelSheet::GetValue(bool bUseMergedData)
 
 	if (!IsEmpty()) {
 		cstring sType	= m_Column.attribute("t").value();
-		cstring sFormat = GetNumberFormat();
+		cstring sFormat = bIgnoreFormat ? "" : GetNumberFormat();
 		sValue			= m_Column.child("v").text().get();
 
 		if (sType == "s") { // string
@@ -438,7 +438,7 @@ string DocExcelSheet::GetValue(bool bUseMergedData)
 				SetPos(iCurX - delta_x, iCurY - delta_y);
 				GetRow();
 				GetColumn();
-				sValue = GetValue();
+				sValue = GetValue(false, bIgnoreFormat);
 				SetPos(iCurX, iCurY);
 				GetRow();
 				GetColumn();

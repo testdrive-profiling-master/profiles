@@ -146,7 +146,7 @@ public:
 	bool		   IsEmpty(void);
 	int			   GetInt(int iDefault = -1);
 	double		   GetDouble(int fDefault = -1);
-	string		   GetValue(bool bUseMergedData = false);
+	string		   GetValue(bool bUseMergedData = false, bool bIgnoreFormat = false);
 	string		   GetNumberFormat(void);
 	struct tm	  *GetDate(int iDateOverride = -1);
 	bool		   IsMergedCell(void);
