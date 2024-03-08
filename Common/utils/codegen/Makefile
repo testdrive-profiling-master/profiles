@@ -5,7 +5,7 @@ SRC_PATH		:= .
 TARGETNAME		:= codegen
 
 VERSION_UPDATE: all
-	@codegen update_version.lua
+	@codegen gen_version -p codegen .codegen_version.inl
 
 SRCS			:= \
 	$(wildcard $(SRC_PATH)/src/*.cpp) \

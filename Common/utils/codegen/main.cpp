@@ -33,7 +33,7 @@
 // Title : TestDrive codegen project
 // Rev.  : 3/8/2024 Fri (clonextop@gmail.com)
 //================================================================================
-#include ".code_gen_version.inl"
+#include ".codegen_version.inl"
 #include "ArgTable.h"
 #include "Script.h"
 
@@ -43,8 +43,8 @@ const char *__sLuaFileName = NULL;
 cstring		GetTitle(void)
 {
 	cstring sTitle;
-	sTitle.Format("TestDrive code generator. v%d.%d (build #%d date : " __DATE__ ")", CODE_GEN_VERSION_MAJOR,
-				  CODE_GEN_VERSION_MINOR, CODE_GEN_BUILD_COUNT);
+	sTitle.Format("TestDrive code generator. v%d.%d (build #%d date : " __DATE__ ")", CODEGEN_VERSION_MAJOR,
+				  CODEGEN_VERSION_MINOR, CODEGEN_VERSION_BUILD);
 	return sTitle;
 }
 

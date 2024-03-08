@@ -20,7 +20,9 @@ if sFileName == nil then
 end
 
 if #sPREFIX ~= 0 then
-	sPREFIX	= sPREFIX .. "_"
+	 sPREFIX	= String(sPREFIX)
+	 sPREFIX:MakeUpper()
+	sPREFIX		= sPREFIX.s .. "_"
 end
 
 -- 
