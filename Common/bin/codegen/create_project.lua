@@ -36,7 +36,17 @@ sProjectName:Replace(" ", "_", true)
 sProjectName:Trim("_.#@$%^&*()~|\\")
 sProjectName		= sProjectName.s
 
-if #sProjectName == 0 then
+-- upper case of 'project name'
+sProjectNameUpper	= String(sProjectName)
+sProjectNameUpper:MakeUpper()
+sProjectNameUpper	= sProjectNameUpper.s
+
+-- lower case of 'project name'
+sProjectNameLower	= String(sProjectName)
+sProjectNameLower:MakeLower()
+sProjectNameLower	= sProjectNameLower.s
+
+if (#sProjectName == 0) or (sProjectNameLower == "project") then
 	LOGE("Invalid project name.")
 end
 
@@ -110,19 +120,16 @@ end
 local sProjectPath = ""
 
 if (sType == "td" or sType == "testdrive") then
-	local sProjectNameUp	= String(sProjectName)
 	sProjectPath			= MakeDirForTestDrive(sProjectName)	-- make folder
 	
 	local	sYear = String(nil)
 	sYear:FormatDate("%Y", 0)	-- get year
 	
-	sProjectNameUp:MakeUpper()
-	
 	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_testdrive/.\" " .. sProjectPath .. "/")
 	
-	os.execute("mv \"" .. sProjectPath .. "/Application/include/SystemConfigPROJECT.h\" \"" .. sProjectPath .. "/Application/include/SystemConfig" .. sProjectNameUp.s .. ".h\"")
+	os.execute("mv \"" .. sProjectPath .. "/Application/include/SystemConfigPROJECT.h\" \"" .. sProjectPath .. "/Application/include/SystemConfig" .. sProjectNameUpper .. ".h\"")
 	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/g\" -i \"" .. sProjectPath .. "/project.profile\"")
-	os.execute("sed \"s/PROJECT/" .. sProjectNameUp.s .. "/g\" -i \"" .. sProjectPath .. "/Application/include/SystemConfig" .. sProjectNameUp.s .. ".h\"")
+	os.execute("sed \"s/PROJECT/" .. sProjectNameUpper .. "/g\" -i \"" .. sProjectPath .. "/Application/include/SystemConfig" .. sProjectNameUpper .. ".h\"")
 	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/g\" -i \"" .. sProjectPath .. "/Profiles/code_inception.txt\"")
 	os.execute("sed \"s/INITIAL_YEAR/" .. sYear.s .. "/g\" -i \"" .. sProjectPath .. "/Profiles/code_inception.txt\"")
 	
@@ -151,6 +158,9 @@ elseif (sType == "util") then
 	os.execute("sed \"s/Test/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/.project")
 	os.execute("sed \"s/Test/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/Makefile")
 	os.execute("sed \"s/Test/" .. sProjectName .. " project/\" -i ./" .. sProjectName .. "/.inception")
+	os.execute("sed \"s/PROJECT_LOWER/" .. sProjectNameLower .. "/\" -i ./" .. sProjectName .. "/main.cpp")
+	os.execute("sed \"s/PROJECT_UPPER/" .. sProjectNameUpper .. "/\" -i ./" .. sProjectName .. "/main.cpp")
+	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/main.cpp")
 	
 	os.execute("explorer " .. sProjectName)
 elseif (sType == "v" or sType == "verilog") then

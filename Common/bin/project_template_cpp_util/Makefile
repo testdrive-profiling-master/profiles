@@ -5,6 +5,7 @@ SRC_PATH		:= .
 TARGETPATH		:= .
 INSTALL_PATH	:= .
 TARGETNAME		:= Test
+BUILD_VERSION	:= 1
 USE_DEBUG		:= 1			# comment out if you not need a debug mode
 
 SRCS			:= \

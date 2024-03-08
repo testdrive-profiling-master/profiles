@@ -3,9 +3,7 @@
 #-------------------------------------------------
 SRC_PATH		:= .
 TARGETNAME		:= codegen
-
-VERSION_UPDATE: all
-	@codegen gen_version -p codegen .codegen_version.inl
+BUILD_VERSION	:= 1
 
 SRCS			:= \
 	$(wildcard $(SRC_PATH)/src/*.cpp) \

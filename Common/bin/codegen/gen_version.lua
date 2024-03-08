@@ -28,7 +28,7 @@ end
 -- 
 local	f 				= TextFile()
 iVersionMajor	= 0
-iVersionMinor	= 0
+iVersionMinor	= 1
 iBuildCount		= 0
 
 -- get version number
@@ -63,7 +63,8 @@ else
 	iBuildCount		= iBuildCount + 1
 end
 
-LOGI("Current Version : " .. tostring(iVersionMajor) .. "." .. tostring(iVersionMinor) .. "(build : " .. tostring(iBuildCount) .. ")")
+LOGI("Version generated : " .. tostring(iVersionMajor) .. "." .. tostring(iVersionMinor) .. " (build #" .. tostring(iBuildCount) .. ")")
+
 -- save version number
 f:Create(sFileName)
 f:Put("#define		" .. sPREFIX .. "VERSION_MAJOR		" .. tostring(iVersionMajor) .. "\n")

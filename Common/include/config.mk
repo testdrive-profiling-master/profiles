@@ -66,6 +66,19 @@ ifeq ($(BUILD_TARGET), $(TARGET_SO_A))
 endif
 
 #-------------------------------------------------
+# Build version header
+#-------------------------------------------------
+ifndef BUILD_VERSION
+	BUILD_VERSION	:= 0
+endif
+
+ifeq ($(BUILD_VERSION), 1)
+	VERSION_HEADER	:= .$(TARGETNAME)_version.inl
+else
+	VERSION_HEADER	:=
+endif
+
+#-------------------------------------------------
 # 	Build flags.
 #-------------------------------------------------
 ifdef CROSS
@@ -133,6 +146,25 @@ else
 	@cppcheck -j $(NUMBER_OF_PROCESSORS) --suppress=*:*/msys64/* --suppress=*:*/lib_src/* $(INC) $(CDEFS) $(CPPCHECK_ARG) -D__MINGW32__ -D__MINGW64__ -D__GNUC__ --platform=win64 --inline-suppr $(CPPCHECK_SRCS)
 endif
 
+# version management
+.$(TARGETNAME)_version.inl: $(SRCS)
+ifeq ($(BUILD_VERSION), 1)
+	@codegen gen_version -p $(TARGETNAME) .$(TARGETNAME)_version.inl
+endif
+
+version_minor:
+ifeq ($(BUILD_VERSION), 1)
+	@codegen gen_version -n -p $(TARGETNAME) .$(TARGETNAME)_version.inl
+else
+	@echo *E: Version control is not enabled for this project.
+endif
+
+version_major:
+ifeq ($(BUILD_VERSION), 1)
+	@codegen gen_version -m -p $(TARGETNAME) .$(TARGETNAME)_version.inl
+else
+	@echo *E: Version control is not enabled for this project.
+endif
 
 # for simulation build sequence
 ifdef SIMPATH
@@ -168,23 +200,33 @@ endif
 #-------------------------------------------------
 # generic rules
 #-------------------------------------------------
-%.o: %.c
+%.o: %.c $(VERSION_HEADER)
 	@echo '- Compiling... : $<'
 	@ccache $(CC) $(CDEFS) $(CFLAGS) $(INC) -MD -c $< -o $@
 # ccache bug fix "D\:/" -> "D:/"
 	@sed -i 's/\\\:/\:/g' $*.d
+# version management update file ignore
+ifeq ($(BUILD_VERSION), 1)
+	@sed -i 's/.$(TARGETNAME)_version.inl//' $*.d
+endif
 
-%.o: %.cpp
+%.o: %.cpp $(VERSION_HEADER)
 	@echo '- Compiling... : $<'
 	@ccache $(CXX) $(CDEFS) $(CPPFLAGS) -Weffc++ $(INC) -MD -c $< -o $@
 	@sed -i 's/\\\:/\:/g' $*.d
+ifeq ($(BUILD_VERSION), 1)
+	@sed -i 's/.$(TARGETNAME)_version.inl//' $*.d
+endif
 	
-%.o: %.cc
+%.o: %.cc $(VERSION_HEADER)
 	@echo '- Compiling... : $<'
 	@ccache $(CXX) $(CDEFS) $(CPPFLAGS) -Weffc++ $(INC) -MD -c $< -o $@
 	@sed -i 's/\\\:/\:/g' $*.d
+ifeq ($(BUILD_VERSION), 1)
+	@sed -i 's/.$(TARGETNAME)_version.inl//' $*.d
+endif
 
-%.o: %.rc
+%.o: %.rc $(VERSION_HEADER)
 	@echo '- Compiling... : $<'
 	@windres $(INC) $< -o $@
 
