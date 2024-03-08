@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 3/7/2024 Thu (clonextop@gmail.com)
+// Rev.  : 3/8/2024 Fri (clonextop@gmail.com)
 //================================================================================
 #include "DocExcel.h"
 #include "ExcelNumFormat/ExcelNumFormat.h"
@@ -406,7 +406,7 @@ string DocExcelSheet::GetValue(bool bUseMergedData, bool bIgnoreFormat)
 			sValue = m_pExcel->GetString(atoi(sValue.c_str()));
 			sValue.ChangeCharsetToANSI();
 
-			if (!sFormat.IsEmpty() && sFormat != "@") {
+			if (!bIgnoreFormat && !sFormat.IsEmpty() && sFormat != "@") {
 				excel_number_format::ExcelNumFormat num_fmt(sFormat);
 				sValue				= num_fmt.Format(0, sValue.c_str());
 				m_sLatestValueColor = num_fmt.Color();
@@ -414,11 +414,13 @@ string DocExcelSheet::GetValue(bool bUseMergedData, bool bIgnoreFormat)
 		} else if (sType == "b") { // boolean
 			sValue = atoi(sValue.c_str()) ? "TRUE" : "FALSE";
 		} else if (!sValue.IsEmpty()) { // double
-			if (sFormat.IsEmpty())
-				sFormat = "General";
-			excel_number_format::ExcelNumFormat num_fmt(sFormat);
-			sValue				= num_fmt.Format(atof(sValue.c_str()));
-			m_sLatestValueColor = num_fmt.Color();
+			if (!bIgnoreFormat) {
+				if (sFormat.IsEmpty())
+					sFormat = "General";
+				excel_number_format::ExcelNumFormat num_fmt(sFormat);
+				sValue				= num_fmt.Format(atof(sValue.c_str()));
+				m_sLatestValueColor = num_fmt.Color();
+			}
 		} else if (bUseMergedData) {
 			bUseMergedCell = true;
 		}
