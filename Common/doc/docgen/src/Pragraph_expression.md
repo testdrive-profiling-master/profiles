@@ -611,7 +611,7 @@ Result : @<link:https://testdrive-profiling-master.github.io/;TestDrive Profilin
 
 수학 수식의 경우 markdown 과 같게 수학 수식에 "\$$" 로 둘러싸서 표시합니다.
 단! WORD 의 수학 수식은 기본이 "@<color:FF0000>@<b>유니코드@</b>@</color>" 표현식으로 초기 지정되어 있습니다. \
-때문에 "@<color:0000FF>@<b>LaTeX@</b>@</color>" 수식을 활용하고자 한다면, @<i>@<u>"@<b>@<bookmark:@선행 과정>@</b>"을 참고하여 설정을 변경해야 함을 유의합니다.@</u>@</i>
+때문에 "@<color:0000FF>@<b>LaTeX@</b>@</color>" 수식을 활용하고자 한다면, "@<u>@<b>@<bookmark:@선행 과정>@</b>@</u>"을 참고하여 설정을 변경해야 함을 유의합니다.
 수학 수식을 단일로 표현할 경우, 가운데 정렬로 표기 되지만, 문장 중간에 표현할 경우 문장과 어울리도록 표현이 자동 변경되며, \
 아래의 예제는 LaTeX 표현으로 구현된 내용이므로 만약 결과 표기가 잘못 되어 있다면, 위 "@<bookmark:선행 과정>"을 시도하지 않은 결과입니다.
 %%% en
@@ -620,7 +620,7 @@ Result : @<link:https://testdrive-profiling-master.github.io/;TestDrive Profilin
 
 In the case of mathematical formulas, the mathematical equation is displayed by surrounding it with "\$$", as in markdown.
 But, WORD's mathematical equation is initially set to the expression "@<color:FF0000>@<b>Unicode@</b>@</color>". \
-Therefore, if you want to use the equation "@<color:0000FF>@<b>LaTeX@</b>@</color>", please note that you must change the settings by referring to @<i>@<u>"@<b>@<bookmark:@Prerequisites>@</b>"@</u>@</i>.
+Therefore, if you want to use the equation "@<color:0000FF>@<b>LaTeX@</b>@</color>", please note that you must change the settings by referring to "@<u>@<b>@<bookmark:@Prerequisites>@</b>@</u>".
 When a mathematical equation is expressed as a single expression, it is displayed centered, but when expressed in the middle of a sentence, the expression is automatically changed to match the sentence, and \
 the example below is implemented in LaTeX expression, so if the result is notated incorrectly, it is the result of not attempting the "@<bookmark:Prerequisites>" above.
 %%%
@@ -885,7 +885,7 @@ It's an english output.
 ```
 
 :::NoteHeading
-기본은 모든 언어 코드에 활성된 상태입니다.
+기본은 모든 언어 코드가 활성된 상태입니다.
 %%% en -------------------------
 ex)
 ```lua
@@ -1041,7 +1041,7 @@ If the table is too long and you move to the next page, the header is automatica
 
 
 
-
+ 
 %%% ko
 ### 엑셀 파일로부터 표 삽입
 
