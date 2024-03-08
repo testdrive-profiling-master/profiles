@@ -110,6 +110,100 @@ local	month_list	= {
 	"December"
 }
 
+local	excel_named_color_table = {
+	["black"]	= 1,
+	["white"]	= 2,
+	["red"]		= 3,
+	["green"]	= 4,
+	["blue"]	= 5,
+	["yellow"]	= 6,
+	["magenta"]	= 7,
+	["cyan"]	= 8
+}
+
+local	excel_numbered_color_codes = {
+	"000000",
+	"FFFFFF",
+	"FF0000",
+	"00FF00",
+	"0000FF",
+	"FFFF00",
+	"FF00FF",
+	"00FFFF",
+	"800000",
+	"008000",
+	"000080",
+	"808000",
+	"800080",
+	"008080",
+	"C0C0C0",
+	"808080",
+	"9999FF",
+	"993366",
+	"FFFFCC",
+	"CCFFFF",
+	"660066",
+	"FF8080",
+	"0066CC",
+	"CCCCFF",
+	"000080",
+	"FF00FF",
+	"FFFF00",
+	"00FFFF",
+	"800080",
+	"800000",
+	"008080",
+	"0000FF",
+	"00CCFF",
+	"CCFFFF",
+	"CCFFCC",
+	"FFFF99",
+	"99CCFF",
+	"FF99CC",
+	"CC99FF",
+	"FFCC99",
+	"3366FF",
+	"33CCCC",
+	"99CC00",
+	"FFCC00",
+	"FF9900",
+	"FF6600",
+	"666699",
+	"969696",
+	"003366",
+	"339966",
+	"003300",
+	"333300",
+	"993300",
+	"993366",
+	"333399",
+	"333333"
+}
+
+function GetExcelColorCode(sName)
+	local	sColorName	= String(sName)
+	local	iColorCode	= -1
+	
+	if #sName > 0 then
+		if sColorName:CompareFront("color") then
+			sColorName:erase(0, 5)
+			iColorCode	= tonumber(sColorName.s)
+		else
+			iColorCode	= excel_named_color_table[sName]
+			
+			if iColorCode == nil then
+				return ""
+			end
+		end
+		
+		if iColorCode >= 1 and iColorCode <= 57 then
+			return excel_numbered_color_codes[iColorCode]
+		end
+	end
+	
+	return ""
+end
+
 -- 지역 변수들...
 local	doc_last		= doc_node:last_child()
 local	chapture_id		= 0
@@ -441,7 +535,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 		while sheet:GetColumn(false) do
 			local	width			= sheet:GetColumnWidth()
 			local	sName			= String(sheet:GetValue())
-			local	sColor			= sheet:GetLatestValueColor()
+			local	sColor			= GetExcelColorCode(sheet:GetLatestValueColor())
 			local	bCenter			= sName:CompareFront("*")
 			if bCenter then
 				sName:erase(0, 1)
@@ -605,7 +699,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 				col_list[i][1]	= sheet:GetValue()
 				col_list[i][4]	= sheet:GetMergeCellPos()
 				col_list[i][5]	= sheet:GetStyle()
-				col_list[i][6]	= sheet:GetLatestValueColor()
+				col_list[i][6]	= GetExcelColorCode(sheet:GetLatestValueColor())
 				if #(col_list[i][1]) == 0 then col_list[i][1] = " " end	-- cell must be filled
 			end
 			bLast	= (sheet:GetRow(false) == false)
@@ -691,8 +785,8 @@ function GenerateTable(sExcelFileName, sSheetName)
 				
 				local color_field	= ""
 				
-				if #col_list[i][6] > 0 then	--FIXME : color 설정 추가하기
-					color_field		= "<w:color w:val=\"" .. "FF0000" .. "\"/>"
+				if #col_list[i][6] > 0 then	-- color 설정
+					color_field		= "<w:color w:val=\"" .. col_list[i][6] .. "\"/>"
 				end
 				
 				table_code:Append("\

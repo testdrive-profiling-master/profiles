@@ -172,16 +172,37 @@ Microsoft currently does not provide an automatic change method in this area, an
 %%% ko
 ## 알려진 문제들
 
-### Excel 테이블에서 number format 문제
+### Excel table의 지역화 문제
 
-엑셀의 숫자 데이터의 표현에 대해서, 'number format'을 이용한 표현이 현재는 불가능합니다. \
-작업중이며, 향후 적절한 시간을 투자하여 테스트 후 지원할 예정입니다.
+엑셀의 숫자 데이터의 표현에 대해서, 원래는 기본 표현형식 날짜의 'number format'이 국가 설정에 따라 다릅니다.
+
+예) 2024년 3월 8일의 경우
+```txt
+미국 : number format("M/D/YYYY")
+       -> '3/8/2024'
+한국 : number format("YYYY-M-D")
+       -> 2024-3-8
+```
+ 
+위와 같이 국가설정에 따라 연도/월/일 표시 순서가 다르지만, 여기서는 미국 표현형식만을 사용합니다. \
+만약 다른 형식을 사용하고자 한다면, excel에서 기본 형식이 아닌, 직접  사용자 정의 'number format'을 입력해야 합니다.
 
 %%% en
 ## Knwon issues
 
-### Number format issue in Excel table 
+### Localization issue in Excel table
 
-Regarding the expression of numerical data in Excel, expression using 'number format' is currently not possible. \
-I'm working on it and will invest appropriate time to test & support it in the future.
+Regarding the expression of numeric data in Excel, the 'number format' of the default date format originally differs depending on the country setting.
+
+예) For March 8, 2024
+```txt
+United state : number format("M/D/YYYY")
+               -> '3/8/2024'
+Korea        : number format("YYYY-M-D")
+               -> 2024-3-8
+```
+ 
+As shown above, the year/month/day display order varies depending on the country setting, but only the US format is used here. \
+If you want to use a different format, you must enter custom 'number format' directly in Excel, not the default format.
+
 %%%

@@ -136,7 +136,7 @@ public:
 	}
 	inline string GetLatestValueColor(void)
 	{
-		return m_sLatestValueColor;
+		return m_sLatestValueColor.c_string();
 	}
 	bool		   GetRow(bool bAutoCreate = false);
 	bool		   GetColumn(bool bAutoCreate = false);
@@ -186,7 +186,7 @@ private:
 	DocXML	  m_SheetData;
 	DocXML	  m_Row, m_Column;
 	string	  m_sName;
-	string	  m_sLatestValueColor;
+	cstring	  m_sLatestValueColor;
 	string	  m_sEntryPath;
 	bool	  m_bRecompute;
 	struct {

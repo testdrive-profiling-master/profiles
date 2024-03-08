@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 3/7/2024 Thu (clonextop@gmail.com)
+// Rev.  : 3/8/2024 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __EXCEL_NUM_FORMAT_H__
 #define __EXCEL_NUM_FORMAT_H__
@@ -171,6 +171,12 @@ public:
 class ExponentialSection
 {
 public:
+	ExponentialSection(void)
+	{
+		DecimalSeparator = false;
+	}
+	~ExponentialSection(void) {}
+
 	list<string> BeforeDecimal;
 	bool		 DecimalSeparator;
 	list<string> AfterDecimal;
@@ -182,6 +188,12 @@ public:
 class FractionSection
 {
 public:
+	FractionSection(void)
+	{
+		DenominatorConstant = 0;
+	}
+	~FractionSection(void) {}
+
 	list<string> IntegerPart;
 	list<string> Numerator;
 	list<string> DenominatorPrefix;
@@ -198,6 +210,14 @@ public:
 class DecimalSection
 {
 public:
+	DecimalSection(void)
+	{
+		ThousandSeparator = false;
+		ThousandDivisor	  = 0;
+		PercentMultiplier = 0;
+		DecimalSeparator  = false;
+	}
+	~DecimalSection(void) {}
 	bool		 ThousandSeparator;
 	double		 ThousandDivisor;
 	double		 PercentMultiplier;

@@ -853,7 +853,7 @@ Result)
 
 :::NoteHeading
 언어코드 이름은 대소문자를 구분하지 않으며, 언어 코드 이름 뒤에 '-', '=' 또는 '%' 문자들을 나열하여 가독성을 높일 수 있습니다.
-Language code names are not case sensitive.
+
 %%% en
 ## Specify language code
 
