@@ -256,12 +256,24 @@ function verigen_description(desc)
 	end
 end
 
-function read_excel_table(filename, sheet_name, tag_name, position_a, position_b)
+function read_excel_table(filename, sheet_name, tag_name, auto_parsing, position_a, position_b)
 	local xls = DocExcel()
 	
 	if xls:Open(filename) then
-		local sheet = xls:GetSheet(sheet_name)
+		local sheet		= xls:GetSheet(sheet_name)
+		local bNumID	= true
 		
+		if tag_name ~= nil then
+			local sTag = String(tag_name)
+			
+			if sTag:CompareFront("#") then
+				sTag:erase(0, 1)
+				tag_name	= sTag.s
+			else
+				bNumID	= false
+			end
+		end
+
 		if sheet ~= nil then
 			local	contents	= {}
 			
@@ -296,16 +308,40 @@ function read_excel_table(filename, sheet_name, tag_name, position_a, position_b
 				-- read cols
 				for i=1,col_count do
 					sheet:GetColumn()
-					item[header[i]]	= sheet:GetValue(true)
+					local value = sheet:GetValue(true, true)
+					local value_type = sheet:GetLatestValueType()
+					
+					-- auto parsing to type
+					if auto_parsing == true then
+						if value_type == "value" then
+							value	= tonumber(value)
+						elseif value_type == "boolean" then
+							if (value == "True") or (value == "TRUE") then
+								value = true
+							elseif (value == "False") or (value == "FALSE") then
+								value = false
+							end
+						elseif value_type == "string" then
+							-- do nothing
+						else
+							value = nil
+						end
+					end
+					
+					item[header[i]]	= value
 				end
 				
-				if tag_name ~= nil then
+				if bNumID then
+					if tag_name ~= nil and (item[tag_name] == nil or #item[tag_name] == 0) then
+						-- do nothing...
+					else
+						contents[#contents + 1] = item
+					end
+				else
 					if contents[item[tag_name]] ~= nil then
 						LOGW("read_excel_table of '" .. filename .. "'[" .. sheet_name .. "]'s tag '" .. tag_name .. "' is duplicated.")
 					end
 					contents[item[tag_name]] = item
-				else
-					contents[#contents + 1] = item
 				end
 				
 			end
