@@ -24,32 +24,20 @@ do
 	local	config_file_name	= Arg:GetOptionFile("config", 0)
 	
 	if config_file_name ~= nil then
-		local	xls		= DocExcel()
-		if xls:Open(config_file_name) then
+		local config_table = excel_read_table("config.xlsx", "configuration", "Confiuration", true, "A3")
+		
+		if config_table ~= nil then
 			local sheet	= xls:GetSheet("configuration")
+			
+			if config_table ~= nil then
+				config.core_size		= config_table.CORE_SIZE.Value
+				config.m_addr_width		= config_table.M_ADDR_WIDTH.Value
+				config.clock_speed		= config_table.CLK_SPEED.Value
 			
 			if sheet == nil then
 				LOGE("Can't open Excel sheet 'configuration'")
 				os.exit(1)
 			end
-			
-			-- core count
-			sheet:SetPosition("B2")
-			sheet:GetRow(false)
-			sheet:GetColumn(false)
-			config.core_size		= tonumber(sheet:GetValue())
-			-- main memory address bit size
-			sheet:SetPosition("B3")
-			sheet:GetRow(false)
-			sheet:GetColumn(false)
-			config.m_addr_width		= tonumber(sheet:GetValue())
-			-- required clock speed
-			sheet:SetPosition("B4")
-			sheet:GetRow(false)
-			sheet:GetColumn(false)
-			config.clock_speed		= tonumber(sheet:GetValue())
-			
-			xls:Close()
 		else
 			LOGE("Can't load EXCEL configuration file.")
 			os.exit(1)
