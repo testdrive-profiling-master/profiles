@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 3/8/2024 Fri (clonextop@gmail.com)
+// Rev.  : 3/13/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include "DocExcel.h"
 #include "ExcelNumFormat/ExcelNumFormat.h"
@@ -194,11 +194,12 @@ string DocExcelPos::Relative(int iIncreaseX, int iIncreaseY) const
 DocExcelSheet::DocExcelSheet(const char *sName, const char *sEntryPath, DocExcel *pExcel, int iID, pugi::xml_node node)
 	: DocXML(node)
 {
-	m_sName		 = sName;
-	m_sEntryPath = sEntryPath;
-	m_pExcel	 = pExcel;
-	m_iID		 = iID;
-	m_bRecompute = false;
+	m_sName			  = sName;
+	m_sEntryPath	  = sEntryPath;
+	m_pExcel		  = pExcel;
+	m_iID			  = iID;
+	m_bRecompute	  = false;
+	m_LatestValueType = EXCEL_VALUE_TYPE_NIL;
 	{
 		// get dimension
 		memset(&m_Dimension, 0, sizeof(m_Dimension));
@@ -390,6 +391,19 @@ double DocExcelSheet::GetDouble(int fDefault)
 	return fData;
 }
 
+string DocExcelSheet::GetLatestValueTypeString(void)
+{
+	switch (m_LatestValueType) {
+	case EXCEL_VALUE_TYPE_STRING:
+		return "string";
+	case EXCEL_VALUE_TYPE_BOOLEAN:
+		return "boolean";
+	case EXCEL_VALUE_TYPE_VALUE:
+		return "value";
+	}
+	return "nil";
+}
+
 string DocExcelSheet::GetValue(bool bUseMergedData, bool bIgnoreFormat)
 {
 	cstring sValue;
@@ -411,8 +425,10 @@ string DocExcelSheet::GetValue(bool bUseMergedData, bool bIgnoreFormat)
 				sValue				= num_fmt.Format(0, sValue.c_str());
 				m_sLatestValueColor = num_fmt.Color();
 			}
+			m_LatestValueType = sValue.IsEmpty() ? EXCEL_VALUE_TYPE_NIL : EXCEL_VALUE_TYPE_STRING;
 		} else if (sType == "b") { // boolean
-			sValue = atoi(sValue.c_str()) ? "TRUE" : "FALSE";
+			sValue			  = atoi(sValue.c_str()) ? "TRUE" : "FALSE";
+			m_LatestValueType = EXCEL_VALUE_TYPE_BOOLEAN;
 		} else if (!sValue.IsEmpty()) { // double
 			if (!bIgnoreFormat) {
 				if (sFormat.IsEmpty())
@@ -421,11 +437,13 @@ string DocExcelSheet::GetValue(bool bUseMergedData, bool bIgnoreFormat)
 				sValue				= num_fmt.Format(atof(sValue.c_str()));
 				m_sLatestValueColor = num_fmt.Color();
 			}
+			m_LatestValueType = EXCEL_VALUE_TYPE_VALUE;
 		} else if (bUseMergedData) {
 			bUseMergedCell = true;
 		}
 	} else {
-		bUseMergedCell = true;
+		bUseMergedCell	  = true;
+		m_LatestValueType = EXCEL_VALUE_TYPE_NIL;
 	}
 
 	if (bUseMergedCell) {

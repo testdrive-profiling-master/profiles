@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 3/7/2024 Thu (clonextop@gmail.com)
+// Rev.  : 3/13/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -1039,6 +1039,7 @@ Script::Script(void)
 				.addFunction("GetColumn", &DocExcelSheet::GetColumn)
 				.addFunction("GetValue", &DocExcelSheet::GetValue)
 				.addFunction("GetLatestValueColor", &DocExcelSheet::GetLatestValueColor)
+				.addFunction("GetLatestValueType", &DocExcelSheet::GetLatestValueTypeString)
 				.addFunction("GetColumnWidth", &DocExcelSheet::GetColumnWidth)
 				.addFunction("IsMergedCell", &DocExcelSheet::IsMergedCell)
 				.addFunction("GetMergeCellPos",

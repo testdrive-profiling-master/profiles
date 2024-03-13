@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 3/7/2024 Thu (clonextop@gmail.com)
+// Rev.  : 3/13/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __DOC_EXCEL_H__
 #define __DOC_EXCEL_H__
@@ -84,6 +84,13 @@ typedef enum { // default number formats
 	EXCEL_NUMBER_FORMAT_SCIENTIFIC				= 48,
 	EXCEL_NUMBER_FORMAT_TEXT					= 49,
 } EXCEL_NUMBER_FORMAT;
+
+typedef enum {
+	EXCEL_VALUE_TYPE_NIL,
+	EXCEL_VALUE_TYPE_STRING,
+	EXCEL_VALUE_TYPE_BOOLEAN,
+	EXCEL_VALUE_TYPE_VALUE
+} EXCEL_VALUE_TYPE;
 
 class DocExcel;
 class DocExcelSheet;
@@ -138,6 +145,11 @@ public:
 	{
 		return m_sLatestValueColor.c_string();
 	}
+	inline EXCEL_VALUE_TYPE GetLatestValueType(void)
+	{
+		return m_LatestValueType;
+	}
+	string		   GetLatestValueTypeString(void);
 	bool		   GetRow(bool bAutoCreate = false);
 	bool		   GetColumn(bool bAutoCreate = false);
 	bool		   ValidateColumn(void);
@@ -181,14 +193,15 @@ protected:
 	void ExpandDimension(int x, int y);
 
 private:
-	DocExcel *m_pExcel;
-	int		  m_iID;
-	DocXML	  m_SheetData;
-	DocXML	  m_Row, m_Column;
-	string	  m_sName;
-	cstring	  m_sLatestValueColor;
-	string	  m_sEntryPath;
-	bool	  m_bRecompute;
+	DocExcel		*m_pExcel;
+	int				 m_iID;
+	DocXML			 m_SheetData;
+	DocXML			 m_Row, m_Column;
+	string			 m_sName;
+	cstring			 m_sLatestValueColor;
+	EXCEL_VALUE_TYPE m_LatestValueType;
+	string			 m_sEntryPath;
+	bool			 m_bRecompute;
 	struct {
 		int sx, sy;
 		int ex, ey;
