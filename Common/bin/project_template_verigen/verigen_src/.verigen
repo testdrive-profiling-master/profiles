@@ -27,17 +27,9 @@ do
 		local config_table = excel_read_table("config.xlsx", "configuration", "Confiuration", true, "A3")
 		
 		if config_table ~= nil then
-			local sheet	= xls:GetSheet("configuration")
-			
-			if config_table ~= nil then
-				config.core_size		= config_table.CORE_SIZE.Value
-				config.m_addr_width		= config_table.M_ADDR_WIDTH.Value
-				config.clock_speed		= config_table.CLK_SPEED.Value
-			
-			if sheet == nil then
-				LOGE("Can't open Excel sheet 'configuration'")
-				os.exit(1)
-			end
+			config.core_size		= config_table.CORE_SIZE.Value
+			config.m_addr_width		= config_table.M_ADDR_WIDTH.Value
+			config.clock_speed		= config_table.CLK_SPEED.Value
 		else
 			LOGE("Can't load EXCEL configuration file.")
 			os.exit(1)
