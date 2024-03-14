@@ -64,6 +64,15 @@ verigen_add_reference("__Defines.sv", "Global definitions")
 ```
 ;;;
 
+## verigen_add_verilog function
+@<tbl:media/instruction_macros.xlsx;verigen_add_verilog>
+ 
+ex) verigen_add_verilog macro example
+```lua
+verigen_add_verilog("*.sv")
+```
+;;;
+
 ## read_excel_table function
 @<tbl:media/instruction_macros.xlsx;read_excel_table>
  

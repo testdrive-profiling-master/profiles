@@ -283,6 +283,66 @@ function verigen_add_sources(path, ext)
 	end
 end
 
+function verigen_add_verilog(filename)
+	if filename == nil then
+		LOGE("must specify the filename of verigen_add_sources()")
+		os.exit(1)
+	end
+
+	filename	= String(filename)
+	filename:Replace("\\", "/", true)
+
+	local	path	= String(filename.s)
+	local	front	= ""
+	local	back	= String(filename.s)
+	
+	if filename:find("*", 0) >= 0 then
+
+		path:CutBack("*")
+		back:CutFront("*")
+		
+		if path:Length() == 0 then
+			path.s	= "."
+		else
+			if path:CompareBack("/") then
+				path:DeleteBack("/")
+			else
+				front	= String(path.s)
+				front:CutFront("/", true)
+				front:MakeLower()
+				front	= front.s
+			end
+		end
+		
+		back:MakeLower()
+	else
+		module.apply_code(entry)
+	end
+	
+	path	= path.s
+	back	= back.s
+	
+	for entry in lfs.dir(path) do
+		local	s	= String(entry)
+		
+		if s:CompareFront(".") == false then
+			s:MakeLower()
+			
+			if (#back ~= 0) and s:CompareBack(back) == false then
+				goto exit_for
+			end
+			
+			if (#front ~= 0) and s:CompareFront(front) == false then
+				goto exit_for
+			end
+			
+			module.apply_code(entry)
+		end
+		
+		::exit_for::
+	end
+end
+
 -- 사용자 소스 실행
 if RunScript(sInFilename) == false then
 	return
