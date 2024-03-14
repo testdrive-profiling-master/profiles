@@ -285,7 +285,7 @@ end
 
 function verigen_add_verilog(filename)
 	if filename == nil then
-		LOGE("must specify the filename of verigen_add_sources()")
+		LOGE("must specify the filename of verigen_add_verilog()")
 		os.exit(1)
 	end
 
