@@ -258,6 +258,14 @@ function verigen_description(desc)
 	end
 end
 
+function verigen_add_reference(filename, desc)
+	local id = #__verigen_lua_files + 1
+	
+	__verigen_lua_files[id]	= {}
+	__verigen_lua_files[id].filename	= filename
+	__verigen_lua_files[id].desc		= desc
+end
+
 -- 사용자 소스 실행
 if RunScript(sInFilename) == false then
 	return

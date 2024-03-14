@@ -55,6 +55,15 @@ verigen_description("Your description")
 ```
 ;;;
 
+## verigen_add_reference function
+@<tbl:media/instruction_macros.xlsx;verigen_add_reference>
+ 
+ex) verigen_add_reference macro example
+```lua
+verigen_add_reference("__Defines.sv", "Global definitions")
+```
+;;;
+
 ## read_excel_table function
 @<tbl:media/instruction_macros.xlsx;read_excel_table>
  
