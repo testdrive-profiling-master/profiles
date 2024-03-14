@@ -809,6 +809,18 @@ function module:make_code(is_top)
 			f:Put("`endif//__" .. self.name:upper() .. "_INCLUDES_VH__\n")
 			f:Close()
 		end
+		
+		-- Post to TestDrive's 'Design map' document 
+		do
+			local	sWorkPath	= lfs.currentdir()		-- ./verigen_src
+			local	sOutputPath	= String(sWorkPath)		-- .
+			local	sDesignFile	= self.name .. "_hierarchy.svg"
+			
+			sOutputPath:Append("\\" .. sOutPath)
+			sOutputPath			= sOutputPath.s
+			
+			PostToDocument("DesignMap", 0, sWorkPath .. ";" .. sOutputPath .. ";" .. sDesignFile .. ";")
+		end
 	end
 end
 

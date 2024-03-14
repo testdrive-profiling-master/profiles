@@ -193,15 +193,21 @@ elseif (sType == "v_gen" or sType == "verigen") then
 	LOGI("Create Verigen project : '" .. sProjectName .. "'(" .. sProjectPath .. ")")
 	
 	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_verigen/.\" \"" .. sProjectPath .. "/\"")
+	os.execute("mv \"" .. sProjectPath .. "/verigen_src/__PROJECT.sv\" \"" .. sProjectPath .. "/verigen_src/__" .. sProjectName .. ".sv\"")
 	os.execute("mv \"" .. sProjectPath .. "/dpi_private/.src.cpp\" \"" .. sProjectPath .. "/dpi_private/" .. sProjectName .. ".cpp\"")
 	os.execute("mv \"" .. sProjectPath .. "/verigen_src/defines_PROJECT.lua\" \"" .. sProjectPath .. "/verigen_src/defines_" .. sProjectName .. ".lua\"")
 	os.execute("sed \"s/HDL/" .. sProjectName .. "/\" -i \"" .. sProjectPath .. "/.project\"")
 	os.execute("sed \"s/HDL/" .. sProjectName .. " project/\" -i \"" .. sProjectPath .. "/.inception\"")
 	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/g\" -i \"" .. sProjectPath .. "/.verilator\"")
+	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/g\" -i \"" .. sProjectPath .. "/top.sv\"")
+	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/g\" -i \"" .. sProjectPath .. "/verigen_src/.verigen\"")
 	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/g\" -i \"" .. sProjectPath .. "/verigen_src/main.lua\"")
 	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/g\" -i \"" .. sProjectPath .. "/verigen_src/design_hierarchy.lua\"")
 	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/g\" -i \"" .. sProjectPath .. "/verigen_src/Makefile\"")
 	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/g\" -i \"" .. sProjectPath .. "/verigen_src/defines_" .. sProjectName .. ".lua\"")
+	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/g\" -i \"" .. sProjectPath .. "/verigen_src/__" .. sProjectName .. ".sv\"")
+	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/g\" -i \"" .. sProjectPath .. "/verigen_src/__BusSlave.sv\"")
+	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/g\" -i \"" .. sProjectPath .. "/verigen_src/__BusMaster.sv\"")
 	
 	os.execute("explorer " .. sProjectPath)
 elseif (sType == "docgen") then

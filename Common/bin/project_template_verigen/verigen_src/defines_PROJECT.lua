@@ -1,3 +1,5 @@
+verigen_description("PROJECT Definitions")
+
 RunScript("defines_common.lua")
 
 i_mtsp		= {}		-- PROJECT interfaces

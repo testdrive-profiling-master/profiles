@@ -1,4 +1,4 @@
-local	Arg				= ArgTable("Processor Generator. v1.0")
+local	Arg				= ArgTable("PROJECT Processor Generator. v1.0")
 
 -- check arguments
 Arg:AddOptionFile	("config", nil, nil, nil, "excel_config_file", "set configuration excel file")

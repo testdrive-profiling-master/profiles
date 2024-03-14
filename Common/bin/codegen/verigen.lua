@@ -266,6 +266,23 @@ function verigen_add_reference(filename, desc)
 	__verigen_lua_files[id].desc		= desc
 end
 
+function verigen_add_sources(path, ext)
+	if path == nil then
+		path	= "."
+	end
+	
+	if ext == nil then
+		ext		= "sv"
+	end
+	
+	for entry in lfs.dir(path) do
+		local	s	= String(entry)
+		if s:CompareBack("." .. ext) then
+			module.apply_code(entry)
+		end
+	end
+end
+
 -- 사용자 소스 실행
 if RunScript(sInFilename) == false then
 	return
