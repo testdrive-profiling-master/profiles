@@ -43,8 +43,7 @@ bus.apb:set_signal("PREADY")
 bus.apb:set_signal("PRDATA", "DATA_WIDTH")
 bus.apb:set_signal("PSLVERR")
 
-bus.apb:set_modport("s", {["input" ]={"PSEL", "PENABLE", "PWRITE", "PADDR", "PWDATA"}, ["output"]={"PREADY", "PRDATA", "PSLVERR"}})
-bus.apb:set_modport("m", {["output"]={"PSEL", "PENABLE", "PWRITE", "PADDR", "PWDATA"}, ["input" ]={"PREADY", "PRDATA", "PSLVERR"}})
+bus.apb:set_modport("m/s", {["output"]={"PSEL", "PENABLE", "PWRITE", "PADDR", "PWDATA"}, ["input" ]={"PREADY", "PRDATA", "PSLVERR"}})
 
 bus.apb:set_prefix("S#")
 
@@ -97,19 +96,7 @@ bus.maxi3:set_signal("RDATA", "DATA_WIDTH")
 bus.maxi3:set_signal("RRESP", 2)
 bus.maxi3:set_signal("RID", "ID_WIDTH")
 
-bus.maxi3:set_modport("s", {
-	["input"]={
-			"AWVALID", "AWADDR", "AWSIZE", "AWBURST", "AWCACHE", "AWPROT", "AWID", "AWLEN", "AWLOCK",
-			"WVALID", "WLAST", "WDATA", "WSTRB", "WID",
-			"BREADY",
-			"ARVALID", "ARADDR", "ARSIZE", "ARBURST", "ARCACHE", "ARPROT", "ARID", "ARLEN", "ARLOCK",
-			"RREADY"
-			},
-	["output"]={
-			"AWREADY", "WREADY", "BVALID", "BRESP", "BID", "ARREADY", "RVALID", "RDATA", "RRESP", "RID", "RLAST"
-			}
-})
-bus.maxi3:set_modport("m", {
+bus.maxi3:set_modport("m/s", {
 	["output"]={
 			"AWVALID", "AWADDR", "AWSIZE", "AWBURST", "AWCACHE", "AWPROT", "AWID", "AWLEN", "AWLOCK",
 			"WVALID", "WLAST", "WDATA", "WSTRB", "WID",
@@ -135,10 +122,7 @@ bus.maxi4:set_signal("AWREGION", 4)		-- new on AXI4
 bus.maxi4:set_signal("ARQOS", 4)		-- new on AXI4
 bus.maxi4:set_signal("ARREGION", 4)		-- new on AXI4
 
-bus.maxi4:add_modport("s", {
-	["input" ]={"ARQOS", "AWQOS", "AWREGION", "ARREGION"}
-})
-bus.maxi4:add_modport("m", {
+bus.maxi4:set_modport("m/s", {
 	["output"]={"ARQOS", "AWQOS", "AWREGION", "ARREGION"}
 })
 

@@ -51,7 +51,7 @@ To run verigen, run the following command.
 ```txt
 > verigen
 
-Verilog Generator for TestDrive Profiling Master. v1.02
+Verilog Generator for TestDrive Profiling Master. v1.04
 Usage: verigen  [--help] input_file [output_path]
 
       --help                display this help and exit

@@ -286,50 +286,43 @@ LOGI("i_axi3's data width = " .. tostring(i_axi3:get_param("DATA_WIDTH")))
  
 ex) set_modport example
 ```lua
--- APB bus
-bus_apb 	= interface:new("apb")
-bus_apb:set_param("ADDR_WIDTH", 16)
-bus_apb:set_param("DATA_WIDTH", 32)
-bus_apb:set_param("SEL_WIDTH", 2)
-bus_apb:set_signal("PADDR", "ADDR_WIDTH")
-bus_apb:set_signal("PSEL", "SEL_WIDTH")
-bus_apb:set_signal("PENABLE")
-bus_apb:set_signal("PWRITE")
-bus_apb:set_signal("PWDATA", "DATA_WIDTH")
-bus_apb:set_signal("PREADY")
-bus_apb:set_signal("PRDATA", "DATA_WIDTH")
-bus_apb:set_signal("PSLVERR")
+-- some bus
+some_bus 	= interface:new("some_bus")
+some_bus:set_param("ADDR_WIDTH", 16)
+some_bus:set_param("DATA_WIDTH", 32)
+some_bus:set_signal("en")
+some_bus:set_signal("addr", "ADDR_WIDTH")
+some_bus:set_signal("idata", "DATA_WIDTH")
+some_bus:set_signal("oe")
+some_bus:set_signal("odata", "DATA_WIDTH")
+some_bus:set_signal("ext")
 
-bus_apb:set_modport("s", {["input" ]={"PSEL", "PENABLE", "PWRITE", "PADDR", "PWDATA"}, ["output"]={"PREADY", "PRDATA", "PSLVERR"}})
-bus_apb:set_modport("m", {["output"]={"PSEL", "PENABLE", "PWRITE", "PADDR", "PWDATA"}, ["input" ]={"PREADY", "PRDATA", "PSLVERR"}})
+some_bus:set_modport("m", {["input" ]={"en", "addr", "idata"}, ["output"]={"oe", "odata"}})
+some_bus:set_modport("s", {["output"]={"en", "addr", "idata"}, ["input" ]={"oe", "odata"}})
 ```
-;;;
-
-### interface:add_modport
-@<tbl:media/instruction_interface.xlsx;add_modport>
  
-ex) add_modport example
+All below three cases of code are identically same.
+
+case #1) 2 seperated modport script
 ```lua
--- APB bus
-bus_apb 	= interface:new("apb")
-bus_apb:set_param("ADDR_WIDTH", 16)
-bus_apb:set_param("DATA_WIDTH", 32)
-bus_apb:set_param("SEL_WIDTH", 2)
-bus_apb:set_signal("PADDR", "ADDR_WIDTH")
-bus_apb:set_signal("PSEL", "SEL_WIDTH")
-bus_apb:set_signal("PENABLE")
-bus_apb:set_signal("PWRITE")
-bus_apb:set_signal("PWDATA", "DATA_WIDTH")
-bus_apb:set_signal("PREADY")
-bus_apb:set_signal("PRDATA", "DATA_WIDTH")
-bus_apb:set_signal("PSLVERR")
-
-bus_apb:set_modport("s", {["input" ]={"PSEL", "PENABLE", "PWRITE"}, ["output"]={"PREADY", "PRDATA", "PSLVERR"}})
-bus_apb:set_modport("m", {["output"]={"PSEL", "PENABLE", "PWRITE"}, ["input" ]={"PREADY", "PRDATA", "PSLVERR"}})
-
-bus_apb:add_modport('s', {["input" ]={"PADDR", "PWDATA"}})
-bus_apb:add_modport('m', {["output"]={"PADDR", "PWDATA"}})
+...
+some_bus:set_modport("m", {["input" ]={"en", "addr", "idata"}, ["output"]={"oe", "odata"}})
+some_bus:set_modport("s", {["output"]={"en", "addr", "idata"}, ["input" ]={"oe", "odata"}})
 ```
+ 
+case #2) dual inverted modport script
+```lua
+...
+some_bus:set_modport("m/s", {["input" ]={"en", "addr", "idata"}, ["output"]={"oe", "odata"}})
+```
+ 
+case #3) dual inverted modport script and delete 'ext' signal
+```lua
+...
+some_bus:set_modport("m/s", {["input" ]={"en", "addr", "idata", "ext"}, ["output"]={"oe", "odata"}})
+some_bus:set_modport("m/s", {["-input" ]={"ext"})	-- delete 'm' input and 's' output as named 'ext'
+```
+
 ;;;
 
 ### interface:get_modport

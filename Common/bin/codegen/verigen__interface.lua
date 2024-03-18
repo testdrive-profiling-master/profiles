@@ -171,17 +171,29 @@ local __forbidden_word_list = {
 	["end"]			= 1,
 	["else"]		= 1,
 	["module"]		= 1,
+	["modport"]		= 1,
+	["class"]		= 1,
 	["interface"]	= 1,
 	["local"]		= 1,
 	["function"]	= 1,
 	["then"]		= 1,
 	["and"]			= 1,
 	["or"]			= 1,
+	["nor"]			= 1,
 	["xor"]			= 1,
 	["xnor"]		= 1,
 	["if"]			= 1,
 	["for"]			= 1,
-	["begin"]		= 1
+	["begin"]		= 1,
+	["input"]		= 1,
+	["output"]		= 1,
+	["inout"]		= 1,
+	["logic"]		= 1,
+	["bit"]			= 1,
+	["signed"]		= 1,
+	["unsigned"]	= 1,
+	["wire"]		= 1,
+	["reg"]			= 1
 }
 
 local function __check_forbidden_word(s)
@@ -191,6 +203,10 @@ end
 function interface:set_signal(name, bit_width)
 	if bit_width == nil then
 		bit_width	= 1
+	end
+	
+	if (type(name) ~= "string") or (name == nil) or (#name == 0) then
+		error("invalid set_signal use of interface '" .. self.name .. "'")
 	end
 	
 	if __check_forbidden_word(name) then
@@ -209,9 +225,127 @@ function interface:get_modport(name)
 end
 
 function interface:set_modport(name, modport)
-	self.modport[name]			= {}
-	self.modport[name].data		= modport
-	self.modport[name].name		= name
+	local	mp_0	= String(name)
+	local	mp_1	= String("")
+	
+	-- 각 modport 얻기/생성
+	do
+		-- "앞/뒤" 이름 분리
+		if mp_0:find("/", 0) >= 0 then
+			mp_1.s	= mp_0.s
+			mp_0:CutBack("/")
+			mp_1:CutFront("/")
+			mp_0:Trim(" ")
+			mp_1:Trim(" ")
+			
+			if mp_0.s == mp_1.s then
+				LOGE("Invalid modeport on interface '" .. self.name .. "'")
+				os.exit(1)
+			end
+		end
+		
+		mp_0	= mp_0.s
+		mp_1	= mp_1.s
+		
+		-- modport 로 변경
+		if #mp_0 > 0 then
+			if self.modport[mp_0] == nil then	-- 없으면 생성
+				self.modport[mp_0]			= {}
+				self.modport[mp_0].name		= mp_0
+				self.modport[mp_0].data		= {}
+			end
+			if modport == nil then				-- clear modport's data
+				self.modport[mp_0].data		= {}
+			else
+				mp_0	= self.modport[mp_0].data
+			end
+		else
+			-- 예외 에러
+			LOGE("set_modport error : invalid name description '" .. name .. "'")
+			os.exit(1)
+		end
+		
+		if #mp_1 > 0 then
+			if self.modport[mp_1] == nil then	-- 없으면 생성
+				self.modport[mp_1]			= {}
+				self.modport[mp_1].name		= mp_1
+				self.modport[mp_1].data		= {}
+			end
+			if modport == nil then				-- clear modport's data
+				self.modport[mp_1].data		= {}
+			else
+				mp_1	= self.modport[mp_1].data
+			end
+		else
+			mp_1	= nil
+		end
+	end
+
+	if modport ~= nil then
+		-- 각각 신규 i/o 리스트에 대해서
+		for io_type, io_list in pairs(modport) do
+			local	port_0		= String(io_type)
+			local	port_1		= ""
+			local	bRemove		= port_0:CompareFront("-")	-- 제거 여부
+			port_0:CutFront("-")
+			port_0:Trim(" ")
+			port_0	= port_0.s
+			
+			-- mp #1 이름 지정하기
+			if mp_1 ~= nil then
+				-- in/out 반전
+				if port_0 == "input" then
+					port_1	= "output"
+				elseif port_0 == "output" then
+					port_1	= "input"
+				else
+					port_1	= port_0
+				end
+			end
+			
+			-- io list 없으면 생성
+			if #port_0 > 0 then
+				if mp_0[port_0] == nil then	-- list 없으면 생성
+					mp_0[port_0]	= {}
+				end
+				port_0	= mp_0[port_0]
+			else
+				port_0	= nil
+			end
+			
+			if #port_1 > 0 then
+				if mp_1[port_1] == nil then	-- list 없으면 생성
+					mp_1[port_1]	= {}
+				end
+				port_1	= mp_1[port_1]
+			else
+				port_1	= nil
+			end
+			
+			-- 시그널 추가/삭제하기
+			local function signal_to_list(io_table, sig_name, bRemove)
+				if io_table ~= nil then
+					for i, i_name in ipairs(io_table) do
+						if i_name == sig_name then
+							if bRemove then
+								table.remove(io_table, i)
+							end
+							return
+						end
+					end
+					
+					if bRemove == false then
+						io_table[#io_table + 1] = sig_name
+					end
+				end
+			end
+			
+			for io_i, io_name in pairs(io_list) do
+				signal_to_list(port_0, io_name, bRemove)
+				signal_to_list(port_1, io_name, bRemove)
+			end
+		end
+	end
 end
 
 function interface:add_modport(name, modport)
