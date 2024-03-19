@@ -148,7 +148,7 @@ If WScript.Arguments.Count > 0 Then
 		End If
 
 		'PDF 로 저장
-		objDoc.ExportAsFixedFormat pdfPath, 17, False, 1, 0, 1, 1, 0, True, True, 1, True, True, True
+		objDoc.ExportAsFixedFormat pdfPath, 17, False, 0, 0, 1, 1, 0, True, True, 1, True, True, False
 		'objDoc.saveas pdfPath, 17
 	Else
 		Wscript.Echo "*E: Not a Word file."
