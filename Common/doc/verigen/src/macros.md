@@ -73,16 +73,33 @@ verigen_add_verilog("*.sv")
 ```
 ;;;
 
-## read_excel_table function
-@<tbl:media/instruction_macros.xlsx;read_excel_table>
+## verigen_add_verilog function
+@<tbl:media/instruction_macros.xlsx;verigen_add_verilog>
  
-ex) read_excel_table macro example
+ex) verigen_add_verilog macro example
 ```lua
-read_excel_table("a.xlsx", "Sheet1")
-read_excel_table("a.xlsx", "Sheet1", nil, "A5")
-read_excel_table("a.xlsx", "Sheet1", nil, 1, 5)
+verigen_add_verilog("*.sv")
+```
+;;;
+
+## verigen_set_max_showlink function
+@<tbl:media/instruction_macros.xlsx;verigen_set_max_showlink>
+ 
+ex.1) set verigen_set_max_showlink to unlimited.
+```lua
+verigen_set_max_showlink(0)
 end)
 ```
+Result:
+@<img:#media/verigen_set_max_showlink_0.jpg;0.7;verigen_set_max_showlink(unlimited)>
+ 
+ex.2) set verigen_set_max_showlink to 4.
+```lua
+verigen_set_max_showlink(4)
+end)
+```
+Result:
+@<img:#media/verigen_set_max_showlink_4.jpg;0.4;verigen_set_max_showlink(4)>
 ;;;
 
 ## $LOG2 function

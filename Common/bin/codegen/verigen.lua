@@ -7,7 +7,7 @@ sProfilePath:GetEnvironment("TESTDRIVE_PROFILE")
 if lfs.attributes(".verigen", "mode") == "file" then
 	RunScript(".verigen")
 else
-	local	Arg				= ArgTable("Verilog Generator for TestDrive Profiling Master. v1.04")
+	local	Arg				= ArgTable("Verilog Generator for TestDrive Profiling Master. v1.05")
 	
 	Arg:AddOptionFile	("in_file", nil, nil, nil, "input_file", "input Lua file")
 	Arg:AddOptionFile	("out_path", "./output", nil, nil, "output_path", "output path")
@@ -20,6 +20,12 @@ else
 	sInFilename				= Arg:GetOptionFile("in_file", 0)
 	sOutPath				= Arg:GetOptionFile("out_path", 0)
 end
+
+__verigen				= {}
+__verigen.lua_files		= {}	-- hook additional user lua script
+
+__verigen.graphviz					= {}
+__verigen.graphviz.max_edge_count	= 8		-- default maximum edge show on same module
 
 -- create output directory
 if lfs.attributes(sOutPath, "mode") ~= "directory" then
@@ -233,25 +239,25 @@ RunScript("verigen__make.lua")
 
 -- hooking RunScript
 local hook		= require("hook")
-__verigen_lua_files	= {}
+
 function __RunScript(filename)
-	for i, v in ipairs(__verigen_lua_files) do	-- delete already existed file name = push back to end reference
+	for i, v in ipairs(__verigen.lua_files) do	-- delete already existed file name = push back to end reference
 		if v.filename == filename then
 			v.filename	= nil
 		end
 	end
 	
-	local id = #__verigen_lua_files + 1
+	local id = #__verigen.lua_files + 1
 	
-	__verigen_lua_files[id]				= {}
-	__verigen_lua_files[id].filename	= filename
-	__verigen_lua_files[id].desc		= nil
+	__verigen.lua_files[id]				= {}
+	__verigen.lua_files[id].filename	= filename
+	__verigen.lua_files[id].desc		= nil
 end
 
 RunScript = hook.add(RunScript, __RunScript)
 
 function verigen_description(desc)
-	for i, v in ipairs(__verigen_lua_files) do	-- delete already existed file name = push back to end reference
+	for i, v in ipairs(__verigen.lua_files) do	-- delete already existed file name = push back to end reference
 		if v.filename ~= nil and v.filename == codegen.current_file then
 			v.desc	= desc
 		end
@@ -259,11 +265,11 @@ function verigen_description(desc)
 end
 
 function verigen_add_reference(filename, desc)
-	local id = #__verigen_lua_files + 1
+	local id = #__verigen.lua_files + 1
 	
-	__verigen_lua_files[id]	= {}
-	__verigen_lua_files[id].filename	= filename
-	__verigen_lua_files[id].desc		= desc
+	__verigen.lua_files[id]	= {}
+	__verigen.lua_files[id].filename	= filename
+	__verigen.lua_files[id].desc		= desc
 end
 
 function verigen_add_sources(path, ext)
@@ -340,6 +346,12 @@ function verigen_add_verilog(filename)
 		end
 		
 		::exit_for::
+	end
+end
+
+function verigen_set_max_showlink(n)
+	if type(n) == "number" then
+		__verigen.graphviz.max_edge_count	= n
 	end
 end
 

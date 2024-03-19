@@ -16,6 +16,7 @@ AddRevision("1.01",	2023, 6,  8,	"add interface:set_top_uppercase function.")
 AddRevision("1.02",	2023, 6,  12,	"add default clock, add vfunctions. ($LOG2, $RANGE, $DEMUX_BY_EN, $MULTICYCLE)")
 AddRevision("1.03",	2023, 11, 2,	"fix module definition.")
 AddRevision("1.04",	2024, 3, 18,	"Combines set_modport/add_modport functions into one and extends functionality.")
+AddRevision("1.05",	2024, 3, 19,	"add verigen_set_max_showlink() function.")
 
 -- Term 추가
 AddTerm("TestDrive", "TestDrive Profiling Master (@<link:https://testdrive-profiling-master.github.io/>)")

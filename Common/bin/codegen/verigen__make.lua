@@ -208,145 +208,189 @@ function module:make_code(is_top)
 
 	-------------------------------------------------------------------
 	-- module instances
-	for m_name, m in key_pairs(self.sub_module) do
-		local	sModule		= String("")
-		local	no_ports	= true
-		
-		sModule:Append(m.code.prefix)
-		
-		sModule:Append("\n" .. m.module.name)
-		
-		__graphviz:Append("\t" .. self.name .. " -> " .. m.module.name .. " [label=<<table border='0' cellspacing='0' cellpadding='0'><tr><td><b>"..
-			((m.graphviz.name_prefix ~= nil) and m.graphviz.name_prefix or "") ..
-			m.name ..
-			((m.graphviz.name_postfix ~= nil) and m.graphviz.name_postfix or "") .. 
-			"</b></td></tr><tr><td align=\"left\">__MODULE__</td></tr></table>>" ..
-			((m.graphviz.node ~= nil) and ("," .. m.graphviz.node) or "") ..
-			"];\n")
-		local sGraphviz_Module	= String("")
-
-		-- parameters
-		do
-			local	sParam		= String("")
-			local	used_param	= {}
-			
-			for p_name, param in key_pairs(m.module.params) do
-				sParam:Append("\t" .. string.format(".%-20s", p_name) .. "(")
-
-				if m:get_param(p_name) == nil then
-					sParam:Append(p_name)
-					
-					if self:get_param(p_name) == nil then
-						self:set_param(p_name, param.default)
-					end
-				else
-					sParam:Append(tostring(m:get_param(p_name)))
-					used_param[p_name]	= true
-					
-					sGraphviz_Module:Append(p_name .. " = " .. tostring(m:get_param(p_name)) .. "\n")
+	if __verigen.graphviz.max_edge_count > 0 then	-- Limits the maximum number of graphviz edges connected to the same sub-module.
+		local	pre_m_name			= ""
+		local	pre_module_name		= ""
+		local	same_link_count		= 0
+		for m_name, m in key_pairs(self.sub_module) do
+			if pre_module_name == m.module.name then
+				same_link_count		= same_link_count + 1
+				
+				if same_link_count >= (__verigen.graphviz.max_edge_count - 1) then	-- too many link, so hide
+					m.__graphviz_hide	= true
+				end
+			else
+				if same_link_count > __verigen.graphviz.max_edge_count then			-- last link will be show
+					self.sub_module[pre_m_name].__graphviz_hide	= nil
 				end
 				
-				sParam:Append("),\n")
+				pre_module_name		= m.module.name
+				same_link_count		= 0
 			end
 
-			if sParam:Length() ~= 0 then
-				sParam:DeleteBack(",")
-				sModule:Append(" #(\n" .. sParam.s .. ")")
-			end
-			
-			-- check unused parameters
-			for p_name, param in key_pairs(m.param) do
-				if used_param[p_name] ~= true then
-					LOGW("Parameter '" .. p_name .. "' is not matched on module[" .. m.module.name .. "]'s instance[" .. m.name .. "]")
-				end
-			end
+			pre_m_name			= m_name
 		end
 		
-		-- ports
-		sModule:Append(" " .. m.name .. " (\n")
-		do
-			local	sPort			= String("")
+		if same_link_count > 0 then	-- last end of link must be shown
+			self.sub_module[pre_m_name].__graphviz_hide	= nil
+		end
+	end
+	
+	do	-- traversal through sub module instances
+		local	graphiviz_show	= true
+		
+		for m_name, m in key_pairs(self.sub_module) do
+			local	sModule		= String("")
+			local	no_ports	= true
+			
+			sModule:Append(m.code.prefix)
+			
+			sModule:Append("\n" .. m.module.name)
+			
+			-- first hiding and put "....."
+			if (graphiviz_show == true) and (m.__graphviz_hide == true) then
+				__graphviz:Append("\t" .. self.name .. " -> " .. m.module.name .. " [label=<<table border='0' cellspacing='0' cellpadding='0'><tr><td><b><font point-size=\"16\">......</font></b></td></tr></table>> color=white];\n")
+				
+			end
+			graphiviz_show	= (m.__graphviz_hide ~= true)
+			
+			
+			if graphiviz_show then
+				__graphviz:Append("\t" .. self.name .. " -> " .. m.module.name .. " [label=<<table border='0' cellspacing='0' cellpadding='0'><tr><td><b>"..
+					((m.graphviz.name_prefix ~= nil) and m.graphviz.name_prefix or "") ..
+					m.name ..
+					((m.graphviz.name_postfix ~= nil) and m.graphviz.name_postfix or "") .. 
+					"</b></td></tr><tr><td align=\"left\">__MODULE__</td></tr></table>>" ..
+					((m.graphviz.node ~= nil) and ("," .. m.graphviz.node) or "") ..
+					"];\n")
+			end
+			local sGraphviz_Module	= String("")
 
-			-- clock & reset
+			-- parameters
 			do
-				local	clock_list		= {}
-				for clk_name, clk in key_pairs(m.module.clocks) do
-					self:add_clock(clk)
-					
-					if clock_list[clk.name] == nil then
-						clock_list[clk.name]	= 0
-						sPort:Append("\t" .. string.format(".%-20s", clk.name) .."(" .. clk.name .. "),\n")
+				local	sParam		= String("")
+				local	used_param	= {}
+				
+				for p_name, param in key_pairs(m.module.params) do
+					sParam:Append("\t" .. string.format(".%-20s", p_name) .. "(")
+
+					if m:get_param(p_name) == nil then
+						sParam:Append(p_name)
+						
+						if self:get_param(p_name) == nil then
+							self:set_param(p_name, param.default)
+						end
+					else
+						sParam:Append(tostring(m:get_param(p_name)))
+						used_param[p_name]	= true
+						
+						sGraphviz_Module:Append(p_name .. " = " .. tostring(m:get_param(p_name)) .. "\n")
 					end
 					
-					if clk:get_reset() ~= nil then
-						if clock_list[clk:get_reset()] == nil then
-							clock_list[clk:get_reset()]	= 0
-							sPort:Append("\t" .. string.format(".%-20s", clk:get_reset()) .."(" .. clk:get_reset() .. "),\n")
-						end
+					sParam:Append("),\n")
+				end
+
+				if sParam:Length() ~= 0 then
+					sParam:DeleteBack(",")
+					sModule:Append(" #(\n" .. sParam.s .. ")")
+				end
+				
+				-- check unused parameters
+				for p_name, param in key_pairs(m.param) do
+					if used_param[p_name] ~= true then
+						LOGW("Parameter '" .. p_name .. "' is not matched on module[" .. m.module.name .. "]'s instance[" .. m.name .. "]")
 					end
 				end
 			end
 			
 			-- ports
-			for i_name, i in key_pairs(m.module.interfaces) do
-				--local	sIPort	= String("")
-				if i.modport ~= nil then
-					--i.interface.__bared --TODO : bared interface?
-					sPort:Append("\t" .. string.format(".%-20s", i.name) .."(")
-					
-					if m:get_port(i_name) ~= nil then	-- specified port
-						sPort:Append(tostring(m:get_port(i_name)))
+			sModule:Append(" " .. m.name .. " (\n")
+			do
+				local	sPort			= String("")
+
+				-- clock & reset
+				do
+					local	clock_list		= {}
+					for clk_name, clk in key_pairs(m.module.clocks) do
+						self:add_clock(clk)
 						
-						if m.graphviz.ignore_port == nil then
-							sGraphviz_Module:Append("." .. i.name .. " (" .. tostring(m:get_port(i_name)) .. ")\n")
+						if clock_list[clk.name] == nil then
+							clock_list[clk.name]	= 0
+							sPort:Append("\t" .. string.format(".%-20s", clk.name) .."(" .. clk.name .. "),\n")
 						end
-					else
-						local	i_self	= self:get_interface(i_name)
 						
-						if i_self == nil then
-							sPort:Append(i_name)
-							i_self	= self:add_interface(i.interface, i_name)
-							
-							i_self.prefix		= i.prefix
-							i_self.desc			= i.desc
-							
-							-- search other submodule's same name with same interface
-							if self:find_sub_module_matched_interface(m, i.interface, i_name) == false then
-								i_self.modport		= i.modport
+						if clk:get_reset() ~= nil then
+							if clock_list[clk:get_reset()] == nil then
+								clock_list[clk:get_reset()]	= 0
+								sPort:Append("\t" .. string.format(".%-20s", clk:get_reset()) .."(" .. clk:get_reset() .. "),\n")
 							end
-						else	-- check interface
-							if i_self.interface ~= i.interface then
-								error("Not same interface type : " .. m.module.name .. "(" .. i.interface.name .. ") != " .. self.name .. "(" .. i_self.name .. ")", 2)
-							end
-							sPort:Append(i_name)
 						end
 					end
-					
-					sPort:Append("),\n")
-					
-					no_ports	= false
 				end
+				
+				-- ports
+				for i_name, i in key_pairs(m.module.interfaces) do
+					--local	sIPort	= String("")
+					if i.modport ~= nil then
+						--i.interface.__bared --TODO : bared interface?
+						sPort:Append("\t" .. string.format(".%-20s", i.name) .."(")
+						
+						if m:get_port(i_name) ~= nil then	-- specified port
+							sPort:Append(tostring(m:get_port(i_name)))
+							
+							if m.graphviz.ignore_port == nil then
+								sGraphviz_Module:Append("." .. i.name .. " (" .. tostring(m:get_port(i_name)) .. ")\n")
+							end
+						else
+							local	i_self	= self:get_interface(i_name)
+							
+							if i_self == nil then
+								sPort:Append(i_name)
+								i_self	= self:add_interface(i.interface, i_name)
+								
+								i_self.prefix		= i.prefix
+								i_self.desc			= i.desc
+								
+								-- search other submodule's same name with same interface
+								if self:find_sub_module_matched_interface(m, i.interface, i_name) == false then
+									i_self.modport		= i.modport
+								end
+							else	-- check interface
+								if i_self.interface ~= i.interface then
+									error("Not same interface type : " .. m.module.name .. "(" .. i.interface.name .. ") != " .. self.name .. "(" .. i_self.name .. ")", 2)
+								end
+								sPort:Append(i_name)
+							end
+						end
+						
+						sPort:Append("),\n")
+						
+						no_ports	= false
+					end
+				end
+				
+				sPort:DeleteBack(",")
+				sModule:Append(sPort.s)
+			end
+			sModule:Append(");\n")
+			sModule:Append(m.code.postfix)
+			
+			if no_ports then
+				sModule:Trim(" \r\n")
+				sBody:Append("\n/* no ports in module. (commented out for DRC.)\n" .. sModule.s .. "*/\n")
+			else
+				sBody:Append(sModule.s)
 			end
 			
-			sPort:DeleteBack(",")
-			sModule:Append(sPort.s)
-		end
-		sModule:Append(");\n")
-		sModule:Append(m.code.postfix)
-		
-		if no_ports then
-			sModule:Trim(" \r\n")
-			sBody:Append("\n/* no ports in module. (commented out for DRC.)\n" .. sModule.s .. "*/\n")
-		else
-			sBody:Append(sModule.s)
-		end
-		
-		sGraphviz_Module:Replace("\n", "<br align=\"left\"/>", true)
-		
-		if sGraphviz_Module:Length() == 0 then
-			__graphviz:Replace("__MODULE__", sGraphviz_Module.s)
-		else
-			__graphviz:Replace("__MODULE__", "<font point-size=\"6\" color=\"gray\">" .. sGraphviz_Module.s .. "</font>")
+			sGraphviz_Module:Replace("\n", "<br align=\"left\"/>", true)
+			
+			if graphiviz_show then
+				if sGraphviz_Module:Length() == 0 then
+					__graphviz:Replace("__MODULE__", sGraphviz_Module.s)
+				else
+					__graphviz:Replace("__MODULE__", "<font point-size=\"6\" color=\"gray\">" .. sGraphviz_Module.s .. "</font>")
+				end
+			end
 		end
 	end
 	
@@ -753,7 +797,7 @@ function module:make_code(is_top)
 				end
 			end
 			
-			for i, v in ipairs(__verigen_lua_files) do
+			for i, v in ipairs(__verigen.lua_files) do
 				if v.filename ~= nil then
 					local sFileName = String(v.filename)
 					local sToolTip	= (v.desc ~= nil) and v.desc or sFileName.s
@@ -764,8 +808,8 @@ function module:make_code(is_top)
 						sFileName.s = "[" .. sName .. "]"
 					end
 					
-					__graphviz:Append("<tr><td href='cmd://LUA/" .. v.filename .. "' align='right' SIDES='L" .. ((i == #__verigen_lua_files) and "B" or "") .. "' cellspacing='0' cellpadding='3' tooltip='" .. sToolTip .. "'><font color='#2020AF' point-size='10'>" .. ((v.desc == nil) and " " or v.desc) .. "</font></td>")
-					__graphviz:Append("<td href='cmd://LUA/" .. v.filename .. "' align='left' SIDES='R" .. ((i == #__verigen_lua_files) and "B" or "") .. "' cellspacing='0' cellpadding='3' tooltip='" .. sToolTip .. "'><font color='#A0A0AF' point-size='10'>" .. sFileName.s .. "</font></td></tr>")
+					__graphviz:Append("<tr><td href='cmd://LUA/" .. v.filename .. "' align='right' SIDES='L" .. ((i == #__verigen.lua_files) and "B" or "") .. "' cellspacing='0' cellpadding='3' tooltip='" .. sToolTip .. "'><font color='#2020AF' point-size='10'>" .. ((v.desc == nil) and " " or v.desc) .. "</font></td>")
+					__graphviz:Append("<td href='cmd://LUA/" .. v.filename .. "' align='left' SIDES='R" .. ((i == #__verigen.lua_files) and "B" or "") .. "' cellspacing='0' cellpadding='3' tooltip='" .. sToolTip .. "'><font color='#A0A0AF' point-size='10'>" .. sFileName.s .. "</font></td></tr>")
 				end
 			end
 			
