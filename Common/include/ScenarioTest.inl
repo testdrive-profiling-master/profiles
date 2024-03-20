@@ -41,10 +41,10 @@
 
 using namespace std;
 
-const char *__sTestStatusList[TEST_STATUS_SIZE] = {
-	"Status : Not tested",		   "Status : Process is passed",	 "Status : Process is failed",
-	"Status : Program is crashed", "Status : Compilation is failed", "Status : Linking is failed",
-	"Status : File is not found",  "Status : System is not ready",	 "Status : Score = %.10lf",
+LPCTSTR __sTestStatusList[TEST_STATUS_SIZE] = {
+	_T("Status : Not tested"),		   _T("Status : Process is passed"),	 _T("Status : Process is failed"),
+	_T("Status : Program is crashed"), _T("Status : Compilation is failed"), _T("Status : Linking is failed"),
+	_T("Status : File is not found"),  _T("Status : System is not ready"),	 _T("Status : Score = %.10lf"),
 };
 
 #ifndef DOCUMENT_EXPORTS
