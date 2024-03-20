@@ -31,12 +31,15 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 3/19/2024 Tue (clonextop@gmail.com)
+// Rev.  : 3/20/2024 Wed (HyungKi)
 //================================================================================
 #ifndef __SCENARIO_TEST_INLINE__
 #define __SCENARIO_TEST_INLINE__
 #include "ScenarioTestStatus.h"
+#include <string>
 #include <windows.h>
+
+using namespace std;
 
 const char *__sTestStatusList[TEST_STATUS_SIZE] = {
 	"Status : Not tested",		   "Status : Process is passed",	 "Status : Process is failed",
@@ -58,8 +61,9 @@ void TestScoreOut(double fScore, const char *sFormat)
 {
 	fflush(stdout);
 	if (sFormat) {
-		printf("Status : Score = ");
-		printf(sFormat, fScore);
+		string sFormat("Status : Score = ");
+		sFormat += sFormat;
+		printf(sFormat.c_str(), fScore);
 	} else {
 		printf(__sTestStatusList[TEST_STATUS_SCORE], fScore);
 	}
