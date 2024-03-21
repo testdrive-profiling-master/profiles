@@ -52,7 +52,7 @@ local function __collect_keys(t, sort)
 end
 
 function key_pairs(t)
-	local keys = __collect_keys(t, function(a,b) return a < b end)
+	local keys = __collect_keys(t, __key_compare)
 	local i = 0
 	return function()
 		i = i+1

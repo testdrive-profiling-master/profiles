@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 3/13/2024 Wed (clonextop@gmail.com)
+// Rev.  : 3/21/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -917,6 +917,40 @@ static bool __IsWindows(void)
 #endif
 }
 
+static bool __key_compare(string a, string b)
+{
+	int i0 = 0, i1 = 0;
+	int len0 = a.length(), len1 = b.length();
+
+	for (int i0 = 0, i1 = 0; i0 < len0 && i1 < len1; i0++, i1++) {
+		char a_ch  = a[i0];
+		char b_ch  = b[i1];
+		bool a_num = isdigit(a_ch);
+		bool b_num = isdigit(b_ch);
+
+		if (a_num && b_num) {
+			cstring n_a, n_b;
+			n_a += a_ch;
+			n_b += b_ch;
+
+			for (++i0; i0 < len0 && isdigit(a[i0]); i0++) n_a += a[i0];
+			for (++i1; i1 < len1 && isdigit(b[i1]); i1++) n_b += b[i1];
+
+			int num_a = atoi(n_a);
+			int num_b = atoi(n_b);
+
+			if (num_a != num_b) {
+				return num_a < num_b;
+			}
+
+		} else if (a_ch != b_ch) {
+			return a_ch < b_ch;
+		}
+	}
+
+	return len0 < len1;
+}
+
 Script::Script(void)
 {
 	m_pLua = luaL_newstate();
@@ -1225,6 +1259,7 @@ Script::Script(void)
 				.addFunction("exec", __exec)
 				.addFunction("run", __execute)
 				.addFunction("Pause", __Pause)
+				.addFunction("__key_compare", __key_compare)
 				.addFunction("IsWindows", __IsWindows)
 				.addFunction("GetCommonToolPath", GetCommonToolPath);
 		}
