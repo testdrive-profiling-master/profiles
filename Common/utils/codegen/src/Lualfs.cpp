@@ -68,8 +68,7 @@
 
 #endif
 
-#include "Lua/LuaLibrary.h"
-
+#include "lua.hpp"
 #include "Lualfs.h"
 
 #define LFS_VERSION "1.8.0"

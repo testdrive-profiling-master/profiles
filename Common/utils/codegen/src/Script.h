@@ -37,7 +37,7 @@
 #define __SCRIPT_H__
 #include "UtilFramework.h"
 #include "VL.h"
-#include "Lua/LuaLibrary.h"
+#include "lua.hpp"
 #include "LuaBridge/LuaBridge.h"
 #include "LuaFile.h"
 
