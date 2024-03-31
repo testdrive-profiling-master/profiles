@@ -73,12 +73,12 @@ verigen_add_verilog("*.sv")
 ```
 ;;;
 
-## verigen_add_verilog function
-@<tbl:media/instruction_macros.xlsx;verigen_add_verilog>
+## read_excel_table function
+@<tbl:media/instruction_macros.xlsx;read_excel_table>
  
-ex) verigen_add_verilog macro example
+ex) read_excel_table macro example
 ```lua
-verigen_add_verilog("*.sv")
+isa_table	= excel_read_table("isa_table.xlsx", "ISA", "#opcode", true, "A4")	-- read from sheet "ISA"'s "A4"
 ```
 ;;;
 
