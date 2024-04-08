@@ -41,7 +41,7 @@ Arg:AddOptionString	("language", "", "l", nil, "language", "Document language co
 Arg:AddRemark(nil, "'docgen_language' variable in Lua")
 Arg:AddRemark(nil, " default : 'en'")
 
-
+Arg:AddOptionString	("run", "", "r", "run", "lua_code", "Run Lua snippet code")
 Arg:AddOptionFile	("in_file", nil, nil, nil, "input_file", "input Lua file")
 Arg:AddOptionFile	("out_file", "", nil, nil, "output_file", "output Microsoft Word(.docx) file")
 
@@ -51,13 +51,23 @@ if (Arg:DoParse() == false) then
 end
 
 local	sInFilename		= Arg:GetOptionFile("in_file", 0)
-local	sDocTemplate	= String(Arg:GetOptionString("template", 0))
+local	sDocTemplate	= String(Arg:GetOptionString("template"))
 local	sOutFilename	= Arg:GetOptionFile("out_file", 0)
-docgen_language			= String(Arg:GetOptionString("language", 0))
+docgen_language			= String(Arg:GetOptionString("language"))
 docgen_language:MakeLower()
 docgen_language			= docgen_language.s
 if #docgen_language == 0 then
 	docgen_language		= "en"
+end
+
+do	-- run lua definition code
+	local sCode = String(Arg:GetOptionString("run", i))
+	
+	sCode:Replace(";", "\n", true)
+	
+	if #sCode.s ~= 0 then
+		load(sCode.s)()
+	end
 end
 
 doc 					= DocWord()
@@ -1339,11 +1349,24 @@ function EncodeParagraph(sText, sExtra)
 			elseif sLine:CompareFront("%%%") then
 				sLine:CutFront("%", true)
 				sLine:Trim(" \t%-=")
-				sLine:MakeLower()
 				sResult:CutBack("<w:p>", false)
 
 				if #sLine.s ~= 0 then
-					bBypass	= (sLine.s ~= docgen_language)
+					if sLine:CompareFront("(") then
+						if sLine:CompareBack(")") == false then
+							error("The ')' symbol is required at the end of the Lua expression : '" .. sLine.s .. "'")
+						end
+						
+						local	ReturnCode	= load("return (" .. sLine.s .. ")")()
+
+						if ReturnCode == nil then
+							bBypass	= true
+						else
+							bBypass	= (ReturnCode == false)
+						end
+					else
+						bBypass	= (sLine.s ~= docgen_language)
+					end
 				else
 					bBypass	= false
 				end
@@ -1629,7 +1652,13 @@ function EncodeParagraph(sText, sExtra)
 							local	sLuaCode	= sVar:Tokenize("")
 							sLuaCode:TrimLeft(" :")
 							
-							sLine:insert(sLine.TokenizePos, load("return (" .. sLuaCode.s .. ")")())
+							local	ReturnCode	= load("return (" .. sLuaCode.s .. ")")()
+							
+							if type(ReturnCode) == "string" then
+								sLine:insert(sLine.TokenizePos, ReturnCode)
+							else
+								sLine:insert(sLine.TokenizePos, tostring(ReturnCode))
+							end
 						else
 							error("Can't recognize paragraph command : " .. sTag.s)
 						end
