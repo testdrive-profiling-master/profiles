@@ -38,7 +38,8 @@ do	-- list-up customized document template list
 end
 
 Arg:AddOptionString	("language", "", "l", nil, "language", "Document language code string.")
-Arg:AddRemark(nil, "('docgen_language' variable in Lua)")
+Arg:AddRemark(nil, "'docgen_language' variable in Lua")
+Arg:AddRemark(nil, " default : 'en'")
 
 
 Arg:AddOptionFile	("in_file", nil, nil, nil, "input_file", "input Lua file")
@@ -55,6 +56,10 @@ local	sOutFilename	= Arg:GetOptionFile("out_file", 0)
 docgen_language			= String(Arg:GetOptionString("language", 0))
 docgen_language:MakeLower()
 docgen_language			= docgen_language.s
+if #docgen_language == 0 then
+	docgen_language		= "en"
+end
+
 doc 					= DocWord()
 
 if sDocTemplate.s == "" then

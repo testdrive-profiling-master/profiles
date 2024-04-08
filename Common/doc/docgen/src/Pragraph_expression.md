@@ -852,7 +852,7 @@ Result)
 만약 언어 코드 없이 '%%%' 로 끝났다면, 다음 줄부터 모든 언어코드에 대해서 활성화됩니다.
 
 :::NoteHeading
-언어코드 이름은 대소문자를 구분하지 않으며, 언어 코드 이름 뒤에 '-', '=' 또는 '%' 문자들을 나열하여 가독성을 높일 수 있습니다.
+언어코드 이름은 대소문자를 구분하지 않으며, 언어 코드 이름 뒤에 '-', '=' 또는 '%' 문자들을 나열하여 가독성을 높일 수 있습니다. 기본값은 'en' 을 가집니다.
 
 %%% en
 ## Specify language code
@@ -864,7 +864,7 @@ This ensures that only sentences written in your desired language can be used in
 If it ends with '%%%' without a language code, it will be activated for all language codes from the next line.
 
 :::NoteHeading
-Language code names are case-insensitive, and you can improve readability by listing '-', '=', or '%' characters after the language code name.
+Language code names are case-insensitive, and you can improve readability by listing '-', '=', or '%' characters after the language code name. The default value is 'en'.
 %%%
 
 %%% ko -------------------------
