@@ -32,6 +32,7 @@ AllowShortLoopsOnASingleLine: true
 AlwaysBreakBeforeMultilineStrings: false
 BinPackArguments: true
 BinPackParameters: true
+BitFieldColonSpacing: Both
 DerivePointerAlignment: false
 FixNamespaceComments: true
 IndentCaseLabels: false
