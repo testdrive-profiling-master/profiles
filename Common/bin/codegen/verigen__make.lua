@@ -902,6 +902,8 @@ vfunction("RANGE", function(size, step)
 
 	if step == nil then
 		step	= 0
+	elseif step < 0 then
+		error("step must be greater than 0.", 2)
 	end
 	
 	start_pos	= step * size
