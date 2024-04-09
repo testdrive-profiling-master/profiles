@@ -317,17 +317,19 @@ function verigen_add_verilog(filename)
 				front:CutFront("/", true)
 				front:MakeLower()
 				front	= front.s
+				path:CutBack("/", false)
 			end
 		end
 		
 		back:MakeLower()
 	else
 		module.apply_code(entry)
+		return
 	end
 	
 	path	= path.s
 	back	= back.s
-	
+
 	for entry in lfs.dir(path) do
 		local	s	= String(entry)
 		
@@ -342,7 +344,7 @@ function verigen_add_verilog(filename)
 				goto exit_for
 			end
 			
-			module.apply_code(entry)
+			module.apply_code(path .. "/" .. entry)
 		end
 		
 		::exit_for::
