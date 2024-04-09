@@ -843,32 +843,52 @@ Result)
 
  
 %%% ko
-## 언어코드 지정
+## 문서 활성화
 
-@<size:30>@<b>표현식 : %%%@<color:FF0000>언어_코드명@</color>@</b>@</size>
-'@<bookmark:@실행 방법>'에서 지정한 '-l' 옵션에서 지정한 '언어 코드명'과 비교합니다. \
-만약 같지 않으면, 다시 언어코드를 변경하기 전까지 다음 문장들을 무시합니다. \
+@<size:30>@<b>표현식 #1 : %%% @<color:FF0000>언어_코드명@</color>@</b>@</size>
+@<size:30>@<b>표현식 #2 : %%% @<color:0000FF>(@<color:FF0000>Lua_코드@<color:0000FF>)@</color>@</b>@</size>
+
+문서 활성화는 다음 문장들이 실제 문서에 적용할지에 대한 여부를 결정합니다. \
+문서 활성화에 조건은 "언어_코드명" 또는 소괄호 "()" 로 감싸진 "Lua_코드" 의 반환 값으로 지정할 수 있습니다.
+
+"언어_코드명" 의 경우, '@<bookmark:@실행 방법>'에서 지정한 '-l' 옵션에서 지정한 '언어 코드명'과 비교합니다. \
+만약 같지 않으면, 다음 문서 활성화 지정까지 문서 내용을 무시합니다. \
 이로써 원하는 언어로 작성된 문장만 문서에 사용할 수 있습니다.
-만약 언어 코드 없이 '%%%' 로 끝났다면, 다음 줄부터 모든 언어코드에 대해서 활성화됩니다.
+
+"Lua_코드" 의 경우, 반드시 소괄호 "()" 로 감싸져야 합니다. \
+Lua 코드 실행의 반환 값이 'true'(boolean) 일 경우, 다음 문서 내용을 사용하며, \
+그외의 값일 경우, 다음 문서 내용은 무시됩니다.
+
+만약 언어 코드나 Lua 코드 없이 '%%%' 로 끝났다면, 다음 줄부터 문서 내용이 활성화됩니다.
 
 :::NoteHeading
-언어코드 이름은 대소문자를 구분하지 않으며, 언어 코드 이름 뒤에 '-', '=' 또는 '%' 문자들을 나열하여 가독성을 높일 수 있습니다. 기본값은 'en' 을 가집니다.
+언어코드 이름은 대소문자를 구별하며, 언어 코드 이름 뒤에 '-', '=' 또는 '%' 문자들을 나열하여 가독성을 높일 수 있습니다. 기본값은 'en' 을 가집니다. 언어코드는 Lua 에서 'docgen_language' 변수로 사용할 수 있습니다.
 
 %%% en
-## Specify language code
+## Document activation
 
-@<size:30>@<b>Expression : %%%@<color:FF0000>language_code@</color>@</b>@</size>
-Compare 'language_code' with the '-l' option specified one. Refer to '@<bookmark:@How to run>'. \
-If they are not equal, the following sentences are ignored until the language code is changed again. \
+@<size:30>@<b>Expression #1 : %%% @<color:FF0000>language_code@</color>@</b>@</size>
+@<size:30>@<b>Expression #2 : %%% @<color:0000FF>(@<color:FF0000>Lua_code@<color:0000FF>)@</color>@</b>@</size>
+
+Document activation determines whether the following statements will be applied to the actual document. \
+The condition for document activation can be specified as a return value of "language_code name" or "Lua_code" enclosed in parentheses "()".
+
+In the case of "language_code", it is compared with the 'language code name' specified in the '-l' option. (Refer to '@<bookmark:@How to run>'). \
+If not equal, the next document content is ignored until the next document activation specified. \
 This ensures that only sentences written in your desired language can be used in your document.
-If it ends with '%%%' without a language code, it will be activated for all language codes from the next line.
+
+For "Lua_code", it must be enclosed in parentheses "()". \
+If the return value of Lua code execution is 'true'(boolean), then use the following document contents. \
+If not same as 'true', the next document contents will be ignored.
+
+If it ends with '%%%' without language code or Lua code definition, the document content is activated from the next line.
 
 :::NoteHeading
-Language code names are case-insensitive, and you can improve readability by listing '-', '=', or '%' characters after the language code name. The default value is 'en'.
+Language code names are case-sensitive, and you can improve readability by listing '-', '=', or '%' characters after the language code name. The default value is 'en'. The language code can be used as the 'docgen_language' variable in Lua.
 %%%
 
 %%% ko -------------------------
-예)
+예1)
 ```lua
 %%% ko -------------------------
 한글 출력입니다.
@@ -883,11 +903,30 @@ It's an english output.
 한글 출력입니다.
 모든 출력입니다.
 ```
+ 
+예2)
+[Lua code]
+```lua
+test_mode = true
+```
 
-:::NoteHeading
-기본은 모든 언어 코드가 활성된 상태입니다.
+[Markdown code]
+```lua
+%%% (test_mode == true)
+test_mode 가 활성화 되었습니다.
+%%% (test_mode ~= false)
+test_mode 가 비활성화 되었습니다.
+%%%
+```
+
+결과)
+```txt
+test_mode 가 활성화 되었습니다.
+```
+
+
 %%% en -------------------------
-ex)
+ex1)
 ```lua
 %%% ko -------------------------
 한글 출력입니다.
@@ -896,16 +935,35 @@ It's an english output.
 %%% ----------------------------
 It's all output.
 ```
-ex) When using the '-l en' option.
+Result) When using the '-l en' option.
 ```txt
 It's an english output.
 It's all output.
 ```
+ 
+ex2)
+[Lua code]
+```lua
+test_mode = true
+```
 
-:::NoteHeading
-The default is enabled for all language codes.
+[Markdown code]
+```lua
+%%% (test_mode == true)
+test_mode is activated.
+%%% (test_mode ~= false)
+test_mode is inactivated.
+%%%
+```
+
+Result)
+```txt
+test_mode is activated.
+```
+
 %%% -------------------------
  
+
 
 
 
@@ -913,7 +971,7 @@ The default is enabled for all language codes.
 %%% ko
 ## Lua 함수 호출
 @<size:30>@<b>표현식 : @@<lua:@<color:FF0000>lua_함수@</color>>@</b>@</size>
-Lua 함수를 호출하여, 반환된 문자열을 표현식으로 다시 사용합니다.
+Lua 함수를 호출합니다. 반환된 값이 문자열 형식일 경우 다음 문서 내용에 적용합니다.
 
 예)
 ```lua
@@ -924,8 +982,7 @@ Lua 변수 'docgen_language'는 @<lua:docgen_language> 입니다.
 %%% en
 ## Lua function call
 @<size:30>@<b>Expression : @@<lua:@<color:FF0000>lua_function@</color>>@</b>@</size>
-Call a Lua function and reuse the returned string as an expression.
-
+Call a Lua function. If the returned value is in string type, it is applied to the next document content.
 ex)
 ```lua
 Lua variable 'docgen_language' is @<lua:docgen_language>

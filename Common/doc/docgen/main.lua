@@ -16,6 +16,7 @@ AddRevision("1.1",	2020,  4,  2,	"add Visio page to picture & bookmark automatio
 AddRevision("1.2",	2021,  7,  3,	"add word's @<b>@@<property>@</b> tag variable")
 AddRevision("1.3",	2021, 11, 12,	"support excel table")
 AddRevision("1.4",	2024,  2,  5,	"add lua function call in paragraph")
+AddRevision("1.5",	2024,  4,  9,	"add lua snippet option on command line")
 
 
 -- Term 추가
