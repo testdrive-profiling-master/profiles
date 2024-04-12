@@ -23,6 +23,7 @@ profile.call		"%TESTDRIVE_PROFILE%\\common\\SystemChart\\initialize.sp"		// syst
 profile.call		"%TESTDRIVE_PROFILE%\\common\\ScenarioTest\\initialize.sp"		// scenario test
 profile.call		"%TESTDRIVE_PROFILE%\\common\\VirtualDisplay\\initialize.sp"	// virtual display
 //profile.call		"%TESTDRIVE_PROFILE%\\common\\SerialConsole\\initialize.sp"		// serial console
+profile.call		"%TESTDRIVE_PROFILE%\\common\\DesignMap\\initialize.sp"			// design map
 
 // Project Profiles
 profile.call		"Profiles\\ALUTest\\initialize.sp"						// ALU test
