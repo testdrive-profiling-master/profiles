@@ -1,23 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
-// 
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -29,9 +29,9 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : Verilator helper
-// Rev.  : 9/20/2023 Wed (clonextop@gmail.com)
+// Rev.  : 4/29/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #include "UtilFramework.h"
 #include <filesystem>
@@ -40,52 +40,55 @@
 
 namespace fs = std::filesystem;
 
-cstring		g_sTestDrivePath;
-bool		g_bUseBakedModel	= false;
-bool		g_bNoBaked			= false;
+cstring		  g_sTestDrivePath;
+bool		  g_bUseBakedModel = false;
+bool		  g_bNoBaked	   = false;
 
-static string GetEnvString(const char* sKey)
+static string GetEnvString(const char *sKey)
 {
-	char	sStr[1024 * 64];
+	char sStr[1024 * 64];
 	GetPrivateProfileString("VERILATOR", sKey, "", sStr, 1024 * 64, g_sTestDrivePath + "/verilator_helper.ini");
 	return sStr;
 }
 
-static void SetEnvString(const char* sKey, const char* sStr)
+static void SetEnvString(const char *sKey, const char *sStr)
 {
 	WritePrivateProfileString("VERILATOR", sKey, sStr, g_sTestDrivePath + "/verilator_helper.ini");
 }
 
-uint64_t MakeHash(const char* s)
+uint64_t MakeHash(const char *s)
 {
 	uint64_t hash = 2166136261;
 
-	for(; *s; s++)
-		hash = 16777619 * (hash ^ (*s));
+	for (; *s; s++) hash = 16777619 * (hash ^ (*s));
 
 	return hash ^ (hash >> 32);
 }
 
-bool MakeTargetName(cstring& sTargetName)
+bool MakeTargetName(cstring &sTargetName)
 {
-	cstring		sTopFile;
-	cstring		sWaveMode;
-	cstring		sDefinition;
+	cstring sTopFile;
+	cstring sWaveMode;
+	cstring sDefinition;
 	sTopFile.GetEnvironment("SIM_TOP_FILE");
 
-	if(sTopFile.IsEmpty()) return false;
+	if (sTopFile.IsEmpty())
+		return false;
 
 	sWaveMode.GetEnvironment("SIM_WAVE_MODE");
 
-	if(sWaveMode.IsEmpty()) return false;
+	if (sWaveMode.IsEmpty())
+		return false;
 
 	sDefinition.GetEnvironment("SIM_DEFINITION");
 
-	if(sDefinition.IsEmpty()) return false;
+	if (sDefinition.IsEmpty())
+		return false;
 
 	cstring sTotal;
-	sTotal.Format("TopFile : %s, WaveModel : %s, Definition : %s", sTopFile.c_str(), sWaveMode.c_str(), sDefinition.c_str());
-	uint64_t	ulHashCode	= MakeHash(sTotal);
+	sTotal.Format("TopFile : %s, WaveModel : %s, Definition : %s", sTopFile.c_str(), sWaveMode.c_str(),
+				  sDefinition.c_str());
+	uint64_t ulHashCode = MakeHash(sTotal);
 	sTopFile.CutFront("\\", true);
 	sTopFile.CutFront("/", true);
 	sTopFile.CutBack(".", true);
@@ -94,53 +97,53 @@ bool MakeTargetName(cstring& sTargetName)
 	return true;
 }
 
-int BakeModel(const char* sName)
+int BakeModel(const char *sName)
 {
 	cstring sTargetName;
 
-	if(sName) {
-		sTargetName		= sName;
-	} else if(!MakeTargetName(sTargetName)) {
+	if (sName) {
+		sTargetName = sName;
+	} else if (!MakeTargetName(sTargetName)) {
 		LOGE("Invalid operation.");
 		return 1;
 	}
 
-	cstring	sLatestMdir	= GetEnvString("LATEST_MDIR");
-	cstring sTargetPath	= "./.bake/";
+	cstring sLatestMdir = GetEnvString("LATEST_MDIR");
+	cstring sTargetPath = "./.bake/";
 
-	if(sLatestMdir.IsEmpty()) {
+	if (sLatestMdir.IsEmpty()) {
 		LOGE("No recent build result.");
 		return 1;
 	}
 
 	{
 		// target is a valid directory?
-		auto target_path	= fs::path(sTargetPath.c_str());
+		auto target_path = fs::path(sTargetPath.c_str());
 
 		// not exist? then create
-		if(!fs::exists(target_path)) {
+		if (!fs::exists(target_path)) {
 			fs::create_directories(target_path);
 			{
 				// add nosearch directive
-				cstring	sNosearchPath(sTargetPath.c_str());
-				sNosearchPath	+= "/.TestDrive.nosearch";
-				target_path	= fs::path(sNosearchPath.c_str());
+				cstring sNosearchPath(sTargetPath.c_str());
+				sNosearchPath += "/.TestDrive.nosearch";
+				target_path = fs::path(sNosearchPath.c_str());
 
-				if(!fs::exists(target_path)) {
+				if (!fs::exists(target_path)) {
 					ofstream ofs(target_path);
 					ofs.close();
 				}
 			}
 		}
 
-		if(!fs::exists(target_path) || !fs::is_directory(target_path)) {
+		if (!fs::exists(target_path) || !fs::is_directory(target_path)) {
 			LOGE("bake path is not a directory. : '%s'\n", target_path.string().c_str());
 			return 1;
 		}
 
 		{
-			auto	target_full_path	= fs::absolute(target_path);
-			cstring	sFullPath			= target_full_path.string();
+			auto	target_full_path = fs::absolute(target_path);
+			cstring sFullPath		 = target_full_path.string();
 			sFullPath.Replace("\\", "/", true);
 			LOGI("Current H/W model(%s%s.tar.gz) baking...", sFullPath.c_str(), sTargetName.c_str());
 		}
@@ -152,7 +155,8 @@ int BakeModel(const char* sName)
 		sLatestMdir.Replace("\\", "/", true);
 		sCmd.Format("rm -f %s%s.tar.gz >nul 2>&1", sTargetPath.c_str(), sTargetName.c_str());
 		system(sCmd);
-		sCmd.Format("tar cvfz %s%s.tar.gz -C %s *.cpp *.h *.mk *.dat >nul 2>&1", sTargetPath.c_str(), sTargetName.c_str(), sLatestMdir.c_str());
+		sCmd.Format("tar cvfz %s%s.tar.gz -C %s *.cpp *.h *.mk *.dat >nul 2>&1", sTargetPath.c_str(),
+					sTargetName.c_str(), sLatestMdir.c_str());
 		system(sCmd);
 		LOGI("Done!");
 	}
@@ -160,34 +164,34 @@ int BakeModel(const char* sName)
 	return 0;
 }
 
-int main(int argc, const char* argv[])
+int main(int argc, const char *argv[])
 {
-	cstring	sArg;	// argument path
-	cstring	sExe;	// verilator path
-	cstring	sCmd;	// modified command line
-	bool	bHelp	= false;
+	cstring sArg; // argument path
+	cstring sExe; // verilator path
+	cstring sCmd; // modified command line
+	bool	bHelp = false;
 
-	if(!g_sTestDrivePath.GetEnvironment("TESTDRIVE_DIR")) {
+	if (!g_sTestDrivePath.GetEnvironment("TESTDRIVE_DIR")) {
 		LOGE("You must run TestDrive Profiling Master first.");
 		return 1;
 	}
 
 	{
 		// check baked model or not
-		cstring	sBakedModel;
+		cstring sBakedModel;
 
-		if(sBakedModel.GetEnvironment("SIM_BAKED_MODEL")) {
-			g_bUseBakedModel	= atoi(sBakedModel.c_str());
+		if (sBakedModel.GetEnvironment("SIM_BAKED_MODEL")) {
+			g_bUseBakedModel = atoi(sBakedModel.c_str());
 		}
 	}
 
-	if(argc >= 2 && !strcmp(argv[1], "bake")) {	// bake copy
-		if(argc > 3) {
+	if (argc >= 2 && !strcmp(argv[1], "bake")) { // bake copy
+		if (argc > 3) {
 			LOGE("Invalid arguments...");
 			return 1;
 		}
 
-		if(g_bUseBakedModel) {
+		if (g_bUseBakedModel) {
 			LOGE("Already baked model is activated.");
 			return 1;
 		}
@@ -197,81 +201,83 @@ int main(int argc, const char* argv[])
 
 	{
 		// check pre-compiled repo.
-		cstring	sDst;
+		cstring sDst;
 		cstring sBakePath;
 		{
-			for(int i = 1; i < argc; i++) {
+			for (int i = 1; i < argc; i++) {
 				cstring sArg = argv[i];
 
-				if(sBakePath.IsEmpty() && !sArg.CompareFront("-")) {
-					sBakePath	= argv[i];
+				if (sBakePath.IsEmpty() && !sArg.CompareFront("-")) {
+					sBakePath = argv[i];
 					sBakePath.Replace("\\", "/", true);
 					sBakePath.CutBack("/");
-					sBakePath	+= "/.bake/";
+					sBakePath += "/.bake/";
 				}
 
-				if(sArg == "--help") {
-					bHelp	= true;
+				if (sArg == "--help") {
+					bHelp = true;
 				}
 
-				if(sArg == "-Mdir" && (i + 1) < argc) {
+				if (sArg == "-Mdir" && (i + 1) < argc) {
 					i++;
-					sDst	= argv[i];
+					sDst = argv[i];
 					sDst.Trim(" \"");
 					// update latest target path
 					SetEnvString("LATEST_MDIR", fs::absolute(fs::path(sDst.c_str())).string().c_str());
 				}
 			}
 
-			if(g_bUseBakedModel) do {	// source .bake path check
-				cstring sBakeName;
+			if (g_bUseBakedModel)
+				do { // source .bake path check
+					cstring sBakeName;
 
-				if(sBakePath.IsEmpty()) {
-					// cancel using baked model.
-					g_bUseBakedModel	= false;
-					break;
-				}
+					if (sBakePath.IsEmpty()) {
+						// cancel using baked model.
+						g_bUseBakedModel = false;
+						break;
+					}
 
-				if(!MakeTargetName(sBakeName))
-					return 1;
+					if (!MakeTargetName(sBakeName))
+						return 1;
 
-				sBakePath	+= sBakeName;
-				sBakePath	+= ".tar.gz";
-				auto repo_path	= fs::path(sBakePath.c_str());
+					sBakePath += sBakeName;
+					sBakePath += ".tar.gz";
+					auto repo_path = fs::path(sBakePath.c_str());
 
-				if(!fs::exists(repo_path) || !fs::is_regular_file(repo_path)) {
-					// cancel using baked model.
-					g_bUseBakedModel	= false;
-					break;
-				}
+					if (!fs::exists(repo_path) || !fs::is_regular_file(repo_path)) {
+						// cancel using baked model.
+						g_bUseBakedModel = false;
+						break;
+					}
 
-				if(sDst.IsEmpty()) sDst = "./";
-				else {
-					sDst	+= '/';
-				}
+					if (sDst.IsEmpty())
+						sDst = "./";
+					else {
+						sDst += '/';
+					}
 
-				// extract
-				{
-					auto src_path = fs::absolute(fs::path(sBakePath.c_str()));
-					cstring sCmd;
-					LOGI("Extract from baked model '%s'", sBakeName.c_str());
-					sCmd.Format("tar xvf %s -C %s >nul 2>&1", sBakePath.c_str(), sDst.c_str());
-					system(sCmd);
-				}
-				return 0;
-			} while(0);
+					// extract
+					{
+						auto	src_path = fs::absolute(fs::path(sBakePath.c_str()));
+						cstring sCmd;
+						LOGI("Extract from baked model '%s'", sBakeName.c_str());
+						sCmd.Format("tar xvf %s -C %s >nul 2>&1", sBakePath.c_str(), sDst.c_str());
+						system(sCmd);
+					}
+					return 0;
+				} while (0);
 		}
 	}
 
 	// make arguments
-	if(argc != 1) {
+	if (argc != 1) {
 		// get given arguments
-		for(int i = 1; i < argc; i++) {
-			cstring	s(argv[i]);
+		for (int i = 1; i < argc; i++) {
+			cstring s(argv[i]);
 
-			if(s.find(' ') >= 0) {
+			if (s.find(' ') >= 0) {
 				s.insert(0, "\"");
-				s	+= "\"";
+				s += "\"";
 			}
 
 			sArg.AppendFormat(" %s", s.c_str());
@@ -279,62 +285,64 @@ int main(int argc, const char* argv[])
 
 		// get extra arguments from file description
 		{
-			cstring	sPath;
+			cstring sPath;
 
-			if(sPath.GetEnvironment("SIM_TOP_FILE")) {
-				int		pos;
+			if (sPath.GetEnvironment("SIM_TOP_FILE")) {
+				int pos;
 				// delete '"'
 				sPath.Replace("\"", "", true);
 				// change linux style path to windows
 				sPath.Replace("/", "\\", true);
 
-				if((pos = sPath.rfind("\\")) > 0) {
-					cstring	sWorkPath;
-					fs::path	sCurPath	= fs::current_path();
+				if ((pos = sPath.rfind("\\")) > 0) {
+					cstring	 sWorkPath;
+					fs::path sCurPath = fs::current_path();
 					sPath.erase(pos, -1);
 					sWorkPath.Format("%s\\%s\\", sCurPath.string().c_str(), sPath.c_str());
 					sPath += "\\.verilator";
-					TextFile	f;
+					TextFile f;
 
-					if(f.Open(sPath.c_str())) {
+					if (f.Open(sPath.c_str())) {
 						cstring sLine;
 
-						while(f.GetLine(sLine)) {
+						while (f.GetLine(sLine)) {
 							sLine.Trim(" \r\n");
 
-							if(sLine.CompareFront(":")) {
-								bool	bRun	= false;
-								cstring	sRunPath;
+							if (sLine.CompareFront(":")) {
+								bool	bRun = false;
+								cstring sRunPath;
 								sLine.erase(0, 1);
 
-								if(sLine.CompareFront("[")) {
+								if (sLine.CompareFront("[")) {
 									sLine.erase(0, 1);
-									int iEnd	= sLine.find("]");
-									sRunPath	= sLine;
+									int iEnd = sLine.find("]");
+									sRunPath = sLine;
 									sRunPath.CutBack("]", true);
 									sLine.CutFront("]");
 									sLine.Trim(" ");
 									sRunPath.Trim(" ");
 
-									if(sRunPath.CompareFront("!")) {	// run when directory is not existed.
+									if (sRunPath.CompareFront("!")) { // run when directory is not existed.
 										sRunPath.erase(0, 1);
 										sRunPath.Trim(" ");
 										sRunPath.insert(0, sWorkPath);
-										bRun	= !fs::exists(fs::path(sRunPath.c_str()));
+										bRun = !fs::exists(fs::path(sRunPath.c_str()));
 										fs::current_path(fs::path(sWorkPath.c_str()));
-									} else {	// run when directory is existed.
+									} else { // run when directory is existed.
 										sRunPath.insert(0, sWorkPath);
-										bRun	= fs::exists(fs::path(sRunPath.c_str()));
+										bRun = fs::exists(fs::path(sRunPath.c_str()));
 
-										if(bRun) fs::current_path(fs::path(sRunPath.c_str()));
+										if (bRun)
+											fs::current_path(fs::path(sRunPath.c_str()));
 									}
 								}
 
-								if(bRun) system(sLine);
+								if (bRun)
+									system(sLine);
 
 								fs::current_path(sCurPath);
-							} else {	// add to argument
-								if(sLine.size())
+							} else { // add to argument
+								if (sLine.size())
 									sArg.AppendFormat(" %s", sLine.c_str());
 							}
 						}
@@ -343,23 +351,23 @@ int main(int argc, const char* argv[])
 			}
 		}
 		// default arguments for Testdrive
-		sArg	+= " -I$(TESTDRIVE_PROFILE)Common/System/SystemSim/HDL";
+		sArg += " -I$(TESTDRIVE_PROFILE)Common/System/SystemSim/HDL";
 	}
 
 	{
 		// get verilator path
 		sExe.Format("%sbin/msys64/ucrt64/share/verilator", g_sTestDrivePath.c_str());
 		sExe.SetEnvironment("VERILATOR_ROOT");
-		sExe.Format("%sbin/msys64/ucrt64/bin", g_sTestDrivePath.c_str());
+		sExe.Format("%sbin/msys64/ucrt64/share/verilator/bin", g_sTestDrivePath.c_str());
 
-		if(bHelp)
+		if (bHelp)
 			sExe += "/verilator";
 		else
 			sExe += "/verilator_bin";
 	}
 
 	// make command
-	if(bHelp)
+	if (bHelp)
 		sCmd.Format("perl \"%s\" %s", sExe.c_str(), sArg.c_str());
 	else
 		sCmd.Format("\"%s\" %s", sExe.c_str(), sArg.c_str());

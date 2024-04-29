@@ -110,3 +110,25 @@ function excel_read_table(filename, sheet_name, tag_name, auto_parsing, position
 	
 	return nil
 end
+
+--[[
+	read text from file.
+	filename 		: text file path
+--]]
+function read_text_file(filename, bUseComment)
+	local f = TextFile()
+	
+	if f:Open(filename) == false then
+		return nil
+	end
+	
+	if bUseComment == nil then
+		bUseComment	= false
+	end
+	
+	local s = f:GetAll(bUseComment)
+	
+	f:Close()
+	
+	return s
+end
