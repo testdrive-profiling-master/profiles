@@ -169,7 +169,7 @@ int main(int argc, const char *argv[])
 	cstring sArg; // argument path
 	cstring sExe; // verilator path
 	cstring sCmd; // modified command line
-	bool	bHelp = false;
+	bool	bHelp = (argc == 1);
 
 	if (!g_sTestDrivePath.GetEnvironment("TESTDRIVE_DIR")) {
 		LOGE("You must run TestDrive Profiling Master first.");
