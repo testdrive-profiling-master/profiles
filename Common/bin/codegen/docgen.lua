@@ -50,6 +50,8 @@ if (Arg:DoParse() == false) then
 	return
 end
 
+RunScript("codegen_utils")
+
 local	sInFilename		= Arg:GetOptionFile("in_file", 0)
 local	sDocTemplate	= String(Arg:GetOptionString("template"))
 local	sOutFilename	= Arg:GetOptionFile("out_file", 0)
