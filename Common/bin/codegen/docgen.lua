@@ -1327,7 +1327,7 @@ function EncodeParagraph(sText, sExtra)
 					<w:tc>\
 						<w:tcPr>\
 							<w:tcW w:w=\"10094\" w:type=\"dxa\"/>\
-							<w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"F7F7F7\" w:themeFill=\"background1\" w:themeFillShade=\"F7\"/>\
+							<w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"F8F8F8\" w:themeFill=\"background1\" w:themeFillShade=\"F8\"/>\
 						</w:tcPr>"
 				.. EncodeParagraph(sContent, {pPr=("<w:jc w:val=\"left\"/><w:spacing w:after=\"0\"/>" .. sIndent), rPr="<w:rFonts w:ascii=\"Cascadia Mono\" w:eastAsia=\"Cascadia Mono\" w:hAnsi=\"Cascadia Mono\"/>"}) ..
 				"</w:tc></w:tr></w:tbl>"
