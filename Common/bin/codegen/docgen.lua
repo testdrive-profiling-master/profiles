@@ -1310,10 +1310,10 @@ function EncodeParagraph(sText, sExtra)
 					<w:tblStyle w:val=\"ae\"/>\
 					<w:tblW w:w=\"0\" w:type=\"auto\"/>\
 					<w:tblBorders>\
-						<w:top w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"F2F2F2\"/>\
-						<w:left w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"F2F2F2\"/>\
-						<w:bottom w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"F2F2F2\"/>\
-						<w:right w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"F2F2F2\"/>\
+						<w:top w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"F7F7F7\"/>\
+						<w:left w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"F7F7F7\"/>\
+						<w:bottom w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"F7F7F7\"/>\
+						<w:right w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"F7F7F7\"/>\
 					</w:tblBorders>\
 					<w:tblCellMar>\
 						<w:top w:w=\"32\" w:type=\"dxa\"/>\
@@ -1327,7 +1327,7 @@ function EncodeParagraph(sText, sExtra)
 					<w:tc>\
 						<w:tcPr>\
 							<w:tcW w:w=\"10094\" w:type=\"dxa\"/>\
-							<w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"F2F2F2\" w:themeFill=\"background1\" w:themeFillShade=\"F2\"/>\
+							<w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"F7F7F7\" w:themeFill=\"background1\" w:themeFillShade=\"F7\"/>\
 						</w:tcPr>"
 				.. EncodeParagraph(sContent, {pPr=("<w:jc w:val=\"left\"/><w:spacing w:after=\"0\"/>" .. sIndent), rPr="<w:rFonts w:ascii=\"Cascadia Mono\" w:eastAsia=\"Cascadia Mono\" w:hAnsi=\"Cascadia Mono\"/>"}) ..
 				"</w:tc></w:tr></w:tbl>"
