@@ -652,6 +652,12 @@ function module:make_code(is_top)
 				"	<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />\n"..
 				"	<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\" />\n"..
 				"	<meta name=\"google\" content=\"notranslate\">\n"..
+				"	<style>\n"..
+				"	* {\n"..
+				"		font-family: 'Cascadia Mono', courier, serif;\n"..
+				"		font-size: 14px;\n"..
+				"	}\n"..
+				"	</style>\n"..
 				"	<title>" .. self.name .. ".sv</title>\n"..
 				"</head>\n"..
 				"<body>\n")

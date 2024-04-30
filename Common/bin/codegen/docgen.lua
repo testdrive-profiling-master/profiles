@@ -1329,7 +1329,7 @@ function EncodeParagraph(sText, sExtra)
 							<w:tcW w:w=\"10094\" w:type=\"dxa\"/>\
 							<w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"F2F2F2\" w:themeFill=\"background1\" w:themeFillShade=\"F2\"/>\
 						</w:tcPr>"
-				.. EncodeParagraph(sContent, {pPr=("<w:jc w:val=\"left\"/><w:spacing w:after=\"0\"/>" .. sIndent), rPr="<w:rFonts w:ascii=\"돋움체\" w:eastAsia=\"돋움체\" w:hAnsi=\"돋움체\"/>"}) ..
+				.. EncodeParagraph(sContent, {pPr=("<w:jc w:val=\"left\"/><w:spacing w:after=\"0\"/>" .. sIndent), rPr="<w:rFonts w:ascii=\"Cascadia Mono\" w:eastAsia=\"Cascadia Mono\" w:hAnsi=\"Cascadia Mono\"/>"}) ..
 				"</w:tc></w:tr></w:tbl>"
 				)
 				bInline	= false

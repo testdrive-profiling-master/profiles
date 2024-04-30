@@ -3,9 +3,9 @@ extension "txt"
 bold "@<b>$text@</b>"
 italics "@<i>$text@</i>"
 underline "@<u>$text@</u>"
-fixed "@<fixed>$text@</fixed>"
+fixed "$text"
 color "@<color:$style>$text@</color>"
-bgcolor "@<bgcolor:bg$style>$text@</bgcolor>"
+bgcolor "$text"
 
 colormap
 "green" "33CC00"
