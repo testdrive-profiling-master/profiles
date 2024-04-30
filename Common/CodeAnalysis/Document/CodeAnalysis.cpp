@@ -63,7 +63,7 @@ CodeAnalysis::CodeAnalysis(ITDDocument* pDoc)
 	m_pDoc		= pDoc;
 	m_pReport	= pDoc->CreateReport(NULL, 0, 0, 10, 10);
 	m_pReport->ShowScrollBar(TRUE);
-	m_pReport->EnableEdit(TRUE);
+	m_pReport->EnableEdit(FALSE);
 	m_pReport->SetManager(this);
 	{
 		ITDPropertyData* pProperty;
@@ -460,7 +460,7 @@ void CodeAnalysis::DoStaticCodeAnalysis(void)
 	BOOL bRet		= TRUE;
 	m_pDoc->Lock();
 	m_pReport->Clear();
-	m_pReport->SetFont(_T("Arial"));
+	m_pReport->SetFont(_T("Cascadia Mono"));
 	m_pReport->SetColor(RGB(0, 0, 0));
 	m_pReport->SetText(_L(STATIC_CODE_ANALYSIS));
 	g_pSystem->LogInfo(_L(STATIC_CODE_ANALYSIS_PLEASE_WAIT));

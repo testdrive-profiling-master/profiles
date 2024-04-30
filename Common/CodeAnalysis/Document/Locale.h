@@ -1,24 +1,23 @@
-﻿//================================================================================
-// Copyright (c) 2013 ~ 2020. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
-// 
+//================================================================================
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -30,12 +29,12 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : Code Analysis
-// Rev.  : 7/26/2020 Sun (CloneX)
+// Rev.  : 4/30/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #include "LocaleString.h"
-
+/* clang-format off */
 #define	PROFILE_NAME	"Code Analysis"
 
 LOCALE_DEFINE(4, LANG_KOREAN, LANG_JAPANESE, LANG_SPANISH, LANG_ENGLISH)
@@ -66,7 +65,7 @@ LOCALE_TEXT(STATIC_CODE_ANALYSIS,
 	_T("análisis de código estático...\n\n"),
 	_T("Static code analysis...\n\n"))
 LOCALE_TEXT(STATIC_CODE_ANALYSIS_PLEASE_WAIT,
-	_T("정적 코드 분석중입니다. 잠시 기다려주시기 비랍니다..."),
+	_T("정적 코드 분석중입니다. 잠시 기다려주시기 바랍니다..."),
 	_T("静的コード分析中です。しばらくお待ち非んですよ..."),
 	_T("analysising código estático . Por favor espera..."),
 	_T("Static code analysising. Please wait..."))
@@ -115,4 +114,5 @@ LOCALE_TEXT(DESC_STATIC_ANALYSIS_SURPPRESS,
 	_T("無視エラーが表示されます。\n例) objectIndex,preprocessorErrorDirective"),
 	_T("Lista de errores a ignorar.\nex) objectIndex,preprocessorErrorDirective"),
 	_T("List errors to ignore.\nex) objectIndex,preprocessorErrorDirective"))
+/* clang-format on */
 LOCALE_END
