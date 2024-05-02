@@ -7,8 +7,11 @@ sTemplatePath.s			= sProfilePath.s
 
 Arg:AddOptionString	("template", "", "t", nil, "template", "Document template name/file.")
 
+local	sDefaultDocgenTemplate			= "testdrive"
+
 do	-- list-up customized document template list
 	local	bCustomTemplateIsExisted	= false
+
 	for src_path in lfs.dir(sTemplatePath.s .. "common/bin/codegen") do
 		local sName		= String(src_path)
 		local sExt		= String(src_path)
@@ -29,17 +32,29 @@ do	-- list-up customized document template list
 				sDesc	= String(f:Get())
 				sDesc:CutBack("\r\n", true)
 				sDesc:Trim(" \t")
+				
+				if sDesc:CompareFront("*") then
+					sDesc:erase(0, 1)
+					sDesc:TrimLeft(" ")
+					sDefaultDocgenTemplate	= sName.s
+					LOGI("sDefaultDocgenTemplate : " .. sDefaultDocgenTemplate)
+				end
+				
 				sDesc	= sDesc.s
 			end
 		
 			Arg:AddRemark(nil, string.format("%-14s : %s", sName.s, sDesc))
 		end
 	end
+	
+	if bCustomTemplateIsExisted then
+		Arg:AddRemark(nil, "(default : " .. sDefaultDocgenTemplate .. ")")
+	end
 end
 
 Arg:AddOptionString	("language", "", "l", nil, "language", "Document language code string.")
 Arg:AddRemark(nil, "'docgen_language' variable in Lua")
-Arg:AddRemark(nil, " default : 'en'")
+Arg:AddRemark(nil, "(default : 'en')")
 
 Arg:AddOptionString	("run", "", "r", "run", "lua_code", "Run Lua snippet code")
 Arg:AddOptionFile	("in_file", nil, nil, nil, "input_file", "input Lua file")
@@ -62,6 +77,10 @@ if #docgen_language == 0 then
 	docgen_language		= "en"
 end
 
+if sDocTemplate.s == "" then
+	sDocTemplate.s		= sDefaultDocgenTemplate
+end
+
 do	-- run lua definition code
 	local sCode = String(Arg:GetOptionString("run", i))
 	
@@ -74,9 +93,7 @@ end
 
 doc 					= DocWord()
 
-if sDocTemplate.s == "" then
-	sTemplatePath:Append("Common/bin/codegen/docgen_template_testdrive.docx")
-elseif sDocTemplate:CompareBack(".docx") then
+if sDocTemplate:CompareBack(".docx") then
 	sTemplatePath.s	= sDocTemplate.s
 else
 	sTemplatePath:Append("Common/bin/codegen/docgen_template_" .. sDocTemplate.s .. ".docx")

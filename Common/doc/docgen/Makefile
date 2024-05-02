@@ -24,5 +24,5 @@ clean:
 
 $(TARGET_NAME)_ko.docx:$(SRCS)
 	@echo '*** DocGen Build (Korean) *** (Please wait a seconds!!!)'
-	@docgen -l ko main.lua $(TARGET_NAME)_ko.docx
-	@docgen -l en main.lua $(TARGET_NAME)_en.docx
+	@docgen -t testdrive -l ko main.lua $(TARGET_NAME)_ko.docx
+	@docgen -t testdrive -l en main.lua $(TARGET_NAME)_en.docx

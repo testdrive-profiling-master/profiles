@@ -26,4 +26,4 @@ clean:
 
 $(BUILD_TARGET):$(SRCS)
 	@echo '*** DocGen Build *** (Please wait a seconds!!!)'
-	@docgen main.lua $(BUILD_TARGET)
+	@docgen -t testdrive main.lua $(BUILD_TARGET)
