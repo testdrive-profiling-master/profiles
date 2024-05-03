@@ -31,12 +31,13 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 3/20/2024 Wed (HyungKi)
+// Rev.  : 5/3/2024 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __SCENARIO_TEST_INLINE__
 #define __SCENARIO_TEST_INLINE__
 #include "ScenarioTestStatus.h"
 #include <string>
+#include <tchar.h>
 #include <windows.h>
 
 using namespace std;

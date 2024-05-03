@@ -1,37 +1,53 @@
-// Processing Unit TestDrive verification environment
-profile.path			"..\\"							// set common profile path
-profile.set.initialize	""								// remove initialization profile
-profile.set.cleanup		"Profiles\\Common\\cleanup.sp"	// set cleanup profile
+#lua	-- lua script declaration
 
-system.clear
+-- must fail treat as error functions
+function CreateMemory(mem_size, mem_name)
+	if System.CreateMemory(mem_size, mem_name) == false then
+		error("Can't create memory model : " .. mem_name)
+	end
+end
 
-// Meitner processor environment
-system.title		"Meitner Processor Verification System"
-system.splash		"Profiles\\media\\splash.png"
+function RunProfile(filename)
+	if System.RunProfile(filename) == false then
+		error("Can't Run profile script : " .. filename)
+	end
+end
 
-// Create memory
-memory.create		0x8000000,	"Meitner"				// System memory : 128MB
-memory.create		0x1000000,	"Meitner_Display"		// Display configuration memory & etc..(register map) : 16MB
+-- Processing Unit TestDrive verification environment
+System.SetProfilePath("root", "..\\")										-- set root profile path
+System.SetProfilePath("initialize", "")										-- remove initialization profile
+System.SetProfilePath("cleanup", "Profiles\\Common\\cleanup.sp")			-- set cleanup profile
 
-// Common Profiles
-profile.call		"%TESTDRIVE_PROFILE%\\common\\SystemManager\\initialize.sp"		// System management
-profile.call		"%TESTDRIVE_PROFILE%\\common\\SystemRemote\\initialize.sp"		// system remote
-profile.call		"%TESTDRIVE_PROFILE%\\common\\CodeAnalysis\\initialize.sp"		// code analysis
-profile.call		"%TESTDRIVE_PROFILE%\\common\\XilinxSynthesis\\initialize.sp"	// xilinx synthesis
-profile.call		"%TESTDRIVE_PROFILE%\\common\\SystemMap\\initialize.sp"			// system map
-profile.call		"%TESTDRIVE_PROFILE%\\common\\SystemChart\\initialize.sp"		// system chart
-profile.call		"%TESTDRIVE_PROFILE%\\common\\ScenarioTest\\initialize.sp"		// scenario test
-profile.call		"%TESTDRIVE_PROFILE%\\common\\VirtualDisplay\\initialize.sp"	// virtual display
-//profile.call		"%TESTDRIVE_PROFILE%\\common\\SerialConsole\\initialize.sp"		// serial console
-profile.call		"%TESTDRIVE_PROFILE%\\common\\DesignMap\\initialize.sp"			// design map
+System.ClearLog()
 
-// Project Profiles
-profile.call		"Profiles\\ALUTest\\initialize.sp"						// ALU test
-profile.call		"Profiles\\RegisterMap\\initialize.sp"					// register map
-profile.call		"Profiles\\FPGA_StarterKit\\initialize.sp"				// FPGA Starter kit
-profile.call		"Profiles\\common\\initialize.sp"						// build archive
-profile.call		"Application\\Example\\initialize.sp"					// Examples
-profile.call		"Documents\\initialize.sp"								// documents
-profile.call		"Driver\\initialize.sp"									// driver
+-- Meitner processor environment
+System.SetTitle("Meitner Processor Verification System")
+--System.SetSubTitle("TestDrive Profiling Master")
+System.ShowSplash("Profiles\\media\\splash.png")
 
-profile.call		"%TESTDRIVE_PROFILE%\\common\\Community\\initialize.sp"			// community
+-- Create memory
+CreateMemory((1024*1024) * 128,	"Meitner")									-- System memory : 128MB
+CreateMemory((1024*1024) * 16,	"Meitner_Display")							-- Display configuration memory & etc..(register map) : 16MB
+
+-- Common Profiles
+RunProfile("%TESTDRIVE_PROFILE%\\common\\SystemManager\\initialize.sp")		-- System management
+RunProfile("%TESTDRIVE_PROFILE%\\common\\SystemRemote\\initialize.sp")		-- system remote
+RunProfile("%TESTDRIVE_PROFILE%\\common\\CodeAnalysis\\initialize.sp")		-- code analysis
+RunProfile("%TESTDRIVE_PROFILE%\\common\\XilinxSynthesis\\initialize.sp")	-- xilinx synthesis
+RunProfile("%TESTDRIVE_PROFILE%\\common\\SystemMap\\initialize.sp")			-- system map
+RunProfile("%TESTDRIVE_PROFILE%\\common\\SystemChart\\initialize.sp")		-- system chart
+RunProfile("%TESTDRIVE_PROFILE%\\common\\ScenarioTest\\initialize.sp")		-- scenario test
+RunProfile("%TESTDRIVE_PROFILE%\\common\\VirtualDisplay\\initialize.sp")		-- virtual display
+--RunProfile("%TESTDRIVE_PROFILE%\\common\\SerialConsole\\initialize.sp")	-- serial console
+RunProfile("%TESTDRIVE_PROFILE%\\common\\DesignMap\\initialize.sp")			-- design map
+
+-- Project Profiles
+RunProfile("Profiles\\ALUTest\\initialize.sp")								-- ALU test
+RunProfile("Profiles\\RegisterMap\\initialize.sp")							-- register map
+RunProfile("Profiles\\FPGA_StarterKit\\initialize.sp")						-- FPGA Starter kit
+RunProfile("Profiles\\common\\initialize.sp")								-- build archive
+RunProfile("Application\\Example\\initialize.sp")							-- Examples
+RunProfile("Documents\\initialize.sp")										-- documents
+RunProfile("Driver\\initialize.sp")											-- driver
+
+RunProfile("%TESTDRIVE_PROFILE%\\common\\Community\\initialize.sp")			-- community
