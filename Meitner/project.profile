@@ -1,24 +1,11 @@
 #lua	-- lua script declaration
 
--- must fail treat as error functions
-function CreateMemory(mem_size, mem_name)
-	if System.CreateMemory(mem_size, mem_name) == false then
-		error("Can't create memory model : " .. mem_name)
-	end
-end
-
-function RunProfile(filename)
-	if System.RunProfile(filename) == false then
-		error("Can't Run profile script : " .. filename)
-	end
-end
-
 -- Processing Unit TestDrive verification environment
 System.SetProfilePath("root", "..\\")										-- set root profile path
 System.SetProfilePath("initialize", "")										-- remove initialization profile
 System.SetProfilePath("cleanup", "Profiles\\Common\\cleanup.sp")			-- set cleanup profile
 
-System.ClearLog()
+--System.ClearLog()
 
 -- Meitner processor environment
 System.SetTitle("Meitner Processor Verification System")
