@@ -37,7 +37,6 @@ do	-- list-up customized document template list
 					sDesc:erase(0, 1)
 					sDesc:TrimLeft(" ")
 					sDefaultDocgenTemplate	= sName.s
-					LOGI("sDefaultDocgenTemplate : " .. sDefaultDocgenTemplate)
 				end
 				
 				sDesc	= sDesc.s
