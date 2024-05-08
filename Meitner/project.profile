@@ -5,7 +5,7 @@ System.SetProfilePath("root", "..\\")										-- set root profile path
 System.SetProfilePath("initialize", "")										-- remove initialization profile
 System.SetProfilePath("cleanup", "Profiles\\Common\\cleanup.sp")			-- set cleanup profile
 
---System.ClearLog()
+LOG_CLEAR()
 
 -- Meitner processor environment
 System.SetTitle("Meitner Processor Verification System")
