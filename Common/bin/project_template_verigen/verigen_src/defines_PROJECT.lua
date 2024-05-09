@@ -1,4 +1,4 @@
-verigen_description("PROJECT Definitions")
+verigen.set_description("PROJECT Definitions")
 
 RunScript("defines_common.lua")
 
@@ -49,7 +49,7 @@ bus.maxi3:set_clock(clk.MCLK)
 bus.maxi4:set_clock(clk.MCLK)
 
 -- additional constraints
-set_constraint("Interrupt", "set_false_path -from [get_ports INTR]")
+verigen.set_constraint("Interrupt", "set_false_path -from [get_ports INTR]")
 
 ----------------------------------------------------------------
 -- verilog function

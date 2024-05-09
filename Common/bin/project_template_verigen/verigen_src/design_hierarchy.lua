@@ -1,4 +1,4 @@
-verigen_description("Design hierarchy")
+verigen.set_description("Design hierarchy")
 
 ----------------------------------------------------------------
 -- module container

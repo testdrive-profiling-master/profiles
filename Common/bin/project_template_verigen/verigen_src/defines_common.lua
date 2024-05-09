@@ -1,4 +1,4 @@
-verigen_description("Common Definitions")
+verigen.set_description("Common Definitions")
 
 ---------------------------------------------------------
 -- clock definition

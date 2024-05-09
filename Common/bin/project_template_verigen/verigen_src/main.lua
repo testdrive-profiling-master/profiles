@@ -1,4 +1,4 @@
-verigen_description("Main generator")
+verigen.set_description("Main generator")
 
 -- default definitions
 RunScript("defines_PROJECT.lua")
@@ -12,7 +12,7 @@ module:add_document("img/simulation_top.png", "../.eclipse.bat")
 ----------------------------------------------------------------
 -- add all code details
 ----------------------------------------------------------------
-verigen_add_verilog("*.sv")
+verigen.add_verilog("*.sv")
 
 ----------------------------------------------------------------
 -- make design

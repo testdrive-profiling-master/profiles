@@ -1,8 +1,26 @@
-local	__constraint_list	= {}
+local	__constraint_list		= {}
+local	__contraint_name		= nil	-- current constaint name
 
-function set_constraint(name, constraint)
-	if __constraint_list[name] == nil then
-		__constraint_list[name]		= constraint
+verigen.set_constraint = function(name, constraint)
+	if name ~= nil then		-- new constraint
+		__contraint_name		= name
+		
+		if constraint == nil then
+			__constraint_list[name]	= nil
+			return
+		else
+			__constraint_list[name]	= ""	-- initialize constaint
+		end
+	else					-- add constraint
+		name					= __contraint_name
+	end
+	
+	if name == nil then
+		error("The first constraint must be named.", 2)
+	end
+	
+	if #constraint ~= 0 then
+		__constraint_list[name]		= __constraint_list[name] .. constraint .. "\n"
 	end
 end
 
@@ -63,9 +81,12 @@ function module:make_constraint()
 		end
 	end
 	
+	f:Put("\n")
 	for name, constraint in key_pairs(__constraint_list) do
-		f:Put("\n# " .. name .. "\n")
-		f:Put(constraint .. "\n")
+		if constraint ~= nil and #constraint > 0 then
+			f:Put("# " .. name .. "\n")
+			f:Put(constraint .. "\n")
+		end
 	end
 end
 
@@ -208,7 +229,7 @@ function module:make_code(is_top)
 
 	-------------------------------------------------------------------
 	-- module instances
-	if __verigen.graphviz.max_edge_count > 0 then	-- Limits the maximum number of graphviz edges connected to the same sub-module.
+	if verigen.graphviz.max_edge_count > 0 then	-- Limits the maximum number of graphviz edges connected to the same sub-module.
 		local	pre_m_name			= ""
 		local	pre_module_name		= ""
 		local	same_link_count		= 0
@@ -216,11 +237,11 @@ function module:make_code(is_top)
 			if pre_module_name == m.module.name then
 				same_link_count		= same_link_count + 1
 				
-				if same_link_count >= (__verigen.graphviz.max_edge_count - 1) then	-- too many link, so hide
+				if same_link_count >= (verigen.graphviz.max_edge_count - 1) then	-- too many link, so hide
 					m.__graphviz_hide	= true
 				end
 			else
-				if same_link_count > __verigen.graphviz.max_edge_count then			-- last link will be show
+				if same_link_count > verigen.graphviz.max_edge_count then			-- last link will be show
 					self.sub_module[pre_m_name].__graphviz_hide	= nil
 				end
 				
@@ -803,7 +824,7 @@ function module:make_code(is_top)
 				end
 			end
 			
-			for i, v in ipairs(__verigen.lua_files) do
+			for i, v in ipairs(verigen.lua_files) do
 				if v.filename ~= nil then
 					local sFileName = String(v.filename)
 					local sToolTip	= (v.desc ~= nil) and v.desc or sFileName.s
@@ -814,8 +835,8 @@ function module:make_code(is_top)
 						sFileName.s = "[" .. sName .. "]"
 					end
 					
-					__graphviz:Append("<tr><td href='cmd://LUA/" .. v.filename .. "' align='right' SIDES='L" .. ((i == #__verigen.lua_files) and "B" or "") .. "' cellspacing='0' cellpadding='3' tooltip='" .. sToolTip .. "'><font color='#2020AF' point-size='10'>" .. ((v.desc == nil) and " " or v.desc) .. "</font></td>")
-					__graphviz:Append("<td href='cmd://LUA/" .. v.filename .. "' align='left' SIDES='R" .. ((i == #__verigen.lua_files) and "B" or "") .. "' cellspacing='0' cellpadding='3' tooltip='" .. sToolTip .. "'><font color='#A0A0AF' point-size='10'>" .. sFileName.s .. "</font></td></tr>")
+					__graphviz:Append("<tr><td href='cmd://LUA/" .. v.filename .. "' align='right' SIDES='L" .. ((i == #verigen.lua_files) and "B" or "") .. "' cellspacing='0' cellpadding='3' tooltip='" .. sToolTip .. "'><font color='#2020AF' point-size='10'>" .. ((v.desc == nil) and " " or v.desc) .. "</font></td>")
+					__graphviz:Append("<td href='cmd://LUA/" .. v.filename .. "' align='left' SIDES='R" .. ((i == #verigen.lua_files) and "B" or "") .. "' cellspacing='0' cellpadding='3' tooltip='" .. sToolTip .. "'><font color='#A0A0AF' point-size='10'>" .. sFileName.s .. "</font></td></tr>")
 				end
 			end
 			
@@ -1083,9 +1104,9 @@ vfunction("MULTICYCLE", function(module_inst_name, if_name, cycle_count, instanc
 		"assign	{" .. sInput_temp.s .. "}	= pipe_i[`BUS_RANGE(" .. input_size .. ", i)];\n" ..
 		"assign	pipe_o[`BUS_RANGE(" .. output_size .. ",i)]	= {" .. sOutput_temp.s .. "};\n"
 
-	-- add constraint
-	set_constraint("multicycle_path_" .. cycle_count .. "_hold" , "set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ \"*gen_multicycle.path_" .. cycle_count .. ".i_*\"}] " .. (cycle_count-1))
-	set_constraint("multicycle_path_" .. cycle_count .. "_setup", "set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ \"*gen_multicycle.path_" .. cycle_count .. ".i_*\"}] " .. (cycle_count))
+	-- set multi-cycle constraint
+	verigen.set_constraint("multicycle_path_" .. cycle_count, "set_multicycle_path -hold  -from [get_cells -hierarchical -filter {NAME =~ \"*gen_multicycle.path_" .. cycle_count .. ".i_*\"}] " .. (cycle_count-1))
+	verigen.set_constraint(nil, "set_multicycle_path -setup -from [get_cells -hierarchical -filter {NAME =~ \"*gen_multicycle.path_" .. cycle_count .. ".i_*\"}] " .. (cycle_count))
 
 	m:set_port(_i.name, "__temp")
 

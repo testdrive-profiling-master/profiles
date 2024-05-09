@@ -46,30 +46,47 @@ wire	[63:32]		T;
 ```
 ;;;
 
-## verigen_description function
-@<tbl:media/instruction_macros.xlsx;verigen_description>
+## verigen.set_description function
+@<tbl:media/instruction_macros.xlsx;verigen.set_description>
  
-ex) verigen_description macro example
+ex) verigen.set_description macro example
 ```lua
-verigen_description("Your description")
+verigen.set_description("Your description")
 ```
 ;;;
 
-## verigen_add_reference function
-@<tbl:media/instruction_macros.xlsx;verigen_add_reference>
+## verigen.add_reference function
+@<tbl:media/instruction_macros.xlsx;verigen.add_reference>
  
-ex) verigen_add_reference macro example
+ex) verigen.add_reference macro example
 ```lua
-verigen_add_reference("__Defines.sv", "Global definitions")
+verigen.add_reference("__Defines.sv", "Global definitions")
 ```
 ;;;
 
-## verigen_add_verilog function
-@<tbl:media/instruction_macros.xlsx;verigen_add_verilog>
+## verigen.add_verilog function
+@<tbl:media/instruction_macros.xlsx;verigen.add_verilog>
  
-ex) verigen_add_verilog macro example
+ex) verigen.add_verilog macro example
 ```lua
-verigen_add_verilog("*.sv")
+verigen.add_verilog("*.sv")
+```
+;;;
+
+## verigen.set_constraint function
+@<tbl:media/instruction_macros.xlsx;verigen.set_constraint>
+ 
+ex) verigen.set_constraint macro example
+```lua
+verigen.set_constraint("Reset constraint for M/S_nRST", "set_false_path -from [get_ports M_nRST]")
+verigen.set_constraint(nil, "set_false_path -from [get_ports S_nRST]")
+```
+ 
+Result: ".xdc" constraint output file
+```perl
+# Reset constraint for M/S_nRST
+set_false_path -from [get_ports M_nRST]
+set_false_path -from [get_ports S_nRST]
 ```
 ;;;
 
@@ -82,24 +99,25 @@ isa_table	= excel_read_table("isa_table.xlsx", "ISA", "#opcode", true, "A4")	-- 
 ```
 ;;;
 
-## verigen_set_max_showlink function
-@<tbl:media/instruction_macros.xlsx;verigen_set_max_showlink>
+## verigen.set_max_showlink function
+@<tbl:media/instruction_macros.xlsx;verigen.set_max_showlink>
  
-ex.1) set verigen_set_max_showlink to unlimited.
+ex.1) set verigen.set_max_showlink to unlimited.
 ```lua
-verigen_set_max_showlink(0)
+verigen.set_max_showlink(0)
+end)
+```
+ 
+Result:
+@<img:#media/verigen.set_max_showlink_0.jpg;0.7;verigen.set_max_showlink(unlimited)>
+ 
+ex.2) set verigen.set_max_showlink to 4.
+```lua
+verigen.set_max_showlink(4)
 end)
 ```
 Result:
-@<img:#media/verigen_set_max_showlink_0.jpg;0.7;verigen_set_max_showlink(unlimited)>
- 
-ex.2) set verigen_set_max_showlink to 4.
-```lua
-verigen_set_max_showlink(4)
-end)
-```
-Result:
-@<img:#media/verigen_set_max_showlink_4.jpg;0.4;verigen_set_max_showlink(4)>
+@<img:#media/verigen.set_max_showlink_4.jpg;0.4;verigen.set_max_showlink(4)>
 ;;;
 
 ## $LOG2 function
