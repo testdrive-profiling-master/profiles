@@ -81,11 +81,19 @@ function module:make_constraint()
 		end
 	end
 	
-	f:Put("\n")
+	-- local constaint
+	__contraint_name	= nil
 	for name, constraint in key_pairs(__constraint_list) do
+		if __contraint_name == nil then
+			f:Put("\n\n###############################################################################\n")
+			f:Put("# Local DUT constraint\n")
+			f:Put("###############################################################################")
+		end
+	
+		__contraint_name	= name
+		
 		if constraint ~= nil and #constraint > 0 then
-			f:Put("# " .. name .. "\n")
-			f:Put(constraint .. "\n")
+			f:Put("\n# " .. name .. "\n" .. constraint)
 		end
 	end
 end

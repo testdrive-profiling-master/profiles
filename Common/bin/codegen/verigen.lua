@@ -21,10 +21,10 @@ else
 	sOutPath				= Arg:GetOptionFile("out_path", 0)
 end
 
-verigen				= {}
-verigen.lua_files		= {}	-- hook additional user lua script
+verigen							= {}
+verigen.lua_files				= {}	-- hook additional user lua script
 
-verigen.graphviz					= {}
+verigen.graphviz				= {}
 verigen.graphviz.max_edge_count	= 8		-- default maximum edge show on same module
 
 -- create output directory
