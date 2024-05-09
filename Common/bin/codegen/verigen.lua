@@ -25,7 +25,7 @@ verigen							= {}
 verigen.lua_files				= {}	-- hook additional user lua script
 
 verigen.graphviz				= {}
-verigen.graphviz.max_edge_count	= 8		-- default maximum edge show on same module
+verigen.graphviz.max_edge_count	= 5		-- default maximum edge show on same module
 
 -- create output directory
 if lfs.attributes(sOutPath, "mode") ~= "directory" then

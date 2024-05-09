@@ -952,7 +952,6 @@ vfunction("RANGE", function(size, step)
 	return s.s
 end)
 
-
 vfunction("DEMUX_BY_EN", function(width, channel_count, en, data_in, data_out)
 	local s	= String("")
 	local inst_name = String(data_out)
