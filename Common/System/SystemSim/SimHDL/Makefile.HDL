@@ -6,6 +6,7 @@ LIBPATH			:= ../../../../Application/lib
 TARGETPATH		:= ../../../../Program
 TARGETNAME		:= SimHDL
 SIMPATH			:= ../../../HDL/$(SIM_TOP_PATH)
+MAIN_COMPILER	:= clang
 
 ifneq ("$(wildcard $(SIMPATH)/config.mk)","")
 include $(SIMPATH)/config.mk
