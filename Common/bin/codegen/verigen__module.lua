@@ -129,10 +129,19 @@ end
 function module:add_interface(i, name, modport)
 	if i == nil then
 		error("NULLed interface.", 2)
+	elseif i.parent ~= nil then		-- interface 'i'에 '.modport.??' 까지 확장 지정한 경우
+		if modport == nil then
+			modport	= i.name
+			i		= i.parent
+		else		-- 이 경우 modport argument 는 사용할 수 없다.
+			error("add_interface function's modport is defined twice.", 2)
+		end
 	end
 	
 	if name == nil then
 		name	= i.name
+	elseif type(name) ~= "string" then
+		error("name must be string.", 2)
 	end
 
 	if interface.is_valid(i) == false then

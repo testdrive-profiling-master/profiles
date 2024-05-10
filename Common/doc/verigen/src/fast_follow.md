@@ -252,21 +252,21 @@ module test_core
 //#---------------------------------------------------------------------
 module core_if
 $set_param("CORE_ID", "0")
-$add_interface(core_i.inst, "if_inst", "m")
-$add_interface(core_busy, nil, "m")
+$add_interface(core_i.inst.modport.m, "if_inst")
+$add_interface(core_busy.modport.m)
 
 assign	core_busy	= 1'b0;
 
 
 //#---------------------------------------------------------------------
 module core_ex
-$add_interface(core_i.inst, "if_inst", "s")
-$add_interface(core_i.inst, "ex_inst", "m")
+$add_interface(core_i.inst.modport.s, "if_inst")
+$add_interface(core_i.inst.modport.m, "ex_inst")
 
 
 //#---------------------------------------------------------------------
 module core_wb
-$add_interface(core_i.inst, "ex_inst", "s")
+$add_interface(core_i.inst.modport.s, "ex_inst")
 ```
 :::NoteHeading
 As above, by declaring 'modport' paired with the name of the same type of interface through the $add_interface() function, \
@@ -294,16 +294,16 @@ ${	-- It's Lua codes
 //#---------------------------------------------------------------------
 module slave_ctrl
 $set_param("BASE_ADDR", "32'h10000000")
-$add_interface(bus.apb, "s_apb", "m")
-$add_interface(bus.apb, "s_apb_0", "m")
+$add_interface(bus.apb.modport.m, "s_apb")
+$add_interface(bus.apb.modport.m, "s_apb_0")
 
 //#---------------------------------------------------------------------
 module mem_ctrl
-$add_interface(bus.maxi4, "maxi", "m")
+$add_interface(bus.maxi4.modport.m, "maxi")
 
 //#---------------------------------------------------------------------
 module reg_ctrl
-$add_interface(core_busy, nil, "s")
+$add_interface(core_busy.modport.s)
 ```
 :::NoteHeading
 You can connect directly through the "@<bookmark:module_i:set_param>()" and "@<bookmark:module_i:set_port>()" functions without automatically connecting interfaces or parameters.

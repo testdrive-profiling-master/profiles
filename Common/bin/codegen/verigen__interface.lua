@@ -63,6 +63,7 @@ function interface:new(name)
 			t.modport[mp_name]			= {}
 			t.modport[mp_name].name		= mp_name
 			t.modport[mp_name].data		= {}
+			t.modport[mp_name].parent	= t
 			for io_type, io_list in pairs(mp.data) do
 				local	io_data		= {}
 				for i, io_name in pairs(io_list) do
@@ -253,6 +254,7 @@ function interface:set_modport(name, modport)
 				self.modport[mp_0]			= {}
 				self.modport[mp_0].name		= mp_0
 				self.modport[mp_0].data		= {}
+				self.modport[mp_0].parent	= self
 			end
 			if modport == nil then				-- clear modport's data
 				self.modport[mp_0].data		= {}
@@ -270,6 +272,7 @@ function interface:set_modport(name, modport)
 				self.modport[mp_1]			= {}
 				self.modport[mp_1].name		= mp_1
 				self.modport[mp_1].data		= {}
+				self.modport[mp_1].parent	= self
 			end
 			if modport == nil then				-- clear modport's data
 				self.modport[mp_1].data		= {}

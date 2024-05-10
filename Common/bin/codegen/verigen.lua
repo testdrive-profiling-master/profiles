@@ -7,7 +7,7 @@ sProfilePath:GetEnvironment("TESTDRIVE_PROFILE")
 if lfs.attributes(".verigen", "mode") == "file" then
 	RunScript(".verigen")
 else
-	local	Arg				= ArgTable("Verilog Generator for TestDrive Profiling Master. v1.05")
+	local	Arg				= ArgTable("Verilog Generator for TestDrive Profiling Master. v1.06")
 	
 	Arg:AddOptionFile	("in_file", nil, nil, nil, "input_file", "input Lua file")
 	Arg:AddOptionFile	("out_path", "./output", nil, nil, "output_path", "output path")

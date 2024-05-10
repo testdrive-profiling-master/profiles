@@ -370,7 +370,7 @@ inst:set_prefix("I#")	-- Signals start with I#_*.
 
 m		= module:new("top")
 m:add_interface(inst, "inst_0", "m")
-m:add_interface(inst, "inst_1", "m")
+m:add_interface(inst.modport.m, "inst_1")		-- Equivalent to : m:add_interface(inst, "inst_1", "m")
 
 m:make_code()
 ```

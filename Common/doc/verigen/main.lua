@@ -1,6 +1,6 @@
 -- document properties
 property["Document_Name"]			= "Verigen user guide"
-property["IP_Version"]				= "1.04"
+property["IP_Version"]				= "1.06"
 property["Main_Title"]				= "Verigen"
 property["Sub_Title"]				= "(verilog generator)"
 property["IP_Name_First_Page"]		= "User Guide"
@@ -17,6 +17,7 @@ AddRevision("1.02",	2023, 6,  12,	"add default clock, add vfunctions. ($LOG2, $R
 AddRevision("1.03",	2023, 11, 2,	"fix module definition.")
 AddRevision("1.04",	2024, 3, 18,	"Combines set_modport/add_modport functions into one and extends functionality.")
 AddRevision("1.05",	2024, 3, 19,	"add verigen_set_max_showlink() function.")
+AddRevision("1.06",	2024, 5, 10,	"Simplified the 'module:add_interface' function.")
 
 -- Term 추가
 AddTerm("TestDrive", "TestDrive Profiling Master (@<link:https://testdrive-profiling-master.github.io/>)")
