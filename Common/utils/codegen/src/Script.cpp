@@ -31,14 +31,13 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 3/21/2024 Thu (clonextop@gmail.com)
+// Rev.  : 5/17/2024 Fri (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
 #include "DocExcel.h"
 #include "DocWord.h"
 #include "minGit.h"
-#include <filesystem>
 #include <tuple>
 
 static bool __bPause_on_error = false;
@@ -715,11 +714,9 @@ public:
 			cstring sHtml;
 			f.GetAll(sHtml);
 
-			while (sHtml.Replace("\n  ", "\n "))
-				;
+			while (sHtml.Replace("\n  ", "\n "));
 
-			while (sHtml.Replace("\r  ", "\r "))
-				;
+			while (sHtml.Replace("\r  ", "\r "));
 
 			HtmlParser parser;
 			m_pDoc = parser.Parse(sHtml.c_string());
@@ -1250,6 +1247,7 @@ Script::Script(void)
 				.addFunction("CreateFileList", &VL_String::CreateFileList)
 				.addFunction("VL_Number", &VL_Number::Create)
 				.addFunction("RunScript", &Script::__RunScript)
+				.addFunction("RunString", &Script::__RunString)
 				.addFunction("ArgumentSize", &ArgTable::ArgumentSize)
 				.addFunction("GetArgument", &ArgTable::GetArgument)
 				.addFunction("PostToDocument", __PostToDocument)
@@ -1419,6 +1417,20 @@ bool Script::__RunScript(const char *sFileName)
 {
 	if (m_pScript)
 		return m_pScript->Run(sFileName);
+
+	return false;
+}
+
+bool Script::__RunString(const char *sCodes, const char *sTag)
+{
+	if (sTag == NULL)
+		sTag = "-";
+
+	if (m_pScript) {
+		cstring sTarget;
+		sTarget.Format("%s(%s)", m_pScript->m_sLuaFileName.c_str(), sTag);
+		return m_pScript->RunBuffer(sCodes, sTarget);
+	}
 
 	return false;
 }

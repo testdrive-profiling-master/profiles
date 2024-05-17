@@ -795,6 +795,43 @@ endmodule
 
 
 
+ 
+%%% ko
+## 코드 실행
+
+@<size:30>@<b>표현식 : ```[@<color:FF0000>코드_형식@</color>]@</b>@</size>
+@<size:30>@<b>        @<color:FF0000>코드_내용@</color>@</b>@</size>
+@<size:30>@<b>        ```@</b>@</size>
+
+'@<bookmark:코드 인용>'과 비슷한 형식이지만, "코드 형식"이 "[]" 로 둘러 싸여 있을 경우, 코드 내용을 실행한다.
+현재 사용 가능한 코드 형식은 "lua" 만 지원한다.
+%%% en
+## Code execution
+
+@<size:30>@<b>Expression : ```[@<color:FF0000>code_format@</color>]@</b>@</size>
+@<size:30>@<b>             @<color:FF0000>code_contents@</color>@</b>@</size>
+@<size:30>@<b>             ```@</b>@</size>
+
+It has a similar format to '@<bookmark:Code citation>', but if the "code format" is surrounded by "[]", the code content is executed.
+The currently available code format supports only "lua".
+%%%
+
+ 
+%%% ko
+예)
+%%% en
+ex)
+%%%
+
+```lua
+@```[lua]
+property["Document_Name"] = "UserGuide"
+property["IP_Version"] = "1.00"
+@```
+```
+
+
+
 
  
 %%% ko
@@ -803,7 +840,7 @@ endmodule
 @<size:30>@<b>표현식 : ;;;@</b>@</size>
 라인 선두에 ';' 문자를 최소 3개 이상 입력하면, 다음 페이지로 넘깁니다.
 %%% en
-## Seperating page
+## Page seperation
 
 @<size:30>@<b>Expression : ;;;@</b>@</size>
 If you enter at least three ';' characters at the beginning of a line, it will advance to the next page.

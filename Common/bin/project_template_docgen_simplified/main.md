@@ -1,3 +1,5 @@
+```[lua]
+-- *** inline lua script ***
 -- Document properties
 property["Document_Name"]			= "UserGuide"
 property["IP_Version"]				= "1.00"
@@ -13,13 +15,52 @@ property["Security_Level"]			= "BSD License."
 -- Revision history
 AddRevision("1.0",	INITIAL_YEAR,  INITIAL_MONTH,  INITIAL_DAY,	"Initial relase")
 
-
-
 -- Terms
 AddTerm("TestDrive", "TestDrive Profiling Master (@<link:https://testdrive-profiling-master.github.io/>)")
 AddTerm("Lua", "Lua script language (@<link:https://en.wikipedia.org/wiki/Lua_(programming_language);Wiki>, @<link:http://www.lua.org/;Homepage>)")
+```
 
 
--- Chapters
-AddParagraph("[[src/Introduction.md]]")
-AddParagraph("[[src/Contents.md]]")
+# Introduction
+
+If you have any ideas with this, please make suggestions to Hyunng-Ki Jeong(@<link:mailto:clonextop@gmail.com;clonextop@gmail.com>).
+
+
+
+ 
+## Main functions
+
+Do something valuable...
+
+* Do 1
+* Do 2
+** Do Do 1
+**> Do Do Do.
+
+
+:::NoteHeading
+note me!
+
+
+# first Contents
+
+It's first @<b>@<color:FF0000>contents@</color>@</b>. \
+Good luck!
+
+```cpp
+#include <stdio.h>
+
+int main(int argc, const char* argv[]) {
+	printf("Hello simplified docgen!!!\n");
+	return 0;
+}
+```
+
+ 
+## media contents
+ 
+@<img:#media/docgen.png;0.5;docgen image>
+
+ 
+@<tbl:media/tables.xlsx;table_1;table example>
+

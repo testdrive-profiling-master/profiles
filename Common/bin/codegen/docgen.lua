@@ -1,4 +1,4 @@
-local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.5")
+local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.6")
 local	sProfilePath	= String(nil)
 local	sTemplatePath	= String(nil)
 
@@ -56,7 +56,7 @@ Arg:AddRemark(nil, "'docgen_language' variable in Lua")
 Arg:AddRemark(nil, "(default : 'en')")
 
 Arg:AddOptionString	("run", "", "r", "run", "lua_code", "Run Lua snippet code")
-Arg:AddOptionFile	("in_file", nil, nil, nil, "input_file", "input Lua file")
+Arg:AddOptionFile	("in_file", nil, nil, nil, "input_file", "input Lua or .md(markdown) file")
 Arg:AddOptionFile	("out_file", "", nil, nil, "output_file", "output Microsoft Word(.docx) file")
 
 
@@ -1261,13 +1261,25 @@ function EncodeParagraph(sText, sExtra)
 			-- code reference
 			elseif sLine:CompareFront("```") then
 				local	bLine	= false
+				local	bScript	= false
 				sResult:CutBack("<w:p>", false)
+				-- code type 얻기
 				sLine:CutFront("`", true)
 				sLine:Trim(" ")
+				sLine:Replace(" ", "", true)	-- 내부 space 모두 제거 "[lua]" 구별을 위해
+				sLine:MakeLower()
 				if sLine:CompareFront("#") then
 					bLine	= true
 					sLine:erase(0,1)
+				else
+					bScript		= sLine:CompareFront("[") and sLine:CompareBack("]")	-- highlight contents 가 아닌 진짜 코드임.
+					
+					if bScript then
+						sLine:DeleteFront("[")
+						sLine:DeleteBack("]")
+					end
 				end
+				
 				local	sCodeType	= sLine.s
 				local	sIndent		= ""
 				-- cut off front
@@ -1295,62 +1307,74 @@ function EncodeParagraph(sText, sExtra)
 						error("Not found of end of code reference \"```\".")
 					end
 					sContent:erase(iCodeLen, -1)
-					sContent:Replace("\r", "", true)
-					sContent:Replace("\n\n", "\n \n", true)
-					sContent:TrimLeft("\n")
-					sContent:TrimRight(" \n")
-					sContent:Replace("@```", "```", true)
+					if bScript == false then
+						sContent:Replace("\r", "", true)
+						sContent:Replace("\n\n", "\n \n", true)
+						sContent:TrimLeft("\n")
+						sContent:TrimRight(" \n")
+						sContent:Replace("@```", "```", true)
+					end
 				end
 				
-				do	-- make highlight contents
-					local txt = TextFile()
-					if txt:Create(".docgen_code_highlight.tmp") then
+				if bScript then
+					if sCodeType == "lua" then
+						if RunString(sContent.s, "inline") == false then
+							error("Got error on inline lua script.")
+						end
 					else
-						error("Create temporary file is failed.")
+						error("Can't execute '" .. sCodeType .. "' script.")
 					end
-					txt:Put(sContent.s)
-					txt:Close()
-					sContent	= exec("code_highlighter --ilang=" .. sCodeType .. " --olang=docgen " .. (bLine and "-n " or "") .. ".docgen_code_highlight.tmp")
-					exec("rm -f .docgen_code_highlight.tmp")
-					
-					if bLine then
-						local sIndentString	= String(sContent)
-						sIndentString:CutBack(":@<", true)
-						sIndentString:CutFront(">", true)
-						local	iIndent	= (sIndentString:Length()+2) * 110	-- chars + ": "
-						sIndent	= "<w:ind w:left=\"" .. iIndent .. "\" w:hangingChars=\"" .. (iIndent/2) .. "\" w:hanging=\"" .. iIndent .. "\"/>"
+				else
+					do	-- make highlight contents
+						local txt = TextFile()
+						if txt:Create(".docgen_code_highlight.tmp") then
+						else
+							error("Create temporary file is failed.")
+						end
+						txt:Put(sContent.s)
+						txt:Close()
+						sContent	= exec("code_highlighter --ilang=" .. sCodeType .. " --olang=docgen " .. (bLine and "-n " or "") .. ".docgen_code_highlight.tmp")
+						exec("rm -f .docgen_code_highlight.tmp")
+						
+						if bLine then
+							local sIndentString	= String(sContent)
+							sIndentString:CutBack(":@<", true)
+							sIndentString:CutFront(">", true)
+							local	iIndent	= (sIndentString:Length()+2) * 110	-- chars + ": "
+							sIndent	= "<w:ind w:left=\"" .. iIndent .. "\" w:hangingChars=\"" .. (iIndent/2) .. "\" w:hanging=\"" .. iIndent .. "\"/>"
+						end
 					end
+					bInline	= true
+					sResult:Append(
+					"<w:tbl>\
+					<w:tblPr>\
+						<w:tblStyle w:val=\"ae\"/>\
+						<w:tblW w:w=\"0\" w:type=\"auto\"/>\
+						<w:tblBorders>\
+							<w:top w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"F7F7F7\"/>\
+							<w:left w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"F7F7F7\"/>\
+							<w:bottom w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"F7F7F7\"/>\
+							<w:right w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"F7F7F7\"/>\
+						</w:tblBorders>\
+						<w:tblCellMar>\
+							<w:top w:w=\"32\" w:type=\"dxa\"/>\
+							<w:bottom w:w=\"52\" w:type=\"dxa\"/>\
+						</w:tblCellMar>\
+					</w:tblPr>\
+					<w:tblGrid>\
+						<w:gridCol w:w=\"10094\"/>\
+					</w:tblGrid>\
+					<w:tr>\
+						<w:tc>\
+							<w:tcPr>\
+								<w:tcW w:w=\"10094\" w:type=\"dxa\"/>\
+								<w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"F8F8F8\" w:themeFill=\"background1\" w:themeFillShade=\"F8\"/>\
+							</w:tcPr>"
+					.. EncodeParagraph(sContent, {pPr=("<w:jc w:val=\"left\"/><w:spacing w:after=\"0\"/>" .. sIndent), rPr="<w:rFonts w:ascii=\"Cascadia Mono\" w:eastAsia=\"Cascadia Mono\" w:hAnsi=\"Cascadia Mono\"/>"}) ..
+					"</w:tc></w:tr></w:tbl>"
+					)
+					bInline	= false
 				end
-				bInline	= true
-				sResult:Append(
-				"<w:tbl>\
-				<w:tblPr>\
-					<w:tblStyle w:val=\"ae\"/>\
-					<w:tblW w:w=\"0\" w:type=\"auto\"/>\
-					<w:tblBorders>\
-						<w:top w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"F7F7F7\"/>\
-						<w:left w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"F7F7F7\"/>\
-						<w:bottom w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"F7F7F7\"/>\
-						<w:right w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"F7F7F7\"/>\
-					</w:tblBorders>\
-					<w:tblCellMar>\
-						<w:top w:w=\"32\" w:type=\"dxa\"/>\
-						<w:bottom w:w=\"52\" w:type=\"dxa\"/>\
-					</w:tblCellMar>\
-				</w:tblPr>\
-				<w:tblGrid>\
-					<w:gridCol w:w=\"10094\"/>\
-				</w:tblGrid>\
-				<w:tr>\
-					<w:tc>\
-						<w:tcPr>\
-							<w:tcW w:w=\"10094\" w:type=\"dxa\"/>\
-							<w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"F8F8F8\" w:themeFill=\"background1\" w:themeFillShade=\"F8\"/>\
-						</w:tcPr>"
-				.. EncodeParagraph(sContent, {pPr=("<w:jc w:val=\"left\"/><w:spacing w:after=\"0\"/>" .. sIndent), rPr="<w:rFonts w:ascii=\"Cascadia Mono\" w:eastAsia=\"Cascadia Mono\" w:hAnsi=\"Cascadia Mono\"/>"}) ..
-				"</w:tc></w:tr></w:tbl>"
-				)
-				bInline	= false
 				goto continue
 			elseif sLine:CompareFront(";;;") then
 				sLine:CutFront(";", true)
@@ -1764,8 +1788,19 @@ AddSubDocument = function(sDocFileName)
 end
 
 -- 사용자 소스 실행
-if RunScript(sInFilename) == false then
-	return
+do
+	local __sExt	= String(sInFilename)
+	
+	__sExt:CutFront(".", true)
+	__sExt:MakeLower()
+	
+	if __sExt.s == "md" then
+		AddParagraph("[[" .. sInFilename .. "]]")
+	else
+		if RunScript(sInFilename) == false then
+			return
+		end
+	end
 end
 
 -- 속성 갱신

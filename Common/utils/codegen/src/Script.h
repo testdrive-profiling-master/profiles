@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,35 +31,38 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 11/20/2023 Mon (clonextop@gmail.com)
+// Rev.  : 5/17/2024 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __SCRIPT_H__
 #define __SCRIPT_H__
 #include "UtilFramework.h"
 #include "VL.h"
 #include "lua.hpp"
+#include <filesystem>
+// lua bridge
 #include "LuaBridge/LuaBridge.h"
 #include "LuaFile.h"
-
 using namespace luabridge;
 
-class Script {
+class Script
+{
 public:
 	Script(void);
 	virtual ~Script(void);
 
-	bool Run(const char* sFileName);
-	bool RunBuffer(const char* sBuffer, const char* sFileName = "inline");
+	bool		Run(const char *sFileName);
+	bool		RunBuffer(const char *sBuffer, const char *sFileName = "inline");
 	static void EnableTraceBack(bool bEnable = true);
 
 protected:
-	static bool __RunScript(const char* sFileName);
+	static bool	   __RunScript(const char *sFileName);
+	static bool	   __RunString(const char *sCodes, const char *sTag);
 
-	lua_State*			m_pLua;
-	cstring				m_sEnvPath;
-	cstring				m_sWorkPath;
-	cstring				m_sLuaFileName;
-	static Script*		m_pScript;
+	lua_State	  *m_pLua;
+	cstring		   m_sEnvPath;
+	cstring		   m_sWorkPath;
+	cstring		   m_sLuaFileName;
+	static Script *m_pScript;
 };
 
-#endif//__SCRIPT_H__
+#endif //__SCRIPT_H__

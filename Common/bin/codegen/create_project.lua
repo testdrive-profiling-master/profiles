@@ -5,7 +5,6 @@ if sProfilePath:GetEnvironment("TESTDRIVE_PROFILE") == false then
 end
 sProfilePath	= sProfilePath.s
 
-
 local Arg = ArgTable("Template project generator with TestDrive Profiling Master.")
 
 Arg:AddOptionString		("type", nil, nil, nil, "type", "Template project type")
@@ -16,6 +15,7 @@ Arg:AddRemark			(nil, "'v', 'verilog'           : verilog project")
 Arg:AddRemark			(nil, "'v_bare', 'verilog_bare' : bared verilog project")
 Arg:AddRemark			(nil, "'v_gen', 'verigen'       : verigen project")
 Arg:AddRemark			(nil, "'docgen'                 : docgen project")
+Arg:AddRemark			(nil, "'docgen_simplified'      : docgen simplified project")
 Arg:AddOptionString		("project_name", nil, nil, nil, "project_name", "Project name")
 
 	
@@ -233,6 +233,27 @@ elseif (sType == "docgen") then
 	
 	os.execute("explorer " .. sProjectName)
 	print("Run 'make' to build document.")
+	os.exit(1)
+elseif (sType == "docgen_simplified") then
+	sProjectPath	= MakeDir(sProjectName)
+	LOGI("Create DocGen simplified project : '" .. sProjectName .. "'")
+	
+	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_docgen_simplified/.\" " .. sProjectPath .. "/")
+	os.execute("sed \"s/TITLE/" .. sProjectName .. "/\" -i ./" .. sProjectPath .. "/main.md")
+	
+	local	sYear = String(nil)
+	sYear:FormatDate("%Y", 0)	-- get year
+	local	sMonth = String(nil)
+	sMonth:FormatDate("%m", 0)	-- get month
+	local	sDay = String(nil)
+	sDay:FormatDate("%d", 0)	-- get day
+	
+	os.execute("sed \"s/INITIAL_YEAR/" .. sYear.s .. "/\" -i ./" .. sProjectPath .. "/main.md")
+	os.execute("sed \"s/INITIAL_MONTH/" .. sMonth.s .. "/\" -i ./" .. sProjectPath .. "/main.md")
+	os.execute("sed \"s/INITIAL_DAY/" .. sDay.s .. "/\" -i ./" .. sProjectPath .. "/main.md")
+	
+	os.execute("explorer " .. sProjectName)
+	print("Run 'build.bat' to build document.")
 	os.exit(1)
 else
 	LOGE("Invalid project type : '" .. sType .. "'. Please refer 'help' with \"create_project --help\" command.")

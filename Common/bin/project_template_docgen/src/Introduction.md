@@ -7,7 +7,7 @@ If you have any ideas with this, please make suggestions to Hyunng-Ki Jeong(@<li
  
 ## Main functions
 
-Do something...
+Do something valuable...
 
 * Do 1
 * Do 2
