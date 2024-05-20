@@ -382,15 +382,15 @@ function GenerateCaption(sType, content)
 	return sXML
 end
 
-local	img_id			= 3000
-local	temp_visio_file_list	= {}
+local	img_id				= 3000
+local	temporary_file_list	= {}
 function GenerateFigure(sFileName, fRatio)
 	local cx			= 0
 	local cy			= 0
 	local width			= 0
 	local height		= 0
 	sFileName			= String(sFileName)
-	local sPageName		= ""	-- for Visio
+	local sPageName		= ""	-- for Visio/Excel
 	local bSolidBox		= sFileName:CompareFront("#")
 	if bSolidBox then
 		sFileName:erase(0,1)
@@ -404,8 +404,8 @@ function GenerateFigure(sFileName, fRatio)
 		sPageName:Trim(" ")
 		sPageName	= sPageName.s
 
-		-- convert visio to svg
 		if sFileName:CompareBack(".vsd") or sFileName:CompareBack(".vsdx") then
+			-- convert visio to svg
 			os.execute("vsd2svg \"" .. sFileName.s .. "\" \"" .. sPageName .. "\"")
 			
 			if #sPageName ~= 0 then
@@ -417,7 +417,21 @@ function GenerateFigure(sFileName, fRatio)
 				LOGE("Visio is not installed.")
 				sFileName.s	= sProfilePath.s .. "common/bin/codegen/no_visio.svg"
 			else
-				temp_visio_file_list[#temp_visio_file_list + 1]		= sFileName.s	-- clean up list.
+				temporary_file_list[#temporary_file_list + 1]		= sFileName.s	-- clean up list.
+			end
+		elseif sFileName:CompareBack(".xls") or sFileName:CompareBack(".xlsx") then
+			-- convert Excel chart to svg
+			if #sPageName == 0 then
+				error("Excel sheet name of chart must be existed.")
+			end
+			
+			os.execute("xlsx_chart \"" .. sFileName.s .. "\" \"" .. sPageName .. "\"")
+			sPageName	= String(sPageName)
+			sPageName:Replace(":", ".", true)
+			sFileName:Append("." .. sPageName.s .. ".svg")
+			
+			if lfs.attributes(sFileName.s) then	-- existed
+				temporary_file_list[#temporary_file_list + 1]		= sFileName.s	-- clean up list.
 			end
 		end
 	end
@@ -434,12 +448,14 @@ function GenerateFigure(sFileName, fRatio)
 	sExt		= sExt.s
 	
 	do	-- get image width & height
-		local sInfo		= String((sExt == "wmf") and exec("magick identify " .. sFileName) or exec("magick identify -size x " .. sFileName))
+		local sInfo		= String((sExt == "wmf") and exec("magick identify \"" .. sFileName .. "\"") or exec("magick identify -size x \"" .. sFileName .. "\""))
 
-		sInfo:CutFront(sFileName, false)
+		sInfo:CutBack("sRGB", false)
+		sInfo:CutFront(".", true)
 		sInfo:CutFront(" ", false)
 		sInfo:CutFront(" ", false)
 		sInfo:CutBack(" ", true)
+		
 		local	sx		= String(sInfo.s)
 		local	sy		= String(sInfo.s)
 		sx:CutBack("x", false)
@@ -1911,8 +1927,8 @@ do
 	doc:Close()
 	
 	-- 중간 생성 파일들 제거
-	for i=1, #temp_visio_file_list do
-		os.execute("rm -f \"" .. temp_visio_file_list[i] .. "\"")
+	for i=1, #temporary_file_list do
+		os.execute("rm -f \"" .. temporary_file_list[i] .. "\"")
 	end	
 	
 	-- Field 갱신 및 pdf 생성

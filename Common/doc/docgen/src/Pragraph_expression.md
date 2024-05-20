@@ -1119,6 +1119,22 @@ Result)
 @<img:nil;0;Insert only a caption without picture content>
 %%%
 
+%%% ko
+예5) Excel로 부터 차트 이미지 삽입
+```html
+@<img:#media/chart_sample.xlsx[chart_population:Population in the world];0.9;Excel 차트 예시>
+```
+결과)
+@<img:#media/chart_sample.xlsx[chart_population:Population in the world];0.9;Excel 차트 예시>
+%%% en
+ex5) Insert chart image from Excel
+```html
+@<img:#media/chart_sample.xlsx[chart_population:Population in the world];0.9;Excel chart example>
+```
+결과)
+@<img:#media/chart_sample.xlsx[chart_population:Population in the world];0.9;Excel chart example>
+%%%
+
 
 
  
