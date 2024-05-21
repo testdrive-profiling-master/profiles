@@ -7,10 +7,14 @@ If WScript.Arguments.Count > 0 Then
 	
 	If WScript.Arguments.Count > 1 Then
 		page_name	= WScript.Arguments(1)
-		svgPath		= fso.GetParentFolderName(vsdPath) & "\" & fso.GetFileName(vsdPath) & "." & page_name & ".svg"
+		svgPath		= fso.GetFileName(vsdPath) & "." & page_name & ".svg"
 	else
-		svgPath		= fso.GetParentFolderName(vsdPath) & "\" & fso.GetFileName(vsdPath) & ".svg"
+		svgPath		= fso.GetFileName(vsdPath) & ".svg"
 	End If
+	
+	svgPath = Replace(svgPath, " ", "_")
+	svgPath	= fso.GetParentFolderName(vsdPath) & "\" & svgPath
+	
 	
 	'SVG 파일이 잠겨 있는지 채크
 	If fso.FileExists(svgPath) Then

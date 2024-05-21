@@ -20,6 +20,8 @@ If (WScript.Arguments.Count > 1) And (WScript.Arguments.Count < 3) Then
 		output_name	=  fso.GetFileName(excel_path) & "." & sheet_name & "." & chart_name & ".svg"
 	End If
 	
+	output_name = Replace(output_name, " ", "_")
+	
 	If LCase(Right(excel_path, 5)) = ".xlsx" Then
 		On Error Resume Next	'오류 강제 처리
 		

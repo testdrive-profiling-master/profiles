@@ -413,6 +413,15 @@ function GenerateFigure(sFileName, fRatio)
 			end
 			sFileName:Append(".svg")
 			
+			do	-- whitespace bug fix. convert " " to "_"
+				local sFixedFileName = String(sFileName.s)
+				sFixedFileName:CutFront("\\", true)
+				sFixedFileName:CutFront("/", true)
+				sFixedFileName:Replace(" ", "_", true)
+				sFileName:erase(#sFileName.s - #sFixedFileName.s, -1);
+				sFileName:Append(sFixedFileName.s)
+			end
+			
 			if lfs.attributes(sFileName.s) == false then	-- no visio
 				LOGE("Visio is not installed.")
 				sFileName.s	= sProfilePath.s .. "common/bin/codegen/no_visio.svg"
@@ -429,6 +438,14 @@ function GenerateFigure(sFileName, fRatio)
 			sPageName	= String(sPageName)
 			sPageName:Replace(":", ".", true)
 			sFileName:Append("." .. sPageName.s .. ".svg")
+			do	-- whitespace bug fix. convert " " to "_"
+				local sFixedFileName = String(sFileName.s)
+				sFixedFileName:CutFront("\\", true)
+				sFixedFileName:CutFront("/", true)
+				sFixedFileName:Replace(" ", "_", true)
+				sFileName:erase(#sFileName.s - #sFixedFileName.s, -1);
+				sFileName:Append(sFixedFileName.s)
+			end
 			
 			if lfs.attributes(sFileName.s) then	-- existed
 				temporary_file_list[#temporary_file_list + 1]		= sFileName.s	-- clean up list.

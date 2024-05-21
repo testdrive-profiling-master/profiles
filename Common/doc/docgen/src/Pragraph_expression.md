@@ -1037,21 +1037,28 @@ Lua variable 'docgen_language' is @<lua:docgen_language>
 ## 그림 삽입
 
 @<size:30>@<b>표현식 : @@<img:@<color:FF0000>파일명@</color>;@<color:FF0000>스케일@</color>;@<color:FF0000>캡션@</color>>@</b>@</size>
-그림은 jpg, png, bmp, gif, tif, svg, wmf, vsd/vsdx(Visio 설치 필요) 포멧을 지원하고 있습니다. @<color:FF0000>파일명@</color>은 표시할 파일명을 지정하게 되며, \
+그림은 jpg, png, bmp, gif, tif, svg, wmf, vsd/vsdx(Visio 설치 필요), xls/xlsx(Excel 설치 필요) 포멧을 지원하고 있습니다. @<color:FF0000>파일명@</color>은 표시할 파일명을 지정하게 되며, \
 그림에 외각선 경계가 필요할 경우 "@<color:0000FF>#@</color>@<color:FF0000>파일명@</color>"으로 표시합니다. \
 Visio 파일일 경우는 "@<color:FF0000>파일명@</color>[@<color:FF0000>페이지명@</color>]"으로 별도의 페이지 이름을 지정할 수 있으며, \
 @<color:FF0000>페이지명@</color>이 지정되지 않을 때는 첫 페이지로 간주합니다.
+Excel 파일일 경우는 "@<color:FF0000>파일명@</color>[@<color:FF0000>시트명@</color>[:@<color:FF0000>차트_제목@</color>]]" 으로 지정하여, 특정 시트의 차트를 이미지로 지정할 수 있습니다. \
+(차트 제목을 생략할 수 있으며, 생략될 경우 해당 시트의 첫번째 차트가 사용됩니다.)
+
 또한 @<color:FF0000>스케일@</color>의 경우, 종이의 폭 기준 최대값 1.0으로 0 초과 1 이하의 값을 넣어 크기를 지정할 수 있습니다. \
 지정되지 않을 경우 기본 1.0으로 간주 합니다.
 @<color:FF0000>캡션@</color>은 말 그대로 캡션 내용을 지정하며, '@<bookmark:@상호 참조>'에서 사용될 수 있습니다. 지정되지 않을 경우 캡션은 삽입되지 않습니다.
+
 %%% en
 ## Picture insertion
 
 @<size:30>@<b>Expression : @@<img:@<color:FF0000>filename@</color>;@<color:FF0000>scale@</color>;@<color:FF0000>caption@</color>>@</b>@</size>
-Pictures support jpg, png, bmp, gif, tif, svg, wmf, and vsd/vsdx (Visio installation required) formats. @<color:FF0000>file name@</color> specifies the file name to display, \
+Pictures support jpg, png, bmp, gif, tif, svg, wmf, and vsd/vsdx (Visio installation required), xls/xlsx(Excel installation required) formats. @<color:FF0000>file name@</color> specifies the file name to display, \
 if the picture requires an outline border, indicate it as "@<color:0000FF>#@</color>@<color:FF0000>filename@</color>". \
 In the case of a Visio file, a separate page name can be specified as "@<color:FF0000>filename@</color>[@<color:FF0000>page name@</color>]", and \
 if @<color:FF0000>page name@</color> is not specified, it is considered the first page.
+Excel 파일일 경우는 "@<color:FF0000>파일명@</color>[@<color:FF0000>시트명@</color>[:@<color:FF0000>차트_제목@</color>]]" 으로 지정하여, 특정 시트의 차트를 이미지로 지정할 수 있습니다.
+In the case of an Excel file, By specifying "@<color:FF0000>file_name@</color>[@<color:FF0000>sheet_name@</color>[:@<color:FF0000>chart_title@</color>]]", you can designate the chart of a specific sheet as an image. \
+(The chart title can be omitted. If omitted, the first chart on the sheet is used.)
 
 Additionally, in the case of @<color:FF0000>scale@</color>, the maximum value based on the width of the paper is 1.0, and you can specify the size by entering a value between 0 and 1. \
 If not specified, the default 1.0 is assumed.

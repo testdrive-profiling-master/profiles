@@ -64,3 +64,5 @@ int main(int argc, const char* argv[]) {
  
 @<tbl:media/tables.xlsx;table_1;table example>
 
+ 
+@<img:media/tables.xlsx[chart:Population in the world];0.9;chart example>
