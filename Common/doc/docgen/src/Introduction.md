@@ -24,7 +24,7 @@ docgen 은 Template 워드(.docx) 파일을 참조하여 새로운 WORD 문서(.
 * Lua 스크립트를 통해 다양한 문자 변조 기능 지원
 * WORD 및 PDF 파일 자동 생성
 * 자동화된 절/캡션(Caption)/상호참조 생성 기능
-* 그림, 표, 스타일 서식, 코드 인용, 수학 수식 표현 기능
+* 그림, 표, 스타일 서식, 코드 블럭, 수학 수식 표현 기능
 * 워터마크(water mark) 삽입 기능
 * 워드 템플릿 문서 기반으로 사용자가 손쉽게 다양한 스타일 변경 구축과 일관된 서식 적용
 
@@ -38,7 +38,7 @@ Basically, CodeGen allows you to write documents in text format through a gramma
 * Supports various character modulation functions through Lua script
 * Automatic creation of WORD and PDF files
 * Automated clause/caption/cross-reference creation function
-* Picture, table, style formatting, code quotation, and mathematical equation expression functions
+* Picture, table, style formatting, code block, and mathematical equation expression functions
 * Watermark insertion function
 * Users can easily change various styles and apply consistent formatting based on Word template documents
 %%%
@@ -81,7 +81,7 @@ To run docgen, run as follows.
 ```txt
 > docgen
 
-Document Generator for TestDrive Profiling Master. v1.6
+Document Generator for TestDrive Profiling Master. v1.7
 Usage: docgen  [--help] [-t template] [-l language] [-r|--run=lua_code] input_file [output_file]
 
       --help                display this help and exit
@@ -90,7 +90,7 @@ Usage: docgen  [--help] [-t template] [-l language] [-r|--run=lua_code] input_fi
                             testdrive      : TestDrive Profiling Master
                             (default : testdrive)
   -l language               Document language code string.
-                            'docgen_language' variable in Lua
+                            'docgen.language' variable in Lua
                             (default : 'en')
   -r, --run=lua_code        Run Lua snippet code
   input_file                input Lua or .md(markdown) file
@@ -102,7 +102,7 @@ Usage: docgen  [--help] [-t template] [-l language] [-r|--run=lua_code] input_fi
 
 @<color:FF0000>INPUT_LUA_FILE@</color>에 해당하는 Lua 스크립트 또는 Markdown 문서를 입력 소스 파일로 지정하며, @<color:FF0000>OUTPUT_DOCX_FILE@</color>을 지정하지 않을 경우 주어진 property를 참조하여 자동으로 알맞게 생성합니다. \
 '-t' 옵션은 기본 바탕이 될 템플릿 문서를 지정하게 되는데, 템플릿 문서를 지정하지 않을 경우 기본 docgen_template.docx로 지정하도록 되어 있으나 이를 참조/변경하여 다양한 문서 형태를 만들 수 있습니다.
-'-l' 옵션은 임의의 언어코드를 지정합니다. Lua 에서는 'docgen_language' 변수로 확인할 수 있고, 문장에서는 @<b>'@<bookmark:@문서 활성화>'@</b> 표현식을 사용하여, 원하는 언어 코드를 선택할 수 있습니다.
+'-l' 옵션은 임의의 언어코드를 지정합니다. Lua 에서는 'docgen.language' 변수로 확인할 수 있고, 문장에서는 @<b>'@<bookmark:@문서 활성화>'@</b> 표현식을 사용하여, 원하는 언어 코드를 선택할 수 있습니다.
 '-r' 옵션은 임의의 선행 Lua 코드를 지정합니다. 이 코드는 문서 구조를 변경을 위한 조건을 넣을 수 있습니다.
 
 :::NoteHeading
@@ -113,7 +113,7 @@ command line : @<fixed>docgen @<color:FF0000>INPUT_LUA_FILE@</color>  @<color:FF
 
 In @<color:FF0000>INPUT_LUA_FILE@</color>, set a Lua script or Markdown text file as the input source file. If @<color:FF0000>OUTPUT_DOCX_FILE@</color> is not specified, it is automatically created appropriately by referring to the given property. \
 The '-t' option specifies the template document that will be the base. If the template document is not specified, the default docgen_template.docx is specified, but various document types can be created by referencing/changing it.
-The '-l' option specifies an arbitrary language code. In Lua, you can check it with the 'docgen_language' variable, and in sentences, you can use the expression @<b>'@<bookmark:@Document activation>'@</b> to select the desired language code.
+The '-l' option specifies an arbitrary language code. In Lua, you can check it with the 'docgen.language' variable, and in sentences, you can use the expression @<b>'@<bookmark:@Document activation>'@</b> to select the desired language code.
 The '-r' option specifies arbitrary preceding Lua code. This code can contain conditions for changing the document structure.
 
 :::NoteHeading

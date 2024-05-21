@@ -1,4 +1,4 @@
-local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.6")
+local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.7")
 local	sProfilePath	= String(nil)
 local	sTemplatePath	= String(nil)
 
@@ -52,7 +52,7 @@ do	-- list-up customized document template list
 end
 
 Arg:AddOptionString	("language", "", "l", nil, "language", "Document language code string.")
-Arg:AddRemark(nil, "'docgen_language' variable in Lua")
+Arg:AddRemark(nil, "'docgen.language' variable in Lua")
 Arg:AddRemark(nil, "(default : 'en')")
 
 Arg:AddOptionString	("run", "", "r", "run", "lua_code", "Run Lua snippet code")
@@ -66,14 +66,19 @@ end
 
 RunScript("codegen_utils")
 
+docgen					= {}
+docgen.code_format		= "cpp"					-- default code format
+docgen.code_bgcolor		= "F7F7F7"				-- code background color
+docgen.fixed_font		= "Cascadia Mono"		-- fixed font name
+
 local	sInFilename		= Arg:GetOptionFile("in_file", 0)
 local	sDocTemplate	= String(Arg:GetOptionString("template"))
 local	sOutFilename	= Arg:GetOptionFile("out_file", 0)
-docgen_language			= String(Arg:GetOptionString("language"))
-docgen_language:MakeLower()
-docgen_language			= docgen_language.s
-if #docgen_language == 0 then
-	docgen_language		= "en"
+docgen.language			= String(Arg:GetOptionString("language"))
+docgen.language:MakeLower()
+docgen.language			= docgen.language.s
+if #docgen.language == 0 then
+	docgen.language		= "en"
 end
 
 if sDocTemplate.s == "" then
@@ -1186,6 +1191,20 @@ function GenerateTableFromLua(sLuaTable)
 	return table_code.s
 end
 
+local function GenerateHighlightedCodes(sCodeFormat, sContent, bLine)
+	local txt = TextFile()
+	if txt:Create(".docgen_code_highlight.tmp") then
+	else
+		error("Create temporary file is failed.")
+	end
+	txt:Put(sContent)
+	txt:Close()
+	local sResult	= exec("code_highlighter --ilang=" .. sCodeFormat .. " --olang=docgen " .. (bLine and "-n " or "") .. ".docgen_code_highlight.tmp")
+	exec("rm -f .docgen_code_highlight.tmp")
+	
+	return sResult
+end
+
 ReadText = function(sFile)
 	local	txt	= TextFile()
 	if txt:Open(sFile) == false then
@@ -1199,7 +1218,7 @@ local	bInline		= false
 function EncodeParagraph(sText, sExtra)
 	local	sPara			= String(sText)
 	local	sResult			= String("")
-	local	bBypass			= false				-- 내용 무시, docgen_language 일치하지 않음
+	local	bBypass			= false				-- 내용 무시, docgen.language 일치하지 않음
 	local	bBypassCodeRef	= false				-- code reference in bypass mode
 	
 	if sPara:CompareFront("[[") and sPara:CompareBack("]]") then
@@ -1313,7 +1332,7 @@ function EncodeParagraph(sText, sExtra)
 					end
 				end
 				
-				local	sCodeType	= sLine.s
+				local	sCodeFormat	= sLine.s
 				local	sIndent		= ""
 				-- cut off front
 				sPara:erase(0, sPara.TokenizePos)
@@ -1350,24 +1369,16 @@ function EncodeParagraph(sText, sExtra)
 				end
 				
 				if bScript then
-					if sCodeType == "lua" then
+					if sCodeFormat == "lua" then
 						if RunString(sContent.s, "inline") == false then
 							error("Got error on inline lua script.")
 						end
 					else
-						error("Can't execute '" .. sCodeType .. "' script.")
+						error("Can't execute '" .. sCodeFormat .. "' script.")
 					end
 				else
 					do	-- make highlight contents
-						local txt = TextFile()
-						if txt:Create(".docgen_code_highlight.tmp") then
-						else
-							error("Create temporary file is failed.")
-						end
-						txt:Put(sContent.s)
-						txt:Close()
-						sContent	= exec("code_highlighter --ilang=" .. sCodeType .. " --olang=docgen " .. (bLine and "-n " or "") .. ".docgen_code_highlight.tmp")
-						exec("rm -f .docgen_code_highlight.tmp")
+						sContent = GenerateHighlightedCodes(sCodeFormat, sContent.s, bLine)
 						
 						if bLine then
 							local sIndentString	= String(sContent)
@@ -1403,7 +1414,7 @@ function EncodeParagraph(sText, sExtra)
 								<w:tcW w:w=\"10094\" w:type=\"dxa\"/>\
 								<w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"F8F8F8\" w:themeFill=\"background1\" w:themeFillShade=\"F8\"/>\
 							</w:tcPr>"
-					.. EncodeParagraph(sContent, {pPr=("<w:jc w:val=\"left\"/><w:spacing w:after=\"0\"/>" .. sIndent), rPr="<w:rFonts w:ascii=\"Cascadia Mono\" w:eastAsia=\"Cascadia Mono\" w:hAnsi=\"Cascadia Mono\"/>"}) ..
+					.. EncodeParagraph(sContent, {pPr=("<w:jc w:val=\"left\"/><w:spacing w:after=\"0\"/>" .. sIndent), rPr="<w:rFonts w:ascii=\"" .. docgen.fixed_font .. "\" w:eastAsia=\"" .. docgen.fixed_font .. "\" w:hAnsi=\"" .. docgen.fixed_font .. "\"/>"}) ..
 					"</w:tc></w:tr></w:tbl>"
 					)
 					bInline	= false
@@ -1440,7 +1451,7 @@ function EncodeParagraph(sText, sExtra)
 							bBypass	= (ReturnCode == false)
 						end
 					else
-						bBypass	= (sLine.s ~= docgen_language)
+						bBypass	= (sLine.s ~= docgen.language)
 					end
 				else
 					bBypass	= false
@@ -1554,7 +1565,7 @@ function EncodeParagraph(sText, sExtra)
 						s_rPr	= s_rPr .. "<w:vertAlign w:val=\"subscript\"/>"
 					end
 					if bFixed then
-						s_rPr	= s_rPr .. "<w:rFonts w:ascii=\"돋움체\" w:eastAsia=\"돋움체\" w:hAnsi=\"돋움체\"/>"
+						s_rPr	= s_rPr .. "<w:rFonts w:ascii=\"" .. docgen.fixed_font .. "\" w:eastAsia=\"" .. docgen.fixed_font .. "\" w:hAnsi=\"" .. docgen.fixed_font .. "\"/>"
 					end
 					if bColor then
 						s_rPr	= s_rPr .. "<w:color w:val=\"" .. sColor .. "\"/>"
@@ -1678,6 +1689,30 @@ function EncodeParagraph(sText, sExtra)
 								end
 							end
 							goto continue
+						elseif sTag.s == "code" then	-- inline code block
+							if bSet then
+								local	sCodeFormat	= sVar:Tokenize(":; ")
+								sCodeFormat:MakeLower()
+								sCodeFormat			= sCodeFormat.s
+								if #sCodeFormat == 0 then
+									sCodeFormat			= docgen.code_format	-- override with default code format
+								end
+								
+								sLine:erase(0, sLine.TokenizePos)
+								
+								local	sContents	= String(sLine.s)
+								sContents:CutBack("@</code>", true)
+								
+								sLine:CutFront("@</code>", false)
+								
+								sContents:Trim(" \r\n\t")
+								
+								sContents.s = GenerateHighlightedCodes(sCodeFormat, sContents.s, false)
+								
+								sLine:insert(sLine.TokenizePos, "@<fixed>@<bgcolor:" .. docgen.code_bgcolor .. ">" .. sContents.s .. "@</bgcolor>@</fixed>")
+							else
+								error("invalid use '</code>'")
+							end
 						elseif sTag.s == "property" then
 							local	sName	= sVar:Tokenize("")
 							sName:TrimLeft(" :")

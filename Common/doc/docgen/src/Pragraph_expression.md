@@ -165,7 +165,7 @@ Text expressions can specify the color, thickness, italics, underline, size, sup
 ### 굵은 글자
 @<size:30>@<b>표현식 : @@<b>@<color:FF0000>표현식@</color>@@</b>@</b>@</size>
 
-굵은 글씨는 @<color:FF0000>표현식@</color> 을 HTML 방식과 유사하게 'b' 태그로 둘러쌓아 표현합니다.
+굵은 글씨는 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'b' 태그로 둘러쌓아 표현합니다.
 
 예)
 ```html
@@ -193,7 +193,7 @@ Result : @<b>It's in bold.@</b> It's not in bold.
 ### 이텔릭체
 @<size:30>@<b>표현식 : @@<i>@<color:FF0000>표현식@</color>@@</i>@</b>@</size>
 
-이텔릭체 문장은 @<color:FF0000>표현식@</color> 을 HTML 방식과 유사하게 'i' 태그로 둘러쌓아 표현합니다.
+이텔릭체 문장은 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'i' 태그로 둘러쌓아 표현합니다.
 
 예)
 ```html
@@ -221,7 +221,7 @@ Result : @<i>italic@</i> Non italic
 ### 밑줄
 @<size:30>@<b>표현식 : @@<u>@<color:FF0000>표현식@</color>@@</u>@</b>@</size>
 
-밑줄 글씨 표현은 @<color:FF0000>표현식@</color> 을 HTML 방식과 유사하게 'u' 태그로 둘러쌓아 표현합니다.
+밑줄 글씨 표현은 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'u' 태그로 둘러쌓아 표현합니다.
 
 예)
 ```html
@@ -249,7 +249,7 @@ Result : @<u>underlined text@</u>
 ### 취소선
 @<size:30>@<b>표현식 : @@<s>@<color:FF0000>표현식@</color>@@</s>@</b>@</size>
 
-취소선 표현은 @<color:FF0000>표현식@</color> 을 HTML 방식과 유사하게 's' 태그로 둘러쌓아 표현합니다.
+취소선 표현은 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 's' 태그로 둘러쌓아 표현합니다.
 
 예)
 ```html
@@ -277,7 +277,7 @@ Result : @<s>Strikethrough text@</s>
 ### 위첨자
 @<size:30>@<b>표현식 : @@<sup>@<color:FF0000>표현식@</color>@@</sup>@</b>@</size>
 
-위첨자 표현은 @<color:FF0000>표현식@</color> 을 HTML 방식과 유사하게 'sup' 태그로 둘러쌓아 표현합니다.
+위첨자 표현은 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'sup' 태그로 둘러쌓아 표현합니다.
 
 예)
 ```html
@@ -305,7 +305,7 @@ Result : Text@<sup>Superscript@</sup>
 ### 아래첨자
 @<size:30>@<b>표현식 : @@<sub>@<color:FF0000>표현식@</color>@@</sub>@</b>@</size>
 
-아래첨자 표현은 @<color:FF0000>표현식@</color> 을 HTML 방식과 유사하게 'sub' 태그로 둘러쌓아 표현합니다.
+아래첨자 표현은 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'sub' 태그로 둘러쌓아 표현합니다.
 
 예)
 ```html
@@ -330,10 +330,38 @@ Result : Text@<sub>Subscript@</sub>
 
  
 %%% ko
+### 배경 색상
+@<size:30>@<b>표현식 : @@<bgcolor:@<color:FF0000>색상값@</color>>@<color:FF0000>표현식@</color>@@</bgcolor>@</b>@</size>
+
+배경 색상 변경을 위해서는 표현은 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'bgcolor' 태그로 둘러쌓아 표현하며, 색상 지정은 @<color:FF0000>색상값@</color>에 24bit RGB 16진수로 표현합니다.
+
+예)
+```html
+@<bgcolor:FF0000>붉은 배경@</bgcolor> 표현
+```
+결과 : @<bgcolor:FF0000>붉은 배경@</bgcolor> 표현
+%%% en
+### Background color
+@<size:30>@<b>Expression : @@<bgcolor:@<color:FF0000>color_value@</color>>@<color:FF0000>expression@</color>@@</bgcolor>@</b>@</size>
+
+To change the background color, the expression is @<color:FF0000>expression@</color> surrounded by 'bgcolor' tags similar to HTML, and the color is specified by @<color:FF0000>color_value@</color> Expressed in 24bit RGB hexadecimal.
+
+ex)
+```html
+@<bgcolor:FF0000>Red background@</bgcolor> expression
+```
+Result : @<bgcolor:FF0000>Red background@</bgcolor> expression
+%%%
+
+
+
+
+ 
+%%% ko
 ### 글자 색상
 @<size:30>@<b>표현식 : @@<color:@<color:FF0000>색상값@</color>>@<color:FF0000>표현식@</color>@@</color>@</b>@</size>
 
-글자 색상 변경을 위해서는 표현은 @<color:FF0000>표현식@</color> 을 HTML 방식과 유사하게 'color' 태그로 둘러쌓아 표현하며, 색상 지정은 @<color:FF0000>색상값@</color>에 24bit RGB 16진수로 표현합니다.
+글자 색상 변경을 위해서는 표현은 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'color' 태그로 둘러쌓아 표현하며, 색상 지정은 @<color:FF0000>색상값@</color>에 24bit RGB 16진수로 표현합니다.
 
 예)
 ```html
@@ -361,7 +389,7 @@ Result : @<color:FF0000>Red text@</color> expression
 ### 글자 크기
 @<size:30>@<b>표현식 : @@<size:@<color:FF0000>크기값@</color>>@<color:FF0000>표현식@</color>@@</size>@</b>@</size>
 
-글자 크기 변경을 위해서는 표현은 @<color:FF0000>표현식@</color> 을 HTML 방식과 유사하게 'size' 태그로 둘러쌓아 표현하며, 색상 지정은 @<color:FF0000>크기값@</color>에 point 단위로 지정합니다.
+글자 크기 변경을 위해서는 표현은 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'size' 태그로 둘러쌓아 표현하며, 색상 지정은 @<color:FF0000>크기값@</color>에 point 단위로 지정합니다.
 
 예)
 ```html
@@ -379,6 +407,42 @@ ex)
 @<size:30>Big text@</size> @<size:10>small text@</size>
 ```
 Result : @<size:30>Big text@</size> @<size:10>small text@</size>
+%%%
+
+
+
+
+ 
+%%% ko
+### 고정폭 글꼴
+@<size:30>@<b>표현식 : @@<fixed>@<color:FF0000>표현식@</color>@@</fixed>@</b>@</size>
+
+고정폭 글꼴을 사용하기 위해 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'fixed' 태그로 둘러쌓아 표현합니다.
+
+ 
+:::NoteHeading
+고정폭 폰트는 Lua 의 '@<b>docgen.fixed_font@</b>' 변수로 지정할 수 있으며, 기본 폰트명은 'Cascadia Mono' 입니다.
+ 
+예)
+```html
+@<fixed>Fixed font@</fixed> 표현식입니다.
+```
+결과 : @<fixed>Fixed font@</fixed> 표현식입니다.
+%%% en
+### Fixed font
+@<size:30>@<b>Expression : @@<fixed>@<color:FF0000>expression@</color>@@</fixed>@</b>@</size>
+
+To use fixed font, the @<color:FF0000>expression@</color> is surrounded by 'fixed' tags similar to HTML.
+
+ 
+:::NoteHeading
+Fixed-width fonts can be specified with Lua's '@<b>docgen.fixed_font@</b>' variable, and the default font name is 'Cascadia Mono'.
+ 
+ex)
+```html
+@<fixed>Fixed font@</fixed> expression.
+```
+Result : @<fixed>Fixed font@</fixed> expression.
 %%%
 
 
@@ -660,7 +724,50 @@ You can write this string as a mathematical equation by adding the characters "\
 
  
 %%% ko
-## 코드 인용
+## 인라인 코드 블럭
+
+@<size:30>@<b>표현식 : @@<code[:@<color:FF0000>코드_형식@</color>]>@<color:FF0000>인라인_코드@</color>@@</code>@</b>@</size>
+
+문장 안에서 인라인 코드를 표현합니다. '코드_형식'은 생략될 수 있으며, 기본 코드 형식은 'cpp' 이며, \
+'@<bookmark:코드 블럭>'에서 지원되는 코드 형식을 동일하게 사용할 수 있습니다.
+
+:::NoteHeading
+Lua 에서 '@<b>docgen.code_format@</b>' 를 지정하여 기본 코드 형식을 변경할 수 있습니다.
+
+ 
+예)
+```html
+C 표현의 출력 예는 "@<code>printf("Hello world.");@</code>" 등이 있다.
+```
+결과 : 
+C 표현의 출력 예는 "@<code>printf("Hello world.");@</code>" 등이 있다.
+
+%%% en
+## Inline code block
+
+@<size:30>@<b>Expression : @@<code[:@<color:FF0000>code_format@</color>]>@<color:FF0000>inline_code@</color>@@</code>@</b>@</size>
+
+Statement Represents inline code. 'code_format' can be omitted and, the default code format is 'cpp', \
+and you can use the same code formats supported by '@<bookmark:Code block>'.
+
+:::NoteHeading
+You can change the default code format in Lua by specifying '@<b>docgen.code_format@</b>'.
+
+ 
+ex)
+```html
+Examples of output from C expressions is "@<code>printf("Hello world.");@</code>".
+```
+Result : 
+Examples of output from C expressions is "@<code>printf("Hello world.");@</code>".
+%%%
+
+
+
+
+ 
+%%% ko
+## 코드 블럭
 
 @<size:30>@<b>표현식 : ```@<color:FF0000>코드_형식@</color>@</b>@</size>
 @<size:30>@<b>        @<color:FF0000>코드_내용@</color>@</b>@</size>
@@ -668,7 +775,7 @@ You can write this string as a mathematical equation by adding the characters "\
 
 @<color:FF0000>코드_형식@</color> 의 경우 아래와 같이 @<fixed>"code_highlighter -l"@</fixed> 명령어 입력을 통해 아래와 같이 지원하는 코드 형식을 확인 할 수 있습니다.
 %%% en
-## Code citation
+## Code block
 
 @<size:30>@<b>Expression : ```@<color:FF0000>code_format@</color>@</b>@</size>
 @<size:30>@<b>             @<color:FF0000>code_contents@</color>@</b>@</size>
@@ -704,11 +811,11 @@ In the case of @<color:FF0000>code_format@</color>, you can check the supported 
 %%% ko
 아래는 verilog 코드를 인용하는 예를 나타낸다. 인용시 "```" 문자열을 사용하려면, "@```" 로 표기하여 인용할 수 있으며, 코드에 라인 번호를 삽입하려면 '#' 를 붙여 "@<color:0000FF>#@</color>@<color:FF0000>코드_형식@</color>"으로 표기할 수 있습니다.
 
-예) 라인 번호가 있는 verilog 코드 인용
+예) 라인 번호가 있는 verilog 코드 블럭
 %%% en
 Below is an example of quoting verilog code. To use the string "```" when quoting, you can quote it by writing "@```". To insert a line number in the code, you can add '#' and quote it like this: "@<color:0000FF>#@</color It can be expressed as ">@<color:FF0000>code_format@</color>".
 
-ex) Verilog code citation with line numbers
+ex) Verilog Code block with line numbers
 %%%
 
 ```txt
@@ -803,7 +910,7 @@ endmodule
 @<size:30>@<b>        @<color:FF0000>코드_내용@</color>@</b>@</size>
 @<size:30>@<b>        ```@</b>@</size>
 
-'@<bookmark:코드 인용>'과 비슷한 형식이지만, "코드 형식"이 "[]" 로 둘러 싸여 있을 경우, 코드 내용을 실행한다.
+'@<bookmark:코드 블럭>'과 비슷한 형식이지만, "코드 형식"이 "[]" 로 둘러 싸여 있을 경우, 코드 내용을 실행한다.
 현재 사용 가능한 코드 형식은 "lua" 만 지원한다.
 %%% en
 ## Code execution
@@ -812,7 +919,7 @@ endmodule
 @<size:30>@<b>             @<color:FF0000>code_contents@</color>@</b>@</size>
 @<size:30>@<b>             ```@</b>@</size>
 
-It has a similar format to '@<bookmark:Code citation>', but if the "code format" is surrounded by "[]", the code content is executed.
+It has a similar format to '@<bookmark:Code block>', but if the "code format" is surrounded by "[]", the code content is executed.
 The currently available code format supports only "lua".
 %%%
 
@@ -899,7 +1006,7 @@ Lua 코드 실행의 반환 값이 'true'(boolean) 일 경우, 다음 문서 내
 만약 언어 코드나 Lua 코드 없이 '%%%' 로 끝났다면, 다음 줄부터 문서 내용이 활성화됩니다.
 
 :::NoteHeading
-언어코드 이름은 대소문자를 구별하며, 언어 코드 이름 뒤에 '-', '=' 또는 '%' 문자들을 나열하여 가독성을 높일 수 있습니다. 기본값은 'en' 을 가집니다. 언어코드는 Lua 에서 'docgen_language' 변수로 사용할 수 있습니다.
+언어코드 이름은 대소문자를 구별하며, 언어 코드 이름 뒤에 '-', '=' 또는 '%' 문자들을 나열하여 가독성을 높일 수 있습니다. 기본값은 'en' 을 가집니다. 언어코드는 Lua 에서 'docgen.language' 변수로 사용할 수 있습니다.
 
 %%% en
 ## Document activation
@@ -921,7 +1028,7 @@ If not same as 'true', the next document contents will be ignored.
 If it ends with '%%%' without language code or Lua code definition, the document content is activated from the next line.
 
 :::NoteHeading
-Language code names are case-sensitive, and you can improve readability by listing '-', '=', or '%' characters after the language code name. The default value is 'en'. The language code can be used as the 'docgen_language' variable in Lua.
+Language code names are case-sensitive, and you can improve readability by listing '-', '=', or '%' characters after the language code name. The default value is 'en'. The language code can be used as the 'docgen.language' variable in Lua.
 %%%
 
 %%% ko -------------------------
@@ -1012,20 +1119,20 @@ Lua 함수를 호출합니다. 반환된 값이 문자열 형식일 경우 다�
 
 예)
 ```lua
-Lua 변수 'docgen_language'는 @<lua:docgen_language> 입니다.
+Lua 변수 'docgen.language'는 @<lua:docgen.language> 입니다.
 ```
 결과)
-Lua 변수 'docgen_language'는 @<lua:docgen_language> 입니다.
+Lua 변수 'docgen.language'는 @<lua:docgen.language> 입니다.
 %%% en
 ## Lua function call
 @<size:30>@<b>Expression : @@<lua:@<color:FF0000>lua_function@</color>>@</b>@</size>
 Call a Lua function. If the returned value is in string type, it is applied to the next document content.
 ex)
 ```lua
-Lua variable 'docgen_language' is @<lua:docgen_language>
+Lua variable 'docgen.language' is @<lua:docgen.language>
 ```
 Result)
-Lua variable 'docgen_language' is @<lua:docgen_language>
+Lua variable 'docgen.language' is @<lua:docgen.language>
 %%%
  
 
@@ -1056,7 +1163,6 @@ Pictures support jpg, png, bmp, gif, tif, svg, wmf, and vsd/vsdx (Visio installa
 if the picture requires an outline border, indicate it as "@<color:0000FF>#@</color>@<color:FF0000>filename@</color>". \
 In the case of a Visio file, a separate page name can be specified as "@<color:FF0000>filename@</color>[@<color:FF0000>page name@</color>]", and \
 if @<color:FF0000>page name@</color> is not specified, it is considered the first page.
-Excel 파일일 경우는 "@<color:FF0000>파일명@</color>[@<color:FF0000>시트명@</color>[:@<color:FF0000>차트_제목@</color>]]" 으로 지정하여, 특정 시트의 차트를 이미지로 지정할 수 있습니다.
 In the case of an Excel file, By specifying "@<color:FF0000>file_name@</color>[@<color:FF0000>sheet_name@</color>[:@<color:FF0000>chart_title@</color>]]", you can designate the chart of a specific sheet as an image. \
 (The chart title can be omitted. If omitted, the first chart on the sheet is used.)
 
@@ -1138,7 +1244,7 @@ ex5) Insert chart image from Excel
 ```html
 @<img:media/chart_sample.xlsx[chart_population:Population in the world];1.0;Excel chart example>
 ```
-결과)
+Result)
 @<img:media/chart_sample.xlsx[chart_population:Population in the world];1.0;Excel chart example>
 %%%
 
