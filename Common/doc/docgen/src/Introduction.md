@@ -90,13 +90,15 @@ To run docgen, run as follows.
 > docgen
 
 Document Generator for TestDrive Profiling Master. v1.8
-Usage: docgen  [--help] [-t template] [-l language] [-r|--run=lua_code] input_file [output_file]
+Usage: docgen  [--help] [-t template] [-i template_desc] [-f format] [-l language] [-r|--run=lua_code] input_file [output_file]
 
       --help                display this help and exit
   -t template               Document template name/file.
                             *** Installed docgen template list ***
                             testdrive      : TestDrive Profiling Master
                             (default : testdrive)
+  -i template_desc          install new docgen template.
+                            ex) docgen -t name -i "description" template.docx
   -f format                 Extra output format.
                             - supported output format
                             html : Standard HTML format
@@ -119,7 +121,8 @@ Usage: docgen  [--help] [-t template] [-l language] [-r|--run=lua_code] input_fi
 
 @<color:FF0000>INPUT_LUA_FILE@</color>에 해당하는 Lua 스크립트 또는 Markdown 문서를 입력 소스 파일로 지정하며, @<color:FF0000>OUTPUT_DOCX_FILE@</color>을 지정하지 않을 경우 주어진 property를 참조하여 자동으로 알맞게 생성합니다. \
 '-t' 옵션은 기본 바탕이 될 템플릿 문서를 지정하게 되는데, 템플릿 문서를 지정하지 않을 경우 기본 docgen_template.docx로 지정하도록 되어 있으나 이를 참조/변경하여 다양한 문서 형태를 만들 수 있습니다.
-'-f' 옵션은 .docx 포멧 이외에 다른 파일로 저장할 수 있도록 지정합니다. -f pdf,html 과 같이 복합적으로 출력을 지정할 수 있습니다.
+'-i' 옵션은 새로운 템플릿 문서를 추가할 수 있습니다. 이 때, 'input_file' 이 새로운 템플릿 문서 원본이며, 'template' 가 지정할 타겟 템플릿 이름입니다.
+'-f' 옵션은 .docx 포멧 이외에 다른 파일로 저장할 수 있도록 지정합니다. '-f pdf,html' 과 같이 복합적으로 출력을 지정할 수 있습니다.
 '-l' 옵션은 임의의 언어코드를 지정합니다. Lua 에서는 'docgen.language' 변수로 확인할 수 있고, 문장에서는 @<b>'@<bookmark:@문서 활성화>'@</b> 표현식을 사용하여, 원하는 언어 코드를 선택할 수 있습니다.
 '-r' 옵션은 임의의 선행 Lua 코드를 지정합니다. 이 코드는 문서 구조를 변경을 위한 조건을 넣을 수 있습니다.
 
@@ -131,6 +134,8 @@ command line : @<fixed>docgen @<color:FF0000>INPUT_LUA_FILE@</color>  @<color:FF
 
 In @<color:FF0000>INPUT_LUA_FILE@</color>, set a Lua script or Markdown text file as the input source file. If @<color:FF0000>OUTPUT_DOCX_FILE@</color> is not specified, it is automatically created appropriately by referring to the given property. \
 The '-t' option specifies the template document that will be the base. If the template document is not specified, the default docgen_template.docx is specified, but various document types can be created by referencing/changing it.
+The '-i' option allows adding a new template document. At this time, 'input_file' is the new template document source, and 'template' is the target template name to be specified.
+The '-f' option specifies saving as a file other than .docx format. You can specify output in combination, such as '-f pdf,html'.
 The '-l' option specifies an arbitrary language code. In Lua, you can check it with the 'docgen.language' variable, and in sentences, you can use the expression @<b>'@<bookmark:@Document activation>'@</b> to select the desired language code.
 The '-r' option specifies arbitrary preceding Lua code. This code can contain conditions for changing the document structure.
 

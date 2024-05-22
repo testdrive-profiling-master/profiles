@@ -1,64 +1,58 @@
 RunScript("codegen_utils")
 
-local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.8")
-local	sProfilePath	= String(nil)
-local	sTemplatePath	= String(nil)
+---------------------------------------------------------------------------------
+-- Initialize configuration
+---------------------------------------------------------------------------------
+docgen					= {}
+docgen.code_format		= "cpp"					-- default code format
+docgen.code_bgcolor		= "F7F7F7"				-- code background color
+docgen.fixed_font		= "Cascadia Mono"		-- fixed font name
+docgen.profile_path		= String(nil)
+docgen.template_path	= String(nil)
+docgen.profile_path:GetEnvironment("TESTDRIVE_PROFILE")
+docgen.template_path.s	= docgen.profile_path.s
 
-sProfilePath:GetEnvironment("TESTDRIVE_PROFILE")
-sTemplatePath.s			= sProfilePath.s
-
-Arg:AddOptionString	("template", "", "t", nil, "template", "Document template name/file.")
-
-local	sDefaultDocgenTemplate			= "testdrive"
-
-do	-- list-up customized document template list
-	local	bCustomTemplateIsExisted	= false
-
-	for src_path in lfs.dir(sTemplatePath.s .. "common/bin/codegen") do
+-- check installed document template
+docgen.installed_template	= {}
+docgen.default_template		= "testdrive"
+do
+	local	latest_modification_date	= nil
+	
+	for src_path in lfs.dir(docgen.template_path.s .. "common/bin/codegen") do
 		local sName		= String(src_path)
 		local sExt		= String(src_path)
 		sExt:CutFront(".", true)
+		sExt:MakeLower()
 		
 		if sName:CompareFront("docgen_template_") and (sExt.s == "docx") then
-			if bCustomTemplateIsExisted == false then
-				Arg:AddRemark(nil, "*** Installed docgen template list ***")
-				bCustomTemplateIsExisted	= true
-			end
-
 			sName:CutFront("docgen_template_")
 			sName:CutBack(".")
 		
-			local sDesc = ""
 			local f = TextFile()
-			if f:Open(sTemplatePath.s .. "common/bin/codegen/docgen_template_" .. sName.s .. ".txt") then
-				sDesc	= String(f:Get())
+			if f:Open(docgen.template_path.s .. "common/bin/codegen/docgen_template_" .. sName.s .. ".txt") then
+				local sDesc	= String(f:Get())
 				sDesc:CutBack("\r\n", true)
 				sDesc:Trim(" \t")
 				
 				if sDesc:CompareFront("*") then
 					sDesc:erase(0, 1)
 					sDesc:TrimLeft(" ")
-					sDefaultDocgenTemplate	= sName.s
+					
+					local modification_date = os.date("%Y%m%d%H%M%S", lfs.attributes(src_path, "modification"))
+					
+					if latest_modification_date == nil or (latest_modification_date < modification_date) then
+						docgen.default_template		= sName.s
+						latest_modification_date	= modification_date
+					end
 				end
 				
-				sDesc	= sDesc.s
+				docgen.installed_template[sName.s]	= sDesc.s
 			end
-		
-			Arg:AddRemark(nil, string.format("%-14s : %s", sName.s, sDesc))
 		end
-	end
-	
-	if bCustomTemplateIsExisted then
-		Arg:AddRemark(nil, "(default : " .. sDefaultDocgenTemplate .. ")")
 	end
 end
 
-docgen					= {}
-docgen.code_format		= "cpp"					-- default code format
-docgen.code_bgcolor		= "F7F7F7"				-- code background color
-docgen.fixed_font		= "Cascadia Mono"		-- fixed font name
-
--- supported format
+-- supported output file format
 docgen.supported_format			= {}
 docgen.supported_format["pdf"]	= "Portable Document Format"
 docgen.supported_format["odt"]	= "OpenDocument Text format"
@@ -66,7 +60,22 @@ docgen.supported_format["rtf"]	= "Rich Text Format"
 docgen.supported_format["html"]	= "Standard HTML format"
 docgen.supported_format["xml"]	= "Extensible Markup Language format"
 docgen.supported_format["txt"]	= "Plain text format (unicode)"
-table.sort(docgen.supported_format)
+
+---------------------------------------------------------------------------------
+-- argument handling
+---------------------------------------------------------------------------------
+local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.8")
+
+Arg:AddOptionString	("template", "", "t", nil, "template", "Document template name/file.")
+-- list-up customized document template list
+Arg:AddRemark(nil, "*** Installed docgen template list ***")
+for name, desc in key_pairs(docgen.installed_template) do
+	Arg:AddRemark(nil, string.format("%-14s : %s", name, desc))
+end
+Arg:AddRemark(nil, "(default : " .. docgen.default_template .. ")")
+
+Arg:AddOptionString ("install", nil, "i", nil, "template_desc", "install new docgen template.")
+Arg:AddRemark		(nil, "ex) docgen -t name -i \"description\" template.docx")
 
 Arg:AddOptionString	("format", "", "f", nil, "format", "Extra output format.")
 Arg:AddRemark		(nil, "- supported output format")
@@ -118,7 +127,7 @@ do	-- check output format
 end
 
 if sDocTemplate.s == "" then
-	sDocTemplate.s		= sDefaultDocgenTemplate
+	sDocTemplate.s		= docgen.default_template
 end
 
 do	-- run lua definition code
@@ -131,17 +140,79 @@ do	-- run lua definition code
 	end
 end
 
-doc 					= DocWord()
-
+-- template source file path
 if sDocTemplate:CompareBack(".docx") then
-	sTemplatePath.s	= sDocTemplate.s
+	docgen.template_path.s	= sDocTemplate.s
 else
-	sTemplatePath:Append("Common/bin/codegen/docgen_template_" .. sDocTemplate.s .. ".docx")
+	docgen.template_path:Append("Common/bin/codegen/docgen_template_" .. sDocTemplate.s .. ".docx")
+end
+
+do	-- install new template
+	local	new_template_desc	= Arg:GetOptionString("install")
+	
+	if #new_template_desc ~= 0 then
+		if sDocTemplate.s == "testdrive" then
+			LOGE("Specify other template name, 'testdrive' is system's default template.")
+			os.exit(1)
+		end
+		
+		if (sDocTemplate:find(".", 0) >= 0) or (sDocTemplate:find(" ", 0) >= 0) then
+			LOGE("Template must be a name, not a file. : " .. sDocTemplate.s)
+			os.exit(1)
+		end
+		
+		if #sOutFilename ~= 0 then
+			LOGE("output file argument is not needed to install template document.")
+			os.exit(1)
+		end
+		
+		sInFilename	= String(sInFilename)
+		
+		if sInFilename:CompareBack(".docx") == false then
+			LOGE("Input file must be a template document(.docx) file. : " .. sInFilename.s)
+			os.exit(1)
+		end
+		
+		LOGI("Set new template : " .. sDocTemplate.s)
+		
+		if lfs.IsExist(sInFilename.s) == false then
+			LOGE("Input document template file is not existed : " .. sInFilename.s)
+			os.exit(1)
+		end
+		
+		if lfs.IsExist(docgen.template_path.s) then
+			LOGW("The template document '" .. sDocTemplate.s .. "' is already existed. It will be overwritten.")
+		end
+		
+		if #exec("cp -f \"" .. sInFilename.s .. "\" \"" .. docgen.template_path.s .. "\"") ~= 0 then
+			LOGE("Template file copy is failed.")
+			os.exist(1)
+		end
+		
+		do	-- create description file
+			local f = TextFile()
+			if f:Create(docgen.profile_path.s .. "common/bin/codegen/docgen_template_" .. sDocTemplate.s .. ".txt") then
+				f:Put(new_template_desc)
+				f:Close()
+			else
+				LOGE("Can't create description file for template '" .. sDocTemplate.s .. "'")
+				os.exit(1)
+			end
+		end
+		
+		LOGI("Template(" .. sDocTemplate.s .. ") installtion is done.")
+		os.exit(0)
+	end
 end
 
 
+---------------------------------------------------------------------------------
+-- new document
+---------------------------------------------------------------------------------
 -- 문서 템플릿 열기
-if doc:Open(sTemplatePath.s) == false then
+doc 	= DocWord()
+
+if doc:Open(docgen.template_path.s) == false then
 	os.exit()		-- template document is not existed
 end
 
@@ -465,7 +536,7 @@ function GenerateFigure(sFileName, fRatio)
 			
 			if lfs.attributes(sFileName.s) == false then	-- no visio
 				LOGE("Visio is not installed.")
-				sFileName.s	= sProfilePath.s .. "common/bin/codegen/no_visio.svg"
+				sFileName.s	= docgen.profile_path.s .. "common/bin/codegen/no_visio.svg"
 			else
 				temporary_file_list[#temporary_file_list + 1]		= sFileName.s	-- clean up list.
 			end

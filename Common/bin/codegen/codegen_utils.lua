@@ -153,3 +153,8 @@ function key_pairs(t)
 		end
 	end
 end
+
+-- lfs extension utils
+lfs.IsExist = function(path)
+	return (lfs.attributes(path) ~= nil)
+end

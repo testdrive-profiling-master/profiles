@@ -19,13 +19,14 @@ AddRevision("1.4",	2024,  2,  5,	"add lua function call in paragraph")
 AddRevision("1.5",	2024,  4,  9,	"add lua snippet option on command line")
 AddRevision("1.6",	2024,  5,  17,	"Markdown can be specified as the input source file")
 AddRevision("1.7",	2024,  5,  21,	"add Excel chart image reference and inline code expression")
-AddRevision("1.8",	2024,  5,  22,	"add export file format : html, odt, rtf, xml, txt")
+AddRevision("1.8",	2024,  5,  22,	"add export file format(html, odt, rtf, xml, txt), and new template installation function")
 
 
 -- Term 추가
 AddTerm("TestDrive", "TestDrive Profiling Master (@<link:https://testdrive-profiling-master.github.io/>)")
 AddTerm("Lua", "Lua script language (@<link:https://ko.wikipedia.org/wiki/%EB%A3%A8%EC%95%84_(%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D_%EC%96%B8%EC%96%B4);Wiki>, @<link:http://www.lua.org/;Homepage>)")
 AddTerm("WORD", "Microsft Office's word processor")
+AddTerm("Excel", "Microsoft's spreadsheet editor")
 AddTerm("Visio", "Microsoft Office's Visio\
 - Diagramming and vector graphics application")
 AddTerm("PDF", "Portable Document Format (@<link:https://ko.wikipedia.org/wiki/PDF;Wiki>)")
