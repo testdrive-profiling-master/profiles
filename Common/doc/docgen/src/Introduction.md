@@ -100,11 +100,11 @@ Usage: docgen  [--help] [-t template] [-l language] [-r|--run=lua_code] input_fi
   -f format                 Extra output format.
                             - supported output format
                             html : Standard HTML format
-                            odt : OpenDocument Text format
-                            pdf : Portable Document Format
-                            rtf : Rich Text Format
-                            txt : Plain text format (unicode)
-                            xml : Extensible Markup Language format
+                            odt  : OpenDocument Text format
+                            pdf  : Portable Document Format
+                            rtf  : Rich Text Format
+                            txt  : Plain text format (unicode)
+                            xml  : Extensible Markup Language format
                             (ex: -f pdf,html)
   -l language               Document language code string.
                             'docgen.language' variable in Lua

@@ -71,7 +71,7 @@ table.sort(docgen.supported_format)
 Arg:AddOptionString	("format", "", "f", nil, "format", "Extra output format.")
 Arg:AddRemark		(nil, "- supported output format")
 for ext, desc in key_pairs(docgen.supported_format) do
-	Arg:AddRemark		(nil, string.format("%4s", ext) .. " : " .. desc)
+	Arg:AddRemark		(nil, string.format("%-4s", ext) .. " : " .. desc)
 end
 Arg:AddRemark		(nil, "(ex: -f pdf,html)")
 Arg:AddOptionString	("language", "", "l", nil, "language", "Document language code string.")
