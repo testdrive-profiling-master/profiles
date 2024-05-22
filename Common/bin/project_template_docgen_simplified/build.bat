@@ -1,2 +1,2 @@
 @echo off
-docgen main.md
+docgen -f pdf,html main.md

@@ -56,7 +56,7 @@ If WScript.Arguments.Count > 0 Then
             Next
 			
 			If bFoundPage = False Then
-				Wscript.Echo "*E: Visio('" & vsdPath & "') page('" & page_name & "') is not found."
+				Wscript.Echo "*E: Visio('" & vsdPath & "') page('" & page_name & "') is locked or not existed."
 			End If
 		End If
 		

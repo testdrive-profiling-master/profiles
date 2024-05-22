@@ -1,12 +1,22 @@
 %%% ko
 # 소개
 
-만약 소개 과정을 생략하고 바로 사용하고자 한다면, 반드시 '@<bookmark:@선행 과정>'을 참고하여 진행해 주시기 바랍니다.
+@<img:media/Introduction.vsdx[Introduction];1.0>
+
+docgen은 템플릿 WORD(.docx) 파일을 참조하여, Markdown + HTML + Lua 스크립트를 통해 새로운 WORD(.docx)와 PDF/HTML/RTF등의 다양한 문서를 생성하는 도구입니다.
+
+:::NoteHeading
+만약 소개 과정을 생략하고 바로 사용하고자 한다면, 반드시 '@<bookmark:@선행 과정>'을 참고하여 진행해 주시기 바랍니다. \
 신규 기능이 필요하거나 개선사항이나 버그를 발견하시면, 정형기(@<link:mailto:clonextop@gmail.com;clonextop@gmail.com>)에게 건의 부탁드리며, 이 문서 또한 docgen으로 작성 및 생성 되었음을 알려드립니다.
 %%% en
 # Introduction
 
-If you want to skip the introduction process and use it right away, please be sure to refer to '@<bookmark:@Prerequisites>'.
+@<img:media/Introduction.vsdx[Introduction];1.0>
+
+docgen is a tool that refers to a template WORD (.docx) file and creates a new WORD (.docx) and various documents such as PDF/HTML/RTF through Markdown + HTML + Lua script.
+
+:::NoteHeading
+If you want to skip the introduction process and use it right away, please be sure to refer to '@<bookmark:@Prerequisites>'. \
 If you need new features or find improvements or bugs, please make suggestions to Hyunng-Ki Jeong(@<link:mailto:clonextop@gmail.com;clonextop@gmail.com>). Please note that this document was also written and created with docgen.
 %%%
 
@@ -22,7 +32,7 @@ docgen 은 Template 워드(.docx) 파일을 참조하여 새로운 WORD 문서(.
 기본적으로 CodeGen을 통해 범용적인 @<link:https://ko.wikipedia.org/wiki/%EB%A3%A8%EC%95%84_(%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D_%EC%96%B8%EC%96%B4);Lua> 프로그래밍 환경과 markdown에 호환되는 문법을 통해 text 형태로 문서를 작성할 수 있습니다. 주요 기능을 나열하면 아래와 같습니다.
 
 * Lua 스크립트를 통해 다양한 문자 변조 기능 지원
-* WORD 및 PDF 파일 자동 생성
+* WORD 및 ODT, PDF, HTML 파일등 다양한 문서 출력 포멧 지원
 * 자동화된 절/캡션(Caption)/상호참조 생성 기능
 * 그림, 표, 스타일 서식, 코드 블럭, 수학 수식 표현 기능
 * 워터마크(water mark) 삽입 기능
@@ -36,7 +46,7 @@ docgen is a tool that automatically creates new WORD documents (.docx) and PDF d
 Basically, CodeGen allows you to write documents in text format through a grammar compatible with the universal @<link:https://en.wikipedia.org/wiki/Lua_(programming_language);Lua> programming environment and markdown. The main features are listed below.
 
 * Supports various character modulation functions through Lua script
-* Automatic creation of WORD and PDF files
+* Supports various document output formats such as WORD, ODT, PDF, and HTML files.
 * Automated clause/caption/cross-reference creation function
 * Picture, table, style formatting, code block, and mathematical equation expression functions
 * Watermark insertion function
@@ -51,17 +61,15 @@ Basically, CodeGen allows you to write documents in text format through a gramma
 문서 자동화 생성 과정은 아래와 같은 단계로 진행됩니다.
 
 * >1. 템플릿 문서(template.docx) 열기
-* >2. 사용자 lua 코드로 부터 아래 내용 추가 하기
-* >3. 워드(.docx) 문서 생성
-* >4. .docx 문서 필드 갱신 및 PDF(.pdf) 파일 생성
+* >2. 사용자 소스(.md 또는 .lua) 문서로 부터 내용 반영
+* >3. 워드(.docx), PDF(.pdf), OpenDocument(.odt), HTML(.html), XML(.xml), RichEdit(.rtf), Text(.txt) 문서 생성
 %%% en
 ## Document automated creation process
 The document automatedn creation process proceeds in the following steps.
 
 * >1. Open the template document (template.docx)
-* >2. Add the following from user lua code
-* >3. Create Word(.docx) document
-* >4. Update word (.docx) document fields and create PDF(.pdf) file.
+* >2. Apply content from user source (.md or .lua) document
+* >3. Create Word(.docx), PDF(.pdf), OpenDocument(.odt), HTML(.html), XML(.xml), RichEdit(.rtf), Text(.txt) document
 %%%
 
 
@@ -81,7 +89,7 @@ To run docgen, run as follows.
 ```txt
 > docgen
 
-Document Generator for TestDrive Profiling Master. v1.7
+Document Generator for TestDrive Profiling Master. v1.8
 Usage: docgen  [--help] [-t template] [-l language] [-r|--run=lua_code] input_file [output_file]
 
       --help                display this help and exit
@@ -89,6 +97,15 @@ Usage: docgen  [--help] [-t template] [-l language] [-r|--run=lua_code] input_fi
                             *** Installed docgen template list ***
                             testdrive      : TestDrive Profiling Master
                             (default : testdrive)
+  -f format                 Extra output format.
+                            - supported output format
+                            html : Standard HTML format
+                            odt : OpenDocument Text format
+                            pdf : Portable Document Format
+                            rtf : Rich Text Format
+                            txt : Plain text format (unicode)
+                            xml : Extensible Markup Language format
+                            (ex: -f pdf,html)
   -l language               Document language code string.
                             'docgen.language' variable in Lua
                             (default : 'en')
@@ -102,6 +119,7 @@ Usage: docgen  [--help] [-t template] [-l language] [-r|--run=lua_code] input_fi
 
 @<color:FF0000>INPUT_LUA_FILE@</color>에 해당하는 Lua 스크립트 또는 Markdown 문서를 입력 소스 파일로 지정하며, @<color:FF0000>OUTPUT_DOCX_FILE@</color>을 지정하지 않을 경우 주어진 property를 참조하여 자동으로 알맞게 생성합니다. \
 '-t' 옵션은 기본 바탕이 될 템플릿 문서를 지정하게 되는데, 템플릿 문서를 지정하지 않을 경우 기본 docgen_template.docx로 지정하도록 되어 있으나 이를 참조/변경하여 다양한 문서 형태를 만들 수 있습니다.
+'-f' 옵션은 .docx 포멧 이외에 다른 파일로 저장할 수 있도록 지정합니다. -f pdf,html 과 같이 복합적으로 출력을 지정할 수 있습니다.
 '-l' 옵션은 임의의 언어코드를 지정합니다. Lua 에서는 'docgen.language' 변수로 확인할 수 있고, 문장에서는 @<b>'@<bookmark:@문서 활성화>'@</b> 표현식을 사용하여, 원하는 언어 코드를 선택할 수 있습니다.
 '-r' 옵션은 임의의 선행 Lua 코드를 지정합니다. 이 코드는 문서 구조를 변경을 위한 조건을 넣을 수 있습니다.
 

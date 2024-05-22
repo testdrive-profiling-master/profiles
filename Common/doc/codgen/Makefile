@@ -26,4 +26,4 @@ clean:
 
 $(BUILD_TARGET):$(SRCS)
 	@echo '*** DocGen Build *** (Please wait a seconds!!!)'
-	@docgen -t testdrive main.lua $(BUILD_TARGET)
+	@docgen -f pdf -t testdrive main.lua $(BUILD_TARGET)

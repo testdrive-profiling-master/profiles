@@ -1,4 +1,6 @@
-local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.7")
+RunScript("codegen_utils")
+
+local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.8")
 local	sProfilePath	= String(nil)
 local	sTemplatePath	= String(nil)
 
@@ -51,9 +53,30 @@ do	-- list-up customized document template list
 	end
 end
 
+docgen					= {}
+docgen.code_format		= "cpp"					-- default code format
+docgen.code_bgcolor		= "F7F7F7"				-- code background color
+docgen.fixed_font		= "Cascadia Mono"		-- fixed font name
+
+-- supported format
+docgen.supported_format			= {}
+docgen.supported_format["pdf"]	= "Portable Document Format"
+docgen.supported_format["odt"]	= "OpenDocument Text format"
+docgen.supported_format["rtf"]	= "Rich Text Format"
+docgen.supported_format["html"]	= "Standard HTML format"
+docgen.supported_format["xml"]	= "Extensible Markup Language format"
+docgen.supported_format["txt"]	= "Plain text format (unicode)"
+table.sort(docgen.supported_format)
+
+Arg:AddOptionString	("format", "", "f", nil, "format", "Extra output format.")
+Arg:AddRemark		(nil, "- supported output format")
+for ext, desc in key_pairs(docgen.supported_format) do
+	Arg:AddRemark		(nil, string.format("%4s", ext) .. " : " .. desc)
+end
+Arg:AddRemark		(nil, "(ex: -f pdf,html)")
 Arg:AddOptionString	("language", "", "l", nil, "language", "Document language code string.")
-Arg:AddRemark(nil, "'docgen.language' variable in Lua")
-Arg:AddRemark(nil, "(default : 'en')")
+Arg:AddRemark		(nil, "'docgen.language' variable in Lua")
+Arg:AddRemark		(nil, "(default : 'en')")
 
 Arg:AddOptionString	("run", "", "r", "run", "lua_code", "Run Lua snippet code")
 Arg:AddOptionFile	("in_file", nil, nil, nil, "input_file", "input Lua or .md(markdown) file")
@@ -64,21 +87,34 @@ if (Arg:DoParse() == false) then
 	return
 end
 
-RunScript("codegen_utils")
-
-docgen					= {}
-docgen.code_format		= "cpp"					-- default code format
-docgen.code_bgcolor		= "F7F7F7"				-- code background color
-docgen.fixed_font		= "Cascadia Mono"		-- fixed font name
-
 local	sInFilename		= Arg:GetOptionFile("in_file", 0)
 local	sDocTemplate	= String(Arg:GetOptionString("template"))
 local	sOutFilename	= Arg:GetOptionFile("out_file", 0)
+
 docgen.language			= String(Arg:GetOptionString("language"))
 docgen.language:MakeLower()
 docgen.language			= docgen.language.s
 if #docgen.language == 0 then
 	docgen.language		= "en"
+end
+
+do	-- check output format
+	local	sExtraFormatList	= String(Arg:GetOptionString("format"))
+	
+	if #sExtraFormatList.s ~= 0 then
+		docgen.output_format	= {}
+		local	sToken			= sExtraFormatList:Tokenize(",;:+/&\"")
+		sToken:MakeLower()
+		
+		while sToken:IsEmpty() == false do
+			if docgen.supported_format[sToken.s] == nil then
+				LOGE("Unsupported output format : " .. sToken.s)
+				os.exit(1)
+			end
+			docgen.output_format[sToken.s]	= true
+			sToken			= sExtraFormatList:Tokenize(",;:+/&\"")
+		end
+	end
 end
 
 if sDocTemplate.s == "" then
@@ -1983,9 +2019,25 @@ do
 		os.execute("rm -f \"" .. temporary_file_list[i] .. "\"")
 	end	
 	
-	-- Field 갱신 및 pdf 생성
-	LOGI("Fields calculation & Saving to PDF output : " .. sOutFilename_PDF.s)
-	os.execute("doc2pdf \"" .. sOutFilename.s .. "\" \"" .. property["Water_Mark"] .. "\"")
-	
-	os.exit()
+	if docgen.output_format == nil then
+		LOGI("Fields calculation...")
+		os.execute("doc2pdf \"" .. sOutFilename.s .. "\" \"" .. property["Water_Mark"] .. "\" *")
+	else
+		-- make pdf first
+		if docgen.output_format["pdf"] == true then
+			LOGI("Save as 'pdf' file...")
+			docgen.output_format["pdf"]	= nil
+			os.execute("doc2pdf \"" .. sOutFilename.s .. "\" \"" .. property["Water_Mark"] .. "\"")
+		end
+		-- the others save as
+		for ext, bOut in key_pairs(docgen.output_format) do
+			if bOut then
+				if ext == "pdf" then
+				else
+					LOGI("Save as '" .. ext .. "' file...")
+					os.execute("doc2save \"" .. sOutFilename.s .. "\" " .. ext)
+				end
+			end
+		end
+	end
 end

@@ -132,3 +132,24 @@ function read_text_file(filename, bUseComment)
 	
 	return s
 end
+
+-- sort by key
+local function __collect_keys(t, sort)
+	local _k = {}
+	for k in pairs(t) do
+		_k[#_k+1] = k
+	end
+	table.sort(_k, sort)
+	return _k
+end
+
+function key_pairs(t)
+	local keys = __collect_keys(t, __key_compare)
+	local i = 0
+	return function()
+		i = i+1
+		if keys[i] then
+			return keys[i], t[keys[i]]
+		end
+	end
+end

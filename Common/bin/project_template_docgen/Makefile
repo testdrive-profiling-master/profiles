@@ -23,4 +23,4 @@ clean:
 
 $(TARGET_NAME).docx:$(SRCS)
 	@echo '*** DocGen Build *** (Please wait a seconds!!!)'
-	@docgen -t template/docgen_template.docx main.lua $(TARGET_NAME).docx
+	@docgen -t template/docgen_template.docx -f pdf main.lua $(TARGET_NAME).docx

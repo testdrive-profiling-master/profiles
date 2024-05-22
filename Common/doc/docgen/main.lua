@@ -19,6 +19,7 @@ AddRevision("1.4",	2024,  2,  5,	"add lua function call in paragraph")
 AddRevision("1.5",	2024,  4,  9,	"add lua snippet option on command line")
 AddRevision("1.6",	2024,  5,  17,	"Markdown can be specified as the input source file")
 AddRevision("1.7",	2024,  5,  21,	"add Excel chart image reference and inline code expression")
+AddRevision("1.8",	2024,  5,  22,	"add export file format : html, odt, rtf, xml, txt")
 
 
 -- Term 추가
