@@ -54,6 +54,7 @@ end
 
 -- supported output file format
 docgen.supported_format			= {}
+docgen.supported_format["djvu"]	= "DjVu image based document"
 docgen.supported_format["pdf"]	= "Portable Document Format"
 docgen.supported_format["odt"]	= "OpenDocument Text format"
 docgen.supported_format["rtf"]	= "Rich Text Format"
@@ -2095,8 +2096,12 @@ do
 		os.execute("doc2pdf \"" .. sOutFilename.s .. "\" \"" .. property["Water_Mark"] .. "\" *")
 	else
 		-- make pdf first
-		if docgen.output_format["pdf"] == true then
-			LOGI("Save as 'pdf' file...")
+		if (docgen.output_format["pdf"] == true) or (docgen.output_format["djvu"] == true) then
+			if docgen.output_format["pdf"] == true then
+				LOGI("Save as 'pdf' file...")
+			else
+				LOGI("Fields calculation...")
+			end
 			docgen.output_format["pdf"]	= nil
 			os.execute("doc2pdf \"" .. sOutFilename.s .. "\" \"" .. property["Water_Mark"] .. "\"")
 		end
@@ -2104,6 +2109,15 @@ do
 		for ext, bOut in key_pairs(docgen.output_format) do
 			if bOut then
 				if ext == "pdf" then
+				elseif ext == "djvu" then
+					local sDJVU_filename	= String(sOutFilename_PDF.s)
+					sDJVU_filename:DeleteBack("pdf")
+					sDJVU_filename:Append("djvu")
+					LOGI("Save as '" .. ext .. "' file...")
+					exec("pdf2djvu -d 600 \"" .. sOutFilename_PDF.s .. "\" -o \"" .. sDJVU_filename.s .. "\"")	-- 600 dpi output
+					if docgen.output_format["pdf"] ~= true then
+						exec("rm -f \"" .. sOutFilename_PDF.s .. "\"")
+					end
 				else
 					LOGI("Save as '" .. ext .. "' file...")
 					os.execute("doc2save \"" .. sOutFilename.s .. "\" " .. ext)

@@ -62,14 +62,14 @@ Basically, CodeGen allows you to write documents in text format through a gramma
 
 * >1. 템플릿 문서(template.docx) 열기
 * >2. 사용자 소스(.md 또는 .lua) 문서로 부터 내용 반영
-* >3. 워드(.docx), PDF(.pdf), OpenDocument(.odt), HTML(.html), XML(.xml), RichEdit(.rtf), Text(.txt) 문서 생성
+* >3. 워드(.docx), PDF(.pdf), DjVu(.djvu),OpenDocument(.odt), HTML(.html), XML(.xml), RichEdit(.rtf), Text(.txt) 문서 생성
 %%% en
 ## Document automated creation process
 The document automatedn creation process proceeds in the following steps.
 
 * >1. Open the template document (template.docx)
 * >2. Apply content from user source (.md or .lua) document
-* >3. Create Word(.docx), PDF(.pdf), OpenDocument(.odt), HTML(.html), XML(.xml), RichEdit(.rtf), Text(.txt) document
+* >3. Create Word(.docx), PDF(.pdf), DjVu(.djvu), OpenDocument(.odt), HTML(.html), XML(.xml), RichEdit(.rtf), Text(.txt) document
 %%%
 
 
@@ -101,6 +101,7 @@ Usage: docgen  [--help] [-t template] [-i template_desc] [-f format] [-l languag
                             ex) docgen -t name -i "description" template.docx
   -f format                 Extra output format.
                             - supported output format
+                            djvu : DjVu image based document
                             html : Standard HTML format
                             odt  : OpenDocument Text format
                             pdf  : Portable Document Format
