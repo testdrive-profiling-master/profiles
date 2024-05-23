@@ -2114,7 +2114,7 @@ do
 					sDJVU_filename:DeleteBack("pdf")
 					sDJVU_filename:Append("djvu")
 					LOGI("Save as '" .. ext .. "' file...")
-					exec("pdf2djvu -d 600 \"" .. sOutFilename_PDF.s .. "\" -o \"" .. sDJVU_filename.s .. "\"")	-- 600 dpi output
+					exec("pdf2djvu -j 2 -d 600 \"" .. sOutFilename_PDF.s .. "\" -o \"" .. sDJVU_filename.s .. "\"")	-- 600 dpi output
 					if docgen.output_format["pdf"] ~= true then
 						exec("rm -f \"" .. sOutFilename_PDF.s .. "\"")
 					end
