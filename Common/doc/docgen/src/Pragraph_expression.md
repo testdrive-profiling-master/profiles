@@ -728,7 +728,7 @@ You can write this string as a mathematical equation by adding the characters "\
 
 @<size:30>@<b>표현식 : @@<code[:@<color:FF0000>코드_형식@</color>]>@<color:FF0000>인라인_코드@</color>@@</code>@</b>@</size>
 
-문장 안에서 인라인 코드를 표현합니다. '코드_형식'은 생략될 수 있으며, 기본 코드 형식은 'cpp' 이며, \
+문장 안에서 인라인 코드를 표현합니다. '코드_형식'은 생략될 수 있으며, 기본 코드 형식은 'cpp' 이고, \
 '@<bookmark:코드 블럭>'에서 지원되는 코드 형식을 동일하게 사용할 수 있습니다.
 
 :::NoteHeading
