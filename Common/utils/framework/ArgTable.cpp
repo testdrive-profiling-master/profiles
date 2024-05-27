@@ -31,10 +31,11 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 5/17/2024 Fri (clonextop@gmail.com)
+// Rev.  : 5/27/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #include "ArgTable.h"
 #include "argtable3/src/argtable3.h"
+#include <assert.h>
 
 ArgTable::ArgTable(const char *sDescription)
 {

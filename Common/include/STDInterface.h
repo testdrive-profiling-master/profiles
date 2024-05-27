@@ -31,13 +31,16 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 3/11/2024 Mon (clonextop@gmail.com)
+// Rev.  : 5/27/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __STD_INTERFACE_H__
 #define __STD_INTERFACE_H__
 #include <cstdint>
 #include <limits.h>
+#include <memory.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #ifdef WIN32
 #	ifndef WIN32_LEAN_AND_MEAN

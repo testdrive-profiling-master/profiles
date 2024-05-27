@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 3/19/2024 Tue (clonextop@gmail.com)
+// Rev.  : 5/27/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __UTIL_FRAMEWORK_H__
 #define __UTIL_FRAMEWORK_H__
@@ -39,7 +39,7 @@
 #define _USE_MATH_DEFINES
 
 #include "STDInterface.h"
-#include "cstring.h"
+// extras
 #include <algorithm>
 #include <assert.h>
 #include <dirent.h>
@@ -49,20 +49,17 @@
 #include <list>
 #include <map>
 #include <math.h>
-#include <memory.h>
 #include <memory>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string>
 #include <strings.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <unistd.h>
 #include <vector>
 // extended functions
 #include "ArgTable.h"
 #include "TestDriver.h"
 #include "TextFile.h"
+#include "cstring.h"
 
 using namespace std;
 

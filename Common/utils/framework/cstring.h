@@ -31,11 +31,10 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 3/7/2024 Thu (clonextop@gmail.com)
+// Rev.  : 5/27/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __CSTRING_H__
 #define __CSTRING_H__
-#include <string.h>
 #include <string>
 
 using namespace std;
@@ -74,28 +73,30 @@ public:
 	{
 		return m_sStr.c_str();
 	}
-	void		MakeUpper(void);
-	void		MakeLower(void);
-	bool		Replace(const char *sSearch, const char *sReplace, bool bRecursive = false);
-	bool		ReplaceVariable(const char *sSearch, const char *sReplace);
-	void		TrimLeft(const char *sDelim);
-	void		TrimRight(const char *sDelim);
-	void		Trim(const char *sDelim);
-	int			Length(void) const;
-	cstring		Tokenize(int &iPos, const char *sDelim = NULL);
-	int			SearchBraket(int iPos = 0);
-	int			RetrieveTag(const char **sTagList, int iTagSize = 0);
-	void		Format(const char *sFormat, ...);
-	void		AppendFormat(const char *sFormat, ...);
-	void		Set(const char *sStr);
-	void		Append(const char *sStr);
-	void		Append(char ch);
-	int			CheckFileExtension(const char **sExtList);
-	bool		GetEnvironment(const char *sKey);
-	void		SetEnvironment(const char *sKey);
-	bool		ChangeCharset(const char *szSrcCharset, const char *szDstCharset);
-	bool		ChangeCharsetToUTF8(void);
-	bool		ChangeCharsetToANSI(void);
+	void	MakeUpper(void);
+	void	MakeLower(void);
+	bool	Replace(const char *sSearch, const char *sReplace, bool bRecursive = false);
+	bool	ReplaceVariable(const char *sSearch, const char *sReplace);
+	void	TrimLeft(const char *sDelim);
+	void	TrimRight(const char *sDelim);
+	void	Trim(const char *sDelim);
+	int		Length(void) const;
+	cstring Tokenize(int &iPos, const char *sDelim = NULL);
+	int		SearchBraket(int iPos = 0);
+	int		RetrieveTag(const char **sTagList, int iTagSize = 0);
+	void	Format(const char *sFormat, ...);
+	void	AppendFormat(const char *sFormat, ...);
+	void	Set(const char *sStr);
+	void	Append(const char *sStr);
+	void	Append(char ch);
+	int		CheckFileExtension(const char **sExtList);
+	bool	GetEnvironment(const char *sKey);
+	void	SetEnvironment(const char *sKey);
+#ifndef UNUSE_CSTRING_ICONV
+	bool ChangeCharset(const char *szSrcCharset, const char *szDstCharset);
+	bool ChangeCharsetToUTF8(void);
+	bool ChangeCharsetToANSI(void);
+#endif
 	inline bool IsEmpty(void) const
 	{
 		return Length() == 0;

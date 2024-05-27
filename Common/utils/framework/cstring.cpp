@@ -31,10 +31,11 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 3/7/2024 Thu (clonextop@gmail.com)
+// Rev.  : 5/27/2024 Mon (clonextop@gmail.com)
 //================================================================================
-#include "UtilFramework.h"
-#include <iconv.h>
+#include "STDInterface.h"
+// cstrings
+#include "cstring.h"
 #include <stdarg.h>
 #include <vector>
 
@@ -798,6 +799,7 @@ int cstring::CheckFileExtension(const char **sExtList)
 static const char *__sEnvDelim = "@";
 #ifdef WIN32
 #	include <windows.h>
+#	include <tchar.h>
 static const char *__sEnvFileName = "testdrive.ini";
 
 static bool		   __GetEnvString(cstring sKey, cstring &sAppName, cstring &sKeyName, cstring &sEnvPath)
@@ -922,6 +924,9 @@ static bool is_utf8(const char *string)
 	return true;
 }
 
+#ifndef UNUSE_CSTRING_ICONV
+#	include <iconv.h>
+
 bool cstring::ChangeCharset(const char *szSrcCharset, const char *szDstCharset)
 {
 	bool	bRet = false;
@@ -965,3 +970,4 @@ bool cstring::ChangeCharsetToANSI(void)
 
 	return ChangeCharset("UTF-8", "EUC-KR//IGNORE");
 }
+#endif

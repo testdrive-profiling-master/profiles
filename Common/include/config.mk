@@ -240,6 +240,9 @@ ifneq ($(INSTALL_PATH), $(TARGETPATH))
 	@cp -f $(TARGET_EXE) $(INSTALL_PATH)/
 endif
 endif
+ifdef POST_BUILD
+	@$(POST_BUILD)
+endif
 
 $(TARGET_A):$(OBJS_LIB) $(OBJS_RES) $(TARGET_DEP)
 	@echo
@@ -266,4 +269,7 @@ ifneq ($(INSTALL_PATH), $(TARGETPATH))
 	@echo Install to : $(INSTALL_PATH)
 	@cp -f $(TARGET_SO) $(INSTALL_PATH)/
 endif
+endif
+ifdef POST_BUILD
+	@$(POST_BUILD)
 endif

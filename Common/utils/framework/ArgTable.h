@@ -31,11 +31,14 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 3/11/2024 Mon (clonextop@gmail.com)
+// Rev.  : 5/27/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __ARG_TABLE_H__
 #define __ARG_TABLE_H__
-#include "UtilFramework.h"
+#include "cstring.h"
+// extra
+#include <map>
+#include <vector>
 
 typedef enum {
 	ARG_TYPE_NONE,
