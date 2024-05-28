@@ -169,6 +169,7 @@ public:
 	void EnumerateInDepth(const char* sChild, void* pPrivate, DOCX_NODE_ENUMERATOR_FUNC func);
 	size_t Size(const char* sChild);
 	void AddChildFromBuffer(const char* sBuffer);
+	DocXML child_by_index(const char* sName, int iIndex);
 };
 
 class DocFile {

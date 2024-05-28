@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 3/13/2024 Wed (clonextop@gmail.com)
+// Rev.  : 5/28/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __DOC_EXCEL_H__
 #define __DOC_EXCEL_H__
@@ -216,19 +216,21 @@ class DocExcelStyle : public DocXML
 	friend class DocExcel;
 
 public:
-	DocExcelStyle(DocXML *pParent, int iID, pugi::xml_node node);
+	DocExcelStyle(DocExcel *pExcel, DocXML *pParent, int iID, pugi::xml_node node);
 	virtual ~DocExcelStyle(void);
 
-	const char *AlignmentHorizontal(void);
+	string	   AlignmentHorizontal(void);
+	string	   BackgroundColor(void);
 
-	inline int	ID(void)
+	inline int ID(void)
 	{
 		return m_iID;
 	}
 
 private:
-	DocXML *m_pParent;
-	int		m_iID;
+	DocExcel *m_pExcel;
+	DocXML	 *m_pParent;
+	int		  m_iID;
 };
 
 class DocExcel : public DocFile
@@ -246,6 +248,7 @@ public:
 	DocExcelSheet *GetSheetByIndex(int iIndex);
 	DocExcelSheet *CreateSheet(const char *sName);
 	DocExcelStyle *GetStyleByIndex(int iIndex);
+	DocXML		   GetThemeColorByIndex(int iIndex);
 	void		   DeleteSheet(DocExcelSheet *pSheet);
 	int			   StyleFont(const char *sFontName, int iFontSize, bool bBold = false, bool bItalic = false,
 							 unsigned int dwARGB = 0);
@@ -275,6 +278,7 @@ private:
 	DocXML							  m_ContentTypes;
 	DocXML							  m_Workbook;
 	DocXML							  m_Styles;
+	DocXML							  m_Theme;
 	map<string, DocExcelSheet *>	  m_SheetMap;
 
 	DocXML							  m_Relationships;

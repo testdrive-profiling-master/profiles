@@ -731,19 +731,12 @@ function GenerateTable(sExcelFileName, sSheetName)
 				col.merge.width		= tonumber(sMerge:Tokenize(",").s)
 				col.merge.height	= tonumber(sMerge:Tokenize(",").s)
 			
+				-- 가로는 span 으로 세로는 vMerge 로 기술한다.
 				if col.merge.width ~= 1 then
 					col.merge.doc = col.merge.doc .. "<w:gridSpan w:val=\"" .. col.merge.width .. "\"/>"
 					if col.merge.x ~= 0 then
 						col.merge.downed	= true
 					end
-					--[[
-					col.merge.doc = col.merge.doc .. "<w:hMerge "
-					if col.merge.x == 0 then
-						col.merge.doc = col.merge.doc .. "w:val=\"restart\""
-					elseif col.merge.x ~= (col.merge.width - 1) then
-						col.merge.doc = col.merge.doc .. "w:val=\"continue\""
-					end
-					col.merge.doc = col.merge.doc .. "/>"--]]
 				end
 				
 				if col.merge.height ~= 1 then
@@ -976,6 +969,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 						table_code:Append("<w:right w:val=\"nil\"/>")
 					end
 					
+					local back_color_doc	= ""
 					-- set horizontal alignment
 					local cell_alignment	= "TableTextLeft"
 					
@@ -984,6 +978,16 @@ function GenerateTable(sExcelFileName, sSheetName)
 							cell_alignment		= "TableTextCenter"
 						elseif col_cells[i].style:AlignmentHorizontal() == "right" then
 							cell_alignment		= "TableTextRight"
+						end
+
+						-- background color
+						local	cell_backcolor = col_cells[i].style:BackgroundColor()
+						
+						if #cell_backcolor ~= 0 then
+							back_color_doc = "\
+							<w:shd w:val=\"clear\"\
+						       w:color=\"auto\"\
+						       w:fill=\"" .. cell_backcolor .. "\"/>"
 						end
 					elseif col_cells[i][3] then
 						cell_alignment		= "TableTextCenter"
@@ -996,8 +1000,8 @@ function GenerateTable(sExcelFileName, sSheetName)
 					end
 					
 					table_code:Append("\
-							</w:tcBorders>\
-						</w:tcPr>"
+							</w:tcBorders>" .. back_color_doc ..
+						"</w:tcPr>"
 						.. EncodeParagraph(col_cells[i].text,
 						{
 							pPr=("<w:pStyle w:val=\"" .. cell_alignment .. "\"/>"),

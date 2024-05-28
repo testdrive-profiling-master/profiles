@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 3/13/2024 Wed (clonextop@gmail.com)
+// Rev.  : 5/28/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #include "DocExcel.h"
 #include "ExcelNumFormat/ExcelNumFormat.h"
@@ -80,6 +80,65 @@ static DEFAULT_NUMFORMAT	__default_number_formats[] = {
 	{EXCEL_NUMBER_FORMAT_SCIENTIFIC,				"##0.0E+0"},
 	{EXCEL_NUMBER_FORMAT_TEXT,						"@"},
 	{-1, NULL}
+};
+
+static const char*	__excel_numbered_color_codes[] = {
+	"000000",
+	"FFFFFF",
+	"FF0000",
+	"00FF00",
+	"0000FF",
+	"FFFF00",
+	"FF00FF",
+	"00FFFF",
+	"800000",
+	"008000",
+	"000080",
+	"808000",
+	"800080",
+	"008080",
+	"C0C0C0",
+	"808080",
+	"9999FF",
+	"993366",
+	"FFFFCC",
+	"CCFFFF",
+	"660066",
+	"FF8080",
+	"0066CC",
+	"CCCCFF",
+	"000080",
+	"FF00FF",
+	"FFFF00",
+	"00FFFF",
+	"800080",
+	"800000",
+	"008080",
+	"0000FF",
+	"00CCFF",
+	"CCFFFF",
+	"CCFFCC",
+	"FFFF99",
+	"99CCFF",
+	"FF99CC",
+	"CC99FF",
+	"FFCC99",
+	"3366FF",
+	"33CCCC",
+	"99CC00",
+	"FFCC00",
+	"FF9900",
+	"FF6600",
+	"666699",
+	"969696",
+	"003366",
+	"339966",
+	"003300",
+	"333300",
+	"993300",
+	"993366",
+	"333399",
+	"333333"
 };
 /* clang-format on */
 
@@ -912,17 +971,74 @@ bool DocExcelSheet::OnSave(void)
 	return false;
 }
 
-DocExcelStyle::DocExcelStyle(DocXML *pParent, int iID, pugi::xml_node node) : DocXML(node)
+DocExcelStyle::DocExcelStyle(DocExcel *pExcel, DocXML *pParent, int iID, pugi::xml_node node) : DocXML(node)
 {
+	m_pExcel  = pExcel;
 	m_pParent = pParent;
 	m_iID	  = iID;
 }
 
 DocExcelStyle::~DocExcelStyle() {}
 
-const char *DocExcelStyle::AlignmentHorizontal(void)
+string DocExcelStyle::AlignmentHorizontal(void)
 {
 	return child("alignment").attribute("horizontal").as_string("left");
+}
+
+string DocExcelStyle::BackgroundColor(void)
+{
+	int id = attribute("fillId").as_int();
+	if (id) {
+		DocXML fills = parent().parent().child("fills");
+		DocXML fill	 = fills.child_by_index("fill", id);
+		if (!fill.empty()) {
+			DocXML	pattern	 = fill.child("patternFill");
+			cstring sPattern = pattern.attribute("patternType").as_string();
+
+			if (sPattern != "none") {
+				if (sPattern.CompareFront("gray")) {
+					sPattern.DeleteFront("gray");
+					int iFactor = atoi(sPattern.c_str());
+					sPattern.Format("%02X%02X%02X", iFactor, iFactor, iFactor);
+					return sPattern.c_string();
+				}
+			}
+			if (sPattern == "solid") {
+				DocXML	fgColor = pattern.child("fgColor");
+				cstring sColor	= fgColor.attribute("rgb").as_string();
+				if (!sColor.IsEmpty()) {
+					sColor.erase(0, 2);
+					return sColor.c_string();
+				}
+				int iTheme = fgColor.attribute("theme").as_int();
+				if (iTheme) {
+					double fTint	   = fgColor.attribute("tint").as_double();
+					DocXML theme_color = m_pExcel->GetThemeColorByIndex(iTheme);
+					sColor			   = theme_color.child("a:srgbClr").attribute("val").as_string();
+
+					if (!sColor.IsEmpty()) {
+						uint8_t r, g, b;
+						sscanf(sColor.c_str(), "%02X%02X%02X", &r, &g, &b);
+						auto make_color = [](uint8_t c, double tint) -> uint8_t {
+							double Lum = c;
+							if (tint < 0) { // tint operation (refer MS's ColorType.Tint Property)
+								Lum = Lum * (1.0 + tint);
+							} else {
+								Lum = Lum * (1 - tint) + (255 - 255 * (1 - tint));
+							}
+							return (uint8_t)Lum;
+						};
+						r = make_color(r, fTint);
+						g = make_color(g, fTint);
+						b = make_color(b, fTint);
+						sColor.Format("%02X%02X%02X", r, g, b);
+						return sColor.c_string();
+					}
+				}
+			}
+		}
+	}
+	return attribute("fillId").as_string();
 }
 
 DocExcel::DocExcel(void) {}
@@ -948,6 +1064,7 @@ bool DocExcel::OnOpen(void)
 	m_Workbook		= GetXML("xl/workbook.xml")->child("workbook").child("sheets");
 	m_Styles		= GetXML("xl/styles.xml")->child("styleSheet");
 	m_Relationships = GetXML("xl/_rels/workbook.xml.rels")->child("Relationships");
+	m_Theme			= GetXML("xl/theme/theme1.xml")->child("a:theme").child("a:themeElements");
 
 	if (GetXML("xl/sharedStrings.xml")) {
 		m_SharedStrings = GetXML("xl/sharedStrings.xml")->child("sst");
@@ -994,13 +1111,14 @@ bool DocExcel::OnOpen(void)
 	{
 		DocXML node = m_Styles.child("cellXfs");
 		typedef struct {
+			DocExcel						  *pExcel;
 			DocXML							  *pParent;
 			vector<unique_ptr<DocExcelStyle>> *pStyleList;
 		} STYLE_REF;
-		STYLE_REF style_ref = {&m_Styles, &m_StyleList};
+		STYLE_REF style_ref = {this, &m_Styles, &m_StyleList};
 		node.Enumerate("xf", (void *)&style_ref, [](DocXML node, void *pPrivate) -> bool {
 			STYLE_REF				 &p = *((STYLE_REF *)pPrivate);
-			unique_ptr<DocExcelStyle> pStyle(new DocExcelStyle(p.pParent, p.pStyleList->size(), node));
+			unique_ptr<DocExcelStyle> pStyle(new DocExcelStyle(p.pExcel, p.pParent, p.pStyleList->size(), node));
 			p.pStyleList->push_back(move(pStyle));
 			return true;
 		});
@@ -1855,6 +1973,12 @@ DocExcelStyle *DocExcel::GetStyleByIndex(int iIndex)
 	}
 
 	return NULL;
+}
+
+DocXML DocExcel::GetThemeColorByIndex(int iIndex)
+{
+	DocXML clrScheme = m_Theme.child("a:clrScheme");
+	return clrScheme.child_by_index(NULL, iIndex);
 }
 
 void DocExcel::DeleteSheet(DocExcelSheet *pSheet) //@FIXME : not working
