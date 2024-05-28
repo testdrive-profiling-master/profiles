@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 5/28/2024 Tue (clonextop@gmail.com)
+// Rev.  : 5/28/2024 Tue (CloneX)
 //================================================================================
 #ifndef __DOC_EXCEL_H__
 #define __DOC_EXCEL_H__
@@ -262,6 +262,10 @@ public:
 	inline DocXML &Workbook(void)
 	{
 		return m_Workbook;
+	}
+	inline bool IsDocGenStyle(void)
+	{
+		return m_bUseDocGenStyle;
 	}
 
 protected:

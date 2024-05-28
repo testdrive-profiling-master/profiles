@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 5/28/2024 Tue (clonextop@gmail.com)
+// Rev.  : 5/28/2024 Tue (CloneX)
 //================================================================================
 #include "DocExcel.h"
 #include "ExcelNumFormat/ExcelNumFormat.h"
@@ -524,6 +524,23 @@ string DocExcelSheet::GetValue(bool bUseMergedData, bool bIgnoreFormat)
 				// restore original base
 				m_Origin.x = iOrgX;
 				m_Origin.y = iOrgY;
+			}
+		}
+	}
+
+	if (m_pExcel->IsDocGenStyle()) {
+		DocExcelStyle *pStyle = m_pExcel->GetStyleByIndex(m_Column.attribute("s").as_int());
+		if (pStyle && pStyle->attribute("applyFont").as_int()) {
+			DocXML fonts = pStyle->parent().parent().child("fonts");
+			DocXML font = fonts.child_by_index("font", pStyle->attribute("fontId").as_int());
+			// color
+			cstring sTok = font.child("color").attribute("rgb").as_string();
+			if (!sTok.IsEmpty()) {
+				cstring sColor;
+				sTok.erase(0, 2);
+				sColor.Format("@<color:%s>", sTok.c_str());
+				sValue.insert(0, sColor);
+				sValue.Append("@</color>");
 			}
 		}
 	}

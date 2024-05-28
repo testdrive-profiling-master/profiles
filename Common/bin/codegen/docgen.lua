@@ -774,7 +774,6 @@ function GenerateTable(sExcelFileName, sSheetName)
 		-- col grid width 재계산
 		for i=1, col_count do
 			col_width[i]	= math.floor((col_cells[i].width * 10094) / col_total_width);
-			print("col_width[" .. i .. "] : " .. col_width[i])
 		end
 	else
 		LOGW("No table data. : " .. sExcelFileName .. "(" .. sSheetName .. ")")
