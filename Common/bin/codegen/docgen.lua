@@ -703,29 +703,84 @@ function GenerateTable(sExcelFileName, sSheetName)
 	local	sheet			= xls:GetSheet(sSheetName)
 	local	col_count		= 0
 	local	col_total_width	= 0
-	local	col_list		= {}
+	local	col_cells		= {}
+	local	col_width		= {}
 	
 	if sheet == nil then
 		error("Can't open sheet table : " .. sExcelFileName .. "(" .. sSheetName .. ")")
 	end
 	
+	local function GetTableCellData(sheet, bGetWidth)
+		local col	= {}
+		col.text	= sheet:GetValue()
+		if bGetWidth == true then
+			col.width	= sheet:GetColumnWidth()
+		end
+		col.align	= ""
+		do
+			local sMerge		= String(sheet:GetMergeCellPos())
+			col.merge			= {}
+			col.merge.doc		= ""
+			col.merge.enable	= (#sMerge.s ~= 0)
+			-- make doc text
+		
+			if col.merge.enable then
+				col.merge.x			= tonumber(sMerge:Tokenize(",").s)
+				col.merge.y			= tonumber(sMerge:Tokenize(",").s)
+				col.merge.width		= tonumber(sMerge:Tokenize(",").s)
+				col.merge.height	= tonumber(sMerge:Tokenize(",").s)
+			
+				if col.merge.width ~= 1 then
+					col.merge.doc = col.merge.doc .. "<w:hMerge "
+					if col.merge.x == 0 then
+						col.merge.doc = col.merge.doc .. "w:val=\"restart\""
+					elseif col.merge.x ~= (col.merge.width - 1) then
+						col.merge.doc = col.merge.doc .. "w:val=\"continue\""
+					end
+					col.merge.doc = col.merge.doc .. "/>"
+				end
+				
+				if col.merge.height ~= 1 then
+					col.merge.doc = col.merge.doc .. "<w:vMerge "
+					if col.merge.y == 0 then
+						col.merge.doc = col.merge.doc .. "w:val=\"restart\""
+					elseif col.merge.y ~= (col.merge.height - 1) then
+						col.merge.doc = col.merge.doc .. "w:val=\"continue\""
+					end
+					col.merge.doc = col.merge.doc .. "/>"
+				end
+			else
+				col.merge.x			= 0
+				col.merge.y			= 0
+				col.merge.width		= 0
+				col.merge.height	= 0
+			end
+		end
+		
+		col.style				= sheet:GetStyle()
+		
+		-- for formated text color
+		col.formated_color		= GetExcelColorCode(sheet:GetLatestValueColor())	-- formated color
+		return col
+	end
+	
 	-- 첫 줄 목록 얻기
 	if sheet:GetRow(false) then
 		while sheet:GetColumn(false) do
-			local	width			= sheet:GetColumnWidth()
-			local	sName			= String(sheet:GetValue())
-			local	sColor			= GetExcelColorCode(sheet:GetLatestValueColor())
-			local	bCenter			= sName:CompareFront("*")
-			if bCenter then
-				sName:erase(0, 1)
-			end
 			col_count				= col_count + 1
-			col_list[col_count]		= {sName.s, width, bCenter, "", sColor}		-- sValue, column width, center style, merge, text color
-			col_total_width			= col_total_width + width
+			col_cells[col_count]	= GetTableCellData(sheet, true)
+			col_total_width			= col_total_width + col_cells[col_count].width
+			
+			-- merged 되었다면, 맨 처음 쪽 width 를 증가 시켜줘야 한다.
+			if (col_cells[col_count].merge.enable == true) and (col_cells[col_count].merge.x ~= 0) then
+				col_cells[col_count - col_cells[col_count].merge.x].width	= col_cells[col_count - col_cells[col_count].merge.x].width + col_cells[col_count].width
+				--col_cells[col_count].width = 0
+			end
+			
 		end
 		
 		for i=1, col_count do
-			col_list[i][2]	= math.floor((col_list[i][2] * 3900) / col_total_width);
+			col_width[i]	= math.floor((col_cells[i].width * 5000) / col_total_width);
 		end
 	else
 		LOGW("No table data. : " .. sExcelFileName .. "(" .. sSheetName .. ")")
@@ -788,7 +843,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 		<w:tblGrid>")
 
 	for i=1, col_count do
-		table_code:Append("<w:gridCol w:w=\"" .. col_list[i][2] .. "\"/>")
+		table_code:Append("<w:gridCol w:w=\"" .. col_width[i] .. "\"/>")
 	end
 
 	-- header
@@ -818,9 +873,9 @@ function GenerateTable(sExcelFileName, sSheetName)
 		table_code:Append("\
 			<w:tc>\
 				<w:tcPr>\
-					<w:tcW w:w=\"" .. col_list[i][2] .. "\"\
-						   w:type=\"dxa\"/>\
-					<w:tcBorders>\
+					<w:tcW w:w=\"" .. col_width[i] .. "\"\
+						   w:type=\"dxa\"/>" .. col_cells[i].merge.doc ..
+					"<w:tcBorders>\
 						<w:top w:val=\"single\"\
 							   w:sz=\"4\"\
 							   w:space=\"0\"\
@@ -852,7 +907,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 						   w:themeFill=\"text1\"\
 						   w:themeFillTint=\"80\"/>\
 				</w:tcPr>"
-				.. EncodeParagraph(col_list[i][1], {pPr="<w:pStyle w:val=\"TableColumn\"/>\
+				.. EncodeParagraph(col_cells[i].text, {pPr="<w:pStyle w:val=\"TableColumn\"/>\
 				<w:rPr>\
 					<w:color w:val=\"FFFFFF\"\
 							 w:themeColor=\"background1\"/>\
@@ -862,7 +917,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 				<w:rFonts w:hint=\"eastAsia\"/>\
 				<w:color w:val=\"FFFFFF\" w:themeColor=\"background1\"/>\
 				<w:sz w:val=\"22\"/>\
-				<w:szCs w:val=\"22\"/>"}) ..
+				<w:szCs w:val=\"22\"/>", bDontIgnoreEmpty=true}) ..
 			"</w:tc>"
 		)
 	end
@@ -875,11 +930,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 		while bLast == false do
 			for i=1, col_count do
 				sheet:GetColumn(false)
-				col_list[i][1]	= sheet:GetValue()
-				col_list[i][4]	= sheet:GetMergeCellPos()
-				col_list[i][5]	= sheet:GetStyle()
-				col_list[i][6]	= GetExcelColorCode(sheet:GetLatestValueColor())
-				if #(col_list[i][1]) == 0 then col_list[i][1] = " " end	-- cell must be filled
+				col_cells[i]			= GetTableCellData(sheet, false)
 			end
 			bLast	= (sheet:GetRow(false) == false)
 			
@@ -888,49 +939,12 @@ function GenerateTable(sExcelFileName, sSheetName)
 			<w:tr>")
 			-- 컬럼 채우기
 			for i=1, col_count do
-				local	bMerge		= (#col_list[i][4] ~= 0)
-				local	bMergeDown	= false
-							
 				table_code:Append("\
 				<w:tc>\
 					<w:tcPr>\
-						<w:tcW w:w=\"" .. col_list[i][2] .. "\" w:type=\"dxa\"/>")
+						<w:tcW w:w=\"" .. col_width[i] .. "\" w:type=\"dxa\"/>")
 			
-				if bMerge then	-- merge case
-					local	sMerge	= String(col_list[i][4])
-					local	x		= tonumber(sMerge:Tokenize(",").s)
-					local	y		= tonumber(sMerge:Tokenize(",").s)
-					local	width	= tonumber(sMerge:Tokenize(",").s)
-					local	height	= tonumber(sMerge:Tokenize(",").s)
-					
-					if width ~= 1 then
-						table_code:Append("<w:hMerge ")
-						if x == 0 then
-							table_code:Append("w:val=\"restart\"")
-						else
-							bMergeDown	= true
-							if x ~= (width-1) then
-								table_code:Append("w:val=\"continue\"")
-								
-							end
-						end
-						table_code:Append("/>")
-					end
-					
-					if height ~= 1 then
-						table_code:Append("<w:vMerge ")
-						if y == 0 then
-							table_code:Append("w:val=\"restart\"")
-						else
-							bMergeDown	= true
-							if y ~= (height-1) then
-								table_code:Append("w:val=\"continue\"")
-								
-							end
-						end
-						table_code:Append("/>")
-					end
-				end
+				table_code:Append(col_cells[i].merge.doc)
 				
 				table_code:Append("\
 						<w:tcBorders>\
@@ -942,6 +956,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 								   w:themeShade=\"BF\"/>"
 				)
 				
+				-- 좌/우 경계선 비우기
 				if i == 1 then	-- first column
 					table_code:Append("<w:left w:val=\"nil\"/>")
 				end
@@ -950,31 +965,32 @@ function GenerateTable(sExcelFileName, sSheetName)
 				end
 				
 				-- set horizontal alignment
-				local table_alignment	= "TableTextLeft"
+				local cell_alignment	= "TableTextLeft"
 				
-				if col_list[i][5] ~= nil then
-					if col_list[i][5]:AlignmentHorizontal() == "center"  then
-						table_alignment		= "TableTextCenter"
-					elseif col_list[i][5]:AlignmentHorizontal() == "right" then
-						table_alignment		= "TableTextRight"
+				if col_cells[i].style ~= nil then
+					if col_cells[i].style:AlignmentHorizontal() == "center"  then
+						cell_alignment		= "TableTextCenter"
+					elseif col_cells[i].style:AlignmentHorizontal() == "right" then
+						cell_alignment		= "TableTextRight"
 					end
-				elseif col_list[i][3] then
-					table_alignment		= "TableTextCenter"
+				elseif col_cells[i][3] then
+					cell_alignment		= "TableTextCenter"
 				end
 				
 				local color_field	= ""
 				
-				if #col_list[i][6] > 0 then	-- color 설정
-					color_field		= "<w:color w:val=\"" .. col_list[i][6] .. "\"/>"
+				if #col_cells[i].formated_color ~= 0 then	-- color 설정
+					color_field		= "<w:color w:val=\"" .. col_cells[i].formated_color .. "\"/>"
 				end
 				
 				table_code:Append("\
 						</w:tcBorders>\
 					</w:tcPr>"
-					.. EncodeParagraph(col_list[i][1],
+					.. EncodeParagraph(col_cells[i].text,
 					{
-						pPr=("<w:pStyle w:val=\"" .. table_alignment .. "\"/>"),
-						rPr="<w:rFonts w:hint=\"eastAsia\"/>" .. color_field
+						pPr=("<w:pStyle w:val=\"" .. cell_alignment .. "\"/>"),
+						rPr="<w:rFonts w:hint=\"eastAsia\"/>" .. color_field,
+						bDontIgnoreEmpty=true
 					}) .. 
 				"</w:tc>")
 			end
@@ -1348,7 +1364,28 @@ function EncodeParagraph(sText, sExtra)
 	sPara:ChangeCharsetToUTF8()
 	sPara:Replace("@@", "&#64;", true)
 	sPara:Replace("\\$", "&#36;", true)
-	
+
+	-- empty paragraph, but do not ignore
+	if sExtra ~= nil then
+		if (#sPara.s == 0) and sExtra.bDontIgnoreEmpty then
+			sResult:Append("<w:p>")
+			sResult:Append("<w:rPr>")
+			if sExtra.pPr ~= nil then
+				sResult:Append(sExtra.pPr)
+			end
+			sResult:Append("</w:rPr>")
+			sResult:Append("<w:r>")
+			sResult:Append("<w:rPr>")
+			if sExtra.rPr ~= nil then
+				sResult:Append(sExtra.rPr)
+			end
+			sResult:Append("</w:rPr>")
+			sResult:Append("</w:r>")
+			sResult:Append("</w:p>")
+			return sResult.s
+		end
+	end
+
 	while true do
 		local	sLine	= sPara:Tokenize("\r\n")	-- enter code process
 		local	s_pPr	= ""
@@ -1372,7 +1409,7 @@ function EncodeParagraph(sText, sExtra)
 		if sExtra ~= nil and sExtra.pPr ~= nil then
 			s_pPr	= sExtra.pPr
 		end
-
+		
 ::new_line::
 		sLine:TrimRight(" \t")
 		
