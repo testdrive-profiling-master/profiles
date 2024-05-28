@@ -722,6 +722,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 			col.merge			= {}
 			col.merge.doc		= ""
 			col.merge.enable	= (#sMerge.s ~= 0)
+			col.merge.downed	= false
 			-- make doc text
 		
 			if col.merge.enable then
@@ -731,13 +732,18 @@ function GenerateTable(sExcelFileName, sSheetName)
 				col.merge.height	= tonumber(sMerge:Tokenize(",").s)
 			
 				if col.merge.width ~= 1 then
+					col.merge.doc = col.merge.doc .. "<w:gridSpan w:val=\"" .. col.merge.width .. "\"/>"
+					if col.merge.x ~= 0 then
+						col.merge.downed	= true
+					end
+					--[[
 					col.merge.doc = col.merge.doc .. "<w:hMerge "
 					if col.merge.x == 0 then
 						col.merge.doc = col.merge.doc .. "w:val=\"restart\""
 					elseif col.merge.x ~= (col.merge.width - 1) then
 						col.merge.doc = col.merge.doc .. "w:val=\"continue\""
 					end
-					col.merge.doc = col.merge.doc .. "/>"
+					col.merge.doc = col.merge.doc .. "/>"--]]
 				end
 				
 				if col.merge.height ~= 1 then
@@ -770,17 +776,11 @@ function GenerateTable(sExcelFileName, sSheetName)
 			col_count				= col_count + 1
 			col_cells[col_count]	= GetTableCellData(sheet, true)
 			col_total_width			= col_total_width + col_cells[col_count].width
-			
-			-- merged 되었다면, 맨 처음 쪽 width 를 증가 시켜줘야 한다.
-			if (col_cells[col_count].merge.enable == true) and (col_cells[col_count].merge.x ~= 0) then
-				col_cells[col_count - col_cells[col_count].merge.x].width	= col_cells[col_count - col_cells[col_count].merge.x].width + col_cells[col_count].width
-				--col_cells[col_count].width = 0
-			end
-			
 		end
-		
+
+		-- col grid width 재계산
 		for i=1, col_count do
-			col_width[i]	= math.floor((col_cells[i].width * 5000) / col_total_width);
+			col_width[i]	= math.floor((col_cells[i].width * 10094) / col_total_width);
 		end
 	else
 		LOGW("No table data. : " .. sExcelFileName .. "(" .. sSheetName .. ")")
@@ -791,8 +791,8 @@ function GenerateTable(sExcelFileName, sSheetName)
 	<w:tbl>\
 		<w:tblPr>\
 			<w:tblStyle w:val=\"ac\"/>\
-			<w:tblW w:w=\"5000\"\
-					w:type=\"pct\"/>\
+			<w:tblW w:w=\"0\"\
+					w:type=\"auto\"/>\
 			<w:tblBorders>\
 				<w:top w:val=\"single\"\
 					   w:sz=\"4\"\
@@ -831,7 +831,6 @@ function GenerateTable(sExcelFileName, sSheetName)
 						   w:themeColor=\"background2\"\
 						   w:themeShade=\"BF\"/>\
 			</w:tblBorders>\
-			<w:tblLayout w:type=\"fixed\"/>\
 			<w:tblLook w:val=\"06A0\"\
 					   w:firstRow=\"1\"\
 					   w:lastRow=\"0\"\
@@ -870,56 +869,63 @@ function GenerateTable(sExcelFileName, sSheetName)
 		)
 		
 	for i=1, col_count do
-		table_code:Append("\
-			<w:tc>\
-				<w:tcPr>\
-					<w:tcW w:w=\"" .. col_width[i] .. "\"\
-						   w:type=\"dxa\"/>" .. col_cells[i].merge.doc ..
-					"<w:tcBorders>\
-						<w:top w:val=\"single\"\
-							   w:sz=\"4\"\
-							   w:space=\"0\"\
-							   w:color=\"AEAAAA\"\
-							   w:themeColor=\"background2\"\
-							   w:themeShade=\"BF\"/>\
-						<w:left w:val=\"single\"\
-								w:sz=\"4\"\
-								w:space=\"0\"\
-								w:color=\"AEAAAA\"\
-								w:themeColor=\"background2\"\
-								w:themeShade=\"BF\"/>\
-						<w:bottom w:val=\"single\"\
-								  w:sz=\"4\"\
-								  w:space=\"0\"\
-								  w:color=\"AEAAAA\"\
-								  w:themeColor=\"background2\"\
-								  w:themeShade=\"BF\"/>\
-						<w:right w:val=\"single\"\
-								 w:sz=\"4\"\
-								 w:space=\"0\"\
-								 w:color=\"AEAAAA\"\
-								 w:themeColor=\"background2\"\
-								 w:themeShade=\"BF\"/>\
-					</w:tcBorders>\
-					<w:shd w:val=\"clear\"\
-						   w:color=\"auto\"\
-						   w:fill=\"7F7F7F\"\
-						   w:themeFill=\"text1\"\
-						   w:themeFillTint=\"80\"/>\
-				</w:tcPr>"
-				.. EncodeParagraph(col_cells[i].text, {pPr="<w:pStyle w:val=\"TableColumn\"/>\
-				<w:rPr>\
-					<w:color w:val=\"FFFFFF\"\
-							 w:themeColor=\"background1\"/>\
+		if col_cells[i].merge.downed == false then
+			local cell_width = 0
+			for t = 0, (col_cells[i].merge.width - 1) do
+				cell_width	= cell_width + col_width[i + t]
+			end
+		
+			table_code:Append("\
+				<w:tc>\
+					<w:tcPr>\
+						<w:tcW w:w=\"" .. cell_width .. "\"\
+							   w:type=\"dxa\"/>" .. col_cells[i].merge.doc ..
+						"<w:tcBorders>\
+							<w:top w:val=\"single\"\
+								   w:sz=\"4\"\
+								   w:space=\"0\"\
+								   w:color=\"AEAAAA\"\
+								   w:themeColor=\"background2\"\
+								   w:themeShade=\"BF\"/>\
+							<w:left w:val=\"single\"\
+									w:sz=\"4\"\
+									w:space=\"0\"\
+									w:color=\"AEAAAA\"\
+									w:themeColor=\"background2\"\
+									w:themeShade=\"BF\"/>\
+							<w:bottom w:val=\"single\"\
+									  w:sz=\"4\"\
+									  w:space=\"0\"\
+									  w:color=\"AEAAAA\"\
+									  w:themeColor=\"background2\"\
+									  w:themeShade=\"BF\"/>\
+							<w:right w:val=\"single\"\
+									 w:sz=\"4\"\
+									 w:space=\"0\"\
+									 w:color=\"AEAAAA\"\
+									 w:themeColor=\"background2\"\
+									 w:themeShade=\"BF\"/>\
+						</w:tcBorders>\
+						<w:shd w:val=\"clear\"\
+							   w:color=\"auto\"\
+							   w:fill=\"7F7F7F\"\
+							   w:themeFill=\"text1\"\
+							   w:themeFillTint=\"80\"/>\
+					</w:tcPr>"
+					.. EncodeParagraph(col_cells[i].text, {pPr="<w:pStyle w:val=\"TableColumn\"/>\
+					<w:rPr>\
+						<w:color w:val=\"FFFFFF\"\
+								 w:themeColor=\"background1\"/>\
+						<w:sz w:val=\"22\"/>\
+						<w:szCs w:val=\"22\"/>\
+					</w:rPr>", rPr="\
+					<w:rFonts w:hint=\"eastAsia\"/>\
+					<w:color w:val=\"FFFFFF\" w:themeColor=\"background1\"/>\
 					<w:sz w:val=\"22\"/>\
-					<w:szCs w:val=\"22\"/>\
-				</w:rPr>", rPr="\
-				<w:rFonts w:hint=\"eastAsia\"/>\
-				<w:color w:val=\"FFFFFF\" w:themeColor=\"background1\"/>\
-				<w:sz w:val=\"22\"/>\
-				<w:szCs w:val=\"22\"/>", bDontIgnoreEmpty=true}) ..
-			"</w:tc>"
-		)
+					<w:szCs w:val=\"22\"/>", bDontIgnoreEmpty=true}) ..
+				"</w:tc>"
+			)
+		end
 	end
 	table_code:Append("</w:tr>")
 	
@@ -939,60 +945,67 @@ function GenerateTable(sExcelFileName, sSheetName)
 			<w:tr>")
 			-- 컬럼 채우기
 			for i=1, col_count do
-				table_code:Append("\
-				<w:tc>\
-					<w:tcPr>\
-						<w:tcW w:w=\"" .. col_width[i] .. "\" w:type=\"dxa\"/>")
-			
-				table_code:Append(col_cells[i].merge.doc)
-				
-				table_code:Append("\
-						<w:tcBorders>\
-							<w:top w:val=\"single\"\
-								   w:sz=\"4\"\
-								   w:space=\"0\"\
-								   w:color=\"AEAAAA\"\
-								   w:themeColor=\"background2\"\
-								   w:themeShade=\"BF\"/>"
-				)
-				
-				-- 좌/우 경계선 비우기
-				if i == 1 then	-- first column
-					table_code:Append("<w:left w:val=\"nil\"/>")
-				end
-				if i == col_count then	-- last column
-					table_code:Append("<w:right w:val=\"nil\"/>")
-				end
-				
-				-- set horizontal alignment
-				local cell_alignment	= "TableTextLeft"
-				
-				if col_cells[i].style ~= nil then
-					if col_cells[i].style:AlignmentHorizontal() == "center"  then
-						cell_alignment		= "TableTextCenter"
-					elseif col_cells[i].style:AlignmentHorizontal() == "right" then
-						cell_alignment		= "TableTextRight"
+				if col_cells[i].merge.downed == false then
+					local cell_width = 0
+					for t = 0, (col_cells[i].merge.width - 1) do
+						cell_width	= cell_width + col_width[i + t]
 					end
-				elseif col_cells[i][3] then
-					cell_alignment		= "TableTextCenter"
+			
+					table_code:Append("\
+					<w:tc>\
+						<w:tcPr>\
+							<w:tcW w:w=\"" .. cell_width .. "\" w:type=\"dxa\"/>")
+				
+					table_code:Append(col_cells[i].merge.doc)
+					
+					table_code:Append("\
+							<w:tcBorders>\
+								<w:top w:val=\"single\"\
+									   w:sz=\"4\"\
+									   w:space=\"0\"\
+									   w:color=\"AEAAAA\"\
+									   w:themeColor=\"background2\"\
+									   w:themeShade=\"BF\"/>"
+					)
+					
+					-- 좌/우 경계선 비우기
+					if i == 1 then	-- first column
+						table_code:Append("<w:left w:val=\"nil\"/>")
+					end
+					if i == (col_count - (col_cells[i].merge.width and (col_cells[i].merge.width-1) or 0)) then	-- last column
+						table_code:Append("<w:right w:val=\"nil\"/>")
+					end
+					
+					-- set horizontal alignment
+					local cell_alignment	= "TableTextLeft"
+					
+					if col_cells[i].style ~= nil then
+						if col_cells[i].style:AlignmentHorizontal() == "center"  then
+							cell_alignment		= "TableTextCenter"
+						elseif col_cells[i].style:AlignmentHorizontal() == "right" then
+							cell_alignment		= "TableTextRight"
+						end
+					elseif col_cells[i][3] then
+						cell_alignment		= "TableTextCenter"
+					end
+					
+					local color_field	= ""
+					
+					if #col_cells[i].formated_color ~= 0 then	-- color 설정
+						color_field		= "<w:color w:val=\"" .. col_cells[i].formated_color .. "\"/>"
+					end
+					
+					table_code:Append("\
+							</w:tcBorders>\
+						</w:tcPr>"
+						.. EncodeParagraph(col_cells[i].text,
+						{
+							pPr=("<w:pStyle w:val=\"" .. cell_alignment .. "\"/>"),
+							rPr="<w:rFonts w:hint=\"eastAsia\"/>" .. color_field,
+							bDontIgnoreEmpty=true
+						}) .. 
+					"</w:tc>")
 				end
-				
-				local color_field	= ""
-				
-				if #col_cells[i].formated_color ~= 0 then	-- color 설정
-					color_field		= "<w:color w:val=\"" .. col_cells[i].formated_color .. "\"/>"
-				end
-				
-				table_code:Append("\
-						</w:tcBorders>\
-					</w:tcPr>"
-					.. EncodeParagraph(col_cells[i].text,
-					{
-						pPr=("<w:pStyle w:val=\"" .. cell_alignment .. "\"/>"),
-						rPr="<w:rFonts w:hint=\"eastAsia\"/>" .. color_field,
-						bDontIgnoreEmpty=true
-					}) .. 
-				"</w:tc>")
 			end
 			table_code:Append("</w:tr>")
 		end
