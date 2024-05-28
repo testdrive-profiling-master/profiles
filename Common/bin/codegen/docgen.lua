@@ -695,7 +695,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 	-- 엑셀 열기
 	local	xls		= DocExcel()
 	
-	if xls:Open(sExcelFileName) == false then
+	if xls:Open(sExcelFileName, true) == false then
 		error("Can't open excel file : " .. sExcelFileName)
 	end
 	

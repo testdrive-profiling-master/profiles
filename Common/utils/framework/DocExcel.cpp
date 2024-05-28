@@ -1041,15 +1041,19 @@ string DocExcelStyle::BackgroundColor(void)
 	return attribute("fillId").as_string();
 }
 
-DocExcel::DocExcel(void) {}
+DocExcel::DocExcel(void)
+{
+	m_bUseDocGenStyle = false;
+}
 
 DocExcel::~DocExcel(void)
 {
 	OnClose();
 }
 
-bool DocExcel::Open(const char *sFileName)
+bool DocExcel::Open(const char *sFileName, bool bUseDocGenStyle)
 {
+	m_bUseDocGenStyle = bUseDocGenStyle;
 	if (!sFileName || !*sFileName) {
 		string sTemplateFileName = GetCommonToolPath() + "/bin/codegen/DocExcel_template.xlsx";
 		return DocFile::Open(sTemplateFileName.c_str());
@@ -1094,19 +1098,64 @@ bool DocExcel::OnOpen(void)
 	}
 
 	// make string map
-	m_SharedStrings.EnumerateInDepth("si", &m_StringTable, [](DocXML node, void *pPrivate) -> bool {
-		vector<string> *pStringTable = (vector<string> *)pPrivate;
-		cstring			sText;
+	{
+		typedef struct {
+			vector<string> *table;
+			cstring			sText;
+			bool			bUseDocGenStyle;
+		} string_table;
+		string_table tbl;
+		tbl.table			= &m_StringTable;
+		tbl.bUseDocGenStyle = m_bUseDocGenStyle;
 
-		node.EnumerateInDepth("t", &sText, [](DocXML node, void *pPrivate) -> bool {
-			cstring *pText = (cstring *)pPrivate;
-			pText->Append(node.text().get());
+		m_SharedStrings.EnumerateInDepth("si", &tbl, [](DocXML node, void *pPrivate) -> bool {
+			string_table *pTable = (string_table *)pPrivate;
+			pTable->sText.clear();
+
+			node.EnumerateInDepth("t", pPrivate, [](DocXML node, void *pPrivate) -> bool {
+				string_table *pTable = (string_table *)pPrivate;
+
+				if (pTable->bUseDocGenStyle) {
+					DocXML	rPr = node.parent().child("rPr");
+					cstring prefix, postfix;
+					cstring sTok = rPr.child("color").attribute("rgb").as_string();
+
+					// text color
+					if (!sTok.IsEmpty()) {
+						sTok.erase(0, 2); // delete alpha
+						prefix.AppendFormat("@<color:%s>", sTok.c_str());
+						postfix.insert(0, "@</color>");
+					}
+
+					// bold
+					if (!rPr.child("b").empty()) {
+						prefix.Append("@<b>");
+						postfix.insert(0, "@</b>");
+					}
+
+					// bold
+					if (!rPr.child("u").empty()) {
+						prefix.Append("@<u>");
+						postfix.insert(0, "@</u>");
+					}
+					// italic
+					if (!rPr.child("i").empty()) {
+						prefix.Append("@<i>");
+						postfix.insert(0, "@</i>");
+					}
+
+					pTable->sText.AppendFormat("%s%s%s", prefix.c_str(), node.text().get(), postfix.c_str());
+				} else {
+					pTable->sText.Append(node.text().get());
+				}
+
+				return true;
+			});
+			pTable->sText.Replace("_x000D_", "", true);
+			pTable->table->push_back(pTable->sText.c_str());
 			return true;
 		});
-		sText.Replace("_x000D_", "", true);
-		pStringTable->push_back(sText.c_str());
-		return true;
-	});
+	}
 	// make style list
 	{
 		DocXML node = m_Styles.child("cellXfs");

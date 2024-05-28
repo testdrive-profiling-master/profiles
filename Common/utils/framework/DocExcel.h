@@ -239,7 +239,7 @@ public:
 	DocExcel(void);
 	virtual ~DocExcel(void);
 
-	virtual bool   Open(const char *sFileName = NULL);
+	virtual bool   Open(const char *sFileName = NULL, bool bUseDocGenStyle = false);
 
 	const char	  *GetString(int iIndex);
 	int			   GetStringIndex(const char *sStr, bool bAutoAppend = true);
@@ -286,6 +286,7 @@ private:
 	DocXML							  m_CalcChain;
 	vector<string>					  m_StringTable;
 	vector<unique_ptr<DocExcelStyle>> m_StyleList;
+	bool							  m_bUseDocGenStyle;
 };
 
 void   Excel_PosDecode(cstring sPos, int &x, int &y);
