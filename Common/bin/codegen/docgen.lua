@@ -774,6 +774,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 		-- col grid width 재계산
 		for i=1, col_count do
 			col_width[i]	= math.floor((col_cells[i].width * 10094) / col_total_width);
+			print("col_width[" .. i .. "] : " .. col_width[i])
 		end
 	else
 		LOGW("No table data. : " .. sExcelFileName .. "(" .. sSheetName .. ")")
@@ -784,7 +785,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 	<w:tbl>\
 		<w:tblPr>\
 			<w:tblStyle w:val=\"ac\"/>\
-			<w:tblW w:w=\"0\"\
+			<w:tblW w:w=\"10094\"\
 					w:type=\"auto\"/>\
 			<w:tblBorders>\
 				<w:top w:val=\"single\"\
@@ -864,7 +865,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 	for i=1, col_count do
 		if col_cells[i].merge.downed == false then
 			local cell_width = 0
-			for t = 0, (col_cells[i].merge.width - 1) do
+			for t = 0, ((col_cells[i].merge.width == 0) and 0 or (col_cells[i].merge.width - 1)) do
 				cell_width	= cell_width + col_width[i + t]
 			end
 		
@@ -965,7 +966,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 					if i == 1 then	-- first column
 						table_code:Append("<w:left w:val=\"nil\"/>")
 					end
-					if i == (col_count - (col_cells[i].merge.width and (col_cells[i].merge.width-1) or 0)) then	-- last column
+					if i == (col_count - ((col_cells[i].merge.width ~= 0) and (col_cells[i].merge.width-1) or 0)) then	-- last column
 						table_code:Append("<w:right w:val=\"nil\"/>")
 					end
 					
