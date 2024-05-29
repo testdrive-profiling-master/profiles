@@ -1037,8 +1037,8 @@ function GenerateTableFromLua(sLuaTable)
 	<w:tbl>\
 		<w:tblPr>\
 			<w:tblStyle w:val=\"ac\"/>\
-			<w:tblW w:w=\"5000\"\
-					w:type=\"pct\"/>\
+			<w:tblW w:w=\"HeaderWidth\"\
+					w:type=\"auto\"/>\
 			<w:tblBorders>\
 				<w:top w:val=\"single\"\
 					   w:sz=\"4\"\
@@ -1077,7 +1077,6 @@ function GenerateTableFromLua(sLuaTable)
 						   w:themeColor=\"background2\"\
 						   w:themeShade=\"BF\"/>\
 			</w:tblBorders>\
-			<w:tblLayout w:type=\"fixed\"/>\
 			<w:tblLook w:val=\"06A0\"\
 					   w:firstRow=\"1\"\
 					   w:lastRow=\"0\"\
@@ -1096,7 +1095,7 @@ function GenerateTableFromLua(sLuaTable)
 	if #lua_table >= 1 then
 		local	iRowCount		= 0
 		local	HeaderCount		= 1
-		local	HeaderWidth		= 3900
+		local	HeaderWidth		= 10094
 		
 		if lua_table.HeaderCount ~= nil then
 			HeaderCount	= lua_table.HeaderCount

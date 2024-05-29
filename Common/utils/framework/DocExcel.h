@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 5/28/2024 Tue (CloneX)
+// Rev.  : 5/29/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __DOC_EXCEL_H__
 #define __DOC_EXCEL_H__
@@ -216,7 +216,7 @@ class DocExcelStyle : public DocXML
 	friend class DocExcel;
 
 public:
-	DocExcelStyle(DocExcel *pExcel, DocXML *pParent, int iID, pugi::xml_node node);
+	DocExcelStyle(DocExcel *pExcel, int iID, pugi::xml_node node);
 	virtual ~DocExcelStyle(void);
 
 	string	   AlignmentHorizontal(void);
@@ -229,7 +229,6 @@ public:
 
 private:
 	DocExcel *m_pExcel;
-	DocXML	 *m_pParent;
 	int		  m_iID;
 };
 

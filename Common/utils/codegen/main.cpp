@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 3/8/2024 Fri (clonextop@gmail.com)
+// Rev.  : 5/29/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include ".codegen_version.inl"
 #include "ArgTable.h"
@@ -43,8 +43,8 @@ const char *__sLuaFileName = NULL;
 cstring		GetTitle(void)
 {
 	cstring sTitle;
-	sTitle.Format("TestDrive code generator. v%d.%d (build #%d date : " __DATE__ ")", CODEGEN_VERSION_MAJOR,
-				  CODEGEN_VERSION_MINOR, CODEGEN_VERSION_BUILD);
+	sTitle.Format("TestDrive Profiling Master's code generator. v%d.%d (build #%d date : " __DATE__ ")",
+				  CODEGEN_VERSION_MAJOR, CODEGEN_VERSION_MINOR, CODEGEN_VERSION_BUILD);
 	return sTitle;
 }
 

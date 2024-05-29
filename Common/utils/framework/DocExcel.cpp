@@ -1003,11 +1003,10 @@ bool DocExcelSheet::OnSave(void)
 	return false;
 }
 
-DocExcelStyle::DocExcelStyle(DocExcel *pExcel, DocXML *pParent, int iID, pugi::xml_node node) : DocXML(node)
+DocExcelStyle::DocExcelStyle(DocExcel *pExcel, int iID, pugi::xml_node node) : DocXML(node)
 {
-	m_pExcel  = pExcel;
-	m_pParent = pParent;
-	m_iID	  = iID;
+	m_pExcel = pExcel;
+	m_iID	 = iID;
 }
 
 DocExcelStyle::~DocExcelStyle() {}
@@ -1019,8 +1018,8 @@ string DocExcelStyle::AlignmentHorizontal(void)
 
 string DocExcelStyle::BackgroundColor(void)
 {
-	int id = attribute("fillId").as_int();
-	if (id) {
+	if (attribute("applyFill").as_int()) {
+		int	   id	 = attribute("fillId").as_int();
 		DocXML fills = parent().parent().child("fills");
 		DocXML fill	 = fills.child_by_index("fill", id);
 		if (!fill.empty()) {
@@ -1070,7 +1069,7 @@ string DocExcelStyle::BackgroundColor(void)
 			}
 		}
 	}
-	return attribute("fillId").as_string();
+	return "";
 }
 
 DocExcel::DocExcel(void)
@@ -1193,13 +1192,12 @@ bool DocExcel::OnOpen(void)
 		DocXML node = m_Styles.child("cellXfs");
 		typedef struct {
 			DocExcel						  *pExcel;
-			DocXML							  *pParent;
 			vector<unique_ptr<DocExcelStyle>> *pStyleList;
 		} STYLE_REF;
-		STYLE_REF style_ref = {this, &m_Styles, &m_StyleList};
+		STYLE_REF style_ref = {this, &m_StyleList};
 		node.Enumerate("xf", (void *)&style_ref, [](DocXML node, void *pPrivate) -> bool {
 			STYLE_REF				 &p = *((STYLE_REF *)pPrivate);
-			unique_ptr<DocExcelStyle> pStyle(new DocExcelStyle(p.pExcel, p.pParent, p.pStyleList->size(), node));
+			unique_ptr<DocExcelStyle> pStyle(new DocExcelStyle(p.pExcel, p.pStyleList->size(), node));
 			p.pStyleList->push_back(move(pStyle));
 			return true;
 		});
