@@ -33,88 +33,11 @@
 // Title : Common profiles
 // Rev.  : 5/29/2024 Wed (clonextop@gmail.com)
 //================================================================================
-#ifndef __TESTDRIVE_LICENSE_MANAGER_H__
-#define __TESTDRIVE_LICENSE_MANAGER_H__
-#include "STDInterface.h"
-#include <sys/types.h>
-
-using namespace std;
-
-namespace testdrive_license_manager
-{
-class LicenseCheck
-{
-public:
-	LicenseCheck(const DWORD *pPublicKey);
-	~LicenseCheck(void);
-};
-}; // namespace testdrive_license_manager
-
-class ZipFile
-{
-public:
-	ZipFile(void);
-	virtual ~ZipFile(void);
-
-	void		   Release(void);
-
-	bool		   Compress(const char *sFileName);
-	bool		   Compress(BYTE *pBuffer, size_t dwByteSize);
-	bool		   Decompress(BYTE *pCompressedBuffer, size_t iCompressedSize, size_t iDecompressedSize);
-
-	inline size_t &DecompressedSize(void)
-	{
-		return m_dwDecompressedSize;
-	}
-	inline size_t &CompressedSize(void)
-	{
-		return m_dwCompressedSize;
-	}
-	inline BYTE *Buffer(void)
-	{
-		return m_pData;
-	}
-
-private:
-	BYTE  *m_pData;
-	size_t m_dwCompressedSize;
-	size_t m_dwDecompressedSize;
-};
-
-class SEED128_Crypto
-{
-public:
-	SEED128_Crypto(const DWORD *pKey = NULL);
-	virtual ~SEED128_Crypto(void);
-
-	void SetupKey(const DWORD *pKey);			 // 4 DWORD input
-	void Encrypt(BYTE *pData, DWORD dwByteSize); // size alignment is 16 bytes
-	void Decrypt(BYTE *pData, DWORD dwByteSize); // size alignment is 16 bytes
-	void EncryptFrame(DWORD *pData);
-	void DecryptFrame(DWORD *pData);
-
-private:
-	DWORD m_dwRoundKey[32];
-};
-
-class SHA256_Hash
-{ // fastest custom SHA256 hash
-public:
-	SHA256_Hash(const DWORD *pInitHash = NULL);
-	~SHA256_Hash(void);
-
-	void		 Initialize(const DWORD *pInitHash = NULL);
-	void		 Push(const BYTE *pData, DWORD dwByteSize);
-	void		 PushFrame(const BYTE *pData);
-	const DWORD *Hash(void)
-	{
-		return m_Hash;
-	}
-	void Randomize(void);
-	bool Compare(const DWORD *pCmpHash);
-
-private:
-	DWORD m_Hash[8];
-};
-
-#endif // __TESTDRIVE_LICENSE_MANAGER_H__
+#ifndef __LICENSE_MANAGER_H__
+#define __LICENSE_MANAGER_H__
+#include "TestDrive_LM.h"
+#include <assert.h>
+#include <iostream>
+#include <memory.h>
+#include <sys/stat.h>
+#endif //__LICENSE_MANAGER_H__

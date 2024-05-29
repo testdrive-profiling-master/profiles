@@ -43,7 +43,7 @@ const char *__sLuaFileName = NULL;
 cstring		GetTitle(void)
 {
 	cstring sTitle;
-	sTitle.Format("TestDrive Profiling Master's code generator. v%d.%d (build #%d date : " __DATE__ ")",
+	sTitle.Format("Code generator for TestDrive Profiling Master. v%d.%d (build #%d date : " __DATE__ ")",
 				  CODEGEN_VERSION_MAJOR, CODEGEN_VERSION_MINOR, CODEGEN_VERSION_BUILD);
 	return sTitle;
 }
