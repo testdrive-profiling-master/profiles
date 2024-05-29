@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 5/28/2024 Tue (CloneX)
+// Rev.  : 5/29/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include "DocExcel.h"
 #include "ExcelNumFormat/ExcelNumFormat.h"
@@ -532,7 +532,7 @@ string DocExcelSheet::GetValue(bool bUseMergedData, bool bIgnoreFormat)
 		DocExcelStyle *pStyle = m_pExcel->GetStyleByIndex(m_Column.attribute("s").as_int());
 		if (pStyle && pStyle->attribute("applyFont").as_int()) {
 			DocXML fonts = pStyle->parent().parent().child("fonts");
-			DocXML font = fonts.child_by_index("font", pStyle->attribute("fontId").as_int());
+			DocXML font	 = fonts.child_by_index("font", pStyle->attribute("fontId").as_int());
 			// color
 			cstring sTok = font.child("color").attribute("rgb").as_string();
 			if (!sTok.IsEmpty()) {
@@ -541,6 +541,21 @@ string DocExcelSheet::GetValue(bool bUseMergedData, bool bIgnoreFormat)
 				sColor.Format("@<color:%s>", sTok.c_str());
 				sValue.insert(0, sColor);
 				sValue.Append("@</color>");
+			}
+			// bold
+			if (!font.child("b").empty()) {
+				sValue.insert(0, "@<b>");
+				sValue.Append("@</b>");
+			}
+			// italic
+			if (!font.child("i").empty()) {
+				sValue.insert(0, "@<i>");
+				sValue.Append("@</i>");
+			}
+			// underline
+			if (!font.child("u").empty()) {
+				sValue.insert(0, "@<u>");
+				sValue.Append("@</u>");
 			}
 		}
 	}
