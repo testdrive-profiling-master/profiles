@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 5/28/2024 Tue (clonextop@gmail.com)
+// Rev.  : 6/3/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -498,6 +498,26 @@ public:
 
 	lua_DocNode find_child_by_attribute(const char *child_name, const char *attr_name, const char *attr_value)
 	{
+		if (child_name && (strstr(child_name, "/") != NULL) && attr_name && attr_value) { // nested search
+			typedef struct {
+				const char *attr_name;
+				const char *attr_value;
+				xml_node	node;
+			} FIND_CHILD_DEPTH;
+			FIND_CHILD_DEPTH p;
+			p.attr_name	 = attr_name;
+			p.attr_value = attr_value;
+			Enumerate(child_name, &p, [](DocXML node, void *pPrivate) -> bool {
+				FIND_CHILD_DEPTH &p = *(FIND_CHILD_DEPTH *)pPrivate;
+				if (!strcmp(node.attribute(p.attr_name).as_string(), p.attr_value)) {
+					p.node = node;
+					return false;
+				}
+				return true;
+			});
+			return p.node;
+		}
+
 		return child_name ? xml_node::find_child_by_attribute(child_name, attr_name, attr_value)
 						  : xml_node::find_child_by_attribute(attr_name, attr_value);
 	}

@@ -454,30 +454,32 @@ Result : @<fixed>Fixed font@</fixed> expression.
 @<size:30>@<b>표현식 : :::@<color:FF0000>스타일_이름@</color>@</b>@</size>
 
 다음 줄의 문단 스타일을 '@<color:FF0000>스타일_이름@</color>'로 변경합니다. 한 줄에 대해서만 스타일이 변경되며, 다음 라인에 대해서는 원래의 스타일 서식으로 다시 돌아갑니다.
-스타일 서식은 초기 템플릿 문서에 지정된 스타일이 참조되어 구현되며, WORD 상에 '텍스트 스타일'로 검색하여 변경 및 추가할 수 있습니다.
+스타일 서식은 초기 템플릿 문서에 지정된 스타일이 참조되어 구현되며, WORD 상에 '텍스트 스타일'로 검색하여 변경 및 추가할 수 있습니다. \
+스타일 이름에 탭 문자나 "//", "--" 또는 ";" 문자 뒤의 내용은 무시됩니다. 스타일 이름이 아닌 스타일 ID 를 입력하여도 상관 없습니다.
 
 예) 노트 서식을 적용
 ```html
-:::NoteHeading
+:::NoteHeading			-- 추가 설명
 민간인과 군인 사망자를 모두 합하여 약 6,000만~7,000만 명에 달하는 사람들이 제2차 세계 대전으로 인해 사망했다. 이 전쟁의 여파로 서구권에서는 그동안 사회 주류였던 집단주의 사상이 쇠퇴하고 개인주의 사상이 대두되어 오늘날까지 이어지게 된다.
 ```
 결과)
-:::NoteHeading
+:::NoteHeading			-- 추가 설명
 민간인과 군인 사망자를 모두 합하여 약 6,000만~7,000만 명에 달하는 사람들이 제2차 세계 대전으로 인해 사망했다. 이 전쟁의 여파로 서구권에서는 그동안 사회 주류였던 집단주의 사상이 쇠퇴하고 개인주의 사상이 대두되어 오늘날까지 이어지게 된다.
 %%% en
 ### Paragraph style
 @<size:30>@<b>Expression : :::@<color:FF0000>style_name@</color>@</b>@</size>
 
 Change the paragraph style of the next line to '@<color:FF0000>style_name@</color>'. The style changes for only one line, and reverts to the original style formatting for the next line.
-Style formatting is implemented by referencing the style specified in the initial template document, and can be changed or added by searching for 'text style' in WORD.
+Style formatting is implemented by referencing the style specified in the initial template document, and can be changed or added by searching for 'text style' in WORD. \
+Style names include tab characters, "//", "--", or ";" Anything after the character is ignored. It doesn't matter if you enter the style ID rather than the style name.
 
 ex) Apply note style
 ```html
-:::NoteHeading
+:::NoteHeading			-- Additional explanation
 Including both civilian and military deaths, an estimated 60 to 70 million people died as a result of World War II. In the aftermath of this war, collectivistic ideology, which had been the mainstream of society, declined in the Western world and individualistic ideology emerged, which continues to this day.
 ```
 Result)
-:::NoteHeading
+:::NoteHeading			-- Additional explanation
 Including both civilian and military deaths, an estimated 60 to 70 million people died as a result of World War II. In the aftermath of this war, collectivistic ideology, which had been the mainstream of society, declined in the Western world and individualistic ideology emerged, which continues to this day.
 %%%
 

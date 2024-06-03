@@ -239,7 +239,7 @@ local	doc_node					= doc:GetNode("word/document.xml", false):child("w:document")
 local	tbl_revision_insert			= doc_node:child_in_depth("w:t", "Doc Revision"):parent("w:tr");
 local	tbl_revision				= tbl_revision_insert:parent(nil);
 local	tbl_term					= doc_node:child_in_depth("w:t", "List of Term"):parent("w:p"):next_sibling("w:tbl")
-
+docgen.doc_styles					= doc:GetNode("word/styles.xml", false):child("w:styles")
 
 local	month_list	= {
 	"January",
@@ -348,6 +348,23 @@ function GetExcelColorCode(sName)
 	end
 	
 	return ""
+end
+
+local function ConvertStyleIDString(StyleName)
+	-- find from style string
+	local t			= docgen.doc_styles:find_child_by_attribute("w:style/w:name", "w:val", StyleName)
+	local IdName	= t:parent("w:style"):get_attribute("w:styleId")
+	
+	-- find from style ID
+	if IdName == nil then
+		t 		= docgen.doc_styles:find_child_by_attribute("w:style", "w:styleId", StyleName)
+		if t:empty() then
+			error("Can't find style : " .. StyleName)
+		end
+		IdName	= StyleName
+	end
+	
+	return IdName
 end
 
 -- 지역 변수들...
@@ -1586,10 +1603,14 @@ function EncodeParagraph(sText, sExtra)
 				sResult:Append("<w:br w:type=\"page\"/>")
 			elseif sLine:CompareFront(":::") then
 				sLine:CutFront(":", true)
+				sLine:CutBack("\t", true)
+				sLine:CutBack("//", true)
+				sLine:CutBack("--", true)
+				sLine:CutBack(";", true)
 				sLine:Trim(" \t")
 				s_pPr	= String(s_pPr)
 				s_pPr:DeleteBlock("<w:pStyle*/>", 0)
-				s_pPr:Append("<w:pStyle w:val=\"" .. sLine.s .. "\"/>")
+				s_pPr:Append("<w:pStyle w:val=\"" .. ConvertStyleIDString(sLine.s) .. "\"/>")
 				s_pPr	= s_pPr.s
 				sLine	= sPara:Tokenize("\r\n")
 				goto new_line
