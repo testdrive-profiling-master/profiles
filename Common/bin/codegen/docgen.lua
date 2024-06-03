@@ -211,9 +211,9 @@ end
 -- new document
 ---------------------------------------------------------------------------------
 -- 문서 템플릿 열기
-doc 	= DocWord()
+docgen.doc	 	= DocWord()
 
-if doc:Open(docgen.template_path.s) == false then
+if docgen.doc:Open(docgen.template_path.s) == false then
 	os.exit()		-- template document is not existed
 end
 
@@ -235,11 +235,11 @@ property["Document_Name_Header"]	= ""
 property["Water_Mark"]				= ""			-- 지정할 경우 워터마크가 overlay 된다.
 
 -- Revision 추가 함수
-local	doc_node					= doc:GetNode("word/document.xml", false):child("w:document"):child("w:body")
-local	tbl_revision_insert			= doc_node:child_in_depth("w:t", "Doc Revision"):parent("w:tr");
+docgen.doc_body						= docgen.doc:GetNode("word/document.xml", false):child("w:document"):child("w:body")
+local	tbl_revision_insert			= docgen.doc_body:child_in_depth("w:t", "Doc Revision"):parent("w:tr");
 local	tbl_revision				= tbl_revision_insert:parent(nil);
-local	tbl_term					= doc_node:child_in_depth("w:t", "List of Term"):parent("w:p"):next_sibling("w:tbl")
-docgen.doc_styles					= doc:GetNode("word/styles.xml", false):child("w:styles")
+local	tbl_term					= docgen.doc_body:child_in_depth("w:t", "List of Term"):parent("w:p"):next_sibling("w:tbl")
+docgen.doc_styles					= docgen.doc:GetNode("word/styles.xml", false):child("w:styles")
 
 local	month_list	= {
 	"January",
@@ -368,7 +368,7 @@ local function ConvertStyleIDString(StyleName)
 end
 
 -- 지역 변수들...
-local	doc_last		= doc_node:last_child()
+local	doc_last		= docgen.doc_body:last_child()
 local	chapture_id		= 0
 local	chapture_sid	= 0
 local	table_id		= 0
@@ -586,7 +586,7 @@ function GenerateFigure(sFileName, fRatio)
 	sFileName	= sFileName.s
 	
 	local sExt			= String(sFileName)
-	local sID			= doc:AddMedia(sFileName)
+	local sID			= docgen.doc:AddMedia(sFileName)
 	local sExtraExt		= ""
 	local sBlipAttr		= ""
 	
@@ -1936,7 +1936,7 @@ function EncodeParagraph(sText, sExtra)
 							if sComment:Length() == 0 then
 								sComment:Append(sLink.s)
 							end
-							sResult:Append("<w:hyperlink r:id=\"" .. doc:AddHyperlink(sLink.s) .. "\"><w:r>\
+							sResult:Append("<w:hyperlink r:id=\"" .. docgen.doc:AddHyperlink(sLink.s) .. "\"><w:r>\
 									<w:rPr><w:rStyle w:val=\"af0\"/></w:rPr>\
 									<w:t>"  .. sComment.s ..  "</w:t>\
 								</w:r></w:hyperlink>")
@@ -2008,7 +2008,7 @@ AddTerm = function(sTag, sDescription)
 end
 
 AddPageBreak = function()
-	doc_node:AddChildBeforeFromBuffer(doc_last,"\
+	docgen.doc_body:AddChildBeforeFromBuffer(doc_last,"\
 		<w:p>\
 			<w:r>\
 				<w:br w:type=\"page\"/>\
@@ -2017,20 +2017,20 @@ AddPageBreak = function()
 end
 
 AddParagraph = function(content)
-	doc_node:AddChildBeforeFromBuffer(doc_last, EncodeParagraph(content, {pPr="<w:pStyle w:val=\"BodyText10\"/>"}))
+	docgen.doc_body:AddChildBeforeFromBuffer(doc_last, EncodeParagraph(content, {pPr="<w:pStyle w:val=\"BodyText10\"/>"}))
 end
 
 AddTable = function(sCaption, sExcelFileName, sSheetName)
 	if sCaption ~= nil and sCaption ~= "" then
-		doc_node:AddChildBeforeFromBuffer(doc_last, GenerateCaption("Table", sCaption))
+		docgen.doc_body:AddChildBeforeFromBuffer(doc_last, GenerateCaption("Table", sCaption))
 	end
 	
-	doc_node:AddChildBeforeFromBuffer(doc_last, GenerateTable(sExcelFileName, sSheetName))
+	docgen.doc_body:AddChildBeforeFromBuffer(doc_last, GenerateTable(sExcelFileName, sSheetName))
 end
 
 AddSubDocument = function(sDocFileName)
-	local	id	= doc:AddSubDocument(sDocFileName)
-	doc_node:AddChildBeforeFromBuffer(doc_last, "\
+	local	id	= docgen.doc:AddSubDocument(sDocFileName)
+	docgen.doc_body:AddChildBeforeFromBuffer(doc_last, "\
 		<w:p>\
 			<w:subDoc r:id=\"" .. id .. "\"/>\
 		</w:p>"
@@ -2056,28 +2056,28 @@ end
 -- 속성 갱신
 for key, value in pairs(property) do
 	if key ~= "Water_Mark" then
-		doc:SetProperty(key, value)
+		docgen.doc:SetProperty(key, value)
 	end
 end
 
 
 -- 테이블/그림 목차 없을시 제거
 if table_count == 0 then
-	doc_node:child_in_depth("w:t", "List of Tables"):parent("w:p"):Destroy(5)
+	docgen.doc_body:child_in_depth("w:t", "List of Tables"):parent("w:p"):Destroy(5)
 end
 
 if figure_count == 0 then
-	doc_node:child_in_depth("w:t", "List of Figures"):parent("w:p"):Destroy(5)
+	docgen.doc_body:child_in_depth("w:t", "List of Figures"):parent("w:p"):Destroy(5)
 end
 
 if term_count == 0 then
-	doc_node:child_in_depth("w:t", "List of Terms"):parent("w:p"):Destroy(4)
+	docgen.doc_body:child_in_depth("w:t", "List of Terms"):parent("w:p"):Destroy(4)
 end
 
 -- 북마크 갱신
 LOGI("Link all bookmarks.")
 while true do
-	local	bookmark_node	= doc_node:child_in_depth("w:instrText", "BOOKMARK")
+	local	bookmark_node	= docgen.doc_body:child_in_depth("w:instrText", "BOOKMARK")
 	
 	if bookmark_node:empty() then break end
 	local	bookmark_text	= bookmark_node:next_sibling("w:t")
@@ -2155,10 +2155,10 @@ do
 	
 	-- 결과 저장
 	LOGI("Build document : " .. sOutFilename.s)
-	if doc:Save(sOutFilename.s) == false then
+	if docgen.doc:Save(sOutFilename.s) == false then
 		error("Can't create : " .. sOutFilename.s)
 	end
-	doc:Close()
+	docgen.doc:Close()
 	
 	-- 중간 생성 파일들 제거
 	for i=1, #temporary_file_list do
