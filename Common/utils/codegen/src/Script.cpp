@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 6/3/2024 Mon (clonextop@gmail.com)
+// Rev.  : 6/4/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -370,7 +370,7 @@ public:
 		return xml_node::path();
 	}
 
-	void Destroy(int iCount)
+	bool Destroy(int iCount)
 	{
 		xml_node node, next_node;
 
@@ -382,8 +382,9 @@ public:
 				node.parent().remove_child(node);
 				iCount--;
 			} else
-				break;
+				return false;
 		}
+		return true;
 	}
 
 	void AddChildFromBuffer(const char *sBuffer)
@@ -491,12 +492,22 @@ public:
 		return xml_node::root();
 	}
 
+	const char *name(void) const
+	{
+		return xml_node::name();
+	}
+
+	bool set_name(const char *sName)
+	{
+		return xml_node::set_name(sName);
+	}
+
 	const char *text(void) const
 	{
 		return xml_node::text().get();
 	}
 
-	lua_DocNode find_child_by_attribute(const char *child_name, const char *attr_name, const char *attr_value)
+	lua_DocNode child_by_attribute(const char *child_name, const char *attr_name, const char *attr_value)
 	{
 		if (child_name && (strstr(child_name, "/") != NULL) && attr_name && attr_value) { // nested search
 			typedef struct {
@@ -520,6 +531,16 @@ public:
 
 		return child_name ? xml_node::find_child_by_attribute(child_name, attr_name, attr_value)
 						  : xml_node::find_child_by_attribute(attr_name, attr_value);
+	}
+
+	lua_DocNode child_by_text(const char *sChild, const char *sSecondChild, const char *sText)
+	{
+		return DocXML::child_by_text(sChild, sSecondChild, sText);
+	}
+
+	string children_text(const char *sChild)
+	{
+		return DocXML::children_text(sChild);
 	}
 
 	bool set_string(const char *rhs)
@@ -1010,8 +1031,6 @@ Script::Script(void)
 				.addProperty("y", &DocExcelPos::y, false)
 				.endClass()
 				.beginClass<pugi::xml_node>("xml_node")
-				.addFunction("name", &pugi::xml_node::name)
-				.addFunction("set_name", &pugi::xml_node::set_name)
 				.endClass()
 				.deriveClass<lua_DocNode, pugi::xml_node>("DocNode")
 				.addConstructor<void (*)(void)>()
@@ -1038,8 +1057,12 @@ Script::Script(void)
 				.addFunction("previous_sibling", &lua_DocNode::previous_sibling)
 				.addFunction("parent", &lua_DocNode::parent)
 				.addFunction("root", &lua_DocNode::root)
+				.addFunction("name", &lua_DocNode::name)
+				.addFunction("set_name", &lua_DocNode::set_name)
 				.addFunction("text", &lua_DocNode::text)
-				.addFunction("find_child_by_attribute", &lua_DocNode::find_child_by_attribute)
+				.addFunction("child_by_attribute", &lua_DocNode::child_by_attribute)
+				.addFunction("child_by_text", &lua_DocNode::child_by_text)
+				.addFunction("children_text", &lua_DocNode::children_text)
 				.addFunction("set_string", &lua_DocNode::set_string)
 				.addFunction("set_int", &lua_DocNode::set_int)
 				.addFunction("set_long", &lua_DocNode::set_long)

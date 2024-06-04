@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 5/28/2024 Tue (clonextop@gmail.com)
+// Rev.  : 6/4/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #include "DocDocument.h"
 
@@ -392,10 +392,18 @@ void DocXML::AddChildFromBuffer(const char *sBuffer)
 
 static bool __EnumerateNodeInDepth(cstring &sChild, DocXML node, void *pPrivate, DOCX_NODE_ENUMERATOR_FUNC func)
 {
+	int		iPos  = 0;
+	cstring sTag  = sChild.Tokenize(iPos, "/");
+	cstring sRest = sChild.Tokenize(iPos, "");
 	for (auto &i : node) {
-		if (sChild == i.name()) {
-			if (!func(i, pPrivate))
-				break;
+		if (sTag == i.name()) {
+			if (!sRest.IsEmpty()) {
+				if (!__EnumerateNodeInDepth(sRest, i, pPrivate, func))
+					break;
+			} else {
+				if (!func(i, pPrivate))
+					break;
+			}
 		} else {
 			if (!__EnumerateNodeInDepth(sChild, i, pPrivate, func))
 				break;
@@ -436,6 +444,60 @@ DocXML DocXML::child_by_index(const char *sName, int iIndex)
 	});
 
 	return p.node;
+}
+
+DocXML DocXML::child_by_text(const char *sChild, const char *sSecondChild, const char *sText)
+{
+	typedef struct {
+		bool   bFound;
+		string sSecondChild;
+		string sGolden;
+		string sText;
+		int	   iLength;
+		DocXML node;
+	} private_data;
+
+	private_data p;
+	if (sText && sSecondChild && sChild) {
+		p.bFound  = false;
+		p.sGolden = sText;
+		p.iLength = p.sGolden.length();
+		if (sSecondChild)
+			p.sSecondChild = sSecondChild;
+		EnumerateInDepth(sChild, &p, [](DocXML node, void *pPrivate) -> bool {
+			private_data *p = (private_data *)pPrivate;
+
+			if (p->sSecondChild.empty()) {
+				p->sText = node.text().as_string();
+			} else {
+				p->sText.clear();
+				node.EnumerateInDepth(p->sSecondChild.c_str(), pPrivate, [](DocXML node, void *pPrivate) -> bool {
+					private_data *p = (private_data *)pPrivate;
+					p->sText += node.text().as_string();
+					return (p->sText.length() <= p->iLength); // for early search termination
+				});
+			}
+
+			if (p->sText == p->sGolden) {
+				p->node = node;
+				return false;
+			}
+
+			return true;
+		});
+	}
+	return p.node;
+}
+
+string DocXML::children_text(const char *sChild)
+{
+	string sText;
+	EnumerateInDepth(sChild, &sText, [](DocXML node, void *pPrivate) -> bool {
+		string &sText = *(string *)pPrivate;
+		sText += node.text().as_string();
+		return true;
+	});
+	return sText;
 }
 
 DocFile::DocFile(void)

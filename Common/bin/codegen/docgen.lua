@@ -97,9 +97,9 @@ if (Arg:DoParse() == false) then
 	return
 end
 
-local	sInFilename		= Arg:GetOptionFile("in_file", 0)
-local	sDocTemplate	= String(Arg:GetOptionString("template"))
-local	sOutFilename	= Arg:GetOptionFile("out_file", 0)
+docgen.sInFilename		= Arg:GetOptionFile("in_file", 0)
+docgen.sDocTemplate		= String(Arg:GetOptionString("template"))
+docgen.sOutFilename		= Arg:GetOptionFile("out_file", 0)
 
 docgen.language			= String(Arg:GetOptionString("language"))
 docgen.language:MakeLower()
@@ -127,8 +127,8 @@ do	-- check output format
 	end
 end
 
-if sDocTemplate.s == "" then
-	sDocTemplate.s		= docgen.default_template
+if docgen.sDocTemplate.s == "" then
+	docgen.sDocTemplate.s		= docgen.default_template
 end
 
 do	-- run lua definition code
@@ -142,66 +142,66 @@ do	-- run lua definition code
 end
 
 -- template source file path
-if sDocTemplate:CompareBack(".docx") then
-	docgen.template_path.s	= sDocTemplate.s
+if docgen.sDocTemplate:CompareBack(".docx") then
+	docgen.template_path.s	= docgen.sDocTemplate.s
 else
-	docgen.template_path:Append("Common/bin/codegen/docgen_template_" .. sDocTemplate.s .. ".docx")
+	docgen.template_path:Append("Common/bin/codegen/docgen_template_" .. docgen.sDocTemplate.s .. ".docx")
 end
 
 do	-- install new template
 	local	new_template_desc	= Arg:GetOptionString("install")
 	
 	if #new_template_desc ~= 0 then
-		if sDocTemplate.s == "testdrive" then
+		if docgen.sDocTemplate.s == "testdrive" then
 			LOGE("Specify other template name, 'testdrive' is system's default template.")
 			os.exit(1)
 		end
 		
-		if (sDocTemplate:find(".", 0) >= 0) or (sDocTemplate:find(" ", 0) >= 0) then
-			LOGE("Template must be a name, not a file. : " .. sDocTemplate.s)
+		if (docgen.sDocTemplate:find(".", 0) >= 0) or (docgen.sDocTemplate:find(" ", 0) >= 0) then
+			LOGE("Template must be a name, not a file. : " .. docgen.sDocTemplate.s)
 			os.exit(1)
 		end
 		
-		if #sOutFilename ~= 0 then
+		if #docgen.sOutFilename ~= 0 then
 			LOGE("output file argument is not needed to install template document.")
 			os.exit(1)
 		end
 		
-		sInFilename	= String(sInFilename)
+		docgen.sInFilename	= String(docgen.sInFilename)
 		
-		if sInFilename:CompareBack(".docx") == false then
-			LOGE("Input file must be a template document(.docx) file. : " .. sInFilename.s)
+		if docgen.sInFilename:CompareBack(".docx") == false then
+			LOGE("Input file must be a template document(.docx) file. : " .. docgen.sInFilename.s)
 			os.exit(1)
 		end
 		
-		LOGI("Set new template : " .. sDocTemplate.s)
+		LOGI("Set new template : " .. docgen.sDocTemplate.s)
 		
-		if lfs.IsExist(sInFilename.s) == false then
-			LOGE("Input document template file is not existed : " .. sInFilename.s)
+		if lfs.IsExist(docgen.sInFilename.s) == false then
+			LOGE("Input document template file is not existed : " .. docgen.sInFilename.s)
 			os.exit(1)
 		end
 		
 		if lfs.IsExist(docgen.template_path.s) then
-			LOGW("The template document '" .. sDocTemplate.s .. "' is already existed. It will be overwritten.")
+			LOGW("The template document '" .. docgen.sDocTemplate.s .. "' is already existed. It will be overwritten.")
 		end
 		
-		if #exec("cp -f \"" .. sInFilename.s .. "\" \"" .. docgen.template_path.s .. "\"") ~= 0 then
+		if #exec("cp -f \"" .. docgen.sInFilename.s .. "\" \"" .. docgen.template_path.s .. "\"") ~= 0 then
 			LOGE("Template file copy is failed.")
 			os.exist(1)
 		end
 		
 		do	-- create description file
 			local f = TextFile()
-			if f:Create(docgen.profile_path.s .. "common/bin/codegen/docgen_template_" .. sDocTemplate.s .. ".txt") then
+			if f:Create(docgen.profile_path.s .. "common/bin/codegen/docgen_template_" .. docgen.sDocTemplate.s .. ".txt") then
 				f:Put(new_template_desc)
 				f:Close()
 			else
-				LOGE("Can't create description file for template '" .. sDocTemplate.s .. "'")
+				LOGE("Can't create description file for template '" .. docgen.sDocTemplate.s .. "'")
 				os.exit(1)
 			end
 		end
 		
-		LOGI("Template(" .. sDocTemplate.s .. ") installtion is done.")
+		LOGI("Template(" .. docgen.sDocTemplate.s .. ") installtion is done.")
 		os.exit(0)
 	end
 end
@@ -219,7 +219,6 @@ end
 
 local	sDate = String(nil)
 
-
 property = {}
 sDate:FormatDate("%Y", 0)
 property["Year"]					= sDate.s		-- 라이센스 연도 반영
@@ -236,9 +235,6 @@ property["Water_Mark"]				= ""			-- 지정할 경우 워터마크가 overlay 된
 
 -- Revision 추가 함수
 docgen.doc_body						= docgen.doc:GetNode("word/document.xml", false):child("w:document"):child("w:body")
-local	tbl_revision_insert			= docgen.doc_body:child_in_depth("w:t", "Doc Revision"):parent("w:tr");
-local	tbl_revision				= tbl_revision_insert:parent(nil);
-local	tbl_term					= docgen.doc_body:child_in_depth("w:t", "List of Term"):parent("w:p"):next_sibling("w:tbl")
 docgen.doc_styles					= docgen.doc:GetNode("word/styles.xml", false):child("w:styles")
 
 local	month_list	= {
@@ -352,12 +348,12 @@ end
 
 local function ConvertStyleIDString(StyleName)
 	-- find from style string
-	local t			= docgen.doc_styles:find_child_by_attribute("w:style/w:name", "w:val", StyleName)
+	local t			= docgen.doc_styles:child_by_attribute("w:style/w:name", "w:val", StyleName)
 	local IdName	= t:parent("w:style"):get_attribute("w:styleId")
 	
 	-- find from style ID
 	if IdName == nil then
-		t 		= docgen.doc_styles:find_child_by_attribute("w:style", "w:styleId", StyleName)
+		t 		= docgen.doc_styles:child_by_attribute("w:style", "w:styleId", StyleName)
 		if t:empty() then
 			error("Can't find style : " .. StyleName)
 		end
@@ -367,6 +363,69 @@ local function ConvertStyleIDString(StyleName)
 	return IdName
 end
 
+docgen.revision			= {}
+docgen.revision.title	= "Document Revision History"
+docgen.revision.count	= 0
+docgen.revision.tbl_top = docgen.doc_body:child_by_text("w:p", "w:t", docgen.revision.title):next_sibling("w:tbl"):child("w:tr")
+docgen.revision.tbl		= docgen.revision.tbl_top:parent("w:tbl")
+
+if docgen.revision.tbl_top:empty() then
+	LOGW("Can't find table of Document revision : " .. docgen.revision.title)
+end
+
+docgen.revision.insert	= function(sVer, iYear, iMonth, iDay, sDescription)
+	property["Doc_Version"]		= sVer
+	property["Revision_Date"]	= month_list[iMonth] .. " " .. tostring(iDay) .. ", " .. tostring(iYear)
+	docgen.revision.tbl:AddChildAfterFromBuffer(docgen.revision.tbl_top, "<w:tr>\
+				<w:tc>\
+					<w:tcPr><w:tcW w:w=\"1985\" w:type=\"dxa\"/></w:tcPr>"
+					.. EncodeParagraph(sVer, {pPr="<w:pStyle w:val=\"tabletext\"/><w:jc w:val=\"center\"/>", rPr="<w:color w:val=\"auto\"/>"}) ..
+				"</w:tc>\
+				<w:tc>\
+					<w:tcPr><w:tcW w:w=\"2249\" w:type=\"dxa\"/></w:tcPr>"
+					.. EncodeParagraph(property["Revision_Date"], {pPr="<w:pStyle w:val=\"tabletext\"/><w:jc w:val=\"center\"/>", rPr="<w:color w:val=\"auto\"/>"}) ..
+				"</w:tc>\
+				<w:tc>\
+					<w:tcPr><w:tcW w:w=\"5834\" w:type=\"dxa\"/></w:tcPr>"
+					.. EncodeParagraph(sDescription, {pPr="<w:pStyle w:val=\"tabletext\"/>", rPr="<w:color w:val=\"auto\"/>"}) ..
+				"</w:tc>\
+			</w:tr>");
+	docgen.revision.count	= docgen.revision.count + 1
+end
+AddRevision	= docgen.revision.insert	-- set global
+
+docgen.terms			= {}
+docgen.terms.title		= "List of Terms"
+docgen.terms.count		= 0
+docgen.terms.tbl		= docgen.doc_body:child_by_text("w:p", "w:t", docgen.terms.title):next_sibling("w:tbl")
+
+if docgen.terms.tbl:empty() then
+	LOGW("Can't find table of terms")
+end
+
+docgen.terms.insert		= function(sTag, sDescription)
+	docgen.terms.tbl:AddChildFromBuffer("\
+	<w:tr>\
+		<w:tc>\
+			<w:tcPr>\
+				<w:tcW w:w=\"1798\" w:type=\"dxa\"/>\
+				<w:hideMark/>\
+			</w:tcPr>"
+			.. EncodeParagraph(sTag, {pPr="<w:pStyle w:val=\"TableTextCenter\"/><w:spacing w:after=\"0\"/>"}) ..
+		"</w:tc>\
+		<w:tc>\
+			<w:tcPr>\
+				<w:tcW w:w=\"8304\" w:type=\"dxa\"/>\
+				<w:hideMark/>\
+			</w:tcPr>"
+			.. EncodeParagraph(sDescription, {pPr="<w:spacing w:after=\"0\"/>"}) ..
+		"</w:tc>\
+	</w:tr>")
+
+	docgen.terms.count	= docgen.terms.count + 1
+end
+AddTerm	= docgen.terms.insert
+
 -- 지역 변수들...
 local	doc_last		= docgen.doc_body:last_child()
 local	chapture_id		= 0
@@ -375,7 +434,6 @@ local	table_id		= 0
 local	figure_id		= 0
 local	table_count		= 0
 local	figure_count	= 0
-local	term_count		= 0
 local	bookmark_id		= 70
 local	bookmark_list	= {}
 
@@ -1966,47 +2024,6 @@ function EncodeParagraph(sText, sExtra)
 	return sResult.s
 end
 
-AddRevision = function(sVer, iYear, iMonth, iDay, sDescription)
-	property["Doc_Version"]		= sVer
-	property["Revision_Date"]	= month_list[iMonth] .. " " .. tostring(iDay) .. ", " .. tostring(iYear)
-	tbl_revision:AddChildAfterFromBuffer(tbl_revision_insert, "<w:tr>\
-				<w:tc>\
-					<w:tcPr><w:tcW w:w=\"1985\" w:type=\"dxa\"/></w:tcPr>"
-					.. EncodeParagraph(sVer, {pPr="<w:pStyle w:val=\"tabletext\"/><w:jc w:val=\"center\"/>", rPr="<w:color w:val=\"auto\"/>"}) ..
-				"</w:tc>\
-				<w:tc>\
-					<w:tcPr><w:tcW w:w=\"2249\" w:type=\"dxa\"/></w:tcPr>"
-					.. EncodeParagraph(property["Revision_Date"], {pPr="<w:pStyle w:val=\"tabletext\"/><w:jc w:val=\"center\"/>", rPr="<w:color w:val=\"auto\"/>"}) ..
-				"</w:tc>\
-				<w:tc>\
-					<w:tcPr><w:tcW w:w=\"5834\" w:type=\"dxa\"/></w:tcPr>"
-					.. EncodeParagraph(sDescription, {pPr="<w:pStyle w:val=\"tabletext\"/>", rPr="<w:color w:val=\"auto\"/>"}) ..
-				"</w:tc>\
-			</w:tr>");
-end
-
-AddTerm = function(sTag, sDescription)
-	tbl_term:AddChildFromBuffer("\
-	<w:tr>\
-		<w:tc>\
-			<w:tcPr>\
-				<w:tcW w:w=\"1798\" w:type=\"dxa\"/>\
-				<w:hideMark/>\
-			</w:tcPr>"
-			.. EncodeParagraph(sTag, {pPr="<w:pStyle w:val=\"TableTextCenter\"/><w:spacing w:after=\"0\"/>"}) ..
-		"</w:tc>\
-		<w:tc>\
-			<w:tcPr>\
-				<w:tcW w:w=\"8304\" w:type=\"dxa\"/>\
-				<w:hideMark/>\
-			</w:tcPr>"
-			.. EncodeParagraph(sDescription, {pPr="<w:spacing w:after=\"0\"/>"}) ..
-		"</w:tc>\
-	</w:tr>")
-
-	term_count	= term_count + 1
-end
-
 AddPageBreak = function()
 	docgen.doc_body:AddChildBeforeFromBuffer(doc_last,"\
 		<w:p>\
@@ -2039,15 +2056,15 @@ end
 
 -- 사용자 소스 실행
 do
-	local __sExt	= String(sInFilename)
+	local __sExt	= String(docgen.sInFilename)
 	
 	__sExt:CutFront(".", true)
 	__sExt:MakeLower()
 	
 	if __sExt.s == "md" then
-		AddParagraph("[[" .. sInFilename .. "]]")
+		AddParagraph("[[" .. docgen.sInFilename .. "]]")
 	else
-		if RunScript(sInFilename) == false then
+		if RunScript(docgen.sInFilename) == false then
 			return
 		end
 	end
@@ -2061,17 +2078,49 @@ for key, value in pairs(property) do
 end
 
 
--- 테이블/그림 목차 없을시 제거
+-- 테이블/그림/Terms 목차 없을시 제거
+local function DeleteDocSection(sPara)
+	local node = docgen.doc_body:child_by_text("w:p", "w:t", sPara)
+
+	if node:empty() then
+		error("Can't find page paragraph : '" .. sPara .. "'")
+	else
+		-- search to top paragraph
+		while node:child_in_depth("w:lastRenderedPageBreak", nil):empty() do
+			node	= node:previous_sibling(nil)
+			if node:empty() then
+				error("It's first page paragraph. : " .. sPara)
+				break;
+			end
+		end
+
+		-- delete first paragraph (because it includes a page break code)
+		node:Destroy(1)
+		
+		-- delete paragraph until page break
+		while node:child_in_depth("w:lastRenderedPageBreak", nil):empty() do
+			if node:Destroy(1) == false then
+				error("It's last page paragraph. : " .. sPara)
+				break;
+			end
+		end
+	end
+end
+
+if docgen.revision.count == 0 then
+	DeleteDocSection(docgen.revision.title)
+end
+
 if table_count == 0 then
-	docgen.doc_body:child_in_depth("w:t", "List of Tables"):parent("w:p"):Destroy(5)
+	DeleteDocSection("List of Tables")
 end
 
 if figure_count == 0 then
-	docgen.doc_body:child_in_depth("w:t", "List of Figures"):parent("w:p"):Destroy(5)
+	DeleteDocSection("List of Figures")
 end
 
-if term_count == 0 then
-	docgen.doc_body:child_in_depth("w:t", "List of Terms"):parent("w:p"):Destroy(4)
+if docgen.terms.count == 0 then
+	DeleteDocSection(docgen.terms.title)
 end
 
 -- 북마크 갱신
@@ -2107,56 +2156,56 @@ end
 -- 파일 저장
 do
 	-- 저장 이름 없을 시 생성
-	if #sOutFilename == 0 then
+	if #docgen.sOutFilename == 0 then
 		if(#property["IP_Name_Header"] > 0) then
-			sOutFilename	= sOutFilename .. property["IP_Name_Header"] .. "_"
+			docgen.sOutFilename	= docgen.sOutFilename .. property["IP_Name_Header"] .. "_"
 		end
 
 		if(#property["Document_Name_Header"] > 0) then
-			sOutFilename	= sOutFilename .. property["Document_Name_Header"] .. "_"
+			docgen.sOutFilename	= docgen.sOutFilename .. property["Document_Name_Header"] .. "_"
 		end
 
 		if(#property["Doc_Version"] > 0) then
-			sOutFilename	= sOutFilename .. "rev" .. property["Doc_Version"]
+			docgen.sOutFilename	= docgen.sOutFilename .. "rev" .. property["Doc_Version"]
 		end
 		
 		do	-- cut last '_' charactor
-			local s = String(sOutFilename)
+			local s = String(docgen.sOutFilename)
 			s:Replace(" ", "_", true)
 			s:TrimRight("_")
-			sOutFilename = s.s
+			docgen.sOutFilename = s.s
 		end
 		
-		if(#sOutFilename == 0)  then
-			sOutFilename = "untitled_document"
+		if(#docgen.sOutFilename == 0)  then
+			docgen.sOutFilename = "untitled_document"
 		end
 		
-		sOutFilename	= sOutFilename .. ".docx"
+		docgen.sOutFilename	= docgen.sOutFilename .. ".docx"
 	end
 
-	sOutFilename	= String(sOutFilename)
-	sOutFilename:Trim(" \"")
+	docgen.sOutFilename	= String(docgen.sOutFilename)
+	docgen.sOutFilename:Trim(" \"")
 
-	if sOutFilename:CompareBack(".docx") == false then
-		sOutFilename:Append(".docx")
+	if docgen.sOutFilename:CompareBack(".docx") == false then
+		docgen.sOutFilename:Append(".docx")
 	end
 
-	local sOutFilename_PDF	= String(sOutFilename.s)
+	local sOutFilename_PDF	= String(docgen.sOutFilename.s)
 	sOutFilename_PDF:CutBack(".docx", false)
 	sOutFilename_PDF:Append(".pdf")
 		
 	-- 기존 doc/pdf 파일 제거
-	if os.execute("rm -f \"" .. sOutFilename.s .. "\"") == false then
-		error("file '" .. sOutFilename.s .. "' is locked.")
+	if os.execute("rm -f \"" .. docgen.sOutFilename.s .. "\"") == false then
+		error("file '" .. docgen.sOutFilename.s .. "' is locked.")
 	end
 	if os.execute("rm -f \"" .. sOutFilename_PDF.s .. "\"") == false then
 		error("file \"" .. sOutFilename_PDF.s .. "\" is locked.")
 	end
 	
 	-- 결과 저장
-	LOGI("Build document : " .. sOutFilename.s)
-	if docgen.doc:Save(sOutFilename.s) == false then
-		error("Can't create : " .. sOutFilename.s)
+	LOGI("Build document : " .. docgen.sOutFilename.s)
+	if docgen.doc:Save(docgen.sOutFilename.s) == false then
+		error("Can't create : " .. docgen.sOutFilename.s)
 	end
 	docgen.doc:Close()
 	
@@ -2167,7 +2216,7 @@ do
 	
 	if docgen.output_format == nil then
 		LOGI("Fields calculation...")
-		os.execute("doc2pdf \"" .. sOutFilename.s .. "\" \"" .. property["Water_Mark"] .. "\" *")
+		os.execute("doc2pdf \"" .. docgen.sOutFilename.s .. "\" \"" .. property["Water_Mark"] .. "\" *")
 	else
 		-- make pdf first
 		if (docgen.output_format["pdf"] == true) or (docgen.output_format["djvu"] == true) then
@@ -2177,7 +2226,7 @@ do
 				LOGI("Fields calculation...")
 			end
 			docgen.output_format["pdf"]	= nil
-			os.execute("doc2pdf \"" .. sOutFilename.s .. "\" \"" .. property["Water_Mark"] .. "\"")
+			os.execute("doc2pdf \"" .. docgen.sOutFilename.s .. "\" \"" .. property["Water_Mark"] .. "\"")
 		end
 		-- the others save as
 		for ext, bOut in key_pairs(docgen.output_format) do
@@ -2194,7 +2243,7 @@ do
 					end
 				else
 					LOGI("Save as '" .. ext .. "' file...")
-					os.execute("doc2save \"" .. sOutFilename.s .. "\" " .. ext)
+					os.execute("doc2save \"" .. docgen.sOutFilename.s .. "\" " .. ext)
 				end
 			end
 		end
