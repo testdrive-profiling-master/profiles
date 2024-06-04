@@ -370,7 +370,7 @@ inst:set_prefix("I#")	-- Signals start with I#_*.
 
 m		= module:new("top")
 m:add_interface(inst, "inst_0", "m")
-m:add_interface(inst.modport.m, "inst_1")		-- Equivalent to : m:add_interface(inst, "inst_1", "m")
+m:add_interface(inst.modport.m, "inst_1")		-- same as : m:add_interface(inst, "inst_1", "m")
 
 m:make_code()
 ```
@@ -660,6 +660,14 @@ top:set_param("BYTE_WIDTH", "DATA_WIDTH/8", true)
 ### module:add_interface
 @<tbl:media/instruction_module.xlsx;add_interface>
 ;;;
+
+ex) module:add_interface example
+```lua
+m = module:new("top")
+m:add_interface(inst.modport.s, "inst_0")	-- slave port interface 'inst_0'
+m:add_interface(inst.modport.m, "inst_1") 	-- master port interface 'inst_1'
+m:add_interface(inst.modport)				-- logic interface 'inst'
+```
 
 ### module:add_clock
 @<tbl:media/instruction_module.xlsx;add_clock>

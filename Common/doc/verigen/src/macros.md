@@ -1,13 +1,13 @@
 # Macro functions
 
-Provides macro functions useful for organizing your code.
+Provides useful macro functions for organizing in your Lua code.
 
-@<tbl:media/instruction_macros.xlsx;summary;Macro function/data summary>
+@<tbl:media/instruction_macros.xlsx;summary;Macro function for Lua>
 
  
-The functions below are predefined functions as vfunction available in verilog. It can be used as "$function_name(~)".
+The functions below are predefined in-line functions as vfunction available in verilog. It can be used as "$function_name(~)".
 
-@<tbl:media/instruction_macros.xlsx;vfunction_list;List of predefined vfunctions>
+@<tbl:media/instruction_macros.xlsx;vfunction_list;In-line functions for verilog>
 
 ;;;
 

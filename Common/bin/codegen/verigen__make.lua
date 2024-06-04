@@ -151,6 +151,14 @@ function module:make_code(is_top)
 		LOGI("Build sub design : " .. self.name .. ".sv")
 	end
 
+	-- create output path if not existed
+	if lfs.IsExist(sOutPath) == false then
+		if lfs.mkdir(sOutPath) == false then
+			LOGE("Can't create output directory : " ..  sOutPath)
+			os.exit(1)
+		end
+	end
+	
 	-- create top design file
 	self:set_current_design()
 	local	f	= TextFile()
