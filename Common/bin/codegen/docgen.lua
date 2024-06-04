@@ -612,7 +612,7 @@ function GenerateFigure(sFileName, fRatio)
 			
 			if lfs.attributes(sFileName.s) == false then	-- no visio
 				LOGE("Visio is not installed.")
-				sFileName.s	= docgen.profile_path.s .. "common/bin/codegen/no_visio.svg"
+				sFileName.s	= docgen.profile_path.s .. "common/bin/codegen/media/no_visio.svg"
 			else
 				temporary_file_list[#temporary_file_list + 1]		= sFileName.s	-- clean up list.
 			end
