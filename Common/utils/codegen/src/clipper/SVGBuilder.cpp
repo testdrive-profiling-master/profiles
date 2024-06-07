@@ -30,7 +30,7 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 //
-// Title : qrcode project
+// Title : Common profiles
 // Rev.  : 6/7/2024 Fri (clonextop@gmail.com)
 //================================================================================
 #include "SVGBuilder.h"
@@ -63,6 +63,8 @@ SVGBuilder::StyleInfo::StyleInfo(void)
 	penClr	   = 0xFF000000;
 	penWidth   = 0.8;
 	showCoords = false;
+	offset.x   = 0;
+	offset.y   = 0;
 }
 
 SVGBuilder::PolyInfo::PolyInfo(Paths paths, StyleInfo style)
@@ -71,12 +73,16 @@ SVGBuilder::PolyInfo::PolyInfo(Paths paths, StyleInfo style)
 	this->si	= style;
 }
 
-void SVGBuilder::AddPaths(Paths &poly)
+void SVGBuilder::AddPaths(Paths &poly, StyleInfo *pStyle)
 {
 	if (poly.size() == 0)
 		return;
 
-	polyInfos.push_back(PolyInfo(poly, style));
+	if (pStyle) {
+		polyInfos.push_back(PolyInfo(poly, *pStyle));
+	} else {
+		polyInfos.push_back(PolyInfo(poly, default_style));
+	}
 }
 
 bool SVGBuilder::SaveToFile(const string &filename, double scale, int margin)
@@ -105,21 +111,26 @@ bool SVGBuilder::SaveToFile(const string &filename, double scale, int margin)
 	rec.top	   = polyInfos[i].paths[j][0].Y;
 	rec.bottom = rec.top;
 
-	for (; i < polyInfos.size(); ++i)
-		for (Paths::size_type j = 0; j < polyInfos[i].paths.size(); ++j)
+	for (; i < polyInfos.size(); ++i) {
+		StyleInfo &si = polyInfos[i].si;
+		for (Paths::size_type j = 0; j < polyInfos[i].paths.size(); ++j) {
 			for (Path::size_type k = 0; k < polyInfos[i].paths[j].size(); ++k) {
-				IntPoint ip = polyInfos[i].paths[j][k];
+				IntPoint &ip = polyInfos[i].paths[j][k];
+				double	  x	 = ip.X + si.offset.x;
+				double	  y	 = ip.Y + si.offset.y;
 
-				if (ip.X < rec.left)
-					rec.left = ip.X;
-				else if (ip.X > rec.right)
-					rec.right = ip.X;
+				if (x < rec.left)
+					rec.left = x;
+				else if (x > rec.right)
+					rec.right = x;
 
-				if (ip.Y < rec.top)
-					rec.top = ip.Y;
-				else if (ip.Y > rec.bottom)
-					rec.bottom = ip.Y;
+				if (y < rec.top)
+					rec.top = y;
+				else if (y > rec.bottom)
+					rec.bottom = y;
 			}
+		}
+	}
 
 	if (scale == 0)
 		scale = 1.0;
@@ -148,8 +159,8 @@ bool SVGBuilder::SaveToFile(const string &filename, double scale, int margin)
 	file.precision(2);
 
 	for (PolyInfoList::size_type i = 0; i < polyInfos.size(); ++i) {
+		StyleInfo &si = polyInfos[i].si;
 		file << " <path d=\"";
-
 		for (Paths::size_type j = 0; j < polyInfos[i].paths.size(); ++j) {
 			if (polyInfos[i].paths[j].size() < 3)
 				continue;
@@ -158,20 +169,19 @@ bool SVGBuilder::SaveToFile(const string &filename, double scale, int margin)
 				 << ((double)polyInfos[i].paths[j][0].Y * scale + offsetY);
 
 			for (Path::size_type k = 1; k < polyInfos[i].paths[j].size(); ++k) {
-				IntPoint ip = polyInfos[i].paths[j][k];
-				double	 x	= (double)ip.X * scale;
-				double	 y	= (double)ip.Y * scale;
+				IntPoint &ip = polyInfos[i].paths[j][k];
+				double	  x	 = (double)(ip.X + si.offset.x) * scale;
+				double	  y	 = (double)(ip.Y + si.offset.y) * scale;
 				file << " L " << (x + offsetX) << " " << (y + offsetY);
 			}
 
 			file << " z";
 		}
 
-		file << __poly_end[0] << __ColorToHtml(polyInfos[i].si.brushClr) << __poly_end[1]
-			 << __GetAlphaAsFrac(polyInfos[i].si.brushClr) << __poly_end[2]
-			 << (polyInfos[i].si.pft == pftEvenOdd ? "evenodd" : "nonzero") << __poly_end[3]
-			 << __ColorToHtml(polyInfos[i].si.penClr) << __poly_end[4] << __GetAlphaAsFrac(polyInfos[i].si.penClr)
-			 << __poly_end[5] << polyInfos[i].si.penWidth << __poly_end[6];
+		file << __poly_end[0] << __ColorToHtml(si.brushClr) << __poly_end[1] << __GetAlphaAsFrac(si.brushClr)
+			 << __poly_end[2] << (si.pft == pftEvenOdd ? "evenodd" : "nonzero") << __poly_end[3]
+			 << __ColorToHtml(si.penClr) << __poly_end[4] << __GetAlphaAsFrac(si.penClr) << __poly_end[5] << si.penWidth
+			 << __poly_end[6];
 
 		if (polyInfos[i].si.showCoords) {
 			file << "<g font-family=\"Verdana\" font-size=\"11\" fill=\"black\">\n\n";
@@ -182,8 +192,9 @@ bool SVGBuilder::SaveToFile(const string &filename, double scale, int margin)
 
 				for (Path::size_type k = 0; k < polyInfos[i].paths[j].size(); ++k) {
 					IntPoint ip = polyInfos[i].paths[j][k];
-					file << "<text x=\"" << (int)(ip.X * scale + offsetX) << "\" y=\"" << (int)(ip.Y * scale + offsetY)
-						 << "\">" << ip.X << "," << ip.Y << "</text>\n";
+					file << "<text x=\"" << (int)((ip.X + si.offset.y) * scale + offsetX) << "\" y=\""
+						 << (int)((ip.Y + si.offset.x) * scale + offsetY) << "\">" << (ip.X + si.offset.x) << ","
+						 << (ip.Y + si.offset.y) << "</text>\n";
 					file << "\n";
 				}
 			}

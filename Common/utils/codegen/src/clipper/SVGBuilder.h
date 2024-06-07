@@ -30,7 +30,7 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 //
-// Title : qrcode project
+// Title : Common profiles
 // Rev.  : 6/7/2024 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __SVG_BUILDER_H__
@@ -57,6 +57,7 @@ using namespace ClipperLib;
 //---------------------------------------------------------------------------
 class SVGBuilder
 {
+public:
 	class StyleInfo
 	{
 	public:
@@ -65,6 +66,9 @@ class SVGBuilder
 		unsigned	 penClr;
 		double		 penWidth;
 		bool		 showCoords;
+		struct {
+			double x, y;
+		} offset;
 
 		StyleInfo();
 	};
@@ -78,16 +82,15 @@ class SVGBuilder
 		PolyInfo(Paths paths, StyleInfo style);
 	};
 
+private:
 	typedef std::vector<PolyInfo> PolyInfoList;
 
-private:
-	PolyInfoList polyInfos;
+	StyleInfo					  default_style;
+	PolyInfoList				  polyInfos;
 
 public:
-	StyleInfo style;
-
-	void	  AddPaths(Paths &poly);
-	bool	  SaveToFile(const string &filename, double scale = 1.0, int margin = 10);
+	void AddPaths(Paths &poly, StyleInfo *pStyle = NULL);
+	bool SaveToFile(const string &filename, double scale = 1.0, int margin = 10);
 };
 
 #endif //__SVG_BUILDER_H__

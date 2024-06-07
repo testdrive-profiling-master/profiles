@@ -963,40 +963,72 @@ public:
 		return (result.size() == 0);
 	}
 
-	Layer_Rect GetBound(void)
+	unordered_map<string, double> GetBound(void)
 	{
-		ClipperLib::Clipper c;
-		Layer_Rect			result;
-		IntRect				rc;
+		unordered_map<string, double> m;
+		ClipperLib::Clipper			  c;
+		Layer_Rect					  result;
+		IntRect						  rc;
 		c.Clear();
 		c.AddPaths(m_Paths, ClipperLib::ptClip, true);
-		rc		  = c.GetBounds();
-		result.sx = rc.left;
-		result.sy = rc.top;
-		result.ex = rc.right;
-		result.ey = rc.bottom;
-		return result;
+		rc			= c.GetBounds();
+		m["left"]	= rc.left;
+		m["top"]	= rc.top;
+		m["right"]	= rc.right;
+		m["bottom"] = rc.bottom;
+		return m;
+	}
+};
+
+class lua_SVGBuilder
+{
+	SVGBuilder m_Builder;
+
+public:
+	lua_SVGBuilder(void) {}
+	~lua_SVGBuilder(void) {}
+
+	void AppPaths(lua_clipper *pPath, LuaRef style)
+	{
+		if (pPath) {
+			SVGBuilder::StyleInfo s;
+			if (style.isTable()) {
+				if (style["fill"].isNumber()) {
+					s.brushClr = (unsigned int)style["fill"];
+				}
+				if (style["stroke"].isNumber()) {
+					s.penClr = (unsigned int)style["stroke"];
+				}
+				if (style["stroke_width"].isNumber()) {
+					s.penWidth = (double)style["stroke_width"];
+				}
+				if (style["shadow"].isBool()) {
+					s.showCoords = (bool)style["shadow"];
+				}
+				if (style["x"].isBool()) {
+					s.offset.x = (bool)style["x"];
+				}
+				if (style["y"].isBool()) {
+					s.offset.x = (bool)style["y"];
+				}
+			}
+			m_Builder.AddPaths(pPath->m_Paths, &s);
+		}
 	}
 
-	bool SaveToSVG(const char *sFileName, LuaRef style)
+	bool ExportToFile(const char *sFileName, LuaRef style)
 	{
-		SVGBuilder svg;
+		double fMargin = 0;
+		double fScale  = 10;
 		if (style.isTable()) {
-			if (style["fill"].isNumber()) {
-				svg.style.brushClr = (unsigned int)style["fill"];
+			if (style["margin"].isNumber()) {
+				fMargin = (double)style["margin"];
 			}
-			if (style["stroke"].isNumber()) {
-				svg.style.penClr = (unsigned int)style["stroke"];
-			}
-			if (style["stroke_width"].isNumber()) {
-				svg.style.penWidth = (double)style["stroke_width"];
-			}
-			if (style["shadow"].isBool()) {
-				svg.style.showCoords = (bool)style["shadow"];
+			if (style["scale"].isNumber()) {
+				fScale = (double)style["scale"];
 			}
 		}
-		svg.AddPaths(m_Paths);
-		return svg.SaveToFile(sFileName, 10);
+		return m_Builder.SaveToFile(sFileName, fScale, fMargin);
 	}
 };
 
@@ -1373,9 +1405,13 @@ Script::Script(void)
 				.addFunction("AddRect", &lua_clipper::AddRect)
 				.addFunction("AddPolygon", &lua_clipper::AddPolygon)
 				.addFunction("AddQRCode", &lua_clipper::AddQRCode)
-				.addFunction("SaveToSVG", &lua_clipper::SaveToSVG)
 				.addFunction("Compare", &lua_clipper::Compare)
 				.addFunction("CompareInclusive", &lua_clipper::CompareInclusive)
+				.endClass()
+				.beginClass<lua_SVGBuilder>("SVGBuilder")
+				.addConstructor<void (*)(void)>()
+				.addFunction("AppPaths", &lua_SVGBuilder::AppPaths)
+				.addFunction("ExportToFile", &lua_SVGBuilder::ExportToFile)
 				.endClass()
 				.beginClass<lua_html_element>("HtmlElement")
 				.addConstructor<void (*)(void)>()
