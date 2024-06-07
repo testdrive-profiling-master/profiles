@@ -30,41 +30,64 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 //
-// Title : TestDrive codegen project
+// Title : qrcode project
 // Rev.  : 6/7/2024 Fri (clonextop@gmail.com)
 //================================================================================
-#ifndef __SCRIPT_H__
-#define __SCRIPT_H__
-#include "UtilFramework.h"
-#include "VL.h"
-#include "lua.hpp"
-#include <filesystem>
-// lua bridge
-#include "LuaBridge/LuaBridge.h"
-#include "LuaBridge/Vector.h"
-#include "LuaBridge/UnorderedMap.h"
-#include "LuaFile.h"
-using namespace luabridge;
+#ifndef __SVG_BUILDER_H__
+#define __SVG_BUILDER_H__
+#include <cmath>
+#include <algorithm>
+#include <ctime>
+#include <cstdlib>
+#include <cstdio>
+#include <vector>
+#include <iomanip>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include "clipper.hpp"
 
-class Script
+using namespace std;
+using namespace ClipperLib;
+
+//---------------------------------------------------------------------------
+// SVGBuilder class
+// a very simple class that creates an SVG image file
+//---------------------------------------------------------------------------
+class SVGBuilder
 {
+	class StyleInfo
+	{
+	public:
+		PolyFillType pft;
+		unsigned	 brushClr;
+		unsigned	 penClr;
+		double		 penWidth;
+		bool		 showCoords;
+
+		StyleInfo();
+	};
+
+	class PolyInfo
+	{
+	public:
+		Paths	  paths;
+		StyleInfo si;
+
+		PolyInfo(Paths paths, StyleInfo style);
+	};
+
+	typedef std::vector<PolyInfo> PolyInfoList;
+
+private:
+	PolyInfoList polyInfos;
+
 public:
-	Script(void);
-	virtual ~Script(void);
+	StyleInfo style;
 
-	bool		Run(const char *sFileName);
-	bool		RunBuffer(const char *sBuffer, const char *sFileName = "inline");
-	static void EnableTraceBack(bool bEnable = true);
-
-protected:
-	static bool	   __RunScript(const char *sFileName);
-	static bool	   __RunString(const char *sCodes, const char *sTag);
-
-	lua_State	  *m_pLua;
-	cstring		   m_sEnvPath;
-	cstring		   m_sWorkPath;
-	cstring		   m_sLuaFileName;
-	static Script *m_pScript;
+	void	  AddPaths(Paths &poly);
+	bool	  SaveToFile(const string &filename, double scale = 1.0, int margin = 10);
 };
 
-#endif //__SCRIPT_H__
+#endif //__SVG_BUILDER_H__

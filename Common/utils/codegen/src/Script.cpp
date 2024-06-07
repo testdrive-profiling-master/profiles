@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 6/4/2024 Tue (clonextop@gmail.com)
+// Rev.  : 6/7/2024 Fri (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -835,6 +835,159 @@ private:
 	shared_ptr<HtmlDocument> m_pDoc;
 };
 
+#include "clipper/SVGBuilder.h"
+#include <qrencode.h>
+typedef struct {
+	double sx, sy, ex, ey;
+} Layer_Rect;
+
+class lua_clipper
+{
+public:
+	Paths m_Paths;
+
+	lua_clipper(void) {
+
+	};
+
+	~lua_clipper(void) {
+
+	};
+
+	void AddRect(int x, int y, int width, int height)
+	{
+		ClipperLib::Clipper c;
+		Path				temp;
+		temp << IntPoint(x, y) << IntPoint(x + width, y) << IntPoint(x + width, y + height) << IntPoint(x, y + height);
+		c.AddPaths(m_Paths, ClipperLib::ptSubject, true);
+		c.AddPath(temp, ClipperLib::ptClip, true);
+		ClipperLib::Paths result;
+		c.Execute(ClipperLib::ctUnion, result, ClipperLib::pftNonZero, ClipperLib::pftNonZero);
+		m_Paths = result;
+	}
+
+	void AddPolygon(lua_State *L) // (x,y) table, offset x, offset y
+	{
+		LuaRef v = LuaRef::fromStack(L, 2);
+
+		double fOffsetX = 0;
+		double fOffsetY = 0;
+		{ // get offset
+			LuaRef vOffsetX = LuaRef::fromStack(L, 3);
+			LuaRef vOffsetY = LuaRef::fromStack(L, 4);
+
+			if (vOffsetX.isNumber()) {
+				fOffsetX = (double)vOffsetX;
+			}
+
+			if (vOffsetY.isNumber()) {
+				fOffsetY = (double)vOffsetY;
+			}
+		}
+
+		if (v.isTable()) {
+			int	  iSize = v.length();
+			Paths temp(1);
+
+			for (int i = 1; i <= iSize; i++) {
+				temp[0].push_back(IntPoint((double)v[i][1] + fOffsetX, (double)v[i][2] + fOffsetY));
+			}
+
+			ClipperLib::Clipper c;
+			c.AddPaths(temp, ClipperLib::ptSubject, true);
+			c.AddPaths(m_Paths, ClipperLib::ptClip, true);
+			ClipperLib::Paths result;
+			c.Execute(ClipperLib::ctUnion, result, ClipperLib::pftNonZero, ClipperLib::pftNonZero);
+			m_Paths = result;
+		}
+	}
+
+	void AddQRCode(lua_State *L) // string, scale, offset x, offset y
+	{
+		LuaRef str = LuaRef::fromStack(L, 2);
+		if (str.isString()) {
+			QRcode		  *qrcode = QRcode_encodeString((const char *)str, 0, QR_ECLEVEL_Q, QR_MODE_8, 1);
+			int			   width  = (qrcode->width);
+			unsigned char *data	  = qrcode->data;
+
+			double		   fScale	= 1;
+			double		   fOffsetX = 0;
+			double		   fOffsetY = 0;
+			{ // get scale & offset
+				LuaRef vScale	= LuaRef::fromStack(L, 3);
+				LuaRef vOffsetX = LuaRef::fromStack(L, 4);
+				LuaRef vOffsetY = LuaRef::fromStack(L, 5);
+
+				if (vScale.isNumber()) {
+					fScale = (double)vScale;
+				}
+				if (vOffsetX.isNumber()) {
+					fOffsetX = (double)vOffsetX;
+				}
+
+				if (vOffsetY.isNumber()) {
+					fOffsetY = (double)vOffsetY;
+				}
+			}
+
+			{
+				for (size_t y = 0; y < width; y++) {
+					for (size_t x = 0; x < width; x++, data++) {
+						if ((*data & 1)) {
+							AddRect((x + fOffsetX) * fScale, (y + fOffsetY) * fScale, fScale, fScale);
+						}
+					}
+				}
+			}
+			QRcode_free(qrcode);
+		}
+	}
+
+	bool Compare(lua_clipper *pClipper)
+	{
+		ClipperLib::Clipper c;
+		c.AddPaths(pClipper->m_Paths, ClipperLib::ptSubject, true);
+		c.AddPaths(m_Paths, ClipperLib::ptClip, true);
+		ClipperLib::Paths result;
+		c.Execute(ClipperLib::ctXor, result, ClipperLib::pftNonZero, ClipperLib::pftNonZero);
+		return (result.size() == 0);
+	}
+
+	bool CompareInclusive(lua_clipper *pClipper)
+	{
+		ClipperLib::Clipper c;
+		c.AddPaths(m_Paths, ClipperLib::ptSubject, true);
+		c.AddPaths(pClipper->m_Paths, ClipperLib::ptClip, true);
+		ClipperLib::Paths result;
+		c.Execute(ClipperLib::ctDifference, result, ClipperLib::pftNonZero, ClipperLib::pftNonZero);
+		return (result.size() == 0);
+	}
+
+	Layer_Rect GetBound(void)
+	{
+		ClipperLib::Clipper c;
+		Layer_Rect			result;
+		IntRect				rc;
+		c.Clear();
+		c.AddPaths(m_Paths, ClipperLib::ptClip, true);
+		rc		  = c.GetBounds();
+		result.sx = rc.left;
+		result.sy = rc.top;
+		result.ex = rc.right;
+		result.ey = rc.bottom;
+		return result;
+	}
+
+	bool SaveToSVG(const char *sFileName)
+	{
+		SVGBuilder svg;
+		svg.style.penWidth = 0;
+		svg.style.brushClr = 0xFF000000;
+		svg.AddPaths(m_Paths);
+		return svg.SaveToFile(sFileName, 10);
+	}
+};
+
 static bool __PostToDocument(const char *sName, int iMsg, const char *sMsg) // To TestDrive document (windows only)
 {
 	if (!sName)
@@ -1202,6 +1355,15 @@ Script::Script(void)
 				.addFunction("at", &lua_cstring::get)
 				.addFunction("erase", &lua_cstring::erase)
 				.addFunction("insert", &lua_cstring::insert)
+				.endClass()
+				.beginClass<lua_clipper>("Clipper")
+				.addConstructor<void (*)(void)>()
+				.addFunction("AddRect", &lua_clipper::AddRect)
+				.addFunction("AddPolygon", &lua_clipper::AddPolygon)
+				.addFunction("AddQRCode", &lua_clipper::AddQRCode)
+				.addFunction("SaveToSVG", &lua_clipper::SaveToSVG)
+				.addFunction("Compare", &lua_clipper::Compare)
+				.addFunction("CompareInclusive", &lua_clipper::CompareInclusive)
 				.endClass()
 				.beginClass<lua_html_element>("HtmlElement")
 				.addConstructor<void (*)(void)>()
