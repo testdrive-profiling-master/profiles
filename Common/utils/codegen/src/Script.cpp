@@ -978,11 +978,23 @@ public:
 		return result;
 	}
 
-	bool SaveToSVG(const char *sFileName)
+	bool SaveToSVG(const char *sFileName, LuaRef style)
 	{
 		SVGBuilder svg;
-		svg.style.penWidth = 0;
-		svg.style.brushClr = 0xFF000000;
+		if (style.isTable()) {
+			if (style["fill"].isNumber()) {
+				svg.style.brushClr = (unsigned int)style["fill"];
+			}
+			if (style["stroke"].isNumber()) {
+				svg.style.penClr = (unsigned int)style["stroke"];
+			}
+			if (style["stroke_width"].isNumber()) {
+				svg.style.penWidth = (double)style["stroke_width"];
+			}
+			if (style["shadow"].isBool()) {
+				svg.style.showCoords = (bool)style["shadow"];
+			}
+		}
 		svg.AddPaths(m_Paths);
 		return svg.SaveToFile(sFileName, 10);
 	}
