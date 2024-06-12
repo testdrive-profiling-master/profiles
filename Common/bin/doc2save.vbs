@@ -43,7 +43,7 @@ If WScript.Arguments.Count = 2 Then
 		End If
 		
 		objWord.Visible			= False
-		objWord.DisplayAlerts	= 0
+		objWord.DisplayAlerts	= False
 		objWord.OMathAutoCorrect.UseOutsideOMath	= True
 		
 		Set objDoc = objWord.documents.open(docPath)
@@ -140,7 +140,7 @@ If WScript.Arguments.Count = 2 Then
 	
 	objDoc.Activate	'alternate wait for save done!
 
-	objDoc.Close 0	' close without saving
+	objDoc.Close False	' close without saving
 	Set objDoc		= Nothing
 	objWord.Quit
 	Set objWord		= Nothing
