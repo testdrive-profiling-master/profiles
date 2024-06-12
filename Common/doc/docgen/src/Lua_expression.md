@@ -1,10 +1,10 @@
 %%% ko
 # Lua 표현
 
-Lua 스크립트는 매우 가벼고 속도가 빠르며 단순하여, 비-프로그래머를 위해 주로 사용되는 언어입니다. '워크래프트 WoW', '앵그리버드' 등 각종 게임에서 비 프로그래머인 게임 디자이너가 사용한 예시가 있습니다.
-docgen 역시 '@<bookmark:@실행 방법>'에서 나열한 것과 같이 docgen.lua 파일을 실행하여 동작합니다.
-세부적으로는 범용적인 Lua 의 기본 기능과 codegen에 추가된 기능을 사용하여 docgen을 구현하고, 다시 이 구현을 통해 문서 자동화가 이루어 집니다.
-표현은 범용적인 Lua 문법과 CodeGen의 추가 문법 그리고 아래에서 나열되는 기능들이 추가됩니다.
+Lua 스크립트는 매우 가볍우면서 속도가 빠르고 단순하여, 비-프로그래머를 위해 주로 사용되는 스크립트 언어입니다. \
+'워크래프트 WoW', '앵그리버드' 등 각종 게임에서 비 프로그래머인 게임 디자이너가 사용한 예시가 있습니다.
+docgen 역시 Lua 로 작성되어 있으며, MarkDown+HTML 표현법 이외에 Lua 문법을 사용하여 문서를 보다 세밀하게 구성할 수 있습니다.
+Lua 기능엔 codegen에서 추가된 기능을 모두 사용할 수 있고, 추가적으로 아래의 문법들이 사용될 수 있습니다.
 
 * 외부 Lua 관련 링크
 ** @<link:https://librewiki.net/wiki/%EC%8B%9C%EB%A6%AC%EC%A6%88:%EC%89%BD%EA%B2%8C_%EB%B0%B0%EC%9A%B0%EB%8A%94_%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D_%EC%9E%85%EB%AC%B8/Lua;쉽게 배우는 프로그래밍 입문/Lua>
@@ -17,10 +17,10 @@ docgen 역시 '@<bookmark:@실행 방법>'에서 나열한 것과 같이 docgen.
 %%% en
 # Lua expression
 
-Lua scripts are very lightweight, fast, and simple, making them the preferred language for non-programmers. There are examples of non-programmer game designers using it in various games such as 'Warcraft WoW' and 'Angry Birds'.
-docgen also operates by executing the docgen.lua file as listed in '@<bookmark:@How to run>'.
-In detail, docgen is implemented using general-purpose Lua basic functions and functions added to codegen, and document automation is again achieved through this implementation.
-The expression is a general-purpose Lua syntax, CodeGen's additional syntax, and the functions listed below are added.
+Lua scripts are very lightweight, fast, and simple, making them the preferred script language for non-programmers. \
+There are examples of non-programmer game designers using it in various games such as 'Warcraft WoW' and 'Angry Birds'.
+docgen is also written in Lua, and documents can be structured in more detail using Lua syntax in addition to the MarkDown+HTML expression.
+All functions added in codegen can be used for Lua functions, and the syntax below can be used additionally.
 
 * External Lua-related links
 ** @<link:https://en.wikipedia.org/wiki/Lua_(programming_language)/Lua wiki>
@@ -191,7 +191,7 @@ AddParagraph("#제목\
  
 예 #2) 외부 markdown 표현 text 파일 구현
 ```lua
-AddParagraph("[[some.txt]]")
+AddParagraph("[[some.md]]")
 ```
 
  
@@ -199,7 +199,7 @@ AddParagraph("[[some.txt]]")
 ```lua
 do
 	local	txt_contents	= String(nil)
-	txt_contents:ReadFile("some.txt", false)
+	txt_contents:ReadFile("some.md", false)
 	AddParagraph(txt_contents.s)
 end
 ```
@@ -211,9 +211,9 @@ end
 if IsInsert == true then	-- directive 확인
 	local	txt_contents	= String(nil)
 	
-	txt_contents:Append(ReadText("some_1.txt"))	-- some_1.txt 추가
-	txt_contents:Append(ReadText("some_2.txt"))	-- some_2.txt 추가
-	txt_contents:Append(ReadText("some_3.txt"))	-- some_3.txt 추가
+	txt_contents:Append(ReadText("some_1.md"))	-- some_1.md 추가
+	txt_contents:Append(ReadText("some_2.md"))	-- some_2.md 추가
+	txt_contents:Append(ReadText("some_3.md"))	-- some_3.md 추가
 	txt_contents:Replace("%ABC%", "good", true)	-- "%ABC%"를 "good"로 모두 변경
 	
 	AddParagraph(txt_contents.s)	-- 문서 적용
@@ -238,7 +238,7 @@ Paragraph content 2")
  
 ex #2) External markdown expression text file implementation
 ```lua
-AddParagraph("[[some.txt]]")
+AddParagraph("[[some.md]]")
 ```
 
  
@@ -246,7 +246,7 @@ ex #3) Implemented using the file read function
 ```lua
 do
 	local	txt_contents	= String(nil)
-	txt_contents:ReadFile("some.txt", false)
+	txt_contents:ReadFile("some.md", false)
 	AddParagraph(txt_contents.s)
 end
 ```
@@ -259,9 +259,9 @@ ex #4) Lua application that checks the 'IsInsert' variable, reads several files,
 if IsInsert == true then	-- directive check
 	local	txt_contents	= String(nil)
 	
-	txt_contents:Append(ReadText("some_1.txt"))	-- some_1.txt added
-	txt_contents:Append(ReadText("some_2.txt"))	-- some_2.txt added
-	txt_contents:Append(ReadText("some_3.txt"))	-- some_3.txt added
+	txt_contents:Append(ReadText("some_1.md"))	-- some_1.md added
+	txt_contents:Append(ReadText("some_2.md"))	-- some_2.md added
+	txt_contents:Append(ReadText("some_3.md"))	-- some_3.md added
 	txt_contents:Replace("%ABC%", "good", true)	-- change all "%ABC%" to "good"
 	
 	AddParagraph(txt_contents.s)	-- Apply to document
