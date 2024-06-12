@@ -1,3 +1,4 @@
+-- wifi QR code : WIFI:S:<SSID>;T:<WEP|WPA|blank>;P:<PASSWORD>;H:<true|false|blank>;;
 local c = Clipper()
 
 c:AddQRCode("https://testdrive-profiling-master.github.io/")
