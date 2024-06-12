@@ -14,7 +14,7 @@ docgen.template_path.s	= docgen.profile_path.s
 
 -- check installed document template
 docgen.installed_template	= {}
-docgen.default_template		= "testdrive"
+docgen.default_template		= ""
 do
 	local	latest_modification_date	= nil
 	
@@ -28,6 +28,11 @@ do
 			sName:CutFront("docgen_template_")
 			sName:CutBack(".")
 		
+			-- set default
+			if #docgen.default_template == 0 then
+				docgen.default_template		= sName.s
+			end
+		
 			local f = TextFile()
 			if f:Open(docgen.template_path.s .. "common/bin/codegen/docgen_template_" .. sName.s .. ".txt") then
 				local sDesc	= String(f:Get())
@@ -40,6 +45,7 @@ do
 					
 					local modification_date = os.date("%Y%m%d%H%M%S", lfs.attributes(src_path, "modification"))
 					
+					-- set explicit newer default
 					if latest_modification_date == nil or (latest_modification_date < modification_date) then
 						docgen.default_template		= sName.s
 						latest_modification_date	= modification_date
