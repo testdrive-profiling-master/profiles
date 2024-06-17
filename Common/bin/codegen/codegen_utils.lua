@@ -158,3 +158,15 @@ end
 lfs.IsExist = function(path)
 	return (lfs.attributes(path) ~= nil)
 end
+
+lfs.FullPath = function(path)
+	local sCurrentPath = lfs.currentdir()
+	
+	if (path ~= nil) and (lfs.chdir(path) == true) then
+		local sFullPath	= lfs.currentdir()
+		lfs.chdir(sCurrentPath)
+		return sFullPath
+	end
+	
+	return nil
+end
