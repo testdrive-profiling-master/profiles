@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : System map
-// Rev.  : 11/8/2023 Wed (clonextop@gmail.com)
+// Rev.  : 6/18/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __DESIGN_MAP_H__
 #define __DESIGN_MAP_H__
@@ -59,42 +59,38 @@ typedef enum {
 	USER_CMD_UPDATE,
 } USER_CMD;
 
-typedef enum {
-	PROPERTY_ID_EDITOR,
-	PROPERTY_ID_SIZE
-} PROPERTY_ID;
+typedef enum { PROPERTY_ID_EDITOR, PROPERTY_ID_SIZE } PROPERTY_ID;
 
 typedef struct {
-	CString		sFilename;
+	CString sFilename;
 } SOURCE_VIEW;
 
-class CDesignMap :
-	public TDImplDocumentBase,
-	public ITDHtmlManager {
+class DesignMap : public TDImplDocumentBase, public ITDHtmlManager
+{
 public:
-	CDesignMap(ITDDocument* pDoc);
-	virtual ~CDesignMap(void);
+	DesignMap(ITDDocument *pDoc);
+	virtual ~DesignMap(void);
 
-	STDMETHOD_(BOOL, OnPropertyUpdate)(ITDPropertyData* pProperty);
+	STDMETHOD_(BOOL, OnPropertyUpdate)(ITDPropertyData *pProperty);
 	STDMETHOD_(BOOL, OnCommand)(DWORD command, WPARAM wParam = NULL, LPARAM lParam = NULL);
 	STDMETHOD_(void, OnSize)(int width, int height);
 	STDMETHOD_(LPCTSTR, OnHtmlBeforeNavigate)(DWORD dwID, LPCTSTR lpszURL);
 	STDMETHOD_(void, OnHtmlDocumentComplete)(DWORD dwID, LPCTSTR lpszURL);
 	STDMETHOD_(LPCTSTR, OnHtmlNewWindowRequest)(DWORD dwID, LPCTSTR lpszURL, BOOL bUserInitiated);
 
-	int CheckModuleFile(LPCTSTR sFileName, LPCTSTR sModuleName);
+	int	 CheckModuleFile(LPCTSTR sFileName, LPCTSTR sModuleName);
 	void UpdateSourceViews(bool bNewProject);
 	bool OpenSourceFile(LPCTSTR sModuleName, BOOL bMustOpen = FALSE);
 	void OpenEditFile(LPCTSTR sFileName);
 
-
 protected:
-	BOOL						m_bInitialized;
-	ITDMemory*					m_pMemory;
-	DESIGNMAP_CONFIG*			m_pConfig;
-	CString						m_sWorkPath;
-	CString						m_sOutputPath;
-	CString						m_sDesignFilePath;
-	map<CString, SOURCE_VIEW>	m_SourceViewList;
+	BOOL					  m_bInitialized;
+	ITDMemory				 *m_pMemory;
+	DESIGNMAP_CONFIG		 *m_pConfig;
+	CString					  m_sWorkPath;
+	CString					  m_sOutputPath;
+	CString					  m_sDesignFilePath;
+	CString					  m_sTopDesignName;
+	map<CString, SOURCE_VIEW> m_SourceViewList;
 };
-#endif//__DESIGN_MAP_H__
+#endif //__DESIGN_MAP_H__

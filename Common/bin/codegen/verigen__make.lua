@@ -1043,6 +1043,7 @@ vfunction("MULTICYCLE", function(module_inst_name, if_name, cycle_count, instanc
 			end
 		end
 		
+		-- interface 개수가 1개 이어야 한다.
 		if interface_count ~= 1 then
 			error("Multicycle design[" .. m.module.name .. "] must specify one interface port.", 2)
 		end
