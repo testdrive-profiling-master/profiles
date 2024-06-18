@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive System Driver wrapper
-// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
+// Rev.  : 6/18/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_DRIVER_INTERFACE_H__
 #define __SYSTEM_DRIVER_INTERFACE_H__
@@ -44,72 +44,82 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-void LOGI(char* fmt, ...);
-void LOGE(char* fmt, ...);
+void LOGI(const char *fmt, ...);
+void LOGE(const char *fmt, ...);
 
 //#define USE_TRACE_LOG
 #ifdef USE_TRACE_LOG
-#define	TRACE_LOG(s)	printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);fflush(stdout);
+#	define TRACE_LOG(s)                                                                                               \
+		printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);                                  \
+		fflush(stdout);
 #else
-#define	TRACE_LOG(s)
+#	define TRACE_LOG(s)
 #endif
 
 class NativeMemory;
 
 typedef struct {
-	UINT64			base_address;
-	UINT64			byte_size;
+	UINT64 base_address;
+	UINT64 byte_size;
 } MEMORY_DESC;
 
-class DriverCommon {
+class DriverCommon
+{
 public:
-	void SetSystemDescription(const char* sDesc);
-	inline const char* GetSystemDescription(void) {
+	void			   SetSystemDescription(const char *sDesc);
+	inline const char *GetSystemDescription(void)
+	{
 		return m_sSystemDesc.c_str();
 	}
 
 protected:
-	static MEMORY_DESC		m_TotalMemory;
-	static MEMORY_DESC*		m_pInaccessibleMemory;
+	static MEMORY_DESC	m_TotalMemory;
+	static MEMORY_DESC *m_pInaccessibleMemory;
 
 private:
-	static std::string		m_sSystemDesc;
+	static std::string m_sSystemDesc;
 };
 
-class SystemDriverInterface : public DriverCommon {
+class SystemDriverInterface : public DriverCommon
+{
 public:
 	SystemDriverInterface(void);
 	virtual ~SystemDriverInterface(void);
 
 	// life cycle
-	virtual bool Initialize(const char* sDeviceName = NULL);
+	virtual bool Initialize(const char *sDeviceName = NULL);
 	virtual void Release(void);
 
 	// register & memory interface
-	virtual void SetCurrentCard(DWORD dwIndex);
-	virtual void RegWrite(UINT64 dwAddress, DWORD dwData) = 0;
-	virtual DWORD RegRead(UINT64 dwAddress) = 0;
-	virtual void MemoryWrite(NativeMemory* pNative, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize) = 0;
-	virtual void MemoryRead(NativeMemory* pNative, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize) = 0;
-	virtual void InterruptLock(void) = 0;
-	virtual void InterruptFree(void) = 0;
-	virtual DWORD Command(void* pCommand);
-	virtual void MemoryCreate(NativeMemory* pNative, UINT64 dwByteSize, UINT64 dwAlignment);
-	virtual void MemoryFree(NativeMemory* pNative);
+	virtual void  SetCurrentCard(DWORD dwIndex);
+	virtual void  RegWrite(UINT64 dwAddress, DWORD dwData)												  = 0;
+	virtual DWORD RegRead(UINT64 dwAddress)																  = 0;
+	virtual void  MemoryWrite(NativeMemory *pNative, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize) = 0;
+	virtual void  MemoryRead(NativeMemory *pNative, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize)  = 0;
+	virtual void  InterruptLock(void)																	  = 0;
+	virtual void  InterruptFree(void)																	  = 0;
+	virtual DWORD Command(void *pCommand);
+	virtual void  MemoryCreate(NativeMemory *pNative, UINT64 dwByteSize, UINT64 dwAlignment);
+	virtual void  MemoryFree(NativeMemory *pNative);
 
 	// inlines
-	inline DWORD CardCount(void)	{
+	inline DWORD CardCount(void)
+	{
 		return m_dwCardCount;
 	}
 
 protected:
-	HANDLE				m_hDriver;
-	DWORD				m_dwCardCount;
+	HANDLE m_hDriver;
+	DWORD  m_dwCardCount;
 };
 
-extern SystemDriverInterface*	g_pDriver;
+extern SystemDriverInterface *g_pDriver;
 
-#define DECLARE_NATIVE_DRIVER(T)	SystemDriverInterface* CreateNativeDriver(void) {return new T;}
-SystemDriverInterface* CreateNativeDriver(void);
+#define DECLARE_NATIVE_DRIVER(T)                                                                                       \
+	SystemDriverInterface *CreateNativeDriver(void)                                                                    \
+	{                                                                                                                  \
+		return new T;                                                                                                  \
+	}
+SystemDriverInterface *CreateNativeDriver(void);
 
-#endif//__SYSTEM_DRIVER_INTERFACE_H__
+#endif //__SYSTEM_DRIVER_INTERFACE_H__

@@ -31,13 +31,13 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive System Driver wrapper
-// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
+// Rev.  : 6/18/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #include "SystemDriverInterface.h"
 
-SystemDriverInterface*	g_pDriver	= NULL;
+SystemDriverInterface *g_pDriver = NULL;
 
-void LOGI(char* fmt, ...)
+void				   LOGI(const char *fmt, ...)
 {
 	printf("*I: [SystemDriver] ");
 	{
@@ -50,7 +50,7 @@ void LOGI(char* fmt, ...)
 	fflush(stdout);
 }
 
-void LOGE(char* fmt, ...)
+void LOGE(const char *fmt, ...)
 {
 	printf("*E: [SystemDriver] ");
 	{
@@ -63,15 +63,15 @@ void LOGE(char* fmt, ...)
 	fflush(stdout);
 }
 
-std::string		DriverCommon::m_sSystemDesc;
-MEMORY_DESC		DriverCommon::m_TotalMemory				= {0};		// total memory block
-MEMORY_DESC*	DriverCommon::m_pInaccessibleMemory		= NULL;		// unused memorys
+std::string	 DriverCommon::m_sSystemDesc;
+MEMORY_DESC	 DriverCommon::m_TotalMemory		 = {0};	 // total memory block
+MEMORY_DESC *DriverCommon::m_pInaccessibleMemory = NULL; // unused memorys
 
-void DriverCommon::SetSystemDescription(const char* sDesc)
+void		 DriverCommon::SetSystemDescription(const char *sDesc)
 {
-	if(sDesc) {
-		if(m_sSystemDesc.size()) {
-			if(strstr(m_sSystemDesc.c_str(), sDesc))
+	if (sDesc) {
+		if (m_sSystemDesc.size()) {
+			if (strstr(m_sSystemDesc.c_str(), sDesc))
 				return;
 
 			m_sSystemDesc.insert(0, ",");
@@ -83,31 +83,33 @@ void DriverCommon::SetSystemDescription(const char* sDesc)
 
 SystemDriverInterface::SystemDriverInterface(void)
 {
-	m_hDriver			= NULL;
-	m_dwCardCount		= 0;
-	g_pDriver			= this;
+	m_hDriver	  = NULL;
+	m_dwCardCount = 0;
+	g_pDriver	  = this;
 }
 
 SystemDriverInterface::~SystemDriverInterface(void)
 {
 	SystemDriverInterface::Release();
-	g_pDriver			= NULL;
+	g_pDriver = NULL;
 }
 
-bool SystemDriverInterface::Initialize(const char* sDeviceName)
+bool SystemDriverInterface::Initialize(const char *sDeviceName)
 {
 	Release();
 
-	if(sDeviceName) {
-		if((m_hDriver = CreateFile(sDeviceName, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL)) != INVALID_HANDLE_VALUE) {
+	if (sDeviceName) {
+		if ((m_hDriver = CreateFile(sDeviceName, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING,
+									FILE_FLAG_OVERLAPPED, NULL)) != INVALID_HANDLE_VALUE) {
 			return true;
 		}
 
 		char sError[4096];
-		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), sError, sizeof(sError), NULL);
+		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(),
+					  MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), sError, sizeof(sError), NULL);
 		LOGE(sError);
 		// failed to create device driver
-		m_hDriver	= NULL;
+		m_hDriver = NULL;
 	}
 
 	return false;
@@ -115,9 +117,9 @@ bool SystemDriverInterface::Initialize(const char* sDeviceName)
 
 void SystemDriverInterface::Release(void)
 {
-	if(m_hDriver) {
+	if (m_hDriver) {
 		CloseHandle(m_hDriver);
-		m_hDriver	= NULL;
+		m_hDriver = NULL;
 	}
 }
 
@@ -126,19 +128,19 @@ void SystemDriverInterface::SetCurrentCard(DWORD dwIndex)
 	// None implementation
 }
 
-DWORD SystemDriverInterface::Command(void* pCommand)
+DWORD SystemDriverInterface::Command(void *pCommand)
 {
 	// None implementation
-	return (DWORD) -1;
+	return (DWORD)-1;
 }
 
-void SystemDriverInterface::MemoryCreate(NativeMemory* pNative, UINT64 dwByteSize, UINT64 dwAlignment)
+void SystemDriverInterface::MemoryCreate(NativeMemory *pNative, UINT64 dwByteSize, UINT64 dwAlignment)
 {
 	// default implementation
-	pNative->pMem	= new BYTE[dwByteSize];
+	pNative->pMem = new BYTE[dwByteSize];
 }
 
-void SystemDriverInterface::MemoryFree(NativeMemory* pNative)
+void SystemDriverInterface::MemoryFree(NativeMemory *pNative)
 {
 	// default implementation
 	SAFE_DELETE_ARRAY(pNative->pMem);
