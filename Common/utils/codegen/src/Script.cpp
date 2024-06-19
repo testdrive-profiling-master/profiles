@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 6/7/2024 Fri (clonextop@gmail.com)
+// Rev.  : 6/19/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -1510,6 +1510,13 @@ Script::Script(void)
 				.addFunction("LOGW", __LOGW)
 				.addFunction("exec", __exec)
 				.addFunction("run", __execute)
+				.addFunction("Sleep", std::function<void(unsigned int ms)>([](unsigned int ms) {
+#if defined __WIN32__ || defined WIN32 // windows
+								 Sleep(ms);
+#else // unix variants
+								 usleep(ms * 1000);
+#endif
+							 }))
 				.addFunction("Pause", __Pause)
 				.addFunction("__key_compare", __key_compare)
 				.addFunction("IsWindows", __IsWindows)
