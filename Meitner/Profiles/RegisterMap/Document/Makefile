@@ -3,7 +3,7 @@
 #-------------------------------------------------
 SRC_PATH		:= .
 TARGETPATH		:= ..
-TARGETNAME		:= RegisterMap
+TARGETNAME		:= MTSP_RegisterMap
 
 SRCS			:= \
 	$(wildcard $(SRC_PATH)/*.cpp)

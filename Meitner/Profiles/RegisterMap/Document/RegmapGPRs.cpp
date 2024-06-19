@@ -1,24 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
-// 
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -30,65 +29,68 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : Meitner processor register map document
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 6/19/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include "RegmapGPRs.h"
 
-static LPCTSTR __sBoolean[2] = {
-	_T("False"),
-	_T("True")
-};
+static LPCTSTR __sBoolean[2] = {_T("False"), _T("True")};
 
-static LPCTSTR __TypePreFix[] = {
-	_T("a"),
-	_T("i"),
-	_T("f"),
-	_T("h"),
-	_T("b")
-};
+static LPCTSTR __TypePreFix[] = {_T("a"), _T("i"), _T("f"), _T("h"), _T("b")};
 
 RegmapGPRs::RegmapGPRs(void) : Regmap(_T("GPRs"))
 {
-	memset(m_Type, 0, sizeof(m_Type));
-	memset(&m_uiUpdateTime, 0xCC, sizeof(m_uiUpdateTime));
-	m_pGPRs			= NULL;
-	m_iGPRsSize		= 0;
-	m_bFlushAll		= TRUE;
+	memset(&m_DataType, 0, sizeof(m_DataType));
 }
 
-RegmapGPRs::~RegmapGPRs(void)
-{
-}
+RegmapGPRs::~RegmapGPRs(void) {}
 
 BOOL RegmapGPRs::OnUpdate(void)
 {
-	{
-		GPRs_T*	pGPRs	= &m_pReg->core[m_pReg->system.iCoreID].thread[m_pReg->system.iThreadID].GPRs;
+	BOOL bRet = FALSE;
 
-		if(pGPRs != m_pGPRs) {
-			m_pGPRs			= pGPRs;
-			m_bFlushAll		= TRUE;
-		}
-	}
-
-	if(m_pReg->system.iGPRsSize != m_iGPRsSize) {
-		OnBroadcast(NULL);
-	}
-
-	if(m_pGPRs->bUpdate) {
-		m_pGPRs->bUpdate	= FALSE;
+	if (m_pThread->GPRs.bUpdate) {
+		m_pThread->GPRs.bUpdate = false;
 		UpdateVectorAll();
+		bRet = TRUE;
 	}
 
-	return FALSE;
+	return bRet;
 }
 
 void RegmapGPRs::OnBroadcast(LPVOID pData)
 {
+	if (!pData) { // on initialization
+		ClearTable();
+
+		for (int i = 0; i < MTSP_GPR_SIZE / 2; i++) {
+			NewRow();
+
+			for (int t = 0; t < 2; t++) {
+				int index = (t * (MTSP_GPR_SIZE / 2)) + i;
+				NewTH();
+				SetTClassAdd(_T("text-center"));
+				SetTID(_T("GPR_I%d"), index);
+				SetTBody(_T("%d"), index);
+				NewTD();
+				SetTClassAdd(_T("text-end"));
+				SetTID(_T("GPR%d_D0"), index);
+				NewTD();
+				SetTClassAdd(_T("text-end"));
+				SetTID(_T("GPR%d_D1"), index);
+				NewTD();
+				SetTClassAdd(_T("text-end"));
+				SetTID(_T("GPR%d_D2"), index);
+				NewTD();
+				SetTClassAdd(_T("text-end"));
+				SetTID(_T("GPR%d_D3"), index);
+			}
+		}
+	}
+
+	/*
 	if(!pData) {	// on initialization
-		m_iGPRsSize			= m_pReg->system.iGPRsSize;
 		int iRowSize		= m_iGPRsSize / 4;
 		m_pGPRs				= &m_pReg->core[m_pReg->system.iCoreID].thread[m_pReg->system.iThreadID].GPRs;
 		m_pGPRs->bUpdate	= TRUE;
@@ -131,127 +133,119 @@ void RegmapGPRs::OnBroadcast(LPVOID pData)
 	} else {
 		m_bFlushAll		= TRUE;
 		UpdateTagName();
-	}
+	}*/
 }
 
 BOOL RegmapGPRs::OnCommand(LPCTSTR lpszURL)
 {
-	int iIndex = _ttoi(lpszURL);
-	m_Type[iIndex] = (DATA_TYPE)((int)m_Type[iIndex] + 1);
+	if (_tcsstr(lpszURL, _T("type/")) == lpszURL) {
+		int iIndex	 = _ttoi(lpszURL + 5);
+		int iElement = iIndex & 3;
+		iIndex /= 4;
+		int iMode = m_DataType[iIndex][iElement] + 1;
 
-	if(m_Type[iIndex] >= DATA_TYPE_SIZE) m_Type[iIndex] = DATA_TYPE_AUTO;
+		if (iMode >= DATA_TYPE_SIZE)
+			iMode = 0;
 
-	{
-		m_bFlushAll		= TRUE;
-		UpdateTag(iIndex);
-		UpdateVector(iIndex);
-		m_bFlushAll		= FALSE;
+		m_DataType[iIndex][iElement] = (DATA_TYPE)iMode;
+		UpdateData(iIndex, iElement);
 	}
+
 	return FALSE;
 }
 
 void RegmapGPRs::UpdateTagAll(void)
 {
-	for(int i = 0; i < m_iGPRsSize; i++) {
+	/*for(int i = 0; i < MTSP_GPR_SIZE; i++) {
 		UpdateTag(i);
 	}
 
-	UpdateTagName();
+	UpdateTagName();*/
 }
 
 void RegmapGPRs::UpdateTagName(void)
 {
-	SetText(_T("GPRs_tag"), _T("- GPRs (Core #%d, Thread #%d)"), m_pReg->system.iCoreID, m_pReg->system.iThreadID);
-}
-
-void RegmapGPRs::UpdateTag(int iIndex)
-{
-	CString sTarget;
-	HString sDesc;
-	sTarget.Format(_T("GPR_%d"), iIndex);
-	sDesc.Format(_T("R%d.<font size=-4>%s</font>"), iIndex, __TypePreFix[m_Type[iIndex]]);
-	sDesc.SetLink(_T("cmd://GPRs/%d"), iIndex);
-	SetText(sTarget, sDesc);
+	// SetText(_T("GPRs_tag"), _T("- GPRs (Core #%d, Thread #%d)"), m_pReg->system.iCoreID, m_pReg->system.iThreadID);
 }
 
 void RegmapGPRs::UpdateVectorAll(void)
 {
-	for(int i = 0; i < m_iGPRsSize; i++) {
+	for (int i = 0; i < MTSP_GPR_SIZE; i++) {
 		UpdateVector(i);
 	}
-
-	m_bFlushAll	= FALSE;
 }
 
 void RegmapGPRs::UpdateVector(int iIndex)
 {
-	REG_VALUE4*	pGPRs			= &m_pGPRs->reg[iIndex];
-	UINT64*		puiUpdateTime	= m_uiUpdateTime[iIndex];
+	REG_VALUE4 *pGPRs = &(m_pThread->GPRs.m[iIndex]);
 
-	for(int i = 0; i < 4; i++) {
-		if(m_bFlushAll || (puiUpdateTime[i] != pGPRs->m[i].uUpdateTime)) {
-			CString sID;
-			sID.Format(_T("GPR_%%d_%d"), i);
-			UpdateData(sID, iIndex, pGPRs->m[i].udata, pGPRs->m[i].uUpdateTime);
-
-			if(m_pGPRs->uLastUpdateTime != puiUpdateTime[i]) puiUpdateTime[i] = pGPRs->m[i].uUpdateTime;
-		}
+	for (int i = 0; i < 4; i++) {
+		UpdateData(iIndex, i);
 	}
 }
 
-void RegmapGPRs::UpdateData(LPCTSTR id_format, int iIndex, DWORD dwData, UINT64 uUpdateTime)
+void RegmapGPRs::UpdateData(int iIndex, int iElement)
 {
-	CString		sID;
-	HString		sData;
-	DWORD		dwColor			= 0xAFAFAF;
-	DATA_TYPE	type			= m_Type[iIndex];
-	sID.Format(id_format, iIndex);
+	CString	   sID;
+	HString	   sData;
+	DWORD	   dwColor = 0xAFAFAF;
+	DATA_TYPE  type	   = m_DataType[iIndex][iElement];
+	REG_VALUE &val	   = m_pThread->GPRs.m[iIndex].m[iElement];
+	sID.Format(_T("GPR%d_D%d"), iIndex, iElement);
 	{
-		CString	sNativeData;
+		CString sNativeData;
 	RETRY_TYPE_SET:
 
-		switch(type) {
+		switch (type) {
 		case DATA_TYPE_AUTO: {
-			if(((dwData & 0xFFFF0000) == 0) || ((dwData & 0xFFFF0000) == 0xFFFF0000))
-				type	= DATA_TYPE_INT;
-			else if((((dwData >> 23) & 0xFF) < (0x7F + 12)) && (((dwData >> 23) & 0xFF) > (0x7F - 12)))
-				type	= DATA_TYPE_FLOAT;
+			if (((val.udata & 0xFFFF0000) == 0) || ((val.udata & 0xFFFF0000) == 0xFFFF0000))
+				goto __TYPE_INT;
+			else if ((((val.udata >> 23) & 0xFF) < (0x7F + 12)) && (((val.udata >> 23) & 0xFF) > (0x7F - 12)))
+				goto __TYPE_FLOAT;
 			else
-				type	= DATA_TYPE_HEX;
+				goto __TYPE_HEX;
 		}
 
-		goto RETRY_TYPE_SET;
-
 		case DATA_TYPE_HEX:
-			sNativeData.Format(_T("%04X_%04X"), dwData >> 16, dwData & 0xFFFF);
+		__TYPE_HEX:
+			sNativeData.Format(_T("%04X_%04X"), val.udata >> 16, val.udata & 0xFFFF);
 			break;
 
 		case DATA_TYPE_INT:
-			sNativeData.Format(_T("%d"), (int)dwData);
+		__TYPE_INT:
+			sNativeData.Format(_T("%d"), val.idata);
 			break;
 
 		case DATA_TYPE_FLOAT:
-			if(!(dwData & 0x7FFF8000)) sNativeData	= _T("0");
+		__TYPE_FLOAT:
+			if (!(val.udata & 0x7FFF8000))
+				sNativeData = _T("0");
 			else
-				sNativeData.Format(_T("%f"), *(float*)&dwData);
+				sNativeData.Format(_T("%f"), val.fdata);
 
 			break;
 
 		case DATA_TYPE_BOOLEAN:
-			sNativeData	= dwData ? __sBoolean[1] : __sBoolean[0];
+			sNativeData = val.udata ? __sBoolean[1] : __sBoolean[0];
 			break;
 		}
 
-		if(uUpdateTime) {
-			dwColor	= (uUpdateTime == m_pGPRs->uLastUpdateTime) ? 0xFF7F7F : 0x7F0000;
-		} else {
-			sNativeData.Insert(0, _T("<small><small>"));
-			sNativeData	+= _T("</small></small>");
+		if (val.uUpdateID) {
+			dwColor = (val.uUpdateID == m_pThread->GPRs.uLastUpdateID) ? 0xFF7F7F : 0x7F0000;
 		}
 
 		sData.AppendColoredFormat(dwColor, (LPCTSTR)sNativeData);
 
-		if(dwColor == 0xFF7F7F) sData.underline();
+		if (dwColor == 0xFF7F7F)
+			sData.underline();
+
+		sData.AppendFormat(_T(".<small><a href='cmd://GPRs/type/%d'>%s</a></small>"), (iIndex * 4) + iElement,
+						   __TypePreFix[type]);
 	}
 	SetText(sID, sData);
+}
+
+bool RegmapGPRs::IsValidID(uint32_t id)
+{
+	return (id & 0x80000000) == 0;
 }

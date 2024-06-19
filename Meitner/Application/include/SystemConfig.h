@@ -1,24 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
-// 
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -30,9 +29,9 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : Global system configuration
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 6/19/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_CONFIG_H__
 #define __SYSTEM_CONFIG_H__
@@ -40,37 +39,37 @@
 #include "BaseSystemConfig.h"
 
 #ifdef USE_TESTDRIVE
-	typedef struct{
-		UINT64			uUpdateTime;
-		union{
-			DWORD		udata;
-			int			idata;
-			float		fdata;
-		};
-	}REG_VALUE;
-	
-	typedef struct{
-		REG_VALUE		m[4];
-	}REG_VALUE4;
+typedef struct {
+	uint32_t uUpdateID;
+	union {
+		uint32_t udata;
+		int		 idata;
+		float	 fdata;
+		uint8_t	 bdata[4];
+	};
+} REG_VALUE;
 
-	typedef struct{
-		UINT64			uUpdateTime;
-		union{
-			DWORD		udata[8];
-			int			idata[8];
-			float		fdata[8];
-		};
-	}REG_VALUE8;
-	
-	typedef struct{
-		DWORD			magic_code;		// system magic code
+typedef struct {
+	REG_VALUE m[4];
+} REG_VALUE4;
 
-	}SYSTEM_REGMAP;
+typedef struct {
+	uint32_t uUpdateID;
+	union {
+		DWORD udata[8];
+		int	  idata[8];
+		float fdata[8];
+	};
+} REG_VALUE8;
 
-	
-	typedef struct : public BASE_SYSTEM_CONFIG{
+typedef struct {
+	DWORD magic_code; // system magic code
 
-	}SYSTEM_CONFIG;
+} SYSTEM_REGMAP;
+
+typedef struct : public BASE_SYSTEM_CONFIG {
+
+} SYSTEM_CONFIG;
 #endif
 
-#endif//__SYSTEM_CONFIG_H__
+#endif //__SYSTEM_CONFIG_H__

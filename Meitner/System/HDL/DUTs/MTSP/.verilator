@@ -1,0 +1,6 @@
+:[!verigen_src] git clone https://github.com/testdrive-profiling-master/MTSP.git verigen_src
+:[verigen_src] git pull
+:[verigen_src] codegen .TestDrive.verilator
+:[verigen_src] make
+-IDUTs/MTSP
+-IDUTs/MTSP/rtl

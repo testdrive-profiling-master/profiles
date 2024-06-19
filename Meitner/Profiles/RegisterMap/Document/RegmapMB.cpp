@@ -1,24 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
-// 
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -30,292 +29,299 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : Meitner processor register map document
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 6/19/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include "RegmapMB.h"
 
-#define MB_SHOWUP_SIZE		40
+#define MB_SHOWUP_SIZE 16
 
-static LPCTSTR	__sMemoryName[] = {
-	_T("LMB"),
-	_T("GMB"),
-};
-
-static LPCTSTR	__sMemoryDescription[] = {
-	_T("Local Memory Block"),
-	_T("Global Memory Block"),
-};
-
-static LPCTSTR	__sLMB_tag = _T("LMB_tag");
-
-RegmapMB::RegmapMB(void) : Regmap(_T("MB"))
+RegmapMB::RegmapMB(LPCTSTR sName) : Regmap(sName)
 {
-	m_pGMB	= &m_pReg->GMB;
-	m_pLMB	= &m_pReg->core[m_pReg->system.iCoreID].LMB;
-	memset(m_iStartupIndex, 0, sizeof(m_iStartupIndex));
+	m_iStartIndex = 0;
+	m_iHoverIndex = 0;
+	m_sTrace.Format(_T("TRACE_%s"), sName);
+	m_bTrace = g_pDoc->GetConfigInt(m_sTrace, FALSE);
 }
 
 RegmapMB::~RegmapMB(void)
 {
-}
-
-BOOL RegmapMB::OnUpdate(void)
-{
-	if(m_pGMB->bUpdate) {
-		m_pGMB->bUpdate	= FALSE;
-		UpdateVectors(MB_TYPE_GLOBAL);
-	}
-
-	if(m_pLMB->bUpdate) {
-		m_pLMB->bUpdate	= FALSE;
-		UpdateVectors(MB_TYPE_LOCAL);
-	}
-
-	return FALSE;
+	g_pDoc->SetConfigInt(m_sTrace, m_bTrace);
 }
 
 void RegmapMB::OnBroadcast(LPVOID pData)
 {
-	switch(*(REGMAP_BROADCAST*)(&pData)) {
+	switch (*(REGMAP_BROADCAST *)(&pData)) {
 	case REGMAP_BROADCAST_INITIALIZATION:
 		InitTable();
-		m_pGMB->bUpdate	= TRUE;
-		m_pLMB->bUpdate	= TRUE;
 		break;
 
-	case REGMAP_BROADCAST_SYSTEM_REBOOT: {
-		g_pHtml->CallJScript(_T("SetSlideMax('%s_slider',%d);"), __sMemoryName[0], m_pReg->system.iLMBSize - MB_SHOWUP_SIZE);
-		g_pHtml->CallJScript(_T("SetSlideMax('%s_slider',%d);"), __sMemoryName[1], m_pReg->system.iGMBSize - MB_SHOWUP_SIZE);
-	}
-
-	UpdateIndex(MB_TYPE_LOCAL);
-	UpdateIndex(MB_TYPE_GLOBAL);
-	UpdateVectors(MB_TYPE_GLOBAL);
-	UpdateVectors(MB_TYPE_LOCAL);
-	UpdateLMBName();
-	break;
+	case REGMAP_BROADCAST_SYSTEM_REBOOT:
+		UpdateIndex(true);
+		UpdateVectors();
+		break;
 	}
 }
 
 BOOL RegmapMB::OnCommand(LPCTSTR lpszURL)
 {
-	if(_tcsstr(lpszURL, _T("slide"))) {
-		lpszURL	+= 6;
+	if (_tcsstr(lpszURL, _T("offset/")) == lpszURL) {
+		m_iStartIndex = _tstoi(lpszURL + 7);
+		UpdateIndex();
+		UpdateVectors(false);
+	} else if (_tcsstr(lpszURL, _T("scroll/")) == lpszURL) {
+		int iNewIndex = m_iStartIndex + _tstoi(lpszURL + 7);
 
-		for(int i = 0; i < 2; i++) {
-			if(_tcsstr(lpszURL, __sMemoryName[i]) == lpszURL) {
-				m_iStartupIndex[i]	= _tstoi(lpszURL + 4);
-				UpdateIndex((MB_TYPE)i);
-				UpdateVectors((MB_TYPE)i);
-				break;
-			}
+		if (iNewIndex < 0)
+			iNewIndex = 0;
+		else if (iNewIndex > (GetMaxCount() - MB_SHOWUP_SIZE))
+			iNewIndex = GetMaxCount() - MB_SHOWUP_SIZE;
+
+		if (iNewIndex != m_iStartIndex) {
+			m_iStartIndex = iNewIndex;
+			UpdateIndex(true);
+			UpdateVectors(false);
+			OnHoverData();
 		}
-	} else if(_tcsstr(lpszURL, _T("recent"))) {
-		lpszURL	+= 7;
-
-		for(int i = 0; i < 2; i++) {
-			if(_tcsstr(lpszURL, __sMemoryName[i]) == lpszURL) {
-				UINT64	uLastUpdateTime;
-				int		iRecentUsed;
-				int		iMaxLimit;
-
-				switch(i) {
-				case MB_TYPE_LOCAL:
-					uLastUpdateTime	= m_pLMB->uLastUpdateTime;
-					iRecentUsed		= m_pLMB->dwRecentUsed;
-					iMaxLimit		= m_pReg->system.iLMBSize - MB_SHOWUP_SIZE;
-					break;
-
-				case MB_TYPE_GLOBAL:
-					uLastUpdateTime	= m_pGMB->uLastUpdateTime;
-					iRecentUsed		= m_pGMB->dwRecentUsed;
-					iMaxLimit		= m_pReg->system.iGMBSize - MB_SHOWUP_SIZE;
-					break;
-				}
-
-				if(!uLastUpdateTime) {
-					g_pSystem->LogWarning(_T("No recent modified of %s!"), __sMemoryName[i]);
-					break;
-				}
-
-				iRecentUsed		-= (MB_SHOWUP_SIZE / 2);
-
-				if(iRecentUsed <= 0) iRecentUsed = 0;
-				else if(iRecentUsed >= iMaxLimit) iMaxLimit = 0;
-
-				m_iStartupIndex[i]	= iRecentUsed;
-				UpdateIndex((MB_TYPE)i);
-				UpdateVectors((MB_TYPE)i);
-				break;
-			}
+	} else if (!_tcscmp(lpszURL, _T("latest"))) {
+		// search latest changed data
+		if (TraceLatest(true)) {
+			UpdateIndex(true);
+			UpdateVectors();
 		}
+	} else if (_tcsstr(lpszURL, _T("trace/")) == lpszURL) {
+		m_bTrace = _tstoi(lpszURL + 6);
+	} else if (_tcsstr(lpszURL, _T("cell/")) == lpszURL) {
+		OnHoverData(_tstoi(lpszURL + 5));
 	}
 
 	return TRUE;
 }
 
-void RegmapMB::UpdateLMBName(void)
-{
-	HString sTag;
-	sTag.AppendFormat(_T("%s (%s - Core #%d)"), __sMemoryName[0], __sMemoryDescription[0], m_pReg->system.iCoreID);
-	sTag.bold();
-	SetText(__sLMB_tag, sTag);
-}
-
 void RegmapMB::InitTable(void)
 {
 	ClearTable();
+	m_iHoverIndex = 0;
+
 	// setup Header : index, table #
-	NewRow();
-
-	for(int i = 0; i < 2; i++) {
+	for (int i = 0; i < MB_SHOWUP_SIZE; i++) {
+		NewRow();
 		NewTH();
-		SetColSpan(10);
-		{
-			HString sTag;
-			sTag.AppendFormat(_T("%s (%s)"), __sMemoryName[i], __sMemoryDescription[i]);
-			sTag.bold();
-			SetTBody(sTag);
+		SetTClassAdd(_T("text-center"));
+		SetTID(_T("%s_I%d"), Name(), i);
 
-			if(i == 0) SetTID(__sLMB_tag);
+		for (int t = 0; t < 4; t++) {
+			NewTD();
+			SetTID(_T("%s_D%d_%d"), Name(), i, 3 - t);
 		}
-	}
 
-	UpdateLMBName();
-	// setup Header : index, table #
-	NewRow();
-
-	// memory block name
-	for(int i = 0; i < 2; i++) {
-		NewTH();
-		SetTBody(_T("Index"));
-
-		for(int t = 0; t < 8; t++) {
+		if (!i) {
 			NewTH();
-			SetTBody(_T("%s<sup>%d</sup>"), g_s4DElement[t & 3], t >> 2);
-
-			if((t & 3) != 3)SetTStyle(_T("border-right"), _T("0"));
+			SetRowSpan(MB_SHOWUP_SIZE);
+			SetTClassAdd(_T("no-hover"));
+			SetTID(_T("%s_slide"), Name());
 		}
-
-		NewTH();	// dummy blank
-		SetTBody(_T("<div class='tooltip'><a href='cmd://MB/recent/%s'><img src='slider.png' border='none'></a><span class='tooltiptext'>%s</span></div>"), __sMemoryName[i], _L(SEARCH_RECENT_USE));
 	}
 
-	// contents table
-	NewRow();
+	if (m_bTrace)
+		g_pHtml->CallJScript(_T("$('#%s_trace').prop('checked', true);"), Name());
 
-	for(int i = 0; i < 2; i++) {
-		// index
-		NewTH();
-		SetTStyle(_T("color"), _T("#afafaf"));
-		SetTStyle(_T("font-size"), _T("#90%"));
-		SetTID(_T("%s_I"), __sMemoryName[i]);
-		{
-			// data cell
-			for(int t = 0; t < 8; t++) {
-				NewTD();
-				SetTStyle(_T("text-align"), _T("center"));
-				SetTStyle(_T("font-family"), _T("Courier New"));
-				SetTStyle(_T("font-size"), _T("#90%"));
-				SetTStyle(_T("color"), _T("#cfcfcf"));
-				CString sTag = _T("td style='text-align=center;font-size:90%;color:#cfcfcf");
+	UpdateIndex(true);
+	UpdateVectors();
+}
 
-				if((t & 3) != 3) SetTStyle(_T("border-right"), _T("0"));
+void RegmapMB::UpdateIndex(bool bUpdateSlider)
+{
+	for (int i = 0; i < MB_SHOWUP_SIZE; i++) {
+		CString sID, sIndex;
+		sID.Format(_T("%s_I%d"), Name(), i);
+		sIndex.Format(_T("%d"), i + m_iStartIndex);
+		SetText(sID, sIndex);
+	}
 
-				SetTID(_T("%s_D%d"), __sMemoryName[i], t);
-			}
+	if (bUpdateSlider) {
+		// setup slider
+		CString sID, sSlide;
+		int		iMax = GetMaxCount();
+		sID.Format(_T("%s_slide"), Name());
+		sSlide.Format(_T("<div><input type='range' class='form-range' min='0' max='%d' value='%d' id='%s_slider' ")
+					  _T("oninput='post_message(\\\"%s/offset/\\\" + this.value);'></div>"),
+					  iMax - MB_SHOWUP_SIZE, m_iStartIndex, Name(), Name());
+		SetText(sID, sSlide);
+	}
+}
+
+void RegmapMB::UpdateVectors(bool bUseTrace)
+{
+	if (m_bTrace && bUseTrace) {
+		if (TraceLatest()) {
+			UpdateIndex(true);
 		}
-		// slider
-		NewTH();
-		SetTID(_T("%s_S"), __sMemoryName[i]);
-		{
-			int	iMax;
+	}
 
-			switch(i) {
-			case MB_TYPE_LOCAL:
-				iMax	= m_pReg->system.iLMBSize;
-				break;
+	int		 iIndex		   = m_iStartIndex;
+	uint32_t uLastUpdateID = GetLastUpdateID();
 
-			case MB_TYPE_GLOBAL:
-				iMax	= m_pReg->system.iGMBSize;
-				break;
+	for (int i = 0; i < MB_SHOWUP_SIZE; i++) {
+		REG_VALUE4 *pValue = GetValue(iIndex + i);
+
+		for (int t = 0; t < 4; t++) {
+			CString	 sID;
+			HString	 sData;
+			uint32_t uUpdateID = pValue->m[t].uUpdateID;
+			sID.Format(_T("%s_D%d_%d"), Name(), i, t);
+			sData.Format(_T("%08X"), pValue->m[t].udata);
+
+			if (!IsValidID(uUpdateID)) {
+				if (!uUpdateID)
+					sData.SetColor(0xCFCFCF);
+				else {
+					sData.SetColor(0xAFAFAF);
+					sData.bold();
+				}
+			} else if (uUpdateID == uLastUpdateID) {
+				sData.SetColor(0xFF0000);
+				sData.underline();
 			}
 
-			iMax	-= MB_SHOWUP_SIZE;
-			SetTStyle(_T("width"), _T("20px"));
-			SetTBody(_T("<input type='range' id='%s_slider' value='0' min='0' max='%d' onchange='PostSlideValue(\\\"MB\\\", \\\"%s\\\", this.value)'>"), __sMemoryName[i], iMax, __sMemoryName[i]);
-			m_iStartupIndex[i] = 0;
+			SetText(sID, sData);
 		}
 	}
 }
 
-void RegmapMB::UpdateIndex(MB_TYPE type)
+bool RegmapMB::IsValidID(uint32_t id)
 {
-	int			iStartupIndex	= m_iStartupIndex[(int)type];
-	CString	sTarget, sIndex;
-	sTarget.Format(_T("%s_I"), __sMemoryName[(int)type]);
-
-	for(int t = 0, idx = m_iStartupIndex[(int)type]; t < MB_SHOWUP_SIZE; t++, idx ++) {
-		HString sID;
-
-		if(t) sIndex.Append(_T("<br>"));
-
-		sID.Format(_T("%d"), idx);
-
-		if(!(idx & 0x7)) sID.underline();
-
-		sIndex.Append(sID);
-	}
-
-	SetText(sTarget, sIndex);
+	return id > 0;
 }
 
-void RegmapMB::UpdateVectors(MB_TYPE type)
+static void __commify(CString &sNum)
 {
-	int			iStartupIndex	= m_iStartupIndex[(int)type];
-	UINT64		uiLastUpdateTime;
-	REG_VALUE8* pVectorBase;
+	int iLen   = sNum.length();
+	int iPoint = sNum.Find(_T('.'));
 
-	switch(type) {
-	case MB_TYPE_LOCAL:
-		pVectorBase			= &m_pLMB->reg[iStartupIndex];
-		uiLastUpdateTime	= m_pLMB->uLastUpdateTime;
-		break;
+	if (iPoint < 0)
+		iPoint = iLen;
 
-	case MB_TYPE_GLOBAL:
-		pVectorBase			= &m_pGMB->reg[iStartupIndex];
-		uiLastUpdateTime	= m_pGMB->uLastUpdateTime;
-		break;
+	while (iPoint > 0) {
+		iPoint -= 3;
+
+		if ((iPoint <= 0) || (iPoint == 1 && !_istdigit(sNum.GetAt(0))))
+			break;
+
+		sNum.Insert(iPoint, _T(','));
 	}
+}
 
-	for(int t = 0; t < 8; t++) {
-		CString sTarget;
-		CString	sData;
-		REG_VALUE8* pVector	= pVectorBase;
-		sTarget.Format(_T("%s_D%d"), __sMemoryName[(int)type], t);
+void RegmapMB::OnHoverData(int iIndex)
+{
+	if (iIndex == -1)
+		iIndex = m_iHoverIndex;
+	else
+		m_iHoverIndex = iIndex;
 
-		for(int x = 0; x < MB_SHOWUP_SIZE; x++, pVector++) {
-			HString	sValue;
+	static LPCTSTR __sCell = _T("xyzw");
+	int			   iOffset = m_iStartIndex + (iIndex >> 2);
+	REG_VALUE4	  *v	   = GetValue(iOffset);
+	CString		   sMsg;
+	g_pHtml->CallJScript(_T("$('#result_id').html('<b>%s</b>[%d]');"), Name(), iOffset);
 
-			if(x) sData.Append(_T("<br>"));
+	for (int i = 0; i < 4; i++) {
+		CString	   sVal;
+		REG_VALUE &m = v->m[i];
+		sVal.Format(_T("%3d[%02X] %3d[%02X] %3d[%02X] %3d[%02X]"), m.bdata[3], m.bdata[3], m.bdata[2], m.bdata[2],
+					m.bdata[1], m.bdata[1], m.bdata[0], m.bdata[0]);
+		sVal.Replace(_T(" "), _T("&nbsp;"));
+		sVal.Replace(_T("["), _T("<font color=\"#BFBFBF\">["));
+		sVal.Replace(_T("]"), _T("]</font>"));
+		g_pHtml->CallJScript(_T("$('#%c_hex').html('%s');"), __sCell[i], (LPCTSTR)sVal);
+		sVal.Format(_T("%u"), m.udata);
+		__commify(sVal);
+		g_pHtml->CallJScript(_T("$('#%c_uint').html('%s');"), __sCell[i], (LPCTSTR)sVal);
+		sVal.Format(_T("%d"), m.idata);
+		__commify(sVal);
+		g_pHtml->CallJScript(_T("$('#%c_int').html('<font color=\"#%06X\">%s</font>');"), __sCell[i],
+							 (__sCell[i], m.idata < 0) ? 0xFF0000 : 0x0000FF, (LPCTSTR)sVal);
 
-			sValue.Format(_T("%08X"), pVector->udata[t]);
-
-			if(pVector->uUpdateTime) {
-				sValue.SetColor(
-					(pVector->uUpdateTime ==  uiLastUpdateTime) 	? 0xFF0000 :
-					(pVector->uUpdateTime == -uiLastUpdateTime) 	? 0xFF0000 :
-					(pVector->uUpdateTime & 0x8000000000000000L)	? 0x00007F : 0x7F0000
-				);
-			}
-
-			if(!((x + iStartupIndex) & 0x7))sValue.underline();
-
-			sData.Append(sValue);
+		if ((m.fdata != 0) && !isnan(m.fdata) && !isinf(m.fdata) &&
+			(abs(m.fdata) > 1000000000.f || abs(m.fdata) <= 0.0000001f)) {
+			sVal.Format(_T("%e"), m.fdata);
+			sVal.Replace(_T("e"), _T("<b>e</b>"));
+			g_pHtml->CallJScript(_T("$('#%c_fp').html('<font color=\"#%06X\">%s</font>');"), __sCell[i],
+								 (__sCell[i], m.fdata < 0) ? 0xFF0000 : 0x0000FF, (LPCTSTR)sVal);
+		} else {
+			sVal.Format(_T("%f"), m.fdata);
+			__commify(sVal);
+			g_pHtml->CallJScript(_T("$('#%c_fp').html('<font color=\"#%06X\">%s</font>');"), __sCell[i],
+								 (__sCell[i], m.fdata < 0) ? 0xFF0000 : 0x0000FF, (LPCTSTR)sVal);
 		}
 
-		SetText(sTarget, sData);
+		if (!(i & 1)) {
+			union {
+				int32_t i32[2];
+				double	f64;
+				int64_t i64;
+			} data;
+			data.i32[0] = m.udata;
+			data.i32[1] = v->m[i + 1].udata;
+			CString iVal;
+			iVal.Format(_T("%lld"), data.i64);
+			__commify(iVal);
+			iVal.Insert(0, data.i64 >= 0 ? _T("<font color=\"#0000FF\">") : _T("<font color=\"#FF0000\">"));
+			iVal += _T("</font><br>");
+
+			if ((data.f64 != 0) && !isnan(data.f64) && !isinf(data.f64) &&
+				(abs(data.f64) > 1000000000.f || abs(data.f64) <= 0.0000001f)) {
+				sVal.Format(_T("%e"), data.f64);
+				sVal.Replace(_T("e"), _T("<b>e</b>"));
+				g_pHtml->CallJScript(_T("$('#%c_dp').html('%s<font color=\"#%06X\">%s</font>');"), __sCell[i],
+									 (LPCTSTR)iVal, (data.f64 < 0) ? 0xFF0000 : 0x0000FF, (LPCTSTR)sVal);
+			} else {
+				sVal.Format(_T("%f"), data.f64);
+				__commify(sVal);
+				g_pHtml->CallJScript(_T("$('#%c_dp').html('%s<font color=\"#%06X\">%s</font>');"), __sCell[i],
+									 (LPCTSTR)iVal, (data.f64 < 0) ? 0xFF0000 : 0x0000FF, (LPCTSTR)sVal);
+			}
+		}
 	}
+}
+
+bool RegmapMB::TraceLatest(bool bLog)
+{
+	uint32_t uLastUpdateID = GetLastUpdateID();
+
+	if (uLastUpdateID) {
+		int iMaxCount = GetMaxCount();
+
+		for (int i = 0; i < iMaxCount; i++) {
+			REG_VALUE4 *pValue = GetValue(i);
+
+			for (int t = 0; t < 4; t++) {
+				if (uLastUpdateID == pValue->m[t].uUpdateID) {
+					int iStartIndex = i - MB_SHOWUP_SIZE / 2; // move to center
+
+					if (iStartIndex < 0)
+						iStartIndex = 0;
+					else if (iStartIndex > iMaxCount - MB_SHOWUP_SIZE)
+						iStartIndex = iMaxCount - MB_SHOWUP_SIZE;
+
+					if (iStartIndex != m_iStartIndex) {
+						m_iStartIndex = iStartIndex;
+						UpdateIndex(true);
+						UpdateVectors();
+
+						if (bLog)
+							g_pHtml->CallJScript(_T("toastr['warning']('[%s#%d] %s');"), Name(), i,
+												 _L(FOUND_LATEST_CHANGE));
+					}
+
+					return true;
+				}
+			}
+		}
+	} else if (bLog) {
+		g_pHtml->CallJScript(_T("toastr['warning']('[%s] %s');"), Name(), _L(NO_LATEST_CHANGE));
+	}
+
+	return false;
 }

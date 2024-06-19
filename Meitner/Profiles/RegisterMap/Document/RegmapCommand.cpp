@@ -1,24 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
-// 
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -30,81 +29,200 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : Meitner processor register map document
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 6/19/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include "RegmapCommand.h"
 
+#define COMMAND_TABLE_LINES 8
+#define COMMAND_TABLE_RANGE (MTSP_COMMAND_RING_SIZE - COMMAND_TABLE_LINES)
+
 RegmapCommand::RegmapCommand(void) : Regmap(_T("Command"))
 {
-	m_pCommand	= &m_pReg->command;
+	m_pCmd	  = &m_pReg->command;
+	m_dwIndex = 0;
 }
 
-RegmapCommand::~RegmapCommand(void)
-{
-}
+RegmapCommand::~RegmapCommand(void) {}
 
 BOOL RegmapCommand::OnUpdate(void)
 {
-	if(m_pCommand->bUpdate) {
-		m_pCommand->bUpdate	= FALSE;
+	BOOL bRet = FALSE;
+
+	if (m_pCmd->bUpdate) {
+		m_pCmd->bUpdate = FALSE;
 		UpdateCommand();
+		bRet = TRUE;
 	}
 
-	return FALSE;
+	return bRet;
 }
 
 void RegmapCommand::OnBroadcast(LPVOID pData)
 {
-	if(!pData) {	// on initialization
-		m_pCommand->bUpdate		= TRUE;
+	switch ((DWORD_PTR)pData) {
+	case 0:
+		for (int i = 0; i < COMMAND_TABLE_LINES; i++) {
+			NewRow();
+			NewTD();
+			SetTID(_T("CMDQ_I_%d"), i);
+			SetTBody(_T("-"));
+			NewTD();
+			SetTID(_T("CMDQ_T_%d"), i);
+			SetTBody(_T("-"));
+			NewTD();
+			SetTID(_T("CMDQ_D_%d"), i);
+			SetTClassAdd(_T("text-start"));
+			SetTBody(_T("-"));
+
+			if (!i) {
+				NewTD();
+				SetRowSpan(16);
+				SetTID(_T("CMDQ_Slide"));
+			}
+		}
+
+		break;
+
+	case REGMAP_BROADCAST_SYSTEM_REBOOT:
+		m_dwIndex = 0;
+		UpdateSlider();
+		break;
 	}
 }
 
 BOOL RegmapCommand::OnCommand(LPCTSTR lpszURL)
 {
-	//m_pCommand->bUpdate		= TRUE;
-	//UpdateCommand();
+	if (_tcsstr(lpszURL, _T("offset")) == lpszURL) {
+		m_dwIndex = _tstoi(lpszURL + 5);
+		UpdateCommand();
+	} else if (!_tcscmp(lpszURL, _T("latest"))) {
+	}
+
 	return FALSE;
 }
 
 void RegmapCommand::UpdateCommand(void)
 {
-	int				iPos		= m_pCommand->iPos;
-	DWORD			dwCount		= m_pCommand->dwCount;
-	COMMAND_TRACE*	pTrace		= m_pCommand->history;
+	uint32_t dwIndex = m_dwIndex;
 
-	if(dwCount > 16) dwCount = 16;
+	if (m_pCmd->dwHead > COMMAND_TABLE_LINES) {
+		dwIndex += (m_pCmd->dwHead - COMMAND_TABLE_LINES);
+	}
 
-	iPos	= (iPos - dwCount) & (MAX_COMMAND_HISTORY_SIZE - 1);
 	{
-		HString	sHistory;
-		CString sTime;
+		for (int i = 0; i < COMMAND_TABLE_LINES; i++) {
+			MTSP_REGMAP_COMMAND_DATA *pCmd = &(m_pCmd->cmd[dwIndex & (MTSP_COMMAND_RING_SIZE - 1)]);
+			CString					  sID;
+			// index update
+			sID.Format(_T("CMDQ_I_%d"), i);
 
-		for(int i = 0; i < dwCount; i++) {
-			if(i) {
-				sHistory.Append(_T("<br>"));
-				sTime.Append(_T("<br"));
+			if (dwIndex < m_pCmd->dwHead)
+				SetText(sID, _T("%d"), dwIndex);
+			else
+				SetText(sID, _T("-"));
+
+			// command data
+			sID.Format(_T("CMDQ_D_%d"), i);
+
+			if (dwIndex < m_pCmd->dwHead) {
+				switch (pCmd->id) {
+				case 1: {
+					MTSP_REG_COMMAND op;
+					CString			 sInfo;
+					op.m = pCmd->op;
+
+					if (op.branch_en) {
+						sInfo.AppendFormat(_T("Run 0x%X_%08X"), pCmd->data[1], pCmd->data[0]);
+					}
+
+					if (op.run_count_enable) {
+						if (sInfo.length())
+							sInfo += _T(", ");
+
+						sInfo.AppendFormat(_T("RUNCOUNT"));
+					}
+
+					if (op.intrrupt_enable) {
+						if (sInfo.length())
+							sInfo += _T(", ");
+
+						sInfo.AppendFormat(_T("INTR"));
+					}
+
+					if (op.icache_clear) {
+						if (sInfo.length())
+							sInfo += _T(", ");
+
+						sInfo.AppendFormat(_T("I$"));
+					}
+
+					if (op.gcache_clear) {
+						if (sInfo.length())
+							sInfo += _T(", ");
+
+						sInfo.AppendFormat(_T("G$"));
+					}
+
+					if (op.lcache_clear) {
+						if (sInfo.length())
+							sInfo += _T(", ");
+
+						sInfo.AppendFormat(_T("L$"));
+					}
+
+					SetText(sID, sInfo);
+				} break;
+
+				default:
+					SetText(sID, _T("unknown : ID(%d) op(0x%X) data(0x%llX)"), pCmd->id, pCmd->op,
+							*(uint64_t *)pCmd->data);
+					break;
+				}
+			} else {
+				SetText(sID, _T("-"));
 			}
 
-			{
-				CString			sCommand, sTimestamp;
-				COMMAND_TRACE*	pCommand	= &pTrace[iPos];
-				DecodeCommand(sCommand, pCommand);
-				PresentTime(sTimestamp, pCommand->uiTime);
-				sHistory.AppendFormat(_T(": %s"), (LPCTSTR)sCommand);
-				sTime.Append(sTimestamp);
+			// elapsed time
+			sID.Format(_T("CMDQ_T_%d"), i);
+
+			if (dwIndex < m_pCmd->dwCurrent) {
+				CString sTime;
+				RetrieveSimulationTime(sTime, pCmd->elapsed_time);
+				SetText(sID, sTime);
+			} else if (dwIndex == m_pCmd->dwCurrent && dwIndex < m_pCmd->dwHead) {
+				SetText(sID, _T("on progress..."));
+			} else {
+				SetText(sID, _T("-"));
 			}
 
-			iPos = (iPos + 1) & (MAX_COMMAND_HISTORY_SIZE - 1);
+			dwIndex++;
 		}
 
-		SetText(_T("CMD"), sHistory);
-		SetText(_T("CMD_TIME"), sTime);
+		UpdateSlider();
 	}
 }
 
+void RegmapCommand::UpdateSlider(void)
+{
+	CString sSlide;
+	int		iMax = 0;
+
+	if (m_pCmd->dwHead > COMMAND_TABLE_RANGE) {
+		iMax = m_pCmd->dwHead - COMMAND_TABLE_LINES;
+
+		if (iMax > COMMAND_TABLE_RANGE)
+			iMax = COMMAND_TABLE_RANGE;
+	}
+
+	sSlide.Format(_T("<div><input type='range' class='form-range' min='0' max='%d' value='%d' id='cmd_slider' ")
+				  _T("oninput='post_message(\\\"Command/offset/\\\" + this.value);'></div>"),
+				  iMax, 0);
+	SetText(_T("CMDQ_Slide"), (LPCTSTR)sSlide);
+}
+
+/*
 void RegmapCommand::DecodeCommand(CString& sCommand, COMMAND_TRACE* pCommand)
 {
 	switch(pCommand->id) {
@@ -144,3 +262,4 @@ void RegmapCommand::DecodeCommand(CString& sCommand, COMMAND_TRACE* pCommand)
 		break;
 	}
 }
+*/

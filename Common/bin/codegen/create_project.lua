@@ -8,12 +8,12 @@ sProfilePath	= sProfilePath.s
 local Arg = ArgTable("Template project generator with TestDrive Profiling Master.")
 
 Arg:AddOptionString		("type", nil, nil, nil, "type", "Template project type")
-Arg:AddRemark			(nil, "'td', 'testdrive'        : TestDrive project")
+Arg:AddRemark			(nil, "'testdrive'              : TestDrive project")
 Arg:AddRemark			(nil, "'c', 'c++', 'cpp'        : C++(Pure) project")
 Arg:AddRemark			(nil, "'util'                   : C++(Util) project")
 Arg:AddRemark			(nil, "'v', 'verilog'           : verilog project")
 Arg:AddRemark			(nil, "'v_bare', 'verilog_bare' : bared verilog project")
-Arg:AddRemark			(nil, "'v_gen', 'verigen'       : verigen project")
+Arg:AddRemark			(nil, "'verigen'                : verigen project")
 Arg:AddRemark			(nil, "'docgen'                 : docgen project")
 Arg:AddRemark			(nil, "'docgen_simplified'      : docgen simplified project")
 Arg:AddOptionString		("project_name", nil, nil, nil, "project_name", "Project name")
@@ -119,7 +119,7 @@ end
 
 local sProjectPath = ""
 
-if (sType == "td" or sType == "testdrive") then
+if (sType == "testdrive") then
 	sProjectPath			= MakeDirForTestDrive(sProjectName)	-- make folder
 	
 	local	sYear = String(nil)
@@ -183,7 +183,7 @@ elseif (sType == "v_bare" or sType == "verilog_bare") then
 	os.execute("sed \"s/HDL/" .. sProjectName .. " project/\" -i \"" .. sProjectPath .. "/.inception\"")
 
 	os.execute("explorer " .. sProjectPath)
-elseif (sType == "v_gen" or sType == "verigen") then
+elseif (sType == "verigen") then
 	if sProjectName == "common" then
 		LOGE("Invalid project name for verigen : " .. sProjectName)
 		os.exit(1)

@@ -1,0 +1,140 @@
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+	background:#ffffff;
+	margin:0;
+	padding:3px;
+	line-height:1.0em;
+	font-family:tahoma, arial, sans-serif;
+	font-size:100%;
+}
+
+table.default0 {
+	border-collapse: collapse;
+	margin:2px;
+	padding:2px;
+	width: calc(100% - 5px);
+	border:1px solid #ccc;
+	line-height:1.0em;
+}
+
+table.default0 caption {
+	border-collapse: collapse;
+	text-align: left;
+	color: #369;
+	background: #ebeef3;
+	border: 1px solid #ccc;
+}
+table.default0 thread th {
+	color: #369;
+	border-bottom: 1px solid #ccc;
+	background: #DEDEDE;
+}
+table.default0 tbody th {
+	color: #369;
+	border-bottom: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	background: #f3f6f7;
+}
+table.default0 td {
+	color: #369;
+	border-bottom: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	font-weight:normal;
+}
+table.default0 tr {
+	-webkit-transition: background .5s;
+	transition: background .5s;
+}
+
+tr {
+   line-height: 15px;
+   min-height: 15px;
+   max-height: 15px;
+   height: 15px;
+}
+
+.table .cell_hover:hover {
+    background-color: rgba(0,0,0,.075);
+}
+
+.cursor_scroll {
+	cursor: pointer;
+}
+
+td.col-gpr, th.col-gpr {
+	width: 11.25%;
+}
+
+#INST_INFO { 
+	font-family: monospace; 
+}
+
+#MEM_INFO { 
+	font-family: monospace; 
+}
+
+#GPRs_slider {
+    -webkit-appearance: slider-vertical; /* WebKit */
+    width: 15px;
+    height: 370px;
+	margin: 0px;
+    padding: 0 0px;
+	transform: rotate(180deg);
+	background-color: #ffffff;
+}
+
+#LMB_slider {
+    -webkit-appearance: slider-vertical; /* WebKit */
+    width: 15px;
+    height: 370px;
+	margin: 0px;
+    padding: 0 0px;
+	transform: rotate(180deg);
+	background-color: #ffffff;
+}
+
+#GMB_slider {
+    -webkit-appearance: slider-vertical; /* WebKit */
+    width: 15px;
+    height: 370px;
+	margin: 0px;
+    padding: 0 0px;
+	transform: rotate(180deg);
+	background-color: #ffffff;
+}
+
+#cmd_slider {
+    -webkit-appearance: slider-vertical; /* WebKit */
+    width: 15px;
+    height: 180px;
+	margin: 0px;
+    padding: 0 0px;
+	transform: rotate(180deg);
+}
+
+#inst_slider {
+    -webkit-appearance: slider-vertical; /* WebKit */
+    width: 15px;
+    height: 560px;
+	margin: 0px;
+    padding: 0 0px;
+	transform: rotate(180deg);
+}
+
+.text_glow {
+  animation: text_glow 0.5s ease-in-out infinite alternate;
+}
+
+@-webkit-keyframes text_glow {
+  from {
+    text-shadow: 0 0 1px #fff;
+  }
+  
+  to {
+    text-shadow: 0 0 1px #fff,  0 0 2px #ff4da6,  0 0 3px #ff4da6, 0 0 4px #ff4da6;
+  }
+}

@@ -1,0 +1,13 @@
+//----------------------------------------------------------------------
+// Sources
+library/SRAM_Dual_Distributed.v
+library/FiFo.v
+library/FiFo_Async.v
+library/ControlSlice.v
+library/mux_by_index.v
+library/CommandQueue.v
+library/SRAM_Dual_2R.v
+
+MTSP/rtl/*.sv
+
+MTSP/rtl/MTSP_wrapper_constraint.xdc

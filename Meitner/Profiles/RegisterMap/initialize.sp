@@ -1,6 +1,6 @@
 profile.tree "System" {
-	report ("Register map",				"main.sp");
+	branch("Register map"){
+		report ("MTSP (Meitner)",				"main.sp");
+		expand();
+	}
 }
-
-// run profile
-profile.call	"main.sp"

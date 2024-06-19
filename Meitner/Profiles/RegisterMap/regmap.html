@@ -1,85 +1,208 @@
+<!DOCTYPE html>
 <html>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-	<title>Register map</title>
+	<title>MTSP register map</title>
 	<style type="text/css"> 
-		@import url(tables.css);
+		@import url(regmap.css);
 		.DEK {POSITION:absolute;VISIBILITY:hidden;Z-INDEX:200;}
 	</style>
+	<!-- jquery & bootstrap -->
+	<script src="./web/js/jquery.min.js"></script>
+	<script src="./web/js/popper.min.js"></script>
+	<link href="./web/css/bootstrap.min.css" rel="stylesheet">
+	<script src="./web/js/bootstrap.bundle.min.js"></script>
+	<!-- icons -->
+	<link href="./web/font/bootstrap-icons.min.css" rel="stylesheet">
+	<!-- toast -->
+	<link href="./web/css/toastr.css" rel="stylesheet">
+	<script src="./web/js/toastr.js"></script>
+	<!-- chart -->
+	<link href="./web/css/toastui-chart.min.css" rel="stylesheet">
+	<script src="./web/js/toastui-chart.min.js"></script>
+	<!-- wait blob  -->
+	<link href="./web/css/waitMe.css" rel="stylesheet" type="text/css">
+	<script src="./web/js/waitMe.js"></script>
+	<!-- play/pause button -->
+	<link href="button_p.css" rel="stylesheet">
 </head>
 
 <SCRIPT LANGUAGE="JScript">
-	// Forbid user?s mouse selecting for the content 
-	//   (allow text selection in EditBox only)
-
+	toastr.options = {
+		"closeButton": false,
+		"debug": false,
+		"newestOnTop": false,
+		"progressBar": false,
+		"positionClass": "toast-bottom-full-width",
+		"preventDuplicates": false,
+		"onclick": null,
+		"showDuration": "250",
+		"hideDuration": "1000",
+		"timeOut": "5000",
+		"extendedTimeOut": "1000",
+		"showEasing": "swing",
+		"hideEasing": "linear",
+		"showMethod": "fadeIn",
+		"hideMethod": "fadeOut"
+	};
 	
-	// Forbid IE context menu 
-	//  (allow in EditBox only)
-	//  (if the real context menu must be shown - Advance&#1074; Hosting 
-	//  Interfaces must be used)
-/*	function onContextMenu(){
-	     if ( window.event.srcElement.tagName !="INPUT" ) {        
-	    window.event.returnValue = false;    
-	    window.event.cancelBubble = true;
-	        return false;
-	    }
-	}*/
+	var	chart_memory;
+	var chart_npu_utilization;
+	
+	function init_chart_npu_utilization() {
+		const el = document.getElementById('chart_npu_utilization');
+		const data = {
+			categories: [],
+			series: [
+				{
+					name: 'Cores',
+					data: [],
+				},
+				{
+					name: 'ALUs',
+					data: [],
+				},
+				{
+					name: 'Memory',
+					data: [],
+				}
+			],
+		};
+		const options = {
+			chart: { title: 'MTSP utilization timeline graph', width: 1200, height: 400 },
+			xAxis: {
+				title: 'Time',
+				tick: {interval: 3},
+				label: {interval: 6},
+			},
+			yAxis: {
+				title: 'Percent (%)',
+				scale: {min: 0, max: 100, stepSize:10},
+				suffix: '%'
+			},
+			tooltip: {
+				formatter: (value) => `${value}%`,
+			},
+			legend: {
+				align: 'bottom',
+			},
+			series: {
+				selectable: true,
+				zoomable: true,
+				shift: true,
+			},
+			lang: {
+				noData: 'The process has not started yet...',
+			},
+		};
+		if(chart_npu_utilization != undefined) chart_npu_utilization.destroy();
+		//chart_npu_utilization.setData(data);
+		chart_npu_utilization = toastui.Chart.lineChart({el, data, options});
+	}
+	
+	function set_tick_npu_utilization(tick_interval, label_interval) {
+		chart_npu_utilization.setOptions({
+			chart: { title: 'NPU utilization timeline graph', width: 1200, height: 400 },
+			xAxis: {
+				title: 'Time',
+				tick: {interval: tick_interval},
+				label: {interval: label_interval},
+			},
+			yAxis: {
+				title: 'Percent (%)',
+				scale: {min: 0, max: 100, stepSize:10},
+				suffix: '%'
+			},
+			tooltip: {
+				formatter: (value) => `${value}%`,
+			},
+			legend: {
+				align: 'bottom',
+			},
+			series: {
+				selectable: true,
+				zoomable: true,
+				shift: true,
+			},
+			lang: {
+				noData: 'The process has not started yet...',
+			},
+		});
+	}
 	
 	// Install Context Menu and Mark handlers on HTML loading.
-	//   
 	function onLoad()
 	{
-	    // forbid cursor change (except "INPUT"
-	    // entry box and "A" hyperlink) for HTML text.
-	    var Objs = document.all;
-	    for (i=0; i< Objs.length; i++)
-	        // "INPUT" entry box and "A" hyperlink
-	        if (Objs(i).tagName!="INPUT" && Objs(i).tagName!="A")
-	        Objs(i).style.cursor = "default";
-	        
-	    // event handler ? content selection
-	    //document.onselectstart = onSelect1;
-	    // event handler ? context menu
-	    //document.oncontextmenu = onContextMenu;
-		onResize();
-	}
-	
-	function getActualHeight() {
-		/*var actualHeight = window.innerHeight ||
-			document.documentElement.clientHeight ||
-			document.body.clientHeight ||
-			document.body.offsetHeight;*/
-		//var actualHeight = document.body.offsetHeight;
-		var actualHeight = document.body.offsetHeight;
+		$('[data-toggle="tooltip"]').tooltip();
+		
+		$("#LMB")[0].addEventListener('mouseover', ({ target }) => {
+			if(!target.matches('td')) return;
+			post_message("LMB/cell/" + (((target.parentNode.rowIndex-1)*4) + (target.cellIndex-1)));
+		});
+		
+		$("#GMB")[0].addEventListener('mouseover', ({ target }) => {
+			if(!target.matches('td')) return;
+			post_message("GMB/cell/" + (((target.parentNode.rowIndex-1)*4) + (target.cellIndex-1)));
+		});
+		
+		$("#GPRs")[0].addEventListener('mouseover', ({ target }) => {
+			if(!target.matches('td')) return;
+			post_message("GPRs/cell/" + (((target.parentNode.rowIndex-1)*4) + (target.cellIndex-1)));
+		});
+		
+		$("#LMB")[0].addEventListener('wheel', event => {
+			const delta = Math.sign(event.deltaY);
+			event.preventDefault();
+			post_message("LMB/scroll/" + delta);
+		});
+		
+		$("#GMB")[0].addEventListener('wheel', event => {
+			const delta = Math.sign(event.deltaY);
+			event.preventDefault();
+			post_message("GMB/scroll/" + delta);
+		});
+		
+		$("#GPRs")[0].addEventListener('wheel', event => {
+			const delta = Math.sign(event.deltaY);
+			event.preventDefault();
+			post_message("GPRs/scroll/" + delta);
+		});
 
-		return actualHeight;
-	}
-	
-	function onResize()
-	{
-		var div_system	= document.getElementById('DivSystem');
-		var div_trace	= document.getElementById('DivTrace');
-		var trace_table	= document.getElementById('Trace');
-		var new_height	= getActualHeight() - (div_system.offsetHeight + 6);
-		if(new_height<100) new_height = 100;
-		//div_trace.style.height	= (window.height - div_system.offsetHeight) + 'px';
-		if(trace_table.offsetHeight<new_height) new_height = trace_table.offsetHeight + 10;
-		div_trace.style.height	= new_height + 'px';
-	}
-	
-	function TraceTableScrollEnd()
-	{
-		onResize();
-		el = document.getElementById('DivTrace'); 
-		if (el.scrollHeight > 0) el.scrollTop = el.scrollHeight; 
-	}
-	
-	function onBtnOk(){
-	    var Txt = txtBox.value;   // the line from TextBox
-	    window.navigate("app:btn:" + Txt);
-	}
+		$("#Command")[0].addEventListener('wheel', event => {
+			const delta = Math.sign(event.deltaY);
+			event.preventDefault();
+			post_message("Command/scroll/" + delta);
+		});
 
+		$('input:checkbox').change(function() {	// the others
+			let sID = this.id.toString();
+			
+			if(sID == "GPRs_trace") {
+				post_message("GPRs/trace/" + ($(this).prop('checked') ? 1 : 0));
+			} else if(sID == "LMB_trace") {
+				post_message("LMB/trace/" + ($(this).prop('checked') ? 1 : 0));
+			} else if(sID == "GMB_trace") {
+				post_message("GMB/trace/" + ($(this).prop('checked') ? 1 : 0));
+			} else if(sID == "core_debug_toggle") {
+				$('#debug_console').collapse($(this).prop('checked') ? 'show' : 'hide');
+				post_message("System/trace/" + ($(this).prop('checked') ? 1 : 0));
+			} else if(sID.startsWith("breakpoint_")) {
+				//sID = sID.substr(11);
+				post_message("System/" + sID);
+			}
+		})
+
+		//---------------------------------------------------------------
+		// core utilizations
+		//---------------------------------------------------------------
+		init_chart_npu_utilization();
+	}
+	
+	function post_message(txt) {
+		window.chrome.webview.postMessage(txt);
+	}
+	
      function SetBody(id, body){
 		var Txt = document.getElementById(id);
 		if(Txt)
@@ -106,10 +229,15 @@
 	function SetTColSpan(iSize)				{cell.colSpan = iSize;}
 	function SetTRowSpan(iSize)				{cell.rowSpan = iSize;}
 	function SetTStyle(sTarget, sAttrib)	{cell.style.setAttribute(sTarget,sAttrib);}
+	function SetTBorderRight(sStyle)		{cell.style.borderRight		= sStyle;}
+	function SetTBorderLeft(sStyle)			{cell.style.borderLeft		= sStyle;}
+	function SetTBorderTop(sStyle)			{cell.style.borderTop		= sStyle;}
+	function SetTBorderBottom(sStyle)		{cell.style.borderBottom	= sStyle;}
+	function SetTBackgroundColor(sColor)	{cell.style.backgroundColor	= sColor;}
+	function SetTClassAdd(sName)			{cell.classList.add(sName);}
+	function SetTClassRemove(sName)			{cell.classList.remove(sName);}
+	function SetTClassToggle(sName)			{cell.classList.toggle(sName);}
 	
-	function PostSlideValue(target, id, val){
-		window.navigate("cmd://" + target + "/slide/" + id + "/" + val);
-	}
 	function SetSlideMax(name, val){
 		document.getElementById(name).max = val;
 	}
@@ -117,102 +245,346 @@
 		document.getElementById(name).value = val;
 	}
 	
-	function toggleStandBy(target, id)
-	{    
-		if(document.getElementById('buttonForSwitch').name == "TurnOn")
-		{  
-			document.getElementById('buttonForSwitch').name = "TurnOff";
-		}
-		else if(document.getElementById('buttonForSwitch').name == "TurnOff")
-		{         
-			document.getElementById('buttonForSwitch').name = "TurnOn";
-		}
-		document.getElementById('checkboxForSwitch').checked = !document.getElementById('checkboxForSwitch').checked;
-		window.navigate("cmd://" + target + "/" + id + "/" + (document.getElementById('checkboxForSwitch').checked ? 1 : 0));
-	} 
+	function memory_table_event(e) {
+		if(!e.matches('td')) return;
+		const rowIndex	= e.parentNode.rowIndex;
+		const cellIndex	= e.cellIndex;
+		console.log("Cell (${rowIndex}, ${cellIndex}):");
+		//console.log("Cell " + rowIndex + ", " + cellIndex);
+	}
 	
+	function Add_CoreMenu(i, total) {
+		if(i < 0) $('#core_menu').html("");
+		else $('#core_menu').append("<li><a class='dropdown-item' href='javascript:post_message(\"System/core/" + i + "\");'>Core #" + i + "</a></li>");
+	}
+	
+	function Add_ThreadMenu(i) {
+		if(i < 0) $('#thread_menu').html("");
+		else $('#thread_menu').append("<li><a class='dropdown-item' href='javascript:post_message(\"System/thread/" + i + "\");'>Thread #" + i + "</a></li>");
+	}
+
 </SCRIPT>
 
-<body onload="onLoad();" onresize="onResize();" scroll="auto">
-	<DIV ID="dek" CLASS="dek"></DIV>
-	
-	
-	<SCRIPT LANGUAGE="JScript">
-	//------------------------------------------------------------------------
-	// popup message
-	//------------------------------------------------------------------------
-	Xoffset=-60;    // modify these values to ...
-	Yoffset= 20;    // change the popup position.
-	var nav,old,iex=(document.all),yyy=-1000;
-	if(navigator.appName=="Netscape"){(document.layers)?nav=true:old=true;}
-	if(!old){
-		var skn=(nav)?document.dek:dek.style;
-		if(nav)document.captureEvents(Event.MOUSEMOVE);
-		document.onmousemove=get_mouse;
-	}
-	function popup(msg,width){
-		var content="<TABLE  WIDTH="+width+" BORDER=1 BORDERCOLOR=black CELLPADDING=2 CELLSPACING=0 "+
-		"BGCOLOR='gold'><TD style='text-align=center'><FONT COLOR=black SIZE=2>"+msg+"</FONT></TD></TABLE>";
-		if(old){alert(msg);return;} 
-		else{
-			yyy=Yoffset;
-			if(nav){skn.document.write(content);skn.document.close();skn.visibility="visible"}
-			if(iex){document.all("dek").innerHTML=content;skn.visibility="visible"}
-		}
-	}
-	
-	function get_mouse(e){
-		if(skn.visibility=="hidden"){
-			//skn.left = 0;
-			//skn.top = 0;
-		}else{
-			var x=(nav)?e.pageX:event.x+document.body.scrollLeft;skn.left=x+Xoffset;
-			var y=(nav)?e.pageY:event.y+document.body.scrollTop;skn.top=y+yyy;
-		}
-	}
-	
-	function kill(){
-		if(!old){yyy=-1000;skn.visibility="hidden";}
-	}
-	</SCRIPT>
-	<div style="height:5px"></div>
-	<div class="ToggleSwitch">
-		<input type="checkbox" class = "ToggleSwitch_Check" id = "checkboxForSwitch" style = "display:none;"/>
-		<div class = "ToggleSwitch_transition">
-			<input type = "button" class = "ToggleSwitch_Btn off" id="buttonForSwitch" name = "TurnOn" onclick = "toggleStandBy('Trace','Enable')" />
-			<div class = "ToggleSwitch_slider_label off" id = "labelForSwitch">
-				<div class = "ToggleSwitch_active" id= "btnAct" ><span class = "ToggleSwitch_On">Trace On</span></div>
-				<div class = "ToggleSwitch_inactive" id= "btnInact" ><span class = "ToggleSwitch_Off">Trace Off</span></div>
+<body onload="onLoad();" scroll="auto">
+	<!-- System -->
+	<div class="container-fluid">
+		<div class="row mt-2 md-2">
+			<div class="input-group input-group-sm col">
+				<button class="btn btn-sm btn-outline-secondary dropdown-toggle shadow-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">MTSP</button>
+				<ul class="dropdown-menu dropdown-menu-end" id="core_menu">
+					<li><a class="dropdown-item" href='javascript:;'>No core available</a></li>
+				</ul>
+				<input type="text" id="core_name" class="form-control shadow-sm" aria-label="Text input with dropdown button" placeholder="Run the simulation first!" readonly>
+			</div>
+			
+			<div class="input-group input-group-sm col">
+				<button class="btn btn-sm btn-outline-secondary dropdown-toggle shadow-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">Thread</button>
+				<ul class="dropdown-menu dropdown-menu-end" id="thread_menu">
+					<li><a class="dropdown-item" href='javascript:;'>No thread available</a></li>
+				</ul>
+				<input type="text" id="thread_name" class="form-control shadow-sm" aria-label="Text input with dropdown button" placeholder="Run the simulation first!" readonly>
+			</div>
+
+			<div class="col-sm align-self-end">
+				<div class="row">
+					<div class="col-md-8 float-end">
+						<div class="input-group input-group-sm">
+							<span class="input-group-text shadow-sm">Time</span>
+							<input type="text" class="form-control text-end shadow-sm" id="sim_time" aria-describedby="basic-addon3" placeholder="0 ps" readonly>
+						</div>
+					</div>
+
+					<div class="col-md-2 float-end">
+						<div class="button_p" onclick="this.classList.toggle('button_p_active')">
+							<div class="button_p_back" x="0" y="0" width="30" height="30"></div>
+							<div class="button_p_icon" width="30" height="30">
+								<div class="button_p_part button_p_left" x="0" y="0" width="30" height="30" fill="#fff"></div>
+								<div class="button_p_part button_p_right" x="0" y="0" width="30" height="30" fill="#fff"></div>
+							</div>
+							<div class="button_p_play"></div>
+						</div>
+					</div>
+					
+					<div class="col-md-2 align-items-center align-self-center">
+						<div class="form-check form-switch float-end">
+							<input class="form-check-input" type="checkbox" role="switch" id="core_debug_toggle">
+							<div class="form-row">
+							<label class="form-check-label" for="core_debug_toggle">Debug</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="collapse mt-2 md-2" id="debug_console">
+			<div class="card card-body">
+			
+					<div class="row align-items-center">
+						<div class="col form-check form-switch">
+							<input class="form-check-input" type="checkbox" role="switch" id="breakpoint_APB">
+							<div class="form-row">
+								<label class="form-check-label" for="breakpoint_APB">APB</label>
+							</div>
+						</div>
+						<div class="col form-check form-switch">
+							<input class="form-check-input" type="checkbox" role="switch" id="breakpoint_DMA">
+							<div class="form-row">
+								<label class="form-check-label" for="breakpoint_EXT_MEM">DMA</label>
+							</div>
+						</div>
+						<div class="col form-check form-switch">
+							<input class="form-check-input" type="checkbox" role="switch" id="breakpoint_INTR">
+							<div class="form-row">
+								<label class="form-check-label" for="breakpoint_INTR">Interrupt</label>
+							</div>
+						</div>
+					</div>
+			
+				공사중...
 			</div>
 		</div>
 	</div>
-	<table class="default0" margin="0" BGCOLOR="#FFFFFF" width="100%">
-		<caption style="text-align=left">- System</caption>
-		<tbody id="System">
-		</tbody>
-	</table>
 	
-	<table class="default0" margin="0" BGCOLOR="#FFFFFF" width="100%">
-		<tbody id="Scratch">
-		</tbody>
-	</table>
+	<!-- Core -->
+	<div class="card m-2 border small rounded shadow-sm">
+		<div class="card-header">
+			<div class="nav nav-tabs card-header-tabs">
+				<li class="nav-item">
+					<button class="nav-link active" id="tab_menu_system_command" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-home" aria-selected="true" href="#tap_system_command" onclick="post_message('System/tab/device');">Command Queue</button>
+				</li>
+				<li class="nav-item">
+					<button class="nav-link" id="tab_menu_analysis" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-home" aria-selected="true" href="#tap_core_analysis" onclick="post_message('System/tab/analysis');">Analysis</button>
+				</li>
+			</div>
+		</div>
+		<div class="card-body tab-content">
+			<!-- Command Queue -->
+			<div class="tab-pane active" id="tap_system_command">
+				<div class="row">
+					<div class="col-sm-6 mr-1">
+						<div class="card text-center">
+							<div class="card-header">Command Queue</div>
+							<div class="card-body">
+								<table class="table table-sm table-bordered text-center cursor_scroll mb-0">
+									<thead class="table-light">
+										<tr>
+											<th style="border-right: 1px dotted #cdd0d4;" class="col-sm-1">Index</th>
+											<th class="col-md-3">Elpased Time</th>
+											<th class="col-md-9">Command</th>
+											<th><a href="javascript:post_message('Command/latest');"><i class="bi bi-binoculars" data-toggle="tooltip" data-placement="left" title="현재 실행하고 있는 Command 위치로 이동합니다."></i></a></th>
+										</tr>
+									</thead>
+									<tbody id="Command" style="font-family:monospace;">
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-sm-6 mr-1">
+						<div class="card text-center" style="width: 100%;">
+							<div class="card-header">Thread map</div>
+							<div class="card-body row m-0">
+								<table class="table table-sm shadow-sm table-bordered mb-0">
+									<thead class="table-light">
+										<tr>
+											<th style="border-right: 1px dotted #cdd0d4;">Core #</th>
+											<th>#0</th>
+											<th>#1</th>
+											<th>#2</th>
+											<th>#3</th>
+											<th>#4</th>
+											<th>#5</th>
+											<th>#6</th>
+											<th>#7</th>
+										</tr>
+									</thead>
+									<tbody id="THREAD" style="font-family:monospace;">
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<!-- Analysis -->
+			<div class="tab-pane" id="tap_core_analysis">
+				<div class="row">
+					<div class="col text-center table-responsive-sm">
+						<table class="table table-sm table-bordered align-middle shadow-sm">
+							<thead class="table-light">
+								<tr>
+									<th scope="col" >Entry</th>
+									<th scope="col" colspan="4">Details</th>
+								</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
+					</div>
+					<div class="col text-center">
+						<div id="chart_npu_utilization"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 	
-	<table class="default0" margin="0" BGCOLOR="#FFFFFF" width="100%">
-		<caption id=THREAD_tag style="text-align=left">Threads</caption>
-		<tbody id="Trace">
-		</tbody>
-	</table>
 	
-	<table class="default0" margin="0" BGCOLOR="#FFFFFF" width="100%">
-		<caption id="GPRs_tag" style="text-align=left">GPRs</caption>
-		<tbody id="GPRs">
-		</tbody>
-	</table>
+	<!-- Registers -->
+	<div class="card m-2 border small rounded shadow-sm">
+		<div class="row small m-1 mt-3">
+			<div class="col-sm-4">
+				<div class="card border rounded">
+					<div class="card-header">
+						<div class="float-start" id="GPRs_tag">
+							<b>GPRs</b> (General Purposed Registers)
+						</div>
+						<div class="form-check form-switch float-end">
+							<input class="form-check-input" type="checkbox" role="switch" id="GPRs_trace">
+							<div class="form-row">
+								<label class="form-check-label" for="GPRs_trace" id="GPRs_trace_label">Auto trace</label>
+							</div>
+						</div>
+					</div>
+					<div class="card-body">
+						<table class="table table-sm table-bordered table-hover align-middle cursor_scroll text-center m-0">
+							<thead class="table-light text-center">
+								<tr>
+									<th>#</th>
+									<th class="col-md-3">W</th>
+									<th class="col-md-3">Z</th>
+									<th class="col-md-3">Y</th>
+									<th class="col-md-3">X</th>
+									<th><a href="javascript:post_message('GPRs/latest');"><i class="bi bi-binoculars" data-toggle="tooltip" data-placement="left" title="가장 최근 수정된 값으로 이동합니다."></i></a></th>
+								</tr>
+							</thead>
+							<tbody id="GPRs" style="font-family:monospace;">
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-sm-4">
+				<div class="card border rounded">
+					<div class="card-header">
+						<div class="float-start" id="LMB_tag">
+							<b>LMB</b> (Local Memory Block)
+						</div>
+						<div class="form-check form-switch float-end">
+							<input class="form-check-input" type="checkbox" role="switch" id="LMB_trace">
+							<div class="form-row">
+								<label class="form-check-label" for="LMB_trace" id="LMB_trace_label">Auto trace</label>
+							</div>
+						</div>
+					</div>
+					<div class="card-body">
+						<table class="table table-sm table-bordered table-hover align-middle cursor_scroll text-center m-0">
+							<thead class="table-light text-center">
+								<tr>
+									<th>#</th>
+									<th class="col-md-3">W</th>
+									<th class="col-md-3">Z</th>
+									<th class="col-md-3">Y</th>
+									<th class="col-md-3">X</th>
+									<th><a href="javascript:post_message('LMB/latest');"><i class="bi bi-binoculars" data-toggle="tooltip" data-placement="left" title="가장 최근 수정된 값으로 이동합니다."></i></a></th>
+								</tr>
+							</thead>
+							<tbody id="LMB" style="font-family:monospace;">
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			
+			<div class="col-sm-4">
+				<div class="card border rounded">
+					<div class="card-header">
+						<div class="float-start" id="GMB_tag">
+							<b>GMB</b> (Global Memory Block)
+						</div>
+						<div class="form-check form-switch float-end">
+							<input class="form-check-input" type="checkbox" role="switch" id="GMB_trace">
+							<div class="form-row">
+								<label class="form-check-label" for="GMB_trace" id="GMB_trace_label">Auto trace</label>
+							</div>
+						</div>
+					</div>
+					<div class="card-body">
+						<table class="table table-sm table-bordered table-hover align-middle cursor_scroll text-center m-0">
+							<thead class="table-light text-center">
+								<tr>
+									<th>#</th>
+									<th class="col-md-3">W</th>
+									<th class="col-md-3">Z</th>
+									<th class="col-md-3">Y</th>
+									<th class="col-md-3">X</th>
+									<th><a href="javascript:post_message('GMB/latest');"><i class="bi bi-binoculars" data-toggle="tooltip" data-placement="left" title="가장 최근 수정된 값으로 이동합니다."></i></a></th>
+								</tr>
+							</thead>
+							<tbody id="GMB" style="font-family:monospace;">
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row small m-1 mb-3">
+			<div class="card border-0">
+				<table class="table table-sm table-bordered align-middle cursor_scroll text-center m-0">
+					<thead class="table-light text-center">
+						<tr>
+							<th id="result_id" class="col-md-1">#</th>
+							<th class="col-md-2">hex</th>
+							<th class="col-md-2">uint</th>
+							<th class="col-md-2">int</th>
+							<th class="col-md-2">float</th>
+							<th class="col-md-3">int64/double</th>
+						</tr>
+					</thead>
+					<tbody id="GMB" style="font-family:monospace;">
+						<tr>
+							<th class="col-md-1">X</th>
+							<td id="x_hex" class="col-md-2 text-end"></td>
+							<td id="x_uint" class="col-md-2 text-end"></td>
+							<td id="x_int" class="col-md-2 text-end"></td>
+							<td id="x_fp" class="col-md-2 text-end"></td>
+							<td id="x_dp" class="col-md-3 text-end" rowspan="2"></td>
+						</tr>
+						<tr>
+							<th class="col-md-1">Y</th>
+							<td id="y_hex" class="col-md-2 text-end"></td>
+							<td id="y_uint" class="col-md-2 text-end"></td>
+							<td id="y_int" class="col-md-2 text-end"></td>
+							<td id="y_fp" class="col-md-2 text-end"></td>
+						</tr>
+						<tr>
+							<th class="col-md-1">Z</th>
+							<td id="z_hex" class="col-md-2 text-end"></td>
+							<td id="z_uint" class="col-md-2 text-end"></td>
+							<td id="z_int" class="col-md-2 text-end"></td>
+							<td id="z_fp" class="col-md-2 text-end"></td>
+							<td id="z_dp" class="col-md-3 text-end" rowspan="2"></td>
+						</tr>
+						<tr>
+							<th class="col-md-1">W</th>
+							<td id="w_hex" class="col-md-2 text-end"></td>
+							<td id="w_uint" class="col-md-2 text-end"></td>
+							<td id="w_int" class="col-md-2 text-end"></td>
+							<td id="w_fp" class="col-md-2 text-end"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+	
+	<div class="collapse mb-2">
 
-	<table class="default0" width="100%">
-		<tbody id=MB>
-		</tbody>
-	</table>
-	
+	</div>
 </body>
 </html>

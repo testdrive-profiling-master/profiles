@@ -1,24 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
-// 
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -30,43 +29,50 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : Meitner processor register map document
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 6/19/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include "testdrive_document.inl"
 #include "RegisterMap.h"
 #include "RegmapCommand.h"
 #include "RegmapSystem.h"
 #include "RegmapScratchCounter.h"
-#include "RegmapGPRs.h"
-#include "RegmapMB.h"
+//#include "RegmapGPRs.h"
+#include "RegmapSTB.h"
+#include "RegmapLMB.h"
+#include "RegmapGMB.h"
 #include "RegmapTrace.h"
 
-ITDDocument*	g_pDoc				= NULL;
-ITDHtml*		g_pHtml				= NULL;
+ITDDocument *g_pDoc	 = NULL;
+ITDHtml		*g_pHtml = NULL;
 
 REGISTER_LOCALED_DOCUMENT(CRegsterMap);
 
-CRegsterMap::CRegsterMap(ITDDocument* pDoc)
+CRegsterMap::CRegsterMap(ITDDocument *pDoc)
 {
-	m_bInitialize	= FALSE;
-	g_pDoc			= pDoc;
-	g_pHtml			= pDoc->GetHtml(_T("regmap"));
+	m_bInitialize = FALSE;
+	g_pDoc		  = pDoc;
+	g_pHtml		  = pDoc->GetHtml(_T("regmap"));
 	{
 		// system's display memory == register map
-		ITDMemory*	pMainMem	= g_pSystem->GetMemory();
-		CString		sName;
+		ITDMemory *pMainMem = g_pSystem->GetMemory();
+		CString	   sName;
 		sName.Format(_T("%s_Display"), pMainMem->GetName());
-		Regmap::m_pReg	= (MTSP_REGMAP*)pDoc->GetSystem()->GetMemory(sName)->GetPointer();
+		// default setup
+		Regmap::m_pReg	  = (MTSP_REGMAP *)pDoc->GetSystem()->GetMemory(sName)->GetPointer();
+		Regmap::m_pCore	  = Regmap::m_pReg->core;
+		Regmap::m_pThread = Regmap::m_pCore->thread;
 	}
 	{
 		// add register monitors
 		new RegmapCommand;
 		new RegmapSystem;
 		new RegmapScratchCounter;
-		new RegmapGPRs;
-		new RegmapMB;
+		new RegmapLMB;
+		new RegmapGMB;
+		new RegmapSTB;
+		// new RegmapGPRs;
 		new RegmapTrace;
 	}
 	g_pHtml->SetManager(this);
@@ -79,7 +85,7 @@ CRegsterMap::~CRegsterMap(void)
 	Regmap::ReleaseAll();
 }
 
-BOOL CRegsterMap::OnPropertyUpdate(ITDPropertyData* pProperty)
+BOOL CRegsterMap::OnPropertyUpdate(ITDPropertyData *pProperty)
 {
 	pProperty->UpdateData();
 	pProperty->UpdateConfigFile(FALSE);
@@ -88,7 +94,7 @@ BOOL CRegsterMap::OnPropertyUpdate(ITDPropertyData* pProperty)
 
 BOOL CRegsterMap::OnCommand(DWORD command, WPARAM wParam, LPARAM lParam)
 {
-	if(command == 10) {
+	if (command == 10) {
 		g_pDoc->KillTimer(10);
 		g_pDoc->SetTimer(10, Regmap::Update() ? 50 : 1000);
 	}
@@ -98,8 +104,8 @@ BOOL CRegsterMap::OnCommand(DWORD command, WPARAM wParam, LPARAM lParam)
 
 void CRegsterMap::OnSize(int width, int height)
 {
-	if(g_pHtml) {
-		ITDLayout* pLayout = g_pHtml->GetObject()->GetLayout();
+	if (g_pHtml) {
+		ITDLayout *pLayout = g_pHtml->GetObject()->GetLayout();
 		pLayout->SetSize(width, height);
 		g_pHtml->GetObject()->UpdateLayout();
 	}
@@ -107,8 +113,8 @@ void CRegsterMap::OnSize(int width, int height)
 
 LPCTSTR CRegsterMap::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 {
-	if(m_bInitialize) {
-		if(_tcsstr(lpszURL, _T("cmd://")) == lpszURL) {
+	if (m_bInitialize) {
+		if (_tcsstr(lpszURL, _T("cmd://")) == lpszURL) {
 			Regmap::Command(&lpszURL[6]);
 		}
 
@@ -120,18 +126,25 @@ LPCTSTR CRegsterMap::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 
 void CRegsterMap::OnHtmlDocumentComplete(DWORD dwID, LPCTSTR lpszURL)
 {
-	if(!m_bInitialize) {
-		m_bInitialize	= TRUE;
+	if (!m_bInitialize) {
+		m_bInitialize = TRUE;
 		Regmap::Initialize();
 		g_pDoc->SetTimer(10, 50);
 	}
 }
 
+LPCTSTR CRegsterMap::OnHtmlWebMessageReceived(DWORD dwID, LPCTSTR lpszMessage)
+{
+	Regmap::Command(lpszMessage);
+	return NULL;
+}
+
 void CRegsterMap::OnShow(BOOL bShow)
 {
-	if(!m_bInitialize) return;
+	if (!m_bInitialize)
+		return;
 
-	if(bShow)
+	if (bShow)
 		g_pDoc->SetTimer(10, 50);
 	else
 		g_pDoc->KillTimer(10);
