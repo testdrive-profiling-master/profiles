@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : System manager
-// Rev.  : 2/26/2024 Mon (clonextop@gmail.com)
+// Rev.  : 6/20/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "LocaleString.h"
 /* clang-format off */
@@ -81,7 +81,7 @@ LOCALE_TEXT(DESC_SIMULATOR,
 			_T("메인 시뮬레이터를 선택합니다.\nverilator, iverilog(미완성)"),
 			_T("メインシミュレータを選択します。\nverilator, iverilog(未完成)"),
 			_T("Seleccione el simulador principal.\nverilator, iverilog(incompleto)"),
-			_T("Choose a main compiler.\nverilator, iverilog(incomplete)"))
+			_T("Choose a main simulator.\nverilator, iverilog(incomplete)"))
 LOCALE_TEXT(DEBUG_INFO,
 			_T("디버그 정보"),
 			_T("デバッグ情報"),
