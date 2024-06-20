@@ -114,9 +114,20 @@ function MakeDirForVerilog(folder_name)
 		os.exit(1)
 	end
 	
+	exec("touch \"" .. folder_path .. "/.TestDrive.nosearch\"")	-- bypass watchdog
+	
 	return folder_path
 end
 
+function CleanForVerilog(folder_path)
+	Sleep(1000)	-- wait for watchdog check
+	exec("rm -f \"" .. folder_path .. "/.TestDrive.nosearch\"")
+
+	local	sHandle	= String("")
+	if sHandle:GetEnvironment("SYSTEM_MANAGER@TESTDRIVE") then
+		SendMessage(tonumber(sHandle.s, 16), 0x400, 4, 0)
+	end
+end
 
 local sProjectPath = ""
 
@@ -174,6 +185,7 @@ elseif (sType == "v" or sType == "verilog") then
 	os.execute("sed \"s/HDL/" .. sProjectName .. " project/\" -i \"" .. sProjectPath .. "/.inception\"")
 	
 	os.execute("explorer " .. sProjectPath)
+	CleanForVerilog(sProjectPath)
 elseif (sType == "v_bare" or sType == "verilog_bare") then
 	sProjectPath	= MakeDirForVerilog(sProjectName)
 	LOGI("Create Bared-Verilog project : '" .. sProjectName .. "'(" .. sProjectPath .. ")")
@@ -184,6 +196,7 @@ elseif (sType == "v_bare" or sType == "verilog_bare") then
 	os.execute("sed \"s/HDL/" .. sProjectName .. " project/\" -i \"" .. sProjectPath .. "/.inception\"")
 
 	os.execute("explorer " .. sProjectPath)
+	CleanForVerilog(sProjectPath)
 elseif (sType == "verigen") then
 	if sProjectName == "common" then
 		LOGE("Invalid project name for verigen : " .. sProjectName)
@@ -211,6 +224,7 @@ elseif (sType == "verigen") then
 	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/g\" -i \"" .. sProjectPath .. "/verigen_src/__BusMaster.sv\"")
 	
 	os.execute("explorer " .. sProjectPath)
+	CleanForVerilog(sProjectPath)
 elseif (sType == "docgen") then
 	sProjectPath	= MakeDir(sProjectName)
 	LOGI("Create DocGen project : '" .. sProjectName .. "'")

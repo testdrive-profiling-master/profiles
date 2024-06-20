@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : System manager
-// Rev.  : 2/26/2024 Mon (clonextop@gmail.com)
+// Rev.  : 6/20/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_H__
 #define __SYSTEM_H__
@@ -95,6 +95,7 @@ public:
 	STDMETHOD_(BOOL, OnCommand)(DWORD command, WPARAM wParam = NULL, LPARAM lParam = NULL);
 
 	void UpdateEnvironments(void);
+	void UpdateDutList(void);
 	void WriteConfiguration(LPCTSTR sKeyName, LPCTSTR sValue);
 	void ExternalCommand(TESTDRIVE_CMD cmd, WORD op, DWORD lParam);
 

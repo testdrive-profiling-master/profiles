@@ -11,7 +11,7 @@ SortIncludes: Never
 
 ---
 Language: Cpp
-ColumnLimit: 120
+ColumnLimit: 145
 BreakBeforeBraces: Linux
 AlignConsecutiveAssignments: Consecutive
 AlignConsecutiveBitFields: Consecutive
@@ -24,6 +24,13 @@ AlignConsecutiveMacros:
     Enabled: true
     AcrossEmptyLines: true
     AcrossComments: true
+AlignConsecutiveShortCaseStatements:
+    Enabled: true
+    AcrossEmptyLines: true
+    AcrossComments: true
+    AlignCaseColons: false
+AlignAfterOpenBracket: AlwaysBreak
+AllowShortEnumsOnASingleLine: false
 AllowAllArgumentsOnNextLine: false
 AllowAllConstructorInitializersOnNextLine: false
 AllowAllParametersOfDeclarationOnNextLine: false

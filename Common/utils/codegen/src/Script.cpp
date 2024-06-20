@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 6/19/2024 Wed (clonextop@gmail.com)
+// Rev.  : 6/20/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -1518,6 +1518,12 @@ Script::Script(void)
 #endif
 							 }))
 				.addFunction("Pause", __Pause)
+#if defined __WIN32__ || defined WIN32 // windows
+				.addFunction("SendMessage", std::function<void(uint64_t hHandle, int msg, int wparam, int lparam)>(
+												[](uint64_t hHandle, int msg, int wparam, int lparam) {
+													SendMessage((HWND)hHandle, msg, wparam, lparam);
+												}))
+#endif
 				.addFunction("__key_compare", __key_compare)
 				.addFunction("IsWindows", __IsWindows)
 				.addFunction("GetCommonToolPath", GetCommonToolPath);

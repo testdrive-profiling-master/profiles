@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : System manager
-// Rev.  : 2/26/2024 Mon (clonextop@gmail.com)
+// Rev.  : 6/20/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "System.h"
 
@@ -134,8 +134,7 @@ void System::MakeDefinitionList(BOOL bAutoFix)
 	}
 }
 
-System::System(ITDDocument *pDoc)
-	: m_bBusy(FALSE), m_BuildAutomation(pDoc, COMMAND_AUTOMATION_CEHCK, COMMAND_AUTOMATION_BUILD)
+System::System(ITDDocument *pDoc) : m_bBusy(FALSE), m_BuildAutomation(pDoc, COMMAND_AUTOMATION_CEHCK, COMMAND_AUTOMATION_BUILD)
 {
 	m_pDoc				= pDoc;
 	m_pSystemConfig		= (BASE_SYSTEM_CONFIG *)g_pSystem->GetMemory(NULL, TRUE)->GetConfig();
@@ -159,8 +158,8 @@ System::System(ITDDocument *pDoc)
 
 		if (m_SubSystemList.Size()) {
 			m_sSubSystem = m_SubSystemList.Item(0) ? m_SubSystemList.Item(0)->sName.c_str() : _T("");
-			pProperty	 = pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_SYSTEM_TYPE, _L(SUB_SYSTEM),
-												 (DWORD_PTR)m_sSubSystem.GetBuffer(), _L(DESC_SUB_SYSTEM));
+			pProperty	 = pDoc->AddPropertyData(
+				   PROPERTY_TYPE_STRING, PROPERTY_ID_SYSTEM_TYPE, _L(SUB_SYSTEM), (DWORD_PTR)m_sSubSystem.GetBuffer(), _L(DESC_SUB_SYSTEM));
 			pProperty->UpdateConfigFile();
 
 			if (!m_SubSystemList.Find(m_sSubSystem)) {
@@ -176,8 +175,8 @@ System::System(ITDDocument *pDoc)
 
 		m_sCompiler.GetBuffer(1024);
 		m_sCompiler = __sCompiler[0];
-		pProperty	= pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_COMPILER, _L(COMPILER),
-											(DWORD_PTR)m_sCompiler.GetBuffer(), _L(DESC_COMPILER));
+		pProperty	= pDoc->AddPropertyData(
+			  PROPERTY_TYPE_STRING, PROPERTY_ID_COMPILER, _L(COMPILER), (DWORD_PTR)m_sCompiler.GetBuffer(), _L(DESC_COMPILER));
 		pProperty->UpdateConfigFile();
 		pProperty->AllowEdit(FALSE);
 
@@ -185,24 +184,26 @@ System::System(ITDDocument *pDoc)
 
 		m_sSimulator.GetBuffer(1024);
 		m_sSimulator = __sSimulator[0];
-		pProperty	 = pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_SIMULATOR, _L(SIMULATOR),
-											 (DWORD_PTR)m_sSimulator.GetBuffer(), _L(DESC_SIMULATOR));
+		pProperty	 = pDoc->AddPropertyData(
+			   PROPERTY_TYPE_STRING, PROPERTY_ID_SIMULATOR, _L(SIMULATOR), (DWORD_PTR)m_sSimulator.GetBuffer(), _L(DESC_SIMULATOR));
 		pProperty->UpdateConfigFile();
 		pProperty->AllowEdit(FALSE);
 
 		for (int i = 0; __sSimulator[i]; i++) pProperty->AddOption(__sSimulator[i]);
 
-		pProperty = pDoc->AddPropertyData(PROPERTY_TYPE_BOOL, PROPERTY_ID_BUILD_AUTOMATION, _L(BUILD_AUTOMATION),
-										  (DWORD_PTR) & (m_BuildAutomation.AutoBuild()), _L(DESC_BUILD_AUTOMATION));
+		pProperty = pDoc->AddPropertyData(
+			PROPERTY_TYPE_BOOL, PROPERTY_ID_BUILD_AUTOMATION, _L(BUILD_AUTOMATION), (DWORD_PTR) & (m_BuildAutomation.AutoBuild()),
+			_L(DESC_BUILD_AUTOMATION));
 		pProperty->UpdateConfigFile();
-		pProperty = pDoc->AddPropertyData(PROPERTY_TYPE_BOOL, PROPERTY_ID_USE_DEBUG, _L(DEBUG_INFO),
-										  (DWORD_PTR) & (m_BuildAutomation.UseDebug()), _L(DESC_USE_DEBUG));
+		pProperty = pDoc->AddPropertyData(
+			PROPERTY_TYPE_BOOL, PROPERTY_ID_USE_DEBUG, _L(DEBUG_INFO), (DWORD_PTR) & (m_BuildAutomation.UseDebug()), _L(DESC_USE_DEBUG));
 		pProperty->UpdateConfigFile();
-		pProperty = pDoc->AddPropertyData(PROPERTY_TYPE_BOOL, PROPERTY_ID_AUTO_UPDATE, _L(AUTO_UPDATE),
-										  (DWORD_PTR) & (m_bAutoUpdate), _L(DESC_AUTO_UPDATE));
+		pProperty = pDoc->AddPropertyData(
+			PROPERTY_TYPE_BOOL, PROPERTY_ID_AUTO_UPDATE, _L(AUTO_UPDATE), (DWORD_PTR) & (m_bAutoUpdate), _L(DESC_AUTO_UPDATE));
 		pProperty->UpdateConfigFile();
-		pProperty = pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_CODING_STYLE, _L(CODING_STYLE),
-										  (DWORD_PTR)(LPCTSTR)(m_BuildAutomation.CodingStyle()), _L(DESC_CODING_STYLE));
+		pProperty = pDoc->AddPropertyData(
+			PROPERTY_TYPE_STRING, PROPERTY_ID_CODING_STYLE, _L(CODING_STYLE), (DWORD_PTR)(LPCTSTR)(m_BuildAutomation.CodingStyle()),
+			_L(DESC_CODING_STYLE));
 		pProperty->AllowEdit(FALSE);
 		pProperty->UpdateConfigFile();
 		{
@@ -215,40 +216,40 @@ System::System(ITDDocument *pDoc)
 				pProperty->UpdateData(FALSE);
 			}
 		}
-		pProperty = pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_CODING_I_STYLE, _L(CODING_I_STYLE),
-										  (DWORD_PTR)(LPCTSTR)(m_BuildAutomation.iStyle()), _L(DESC_CODING_I_STYLE));
+		pProperty = pDoc->AddPropertyData(
+			PROPERTY_TYPE_STRING, PROPERTY_ID_CODING_I_STYLE, _L(CODING_I_STYLE), (DWORD_PTR)(LPCTSTR)(m_BuildAutomation.iStyle()),
+			_L(DESC_CODING_I_STYLE));
 		pProperty->UpdateConfigFile();
-		pProperty = pDoc->AddPropertyData(PROPERTY_TYPE_BOOL, PROPERTY_ID_STRICT_BUILD, _L(STRICT_BUILD),
-										  (DWORD_PTR) & (m_BuildAutomation.StrictBuild()), _L(DESC_STRICT_BUILD));
+		pProperty = pDoc->AddPropertyData(
+			PROPERTY_TYPE_BOOL, PROPERTY_ID_STRICT_BUILD, _L(STRICT_BUILD), (DWORD_PTR) & (m_BuildAutomation.StrictBuild()),
+			_L(DESC_STRICT_BUILD));
 		pProperty->UpdateConfigFile();
-		pProperty = pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_AUTHOR_INFO, _L(AUTHOR),
-										  (DWORD_PTR)m_BuildAutomation.AuthorName().GetBuffer(), _L(DESC_AUTHOR));
+		pProperty = pDoc->AddPropertyData(
+			PROPERTY_TYPE_STRING, PROPERTY_ID_AUTHOR_INFO, _L(AUTHOR), (DWORD_PTR)m_BuildAutomation.AuthorName().GetBuffer(), _L(DESC_AUTHOR));
 		pProperty->UpdateConfigFile();
 
 		if (m_BuildAutomation.AuthorName().IsEmpty())
 			g_pSystem->LogWarning(_L(AUTHOR_IS_EMPTY));
 
 		m_sSimTopFile.GetBuffer(1024);
-		pProperty = pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_SIMULATION_TOP, _L(SIM_TOP),
-										  (DWORD_PTR)(LPCTSTR)m_sSimTopFile, _L(DESC_SIM_TOP));
+		pProperty = pDoc->AddPropertyData(
+			PROPERTY_TYPE_STRING, PROPERTY_ID_SIMULATION_TOP, _L(SIM_TOP), (DWORD_PTR)(LPCTSTR)m_sSimTopFile, _L(DESC_SIM_TOP));
 		pProperty->UpdateConfigFile();
 		m_pPropertySim[SIM_PROPERTY_TOP] = pProperty;
-		{
-			for (int i = 0; i < m_TopDesignList.Size(); i++) {
-				TopDesignItem *pTop = m_TopDesignList.Item(i);
-				pProperty->AddOption(pTop->sTopPath);
-			}
-		}
+		UpdateDutList();
+
 		m_sSimDefinition.GetBuffer(1024 * 32);
-		pProperty = pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_SIMULATION_DEFINITION, _L(SIM_DEFINITION),
-										  (DWORD_PTR)(LPCTSTR)m_sSimDefinition, _L(DESC_SIM_DEFINITION));
+		pProperty = pDoc->AddPropertyData(
+			PROPERTY_TYPE_STRING, PROPERTY_ID_SIMULATION_DEFINITION, _L(SIM_DEFINITION), (DWORD_PTR)(LPCTSTR)m_sSimDefinition,
+			_L(DESC_SIM_DEFINITION));
 		pProperty->UpdateConfigFile();
 		m_pPropertySim[SIM_PROPERTY_DEFINITION] = pProperty;
 		MakeDefinitionList(FALSE); // preserve previous configuration.
 		m_sSimWaveMode.GetBuffer(MAX_PATH);
 		m_sSimWaveMode = __sSimWaveMode[0];
-		pProperty	   = pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_SIMULATION_WAVE_MODE, _L(WAVE_OUTPUT),
-											   (DWORD_PTR)m_sSimWaveMode.GetBuffer(), _L(DESC_WAVE_OUTPUT));
+		pProperty	   = pDoc->AddPropertyData(
+			 PROPERTY_TYPE_STRING, PROPERTY_ID_SIMULATION_WAVE_MODE, _L(WAVE_OUTPUT), (DWORD_PTR)m_sSimWaveMode.GetBuffer(),
+			 _L(DESC_WAVE_OUTPUT));
 		pProperty->UpdateConfigFile();
 		pProperty->AllowEdit(FALSE);
 
@@ -257,21 +258,21 @@ System::System(ITDDocument *pDoc)
 		m_pPropertySim[SIM_PROPERTY_WAVE_MODE] = pProperty;
 		m_sSimMultithreading.GetBuf(1024);
 		m_sSimMultithreading = __sSimMultithreading[0];
-		pProperty			 = pDoc->AddPropertyData(PROPERTY_TYPE_STRING, PROPERTY_ID_SIMULATION_MULTITHREAD,
-													 _L(SIMULATION_MULTITHREADING), (DWORD_PTR)m_sSimMultithreading.GetBuffer(),
-													 _L(DESC_SIMULATION_MULTITHREADING));
+		pProperty			 = pDoc->AddPropertyData(
+			   PROPERTY_TYPE_STRING, PROPERTY_ID_SIMULATION_MULTITHREAD, _L(SIMULATION_MULTITHREADING), (DWORD_PTR)m_sSimMultithreading.GetBuffer(),
+			   _L(DESC_SIMULATION_MULTITHREADING));
 		pProperty->UpdateConfigFile();
 		pProperty->AllowEdit(FALSE);
 
 		for (int i = 0; __sSimMultithreading[i]; i++) pProperty->AddOption(__sSimMultithreading[i]);
 
 		m_pPropertySim[SIM_PROPERTY_MULTITHREAD] = pProperty;
-		pProperty = pDoc->AddPropertyData(PROPERTY_TYPE_BOOL, PROPERTY_ID_SIMULATION_BAKED_MODEL, _L(BAKED_MODEL),
-										  (DWORD_PTR) & (m_bBakedModel), _L(DESC_BAKED_MODEL));
+		pProperty								 = pDoc->AddPropertyData(
+			   PROPERTY_TYPE_BOOL, PROPERTY_ID_SIMULATION_BAKED_MODEL, _L(BAKED_MODEL), (DWORD_PTR) & (m_bBakedModel), _L(DESC_BAKED_MODEL));
 		pProperty->UpdateConfigFile();
 		m_pPropertySim[SIM_PROPERTY_BAKED_MODEL] = pProperty;
-		pProperty = pDoc->AddPropertyData(PROPERTY_TYPE_INT, PROPERTY_ID_SIMULATION_BUILD_JOBS, _L(SIM_BUILD_JOBS),
-										  (DWORD_PTR)&m_iSimBuildJobCount, _L(DESC_SIM_BUILD_JOBS));
+		pProperty								 = pDoc->AddPropertyData(
+			   PROPERTY_TYPE_INT, PROPERTY_ID_SIMULATION_BUILD_JOBS, _L(SIM_BUILD_JOBS), (DWORD_PTR)&m_iSimBuildJobCount, _L(DESC_SIM_BUILD_JOBS));
 		pProperty->AllowEdit(FALSE);
 		pProperty->UpdateConfigFile();
 		{
@@ -286,26 +287,33 @@ System::System(ITDDocument *pDoc)
 		m_pPropertySim[SIM_PROPERTY_BUILD_JOBS] = pProperty;
 		m_sSimWaveOutputFile.GetBuffer(1024);
 		m_sSimWaveOutputFile = _T("sim.fst");
-		pProperty			 = pDoc->AddPropertyData(PROPERTY_TYPE_FILE_PATH, PROPERTY_ID_SIMULATION_WAVE_OUTPUT_FILE,
-													 _L(WAVE_OUTPUT_FILENAME), (DWORD_PTR)m_sSimWaveOutputFile.GetBuffer(),
-													 _L(DESC_OUTPUT_FILENAME));
+		pProperty			 = pDoc->AddPropertyData(
+			   PROPERTY_TYPE_FILE_PATH, PROPERTY_ID_SIMULATION_WAVE_OUTPUT_FILE, _L(WAVE_OUTPUT_FILENAME),
+			   (DWORD_PTR)m_sSimWaveOutputFile.GetBuffer(), _L(DESC_OUTPUT_FILENAME));
 		pProperty->UpdateConfigFile();
 		m_pPropertySim[SIM_PROPERTY_WAVE_OUTPUT_FILE] = pProperty;
 		m_sSimWaveDoFile.GetBuffer(1024);
 		m_sSimWaveDoFile = _T("sim.do");
-		pProperty = pDoc->AddPropertyData(PROPERTY_TYPE_FILE_PATH, PROPERTY_ID_SIMULATION_WAVE_DO_FILE, _L(DO_FILENAME),
-										  (DWORD_PTR)m_sSimWaveDoFile.GetBuffer(), _L(DESC_DO_FILENAME));
+		pProperty		 = pDoc->AddPropertyData(
+			   PROPERTY_TYPE_FILE_PATH, PROPERTY_ID_SIMULATION_WAVE_DO_FILE, _L(DO_FILENAME), (DWORD_PTR)m_sSimWaveDoFile.GetBuffer(),
+			   _L(DESC_DO_FILENAME));
 		pProperty->UpdateConfigFile();
 		m_pPropertySim[SIM_PROPERTY_WAVE_DO_FILE] = pProperty;
 		m_iTraceStartTime						  = 0;
-		pProperty = pDoc->AddPropertyData(PROPERTY_TYPE_INT, PROPERTY_ID_TRACE_START_TIME, _L(TRACE_START_TIME),
-										  (DWORD_PTR)&m_iTraceStartTime, _L(DESC_TRACE_START_TIME));
+		pProperty								  = pDoc->AddPropertyData(
+			PROPERTY_TYPE_INT, PROPERTY_ID_TRACE_START_TIME, _L(TRACE_START_TIME), (DWORD_PTR)&m_iTraceStartTime, _L(DESC_TRACE_START_TIME));
 		m_pPropertySim[SIM_PROPERTY_TRACE_START_TIME] = pProperty;
 	}
 	UpdateEnvironments();
 	{
 		// setup global environment file
 		g_pSystem->SetConfigString(_T("RECENT_PROJECT"), g_pSystem->RetrieveFullPath(_T("%PROJECT%")));
+
+		{ // set current system manager handle
+			CString sHandle;
+			sHandle.Format(_T("%llX"), (PDWORD)pDoc->GetWindowHandle());
+			g_pSystem->SetConfigString(_T("SYSTEM_MANAGER"), sHandle);
+		}
 	}
 	{
 		BOOL bFirstRunToday = FALSE;
@@ -344,8 +352,7 @@ System::System(ITDDocument *pDoc)
 
 				if (m_bAutoUpdate && bMonthlyUpdate) {
 					g_pSystem->LogInfo(_L(MONTHLY_UPDATE));
-					g_pSystem->ExecuteFile(_T("%TESTDRIVE_DIR%bin\\upgrade_mingw.bat"), NULL, TRUE, NULL,
-										   _T("%TESTDRIVE_DIR%bin"), NULL);
+					g_pSystem->ExecuteFile(_T("%TESTDRIVE_DIR%bin\\upgrade_mingw.bat"), NULL, TRUE, NULL, _T("%TESTDRIVE_DIR%bin"), NULL);
 				}
 			}
 		}
@@ -365,14 +372,19 @@ System::System(ITDDocument *pDoc)
 
 		// install custom tool resources
 		g_pSystem->LogInfo(_T("[%s] %s"), _L(DOCUMENT_TITLE), _L(UPDATE_REQUIRED_TOOLS));
-		g_pSystem->ExecuteFile(_T("%TESTDRIVE_PROFILE%common\\bin\\codegen.exe"), _T("update_common_tools"), TRUE, NULL,
-							   _T("%TESTDRIVE_PROFILE%common\\bin"), _T("*I:"), 0, _T("*E:"), 1, _T("*W:"), 2, NULL);
+		g_pSystem->ExecuteFile(
+			_T("%TESTDRIVE_PROFILE%common\\bin\\codegen.exe"), _T("update_common_tools"), TRUE, NULL, _T("%TESTDRIVE_PROFILE%common\\bin"),
+			_T("*I:"), 0, _T("*E:"), 1, _T("*W:"), 2, NULL);
 		g_pSystem->LogInfo(_T("> %s"), _L(DONE));
 	}
 }
 
 System::~System(void)
 {
+	CString sProjectPath = g_pSystem->RetrieveFullPath(_T("%PROJECT%"));
+	if (sProjectPath == g_pSystem->GetConfigString(_T("RECENT_PROJECT"))) {
+		g_pSystem->SetConfigString(_T("SYSTEM_MANAGER"), NULL);
+	}
 	m_pSystemConfig->hSystemManager = NULL;
 }
 
@@ -389,9 +401,8 @@ void System::UpdateEnvironments(void)
 	WriteConfiguration(_T("MAIN_COMPILER"), m_sCompiler);
 	WriteConfiguration(_T("MAIN_SIMULATOR"), m_sSimulator);
 	WriteConfiguration(_T("SUB_SYSTEM_NAME"), m_sSubSystem);
-	WriteConfiguration(_T("SUB_SYSTEM_PATH"), m_SubSystemList.Find(m_sSubSystem)
-												  ? (LPCTSTR)(m_SubSystemList.Find(m_sSubSystem)->sFile)
-												  : _T(""));
+	WriteConfiguration(
+		_T("SUB_SYSTEM_PATH"), m_SubSystemList.Find(m_sSubSystem) ? (LPCTSTR)(m_SubSystemList.Find(m_sSubSystem)->sFile) : _T(""));
 	WriteConfiguration(_T("AUTHOR"), m_BuildAutomation.AuthorName());
 	WriteConfiguration(_T("SIM_TOP_FILE"), m_sSimTopFile);
 	{
@@ -441,8 +452,7 @@ void System::UpdateEnvironments(void)
 			// simulation C++ defines
 			int id = 0;
 
-			for (; __sSimWaveMode[id] && _tcscmp(m_sSimWaveMode, __sSimWaveMode[id]); id++)
-				;
+			for (; __sSimWaveMode[id] && _tcscmp(m_sSimWaveMode, __sSimWaveMode[id]); id++);
 
 			WriteConfiguration(_T("SIM_CDEFS"), __sSimCDEFS[id]);
 		}
@@ -478,6 +488,19 @@ void System::UpdateEnvironments(void)
 	}
 }
 
+void System::UpdateDutList(void)
+{
+	if (m_SubSystemList.Size()) {
+		m_TopDesignList.Initialize();
+		ITDPropertyData *pProperty = m_pPropertySim[SIM_PROPERTY_TOP];
+		pProperty->AddOption(NULL);
+		for (int i = 0; i < m_TopDesignList.Size(); i++) {
+			TopDesignItem *pTop = m_TopDesignList.Item(i);
+			pProperty->AddOption(pTop->sTopPath);
+		}
+	}
+}
+
 BOOL System::OnPropertyUpdate(ITDPropertyData *pProperty)
 {
 	if (m_pDoc->IsLocked()) {
@@ -495,8 +518,7 @@ BOOL System::OnPropertyUpdate(ITDPropertyData *pProperty)
 	UpdateEnvironments();
 
 	if (pProperty->GetID() == PROPERTY_ID_SIMULATION_TOP || pProperty->GetID() == PROPERTY_ID_SIMULATION_DEFINITION ||
-		pProperty->GetID() == PROPERTY_ID_SIMULATION_WAVE_MODE ||
-		pProperty->GetID() == PROPERTY_ID_SIMULATION_MULTITHREAD ||
+		pProperty->GetID() == PROPERTY_ID_SIMULATION_WAVE_MODE || pProperty->GetID() == PROPERTY_ID_SIMULATION_MULTITHREAD ||
 		pProperty->GetID() == PROPERTY_ID_SIMULATION_BAKED_MODEL) {
 		m_BuildAutomation.SetDirtySystem();
 		m_pDoc->SetTimer(COMMAND_AUTOMATION_BUILD + 0, 50);
@@ -568,6 +590,9 @@ void System::ExternalCommand(TESTDRIVE_CMD cmd, WORD op, DWORD lParam)
 		HWND		*pHwnd = (HWND *)g_pSystem->GetMemory()->GetPointer(lParam);
 		*pHwnd			   = pDoc ? pDoc->GetWindowHandle() : NULL;
 	} break;
+	case TESTDRIVE_CMD_UPDATE_DUT_LIST:
+		UpdateDutList();
+		break;
 
 	default:
 		g_pSystem->LogWarning(_T("Undefined external command!"));

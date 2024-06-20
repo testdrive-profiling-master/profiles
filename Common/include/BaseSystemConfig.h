@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 11/7/2023 Tue (clonextop@gmail.com)
+// Rev.  : 6/20/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __BASE_SYSTEM_CONFIG_H__
 #define __BASE_SYSTEM_CONFIG_H__
@@ -53,12 +53,13 @@ typedef enum {
 	TESTDRIVE_CMD_CLEAR_LOG,
 	TESTDRIVE_CMD_RUN_PROFILE,
 	TESTDRIVE_CMD_GET_DOCUMENT_HANDLE,
+	TESTDRIVE_CMD_UPDATE_DUT_LIST,
 } TESTDRIVE_CMD;
 
 typedef struct {
-	DWORD					dwMemorySize;
-	SYSTEM_TYPE				dwSystemType;
-	HWND					hSystemManager;
+	DWORD		dwMemorySize;
+	SYSTEM_TYPE dwSystemType;
+	HWND		hSystemManager;
 } BASE_SYSTEM_CONFIG;
 
 //-----------------------------------------------------------------
@@ -78,8 +79,8 @@ typedef enum {
 } CHART_CMD;
 
 typedef struct {
-	DWORD					dwMemorySize;
-	HWND					hWnd;
+	DWORD dwMemorySize;
+	HWND  hWnd;
 } SYSTEM_CHART_CONFIG;
 
 //-----------------------------------------------------------------
@@ -90,9 +91,9 @@ typedef enum {
 } DESIGNMAP_CMD;
 
 typedef struct {
-	DWORD					dwMemorySize;
-	HWND					hWnd;
+	DWORD dwMemorySize;
+	HWND  hWnd;
 } DESIGNMAP_CONFIG;
 
-#endif//USE_TESTDRIVE
-#endif//__BASE_SYSTEM_CONFIG_H__
+#endif // USE_TESTDRIVE
+#endif //__BASE_SYSTEM_CONFIG_H__
