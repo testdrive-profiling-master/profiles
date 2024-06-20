@@ -1,7 +1,7 @@
 verigen.set_description("Main generator")
 
 -- default definitions
-RunScript("defines_PROJECT.lua")
+RunScript("defines___PROJECT__.lua")
 
 -- IP design
 RunScript("design_hierarchy.lua")
@@ -17,4 +17,4 @@ verigen.add_verilog("*.sv")
 ----------------------------------------------------------------
 -- make design
 ----------------------------------------------------------------
-PROJECT.top_wrapper:make_code()
+__PROJECT__.top_wrapper:make_code()

@@ -1,4 +1,4 @@
 //# Slave bus controller
-module PROJECT_BusSlave
+module __PROJECT___BusSlave
 
 $add_interface(bus.apb.modport.s)

@@ -3,31 +3,31 @@ verigen.set_description("Design hierarchy")
 ----------------------------------------------------------------
 -- module container
 ----------------------------------------------------------------
-PROJECT	= {}
+__PROJECT__	= {}
 
 ----------------------------------------------------------------
 -- mtsp top
 ----------------------------------------------------------------
-PROJECT.top_wrapper		= module:new("PROJECT_wrapper")
-PROJECT.top				= module:new("PROJECT")
-PROJECT.sbus			= module:new("PROJECT_BusSlave")
-PROJECT.mbus			= module:new("PROJECT_BusMaster")
-PROJECT.mbus_wrapper	= module:new("PROJECT_BusMasterWrapper")
+__PROJECT__.top_wrapper		= module:new("__PROJECT___wrapper")
+__PROJECT__.top				= module:new("__PROJECT__")
+__PROJECT__.sbus			= module:new("__PROJECT___BusSlave")
+__PROJECT__.mbus			= module:new("__PROJECT___BusMaster")
+__PROJECT__.mbus_wrapper	= module:new("__PROJECT___BusMasterWrapper")
 
 
-PROJECT.top_wrapper:add_module(PROJECT.top)
-PROJECT.top_wrapper:add_module(PROJECT.sbus)
-PROJECT.top_wrapper:add_module(PROJECT.mbus)
+__PROJECT__.top_wrapper:add_module(__PROJECT__.top)
+__PROJECT__.top_wrapper:add_module(__PROJECT__.sbus)
+__PROJECT__.top_wrapper:add_module(__PROJECT__.mbus)
 
-PROJECT.mbus_list		= {"bus_inst", "bus_data", "bus_stack"}	-- instruction & data
-PROJECT.mbus_inst		= {}
+__PROJECT__.mbus_list		= {"bus_inst", "bus_data", "bus_stack"}	-- instruction & data
+__PROJECT__.mbus_inst		= {}
 
-for i=1, #PROJECT.mbus_list do
-	PROJECT.mbus_inst[i]	= PROJECT.mbus:add_module(PROJECT.mbus_wrapper)
+for i=1, #__PROJECT__.mbus_list do
+	__PROJECT__.mbus_inst[i]	= __PROJECT__.mbus:add_module(__PROJECT__.mbus_wrapper)
 end
 
 ----------------------------------------------------------------
 -- set colored to design map
 ----------------------------------------------------------------
-PROJECT.sbus.fill_color		= "00D0FF"
-PROJECT.mbus.fill_color		= "00D0FF"
+__PROJECT__.sbus.fill_color		= "00D0FF"
+__PROJECT__.mbus.fill_color		= "00D0FF"

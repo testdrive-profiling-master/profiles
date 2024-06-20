@@ -1,12 +1,30 @@
-verigen.set_description("PROJECT Definitions")
+verigen.set_description("__PROJECT__ Definitions")
 
 RunScript("defines_common.lua")
 
-i_mtsp		= {}		-- PROJECT interfaces
+i_mtsp		= {}		-- __PROJECT__ interfaces
 i_core		= {}		-- core interfaces
 
 config.thread_size		= 8
 config.inst_width		= 128
+
+----------------------------------------------------------------
+-- code inception
+----------------------------------------------------------------
+do
+	local	sPath	= String("")
+	sPath:GetEnvironment("PROJECT")
+
+	if sPath:Length() ~= 0 then
+		module:set_inception(sPath.s .. "Profiles\\code_inception.txt")
+	end
+
+	local	sAuthor	= String("")
+	sAuthor:GetEnvironment("AUTHOR")
+
+	module:set_title("__PROJECT__")
+	module:set_author(sAuthor.s)
+end
 
 -------------------------------------------------------------------
 -- master bus wrapper

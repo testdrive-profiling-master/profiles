@@ -1,4 +1,4 @@
 :[verigen_src] codegen .TestDrive.verilator
 :[verigen_src] make
--IDUTs/PROJECT
--IDUTs/PROJECT/rtl
+-IDUTs/__PROJECT__
+-IDUTs/__PROJECT__/rtl

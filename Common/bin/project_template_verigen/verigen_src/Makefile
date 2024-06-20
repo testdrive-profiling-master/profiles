@@ -1,7 +1,7 @@
 #-------------------------------------------------
 # Build sequence
 #-------------------------------------------------
-BUILD_TARGET	:= ../rtl/PROJECT_wrapper.sv
+BUILD_TARGET	:= ../rtl/__PROJECT___wrapper.sv
 SRCS			:= $(wildcard ./*) .TestDrive.verilator
 
 #-------------------------------------------------

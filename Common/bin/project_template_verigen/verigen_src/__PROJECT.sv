@@ -1,1 +1,1 @@
-module PROJECT
+module __PROJECT__
