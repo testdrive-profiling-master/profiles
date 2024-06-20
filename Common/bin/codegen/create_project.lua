@@ -125,7 +125,9 @@ function CleanForVerilog(folder_path)
 
 	local	sHandle	= String("")
 	if sHandle:GetEnvironment("SYSTEM_MANAGER@TESTDRIVE") then
-		SendMessage(tonumber(sHandle.s, 16), 0x400, 4, 0)
+		if sHandle:IsEmpty() == false then
+			SendMessage(tonumber(sHandle.s, 16), 0x400, 4, 0)
+		end
 	end
 end
 

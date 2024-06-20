@@ -1207,12 +1207,12 @@ Script::Script(void)
 				.addFunction("Close", &TextFile::Close)
 				.addFunction("Put", &TextFile::Puts)
 				.addFunction("Get", &TextFile::Gets)
-				.addFunction("GetAll", std::function<string(TextFile * pFile, bool bUseComment)>(
-										   [](TextFile *pFile, bool bUseComment) -> string {
-											   cstring sContents;
-											   pFile->GetAll(sContents, bUseComment);
-											   return sContents.c_string();
-										   }))
+				.addFunction(
+					"GetAll", std::function<string(TextFile * pFile, bool bUseComment)>([](TextFile *pFile, bool bUseComment) -> string {
+						cstring sContents;
+						pFile->GetAll(sContents, bUseComment);
+						return sContents.c_string();
+					}))
 				.addFunction("LineNumber", &TextFile::LineNumber)
 				.addFunction("IsOpen", &TextFile::IsOpen)
 				.addFunction("IsEOF", &TextFile::IsEOF)
@@ -1281,11 +1281,11 @@ Script::Script(void)
 				.addFunction("FileName", &DocFile::FileName)
 				.addFunction("ReplaceFile", &DocFile::ReplaceFile)
 				.addFunction("DeleteFile", &DocFile::DeleteFile)
-				.addFunction("GetNode",
-							 std::function<lua_DocNode(DocFile * pFile, const char *sEntryName, bool bForceToCreate)>(
-								 [](DocFile *pFile, const char *sEntryName, bool bForceToCreate) -> lua_DocNode {
-									 return *(pFile->GetXML(sEntryName, bForceToCreate));
-								 }))
+				.addFunction(
+					"GetNode", std::function<lua_DocNode(DocFile * pFile, const char *sEntryName, bool bForceToCreate)>(
+								   [](DocFile *pFile, const char *sEntryName, bool bForceToCreate) -> lua_DocNode {
+									   return *(pFile->GetXML(sEntryName, bForceToCreate));
+								   }))
 				.endClass()
 				.deriveClass<DocWord, DocFile>("DocWord")
 				.addConstructor<void (*)(void)>()
@@ -1314,8 +1314,7 @@ Script::Script(void)
 				.addFunction("GetLatestValueType", &DocExcelSheet::GetLatestValueTypeString)
 				.addFunction("GetColumnWidth", &DocExcelSheet::GetColumnWidth)
 				.addFunction("IsMergedCell", &DocExcelSheet::IsMergedCell)
-				.addFunction("GetMergeCellPos",
-							 std::function<string(DocExcelSheet * pSheet)>([](DocExcelSheet *pSheet) -> string {
+				.addFunction("GetMergeCellPos", std::function<string(DocExcelSheet * pSheet)>([](DocExcelSheet *pSheet) -> string {
 								 int tx, ty, width, height;
 
 								 if (pSheet->GetMergeCellPos(tx, ty, width, height)) {
@@ -1519,10 +1518,11 @@ Script::Script(void)
 							 }))
 				.addFunction("Pause", __Pause)
 #if defined __WIN32__ || defined WIN32 // windows
-				.addFunction("SendMessage", std::function<void(uint64_t hHandle, int msg, int wparam, int lparam)>(
-												[](uint64_t hHandle, int msg, int wparam, int lparam) {
-													SendMessage((HWND)hHandle, msg, wparam, lparam);
-												}))
+				.addFunction(
+					"SendMessage", std::function<void(uint64_t hHandle, int msg, int wparam, int lparam)>(
+									   [](uint64_t hHandle, int msg, int wparam, int lparam) {
+										   SendMessage((HWND)hHandle, msg, wparam, lparam);
+									   }))
 #endif
 				.addFunction("__key_compare", __key_compare)
 				.addFunction("IsWindows", __IsWindows)
@@ -1629,8 +1629,7 @@ bool Script::Run(const char *sFileName)
 		cstring sBuffer(f.Buffer(), f.Size()); // automatic change to UTF-8 format
 		sBuffer.ChangeCharsetToUTF8();
 
-		if (luaL_loadbuffer(m_pLua, sBuffer.c_str(), sBuffer.Length(), sShortenFilePath.c_str()) ||
-			lua_pcall(m_pLua, 0, LUA_MULTRET, 0)) {
+		if (luaL_loadbuffer(m_pLua, sBuffer.c_str(), sBuffer.Length(), sShortenFilePath.c_str()) || lua_pcall(m_pLua, 0, LUA_MULTRET, 0)) {
 			const char *sError = luaL_checkstring(m_pLua, -1);
 			LOGE("Error on running script : %s", sError);
 			lua_pop(m_pLua, 1); // pop out error message

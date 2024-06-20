@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 5/27/2024 Mon (clonextop@gmail.com)
+// Rev.  : 6/20/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "STDInterface.h"
 // cstrings
@@ -824,6 +824,7 @@ bool cstring::GetEnvironment(const char *sKey)
 	if (sKey) {
 		if (strstr(sKey, __sEnvDelim)) {
 #ifdef WIN32
+			bool bRet = true;
 			// in testdrive.ini
 			m_sStr.clear();
 			cstring sAppName, sKeyName, sEnvPath;
@@ -837,10 +838,12 @@ bool cstring::GetEnvironment(const char *sKey)
 
 				if (GetPrivateProfileString(sAppName, sKeyName, NULL, sData, 1024 * 64, sEnvPath))
 					m_sStr = sData;
+				else
+					bRet = false;
 
 				delete[] sData;
 			}
-			return true;
+			return bRet;
 #else
 			return false;
 #endif
