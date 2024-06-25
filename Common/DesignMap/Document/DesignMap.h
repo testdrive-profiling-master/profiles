@@ -53,6 +53,7 @@ typedef enum {
 
 typedef enum {
 	MAIN_CMD_WATCHDOG_FREE = 1000,
+	MAIN_CMD_SET_FOREGROUND,
 } MAIN_CMD;
 
 typedef enum {

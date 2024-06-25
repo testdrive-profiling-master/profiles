@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : System map
-// Rev.  : 6/18/2024 Tue (clonextop@gmail.com)
+// Rev.  : 6/25/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #include "DesignMap.h"
 #include "testdrive_document.inl"
@@ -42,12 +42,10 @@ using namespace std;
 
 REGISTER_LOCALED_DOCUMENT(DesignMap);
 
-ITDDocument	  *g_pDoc  = NULL;
-ITDHtml		  *g_pHtml = NULL;
+ITDDocument *g_pDoc	 = NULL;
+ITDHtml		*g_pHtml = NULL;
 
-static LPCTSTR __DOC_NAME = _T("DESIGN_MAP");
-
-int			   DecodeStringList(CString &str, LPCTSTR *pID)
+int			 DecodeStringList(CString &str, LPCTSTR *pID)
 {
 	for (int i = 0; pID[i]; i++)
 		if (!str.Compare(pID[i]))
@@ -221,6 +219,10 @@ BOOL DesignMap::OnCommand(DWORD command, WPARAM wParam, LPARAM lParam)
 		SetEnvironmentVariable(_T("TESTDRIVE_WATCHDOG"), NULL);
 		break;
 
+	case MAIN_CMD_SET_FOREGROUND:
+		g_pDoc->KillTimer(MAIN_CMD_SET_FOREGROUND);
+		g_pDoc->SetForegroundDocument();
+		break;
 	case TD_EXTERNAL_COMMAND:
 		switch (wParam) {
 		case USER_CMD_UPDATE:
@@ -250,8 +252,7 @@ BOOL DesignMap::OnCommand(DWORD command, WPARAM wParam, LPARAM lParam)
 					// open design
 					CString sContents;
 					__ReadSVG(sContents, m_sDesignFilePath);
-					g_pHtml->CallJScript(_T("SetContent(\"%s\", %s);"), (LPCTSTR)sContents,
-										 bNewProject ? _T("false") : _T("true"));
+					g_pHtml->CallJScript(_T("SetContent(\"%s\", %s);"), (LPCTSTR)sContents, bNewProject ? _T("false") : _T("true"));
 				}
 				{
 					// refresh opened source view
@@ -395,8 +396,9 @@ LPCTSTR DesignMap::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 						sArg.Format(_T("\"%s\\%s\" %s"), (LPCTSTR)m_sWorkPath, (LPCTSTR)sFileName, (LPCTSTR)sSheet);
 					}
 
-					g_pSystem->ExecuteFile(_T("%TESTDRIVE_PROFILE%common\\bin\\xlsx_open.bat"), sArg, TRUE, NULL,
-										   _T("%TESTDRIVE_PROFILE%common\\bin"), _T("*E: "), -1, NULL);
+					g_pSystem->ExecuteFile(
+						_T("%TESTDRIVE_PROFILE%common\\bin\\xlsx_open.bat"), sArg, TRUE, NULL, _T("%TESTDRIVE_PROFILE%common\\bin"), _T("*E: "),
+						-1, NULL);
 				} else {
 					CString sExe;
 					CString sWorkPath;
@@ -414,8 +416,7 @@ LPCTSTR DesignMap::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 			case CMD_ID_MANUAL: {
 				CString sName = cmd.Tokenize(_T(""), iStart);
 				CString sLink;
-				sLink.Format(_T("https://testdrive-profiling-master.github.io/download/%s_userguide.pdf"),
-							 (LPCTSTR)sName);
+				sLink.Format(_T("https://testdrive-profiling-master.github.io/download/%s_userguide.pdf"), (LPCTSTR)sName);
 				ShellExecute(NULL, _T("open"), sLink, NULL, NULL, SW_SHOWDEFAULT);
 			} break;
 
@@ -454,12 +455,13 @@ LPCTSTR DesignMap::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 void DesignMap::OnHtmlDocumentComplete(DWORD dwID, LPCTSTR lpszURL)
 {
 	if (!m_bInitialized) {
-		g_pDoc->SetForegroundDocument();
 		m_bInitialized = TRUE;
 
 		if (!m_sDesignFilePath.IsEmpty() && IsFileExist(m_sDesignFilePath)) {
 			CString sContents;
-			__ReadSVG(sContents, m_sDesignFilePath);
+			if (__ReadSVG(sContents, m_sDesignFilePath)) {
+				g_pDoc->SetTimer(MAIN_CMD_SET_FOREGROUND, 1500);
+			}
 			g_pHtml->CallJScript(_T("SetContent(\"%s\");"), (LPCTSTR)sContents);
 			g_pHtml->CallJScript(_T("PopupLog(\"info\", \"%s\");"), _L(CAN_EDIT_CONTROL));
 		}
@@ -513,8 +515,7 @@ bool DesignMap::OpenSourceFile(LPCTSTR sModuleName, BOOL bMustOpen)
 			BOOL bSearch = TRUE;
 
 			while (bSearch) {
-				if (!(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-					FindFileData.cFileName[0] != _T('.')) {
+				if (!(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && FindFileData.cFileName[0] != _T('.')) {
 					int iLineNumber = CheckModuleFile(FindFileData.cFileName, sModuleName);
 
 					if (iLineNumber >= 0) {
@@ -567,10 +568,11 @@ bool DesignMap::OpenSourceFile(LPCTSTR sModuleName, BOOL bMustOpen)
 				if (fp) {
 					// insert separator
 					if (bExist)
-						_fputts(_T("\n//")
-								_T("#=================================================================================")
-								_T("=============================\n"),
-								fp);
+						_fputts(
+							_T("\n//")
+							_T("#=================================================================================")
+							_T("=============================\n"),
+							fp);
 
 					CString sModuleDeclare;
 					sModuleDeclare.Format(_T("module %s\n"), sModuleName);
