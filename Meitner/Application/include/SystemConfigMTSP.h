@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Global system configuration
-// Rev.  : 6/19/2024 Wed (clonextop@gmail.com)
+// Rev.  : 6/26/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_CONFIG_MTSP_H__
 #define __SYSTEM_CONFIG_MTSP_H__
@@ -43,6 +43,52 @@
 #define MTSP_GPR_SIZE	   128
 #define MTSP_LMB_SIZE	   (MTSP_GPR_SIZE * MTSP_THREAD_SIZE)
 #define MTSP_MAX_GMB_SIZE  65536
+
+typedef enum {
+	MTSP_COMMAND_MEMORY_DESC_0,
+	MTSP_COMMAND_MEMORY_DESC_1,
+	MTSP_COMMAND_MEMORY_DESC_2,
+	MTSP_COMMAND_MEMORY_DESC_3,
+	MTSP_COMMAND_SET_PC,
+	MTSP_COMMAND_VIDEO_BASE,
+	MTSP_COMMAND_INVOKE_MEMORY_OPERATION = 8,
+	MTSP_COMMAND_SIGNAL_ASSERTION,
+	MTSP_COMMAND_TREAD_CONTROL,
+	MTSP_COMMAND_WAIT_SIGNAL,
+} MTSP_COMMAND_ID;
+
+typedef union {
+	DWORD all;
+	struct {
+		DWORD busy			  : 1;
+		DWORD mem_command_en  : 1;
+		DWORD cmd_fifo_empty  : 1;
+		DWORD cmd_fifo_full	  : 1;
+		DWORD cmd_fifo_depth  : 4;
+		DWORD cmd_fifo_rindex : 8;
+		DWORD cmd_fifo_windex : 8;
+		DWORD core_size		  : 8;
+	};
+} MTSP_STATUS;
+
+typedef union {
+	DWORD m[4];
+	struct {
+		// #0
+		WORD id;		 // memory ID
+		WORD index : 12; // register index
+		WORD op	   : 4;	 // memory operation
+		// #1
+		WORD mask;	 // index mask
+		BYTE size;	 // transfer size (n * 16 bytes)
+		BYTE stride; // transfer stride (n * 16 bytes)
+		// #2
+		DWORD p_base; // physical base address
+		// #3
+		WORD g_base; // GMB base index
+		WORD l_base; // LMB base index
+	};
+} MTSP_MEM_COMMAND;
 
 typedef union {
 	uint32_t m;
