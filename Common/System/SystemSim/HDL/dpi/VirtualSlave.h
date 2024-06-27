@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,29 +31,26 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 11/9/2023 Thu (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __VIRTUAL_SLAVE_H__
 #define __VIRTUAL_SLAVE_H__
 #include "dpi_lib.h"
 
-class VirtualSlave : public SelfDestory {
+class VirtualSlave : public SelfDestory
+{
 public:
-	VirtualSlave(const char* sTitle, UINT64 lAddrBase, UINT64 lAddrHigh);
+	VirtualSlave(const char *sTitle, uint64_t lAddrBase, uint64_t lAddrHigh);
 	virtual ~VirtualSlave(void);
 
-	void BusWrite(
-		BYTE nRST,
-		BYTE& EN, UINT64& ADDR, DWORD& DATA);
-	void BusRead(
-		BYTE nRST,
-		BYTE& EN, UINT64& ADDR, DWORD DATA);
+	void BusWrite(uint8_t nRST, uint8_t &EN, uint64_t &ADDR, uint32_t &DATA);
+	void BusRead(uint8_t nRST, uint8_t &EN, uint64_t &ADDR, uint32_t DATA);
 
 private:
-	BUS_SLAVE_INTERFACE*	m_pSlave;
-	BUS_SALVE_PACKET*		m_pReadPacket;
-	bool					m_bReadWait;
-	SystemLog				Log;
+	BUS_SLAVE_INTERFACE *m_pSlave;
+	BUS_SALVE_PACKET	*m_pReadPacket;
+	bool				 m_bReadWait;
+	SystemLog			 Log;
 };
 
-#endif//__VIRTUAL_SLAVE_H__
+#endif //__VIRTUAL_SLAVE_H__

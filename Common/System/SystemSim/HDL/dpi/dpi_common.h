@@ -1,23 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
-// 
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -29,9 +29,9 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : Common DPI
-// Rev.  : 12/30/2021 Thu (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __DPI_COMMON_H__
 #define __DPI_COMMON_H__
@@ -40,7 +40,8 @@
 #include "SelfDestory.h"
 #include "ChainList.h"
 
-class SystemLog {
+class SystemLog
+{
 public:
 	typedef enum {
 		LOG_ID_INFO,
@@ -48,37 +49,38 @@ public:
 		LOG_ID_ERROR
 	} LOG_ID;
 
-	SystemLog(const char* sTitle = NULL);
+	SystemLog(const char *sTitle = NULL);
 	~SystemLog(void);
 
-	void SetTitle(const char* fmt, ...);
+	void SetTitle(const char *fmt, ...);
 
-#define Info(...)		Log(SystemLog::LOG_ID_INFO, __VA_ARGS__)
-#define Warning(...)	Log(SystemLog::LOG_ID_WARNING, __VA_ARGS__)
-#define Error(...)		Log(SystemLog::LOG_ID_ERROR, __VA_ARGS__)
+#define Info(...)	 Log(SystemLog::LOG_ID_INFO, __VA_ARGS__)
+#define Warning(...) Log(SystemLog::LOG_ID_WARNING, __VA_ARGS__)
+#define Error(...)	 Log(SystemLog::LOG_ID_ERROR, __VA_ARGS__)
 
-	void Log(LOG_ID id, const char* fmt, ...);
+	void Log(LOG_ID id, const char *fmt, ...);
 
 private:
-	std::string		m_sTitle;
+	std::string m_sTitle;
 };
 
-class MemoryWriteFilter : public SelfDestory {
+class MemoryWriteFilter : public SelfDestory
+{
 public:
 	MemoryWriteFilter(void);
 	virtual ~MemoryWriteFilter(void);
 
-	static void DoFilter(DWORD dwAddress, DWORD dwByteSize);
+	static void DoFilter(uint64_t uAddress, uint32_t dwByteSize);
 
 protected:
-	virtual void OnDoFilter(DWORD dwAddress, DWORD dwByteSize) = 0;
+	virtual void OnDoFilter(uint64_t uAddress, uint32_t dwByteSize) = 0;
 
 private:
-	ChainList<MemoryWriteFilter>	m_pChain;
+	ChainList<MemoryWriteFilter> m_pChain;
 };
 
-#define LOGI			Log.Info
-#define LOGE			Log.Error
-#define LOGW			Log.Warning
+#define LOGI Log.Info
+#define LOGE Log.Error
+#define LOGW Log.Warning
 
-#endif//__DPI_COMMON_H__
+#endif //__DPI_COMMON_H__

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive System Driver wrapper
-// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_DRIVER_H__
 #define __SYSTEM_DRIVER_H__
@@ -40,46 +40,44 @@
 #include "ThreadManager.h"
 #include <string>
 
-class SystemDriver :
-	public ISystemImp,
-	public IMemoryManager,
-	public DriverCommon {
+class SystemDriver : public ISystemImp, public IMemoryManager, public DriverCommon
+{
 public:
 	SystemDriver(void);
 	virtual ~SystemDriver(void);
 
 	// Identify
-	virtual const char* GetDescription(void);								// get system description
+	virtual const char *GetDescription(void); // get system description
 
 	// life cycle
-	virtual bool Initialize(IMemoryImp* pMem);								// system create
-	virtual void Release(void);												// system release
+	virtual bool Initialize(IMemoryImp *pMem); // system create
+	virtual void Release(void);				   // system release
 
 	// memory
-	virtual UINT64 GetMemoryBase(void);										// get memory start address
-	virtual UINT64 GetMemorySize(void);										// get memory byte size
+	virtual uint64_t GetMemoryBase(void); // get memory start address
+	virtual uint64_t GetMemorySize(void); // get memory byte size
 
 	// register
-	virtual DWORD RegRead(UINT64 dwAddress);								// register read
-	virtual void RegWrite(UINT64 dwAddress, DWORD dwData);					// register write
+	virtual uint32_t RegRead(uint64_t dwAddress);					// register read
+	virtual void	 RegWrite(uint64_t dwAddress, uint32_t dwData); // register write
 
 	// system
-	virtual void RegisterInterruptService(INTRRUPT_SERVICE routine, void* pPrivate);		// register ISR
-	virtual void EnableInterrupt(bool bEnable = true);						// enable interrupt
-	virtual void ClearInterruptPending(void);								// clear interrupt pending bit
-	virtual DWORD DriverCommand(void* pCommand);							// post driver specific command
+	virtual void	 RegisterInterruptService(INTRRUPT_SERVICE routine, void *pPrivate); // register ISR
+	virtual void	 EnableInterrupt(bool bEnable = true);								 // enable interrupt
+	virtual void	 ClearInterruptPending(void);										 // clear interrupt pending bit
+	virtual uint32_t DriverCommand(void *pCommand);										 // post driver specific command
 
 	// memory manager
-	virtual IMemoryNative* CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment);
+	virtual IMemoryNative *CreateMemory(uint64_t dwByteSize, uint64_t dwByteAlignment);
 
 protected:
 	virtual void InvokeISR(void);
 
 private:
-	SystemDriverInterface*	m_pNativeDriver;
-	IMemoryImp*				m_pMemImp;
-	InterruptService		m_ISR;
-	bool					m_bMustExit;
-	std::string				m_sSystemDesc;
+	SystemDriverInterface *m_pNativeDriver;
+	IMemoryImp			  *m_pMemImp;
+	InterruptService	   m_ISR;
+	bool				   m_bMustExit;
+	std::string			   m_sSystemDesc;
 };
-#endif//__SYSTEM_DRIVER_H__
+#endif //__SYSTEM_DRIVER_H__

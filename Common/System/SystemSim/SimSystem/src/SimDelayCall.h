@@ -1,23 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
-// 
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -29,26 +29,27 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
-// Title : Simulation sub-system
-// Rev.  : 2/23/2023 Thu (clonextop@gmail.com)
+//
+// Title : Common profiles
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_DELAY_CALL_H__
 #define __SIM_DELAY_CALL_H__
 #include "SimEngine.h"
 
-typedef void (*SIM_DELAY_CALL)(void* pPrivate);
+typedef void (*SIM_DELAY_CALL)(void *pPrivate);
 
-class SimDelayCall : public SimInstance {
+class SimDelayCall : public SimInstance
+{
 public:
-	SimDelayCall(SIM_DELAY_CALL func, void* pPrivate = NULL, UINT64 uDelayTime_ps = 1000 * 10 * 16);
+	SimDelayCall(SIM_DELAY_CALL func, void *pPrivate = NULL, uint64_t uDelayTime_ps = 1000 * 10 * 16);
 	~SimDelayCall(void);
 
 	virtual bool OnRun(void);
 
 private:
-	SIM_DELAY_CALL	m_Function;
-	void*			m_pPrivate;
-	UINT64			m_uEndTime;
+	SIM_DELAY_CALL m_Function;
+	void		  *m_pPrivate;
+	uint64_t	   m_uEndTime;
 };
-#endif//__SIM_DELAY_CALL_H__
+#endif //__SIM_DELAY_CALL_H__

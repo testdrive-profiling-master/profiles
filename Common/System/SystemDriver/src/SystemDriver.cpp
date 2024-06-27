@@ -31,16 +31,16 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive System Driver wrapper
-// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "SystemDriver.h"
 #include "NativeMemory.h"
 
 SystemDriver::SystemDriver(void)
 {
-	m_pNativeDriver		= NULL;
-	m_pMemImp			= NULL;
-	m_bMustExit			= false;
+	m_pNativeDriver = NULL;
+	m_pMemImp		= NULL;
+	m_bMustExit		= false;
 	SetSystemDescription("System driver");
 }
 
@@ -52,27 +52,28 @@ SystemDriver::~SystemDriver(void)
 	SAFE_DELETE(m_pNativeDriver);
 }
 
-const char* SystemDriver::GetDescription(void)
+const char *SystemDriver::GetDescription(void)
 {
 	return GetSystemDescription();
 }
 
-bool SystemDriver::Initialize(IMemoryImp* pMem)
+bool SystemDriver::Initialize(IMemoryImp *pMem)
 {
 	SAFE_DELETE(m_pNativeDriver);
 	m_pNativeDriver = CreateNativeDriver();
 
-	if(!m_pNativeDriver->Initialize()) return false;
+	if (!m_pNativeDriver->Initialize())
+		return false;
 
 	// memory heap initialization
-	m_pMemImp	= pMem;
+	m_pMemImp = pMem;
 	pMem->Initialize(m_TotalMemory.base_address, m_TotalMemory.byte_size, this);
 
 	// apply inaccessible memory list
-	if(m_pInaccessibleMemory) {
-		MEMORY_DESC* pDesc	= m_pInaccessibleMemory;
+	if (m_pInaccessibleMemory) {
+		MEMORY_DESC *pDesc = m_pInaccessibleMemory;
 
-		while(pDesc->byte_size) {
+		while (pDesc->byte_size) {
 			pMem->SetInaccessible(pDesc->base_address, pDesc->byte_size);
 			pDesc++;
 		}
@@ -89,18 +90,18 @@ void SystemDriver::Release(void)
 	delete this;
 }
 
-DWORD SystemDriver::RegRead(UINT64 dwAddress)
+uint32_t SystemDriver::RegRead(uint64_t dwAddress)
 {
-	DWORD	dwData	= m_pNativeDriver->RegRead(dwAddress);
+	uint32_t dwData = m_pNativeDriver->RegRead(dwAddress);
 	return dwData;
 }
 
-void SystemDriver::RegWrite(UINT64 dwAddress, DWORD dwData)
+void SystemDriver::RegWrite(uint64_t dwAddress, uint32_t dwData)
 {
 	m_pNativeDriver->RegWrite(dwAddress, dwData);
 }
 
-void SystemDriver::RegisterInterruptService(INTRRUPT_SERVICE routine, void* pPrivate)
+void SystemDriver::RegisterInterruptService(INTRRUPT_SERVICE routine, void *pPrivate)
 {
 	m_ISR.RegisterService(routine, pPrivate);
 }
@@ -115,18 +116,18 @@ void SystemDriver::ClearInterruptPending(void)
 	m_ISR.ClearPending();
 }
 
-DWORD SystemDriver::DriverCommand(void* pCommand)
+uint32_t SystemDriver::DriverCommand(void *pCommand)
 {
 	return m_pNativeDriver->Command(pCommand);
 }
 
 // Memory interface
-UINT64 SystemDriver::GetMemoryBase(void)
+uint64_t SystemDriver::GetMemoryBase(void)
 {
 	return m_TotalMemory.base_address;
 }
 
-UINT64 SystemDriver::GetMemorySize(void)
+uint64_t SystemDriver::GetMemorySize(void)
 {
 	return m_TotalMemory.byte_size;
 }
@@ -136,7 +137,7 @@ void SystemDriver::InvokeISR(void)
 	m_ISR.Awake();
 }
 
-IMemoryNative* SystemDriver::CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment)
+IMemoryNative *SystemDriver::CreateMemory(uint64_t dwByteSize, uint64_t dwByteAlignment)
 {
 	return new NativeMemory(dwByteSize, dwByteAlignment);
 }

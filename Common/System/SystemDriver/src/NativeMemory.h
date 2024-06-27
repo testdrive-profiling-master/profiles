@@ -31,22 +31,23 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive System Driver wrapper
-// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __NATIVE_MEMORY_H__
 #define __NATIVE_MEMORY_H__
 #include "SystemDriverInterface.h"
 
-class NativeMemory : public IMemoryNative {
+class NativeMemory : public IMemoryNative
+{
 public:
-	BYTE*			pMem;
-	void*			pDriver;
+	BYTE *pMem;
+	void *pDriver;
 
-	NativeMemory(UINT64 dwByteSize, UINT64 dwAlignment);
+	NativeMemory(uint64_t dwByteSize, uint64_t dwAlignment);
 	virtual ~NativeMemory(void);
 
-	virtual void Release(void);
-	virtual BYTE* Virtual(void);
-	virtual bool Flush(UINT64 dwOffset, UINT64 dwPhyAddress, UINT64 dwByteSize, bool bWrite);
+	virtual void  Release(void);
+	virtual BYTE *Virtual(void);
+	virtual bool  Flush(uint64_t dwOffset, uint64_t dwPhyAddress, uint64_t dwByteSize, bool bWrite);
 };
-#endif//__NATIVE_MEMORY_H__
+#endif //__NATIVE_MEMORY_H__

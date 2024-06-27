@@ -31,22 +31,22 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive System Driver wrapper
-// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "STDInterface.h"
 #include "NativeMemory.h"
 
-NativeMemory::NativeMemory(UINT64 dwByteSize, UINT64 dwAlignment)
+NativeMemory::NativeMemory(uint64_t dwByteSize, uint64_t dwAlignment)
 {
-	pMem		= NULL;
-	pDriver		= NULL;
+	pMem	= NULL;
+	pDriver = NULL;
 	g_pDriver->MemoryCreate(this, dwByteSize, dwAlignment);
 }
 NativeMemory::~NativeMemory(void)
 {
 	g_pDriver->MemoryFree(this);
-	pDriver		= NULL;
-	pMem		= NULL;
+	pDriver = NULL;
+	pMem	= NULL;
 }
 
 void NativeMemory::Release(void)
@@ -54,15 +54,15 @@ void NativeMemory::Release(void)
 	delete this;
 }
 
-BYTE* NativeMemory::Virtual(void)
+BYTE *NativeMemory::Virtual(void)
 {
 	return pMem;
 }
 
-bool NativeMemory::Flush(UINT64 dwOffset, UINT64 dwPhyAddress, UINT64 dwByteSize, bool bWrite)
+bool NativeMemory::Flush(uint64_t dwOffset, uint64_t dwPhyAddress, uint64_t dwByteSize, bool bWrite)
 {
-	if(pMem) {
-		if(bWrite)
+	if (pMem) {
+		if (bWrite)
 			g_pDriver->MemoryWrite(this, dwPhyAddress, dwOffset, dwByteSize);
 		else
 			g_pDriver->MemoryRead(this, dwPhyAddress, dwOffset, dwByteSize);

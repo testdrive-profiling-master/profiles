@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,21 +31,21 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 11/9/2023 Thu (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __APB_SLAVE_H__
 #define __APB_SLAVE_H__
 #include "dpi_lib.h"
 
-class APB_Slave : public SelfDestory {
+class APB_Slave : public SelfDestory
+{
 public:
-	APB_Slave(const char* sTitle, UINT64 lAddrBase, UINT64 lAddrHigh, DWORD dwTimeout);
+	APB_Slave(const char *sTitle, uint64_t lAddrBase, uint64_t lAddrHigh, uint32_t dwTimeout);
 	virtual ~APB_Slave(void);
 
 	void BusSignal(
-		BYTE nRST,
-		BYTE& PSEL, BYTE& PENABLE, BYTE& PWRITE, UINT64& PADDR, DWORD& PWDATA, DWORD& PSTRB,
-		DWORD PRDATA, BYTE PREADY, BYTE PSLVERR);
+		uint8_t nRST, uint8_t &PSEL, uint8_t &PENABLE, uint8_t &PWRITE, uint64_t &PADDR, uint32_t &PWDATA, uint32_t &PSTRB, uint32_t PRDATA,
+		uint8_t PREADY, uint8_t PSLVERR);
 
 protected:
 	typedef enum {
@@ -56,13 +56,13 @@ protected:
 	} BUS_STATE;
 
 private:
-	BUS_SLAVE_INTERFACE*	m_pSlave;
-	BUS_STATE				m_state;
-	BUS_SALVE_PACKET*		m_pPacket;
-	bool					m_bWrite;
-	DWORD					m_dwTime;
-	DWORD					m_dwTimeout;
-	SystemLog				Log;
+	BUS_SLAVE_INTERFACE *m_pSlave;
+	BUS_STATE			 m_state;
+	BUS_SALVE_PACKET	*m_pPacket;
+	bool				 m_bWrite;
+	uint32_t			 m_dwTime;
+	uint32_t			 m_dwTimeout;
+	SystemLog			 Log;
 };
 
-#endif//__APB_SLAVE_H__
+#endif //__APB_SLAVE_H__

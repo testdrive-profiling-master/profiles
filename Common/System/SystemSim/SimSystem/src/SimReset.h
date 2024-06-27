@@ -1,23 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
-// 
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -29,27 +29,27 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
-// Title : Simulation sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+//
+// Title : Common profiles
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_RESET_H__
 #define __SIM_RESET_H__
 #include "SimEngine.h"
 
-class SimReset : public SimInstance {
-	DWORD		m_dwResetCycles;
-	DWORD		m_dwLifeCycle;
-	BYTE*		m_pRST;
+class SimReset : public SimInstance
+{
+	uint32_t m_dwResetCycles;
+	uint32_t m_dwLifeCycle;
+	uint8_t *m_pRST;
 
 public:
-	SimReset(BYTE* pRST);
+	SimReset(uint8_t *pRST);
 	~SimReset(void);
-
 
 	virtual bool OnRun(void);
 
-	void Set(DWORD dwCycles = 8, BYTE Polarity = 0);
-	bool DoCycle(void);
+	void		 Set(uint32_t dwCycles = 8, uint8_t Polarity = 0);
+	bool		 DoCycle(void);
 };
-#endif//__SIM_RESET_H__
+#endif //__SIM_RESET_H__

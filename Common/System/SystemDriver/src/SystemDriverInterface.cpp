@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive System Driver wrapper
-// Rev.  : 6/18/2024 Tue (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "SystemDriverInterface.h"
 
@@ -99,14 +99,15 @@ bool SystemDriverInterface::Initialize(const char *sDeviceName)
 	Release();
 
 	if (sDeviceName) {
-		if ((m_hDriver = CreateFile(sDeviceName, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING,
-									FILE_FLAG_OVERLAPPED, NULL)) != INVALID_HANDLE_VALUE) {
+		if ((m_hDriver = CreateFile(sDeviceName, GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, NULL)) !=
+			INVALID_HANDLE_VALUE) {
 			return true;
 		}
 
 		char sError[4096];
-		FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(),
-					  MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), sError, sizeof(sError), NULL);
+		FormatMessage(
+			FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), sError,
+			sizeof(sError), NULL);
 		LOGE(sError);
 		// failed to create device driver
 		m_hDriver = NULL;
@@ -123,15 +124,15 @@ void SystemDriverInterface::Release(void)
 	}
 }
 
-void SystemDriverInterface::SetCurrentCard(DWORD dwIndex)
+void SystemDriverInterface::SetCurrentCard(uint32_t dwIndex)
 {
 	// None implementation
 }
 
-DWORD SystemDriverInterface::Command(void *pCommand)
+uint32_t SystemDriverInterface::Command(void *pCommand)
 {
 	// None implementation
-	return (DWORD)-1;
+	return (uint32_t)-1;
 }
 
 void SystemDriverInterface::MemoryCreate(NativeMemory *pNative, UINT64 dwByteSize, UINT64 dwAlignment)

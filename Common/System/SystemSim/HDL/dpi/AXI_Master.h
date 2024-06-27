@@ -31,13 +31,13 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 2/2/2024 Fri (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __AXI_MASTER_H__
 #define __AXI_MASTER_H__
 #include "dpi_lib.h"
 
-#define	MAXI_TIMEOUT_COUNT		100000
+#define MAXI_TIMEOUT_COUNT 100000
 
 typedef enum {
 	MAXI_STATUS_INIT,
@@ -48,46 +48,53 @@ typedef enum {
 } MAXI_STATUS;
 
 typedef struct {
-	WORD			ID;
-	WORD			SIZE;		// byte size
-	UINT64			ADDR;		// address
-	WORD			BEAT;		// beat count
-	WORD			LEN;		// length
-	DWORD			BURST;		// burst mode
-	MAXI_STATUS		status;		// current status
-	DWORD			TimeOut;	// timeout count
+	uint16_t	ID;
+	uint16_t	SIZE;	 // byte size
+	uint64_t	ADDR;	 // address
+	uint16_t	BEAT;	 // beat count
+	uint16_t	LEN;	 // length
+	uint32_t	BURST;	 // burst mode
+	MAXI_STATUS status;	 // current status
+	uint32_t	TimeOut; // timeout count
 } MAXI_DESC;
 
-typedef RoundQueue<MAXI_DESC, 4>		MAXI_QUEUE;
+typedef RoundQueue<MAXI_DESC, 4> MAXI_QUEUE;
 
-class MAXI_Observer : public ChainList<MAXI_Observer> {
+class MAXI_Observer : public ChainList<MAXI_Observer>
+{
 public:
 	MAXI_Observer(void) : ChainList<MAXI_Observer>(this) {}
 	virtual ~MAXI_Observer(void) {}
 
-	virtual bool OnRead(MAXI_DESC* pDesc, BYTE* pData) {
+	virtual bool OnRead(MAXI_DESC *pDesc, uint8_t *pData)
+	{
 		return true;
 	}
-	virtual bool OnWrite(MAXI_DESC* pDesc, BYTE* pData) {
+	virtual bool OnWrite(MAXI_DESC *pDesc, uint8_t *pData)
+	{
 		return true;
 	}
 };
 
-class MAXI : public SelfDestory {
+class MAXI : public SelfDestory
+{
 	// access main memory
-	MAXI_QUEUE	m_WriteQ;
-	MAXI_QUEUE	m_ReadQ;
+	MAXI_QUEUE m_WriteQ;
+	MAXI_QUEUE m_ReadQ;
+
 public:
-	MAXI(const char* sTitle, int iDataWidth, bool bUseAXI4,  bool bLite, int iDebugLevel = 0);
+	MAXI(const char *sTitle, int iDataWidth, bool bUseAXI4, bool bLite, int iDebugLevel = 0);
 	virtual ~MAXI(void);
 
-	bool Read(MAXI_DESC* pDesc, BYTE* pData);
-	bool Write(MAXI_DESC* pDesc, const BYTE* pData, const DWORD* pByteStrob);
+	bool			   Read(MAXI_DESC *pDesc, uint8_t *pData);
+	bool			   Write(MAXI_DESC *pDesc, const uint8_t *pData, const uint32_t *pByteStrob);
 
-	inline MAXI_QUEUE& ReadQ(void)	{
+	inline MAXI_QUEUE &ReadQ(void)
+	{
 		return m_ReadQ;
 	}
-	inline MAXI_QUEUE& WriteQ(void)	{
+	inline MAXI_QUEUE &WriteQ(void)
+	{
 		return m_WriteQ;
 	}
 
@@ -95,65 +102,51 @@ public:
 	void ReleaseBus(void);
 
 	void BusWriteRequest(
-		BYTE nRST,
-		int AWID, UINT64 AWADDR, DWORD AWLEN, DWORD AWSIZE, DWORD AWBURST, BYTE AWLOCK, DWORD AWCACHE, DWORD AWPROT, DWORD AWREGION, DWORD AWQOS,
-		BYTE AWVALID, BYTE& AWREADY
-	);
-	void BusWriteRequestLite(
-		BYTE nRST,
-		UINT64 AWADDR, BYTE AWVALID, BYTE& AWREADY
-	);
+		uint8_t nRST, int AWID, uint64_t AWADDR, uint32_t AWLEN, uint32_t AWSIZE, uint32_t AWBURST, uint8_t AWLOCK, uint32_t AWCACHE,
+		uint32_t AWPROT, uint32_t AWREGION, uint32_t AWQOS, uint8_t AWVALID, uint8_t &AWREADY);
+	void BusWriteRequestLite(uint8_t nRST, uint64_t AWADDR, uint8_t AWVALID, uint8_t &AWREADY);
 	void BusWriteData(
-		BYTE nRST,
-		int WID, const DWORD* WDATA, const DWORD* WSTRB, BYTE WLAST, BYTE WVALID, BYTE& WREADY,
-		int& BID, DWORD& BRESP, BYTE& BVALID, BYTE BREADY
-	);
+		uint8_t nRST, int WID, const uint32_t *WDATA, const uint32_t *WSTRB, uint8_t WLAST, uint8_t WVALID, uint8_t &WREADY, int &BID,
+		uint32_t &BRESP, uint8_t &BVALID, uint8_t BREADY);
 	void BusReadRequest(
-		BYTE nRST,
-		int ARID, UINT64 ARADDR, DWORD ARLEN, DWORD ARSIZE, DWORD ARBURST, BYTE ARLOCK, DWORD ARCACHE, DWORD ARPROT, DWORD ARREGION, DWORD ARQOS,
-		BYTE ARVALID, BYTE& ARREADY
-	);
-	void BusReadRequestLite(
-		BYTE nRST,
-		UINT64 ARADDR, BYTE ARVALID, BYTE& ARREADY
-	);
-	void BusReadData(
-		BYTE nRST,
-		int& RID, DWORD* RDATA, DWORD& RRESP, BYTE& RLAST, BYTE& RVALID, BYTE RREADY
-	);
+		uint8_t nRST, int ARID, uint64_t ARADDR, uint32_t ARLEN, uint32_t ARSIZE, uint32_t ARBURST, uint8_t ARLOCK, uint32_t ARCACHE,
+		uint32_t ARPROT, uint32_t ARREGION, uint32_t ARQOS, uint8_t ARVALID, uint8_t &ARREADY);
+	void BusReadRequestLite(uint8_t nRST, uint64_t ARADDR, uint8_t ARVALID, uint8_t &ARREADY);
+	void BusReadData(uint8_t nRST, int &RID, uint32_t *RDATA, uint32_t &RRESP, uint8_t &RLAST, uint8_t &RVALID, uint8_t RREADY);
+
 protected:
-	void TouchAddress(MAXI_DESC* pDesc);
+	void TouchAddress(MAXI_DESC *pDesc);
 
 private:
-	DWORD		m_dwDataBytes;
-	UINT64		m_lAddressMask;
-	DWORD		m_dwMaxASIZE;
-	bool		m_bUseAXI4;
-	int			m_iDebugLevel;
-	BUS_SLAVE_INTERFACE*	m_pWriteSlave;
-	BUS_SLAVE_INTERFACE*	m_pReadSlave;
-	static BandwidthLimiter	m_Bandwidth;
+	uint32_t				m_dwDataBytes;
+	uint64_t				m_lAddressMask;
+	uint32_t				m_dwMaxASIZE;
+	bool					m_bUseAXI4;
+	int						m_iDebugLevel;
+	BUS_SLAVE_INTERFACE	   *m_pWriteSlave;
+	BUS_SLAVE_INTERFACE	   *m_pReadSlave;
+	static BandwidthLimiter m_Bandwidth;
 
 	struct {
-		MAXI_DESC*		pDesc;
-		BYTE			ARREADY;
-		BYTE			RVALID;
-		DWORD			RDATA[32];
-		BYTE			RLAST;
+		MAXI_DESC *pDesc;
+		uint8_t	   ARREADY;
+		uint8_t	   RVALID;
+		uint32_t   RDATA[32];
+		uint8_t	   RLAST;
 	} m_Read;
 
 	struct {
-		MAXI_DESC*		pDesc;
-		BYTE			AWREADY;
-		BYTE			WREADY;
-		BYTE			BID;
-		DWORD			BRESP;
-		DWORD			WDATA[32];
-		DWORD			WSTRB[4];
-		BYTE			BVALID;
-		DWORD			BVALID_TimeOut;
+		MAXI_DESC *pDesc;
+		uint8_t	   AWREADY;
+		uint8_t	   WREADY;
+		uint8_t	   BID;
+		uint32_t   BRESP;
+		uint32_t   WDATA[32];
+		uint32_t   WSTRB[4];
+		uint8_t	   BVALID;
+		uint32_t   BVALID_TimeOut;
 	} m_Write;
-	SystemLog				Log;
+	SystemLog Log;
 };
 
-#endif//__AXI_MASTER_H__
+#endif //__AXI_MASTER_H__

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "STDInterface.h"
@@ -42,41 +42,43 @@
 #include "BusSlave.h"
 #include "SystemMemory.h"
 #include "NativeMemory.h"
-#include <exception>	// for std::terminate
+#include <exception> // for std::terminate
 
 SystemSim::SystemSim(void)
 {
-	m_pSim				= NULL;
-	m_pMemImp			= NULL;
+	m_pSim	  = NULL;
+	m_pMemImp = NULL;
 }
 
-SystemSim::~SystemSim(void)
-{
-}
+SystemSim::~SystemSim(void) {}
 
-const char* SystemSim::GetDescription(void)
+const char *SystemSim::GetDescription(void)
 {
-	if(!m_pSim) return NULL;
+	if (!m_pSim)
+		return NULL;
 
 	return m_pSim->GetSystemDescription();
 }
 
-bool SystemSim::Initialize(IMemoryImp* pMem)
+bool SystemSim::Initialize(IMemoryImp *pMem)
 {
-	if(!g_SystemMemory.IsInitialized()) return false;
+	if (!g_SystemMemory.IsInitialized())
+		return false;
 
-	m_pSim	= new SimEngine();
+	m_pSim = new SimEngine();
 
-	if(!m_pSim->Initialize()) return false;
+	if (!m_pSim->Initialize())
+		return false;
 
 	// memory heap initialization
-	m_pMemImp	= pMem;
+	m_pMemImp = pMem;
 	pMem->Initialize(g_SystemMemory.BaseAddress(), g_SystemMemory.ByteSize(), this);
 	// run simulation thread
 	bool bRet = m_pSim->Start();
 
 	// wait until for start-up and release the reset.
-	if(bRet) while(!SimulationTime() || SimClock::IsReset())Sleep(0);
+	if (bRet)
+		while (!SimulationTime() || SimClock::IsReset()) Sleep(0);
 
 	// flush initial start-up H/W log.
 	fflush(stdout);
@@ -86,25 +88,25 @@ bool SystemSim::Initialize(IMemoryImp* pMem)
 void SystemSim::Release(void)
 {
 	// simulation end.
-	if(m_pSim) {
+	if (m_pSim) {
 		m_pSim->Terminate();
 		SAFE_DELETE(m_pSim);
 	}
 
 	// release memory implementation
-	if(m_pMemImp) {
+	if (m_pMemImp) {
 		m_pMemImp->Release();
-		m_pMemImp	= NULL;
+		m_pMemImp = NULL;
 	}
 
 	delete this;
 }
 
-DWORD SystemSim::RegRead(UINT64 dwAddress)
+uint32_t SystemSim::RegRead(uint64_t dwAddress)
 {
-	BusSlave* pSlave	= BusSlave::FindSlave(dwAddress);
+	BusSlave *pSlave = BusSlave::FindSlave(dwAddress);
 
-	if(pSlave) {
+	if (pSlave) {
 		return pSlave->Read(dwAddress);
 	} else {
 		LOGE("Invalid 'RegRead' address : 0x%08llX\n", dwAddress);
@@ -113,18 +115,18 @@ DWORD SystemSim::RegRead(UINT64 dwAddress)
 	return 0xDEADC0DE;
 }
 
-void SystemSim::RegWrite(UINT64 dwAddress, DWORD dwData)
+void SystemSim::RegWrite(uint64_t dwAddress, uint32_t dwData)
 {
-	BusSlave* pSlave	= BusSlave::FindSlave(dwAddress);
+	BusSlave *pSlave = BusSlave::FindSlave(dwAddress);
 
-	if(pSlave) {
+	if (pSlave) {
 		pSlave->Write(dwAddress, dwData);
 	} else {
 		LOGE("Invalid 'RegWrite' address : 0x%08X (data : 0x%llX)\n", dwAddress, dwData);
 	}
 }
 
-void SystemSim::RegisterInterruptService(INTRRUPT_SERVICE routine, void* pPrivate)
+void SystemSim::RegisterInterruptService(INTRRUPT_SERVICE routine, void *pPrivate)
 {
 	m_pSim->Interrupt().RegisterService(routine, pPrivate);
 }
@@ -139,28 +141,28 @@ void SystemSim::ClearInterruptPending(void)
 	m_pSim->Interrupt().ClearPending();
 }
 
-DWORD SystemSim::DriverCommand(void* pCommand)
+uint32_t SystemSim::DriverCommand(void *pCommand)
 {
 	return m_pSim->DriverCommand(pCommand);
 }
 
 // Memory interface
-UINT64 SystemSim::GetMemoryBase(void)
+uint64_t SystemSim::GetMemoryBase(void)
 {
 	return g_SystemMemory.BaseAddress();
 }
 
-UINT64 SystemSim::GetMemorySize(void)
+uint64_t SystemSim::GetMemorySize(void)
 {
 	return g_SystemMemory.ByteSize();
 }
 
-void* SystemSim::GetMemoryPointer(UINT64 lAddress, UINT64 dwByteSize)
+void *SystemSim::GetMemoryPointer(uint64_t lAddress, uint64_t dwByteSize)
 {
 	return g_SystemMemory.GetPointer(lAddress, dwByteSize);
 }
 
-IMemoryNative* SystemSim::CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment)
+IMemoryNative *SystemSim::CreateMemory(uint64_t dwByteSize, uint64_t dwByteAlignment)
 {
 	return new NativeSystemMemory(dwByteSize);
 }

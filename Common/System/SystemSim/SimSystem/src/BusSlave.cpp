@@ -1,23 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
-// 
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -29,47 +29,43 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : Common profiles
-// Rev.  : 4/14/2023 Fri (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "BusSlave.h"
 
-BusSlave*	BusSlave::m_pHead	= NULL;
-Semaphore	BusSlave::m_LockSW(1);
+BusSlave *BusSlave::m_pHead = NULL;
+Semaphore BusSlave::m_LockSW(1);
 
 //----------------------------------------------------------------------------------------------------
 // Slave bus method
 //----------------------------------------------------------------------------------------------------
-BusSlave::BusSlave(UINT64 lAddrBase, UINT64 lAddrHigh) :
-	m_LockBusAck(0),
-	m_LockBus(1),
-	m_lAddrBase(lAddrBase),
-	m_lAddrHigh(lAddrHigh)
+BusSlave::BusSlave(uint64_t lAddrBase, uint64_t lAddrHigh) : m_LockBusAck(0), m_LockBus(1), m_lAddrBase(lAddrBase), m_lAddrHigh(lAddrHigh)
 {
 	// link chain
-	m_pNext			= m_pHead;
-	m_pHead			= this;
-	memset(&m_Read,  0, sizeof(m_Read));
+	m_pNext = m_pHead;
+	m_pHead = this;
+	memset(&m_Read, 0, sizeof(m_Read));
 	memset(&m_Write, 0, sizeof(m_Write));
 }
 
 BusSlave::~BusSlave(void)
 {
 	// unlink chain
-	if(m_pHead == this) {
-		m_pHead	= m_pNext;
+	if (m_pHead == this) {
+		m_pHead = m_pNext;
 	} else {
-		BusSlave* pSlave	= m_pHead;
+		BusSlave *pSlave = m_pHead;
 
-		while(pSlave) {
-			if(pSlave->m_pNext == this) {
-				pSlave->m_pNext	= m_pNext;
+		while (pSlave) {
+			if (pSlave->m_pNext == this) {
+				pSlave->m_pNext = m_pNext;
 				break;
 			}
 
-			pSlave	= pSlave->m_pNext;
+			pSlave = pSlave->m_pNext;
 		}
 	}
 }
@@ -79,22 +75,22 @@ bool BusSlave::OnRun(void)
 	return m_Read.bEnable | m_Write.bEnable;
 }
 
-void BusSlave::Write(UINT64 lAddrBase, DWORD dwData)
+void BusSlave::Write(uint64_t lAddrBase, uint32_t dwData)
 {
 	m_LockSW.Down();
 	{
 	RETRY:
 		m_LockBus.Down();
 
-		if(m_Write.bEnable || m_Write.bWait) {
+		if (m_Write.bEnable || m_Write.bWait) {
 			m_LockBus.Up();
 			goto RETRY;
 		}
 
-		m_Write.packet.lAddr	= lAddrBase;
-		m_Write.packet.dwData	= dwData;
-		m_Write.bEnable			= true;
-		m_Write.bWait			= false;
+		m_Write.packet.lAddr  = lAddrBase;
+		m_Write.packet.dwData = dwData;
+		m_Write.bEnable		  = true;
+		m_Write.bWait		  = false;
 		m_LockBus.Up();
 		TRACE_UNLOCK
 		m_pSim->Unlock();
@@ -103,43 +99,43 @@ void BusSlave::Write(UINT64 lAddrBase, DWORD dwData)
 	m_LockSW.Up();
 }
 
-DWORD BusSlave::Read(UINT64 lAddrBase)
+uint32_t BusSlave::Read(uint64_t lAddrBase)
 {
-	DWORD	dwData;
+	uint32_t dwData;
 	m_LockSW.Down();
 	{
 	RETRY:
 		m_LockBus.Down();
 
-		if(m_Read.bEnable || m_Write.bWait) {
+		if (m_Read.bEnable || m_Write.bWait) {
 			m_LockBus.Up();
 			goto RETRY;
 		}
 
-		m_Read.packet.lAddr		= lAddrBase;
-		m_Read.bEnable			= true;
-		m_Read.bWait			= false;
+		m_Read.packet.lAddr = lAddrBase;
+		m_Read.bEnable		= true;
+		m_Read.bWait		= false;
 		m_LockBus.Up();
 		TRACE_UNLOCK
 		m_pSim->Unlock();
 		m_LockBusAck.Down();
-		dwData			= m_Read.packet.dwData;
+		dwData = m_Read.packet.dwData;
 	}
 	m_LockSW.Up();
 	return dwData;
 }
 
-bool BusSlave::RequestWrite(UINT64 lAddr, DWORD dwData)
+bool BusSlave::RequestWrite(uint64_t lAddr, uint32_t dwData)
 {
-	bool bRet	= false;
+	bool bRet = false;
 	m_LockBus.Down();
 
-	if(!m_Write.bEnable && !m_Write.bWait) {
-		bRet					= true;
-		m_Write.bEnable			= true;
-		m_Write.bWait			= true;
-		m_Write.packet.lAddr	= lAddr;
-		m_Write.packet.dwData	= dwData;
+	if (!m_Write.bEnable && !m_Write.bWait) {
+		bRet				  = true;
+		m_Write.bEnable		  = true;
+		m_Write.bWait		  = true;
+		m_Write.packet.lAddr  = lAddr;
+		m_Write.packet.dwData = dwData;
 		m_pSim->Unlock();
 	}
 
@@ -149,28 +145,28 @@ bool BusSlave::RequestWrite(UINT64 lAddr, DWORD dwData)
 
 bool BusSlave::WaitWrite(void)
 {
-	bool bRet	= false;
+	bool bRet = false;
 	m_LockBus.Down();
 
-	if(!m_Write.bEnable && m_Write.bWait) {
-		bRet					= true;
-		m_Write.bWait			= false;
+	if (!m_Write.bEnable && m_Write.bWait) {
+		bRet		  = true;
+		m_Write.bWait = false;
 	}
 
 	m_LockBus.Up();
 	return bRet;
 }
 
-bool BusSlave::RequestRead(UINT64 lAddr)
+bool BusSlave::RequestRead(uint64_t lAddr)
 {
-	bool bRet	= false;
+	bool bRet = false;
 	m_LockBus.Down();
 
-	if(!m_Read.bEnable && !m_Read.bWait) {
-		bRet					= true;
-		m_Read.bEnable			= true;
-		m_Read.bWait			= true;
-		m_Read.packet.lAddr		= lAddr;
+	if (!m_Read.bEnable && !m_Read.bWait) {
+		bRet				= true;
+		m_Read.bEnable		= true;
+		m_Read.bWait		= true;
+		m_Read.packet.lAddr = lAddr;
 		m_pSim->Unlock();
 	}
 
@@ -178,22 +174,22 @@ bool BusSlave::RequestRead(UINT64 lAddr)
 	return bRet;
 }
 
-bool BusSlave::WaitRead(DWORD& dwData)
+bool BusSlave::WaitRead(uint32_t &dwData)
 {
-	bool bRet	= false;
+	bool bRet = false;
 	m_LockBus.Down();
 
-	if(!m_Read.bEnable && m_Read.bWait) {
-		bRet					= true;
-		m_Read.bWait			= false;
-		dwData					= m_Read.packet.dwData;
+	if (!m_Read.bEnable && m_Read.bWait) {
+		bRet		 = true;
+		m_Read.bWait = false;
+		dwData		 = m_Read.packet.dwData;
 	}
 
 	m_LockBus.Up();
 	return bRet;
 }
 
-BUS_SALVE_PACKET* BusSlave::GetWrite(void)
+BUS_SALVE_PACKET *BusSlave::GetWrite(void)
 {
 	return m_Write.bEnable ? &m_Write.packet : NULL;
 }
@@ -201,15 +197,16 @@ BUS_SALVE_PACKET* BusSlave::GetWrite(void)
 void BusSlave::WriteAck(void)
 {
 	m_LockBus.Down();
-	m_Write.bEnable		= false;
+	m_Write.bEnable = false;
 
-	if(!m_Write.bWait) m_LockBusAck.Up();
+	if (!m_Write.bWait)
+		m_LockBusAck.Up();
 
 	m_LockBus.Up();
 	TRACE_LOCK
 	m_pSim->Lock(32);
 }
-BUS_SALVE_PACKET* BusSlave::GetRead(void)
+BUS_SALVE_PACKET *BusSlave::GetRead(void)
 {
 	return m_Read.bEnable ? &m_Read.packet : NULL;
 }
@@ -217,39 +214,41 @@ BUS_SALVE_PACKET* BusSlave::GetRead(void)
 void BusSlave::ReadAck(void)
 {
 	m_LockBus.Down();
-	m_Read.bEnable		= false;
+	m_Read.bEnable = false;
 
-	if(!m_Read.bWait) m_LockBusAck.Up();
+	if (!m_Read.bWait)
+		m_LockBusAck.Up();
 
 	m_LockBus.Up();
 	TRACE_LOCK
 	m_pSim->Lock(32);
 }
 
-bool BusSlave::IsValidAddress(UINT64 lAddress)
+bool BusSlave::IsValidAddress(uint64_t lAddress)
 {
 	return (lAddress >= m_lAddrBase) && (lAddress <= m_lAddrHigh);
 }
 
-BusSlave* BusSlave::FindSlave(UINT64 lAddress)
+BusSlave *BusSlave::FindSlave(uint64_t lAddress)
 {
-	BusSlave* pSlave	= m_pHead;
+	BusSlave *pSlave = m_pHead;
 
-	while(pSlave) {
-		if(pSlave->IsValidAddress(lAddress)) break;
+	while (pSlave) {
+		if (pSlave->IsValidAddress(lAddress))
+			break;
 
-		pSlave	= pSlave->m_pNext;
+		pSlave = pSlave->m_pNext;
 	}
 
 	return pSlave;
 }
 
-BUS_SLAVE_INTERFACE* SimEngine::CreateSlave(UINT64 lAddrBase, UINT64 lAddrHigh)
+BUS_SLAVE_INTERFACE *SimEngine::CreateSlave(uint64_t lAddrBase, uint64_t lAddrHigh)
 {
 	return new BusSlave(lAddrBase, lAddrHigh);
 }
 
-BUS_SLAVE_INTERFACE* SimEngine::FindSlave(UINT64 lAddress)
+BUS_SLAVE_INTERFACE *SimEngine::FindSlave(uint64_t lAddress)
 {
 	return BusSlave::FindSlave(lAddress);
 }

@@ -75,7 +75,7 @@ void StarterKit::Initialize(void)
 	// randomize screen
 	for (int y = 0; y < TFT_LCD_DISPLAY_HEIGHT; y++)
 		for (int x = 0; x < TFT_LCD_DISPLAY_WIDTH; x++) {
-			DWORD dwColor = (rand() & 0xFF) | ((rand() & 0xFF)) << 8 | ((rand() & 0xFF) << 16);
+			uint32_t dwColor = (rand() & 0xFF) | ((rand() & 0xFF)) << 8 | ((rand() & 0xFF) << 16);
 			m_pReg->tft_lcd_display.buffer.front[x + y * TFT_LCD_DISPLAY_WIDTH] = dwColor;
 			m_pReg->tft_lcd_display.buffer.back[x + y * TFT_LCD_DISPLAY_WIDTH]	= dwColor;
 		}
@@ -83,7 +83,7 @@ void StarterKit::Initialize(void)
 	m_pReg->tft_lcd_display.bUpdate = true;
 }
 
-void StarterKit::LED(DWORD pins)
+void StarterKit::LED(uint32_t pins)
 {
 	for (int i = 0; i < 9; i++) {
 		ACCUMULATE_DATA acc;
@@ -98,7 +98,7 @@ void StarterKit::LED(DWORD pins)
 	}
 }
 
-void StarterKit::NumericDisplay(DWORD pins)
+void StarterKit::NumericDisplay(uint32_t pins)
 {
 	union { // KW4-56NCWB-P-Y
 		uint32_t pins;
@@ -170,7 +170,7 @@ void StarterKit::NumericDisplay(DWORD pins)
 	}
 }
 
-void StarterKit::Motor(BYTE PWM, BYTE DIR, BYTE &SENSOR)
+void StarterKit::Motor(uint8_t PWM, uint8_t DIR, uint8_t &SENSOR)
 {
 	static double fValocity = 0;
 	int			  iRatio	= m_pReg->motor.iRatio;
@@ -193,11 +193,11 @@ void StarterKit::Motor(BYTE PWM, BYTE DIR, BYTE &SENSOR)
 	}
 }
 
-void StarterKit::TFTLCD_Display(BYTE EN, BYTE DE, BYTE VSYNC, BYTE HSYNC, DWORD dwRGB)
+void StarterKit::TFTLCD_Display(uint8_t EN, uint8_t DE, uint8_t VSYNC, uint8_t HSYNC, uint32_t dwRGB)
 {
 	static int	 x = 0, y = 0;
-	static BYTE	 vsync_pre = 0, hsync_pre = 0;
-	static DWORD dwOffset = 0;
+	static uint8_t	 vsync_pre = 0, hsync_pre = 0;
+	static uint32_t dwOffset = 0;
 
 	if (EN) {
 		if (VSYNC) {
@@ -238,12 +238,12 @@ void StarterKit::TFTLCD_Display(BYTE EN, BYTE DE, BYTE VSYNC, BYTE HSYNC, DWORD 
 	}
 }
 
-void StarterKit::GetButtons(DWORD &dwButtons)
+void StarterKit::GetButtons(uint32_t &dwButtons)
 {
 	dwButtons = m_pReg->buttons;
 }
 
-void StarterKit::GetSwitches(DWORD &dwSwitches)
+void StarterKit::GetSwitches(uint32_t &dwSwitches)
 {
 	dwSwitches = m_pReg->switches;
 }
@@ -254,7 +254,7 @@ void StarterKit::GetSwitches(DWORD &dwSwitches)
 void StarterKit_MainLoop(void)
 {
 	{
-		DWORD dwFrequency;
+		uint32_t dwFrequency;
 		float fVolume;
 		__Buzzer.Get(dwFrequency, fVolume);
 
@@ -270,22 +270,22 @@ void StarterKit_LED(const svBitVecVal *pins)
 
 void StarterKit_NumericDisplay(const svBitVecVal *pins)
 {
-	__starter_kit.NumericDisplay(*(DWORD *)pins);
+	__starter_kit.NumericDisplay(*(uint32_t *)pins);
 }
 
 void StarterKit_GetButtons(svBitVecVal *pins)
 {
-	__starter_kit.GetButtons(*(DWORD *)pins);
+	__starter_kit.GetButtons(*(uint32_t *)pins);
 }
 
 void StarterKit_GetSwitches(svBitVecVal *pins)
 {
-	__starter_kit.GetSwitches(*(DWORD *)pins);
+	__starter_kit.GetSwitches(*(uint32_t *)pins);
 }
 
 void StarterKit_Motor(svBit PWM, svBit DIR, svBit *SENSOR)
 {
-	__starter_kit.Motor(PWM, DIR, *(BYTE *)SENSOR);
+	__starter_kit.Motor(PWM, DIR, *(uint8_t *)SENSOR);
 }
 
 void StarterKit_TFT_LCD(svBit DISP, svBit HSYNC, svBit VSYNC, svBit DE, const svBitVecVal *RGB)

@@ -31,122 +31,133 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "VirtualDisplay.h"
 #include "SelfDestory.h"
 
-static VirtualDisplay*	__VirtualDisplay	= NULL;
+static VirtualDisplay *__VirtualDisplay = NULL;
 
 VirtualDisplay::VirtualDisplay(void)
 {
 	memset(&m_MemoryRange, 0, sizeof(m_MemoryRange));
-	m_pConfig			= NULL;
-	__VirtualDisplay	= this;
+	m_pConfig		 = NULL;
+	__VirtualDisplay = this;
 }
 VirtualDisplay::~VirtualDisplay(void)
 {
-	m_pConfig			= NULL;
-	__VirtualDisplay	= NULL;
+	m_pConfig		 = NULL;
+	__VirtualDisplay = NULL;
 }
 
 void VirtualDisplay::Initialize(bool bReverse)
 {
 	m_pConfig			= GetDisplayConfig();
-	m_pConfig->bReverse	= bReverse;
+	m_pConfig->bReverse = bReverse;
 }
 void VirtualDisplay::SetBaseAddress(uint64_t lBaseAddress, bool bFront)
 {
-	if(!m_pConfig) return;
+	if (!m_pConfig)
+		return;
 
-	DisplayBuffer* pBuffer	= bFront ? &m_pConfig->Front : &m_pConfig->Back;
-	pBuffer->dwAddress	= lBaseAddress - GetMemoryBaseAddress();
-	pBuffer->bUpdate	= true;
+	DisplayBuffer *pBuffer = bFront ? &m_pConfig->Front : &m_pConfig->Back;
+	pBuffer->dwAddress	   = lBaseAddress - GetMemoryBaseAddress();
+	pBuffer->bUpdate	   = true;
 	UpdateMemoryRange();
 }
-void VirtualDisplay::SetFormat(int iWidth, int iHeight, DWORD dwByteStride, DISPLAY_FORMAT Format)
+void VirtualDisplay::SetFormat(int iWidth, int iHeight, uint32_t dwByteStride, DISPLAY_FORMAT Format)
 {
-	if(!m_pConfig) return;
+	if (!m_pConfig)
+		return;
 
-	if(!dwByteStride) {
+	if (!dwByteStride) {
 		static const BYTE __FormatSize[] = {
-			1,		// A8
-			1,		// L8
-			2,		// L8A8
-			2,		// R5G6B5
-			2,		// R4G4B4A4
-			2,		// R5G5B5A1
-			3,		// R8G8B8
-			4,		// A8B8G8R8
-			4,		// R8G8B8A8
-			4,		// A8R8G8B8
+			1, // A8
+			1, // L8
+			2, // L8A8
+			2, // R5G6B5
+			2, // R4G4B4A4
+			2, // R5G5B5A1
+			3, // R8G8B8
+			4, // A8B8G8R8
+			4, // R8G8B8A8
+			4, // A8R8G8B8
 		};
-		dwByteStride			= iWidth * __FormatSize[m_pConfig->ColorFormat];
+		dwByteStride = iWidth * __FormatSize[m_pConfig->ColorFormat];
 	}
 
-	m_pConfig->iWidth			= iWidth;
-	m_pConfig->iHeight			= iHeight;
-	m_pConfig->ColorFormat		= Format;
-	m_pConfig->Front.bUpdate	= true;
-	m_pConfig->Back.bUpdate		= true;
-	m_pConfig->dwByteStride		= dwByteStride;
+	m_pConfig->iWidth		 = iWidth;
+	m_pConfig->iHeight		 = iHeight;
+	m_pConfig->ColorFormat	 = Format;
+	m_pConfig->Front.bUpdate = true;
+	m_pConfig->Back.bUpdate	 = true;
+	m_pConfig->dwByteStride	 = dwByteStride;
 	UpdateMemoryRange();
 }
 
 void VirtualDisplay::Update(bool bFront)
 {
-	if(!m_pConfig) return;
+	if (!m_pConfig)
+		return;
 
-	DisplayBuffer* pBuffer	= bFront ? &m_pConfig->Front : &m_pConfig->Back;
-	pBuffer->bUpdate		= true;
+	DisplayBuffer *pBuffer = bFront ? &m_pConfig->Front : &m_pConfig->Back;
+	pBuffer->bUpdate	   = true;
 }
 
-void VirtualDisplay::OnDoFilter(DWORD dwAddress, DWORD dwByteSize)
+void VirtualDisplay::OnDoFilter(uint64_t dwAddress, uint32_t dwByteSize)
 {
-	if(dwAddress < m_MemoryRange.dwBase  || dwAddress >= m_MemoryRange.dwEnd) return;
+	if (dwAddress < m_MemoryRange.dwBase || dwAddress >= m_MemoryRange.dwEnd)
+		return;
 
-	if(!m_pConfig) return;
+	if (!m_pConfig)
+		return;
 
-	m_pConfig->Back.bUpdate		= true;
+	m_pConfig->Back.bUpdate = true;
 }
-
 
 void VirtualDisplay::UpdateMemoryRange(void)
 {
-	if(!m_pConfig) return;
+	if (!m_pConfig)
+		return;
 
-	m_MemoryRange.dwBase	= m_pConfig->Back.dwAddress + GetMemoryBaseAddress();
-	m_MemoryRange.dwEnd		= m_MemoryRange.dwBase + (m_pConfig->dwByteStride * m_pConfig->iHeight);
+	m_MemoryRange.dwBase = m_pConfig->Back.dwAddress + GetMemoryBaseAddress();
+	m_MemoryRange.dwEnd	 = m_MemoryRange.dwBase + (m_pConfig->dwByteStride * m_pConfig->iHeight);
 }
 
 DPI_FUNCTION void VirtualDisplayInitialize(int bReverse)
 {
-	if(!__VirtualDisplay) __VirtualDisplay	= new VirtualDisplay;
+	if (!__VirtualDisplay)
+		__VirtualDisplay = new VirtualDisplay;
 
 	__VirtualDisplay->Initialize(bReverse);
 }
 
 DPI_FUNCTION void VirtualDisplayBaseAddress(unsigned long long lBaseAddress, int bFront)
 {
-	if(!__VirtualDisplay) return;
+	if (!__VirtualDisplay)
+		return;
 
 	__VirtualDisplay->SetBaseAddress(lBaseAddress, bFront);
 }
 
 DPI_FUNCTION void VirtualDisplayFormat(int iWidth, int iHeight, unsigned int dwByteStride, unsigned int Format)
 {
-	if(!__VirtualDisplay) return;
+	if (!__VirtualDisplay)
+		return;
 
-	if(iWidth < 0 || iWidth > 4096) iWidth	= 100;
+	if (iWidth < 0 || iWidth > 4096)
+		iWidth = 100;
 
-	if(iHeight < 0 || iHeight > 4096) iHeight	= 100;
+	if (iHeight < 0 || iHeight > 4096)
+		iHeight = 100;
 
 	__VirtualDisplay->SetFormat(iWidth, iHeight, dwByteStride, (DISPLAY_FORMAT)Format);
 }
 
 DPI_FUNCTION void VirtualDisplayUpdate(int bFront)
 {
-	if(!__VirtualDisplay) return;
+	if (!__VirtualDisplay)
+		return;
 
 	__VirtualDisplay->Update(bFront);
 }

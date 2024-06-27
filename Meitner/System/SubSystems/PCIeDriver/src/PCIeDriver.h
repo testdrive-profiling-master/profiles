@@ -31,36 +31,37 @@
 // OF SUCH DAMAGE.
 //
 // Title : Driver(PCIe) sub-system
-// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __PCIE_DRIVER_H__
 #define __PCIE_DRIVER_H__
 #include "SystemDriverInterface.h"
 #include "driver_testdrive.h"
 
-class PCIeDriver : public SystemDriverInterface {
+class PCIeDriver : public SystemDriverInterface
+{
 public:
 	PCIeDriver(void);
 	virtual ~PCIeDriver(void);
 
 	// native driver interfaces
-	virtual bool Initialize(const char* sDeviceName = NULL);
-	virtual void Release(void);
-	virtual void SetCurrentCard(DWORD dwIndex);
-	virtual void RegWrite(UINT64 dwAddress, DWORD dwData);
-	virtual DWORD RegRead(UINT64 dwAddress);
-	virtual void MemoryWrite(NativeMemory* pNative, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize);
-	virtual void MemoryRead(NativeMemory* pNative, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize);
-	virtual void MemoryCreate(NativeMemory* pNative, UINT64 dwByteSize, UINT64 dwAlignment);
-	virtual void MemoryFree(NativeMemory* pNative);
-	virtual void InterruptLock(void);
-	virtual void InterruptFree(void);
-	virtual DWORD Command(void* pCommand);
+	virtual bool	 Initialize(const char *sDeviceName = NULL);
+	virtual void	 Release(void);
+	virtual void	 SetCurrentCard(uint32_t dwIndex);
+	virtual void	 RegWrite(uint64_t dwAddress, uint32_t dwData);
+	virtual uint32_t RegRead(uint64_t dwAddress);
+	virtual void	 MemoryWrite(NativeMemory *pNative, uint64_t dwAddress, uint64_t dwOffset, uint32_t dwByteSize);
+	virtual void	 MemoryRead(NativeMemory *pNative, uint64_t dwAddress, uint64_t dwOffset, uint32_t dwByteSize);
+	virtual void	 MemoryCreate(NativeMemory *pNative, uint64_t dwByteSize, uint64_t dwAlignment);
+	virtual void	 MemoryFree(NativeMemory *pNative);
+	virtual void	 InterruptLock(void);
+	virtual void	 InterruptFree(void);
+	virtual uint32_t Command(void *pCommand);
 
 private:
-	OVERLAPPED			m_OverlappedIO;
-	DWORD				m_dwCurrentCardID;
-	int					m_iBarID;				// BAR# of RegWrite/RegRead
+	OVERLAPPED m_OverlappedIO;
+	uint32_t   m_dwCurrentCardID;
+	int		   m_iBarID; // BAR# of RegWrite/RegRead
 };
 
-#endif//__PCIE_DRIVER_H__
+#endif //__PCIE_DRIVER_H__

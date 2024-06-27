@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,27 +31,24 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 10/18/2023 Wed (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __AXI_SLAVE_LITE_H__
 #define __AXI_SLAVE_LITE_H__
 #include "AXI_common.h"
 #include "RoundQueue.h"
 
-class SAXI_Lite : public SelfDestory {
+class SAXI_Lite : public SelfDestory
+{
 public:
-	SAXI_Lite(const char* sTitle, DWORD dwAddrBase, DWORD dwAddrHigh);
+	SAXI_Lite(const char *sTitle, uint32_t dwAddrBase, uint32_t dwAddrHigh);
 	virtual ~SAXI_Lite(void);
 
 	void BusWrite(
-		BYTE nRST,
-		UINT64& AWADDR, BYTE& AWVALID, BYTE AWREADY,
-		DWORD& WDATA, DWORD& WSTRB, BYTE& WVALID, BYTE WREADY,
-		DWORD BRESP, BYTE BVALID, BYTE& BREADY);
-	void BusRead(
-		BYTE nRST,
-		UINT64& ARADDR, BYTE& ARVALID, BYTE ARREADY,
-		DWORD RDATA, DWORD RRESP, BYTE RVALID, BYTE& RREADY);
+		uint8_t nRST, uint64_t &AWADDR, uint8_t &AWVALID, uint8_t AWREADY, uint32_t &WDATA, uint32_t &WSTRB, uint8_t &WVALID, uint8_t WREADY,
+		uint32_t BRESP, uint8_t BVALID, uint8_t &BREADY);
+	void
+	BusRead(uint8_t nRST, uint64_t &ARADDR, uint8_t &ARVALID, uint8_t ARREADY, uint32_t RDATA, uint32_t RRESP, uint8_t RVALID, uint8_t &RREADY);
 
 protected:
 	typedef enum {
@@ -63,21 +60,21 @@ protected:
 	} BUS_STATE;
 
 private:
-	BUS_SLAVE_INTERFACE*	m_pSlave;
+	BUS_SLAVE_INTERFACE *m_pSlave;
 	struct {
-		BUS_STATE			state;
-		BUS_SALVE_PACKET*	packet;
-		DWORD				dwTime;
+		BUS_STATE		  state;
+		BUS_SALVE_PACKET *packet;
+		uint32_t		  dwTime;
 	} m_Read, m_Write;
 	union {
-		DWORD				all;
+		uint32_t all;
 		struct {
-			BYTE				control;
-			BYTE				data;
+			uint8_t control;
+			uint8_t data;
 		};
-	} m_WFlag;	// write flag
+	} m_WFlag; // write flag
 
-	SystemLog				Log;
+	SystemLog Log;
 };
 
-#endif//__AXI_SLAVE_LITE_H__
+#endif //__AXI_SLAVE_LITE_H__

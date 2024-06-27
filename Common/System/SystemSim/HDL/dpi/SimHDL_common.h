@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 11/9/2023 Thu (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIMHDL_COMMON_H__
 #define __SIMHDL_COMMON_H__
@@ -44,36 +44,36 @@
 #include "VirtualDisplayConfig.h"
 #include "dpi_interfaces.h"
 #ifndef SIMHDL_LIB
-#include "../verilator/SimTop__Dpi.h"
+#	include "../verilator/SimTop__Dpi.h"
 #endif
 
-#define LOGI(...)			printf("*I: [SimHDL] " __VA_ARGS__)
-#define LOGE(...)			printf("*E: [SimHDL] " __VA_ARGS__)
-#define DPI_FUNCTION		extern "C"
-#define GET_SYSTEM_REGMAP	((SYSTEM_REGMAP*)GetMemoryPointer(0, 0, true))
+#define LOGI(...)		  printf("*I: [SimHDL] " __VA_ARGS__)
+#define LOGE(...)		  printf("*E: [SimHDL] " __VA_ARGS__)
+#define DPI_FUNCTION	  extern "C"
+#define GET_SYSTEM_REGMAP ((SYSTEM_REGMAP *)GetMemoryPointer(0, 0, true))
 
 // Non-DPI
-extern UINT64	g_lSimulationTime;
-SYSTEM_CONFIG* GetSystemConfig(void);
-DisplayConfig* GetDisplayConfig(void);
-BYTE* GetMemoryPointer(UINT64 lAddress, DWORD dwSize = 0, bool bDisplay = false);
-UINT64 GetMemoryBaseAddress(void);
-bool GetMemory(const char* sName, void*& pConfig, void*& pMemory);
-const char* GetConfigString(const char* sKeyName, const char* sDefault = NULL);
-void SetConfigString(const char* sKeyName, const char* sData = NULL);
-int GetConfigInt(const char* sKeyName, int iDefault = 0);
-void SetConfigInt(const char* sKeyName, int iData);
+extern uint64_t g_lSimulationTime;
+SYSTEM_CONFIG  *GetSystemConfig(void);
+DisplayConfig  *GetDisplayConfig(void);
+BYTE		   *GetMemoryPointer(uint64_t lAddress, uint32_t dwSize = 0, bool bDisplay = false);
+uint64_t		GetMemoryBaseAddress(void);
+bool			GetMemory(const char *sName, void *&pConfig, void *&pMemory);
+const char	   *GetConfigString(const char *sKeyName, const char *sDefault = NULL);
+void			SetConfigString(const char *sKeyName, const char *sData = NULL);
+int				GetConfigInt(const char *sKeyName, int iDefault = 0);
+void			SetConfigInt(const char *sKeyName, int iData);
 extern bool (*DPI_Initialize)(void);
 extern void (*DPI_Finalize)(void);
 
 // DPI functions
-DPI_FUNCTION void SimulationLock(int iDelayTicks = 0);
-DPI_FUNCTION void SimulationUnLock(void);
-DPI_FUNCTION void SimulationQuit(bool bError = false);
-DPI_FUNCTION void SimulationStop(void);
-DPI_FUNCTION void SimulationFlush(void);
-DPI_FUNCTION void SimulationDebugMode(bool bDebug = true);
-DPI_FUNCTION UINT64 SimulationTime(void);
-DPI_FUNCTION void SetSystemDescription(const char* sDesc);
+DPI_FUNCTION void	  SimulationLock(int iDelayTicks = 0);
+DPI_FUNCTION void	  SimulationUnLock(void);
+DPI_FUNCTION void	  SimulationQuit(bool bError = false);
+DPI_FUNCTION void	  SimulationStop(void);
+DPI_FUNCTION void	  SimulationFlush(void);
+DPI_FUNCTION void	  SimulationDebugMode(bool bDebug = true);
+DPI_FUNCTION uint64_t SimulationTime(void);
+DPI_FUNCTION void	  SetSystemDescription(const char *sDesc);
 
-#endif//__SIMHDL_COMMON_H__
+#endif //__SIMHDL_COMMON_H__

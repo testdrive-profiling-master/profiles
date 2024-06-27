@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_SIM_H__
 #define __SYSTEM_SIM_H__
@@ -41,40 +41,39 @@
 #include "VirtualDisplayConfig.h"
 #include "NativeMemory.h"
 
-class SystemSim :
-	public ISystemImp,
-	public IMemoryManager {
+class SystemSim : public ISystemImp, public IMemoryManager
+{
 public:
 	SystemSim(void);
 	virtual ~SystemSim(void);
 
 	// Identify
-	virtual const char* GetDescription(void);								// get system description
+	virtual const char *GetDescription(void); // get system description
 
 	// life cycle
-	virtual bool Initialize(IMemoryImp* pMem);								// system initialize
-	virtual void Release(void);												// release all system resources
+	virtual bool Initialize(IMemoryImp *pMem); // system initialize
+	virtual void Release(void);				   // release all system resources
 
 	// memory
-	virtual UINT64 GetMemoryBase(void);										// get memory start address
-	virtual UINT64 GetMemorySize(void);										// get memory byte size
-	virtual void* GetMemoryPointer(UINT64 lAddress, UINT64 dwByteSize = 0);		// get virtual pointer from physical address
+	virtual uint64_t GetMemoryBase(void);										   // get memory start address
+	virtual uint64_t GetMemorySize(void);										   // get memory byte size
+	virtual void	*GetMemoryPointer(uint64_t lAddress, uint64_t dwByteSize = 0); // get virtual pointer from physical address
 
 	// register
-	virtual DWORD RegRead(UINT64 dwAddress);								// register read
-	virtual void RegWrite(UINT64 dwAddress, DWORD dwData);					// register write
+	virtual uint32_t RegRead(uint64_t dwAddress);					// register read
+	virtual void	 RegWrite(uint64_t dwAddress, uint32_t dwData); // register write
 
 	// system
-	virtual void RegisterInterruptService(INTRRUPT_SERVICE routine, void* pPrivate);		// register interrupt service routine
-	virtual void EnableInterrupt(bool bEnable = true);						// enable interrupt service
-	virtual void ClearInterruptPending(void);								// clear interrupt service pending bit
-	virtual DWORD DriverCommand(void* pCommand);							// post driver specific command
+	virtual void	 RegisterInterruptService(INTRRUPT_SERVICE routine, void *pPrivate); // register interrupt service routine
+	virtual void	 EnableInterrupt(bool bEnable = true);								 // enable interrupt service
+	virtual void	 ClearInterruptPending(void);										 // clear interrupt service pending bit
+	virtual uint32_t DriverCommand(void *pCommand);										 // post driver specific command
 
 	// memory manager
-	virtual IMemoryNative* CreateMemory(UINT64 dwByteSize, UINT64 dwByteAlignment);
+	virtual IMemoryNative *CreateMemory(uint64_t dwByteSize, uint64_t dwByteAlignment);
 
 private:
-	SimEngine*				m_pSim;
-	IMemoryImp*				m_pMemImp;
+	SimEngine  *m_pSim;
+	IMemoryImp *m_pMemImp;
 };
-#endif//__SYSTEM_SIM_H__
+#endif //__SYSTEM_SIM_H__

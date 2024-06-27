@@ -1,23 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
-// 
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -29,31 +29,31 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
-// Title : Simulation sub-system
-// Rev.  : 1/30/2023 Mon (clonextop@gmail.com)
+//
+// Title : Common profiles
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "SimClock.h"
 #include <assert.h>
 
-DWORD			SimClock::m_dwElapsedTime		= 0;
-bool			SimClock::m_bReset				= true;
+uint32_t SimClock::m_dwElapsedTime = 0;
+bool	 SimClock::m_bReset		   = true;
 
-SimClock::SimClock(BYTE* pCLK, BYTE* pRST)
+SimClock::SimClock(uint8_t *pCLK, uint8_t *pRST)
 {
-	m_dwID					= 0;
-	m_pCLK					= pCLK;
-	m_pRST					= pRST;
-	m_NextClock				= 0;
-	m_NextReset				= 0;
-	m_clock_polarity		= 1;
-	m_reset_polarity		= 0;
-	m_reset_cycles			= 0;
-	m_dwPeriod				= 5000;		// default 5000ps(5ns)
-	m_dwLeftTime			= 0;
+	m_dwID			 = 0;
+	m_pCLK			 = pCLK;
+	m_pRST			 = pRST;
+	m_NextClock		 = 0;
+	m_NextReset		 = 0;
+	m_clock_polarity = 1;
+	m_reset_polarity = 0;
+	m_reset_cycles	 = 0;
+	m_dwPeriod		 = 5000; // default 5000ps(5ns)
+	m_dwLeftTime	 = 0;
 	// add to linked list
-	m_pReset				= NULL;
+	m_pReset = NULL;
 	Refresh();
 }
 
@@ -64,83 +64,85 @@ SimClock::~SimClock(void)
 
 void SimClock::Tik(void)
 {
-	SimClock*	pNode	= Head();
+	SimClock *pNode = Head();
 
 	// present clocking
-	while(pNode) {
+	while (pNode) {
 		pNode->ProcessTik();
-		pNode	= pNode->Next();
+		pNode = pNode->Next();
 	}
 }
 
-DWORD SimClock::Tok(void)
+uint32_t SimClock::Tok(void)
 {
-	SimClock*	pNode			= Head();
-	DWORD		dwMinTIme		= 0xFFFFFFFF;
-	DWORD		dwCurElpaseTime	= m_dwElapsedTime;
-	bool		bReset			= false;
+	SimClock *pNode			  = Head();
+	uint32_t  dwMinTIme		  = 0xFFFFFFFF;
+	uint32_t  dwCurElpaseTime = m_dwElapsedTime;
+	bool	  bReset		  = false;
 
-	if(pNode) {
-		while(pNode) {
-			bReset	|= pNode->ProcessTok(dwCurElpaseTime, dwMinTIme);
-			pNode	= pNode->Next();
+	if (pNode) {
+		while (pNode) {
+			bReset |= pNode->ProcessTok(dwCurElpaseTime, dwMinTIme);
+			pNode = pNode->Next();
 		}
 
-		m_dwElapsedTime		= dwMinTIme;
+		m_dwElapsedTime = dwMinTIme;
 	} else {
-		m_dwElapsedTime		= 5000;		// default half clock is 5000ps(5ns)
+		m_dwElapsedTime = 5000; // default half clock is 5000ps(5ns)
 	}
 
-	m_bReset	= bReset;
+	m_bReset = bReset;
 	return dwCurElpaseTime;
 }
 
 void SimClock::ProcessTik(void)
 {
-	*m_pCLK		= m_NextClock;
+	*m_pCLK = m_NextClock;
 }
 
-bool SimClock::ProcessTok(DWORD dwElapsedTime, DWORD& dwMinTime)
+bool SimClock::ProcessTok(uint32_t dwElapsedTime, uint32_t &dwMinTime)
 {
-	bool	bReset	= (m_pReset != NULL);
-	m_dwLeftTime	-= dwElapsedTime;
+	bool bReset = (m_pReset != NULL);
+	m_dwLeftTime -= dwElapsedTime;
 
-	if(!m_dwLeftTime) {
-		m_dwLeftTime	= m_dwPeriod;
-		m_NextClock		^= 1;
+	if (!m_dwLeftTime) {
+		m_dwLeftTime = m_dwPeriod;
+		m_NextClock ^= 1;
 
-		if(m_pReset && m_NextClock == m_clock_polarity) {
-			if(!m_pReset->DoCycle()) {
-				m_pReset	= NULL;
+		if (m_pReset && m_NextClock == m_clock_polarity) {
+			if (!m_pReset->DoCycle()) {
+				m_pReset = NULL;
 			}
 		}
 	}
 
-	if(m_dwLeftTime < dwMinTime)
-		dwMinTime	= m_dwLeftTime;
+	if (m_dwLeftTime < dwMinTime)
+		dwMinTime = m_dwLeftTime;
 
 	return bReset;
 }
 
-void SimClock::SetParameters(DWORD dwID, DWORD dwPeriod, BYTE bInitValue, DWORD dwPhase, BYTE ClockPolarity, BYTE ResetPolarity)
+void SimClock::SetParameters(
+	uint32_t dwID, uint32_t dwPeriod, uint8_t bInitValue, uint32_t dwPhase, uint8_t ClockPolarity, uint8_t ResetPolarity)
 {
 	assert(dwPeriod != 0);
-	m_dwID					= dwID;
-	*m_pCLK					= bInitValue;
-	m_NextClock				= bInitValue;
-	m_clock_polarity		= ClockPolarity;
-	m_reset_polarity		= ResetPolarity;
-	m_dwPeriod				= dwPeriod;
-	m_dwLeftTime			= dwPeriod + dwPhase;
+	m_dwID			 = dwID;
+	*m_pCLK			 = bInitValue;
+	m_NextClock		 = bInitValue;
+	m_clock_polarity = ClockPolarity;
+	m_reset_polarity = ResetPolarity;
+	m_dwPeriod		 = dwPeriod;
+	m_dwLeftTime	 = dwPeriod + dwPhase;
 	Refresh();
 }
 
-void SimClock::DoReset(DWORD dwCycles)
+void SimClock::DoReset(uint32_t dwCycles)
 {
-	if(!m_pReset) m_pReset	= new SimReset(m_pRST);
+	if (!m_pReset)
+		m_pReset = new SimReset(m_pRST);
 
 	m_pReset->Set(dwCycles, m_reset_polarity);
-	m_bReset	= true;
+	m_bReset = true;
 }
 
 void SimClock::Release(void)
@@ -150,23 +152,24 @@ void SimClock::Release(void)
 
 void SimClock::Refresh(void)
 {
-	m_dwElapsedTime			= 0;
+	m_dwElapsedTime = 0;
 	Tok();
 }
 
-CLOCK_INTERFACE* SimEngine::CreateClock(BYTE* pCLK, BYTE* pRST)
+CLOCK_INTERFACE *SimEngine::CreateClock(uint8_t *pCLK, uint8_t *pRST)
 {
 	return new SimClock(pCLK, pRST);
 }
 
-CLOCK_INTERFACE* SimEngine::FindClock(BYTE* pCLK)
+CLOCK_INTERFACE *SimEngine::FindClock(uint8_t *pCLK)
 {
-	SimClock*	pNode	= SimClock::Head();
+	SimClock *pNode = SimClock::Head();
 
-	while(pNode) {
-		if(pNode->CLK() == pCLK) return pNode;
+	while (pNode) {
+		if (pNode->CLK() == pCLK)
+			return pNode;
 
-		pNode	= pNode->Next();
+		pNode = pNode->Next();
 	}
 
 	return NULL;

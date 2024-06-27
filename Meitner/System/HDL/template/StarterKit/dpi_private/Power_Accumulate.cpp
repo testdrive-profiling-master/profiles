@@ -46,10 +46,10 @@ PowerAccumulate::~PowerAccumulate(void)
 {
 }
 
-void PowerAccumulate::Eval(DWORD bOn)
+void PowerAccumulate::Eval(uint32_t bOn)
 {
 	// modify power level for LED.
-	DWORD	dwAccumulate	= m_dwAccumulate;
+	uint32_t	dwAccumulate	= m_dwAccumulate;
 	bOn	&= 1;
 
 	if(m_Buffer[m_dwIndex]) dwAccumulate--;

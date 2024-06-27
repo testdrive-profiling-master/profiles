@@ -73,7 +73,7 @@ void SystemLog::Log(LOG_ID id, const char* fmt, ...)
 		UINT64	llTime	= SimulationTime();
 		{
 			static const char*	_time_unit[] = {"ps", "ns", "us", "ms", "s", "m", "h"};
-			DWORD		dwTimeBuff[7];
+			uint32_t		dwTimeBuff[7];
 			int			iMaxTimeScale	= 0;
 
 			for(; iMaxTimeScale < 7; iMaxTimeScale++) {
@@ -133,9 +133,9 @@ MemoryWriteFilter::~MemoryWriteFilter(void)
 {
 }
 
-void MemoryWriteFilter::DoFilter(DWORD dwAddress, DWORD dwByteSize)
+void MemoryWriteFilter::DoFilter(uint64_t uAddress, uint32_t dwByteSize)
 {
 	for(ChainList<MemoryWriteFilter>* pNode = ChainList<MemoryWriteFilter>::Head(); pNode; pNode = pNode->Next()) {
-		pNode->Item()->OnDoFilter(dwAddress, dwByteSize);
+		pNode->Item()->OnDoFilter(uAddress, dwByteSize);
 	}
 }

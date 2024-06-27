@@ -31,32 +31,33 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __VIRTUAL_DISPLAY_H__
 #define __VIRTUAL_DISPLAY_H__
 #include "dpi_lib.h"
 
-class VirtualDisplay : public MemoryWriteFilter {
+class VirtualDisplay : public MemoryWriteFilter
+{
 public:
 	VirtualDisplay(void);
 	virtual ~VirtualDisplay(void);
 
 	void Initialize(bool bReverse = FALSE);
 	void SetBaseAddress(uint64_t lBaseAddress, bool bFront = FALSE);
-	void SetFormat(int iWidth, int iHeight, DWORD dwByteStride = 0, DISPLAY_FORMAT Format = DISPLAY_FORMAT_ARGB_8888);
+	void SetFormat(int iWidth, int iHeight, uint32_t dwByteStride = 0, DISPLAY_FORMAT Format = DISPLAY_FORMAT_ARGB_8888);
 	void Update(bool bFront = FALSE);
 
 protected:
-	virtual void OnDoFilter(DWORD dwAddress, DWORD dwByteSize);
+	virtual void OnDoFilter(uint64_t dwAddress, uint32_t dwByteSize);
 
 private:
-	virtual void UpdateMemoryRange(void);
+	virtual void   UpdateMemoryRange(void);
 
-	DisplayConfig*		m_pConfig;
+	DisplayConfig *m_pConfig;
 	struct {
-		DWORD			dwBase;
-		DWORD			dwEnd;
+		uint64_t dwBase;
+		uint64_t dwEnd;
 	} m_MemoryRange;
 };
 
@@ -65,4 +66,4 @@ DPI_FUNCTION void VirtualDisplayBaseAddress(unsigned long long lBaseAddress, int
 DPI_FUNCTION void VirtualDisplayFormat(int iWidth, int iHeight, unsigned int dwByteStride, unsigned int Format);
 DPI_FUNCTION void VirtualDisplayUpdate(int bFront = FALSE);
 
-#endif//__VIRTUAL_DISPLAY_H__
+#endif //__VIRTUAL_DISPLAY_H__

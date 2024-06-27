@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,28 +31,30 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 11/9/2023 Thu (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __DPI_PIBONACHI_H__
 #define __DPI_PIBONACHI_H__
 #include "dpi_lib.h"
 
-class Pibonachi {
+class Pibonachi
+{
 public:
 	Pibonachi(void);
 	~Pibonachi(void);
 
-	void Reset(void);
-	bool CountUp(void);
-	void Generate(void);
+	void			Reset(void);
+	bool			CountUp(void);
+	void			Generate(void);
 
-	inline UINT64 GetTicks(void)	{
-		return  m_iTicks;
+	inline uint64_t GetTicks(void)
+	{
+		return m_iTicks;
 	}
 
 private:
-	UINT64		m_iTicks;
-	UINT64		m_iPibonachi, m_iIncreasement;
+	uint64_t m_iTicks;
+	uint64_t m_iPibonachi, m_iIncreasement;
 };
 
-#endif//__DPI_PIBONACHI_H__
+#endif //__DPI_PIBONACHI_H__

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive System Driver wrapper
-// Rev.  : 6/18/2024 Tue (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_DRIVER_INTERFACE_H__
 #define __SYSTEM_DRIVER_INTERFACE_H__
@@ -49,8 +49,8 @@ void LOGE(const char *fmt, ...);
 
 //#define USE_TRACE_LOG
 #ifdef USE_TRACE_LOG
-#	define TRACE_LOG(s)                                                                                               \
-		printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);                                  \
+#	define TRACE_LOG(s)                                                                                                                        \
+		printf("\t* TRACE %s : %s - %s (%d)\n", s, __FILE__, __FUNCTION__, __LINE__);                                                           \
 		fflush(stdout);
 #else
 #	define TRACE_LOG(s)
@@ -59,8 +59,8 @@ void LOGE(const char *fmt, ...);
 class NativeMemory;
 
 typedef struct {
-	UINT64 base_address;
-	UINT64 byte_size;
+	uint64_t base_address;
+	uint64_t byte_size;
 } MEMORY_DESC;
 
 class DriverCommon
@@ -91,34 +91,34 @@ public:
 	virtual void Release(void);
 
 	// register & memory interface
-	virtual void  SetCurrentCard(DWORD dwIndex);
-	virtual void  RegWrite(UINT64 dwAddress, DWORD dwData)												  = 0;
-	virtual DWORD RegRead(UINT64 dwAddress)																  = 0;
-	virtual void  MemoryWrite(NativeMemory *pNative, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize) = 0;
-	virtual void  MemoryRead(NativeMemory *pNative, UINT64 dwAddress, UINT64 dwOffset, DWORD dwByteSize)  = 0;
-	virtual void  InterruptLock(void)																	  = 0;
-	virtual void  InterruptFree(void)																	  = 0;
-	virtual DWORD Command(void *pCommand);
-	virtual void  MemoryCreate(NativeMemory *pNative, UINT64 dwByteSize, UINT64 dwAlignment);
-	virtual void  MemoryFree(NativeMemory *pNative);
+	virtual void	 SetCurrentCard(uint32_t dwIndex);
+	virtual void	 RegWrite(uint64_t dwAddress, uint32_t dwData)													= 0;
+	virtual uint32_t RegRead(uint64_t dwAddress)																	= 0;
+	virtual void	 MemoryWrite(NativeMemory *pNative, uint64_t dwAddress, uint64_t dwOffset, uint32_t dwByteSize) = 0;
+	virtual void	 MemoryRead(NativeMemory *pNative, uint64_t dwAddress, uint64_t dwOffset, uint32_t dwByteSize)	= 0;
+	virtual void	 InterruptLock(void)																			= 0;
+	virtual void	 InterruptFree(void)																			= 0;
+	virtual uint32_t Command(void *pCommand);
+	virtual void	 MemoryCreate(NativeMemory *pNative, uint64_t dwByteSize, uint64_t dwAlignment);
+	virtual void	 MemoryFree(NativeMemory *pNative);
 
 	// inlines
-	inline DWORD CardCount(void)
+	inline uint32_t CardCount(void)
 	{
 		return m_dwCardCount;
 	}
 
 protected:
-	HANDLE m_hDriver;
-	DWORD  m_dwCardCount;
+	HANDLE	 m_hDriver;
+	uint32_t m_dwCardCount;
 };
 
 extern SystemDriverInterface *g_pDriver;
 
-#define DECLARE_NATIVE_DRIVER(T)                                                                                       \
-	SystemDriverInterface *CreateNativeDriver(void)                                                                    \
-	{                                                                                                                  \
-		return new T;                                                                                                  \
+#define DECLARE_NATIVE_DRIVER(T)                                                                                                                \
+	SystemDriverInterface *CreateNativeDriver(void)                                                                                             \
+	{                                                                                                                                           \
+		return new T;                                                                                                                           \
 	}
 SystemDriverInterface *CreateNativeDriver(void);
 

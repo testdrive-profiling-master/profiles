@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : HDMI controller
-// Rev.  : 6/26/2024 Wed (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "dpi_common.h"
 
@@ -43,11 +43,11 @@ static HDMI_DISPLAY __display;
 
 DPI_FUNCTION void	hdmi_out(unsigned char de, unsigned char hsync, unsigned char vsync, const svBitVecVal *data)
 {
-	static BYTE			  prev_hsync	 = 0;
-	static BYTE			  prev_vsync	 = 0;
+	static uint8_t		  prev_hsync	 = 0;
+	static uint8_t		  prev_vsync	 = 0;
 	static int			  x				 = 0;
 	static int			  y				 = 0;
-	static BOOL			  bSet			 = FALSE;
+	static bool			  bSet			 = false;
 	static DisplayConfig *pDisplayConfig = NULL;
 	static DisplayColor	 *pBuffer		 = NULL;
 
@@ -80,7 +80,7 @@ DPI_FUNCTION void	hdmi_out(unsigned char de, unsigned char hsync, unsigned char 
 			if (pBuffer)
 				pBuffer[x + y * __display.width].color = *(DWORD *)data;
 
-			bSet						 = TRUE;
+			bSet						 = true;
 			pDisplayConfig->Back.bUpdate = TRUE;
 			x++;
 		}
@@ -94,7 +94,7 @@ DPI_FUNCTION void	hdmi_out(unsigned char de, unsigned char hsync, unsigned char 
 
 			if (bSet) {
 				y++;
-				bSet = FALSE;
+				bSet = false;
 			}
 
 			if (y > __display.height) {

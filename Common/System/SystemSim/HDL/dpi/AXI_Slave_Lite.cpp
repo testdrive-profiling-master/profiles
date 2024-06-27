@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,54 +31,50 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 10/18/2023 Wed (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "AXI_Slave_Lite.h"
 
-SAXI_Lite::SAXI_Lite(const char* sTitle, DWORD dwAddrBase, DWORD dwAddrHigh)
+SAXI_Lite::SAXI_Lite(const char *sTitle, uint32_t dwAddrBase, uint32_t dwAddrHigh)
 {
 	Log.SetTitle(*sTitle ? "SAXI_Lite('%s')" : "SAXI_Lite", sTitle);
-	m_pSlave		= CreateSlave(dwAddrBase, dwAddrHigh);
-	memset(&m_Read,  0, sizeof(m_Read));
+	m_pSlave = CreateSlave(dwAddrBase, dwAddrHigh);
+	memset(&m_Read, 0, sizeof(m_Read));
 	memset(&m_Write, 0, sizeof(m_Write));
-	m_WFlag.all		= 0;
+	m_WFlag.all = 0;
 	LOGI("Bus created - 0x%08X ~ 0x%08X", dwAddrBase, dwAddrHigh);
 }
 
-SAXI_Lite::~SAXI_Lite(void)
-{
-}
+SAXI_Lite::~SAXI_Lite(void) {}
 
 //----------------------------------------------------------------------------------------------------
 // Write bus
 //----------------------------------------------------------------------------------------------------
 void SAXI_Lite::BusWrite(
-	BYTE nRST,
-	UINT64& AWADDR, BYTE& AWVALID, BYTE AWREADY,
-	DWORD& WDATA, DWORD& WSTRB, BYTE& WVALID, BYTE WREADY,
-	DWORD BRESP, BYTE BVALID, BYTE& BREADY)
+	uint8_t nRST, uint64_t &AWADDR, uint8_t &AWVALID, uint8_t AWREADY, uint32_t &WDATA, uint32_t &WSTRB, uint8_t &WVALID, uint8_t WREADY,
+	uint32_t BRESP, uint8_t BVALID, uint8_t &BREADY)
 {
-	AWADDR				= 0xDEADC0DE;
-	AWVALID				= 0;
-	WDATA				= 0;
-	WSTRB				= 0;
-	WVALID				= 0;
-	BREADY				= 0;
+	AWADDR	= 0xDEADC0DE;
+	AWVALID = 0;
+	WDATA	= 0;
+	WSTRB	= 0;
+	WVALID	= 0;
+	BREADY	= 0;
 
-	if(!nRST) {
-		m_Write.state		= BUS_STATE_RESET;
+	if (!nRST) {
+		m_Write.state = BUS_STATE_RESET;
 	} else {
-		switch(m_Write.state) {
+		switch (m_Write.state) {
 		case BUS_STATE_RESET:
-			if(AWREADY) {
+			if (AWREADY) {
 				LOGW("S_AWREADY is must be initialized with zero on start.");
 			}
 
-			m_Write.state		= BUS_STATE_IDLE;
+			m_Write.state = BUS_STATE_IDLE;
 			break;
 
 		case BUS_STATE_IDLE:
-			if((m_Write.packet	= m_pSlave->GetWrite())) {
+			if ((m_Write.packet = m_pSlave->GetWrite())) {
 				// address transaction
 				AWVALID			= 1;
 				WVALID			= 1;
@@ -86,7 +82,7 @@ void SAXI_Lite::BusWrite(
 				AWADDR			= m_Write.packet->lAddr;
 				WDATA			= m_Write.packet->dwData;
 				m_Write.dwTime	= 0;
-				m_WFlag.control	= 1;
+				m_WFlag.control = 1;
 				m_WFlag.data	= 1;
 				m_Write.state	= BUS_STATE_CONTROL;
 			}
@@ -97,35 +93,36 @@ void SAXI_Lite::BusWrite(
 			m_Write.dwTime++;
 
 			// address control
-			if(m_WFlag.control) {
-				if(AWREADY)
-					m_WFlag.control	= 0;
+			if (m_WFlag.control) {
+				if (AWREADY)
+					m_WFlag.control = 0;
 				else
-					AWVALID			= 1;
+					AWVALID = 1;
 			}
 
 			// data transaction
-			if(m_WFlag.data) {
-				if(WREADY) {
-					m_WFlag.data	= 0;
+			if (m_WFlag.data) {
+				if (WREADY) {
+					m_WFlag.data = 0;
 
-					if(m_WFlag.control) LOGW("WREADY is asserted too early before the AWREADY.");
+					if (m_WFlag.control)
+						LOGW("WREADY is asserted too early before the AWREADY.");
 				} else
-					WVALID			= 1;
+					WVALID = 1;
 			}
 
-			if(m_WFlag.all) {
-				WSTRB			= 0xF;
-				AWADDR			= m_Write.packet->lAddr;
-				WDATA			= m_Write.packet->dwData;
+			if (m_WFlag.all) {
+				WSTRB  = 0xF;
+				AWADDR = m_Write.packet->lAddr;
+				WDATA  = m_Write.packet->dwData;
 			} else {
 				m_pSlave->WriteAck();
-				BREADY			= 1;
-				m_Write.dwTime	= 0;
-				m_Write.state	= BUS_STATE_RESP;
+				BREADY		   = 1;
+				m_Write.dwTime = 0;
+				m_Write.state  = BUS_STATE_RESP;
 			}
 
-			if(m_Write.dwTime > 5000)
+			if (m_Write.dwTime > 5000)
 				LOGE("Too long waited on write control transaction.");
 
 			break;
@@ -133,15 +130,15 @@ void SAXI_Lite::BusWrite(
 		case BUS_STATE_RESP:
 			m_Write.dwTime++;
 
-			if(BVALID) {
-				if(BRESP) {
+			if (BVALID) {
+				if (BRESP) {
 					LOGE("BRESP('%s') is asserted.", g_sAXI_BRESP[BRESP]);
 				}
 
-				m_Write.state	= BUS_STATE_IDLE;
+				m_Write.state = BUS_STATE_IDLE;
 			}
 
-			if(m_Write.dwTime > 5000)
+			if (m_Write.dwTime > 5000)
 				LOGE("Too long waited for BVALID signal.");
 
 			break;
@@ -150,36 +147,30 @@ void SAXI_Lite::BusWrite(
 }
 
 DPI_FUNCTION void SAXIW_Interface(
-	void* hSAXIL,
-	unsigned char nRST,
-	svBitVecVal* AWADDR, unsigned char* AWVALID, unsigned char AWREADY, svBitVecVal* WDATA, svBitVecVal* WSTRB, unsigned char* WVALID, unsigned char WREADY, const svBitVecVal* BRESP, unsigned char BVALID, unsigned char* BREADY)
+	void *hSAXIL, unsigned char nRST, svBitVecVal *AWADDR, unsigned char *AWVALID, unsigned char AWREADY, svBitVecVal *WDATA, svBitVecVal *WSTRB,
+	unsigned char *WVALID, unsigned char WREADY, const svBitVecVal *BRESP, unsigned char BVALID, unsigned char *BREADY)
 {
-	SAXI_Lite* pSAXI	= reinterpret_cast<SAXI_Lite*>(hSAXIL);
+	SAXI_Lite *pSAXI = reinterpret_cast<SAXI_Lite *>(hSAXIL);
 	pSAXI->BusWrite(
-		nRST,
-		*(UINT64*)AWADDR, *AWVALID, AWREADY,
-		*(DWORD*)WDATA, *(DWORD*)WSTRB, *WVALID, WREADY,
-		*BRESP, BVALID, *BREADY);
+		nRST, *(uint64_t *)AWADDR, *AWVALID, AWREADY, *(uint32_t *)WDATA, *(uint32_t *)WSTRB, *WVALID, WREADY, *BRESP, BVALID, *BREADY);
 }
 
 //----------------------------------------------------------------------------------------------------
 // Read bus
 //----------------------------------------------------------------------------------------------------
 void SAXI_Lite::BusRead(
-	BYTE nRST,
-	UINT64& ARADDR, BYTE& ARVALID, BYTE ARREADY,
-	DWORD RDATA, DWORD RRESP, BYTE RVALID, BYTE& RREADY)
+	uint8_t nRST, uint64_t &ARADDR, uint8_t &ARVALID, uint8_t ARREADY, uint32_t RDATA, uint32_t RRESP, uint8_t RVALID, uint8_t &RREADY)
 {
-	ARADDR		= 0;
-	ARVALID		= 0;
-	RREADY		= 0;
+	ARADDR	= 0;
+	ARVALID = 0;
+	RREADY	= 0;
 
-	if(!nRST) {
-		m_Read.state	= BUS_STATE_RESET;
+	if (!nRST) {
+		m_Read.state = BUS_STATE_RESET;
 	} else {
-		switch(m_Read.state) {
+		switch (m_Read.state) {
 		case BUS_STATE_RESET:
-			if(RVALID) {
+			if (RVALID) {
 				LOGW("S_RVALID is must be initialized with zero on start.");
 			}
 
@@ -187,12 +178,12 @@ void SAXI_Lite::BusRead(
 			break;
 
 		case BUS_STATE_IDLE:
-			if((m_Read.packet = m_pSlave->GetRead())) {
+			if ((m_Read.packet = m_pSlave->GetRead())) {
 				// address transaction
-				ARVALID			= 1;
-				ARADDR			= m_Read.packet->lAddr;
-				m_Read.dwTime	= 0;
-				m_Read.state	= BUS_STATE_CONTROL;
+				ARVALID		  = 1;
+				ARADDR		  = m_Read.packet->lAddr;
+				m_Read.dwTime = 0;
+				m_Read.state  = BUS_STATE_CONTROL;
 			}
 
 			break;
@@ -200,17 +191,17 @@ void SAXI_Lite::BusRead(
 		case BUS_STATE_CONTROL:
 			m_Read.dwTime++;
 
-			if(ARREADY) {	// address ready check
+			if (ARREADY) { // address ready check
 				// data transaction
-				RREADY			= 1;
-				m_Read.dwTime	= 0;
-				m_Read.state	= BUS_STATE_DATA;
+				RREADY		  = 1;
+				m_Read.dwTime = 0;
+				m_Read.state  = BUS_STATE_DATA;
 			} else {
-				ARVALID			= 1;
-				ARADDR			= m_Read.packet->lAddr;
+				ARVALID = 1;
+				ARADDR	= m_Read.packet->lAddr;
 			}
 
-			if(m_Read.dwTime > 5000)
+			if (m_Read.dwTime > 5000)
 				LOGE("Too long waited on read control transaction.");
 
 			break;
@@ -218,20 +209,20 @@ void SAXI_Lite::BusRead(
 		case BUS_STATE_DATA:
 			m_Read.dwTime++;
 
-			if(RVALID) {
+			if (RVALID) {
 				// data is ok
-				m_Read.packet->dwData	= RDATA;
+				m_Read.packet->dwData = RDATA;
 				m_pSlave->ReadAck();
-				m_Read.state	= BUS_STATE_IDLE;
+				m_Read.state = BUS_STATE_IDLE;
 
-				if(RRESP) {
+				if (RRESP) {
 					LOGE("RRESP('%s') is asserted.", g_sAXI_BRESP[RRESP]);
 				}
 			} else {
-				RREADY			= 1;
+				RREADY = 1;
 			}
 
-			if(m_Read.dwTime > 5000)
+			if (m_Read.dwTime > 5000)
 				LOGE("Too long waited on RVALID signal.");
 
 			break;
@@ -240,18 +231,14 @@ void SAXI_Lite::BusRead(
 }
 
 DPI_FUNCTION void SAXIR_Interface(
-	void* hSAXIL,
-	unsigned char nRST,
-	unsigned long long* ARADDR, unsigned char* ARVALID, unsigned char ARREADY, const svBitVecVal* RDATA, const svBitVecVal* RRESP, unsigned char RVALID, unsigned char* RREADY)
+	void *hSAXIL, unsigned char nRST, unsigned long long *ARADDR, unsigned char *ARVALID, unsigned char ARREADY, const svBitVecVal *RDATA,
+	const svBitVecVal *RRESP, unsigned char RVALID, unsigned char *RREADY)
 {
-	SAXI_Lite* pSAXI	= reinterpret_cast<SAXI_Lite*>(hSAXIL);
-	pSAXI->BusRead(
-		nRST,
-		*(UINT64*)ARADDR, *ARVALID, ARREADY,
-		*RDATA, *RRESP, RVALID, *RREADY);
+	SAXI_Lite *pSAXI = reinterpret_cast<SAXI_Lite *>(hSAXIL);
+	pSAXI->BusRead(nRST, *(uint64_t *)ARADDR, *ARVALID, ARREADY, *RDATA, *RRESP, RVALID, *RREADY);
 }
 
-DPI_FUNCTION void* CreateSAXILite(const char* sTitle, unsigned long long lAddrBase, unsigned int dwAddrBits)
+DPI_FUNCTION void *CreateSAXILite(const char *sTitle, unsigned long long lAddrBase, unsigned int dwAddrBits)
 {
-	return (void*)(new SAXI_Lite(sTitle, lAddrBase, lAddrBase + (1 << dwAddrBits) - 1));
+	return (void *)(new SAXI_Lite(sTitle, lAddrBase, lAddrBase + (1 << dwAddrBits) - 1));
 }
