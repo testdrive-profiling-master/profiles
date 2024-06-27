@@ -43,7 +43,7 @@
 
 using namespace std;
 
-uint64_t				 g_lSimulationTime	  = 0; // global simulation timestamp
+uint64_t				 g_ulSimulationTime	  = 0; // global simulation timestamp
 static SimHDL			*__pSimHDL			  = NULL;
 static SimControl		*__pSimControl		  = NULL;
 static VerilatedContext *__pContext			  = NULL;
@@ -236,8 +236,8 @@ public:
 #ifdef SIM_TRACE
 
 			if (__pWaveDump) {
-				if (!g_lSimulationTime || (g_lSimulationTime > g_lTraceStartTime))
-					__pWaveDump->dump((vluint64_t)g_lSimulationTime);
+				if (!g_ulSimulationTime || (g_ulSimulationTime > g_lTraceStartTime))
+					__pWaveDump->dump((vluint64_t)g_ulSimulationTime);
 			}
 
 #endif
@@ -298,19 +298,19 @@ void vl_fatal(const char *filename, int linenum, const char *hier, const char *m
 
 double sc_time_stamp() // Called by $time in Verilog
 {
-	return SimulationTime();
+	return g_ulSimulationTime;
 }
 
 //-----------------------------------------------------------------------------------------------
 // bypass command
-BUS_SLAVE_INTERFACE *CreateSlave(uint64_t lAddrBase, uint64_t lddrHigh)
+BUS_SLAVE_INTERFACE *CreateSlave(uint64_t ulAddrBase, uint64_t ulddrHigh)
 {
-	return __pSimControl->CreateSlave(lAddrBase, lddrHigh);
+	return __pSimControl->CreateSlave(ulAddrBase, ulddrHigh);
 }
 
-BUS_SLAVE_INTERFACE *FindSlave(uint64_t lAddress)
+BUS_SLAVE_INTERFACE *FindSlave(uint64_t ulAddress)
 {
-	return __pSimControl->FindSlave(lAddress);
+	return __pSimControl->FindSlave(ulAddress);
 }
 
 CLOCK_INTERFACE *FindClock(BYTE *pCLK)
@@ -369,12 +369,12 @@ DisplayConfig *GetDisplayConfig(void)
 	return __pSimControl->GetDisplayConfig();
 }
 
-BYTE *GetMemoryPointer(uint64_t lAddress, uint32_t dwSize, bool bDisplay)
+BYTE *GetMemoryPointer(uint64_t ulAddress, uint32_t dwSize, bool bDisplay)
 {
 	if (!__pSimControl)
 		return NULL;
 
-	return __pSimControl->GetMemoryPointer(lAddress, dwSize, bDisplay);
+	return __pSimControl->GetMemoryPointer(ulAddress, dwSize, bDisplay);
 }
 
 uint64_t GetMemoryBaseAddress(void)
@@ -461,12 +461,12 @@ void SimulationFlush(void)
 
 uint64_t SimulationTime(void)
 {
-	return g_lSimulationTime;
+	return g_ulSimulationTime;
 }
 
 void AdvenceSimulationTime(uint32_t dwTime)
 {
-	g_lSimulationTime += dwTime;
+	g_ulSimulationTime += dwTime;
 }
 
 void SimulationDebugMode(bool bDebug)

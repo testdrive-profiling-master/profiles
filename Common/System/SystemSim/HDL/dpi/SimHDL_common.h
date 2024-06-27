@@ -53,7 +53,7 @@
 #define GET_SYSTEM_REGMAP ((SYSTEM_REGMAP *)GetMemoryPointer(0, 0, true))
 
 // Non-DPI
-extern uint64_t g_lSimulationTime;
+extern uint64_t g_ulSimulationTime;
 SYSTEM_CONFIG  *GetSystemConfig(void);
 DisplayConfig  *GetDisplayConfig(void);
 BYTE		   *GetMemoryPointer(uint64_t lAddress, uint32_t dwSize = 0, bool bDisplay = false);

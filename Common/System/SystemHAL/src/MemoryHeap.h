@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __MEMORY_HEAP_H__
 #define __MEMORY_HEAP_H__
@@ -42,74 +42,78 @@
 class MemoryHeap;
 class MemoryImplementation;
 
-typedef	CircularLink<MemoryHeap*, 0>	HeapLink;
-typedef	CircularLink<MemoryHeap*, 1>	FreeLink;
+typedef CircularLink<MemoryHeap *, 0> HeapLink;
+typedef CircularLink<MemoryHeap *, 1> FreeLink;
 
-class MemoryHeap : public IMemory {
+class MemoryHeap : public IMemory
+{
 public:
-	MemoryHeap(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress);
-	virtual void AddRef(void);
-	virtual void Release(void);		// for user
+	MemoryHeap(uint64_t ulByteSize, uint64_t ulByteAlignment, uint64_t ulPhyAddress);
+	virtual void	 AddRef(void);
+	virtual void	 Release(void); // for user
 
-	virtual void* Virtual(void);
-	virtual UINT64 Physical(void);
-	virtual UINT64 ByteSize(void);
-	virtual bool Flush(bool bWrite = true, UINT64 dwOffset = 0, UINT64 dwByteSize = 0);
-	virtual void PhysicalOverride(UINT64 dwPhysical = (UINT64) - 1);
+	virtual void	*Virtual(void);
+	virtual uint64_t Physical(void);
+	virtual uint64_t ByteSize(void);
+	virtual bool	 Flush(bool bWrite = true, uint64_t ulOffset = 0, uint64_t ulByteSize = 0);
+	virtual void	 PhysicalOverride(uint64_t ulPhysical = (uint64_t)-1);
 
-	inline bool IsFree(void) {
+	inline bool		 IsFree(void)
+	{
 		return m_bFree;
 	}
 
-	inline bool IsInaccessible(void) {
+	inline bool IsInaccessible(void)
+	{
 		return m_bInaccessible;
 	}
 
-	void ReleaseNoneThreadSafe(void);	// for this in thread safe function
-	bool Alloc(MemoryHeap* pHeap, UINT64 dwAllocByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress);
+	void ReleaseNoneThreadSafe(void); // for this in thread safe function
+	bool Alloc(MemoryHeap *pHeap, uint64_t ulAllocByteSize, uint64_t ulByteAlignment, uint64_t ulPhyAddress);
 
 protected:
-	MemoryHeap(MemoryHeap* pPrev = NULL);
+	MemoryHeap(MemoryHeap *pPrev = NULL);
 	virtual ~MemoryHeap(void);
-	MemoryHeap(UINT64 dwPhysical, UINT64 dwByteSize);
+	MemoryHeap(uint64_t ulPhysical, uint64_t ulByteSize);
 
-	MemoryHeap* Prev(void);
-	MemoryHeap* Next(void);
+	MemoryHeap *Prev(void);
+	MemoryHeap *Next(void);
 
 	friend class MemoryImplementation;
 
 private:
 	// life-cycle management
-	volatile int				m_iRefCount;		// reference count
+	volatile int m_iRefCount; // reference count
 
 	// resource link management
-	HeapLink					m_Link;				// all heap link
-	FreeLink					m_Free;				// free heap link for free heap fast search
+	HeapLink m_Link; // all heap link
+	FreeLink m_Free; // free heap link for free heap fast search
 
 	// memory allocation information
-	bool						m_bFree;				// is free heap?
-	UINT64						m_dwPhysical;			// physical memory address
-	UINT64						m_dwPhysicalOverride;	// physical memory address override
-	UINT64						m_dwByteSize;			// heap size (byte, block aligned)
-	IMemoryNative*				m_pNative;				// native system memory manager
-	bool						m_bInaccessible;		// inaccessible memory
+	bool		   m_bFree;				 // is free heap?
+	uint64_t	   m_ulPhysical;		 // physical memory address
+	uint64_t	   m_ulPhysicalOverride; // physical memory address override
+	uint64_t	   m_ulByteSize;		 // heap size (byte, block aligned)
+	IMemoryNative *m_pNative;			 // native system memory manager
+	bool		   m_bInaccessible;		 // inaccessible memory
 };
 
-class MemoryImplementation : public IMemoryImp {
+class MemoryImplementation : public IMemoryImp
+{
 public:
 	MemoryImplementation(void);
 	virtual ~MemoryImplementation(void);
 
-	virtual bool Initialize(UINT64 dwPhysical, UINT64 dwByteSize, IMemoryManager* pMemoryManager);
+	virtual bool Initialize(uint64_t ulPhysical, uint64_t ulByteSize, IMemoryManager *pMemoryManager);
 	virtual void Release(void);
-	virtual bool SetInaccessible(UINT64 dwPhysical, UINT64 dwByteSize);
+	virtual bool SetInaccessible(uint64_t ulPhysical, uint64_t ulByteSize);
 
-	int AllocatedMemoryCount(void);
-	static void Report(void);
+	int			 AllocatedMemoryCount(void);
+	static void	 Report(void);
 
 private:
-	std::list<IMemory*>	m_InaccessibleList;
+	std::list<IMemory *> m_InaccessibleList;
 };
 
-extern MemoryImplementation	g_MemoryImplementation;
-#endif//__MEMORY_HEAP_H__
+extern MemoryImplementation g_MemoryImplementation;
+#endif //__MEMORY_HEAP_H__

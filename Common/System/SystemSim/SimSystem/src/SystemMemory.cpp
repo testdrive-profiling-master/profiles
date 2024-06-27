@@ -60,7 +60,7 @@ SystemMemory::SystemMemory(void)
 	m_pSystemConfig	 = m_pSystemMemory ? (SYSTEM_CONFIG *)m_pSystemMemory->GetConfig() : NULL;
 	m_pDisplayMemory = TestDriver_GetMemory(sMemoryNameDisplay);
 	m_pDisplayConfig = m_pDisplayMemory ? (DisplayConfig *)m_pDisplayMemory->GetConfig() : NULL;
-	m_lBaseAddress	 = 0x80000000; // default system memory's base address
+	m_ulBaseAddress	 = 0x80000000; // default system memory's base address
 }
 
 SystemMemory::~SystemMemory(void)
@@ -73,10 +73,10 @@ uint64_t SystemMemory::ByteSize(void)
 	return m_pSystemMemory->GetSize();
 }
 
-uint8_t *SystemMemory::GetPointer(uint64_t lAddress, uint64_t dwSize, bool bDisplay)
+uint8_t *SystemMemory::GetPointer(uint64_t ulAddress, uint64_t ulSize, bool bDisplay)
 {
 	if (bDisplay)
-		return m_pDisplayMemory->GetPointer(lAddress, dwSize);
+		return m_pDisplayMemory->GetPointer(ulAddress, ulSize);
 
-	return m_pSystemMemory->GetPointer(lAddress - m_lBaseAddress, dwSize);
+	return m_pSystemMemory->GetPointer(ulAddress - m_ulBaseAddress, ulSize);
 }

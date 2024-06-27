@@ -119,26 +119,26 @@ void PCIeDriver::SetCurrentCard(uint32_t dwIndex)
 	m_dwCurrentCardID = dwIndex;
 }
 
-void PCIeDriver::RegWrite(uint64_t dwAddress, uint32_t dwData)
+void PCIeDriver::RegWrite(uint64_t ulAddress, uint32_t dwData)
 {
 	DWORD			   dwReadSize;
 	TD_TRANSACTION_REG reg_transaction;
 	reg_transaction.dev_id		= m_dwCurrentCardID;
 	reg_transaction.bar_id		= m_iBarID; // REG(0), XDMA(1), bypass_MEM(2)
 	reg_transaction.is_write	= 1;
-	reg_transaction.phy_address = dwAddress;
+	reg_transaction.phy_address = ulAddress;
 	reg_transaction.reg_data	= dwData;
 	DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_REG, &reg_transaction, sizeof(TD_TRANSACTION_REG), NULL, 0, &dwReadSize, NULL);
 }
 
-uint32_t PCIeDriver::RegRead(uint64_t dwAddress)
+uint32_t PCIeDriver::RegRead(uint64_t ulAddress)
 {
 	DWORD			   dwReadSize;
 	TD_TRANSACTION_REG reg_transaction;
 	reg_transaction.dev_id		= m_dwCurrentCardID;
 	reg_transaction.bar_id		= m_iBarID; // REG(0), XDMA(1), bypass_MEM(2)
 	reg_transaction.is_write	= 0;
-	reg_transaction.phy_address = dwAddress;
+	reg_transaction.phy_address = ulAddress;
 	reg_transaction.reg_data	= 0;
 	DeviceIoControl(
 		m_hDriver, IOCTL_COMMAND_TRANSACTION_REG, &reg_transaction, sizeof(TD_TRANSACTION_REG), &reg_transaction.reg_data, sizeof(uint32_t),
@@ -146,7 +146,7 @@ uint32_t PCIeDriver::RegRead(uint64_t dwAddress)
 	return reg_transaction.reg_data;
 }
 
-void PCIeDriver::MemoryWrite(NativeMemory *pNative, uint64_t dwAddress, uint64_t dwOffset, uint32_t dwByteSize)
+void PCIeDriver::MemoryWrite(NativeMemory *pNative, uint64_t ulAddress, uint64_t ulOffset, uint32_t dwByteSize)
 {
 	TD_DMA_MEMORY *pDMA = (TD_DMA_MEMORY *)pNative->pDriver;
 	DWORD		   dwReadSize;
@@ -160,8 +160,8 @@ void PCIeDriver::MemoryWrite(NativeMemory *pNative, uint64_t dwAddress, uint64_t
 		TranDMA.dev_id			   = m_dwCurrentCardID;
 		TranDMA.hDMA.pointer	   = pDMA->hDMA.pointer;
 		TranDMA.is_write		   = 1;
-		TranDMA.phy_address.addr64 = dwAddress;
-		TranDMA.offset			   = dwOffset;
+		TranDMA.phy_address.addr64 = ulAddress;
+		TranDMA.offset			   = ulOffset;
 		TranDMA.size			   = dwByteSize;
 		DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_DMA, &TranDMA, sizeof(TD_TRANSACTION_DMA), NULL, 0, &dwReadSize, &OverlappedIO);
 		WaitForSingleObject(OverlappedIO.hEvent, INFINITE);
@@ -169,7 +169,7 @@ void PCIeDriver::MemoryWrite(NativeMemory *pNative, uint64_t dwAddress, uint64_t
 	}
 }
 
-void PCIeDriver::MemoryRead(NativeMemory *pNative, uint64_t dwAddress, uint64_t dwOffset, uint32_t dwByteSize)
+void PCIeDriver::MemoryRead(NativeMemory *pNative, uint64_t ulAddress, uint64_t ulOffset, uint32_t dwByteSize)
 {
 	TD_DMA_MEMORY *pDMA = (TD_DMA_MEMORY *)pNative->pDriver;
 	DWORD		   dwReadSize;
@@ -183,8 +183,8 @@ void PCIeDriver::MemoryRead(NativeMemory *pNative, uint64_t dwAddress, uint64_t 
 		TranDMA.dev_id			   = m_dwCurrentCardID;
 		TranDMA.hDMA.pointer	   = pDMA->hDMA.pointer;
 		TranDMA.is_write		   = 0;
-		TranDMA.phy_address.addr64 = dwAddress;
-		TranDMA.offset			   = dwOffset;
+		TranDMA.phy_address.addr64 = ulAddress;
+		TranDMA.offset			   = ulOffset;
 		TranDMA.size			   = dwByteSize;
 		DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_DMA, &TranDMA, sizeof(TD_TRANSACTION_DMA), NULL, 0, &dwReadSize, &OverlappedIO);
 		WaitForSingleObject(OverlappedIO.hEvent, INFINITE);
@@ -192,17 +192,17 @@ void PCIeDriver::MemoryRead(NativeMemory *pNative, uint64_t dwAddress, uint64_t 
 	}
 }
 
-void PCIeDriver::MemoryCreate(NativeMemory *pNative, uint64_t dwByteSize, uint64_t dwAlignment)
+void PCIeDriver::MemoryCreate(NativeMemory *pNative, uint64_t ulByteSize, uint64_t ulAlignment)
 {
 	DWORD		   dwReadSize;
 	TD_DMA_MEMORY *pDma = new TD_DMA_MEMORY;
 	memset(pDma, 0, sizeof(TD_DMA_MEMORY));
-	pDma->byte_size = dwByteSize;
+	pDma->byte_size = ulByteSize;
 	DeviceIoControl(m_hDriver, IOCTL_COMMAND_DMA_ALLOC, pDma, sizeof(TD_DMA_MEMORY), pDma, sizeof(TD_DMA_MEMORY), &dwReadSize, NULL);
 
 	if (!pDma->vir_addr.pointer) {
 		delete pDma;
-		LOGE("DMA memory insufficient : %lld bytes", dwByteSize);
+		LOGE("DMA memory insufficient : %lld bytes", ulByteSize);
 	} else {
 		pNative->pMem	 = (BYTE *)(pDma->vir_addr.pointer);
 		pNative->pDriver = pDma;

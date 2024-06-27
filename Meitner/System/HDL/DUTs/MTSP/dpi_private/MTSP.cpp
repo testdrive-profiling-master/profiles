@@ -4,7 +4,7 @@
 // Home  : https://testdrive-profiling-master.github.io/
 //
 // Title : MTSPU
-// Rev.  : 6/19/2024 Wed (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "MTSP.h"
 MTSP *g_pMTSP = NULL;
@@ -37,7 +37,7 @@ MTSP::~MTSP(void)
 
 void MTSP::Main(void)
 {
-	m_pRegmap->lSimulationTime = g_lSimulationTime;
+	m_pRegmap->lSimulationTime = g_ulSimulationTime;
 }
 
 void MTSP::GetInstruction(uint64_t addr, uint32_t *inst)
@@ -84,7 +84,7 @@ void MTSP::CommandStart(void)
 
 	// update register update ID when start-up process
 	if (pCmd->id == 2) {
-		m_pRegmap->lStartupTime = g_lSimulationTime;
+		m_pRegmap->lStartupTime = g_ulSimulationTime;
 		// clear all update count
 		REG_VALUE4 *pM;
 		// GMB
@@ -116,13 +116,13 @@ void MTSP::CommandStart(void)
 		}
 	}
 
-	pCmd->elapsed_time = g_lSimulationTime;
+	pCmd->elapsed_time = g_ulSimulationTime;
 }
 
 void MTSP::CommandEnd(void)
 {
 	MTSP_REGMAP_COMMAND_DATA *pCmd = CommandCurrent();
-	pCmd->elapsed_time			   = g_lSimulationTime - pCmd->elapsed_time;
+	pCmd->elapsed_time			   = g_ulSimulationTime - pCmd->elapsed_time;
 	m_pCmd->dwCurrent++;
 	m_pCmd->bUpdate = true;
 }

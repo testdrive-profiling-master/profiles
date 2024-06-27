@@ -1,2 +1,2 @@
 @echo off
-InvokeEclipse.exe .
+InvokeEclipse .

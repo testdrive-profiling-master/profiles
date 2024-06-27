@@ -31,37 +31,37 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 1/31/2024 Wed (clonextop@gmail.com)
+// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "DDK_Context.h"
 
-DDK_API DDK* CreateDDK(void)
+DDK_API DDK *CreateDDK(void)
 {
-	DDKContext* pContext	= new DDKContext;
-	setbuf(stdout, NULL);	// eliminate delayed console output.
+	DDKContext *pContext = new DDKContext;
+	setbuf(stdout, NULL); // eliminate delayed console output.
 
-	if(!pContext->IsInitialized())
+	if (!pContext->IsInitialized())
 		SAFE_RELEASE(pContext);
 
 	return pContext;
 }
 
-DDK_API DDKMemory* CreateDDKMemory(UINT64 dwByteSize, UINT64 dwByteAlignment)
+DDK_API DDKMemory *CreateDDKMemory(uint64_t ulByteSize, uint64_t ulByteAlignment)
 {
-	return (DDKMemory*)CreateMemory(dwByteSize, dwByteAlignment, (UINT64) - 1);
+	return (DDKMemory *)CreateMemory(ulByteSize, ulByteAlignment, (uint64_t)-1);
 }
 
-DDK_API DDKMemory* CreateDDKMemoryEx(UINT64 dwByteSize, UINT64 dwByteAlignment, UINT64 dwPhyAddress)
+DDK_API DDKMemory *CreateDDKMemoryEx(uint64_t ulByteSize, uint64_t ulByteAlignment, uint64_t ulPhyAddress)
 {
-	return (DDKMemory*)CreateMemory(dwByteSize, dwByteAlignment, dwPhyAddress);
+	return (DDKMemory *)CreateMemory(ulByteSize, ulByteAlignment, ulPhyAddress);
 }
 
-static void _ISR_(void* pPrivate)
+static void _ISR_(void *pPrivate)
 {
 	printf("*I: [DDK] Interrupt occurred.\n");
 }
 
-void EnumerateDDKMemory(ENUMERATE_DDK_MEMORY_FUNCTION func, void* pPrivate)
+void EnumerateDDKMemory(ENUMERATE_DDK_MEMORY_FUNCTION func, void *pPrivate)
 {
 	EnumerateMemory((ENUMERATE_MEMORY_FUNCTION)func, pPrivate);
 }
@@ -75,21 +75,24 @@ void ReportDDKMemory(void)
 
 DDKContext::DDKContext(void)
 {
-	m_pSystem		= CreateSystem();
+	m_pSystem = CreateSystem();
 
-	if(m_pSystem) m_pSystem->RegisterInterruptService(_ISR_, this);
+	if (m_pSystem)
+		m_pSystem->RegisterInterruptService(_ISR_, this);
 }
 
 DDKContext::~DDKContext(void)
 {
-	if(m_pSystem) m_pSystem->RegisterInterruptService(NULL, NULL);
+	if (m_pSystem)
+		m_pSystem->RegisterInterruptService(NULL, NULL);
 
 	SAFE_RELEASE(m_pSystem);
 }
 
-const char* DDKContext::GetSystemDescription(void)
+const char *DDKContext::GetSystemDescription(void)
 {
-	if(m_pSystem) return m_pSystem->GetDescription();
+	if (m_pSystem)
+		return m_pSystem->GetDescription();
 
 	return NULL;
 }
@@ -99,29 +102,30 @@ void DDKContext::Release(void)
 	delete this;
 }
 
-UINT64 DDKContext::GetMemoryBase(void)
+uint64_t DDKContext::GetMemoryBase(void)
 {
 	return m_pSystem->GetMemoryBase();
 }
 
-UINT64 DDKContext::GetMemorySize(void)
+uint64_t DDKContext::GetMemorySize(void)
 {
 	return m_pSystem->GetMemorySize();
 }
 
-DWORD DDKContext::RegRead(UINT64 dwAddress)
+uint32_t DDKContext::RegRead(uint64_t ulAddress)
 {
-	return m_pSystem->RegRead(dwAddress);
+	return m_pSystem->RegRead(ulAddress);
 }
 
-void DDKContext::RegWrite(UINT64 dwAddress, DWORD dwData)
+void DDKContext::RegWrite(uint64_t ulAddress, uint32_t dwData)
 {
-	m_pSystem->RegWrite(dwAddress, dwData);
+	m_pSystem->RegWrite(ulAddress, dwData);
 }
 
-void DDKContext::RegisterInterruptService(DDK_INTRRUPT_SERVICE routine, void* pPrivate)
+void DDKContext::RegisterInterruptService(DDK_INTRRUPT_SERVICE routine, void *pPrivate)
 {
-	if(m_pSystem) m_pSystem->RegisterInterruptService(routine ? routine : _ISR_, pPrivate ? pPrivate : this);
+	if (m_pSystem)
+		m_pSystem->RegisterInterruptService(routine ? routine : _ISR_, pPrivate ? pPrivate : this);
 }
 
 void DDKContext::EnableInterrupt(bool bEnable)
@@ -134,7 +138,7 @@ void DDKContext::ClearInterruptPending(void)
 	m_pSystem->ClearInterruptPending();
 }
 
-DWORD DDKContext::DriverCommand(void* pCommand)
+uint32_t DDKContext::DriverCommand(void *pCommand)
 {
 	return m_pSystem->DriverCommand(pCommand);
 }

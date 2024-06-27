@@ -38,9 +38,9 @@
 #include "NativeMemory.h"
 #include "SystemMemory.h"
 
-NativeSystemMemory::NativeSystemMemory(uint64_t dwByteSize)
+NativeSystemMemory::NativeSystemMemory(uint64_t ulByteSize)
 {
-	m_pMem = new uint8_t[dwByteSize];
+	m_pMem = new uint8_t[ulByteSize];
 }
 NativeSystemMemory::~NativeSystemMemory(void)
 {
@@ -57,17 +57,17 @@ uint8_t *NativeSystemMemory::Virtual(void)
 	return m_pMem;
 }
 
-bool NativeSystemMemory::Flush(uint64_t dwOffset, uint64_t dwPhyAddress, uint64_t dwByteSize, bool bWrite)
+bool NativeSystemMemory::Flush(uint64_t ulOffset, uint64_t ulPhyAddress, uint64_t ulByteSize, bool bWrite)
 {
-	uint8_t *pDest = g_SystemMemory.GetPointer(dwPhyAddress, dwByteSize);
+	uint8_t *pDest = g_SystemMemory.GetPointer(ulPhyAddress, ulByteSize);
 
 	if (!pDest || !m_pMem)
 		return false;
 
 	if (bWrite)
-		memcpy(pDest, m_pMem + dwOffset, dwByteSize);
+		memcpy(pDest, m_pMem + ulOffset, ulByteSize);
 	else
-		memcpy(m_pMem + dwOffset, pDest, dwByteSize);
+		memcpy(m_pMem + ulOffset, pDest, ulByteSize);
 
 	return true;
 }

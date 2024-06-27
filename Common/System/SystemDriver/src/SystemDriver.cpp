@@ -90,15 +90,15 @@ void SystemDriver::Release(void)
 	delete this;
 }
 
-uint32_t SystemDriver::RegRead(uint64_t dwAddress)
+uint32_t SystemDriver::RegRead(uint64_t ulAddress)
 {
-	uint32_t dwData = m_pNativeDriver->RegRead(dwAddress);
+	uint32_t dwData = m_pNativeDriver->RegRead(ulAddress);
 	return dwData;
 }
 
-void SystemDriver::RegWrite(uint64_t dwAddress, uint32_t dwData)
+void SystemDriver::RegWrite(uint64_t ulAddress, uint32_t dwData)
 {
-	m_pNativeDriver->RegWrite(dwAddress, dwData);
+	m_pNativeDriver->RegWrite(ulAddress, dwData);
 }
 
 void SystemDriver::RegisterInterruptService(INTRRUPT_SERVICE routine, void *pPrivate)
@@ -137,7 +137,7 @@ void SystemDriver::InvokeISR(void)
 	m_ISR.Awake();
 }
 
-IMemoryNative *SystemDriver::CreateMemory(uint64_t dwByteSize, uint64_t dwByteAlignment)
+IMemoryNative *SystemDriver::CreateMemory(uint64_t ulByteSize, uint64_t ulByteAlignment)
 {
-	return new NativeMemory(dwByteSize, dwByteAlignment);
+	return new NativeMemory(ulByteSize, ulByteAlignment);
 }

@@ -57,11 +57,11 @@ public:
 	// memory
 	virtual uint64_t GetMemoryBase(void);										   // get memory start address
 	virtual uint64_t GetMemorySize(void);										   // get memory byte size
-	virtual void	*GetMemoryPointer(uint64_t lAddress, uint64_t dwByteSize = 0); // get virtual pointer from physical address
+	virtual void	*GetMemoryPointer(uint64_t lAddress, uint64_t ulByteSize = 0); // get virtual pointer from physical address
 
 	// register
-	virtual uint32_t RegRead(uint64_t dwAddress);					// register read
-	virtual void	 RegWrite(uint64_t dwAddress, uint32_t dwData); // register write
+	virtual uint32_t RegRead(uint64_t ulAddress);					// register read
+	virtual void	 RegWrite(uint64_t ulAddress, uint32_t dwData); // register write
 
 	// system
 	virtual void	 RegisterInterruptService(INTRRUPT_SERVICE routine, void *pPrivate); // register interrupt service routine
@@ -70,7 +70,7 @@ public:
 	virtual uint32_t DriverCommand(void *pCommand);										 // post driver specific command
 
 	// memory manager
-	virtual IMemoryNative *CreateMemory(uint64_t dwByteSize, uint64_t dwByteAlignment);
+	virtual IMemoryNative *CreateMemory(uint64_t ulByteSize, uint64_t ulByteAlignment);
 
 private:
 	SimEngine  *m_pSim;

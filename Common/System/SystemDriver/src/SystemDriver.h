@@ -58,8 +58,8 @@ public:
 	virtual uint64_t GetMemorySize(void); // get memory byte size
 
 	// register
-	virtual uint32_t RegRead(uint64_t dwAddress);					// register read
-	virtual void	 RegWrite(uint64_t dwAddress, uint32_t dwData); // register write
+	virtual uint32_t RegRead(uint64_t ulAddress);					// register read
+	virtual void	 RegWrite(uint64_t ulAddress, uint32_t dwData); // register write
 
 	// system
 	virtual void	 RegisterInterruptService(INTRRUPT_SERVICE routine, void *pPrivate); // register ISR
@@ -68,7 +68,7 @@ public:
 	virtual uint32_t DriverCommand(void *pCommand);										 // post driver specific command
 
 	// memory manager
-	virtual IMemoryNative *CreateMemory(uint64_t dwByteSize, uint64_t dwByteAlignment);
+	virtual IMemoryNative *CreateMemory(uint64_t ulByteSize, uint64_t ulByteAlignment);
 
 protected:
 	virtual void InvokeISR(void);

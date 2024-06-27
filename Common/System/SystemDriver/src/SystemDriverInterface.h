@@ -92,14 +92,14 @@ public:
 
 	// register & memory interface
 	virtual void	 SetCurrentCard(uint32_t dwIndex);
-	virtual void	 RegWrite(uint64_t dwAddress, uint32_t dwData)													= 0;
-	virtual uint32_t RegRead(uint64_t dwAddress)																	= 0;
-	virtual void	 MemoryWrite(NativeMemory *pNative, uint64_t dwAddress, uint64_t dwOffset, uint32_t dwByteSize) = 0;
-	virtual void	 MemoryRead(NativeMemory *pNative, uint64_t dwAddress, uint64_t dwOffset, uint32_t dwByteSize)	= 0;
+	virtual void	 RegWrite(uint64_t ulAddress, uint32_t dwData)													= 0;
+	virtual uint32_t RegRead(uint64_t ulAddress)																	= 0;
+	virtual void	 MemoryWrite(NativeMemory *pNative, uint64_t ulAddress, uint64_t ulOffset, uint32_t dwByteSize) = 0;
+	virtual void	 MemoryRead(NativeMemory *pNative, uint64_t ulAddress, uint64_t ulOffset, uint32_t dwByteSize)	= 0;
 	virtual void	 InterruptLock(void)																			= 0;
 	virtual void	 InterruptFree(void)																			= 0;
 	virtual uint32_t Command(void *pCommand);
-	virtual void	 MemoryCreate(NativeMemory *pNative, uint64_t dwByteSize, uint64_t dwAlignment);
+	virtual void	 MemoryCreate(NativeMemory *pNative, uint64_t ulByteSize, uint64_t ulAlignment);
 	virtual void	 MemoryFree(NativeMemory *pNative);
 
 	// inlines

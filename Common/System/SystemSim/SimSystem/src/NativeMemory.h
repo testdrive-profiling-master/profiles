@@ -42,11 +42,11 @@ class NativeSystemMemory : public IMemoryNative
 	uint8_t *m_pMem;
 
 public:
-	NativeSystemMemory(uint64_t dwByteSize);
+	NativeSystemMemory(uint64_t ulByteSize);
 	virtual ~NativeSystemMemory(void);
 
 	virtual void	 Release(void);
 	virtual uint8_t *Virtual(void);
-	virtual bool	 Flush(uint64_t dwOffset, uint64_t dwPhyAddress, uint64_t dwByteSize, bool bWrite);
+	virtual bool	 Flush(uint64_t ulOffset, uint64_t ulPhyAddress, uint64_t ulByteSize, bool bWrite);
 };
 #endif //__NATIVE_MEMORY_H__

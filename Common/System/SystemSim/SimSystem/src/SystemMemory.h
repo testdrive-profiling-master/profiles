@@ -45,16 +45,16 @@ class SystemMemory
 public:
 	SystemMemory(void);
 	virtual ~SystemMemory(void);
-	void SetBaseAddress(uint64_t lAddress)
+	void SetBaseAddress(uint64_t ulAddress)
 	{
-		m_lBaseAddress = lAddress;
+		m_ulBaseAddress = ulAddress;
 	}
 	uint64_t ByteSize(void);
-	uint8_t *GetPointer(uint64_t lAddress, uint64_t dwSize = 0, bool bDisplay = false);
-	void	 Flush(uint64_t dwAddress, uint64_t dwSize)
+	uint8_t *GetPointer(uint64_t ulAddress, uint64_t ulSize = 0, bool bDisplay = false);
+	void	 Flush(uint64_t ulAddress, uint64_t ulSize)
 	{
 		if (m_pSystemMemory)
-			m_pSystemMemory->Flush(dwAddress, dwSize);
+			m_pSystemMemory->Flush(ulAddress, ulSize);
 	}
 
 	inline bool IsInitialized(void)
@@ -63,7 +63,7 @@ public:
 	}
 	inline uint64_t BaseAddress(void)
 	{
-		return m_lBaseAddress;
+		return m_ulBaseAddress;
 	}
 	inline ITestDriverMemory *Handle(void)
 	{
@@ -83,7 +83,7 @@ private:
 	ITestDriverMemory *m_pDisplayMemory;
 	SYSTEM_CONFIG	  *m_pSystemConfig;
 	DisplayConfig	  *m_pDisplayConfig;
-	uint64_t		   m_lBaseAddress;
+	uint64_t		   m_ulBaseAddress;
 };
 
 extern SystemMemory g_SystemMemory;

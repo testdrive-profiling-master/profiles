@@ -43,11 +43,11 @@ public:
 	BYTE *pMem;
 	void *pDriver;
 
-	NativeMemory(uint64_t dwByteSize, uint64_t dwAlignment);
+	NativeMemory(uint64_t ulByteSize, uint64_t ulAlignment);
 	virtual ~NativeMemory(void);
 
 	virtual void  Release(void);
 	virtual BYTE *Virtual(void);
-	virtual bool  Flush(uint64_t dwOffset, uint64_t dwPhyAddress, uint64_t dwByteSize, bool bWrite);
+	virtual bool  Flush(uint64_t ulOffset, uint64_t ulPhyAddress, uint64_t ulByteSize, bool bWrite);
 };
 #endif //__NATIVE_MEMORY_H__

@@ -36,11 +36,11 @@
 #include "STDInterface.h"
 #include "NativeMemory.h"
 
-NativeMemory::NativeMemory(uint64_t dwByteSize, uint64_t dwAlignment)
+NativeMemory::NativeMemory(uint64_t ulByteSize, uint64_t ulAlignment)
 {
 	pMem	= NULL;
 	pDriver = NULL;
-	g_pDriver->MemoryCreate(this, dwByteSize, dwAlignment);
+	g_pDriver->MemoryCreate(this, ulByteSize, ulAlignment);
 }
 NativeMemory::~NativeMemory(void)
 {
@@ -59,13 +59,13 @@ BYTE *NativeMemory::Virtual(void)
 	return pMem;
 }
 
-bool NativeMemory::Flush(uint64_t dwOffset, uint64_t dwPhyAddress, uint64_t dwByteSize, bool bWrite)
+bool NativeMemory::Flush(uint64_t ulOffset, uint64_t ulPhyAddress, uint64_t ulByteSize, bool bWrite)
 {
 	if (pMem) {
 		if (bWrite)
-			g_pDriver->MemoryWrite(this, dwPhyAddress, dwOffset, dwByteSize);
+			g_pDriver->MemoryWrite(this, ulPhyAddress, ulOffset, ulByteSize);
 		else
-			g_pDriver->MemoryRead(this, dwPhyAddress, dwOffset, dwByteSize);
+			g_pDriver->MemoryRead(this, ulPhyAddress, ulOffset, ulByteSize);
 	}
 
 	return true;

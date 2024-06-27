@@ -102,27 +102,27 @@ void SystemSim::Release(void)
 	delete this;
 }
 
-uint32_t SystemSim::RegRead(uint64_t dwAddress)
+uint32_t SystemSim::RegRead(uint64_t ulAddress)
 {
-	BusSlave *pSlave = BusSlave::FindSlave(dwAddress);
+	BusSlave *pSlave = BusSlave::FindSlave(ulAddress);
 
 	if (pSlave) {
-		return pSlave->Read(dwAddress);
+		return pSlave->Read(ulAddress);
 	} else {
-		LOGE("Invalid 'RegRead' address : 0x%08llX\n", dwAddress);
+		LOGE("Invalid 'RegRead' address : 0x%08llX\n", ulAddress);
 	}
 
 	return 0xDEADC0DE;
 }
 
-void SystemSim::RegWrite(uint64_t dwAddress, uint32_t dwData)
+void SystemSim::RegWrite(uint64_t ulAddress, uint32_t dwData)
 {
-	BusSlave *pSlave = BusSlave::FindSlave(dwAddress);
+	BusSlave *pSlave = BusSlave::FindSlave(ulAddress);
 
 	if (pSlave) {
-		pSlave->Write(dwAddress, dwData);
+		pSlave->Write(ulAddress, dwData);
 	} else {
-		LOGE("Invalid 'RegWrite' address : 0x%08X (data : 0x%llX)\n", dwAddress, dwData);
+		LOGE("Invalid 'RegWrite' address : 0x%08X (data : 0x%llX)\n", ulAddress, dwData);
 	}
 }
 
@@ -157,12 +157,12 @@ uint64_t SystemSim::GetMemorySize(void)
 	return g_SystemMemory.ByteSize();
 }
 
-void *SystemSim::GetMemoryPointer(uint64_t lAddress, uint64_t dwByteSize)
+void *SystemSim::GetMemoryPointer(uint64_t ulAddress, uint64_t ulByteSize)
 {
-	return g_SystemMemory.GetPointer(lAddress, dwByteSize);
+	return g_SystemMemory.GetPointer(ulAddress, ulByteSize);
 }
 
-IMemoryNative *SystemSim::CreateMemory(uint64_t dwByteSize, uint64_t dwByteAlignment)
+IMemoryNative *SystemSim::CreateMemory(uint64_t ulByteSize, uint64_t ulByteAlignment)
 {
-	return new NativeSystemMemory(dwByteSize);
+	return new NativeSystemMemory(ulByteSize);
 }

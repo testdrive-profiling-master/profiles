@@ -206,14 +206,14 @@ void SimEngine::Terminate(void)
 	m_Interrupt.KillThread();
 }
 
-void SimEngine::SetMemoryBaseAddress(uint64_t lAddress)
+void SimEngine::SetMemoryBaseAddress(uint64_t ulAddress)
 {
-	g_SystemMemory.SetBaseAddress(lAddress);
+	g_SystemMemory.SetBaseAddress(ulAddress);
 }
 
-void SimEngine::MemoryRead32(int iID, uint64_t lAddress, uint32_t &dwData)
+void SimEngine::MemoryRead32(int iID, uint64_t ulAddress, uint32_t &dwData)
 {
-	uint32_t *pData = (uint32_t *)g_SystemMemory.GetPointer(lAddress, sizeof(uint32_t), iID);
+	uint32_t *pData = (uint32_t *)g_SystemMemory.GetPointer(ulAddress, sizeof(uint32_t), iID);
 
 	if (pData) {
 		dwData = *pData;
@@ -222,9 +222,9 @@ void SimEngine::MemoryRead32(int iID, uint64_t lAddress, uint32_t &dwData)
 	}
 }
 
-void SimEngine::MemoryWrite32(int iID, uint64_t lAddress, uint32_t dwData)
+void SimEngine::MemoryWrite32(int iID, uint64_t ulAddress, uint32_t dwData)
 {
-	uint32_t *pData = (uint32_t *)g_SystemMemory.GetPointer(lAddress, sizeof(uint32_t), iID);
+	uint32_t *pData = (uint32_t *)g_SystemMemory.GetPointer(ulAddress, sizeof(uint32_t), iID);
 
 	if (pData) {
 		*pData = dwData;
@@ -233,9 +233,9 @@ void SimEngine::MemoryWrite32(int iID, uint64_t lAddress, uint32_t dwData)
 	}
 }
 
-void SimEngine::MemoryRead16(int iID, uint64_t lAddress, uint16_t &dwData)
+void SimEngine::MemoryRead16(int iID, uint64_t ulAddress, uint16_t &dwData)
 {
-	uint16_t *pData = (uint16_t *)g_SystemMemory.GetPointer(lAddress, sizeof(uint16_t), iID);
+	uint16_t *pData = (uint16_t *)g_SystemMemory.GetPointer(ulAddress, sizeof(uint16_t), iID);
 
 	if (pData) {
 		dwData = *pData;
@@ -244,9 +244,9 @@ void SimEngine::MemoryRead16(int iID, uint64_t lAddress, uint16_t &dwData)
 	}
 }
 
-void SimEngine::MemoryWrite16(int iID, uint64_t lAddress, uint16_t dwData)
+void SimEngine::MemoryWrite16(int iID, uint64_t ulAddress, uint16_t dwData)
 {
-	uint16_t *pData = (uint16_t *)g_SystemMemory.GetPointer(lAddress, sizeof(uint16_t), iID);
+	uint16_t *pData = (uint16_t *)g_SystemMemory.GetPointer(ulAddress, sizeof(uint16_t), iID);
 
 	if (pData) {
 		*pData = dwData;
@@ -255,9 +255,9 @@ void SimEngine::MemoryWrite16(int iID, uint64_t lAddress, uint16_t dwData)
 	}
 }
 
-void SimEngine::MemoryRead8(int iID, uint64_t lAddress, uint8_t &dwData)
+void SimEngine::MemoryRead8(int iID, uint64_t ulAddress, uint8_t &dwData)
 {
-	uint8_t *pData = (uint8_t *)g_SystemMemory.GetPointer(lAddress, sizeof(uint8_t), iID);
+	uint8_t *pData = (uint8_t *)g_SystemMemory.GetPointer(ulAddress, sizeof(uint8_t), iID);
 
 	if (pData) {
 		dwData = *pData;
@@ -266,9 +266,9 @@ void SimEngine::MemoryRead8(int iID, uint64_t lAddress, uint8_t &dwData)
 	}
 }
 
-void SimEngine::MemoryWrite8(int iID, uint64_t lAddress, uint8_t dwData)
+void SimEngine::MemoryWrite8(int iID, uint64_t ulAddress, uint8_t dwData)
 {
-	uint8_t *pData = (uint8_t *)g_SystemMemory.GetPointer(lAddress, sizeof(uint8_t), iID);
+	uint8_t *pData = (uint8_t *)g_SystemMemory.GetPointer(ulAddress, sizeof(uint8_t), iID);
 
 	if (pData) {
 		*pData = dwData;
@@ -287,9 +287,9 @@ DisplayConfig *SimEngine::GetDisplayConfig(void)
 	return g_SystemMemory.GetDisplayConfig();
 }
 
-uint8_t *SimEngine::GetMemoryPointer(uint64_t lAddress, uint64_t dwSize, bool bDisplay)
+uint8_t *SimEngine::GetMemoryPointer(uint64_t ulAddress, uint64_t ulSize, bool bDisplay)
 {
-	return g_SystemMemory.GetPointer(lAddress, dwSize, bDisplay);
+	return g_SystemMemory.GetPointer(ulAddress, ulSize, bDisplay);
 }
 
 uint64_t SimEngine::GetMemoryBaseAddress(void)

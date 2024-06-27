@@ -48,11 +48,11 @@ public:
 	virtual bool	 Initialize(const char *sDeviceName = NULL);
 	virtual void	 Release(void);
 	virtual void	 SetCurrentCard(uint32_t dwIndex);
-	virtual void	 RegWrite(uint64_t dwAddress, uint32_t dwData);
-	virtual uint32_t RegRead(uint64_t dwAddress);
-	virtual void	 MemoryWrite(NativeMemory *pNative, uint64_t dwAddress, uint64_t dwOffset, uint32_t dwByteSize);
-	virtual void	 MemoryRead(NativeMemory *pNative, uint64_t dwAddress, uint64_t dwOffset, uint32_t dwByteSize);
-	virtual void	 MemoryCreate(NativeMemory *pNative, uint64_t dwByteSize, uint64_t dwAlignment);
+	virtual void	 RegWrite(uint64_t ulAddress, uint32_t dwData);
+	virtual uint32_t RegRead(uint64_t ulAddress);
+	virtual void	 MemoryWrite(NativeMemory *pNative, uint64_t ulAddress, uint64_t ulOffset, uint32_t dwByteSize);
+	virtual void	 MemoryRead(NativeMemory *pNative, uint64_t ulAddress, uint64_t ulOffset, uint32_t dwByteSize);
+	virtual void	 MemoryCreate(NativeMemory *pNative, uint64_t ulByteSize, uint64_t ulAlignment);
 	virtual void	 MemoryFree(NativeMemory *pNative);
 	virtual void	 InterruptLock(void);
 	virtual void	 InterruptFree(void);
