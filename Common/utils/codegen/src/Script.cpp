@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 6/20/2024 Thu (clonextop@gmail.com)
+// Rev.  : 7/2/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -1195,7 +1195,18 @@ Script::Script(void)
 		luaopen_lfs(m_pLua);
 		{
 			m_sEnvPath = GetCommonToolPath() + "/bin/codegen/";
+			m_sEnvPath.Replace("//", "/");
 			__AddLuaPackagePath(m_pLua, m_sEnvPath.c_str());
+			// add common package path
+			cstring sPackagePath;
+			sPackagePath.Format("package.path = package.path .. ';%slibs/?.lua'", m_sEnvPath.c_str());
+			luaL_dostring(m_pLua, sPackagePath);
+#ifdef WIN32
+			sPackagePath.Format("package.cpath = package.cpath .. ';%slibs/?.dll'", m_sEnvPath.c_str());
+#else
+			sPackagePath.Format("package.cpath = package.cpath .. ';%slibs/?.so'", m_sEnvPath.c_str());
+#endif
+			luaL_dostring(m_pLua, sPackagePath);
 		}
 		{
 			// setup lua
