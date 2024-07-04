@@ -86,37 +86,6 @@ do	-- check deprecated tool resources
 	end
 end
 
---check installed msys2 package
-local __installed_package = {}
-do
-	local	sList	= String(exec("pacman -Q"))
-	
-	while (sList.TokenizePos >= 0) do
-		local	sPackage	= sList:Tokenize("\r\n")
-		sPackage:Trim(" ")
-		sPackage:CutBack(" ", true)
-		
-		if sPackage:Length() > 0 then
-			__installed_package[#__installed_package + 1] = sPackage.s
-		end
-	end
-end
-
-function RequireMingwPackage(package_name)
-	local bInstalled = false
-	for key,val in pairs(__installed_package) do
-		if val == package_name then
-			bInstalled	= true
-			break
-		end
-	end
-	
-	if bInstalled == false then
-		LOGI("Installing new requried package : " .. package_name)
-		os.execute("pacman -S --noconfirm " .. package_name)
-	end
-end
-
 if lfs.attributes(project_path .. "bin/.update_extra_tools.lua") ~= nil then
 	RunScript(project_path .. "bin/.update_extra_tools.lua")
 end

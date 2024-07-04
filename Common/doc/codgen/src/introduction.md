@@ -76,7 +76,7 @@ To decrypt the encrypted lua file again, run the command below.
 ```
  
 :::NoteHeading
-However, if the password begins with the '@~' character, decryption is not possible and only execution is possible.
+However, if the password begins with the '@~' character, decryption is not possible and only execution is allowed.
  
 ## License
 

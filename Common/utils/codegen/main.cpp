@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 5/29/2024 Wed (clonextop@gmail.com)
+// Rev.  : 7/4/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include ".codegen_version.inl"
 #include "ArgTable.h"
@@ -43,8 +43,9 @@ const char *__sLuaFileName = NULL;
 cstring		GetTitle(void)
 {
 	cstring sTitle;
-	sTitle.Format("Code generator for TestDrive Profiling Master. v%d.%d (build #%d date : " __DATE__ ")",
-				  CODEGEN_VERSION_MAJOR, CODEGEN_VERSION_MINOR, CODEGEN_VERSION_BUILD);
+	sTitle.Format(
+		"Code generator for TestDrive Profiling Master. v%d.%d (build #%d date : " __DATE__ ")", CODEGEN_VERSION_MAJOR, CODEGEN_VERSION_MINOR,
+		CODEGEN_VERSION_BUILD);
 	return sTitle;
 }
 
@@ -58,8 +59,7 @@ int main(int argc, const char *argv[])
 	main_arg_table.AddOption("encrypt", "e", "encrypt", "Encrypt Lua script file");
 	main_arg_table.AddOption("decrypt", "d", "decrypt", "Decrypt Lua script file");
 	main_arg_table.AddOption("trace", NULL, "trace", "Enable traceback on Lua script");
-	main_arg_table.AddOptionString("key", "code_gen_default", "k", "key", "key_code",
-								   "Set key code for Encrypt/Decrypt");
+	main_arg_table.AddOptionString("key", "code_gen_default", "k", "key", "key_code", "Set key code for Encrypt/Decrypt");
 	main_arg_table.AddOptionFile("lua_file", NULL, NULL, NULL, "lua_file", "Lua script file");
 	// calculate maintain ArgumentSize
 	{
@@ -67,8 +67,7 @@ int main(int argc, const char *argv[])
 
 		for (arg_size = 1; arg_size < argc; arg_size++)
 			if (!bBypass) {
-				if (!strcmp(argv[arg_size], "-k") ||
-					!strcmp(argv[arg_size], "--key")) { // for secondary argument bypass
+				if (!strcmp(argv[arg_size], "-k") || !strcmp(argv[arg_size], "--key")) { // for secondary argument bypass
 					bBypass = true;
 					continue;
 				}
@@ -151,6 +150,9 @@ int main(int argc, const char *argv[])
 	{
 		Script sc;
 
+		// run global initialization script first
+		sc.Run("codegen_init");
+		// run source
 		if (sc.Run(__sLuaFileName))
 			iRet = 0;
 	}

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 7/2/2024 Tue (clonextop@gmail.com)
+// Rev.  : 7/4/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -55,10 +55,11 @@ public:
 	{
 		iTokenizePos = 0;
 	}
-	lua_cstring(const char *s)
+	lua_cstring(LuaRef s)
 	{
-		if (s)
-			m_sStr = s;
+		if (!s.isNil()) {
+			m_sStr = s.tostring();
+		}
 
 		iTokenizePos = 0;
 	}
@@ -1196,7 +1197,7 @@ Script::Script(void)
 		{
 			m_sEnvPath = GetCommonToolPath() + "/bin/codegen/";
 			m_sEnvPath.Replace("//", "/");
-			__AddLuaPackagePath(m_pLua, m_sEnvPath.c_str());
+			/*__AddLuaPackagePath(m_pLua, m_sEnvPath.c_str());
 			// add common package path
 			cstring sPackagePath;
 			sPackagePath.Format("package.path = package.path .. ';%slibs/?.lua'", m_sEnvPath.c_str());
@@ -1207,6 +1208,7 @@ Script::Script(void)
 			sPackagePath.Format("package.cpath = package.cpath .. ';%slibs/?.so'", m_sEnvPath.c_str());
 #endif
 			luaL_dostring(m_pLua, sPackagePath);
+			*/
 		}
 		{
 			// setup lua
@@ -1370,7 +1372,7 @@ Script::Script(void)
 				.addFunction("StyleFormat", &DocExcel::StyleFormat)
 				.endClass()
 				.beginClass<lua_cstring>("String")
-				.addConstructor<void (*)(const char *s)>()
+				.addConstructor<void (*)(LuaRef s)>()
 				.addFunction("Replace", &lua_cstring::Replace)
 				.addFunction("ReplaceVariable", &lua_cstring::ReplaceVariable)
 				.addProperty("s", &lua_cstring::c_str, &lua_cstring::Set)
@@ -1493,8 +1495,11 @@ Script::Script(void)
 				.addProperty("pause_on_error", &__bPause_on_error)
 				.endNamespace()
 				.beginNamespace("codegen")
+				.addFunction("ArgumentSize", &ArgTable::ArgumentSize)
+				.addFunction("GetArgument", &ArgTable::GetArgument)
 				.addProperty("current_file", &m_sLuaFileName.c_string(), false)
 				.addProperty("work_path", &m_sWorkPath.c_string(), false)
+				.addProperty("env_path", &m_sEnvPath.c_string(), false)
 				.endNamespace()
 				.beginClass<minGit>("Git")
 				.addConstructor<void (*)(void)>()

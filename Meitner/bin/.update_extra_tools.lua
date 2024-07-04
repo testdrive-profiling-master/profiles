@@ -1,2 +1,2 @@
 -- Requred package list
---RequireMingwPackage("mingw-w64-ucrt-x86_64-graphviz")
+--os.require_library("graphviz")
