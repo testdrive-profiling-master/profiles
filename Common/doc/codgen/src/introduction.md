@@ -13,6 +13,7 @@
 ** Lua basic libraries (@<link:https://www.tutorialspoint.com/lua/lua_standard_libraries.htm>)
 ** LuaFileSystem (@<link:https://lunarmodules.github.io/luafilesystem>)
 ** hook.lua (@<link:https://github.com/vallentin/hook.lua>)
+* LuaRocks package manager (@<link:https://luarocks.org>)
 * LuaBridge 3.0 (@<link:https://github.com/kunitoki/LuaBridge3>)
 * minizip (@<link:https://github.com/zlib-ng/minizip-ng>)
 * SSL(@<link:https://github.com/openssl/openssl>)
@@ -27,7 +28,7 @@
  
 ## Command line
 
-``` txt
+```txt
 > codegen
 
 Code generator for TestDrive Profiling Master. v1.0 (build #166 date : Jun 20 2024)
@@ -77,6 +78,18 @@ To decrypt the encrypted lua file again, run the command below.
  
 :::NoteHeading
 However, if the password begins with the '@~' character, decryption is not possible and only execution is allowed.
+
+ 
+## Package managing
+
+codegen provides the LuaRocks environment. \
+You can enter luarocks directly as a command, \
+or use the [@<code>codegen lib@</code>] command. Additionally, \
+a modified [@<code>require@</code>] Lua fuction is provided to enable automatic installation.
+
+:::NoteHeading
+For more information, see '@<bookmark:@Require Lua package library>'.
+
  
 ## License
 
