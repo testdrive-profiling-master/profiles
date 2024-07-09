@@ -12,7 +12,7 @@ Generate and run the script code as shown below.
 
 @<b>[main.lua file]@</b>
 ```#lua
-verigen_description("Test project")
+verigen.set_description("Test project")
 
 -- modules
 core_wrapper = module:new("test_wrapper")	-- top
@@ -74,7 +74,7 @@ Modify and run the Lua script as shown below.
 
 @<b>[main.lua file]@</b>
 ```#lua
-verigen_description("Test project")
+verigen.set_description("Test project")
 
 RunScript("test_definition.lua")
 
@@ -188,7 +188,7 @@ Modify and run the Lua script as shown below.
 
 @<b>[main.lua file]@</b>
 ```#lua
-verigen_description("Test project")
+verigen.set_description("Test project")
 
 RunScript("test_definition.lua")
 

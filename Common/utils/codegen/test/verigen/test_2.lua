@@ -1,4 +1,4 @@
-verigen_description("Test project")
+verigen.set_description("Test project")
 
 RunScript("test_definition.lua")
 

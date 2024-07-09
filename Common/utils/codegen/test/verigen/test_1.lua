@@ -1,4 +1,4 @@
-verigen_description("Test project")
+verigen.set_description("Test project")
 
 -- modules
 core_wrapper = module:new("test_wrapper")	-- top
