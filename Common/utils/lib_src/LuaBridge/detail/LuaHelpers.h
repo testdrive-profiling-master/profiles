@@ -55,14 +55,14 @@ inline void* lua_newuserdata_x(lua_State* L, size_t sz)
     });
 }
 
-inline void lua_pushcfunction_x(lua_State *L, lua_CFunction fn)
+inline void lua_pushcfunction_x(lua_State *L, lua_CFunction fn, const char* debugname)
 {
-    lua_pushcfunction(L, fn, "");
+    lua_pushcfunction(L, fn, debugname);
 }
 
-inline void lua_pushcclosure_x(lua_State* L, lua_CFunction fn, int n)
+inline void lua_pushcclosure_x(lua_State* L, lua_CFunction fn, const char* debugname, int n)
 {
-    lua_pushcclosure(L, fn, "", n);
+    lua_pushcclosure(L, fn, debugname, n);
 }
 
 inline int lua_error_x(lua_State* L)
@@ -91,13 +91,17 @@ inline void* lua_newuserdata_x(lua_State* L, size_t sz)
     return lua_newuserdata(L, sz);
 }
 
-inline void lua_pushcfunction_x(lua_State *L, lua_CFunction fn)
+inline void lua_pushcfunction_x(lua_State *L, lua_CFunction fn, const char* debugname)
 {
+    unused(debugname);
+
     lua_pushcfunction(L, fn);
 }
 
-inline void lua_pushcclosure_x(lua_State* L, lua_CFunction fn, int n)
+inline void lua_pushcclosure_x(lua_State* L, lua_CFunction fn, const char* debugname, int n)
 {
+    unused(debugname);
+
     lua_pushcclosure(L, fn, n);
 }
 
@@ -491,24 +495,26 @@ int lua_deleteuserdata_aligned(lua_State* L)
 template <class T, class... Args>
 void* lua_newuserdata_aligned(lua_State* L, Args&&... args)
 {
+    using U = std::remove_reference_t<T>;
+
 #if LUABRIDGE_ON_LUAU
-    void* pointer = lua_newuserdatadtor(L, maximum_space_needed_to_align<T>(), [](void* x)
+    void* pointer = lua_newuserdatadtor(L, maximum_space_needed_to_align<U>(), [](void* x)
     {
-        T* aligned = align<T>(x);
-        aligned->~T();
+        U* aligned = align<U>(x);
+        aligned->~U();
     });
 #else
-    void* pointer = lua_newuserdata_x<T>(L, maximum_space_needed_to_align<T>());
+    void* pointer = lua_newuserdata_x<U>(L, maximum_space_needed_to_align<U>());
 
     lua_newtable(L);
-    lua_pushcfunction_x(L, &lua_deleteuserdata_aligned<T>);
+    lua_pushcfunction_x(L, &lua_deleteuserdata_aligned<U>, "");
     rawsetfield(L, -2, "__gc");
     lua_setmetatable(L, -2);
 #endif
 
-    T* aligned = align<T>(pointer);
+    U* aligned = align<U>(pointer);
 
-    new (aligned) T(std::forward<Args>(args)...);
+    new (aligned) U(std::forward<Args>(args)...);
 
     return pointer;
 }
