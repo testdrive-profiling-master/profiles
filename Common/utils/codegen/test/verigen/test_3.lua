@@ -39,12 +39,7 @@ for i = 1, config.core_size do
 end
 
  -- add verilog codes
-for entry in lfs.dir("src/") do
-	local s = String(entry)
-	if s:CompareBack(".sv") then
-		module.apply_code("src/" .. entry)
-	end
-end
+verigen.add_verilog("src/*.sv")
 
 -- make code
 core_wrapper:make_code()

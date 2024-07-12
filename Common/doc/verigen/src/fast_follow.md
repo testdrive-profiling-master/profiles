@@ -10,7 +10,7 @@ You can achieve the same result by running do_test.bat in that folder.
 
 Generate and run the script code as shown below.
 
-@<b>[main.lua file]@</b>
+@<b>[test_1.lua file]@</b>
 ```#lua
 verigen.set_description("Test project")
 
@@ -72,7 +72,7 @@ You can view the actual verilog codes by clicking on the module name in this ima
 
 Modify and run the Lua script as shown below.
 
-@<b>[main.lua file]@</b>
+@<b>[test_2.lua file]@</b>
 ```#lua
 verigen.set_description("Test project")
 
@@ -186,7 +186,7 @@ as seen in @<bookmark:Step #2 Hierarchy Diagram>.
 
 Modify and run the Lua script as shown below.
 
-@<b>[main.lua file]@</b>
+@<b>[test_3.lua file]@</b>
 ```#lua
 verigen.set_description("Test project")
 
@@ -229,17 +229,12 @@ for i = 1, config.core_size do
 end
 
  -- add verilog codes
-for entry in lfs.dir("src/") do
-	local s = String(entry)
-	if s:CompareBack(".sv") then
-		module.apply_code("src/" .. entry)
-	end
-end
+verigen.add_verilog("src/*.sv")
 
 -- make code
 core_wrapper:make_code()
 ```
-The code added to the existing Lua script is line #18~24 and #41~47.
+The code added to the existing Lua script is line #18~24 and #41~42.
 The first changes the bit width of data and address of axi4, \
 and the second one adds the two files below through the module.apply_code() function to all *.sv files in the subfolder "./src".
  
