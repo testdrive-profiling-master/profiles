@@ -122,6 +122,10 @@ encrypt: $(ENCRYPT_EXTRA:=.encrypted) $(SRCS:=.encrypted) $(SRCS_RES:=.encrypted
 decrypt: $(ENCRYPT_EXTRA:=.decrypted) $(SRCS_ENCRYPTED:.encrypted=.decrypted)
 	@echo Decryption is done!
 
+deploy: all
+	@echo $(BUILD_TARGET)
+	@codegen collect_lib $(BUILD_TARGET)
+
 clean:
 	@$(RM) -f $(OBJS) $(OBJS_RES) $(DEPS)
 ifndef PRESERVE_RESULT
