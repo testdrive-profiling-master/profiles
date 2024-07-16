@@ -34,6 +34,7 @@ function IsMinGWLibrary(sFileName)
 	return lfs.IsExist(sLibPath.s .. sFileName)
 end
 
+local	lib_count	= 0
 function Collect_Lib(sBinPath)
 	-- get ldd log
 	local	sTxt		= String(exec("ldd " .. sBinPath))
@@ -51,7 +52,7 @@ function Collect_Lib(sBinPath)
 					
 					print(" - Copy library from : " .. sName.s)
 					run("cp -f \"" .. sLibPath.s .. sName.s .. "\" " .. sTargetPath)
-					
+					lib_count	= lib_count + 1
 					Collect_Lib(sLibPath.s .. sName.s)
 				end
 			end
@@ -63,5 +64,9 @@ end
 
 LOGI("Check library dependencies...")
 Collect_Lib(sBinFilename)
+
+if lib_count == 0 then
+	LOGI("No MinGW library is required for this.")
+end
 
 LOGI("Done!")
