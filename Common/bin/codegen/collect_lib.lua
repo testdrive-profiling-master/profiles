@@ -1,6 +1,5 @@
 local	Arg		= ArgTable("Collect MinGW libraries on execution binary.")
 
-Arg:AddOption		("forced", "f", nil, "forced to copy")
 Arg:AddOptionFile	("exe_file", nil, nil, nil, "exe_file", "execution binary file")
 
 if (Arg:DoParse() == false) then
@@ -24,48 +23,45 @@ if sToolPath:GetEnvironment("TESTDRIVE_DIR") == false then
 	os.exit(1)
 end
 
+-- set libraries path
+local	sLibPath	= String(sToolPath.s .. "/bin/msys64/ucrt64/bin/")
+sLibPath:Replace("//", "/", true)
+
 -- make library list
 local	lib_list	= {}
 
+function IsMinGWLibrary(sFileName)
+	return lfs.IsExist(sLibPath.s .. sFileName)
+end
+
 function Collect_Lib(sBinPath)
 	-- get ldd log
-	local	sTxt		= String(exec("ldd " .. sBinPath .. " | grep ucrt64"))
-
-	--print("sTxt : " .. sTxt.s)
+	local	sTxt		= String(exec("ldd " .. sBinPath))
 
 	-- get reference libraries
-	local	sTok		= sTxt:Tokenize("\r\n")
-	while #sTok.s ~= 0 do
-		sTok:CutBack("(", true)
-		sTok:CutFront("=>", true)
-		sTok:Trim(" \t")
+	local	sName		= sTxt:Tokenize("\r\n")
+	while #sName.s ~= 0 do
+		sName:CutBack("=>", true)
+		sName:Trim(" \t")
 		
-		if sTok.s ~= 0 then
-			if lib_list[sTok.s] ~= true then
-				lib_list[sTok.s]	= true
-				Collect_Lib(sToolPath.s .. "/bin/msys64/" .. sTok.s)
+		if sName.s ~= 0 then
+			if lib_list[sName.s] ~= true then
+				if IsMinGWLibrary(sName.s) then
+					lib_list[sName.s]	= true
+					
+					print(" - Copy library from : " .. sName.s)
+					run("cp -f \"" .. sLibPath.s .. sName.s .. "\" " .. sTargetPath)
+					
+					Collect_Lib(sLibPath.s .. sName.s)
+				end
 			end
 		end
 		
-		sTok = sTxt:Tokenize("\r\n")
+		sName = sTxt:Tokenize("\r\n")
 	end
 end
 
 LOGI("Check library dependencies...")
 Collect_Lib(sBinFilename)
-
--- copy libraries
-local	lib_count = 0
-for k in pairs(lib_list) do
-	local	sLibPath	= String(sToolPath.s .. "/bin/msys64/" .. k)
-	sLibPath:Replace("//", "/", true)
-	print(" - Copy library from : " .. sLibPath.s)
-	run("cp -f \"" .. sLibPath.s .. "\" " .. sTargetPath)
-	lib_count	= lib_count + 1
-end
-
-if lib_count == 0 then
-	LOGW("No libraries copied. If you want ")
-end
 
 LOGI("Done!")
