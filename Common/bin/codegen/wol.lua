@@ -17,7 +17,7 @@ for w in string.gmatch(mac_string, "[0-9A-Za-z][0-9A-Za-z]") do
   mac = mac .. string.char(tonumber(w, 16))
 end
 
-local udp = require("socket", "lua-socket").udp()
+local udp = require("socket", "luasocket").udp()
 udp:settimeout(1)
 udp:setoption("broadcast", true)
 udp:sendto(string.char(0xff):rep(6) .. mac:rep(16) , ip, port)

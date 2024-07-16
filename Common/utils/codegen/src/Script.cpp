@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 7/4/2024 Thu (clonextop@gmail.com)
+// Rev.  : 7/16/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -311,9 +311,13 @@ public:
 	{
 		return m_sStr.find(ch, pos);
 	}
-	inline int find(const char *s, int pos = 0)
+	inline int find(const char *s, LuaRef pos)
 	{
-		return m_sStr.find(s, pos);
+		int ipos = 0;
+		if (pos.isNumber()) {
+			ipos = (int)pos;
+		}
+		return m_sStr.find(s, ipos);
 	}
 	inline int rfind(const char *s)
 	{

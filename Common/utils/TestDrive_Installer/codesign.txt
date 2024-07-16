@@ -1,0 +1,3 @@
+아래와 같이 코드사인을 수행할 수 있다.
+
+"D:\Windows Kits\10\bin\10.0.19041.0\x64\signtool.exe" sign /a /s my /n "회사명" /tr http://timestamp.digicert.com /td sha256 /fd sha256 /v TestDrive_Profiling_Master.exe
