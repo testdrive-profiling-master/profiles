@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive System Driver wrapper
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 7/17/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_DRIVER_INTERFACE_H__
 #define __SYSTEM_DRIVER_INTERFACE_H__
@@ -70,6 +70,15 @@ public:
 	inline const char *GetSystemDescription(void)
 	{
 		return m_sSystemDesc.c_str();
+	}
+	inline const MEMORY_DESC *GetMemoryDescription(void)
+	{
+		return &m_TotalMemory;
+	}
+
+	inline const MEMORY_DESC *GetInaccessibleMemoryDescription(void)
+	{
+		return m_pInaccessibleMemory;
 	}
 
 protected:

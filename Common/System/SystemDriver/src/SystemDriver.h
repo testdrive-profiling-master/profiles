@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive System Driver wrapper
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 7/17/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_DRIVER_H__
 #define __SYSTEM_DRIVER_H__
@@ -40,7 +40,7 @@
 #include "ThreadManager.h"
 #include <string>
 
-class SystemDriver : public ISystemImp, public IMemoryManager, public DriverCommon
+class SystemDriver : public ISystemImp, public IMemoryManager
 {
 public:
 	SystemDriver(void);

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive System Driver wrapper
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 7/17/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include "SystemDriver.h"
 #include "NativeMemory.h"
@@ -41,7 +41,6 @@ SystemDriver::SystemDriver(void)
 	m_pNativeDriver = NULL;
 	m_pMemImp		= NULL;
 	m_bMustExit		= false;
-	SetSystemDescription("System driver");
 }
 
 SystemDriver::~SystemDriver(void)
@@ -54,7 +53,10 @@ SystemDriver::~SystemDriver(void)
 
 const char *SystemDriver::GetDescription(void)
 {
-	return GetSystemDescription();
+	if (m_pNativeDriver) {
+		return m_pNativeDriver->GetSystemDescription();
+	}
+	return NULL;
 }
 
 bool SystemDriver::Initialize(IMemoryImp *pMem)
@@ -67,11 +69,11 @@ bool SystemDriver::Initialize(IMemoryImp *pMem)
 
 	// memory heap initialization
 	m_pMemImp = pMem;
-	pMem->Initialize(m_TotalMemory.base_address, m_TotalMemory.byte_size, this);
+	pMem->Initialize(GetMemoryBase(), GetMemorySize(), this);
 
 	// apply inaccessible memory list
-	if (m_pInaccessibleMemory) {
-		MEMORY_DESC *pDesc = m_pInaccessibleMemory;
+	if (m_pNativeDriver->GetInaccessibleMemoryDescription()) {
+		const MEMORY_DESC *pDesc = m_pNativeDriver->GetInaccessibleMemoryDescription();
 
 		while (pDesc->byte_size) {
 			pMem->SetInaccessible(pDesc->base_address, pDesc->byte_size);
@@ -124,12 +126,18 @@ uint32_t SystemDriver::DriverCommand(void *pCommand)
 // Memory interface
 uint64_t SystemDriver::GetMemoryBase(void)
 {
-	return m_TotalMemory.base_address;
+	if (m_pNativeDriver) {
+		return m_pNativeDriver->GetMemoryDescription()->base_address;
+	}
+	return 0;
 }
 
 uint64_t SystemDriver::GetMemorySize(void)
 {
-	return m_TotalMemory.byte_size;
+	if (m_pNativeDriver) {
+		return m_pNativeDriver->GetMemoryDescription()->byte_size;
+	}
+	return 0;
 }
 
 void SystemDriver::InvokeISR(void)
