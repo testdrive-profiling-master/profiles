@@ -1,4 +1,4 @@
-sProfilePath = String("")
+sProfilePath = String()
 if sProfilePath:GetEnvironment("TESTDRIVE_PROFILE") == false then
 	LOGE("You must run the TestDrive once.")
 	os.exit(1)
@@ -95,7 +95,7 @@ function MakeDirForTestDrive(folder_name)
 end
 
 function MakeDirForVerilog(folder_name)
-	local folder_path = String("")
+	local folder_path = String()
 	if folder_path:GetEnvironment("RECENT_PROJECT@TESTDRIVE") == false then
 		LOGE("You must execute your 'TestDrive' project at least once.")
 		os.exit(1)
@@ -123,7 +123,7 @@ function CleanForVerilog(folder_path)
 	Sleep(1000)	-- wait for watchdog check
 	exec("rm -f \"" .. folder_path .. "/.TestDrive.nosearch\"")
 
-	local	sHandle	= String("")
+	local	sHandle	= String()
 	if sHandle:GetEnvironment("SYSTEM_MANAGER@TESTDRIVE") then
 		if sHandle:IsEmpty() == false then
 			SendMessage(tonumber(sHandle.s, 16), 0x400, 4, 0)

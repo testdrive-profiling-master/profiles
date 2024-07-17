@@ -227,7 +227,7 @@ end
 
 function interface:set_modport(name, modport)
 	local	mp_0	= String(name)
-	local	mp_1	= String("")
+	local	mp_1	= String()
 	
 	-- 각 modport 얻기/생성
 	do
@@ -428,7 +428,7 @@ function interface.__make_code(f)
 			-- modport list
 			for mp_name, mp in key_pairs(i.modport) do
 				f:Put("	modport " .. mp_name .. " (\n")
-				local sModport	= String("")
+				local sModport	= String()
 				for io_type, io_list in key_pairs(mp.data) do
 					sModport:Append("\t\t" .. string.format("%-7s ", io_type))
 					for io_num, io_name in ipairs(io_list) do

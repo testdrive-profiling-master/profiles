@@ -1,4 +1,4 @@
-local	sProjectPath	= String("")
+local	sProjectPath	= String()
 sProjectPath:GetEnvironment("PROJECT")
 
 -- prevent running by user

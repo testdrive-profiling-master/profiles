@@ -1439,7 +1439,7 @@ local	bInline		= false
 
 function EncodeParagraph(sText, sExtra)
 	local	sPara			= String(sText)
-	local	sResult			= String("")
+	local	sResult			= String()
 	local	bBypass			= false				-- 내용 무시, docgen.language 일치하지 않음
 	local	bBypassCodeRef	= false				-- code reference in bypass mode
 	

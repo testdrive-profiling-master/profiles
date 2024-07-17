@@ -98,9 +98,9 @@ function module:make_constraint()
 	end
 end
 
-local	__graphviz		= String("")
-local	__FileList		= String("")
-local	__IncludeList	= String("")
+local	__graphviz		= String()
+local	__FileList		= String()
+local	__IncludeList	= String()
 
 function module:find_sub_module_matched_interface(cur_m, cur_i, cur_i_name)
 	for name, m in key_pairs(self.sub_module) do
@@ -182,11 +182,11 @@ function module:make_code(is_top)
 	-- module declaration
 	f:Put("module " .. self.name)
 	
-	local	sDocuments		= String("")
-	local	sParameters		= String("")
-	local	sPorts			= String("")
-	local	sDeclares		= String("")
-	local	sBody			= String("")
+	local	sDocuments		= String()
+	local	sParameters		= String()
+	local	sPorts			= String()
+	local	sDeclares		= String()
+	local	sBody			= String()
 	local	sGraphviz		= String("URL=\"html/" .. self.name .. ".sv.html\" tooltip = \"" .. self.name .. "\" target=\"" .. self.name .. ".sv\" label=<<table border='" .. (is_top and "1" or "0") .. "' cellborder='1' cellspacing='0' cellpadding='4'><tr><td><b>" .. self.name .. "</b></td></tr>__DOC____PARAM__<tr><td align='left' SIDES='LRB'>__PORT__</td></tr></table>>, fillcolor=\"#__FILL_COLOR__\", shape=plain")
 	
 	-- document
@@ -210,7 +210,7 @@ function module:make_code(is_top)
 
 		-- original parameters
 		do
-			local	sParam	= String("")
+			local	sParam	= String()
 			
 			for name, param in key_pairs(self.params) do
 				if param.is_local == false then
@@ -224,7 +224,7 @@ function module:make_code(is_top)
 		
 		-- original ports
 		do
-			local	sPort	= String("")
+			local	sPort	= String()
 			
 			for i_name, i in key_pairs(self.interfaces) do
 				local	modport	= i.modport
@@ -277,7 +277,7 @@ function module:make_code(is_top)
 		local	graphiviz_show	= true
 		
 		for m_name, m in key_pairs(self.sub_module) do
-			local	sModule		= String("")
+			local	sModule		= String()
 			local	no_ports	= true
 			
 			sModule:Append(m.code.prefix)
@@ -301,11 +301,11 @@ function module:make_code(is_top)
 					((m.graphviz.node ~= nil) and ("," .. m.graphviz.node) or "") ..
 					"];\n")
 			end
-			local sGraphviz_Module	= String("")
+			local sGraphviz_Module	= String()
 
 			-- parameters
 			do
-				local	sParam		= String("")
+				local	sParam		= String()
 				local	used_param	= {}
 				
 				for p_name, param in key_pairs(m.module.params) do
@@ -343,7 +343,7 @@ function module:make_code(is_top)
 			-- ports
 			sModule:Append(" " .. m.name .. " (\n")
 			do
-				local	sPort			= String("")
+				local	sPort			= String()
 
 				-- clock & reset
 				do
@@ -367,7 +367,7 @@ function module:make_code(is_top)
 				
 				-- ports
 				for i_name, i in key_pairs(m.module.interfaces) do
-					--local	sIPort	= String("")
+					--local	sIPort	= String()
 					if i.modport ~= nil then
 						--i.interface.__bared --TODO : bared interface?
 						sPort:Append("\t" .. string.format(".%-20s", i.name) .."(")
@@ -711,7 +711,7 @@ function module:make_code(is_top)
 
 		-- original parameters
 		do
-			local	sParam	= String("")
+			local	sParam	= String()
 			
 			for name, param in key_pairs(self.params) do
 				if param.is_local == false then
@@ -727,7 +727,7 @@ function module:make_code(is_top)
 		
 		-- original ports
 		do
-			local	sPort	= String("")
+			local	sPort	= String()
 			
 			for i_name, i in key_pairs(self.interfaces) do
 				local	modport	= i.modport
@@ -812,6 +812,12 @@ function module:make_code(is_top)
 						"	<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />\n"..
 						"	<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\" />\n"..
 						"	<meta name=\"google\" content=\"notranslate\">\n"..
+						"	<style>\n"..
+						"	* {\n"..
+						"		font-family: 'Cascadia Mono', courier, serif;\n"..
+						"		font-size: 14px;\n"..
+						"	}\n"..
+						"	</style>\n"..
 						"	<title>" .. self.name .. "_defines.vh</title>\n"..
 						"</head>\n"..
 						"<body>\n")
@@ -935,7 +941,7 @@ vfunction("LOG2", function(val, bOverflow)
 end)
 
 vfunction("RANGE", function(size, step)
-	local s = String("")
+	local s = String()
 
 	if size == nil then size = 1 end
 
@@ -961,7 +967,7 @@ vfunction("RANGE", function(size, step)
 end)
 
 vfunction("DEMUX_BY_EN", function(width, channel_count, en, data_in, data_out)
-	local s	= String("")
+	local s	= String()
 	local inst_name = String(data_out)
 
 	inst_name:Replace(".", "_", true)

@@ -139,7 +139,7 @@ end
 function __build_code(s)
 	local 	org_size	= #s.s
 	local	sSrc		= String(s.s)
-	local	sOut		= String("")
+	local	sOut		= String()
 
 	-- lua vfunction call
 	for name, func in pairs(__vfunctions) do

@@ -59,7 +59,7 @@ function module:new(name)
 	t.constraint	= {}
 	t.document		= {}
 	t.fill_color	= "00000010"
-	t.code			= String("")
+	t.code			= String()
 	t.enable		= true
 	
 	return t
@@ -285,7 +285,7 @@ function _V(s, v_start, v_end, v_step)
 			end
 			
 			do
-				local s_code = String("")
+				local s_code = String()
 				for i = v_start, v_end, v_step do
 					local s_val = String(s_variable)
 					s_val:Replace("#", tostring(i), true)
@@ -351,7 +351,7 @@ function module.apply_code(filename)
 	local	f = TextFile()
 	local	cur_module	= nil
 	if f:Open(filename) then
-		local	codes		= String("")
+		local	codes		= String()
 		
 		function add_code(m, code)
 			if m ~= nil then
