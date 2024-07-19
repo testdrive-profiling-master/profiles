@@ -4,7 +4,7 @@
 SRC_PATH		:= .
 TARGETPATH		:= .
 INSTALL_PATH	:= ..
-TARGETNAME		:= meitner_thread
+TARGETNAME		:= mtsp_thread
 
 SRCS			:= \
 	$(wildcard $(SRC_PATH)/*.cpp)
