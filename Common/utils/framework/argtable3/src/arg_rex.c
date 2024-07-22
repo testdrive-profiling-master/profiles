@@ -96,7 +96,9 @@ typedef struct {
     int len;
 } TRexMatch;
 
-#ifdef __GNUC__
+#if defined(__clang__)
+TREX_API TRex* trex_compile(const TRexChar* pattern, const TRexChar** error, int flags) __attribute__((optnone));
+#elif defined(__GNUC__)
 TREX_API TRex* trex_compile(const TRexChar* pattern, const TRexChar** error, int flags) __attribute__((optimize(0)));
 #else
 TREX_API TRex* trex_compile(const TRexChar* pattern, const TRexChar** error, int flags);
@@ -241,7 +243,7 @@ struct arg_rex* arg_rexn(const char* shortopts,
 
     nbytes = sizeof(struct arg_rex)      /* storage for struct arg_rex */
              + sizeof(struct privhdr)    /* storage for private arg_rex data */
-             + maxcount * sizeof(char*); /* storage for sval[maxcount] array */
+             + (size_t)maxcount * sizeof(char*); /* storage for sval[maxcount] array */
 
     /* init the arg_hdr struct */
     result = (struct arg_rex*)xmalloc(nbytes);
@@ -376,7 +378,7 @@ static int trex_newnode(TRex* exp, TRexNodeType type) {
         n.right = exp->_nsubexpr++;
     if (exp->_nallocated < (exp->_nsize + 1)) {
         exp->_nallocated *= 2;
-        exp->_nodes = (TRexNode*)xrealloc(exp->_nodes, exp->_nallocated * sizeof(TRexNode));
+        exp->_nodes = (TRexNode*)xrealloc(exp->_nodes, (size_t)exp->_nallocated * sizeof(TRexNode));
     }
     exp->_nodes[exp->_nsize++] = n;
     newid = exp->_nsize - 1;
@@ -417,7 +419,7 @@ static TRexChar trex_escapechar(TRex* exp) {
             default:
                 return (*exp->_p++);
         }
-    } else if (!scisprint(*exp->_p))
+    } else if (!scisprint((int)(*exp->_p)))
         trex_error(exp, _SC("letter expected"));
     return (*exp->_p++);
 }
@@ -482,7 +484,7 @@ static int trex_charnode(TRex* exp, TRexBool isclass) {
                 exp->_p++;
                 return trex_newnode(exp, t);
         }
-    } else if (!scisprint(*exp->_p)) {
+    } else if (!scisprint((int)(*exp->_p))) {
         trex_error(exp, _SC("letter expected"));
     }
     t = *exp->_p;
@@ -544,7 +546,7 @@ static int trex_parsenumber(TRex* exp) {
     int ret = *exp->_p - '0';
     int positions = 10;
     exp->_p++;
-    while (isdigit(*exp->_p)) {
+    while (isdigit((int)(*exp->_p))) {
         ret = ret * 10 + (*exp->_p++ - '0');
         if (positions == 1000000000)
             trex_error(exp, _SC("overflow in numeric constant"));
@@ -613,7 +615,7 @@ static int trex_element(TRex* exp) {
                 break;
             case '{':
                 exp->_p++;
-                if (!isdigit(*exp->_p))
+                if (!isdigit((int)(*exp->_p)))
                     trex_error(exp, _SC("number expected"));
                 p0 = (unsigned short)trex_parsenumber(exp);
                 /*******************************/
@@ -625,7 +627,7 @@ static int trex_element(TRex* exp) {
                     case ',':
                         exp->_p++;
                         p1 = 0xFFFF;
-                        if (isdigit(*exp->_p)) {
+                        if (isdigit((int)(*exp->_p))) {
                             p1 = (unsigned short)trex_parsenumber(exp);
                         }
                         trex_expect(exp, '}');
@@ -853,8 +855,8 @@ static const TRexChar* trex_matchnode(TRex* exp, TRexNode* node, const TRexChar*
             return cur;
         }
         case OP_WB:
-            if ((str == exp->_bol && !isspace(*str)) || (str == exp->_eol && !isspace(*(str - 1))) || (!isspace(*str) && isspace(*(str + 1))) ||
-                (isspace(*str) && !isspace(*(str + 1)))) {
+            if ((str == exp->_bol && !isspace((int)(*str))) || (str == exp->_eol && !isspace((int)(*(str - 1)))) || (!isspace((int)(*str)) && isspace((int)(*(str + 1)))) ||
+                (isspace((int)(*str)) && !isspace((int)(*(str + 1))))) {
                 return (node->left == 'b') ? str : NULL;
             }
             return (node->left == 'b') ? NULL : str;
@@ -902,8 +904,8 @@ TRex* trex_compile(const TRexChar* pattern, const TRexChar** error, int flags) {
     TRex* exp = (TRex*)xmalloc(sizeof(TRex));
     exp->_eol = exp->_bol = NULL;
     exp->_p = pattern;
-    exp->_nallocated = (int)scstrlen(pattern) * sizeof(TRexChar);
-    exp->_nodes = (TRexNode*)xmalloc(exp->_nallocated * sizeof(TRexNode));
+    exp->_nallocated = (int)(scstrlen(pattern) * sizeof(TRexChar));
+    exp->_nodes = (TRexNode*)xmalloc((size_t)exp->_nallocated * sizeof(TRexNode));
     exp->_nsize = 0;
     exp->_matches = 0;
     exp->_nsubexpr = 0;
@@ -931,8 +933,8 @@ TRex* trex_compile(const TRexChar* pattern, const TRexChar** error, int flags) {
             scprintf(_SC("\n"));
         }
 #endif
-        exp->_matches = (TRexMatch*)xmalloc(exp->_nsubexpr * sizeof(TRexMatch));
-        memset(exp->_matches, 0, exp->_nsubexpr * sizeof(TRexMatch));
+        exp->_matches = (TRexMatch*)xmalloc((size_t)exp->_nsubexpr * sizeof(TRexMatch));
+        memset(exp->_matches, 0, (size_t)exp->_nsubexpr * sizeof(TRexMatch));
     } else {
         trex_free(exp);
         return NULL;

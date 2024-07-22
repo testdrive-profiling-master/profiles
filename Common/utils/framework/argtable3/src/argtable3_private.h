@@ -35,8 +35,25 @@
 
 #include <stdlib.h>
 
+#ifndef ARG_ENABLE_TRACE
 #define ARG_ENABLE_TRACE 0
+#endif /* ARG_ENABLE_TRACE */
+
+#ifndef ARG_ENABLE_LOG
 #define ARG_ENABLE_LOG 1
+#endif /* ARG_ENABLE_LOG */
+
+/* Use the embedded getopt as the system getopt(3) */
+#ifndef ARG_REPLACE_GETOPT
+#define ARG_REPLACE_GETOPT 1
+#endif /* ARG_REPLACE_GETOPT */
+
+/* Size of the buffer pre-allocated for dynamic strings.
+ * If the length exceeds this size, the buffer will be dynamically allocated.
+ */
+#ifndef ARG_DSTR_SIZE
+#define ARG_DSTR_SIZE 200
+#endif /* ARG_DSTR_SIZE */
 
 #ifdef __cplusplus
 extern "C" {
@@ -75,6 +92,16 @@ typedef void(arg_panicfn)(const char* fmt, ...);
             dbg_printf x;   \
     } while (0)
 #endif
+
+/*
+ * Rename a few generic names to unique names.
+ * They can be a problem for the platforms like NuttX, where
+ * the namespace is flat for everything including apps and libraries.
+ */
+#define	xmalloc argtable3_xmalloc
+#define	xcalloc argtable3_xcalloc
+#define	xrealloc argtable3_xrealloc
+#define	xfree argtable3_xfree
 
 extern void dbg_printf(const char* fmt, ...);
 extern void arg_set_panic(arg_panicfn* proc);
