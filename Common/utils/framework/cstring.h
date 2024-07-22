@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 5/27/2024 Mon (clonextop@gmail.com)
+// Rev.  : 7/22/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __CSTRING_H__
 #define __CSTRING_H__
@@ -62,41 +62,39 @@ public:
 	int		 Compare(const char *s);
 	bool	 CompareFront(const char *s) const;
 	bool	 CompareBack(const char *s) const;
-	bool	 CutFront(const char *s, bool bRecursive = false);	 // delete ~s
-	bool	 CutBack(const char *s, bool bRecursive = false);	 // delete s~
-	bool	 DeleteFront(const char *s);						 // find first front 's' and delete
-	bool	 DeleteBack(const char *s);							 // find last 's' and delete
-	bool	 DeleteBlock(const char *sExpression, int iPos = 0); // ex) sExpression = "[*]"
-	int FindVariableString(cstring &sVar, const char *sExpression = "$(*)", int iPos = 0); // ex : "$(" variable ")"
-	int FindNameString(const char *sName, int iPos = 0); // ex) sName = 'box', 'abox'(X), 'a box'(O)
+	bool	 CutFront(const char *s, bool bRecursive = false);									// delete ~s
+	bool	 CutBack(const char *s, bool bRecursive = false);									// delete s~
+	bool	 DeleteFront(const char *s);														// find first front 's' and delete
+	bool	 DeleteBack(const char *s);															// find last 's' and delete
+	bool	 DeleteBlock(const char *sExpression, int iPos = 0);								// ex) sExpression = "[*]"
+	int		 FindVariableString(cstring &sVar, const char *sExpression = "$(*)", int iPos = 0); // ex : "$(" variable ")"
+	int		 FindNameString(const char *sName, int iPos = 0);									// ex) sName = 'box', 'abox'(X), 'a box'(O)
 	operator const char *(void) const
 	{
 		return m_sStr.c_str();
 	}
-	void	MakeUpper(void);
-	void	MakeLower(void);
-	bool	Replace(const char *sSearch, const char *sReplace, bool bRecursive = false);
-	bool	ReplaceVariable(const char *sSearch, const char *sReplace);
-	void	TrimLeft(const char *sDelim);
-	void	TrimRight(const char *sDelim);
-	void	Trim(const char *sDelim);
-	int		Length(void) const;
-	cstring Tokenize(int &iPos, const char *sDelim = NULL);
-	int		SearchBraket(int iPos = 0);
-	int		RetrieveTag(const char **sTagList, int iTagSize = 0);
-	void	Format(const char *sFormat, ...);
-	void	AppendFormat(const char *sFormat, ...);
-	void	Set(const char *sStr);
-	void	Append(const char *sStr);
-	void	Append(char ch);
-	int		CheckFileExtension(const char **sExtList);
-	bool	GetEnvironment(const char *sKey);
-	void	SetEnvironment(const char *sKey);
-#ifndef UNUSE_CSTRING_ICONV
-	bool ChangeCharset(const char *szSrcCharset, const char *szDstCharset);
-	bool ChangeCharsetToUTF8(void);
-	bool ChangeCharsetToANSI(void);
-#endif
+	void		MakeUpper(void);
+	void		MakeLower(void);
+	bool		Replace(const char *sSearch, const char *sReplace, bool bRecursive = false);
+	bool		ReplaceVariable(const char *sSearch, const char *sReplace);
+	void		TrimLeft(const char *sDelim);
+	void		TrimRight(const char *sDelim);
+	void		Trim(const char *sDelim);
+	int			Length(void) const;
+	cstring		Tokenize(int &iPos, const char *sDelim = NULL);
+	int			SearchBraket(int iPos = 0);
+	int			RetrieveTag(const char **sTagList, int iTagSize = 0);
+	void		Format(const char *sFormat, ...);
+	void		AppendFormat(const char *sFormat, ...);
+	void		Set(const char *sStr);
+	void		Append(const char *sStr);
+	void		Append(char ch);
+	int			CheckFileExtension(const char **sExtList);
+	bool		GetEnvironment(const char *sKey);
+	void		SetEnvironment(const char *sKey);
+	bool		ChangeCharset(const char *szSrcCharset, const char *szDstCharset);
+	bool		ChangeCharsetToUTF8(void);
+	bool		ChangeCharsetToANSI(void);
 	inline bool IsEmpty(void) const
 	{
 		return Length() == 0;

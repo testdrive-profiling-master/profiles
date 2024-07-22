@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 6/20/2024 Thu (clonextop@gmail.com)
+// Rev.  : 7/22/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #include "STDInterface.h"
 // cstrings
@@ -929,11 +929,12 @@ static bool is_utf8(const char *string)
 
 #ifndef UNUSE_CSTRING_ICONV
 #	include <iconv.h>
-
+#endif
 bool cstring::ChangeCharset(const char *szSrcCharset, const char *szDstCharset)
 {
-	bool	bRet = false;
-	iconv_t it	 = iconv_open(szDstCharset, szSrcCharset);
+	bool bRet = false;
+#ifndef UNUSE_CSTRING_ICONV
+	iconv_t it = iconv_open(szDstCharset, szSrcCharset);
 
 	if (it != (iconv_t)(-1)) {
 		size_t nSrcStrLen = Length();
@@ -954,23 +955,30 @@ bool cstring::ChangeCharset(const char *szSrcCharset, const char *szDstCharset)
 		delete[] sIn;
 		delete[] sOut;
 	}
-
+#endif
 	return bRet;
 }
 
 bool cstring::ChangeCharsetToUTF8(void)
 {
+#ifndef UNUSE_CSTRING_ICONV
 	if (is_utf8(m_sStr.c_str()))
 		return true;
 
 	return ChangeCharset("EUC-KR", "UTF-8//IGNORE");
+#else
+	return false;
+#endif
 }
 
 bool cstring::ChangeCharsetToANSI(void)
 {
+#ifndef UNUSE_CSTRING_ICONV
 	if (!is_utf8(m_sStr.c_str()))
 		return true;
 
 	return ChangeCharset("UTF-8", "EUC-KR//IGNORE");
-}
+#else
+	return false;
 #endif
+}
