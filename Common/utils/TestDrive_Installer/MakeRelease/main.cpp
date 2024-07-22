@@ -1,23 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
-// 
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -29,9 +29,9 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : TestDrive installer Release Build
-// Rev.  : 1/31/2023 Tue (clonextop@gmail.com)
+// Rev.  : 7/22/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #include "UtilFramework.h"
 #include <unistd.h>
@@ -42,23 +42,22 @@
 #include <map>
 #include <boost/filesystem.hpp>
 
-//using std::filesystem;
-
-static string __exec(const char* cmd)
+static string __exec(const char *cmd)
 {
-	cstring	sCmd(cmd);
-	char buffer[4096];
-	string result = "";
-	sCmd	+= " 2>&1";		// redirect catch stderr
-	FILE* pipe = popen(sCmd.c_str(), "r");
+	cstring sCmd(cmd);
+	char	buffer[4096];
+	string	result = "";
+	sCmd += " 2>&1"; // redirect catch stderr
+	FILE *pipe = popen(sCmd.c_str(), "r");
 
-	if(!pipe) throw runtime_error("popen() failed!");
+	if (!pipe)
+		throw runtime_error("popen() failed!");
 
 	try {
-		while(fgets(buffer, sizeof(buffer), pipe) != NULL) {
+		while (fgets(buffer, sizeof(buffer), pipe) != NULL) {
 			result += buffer;
 		}
-	} catch(...) {
+	} catch (...) {
 		pclose(pipe);
 		throw;
 	}
@@ -67,34 +66,25 @@ static string __exec(const char* cmd)
 	return result;
 }
 
-bool IsFileExists(const char* path)
+bool IsFileExists(const char *path)
 {
 	struct stat info;
 
-	if(stat(path, &info) != 0)
+	if (stat(path, &info) != 0)
 		return false;
 
-	if(info.st_mode & S_IFMT)
+	if (info.st_mode & S_IFMT)
 		return true;
 
 	return false;
 }
 
-map<string, int>	g_LibrariesMap;
+map<string, int> g_LibrariesMap;
 
-int main(int argc, const char* argv[])
+int				 main(int argc, const char *argv[])
 {
-	cstring sToolPath;
-	sToolPath.GetEnvironment("TESTDRIVE_DIR");
-
-	// get tool path
-	if(sToolPath.IsEmpty()) {
-		printf("*E: No TestDrive...\n");
-		exit(1);
-	}
-
 	// check existence of installer
-	if(access("release/TestDrive_Installer.exe", F_OK)) {
+	if (access("release/TestDrive_Installer.exe", F_OK)) {
 		printf("*E: No Target file...\n");
 		exit(1);
 	}
@@ -102,41 +92,19 @@ int main(int argc, const char* argv[])
 	// clear previous library dependencies
 	__exec("rm -f release/*.dll");
 	// collect new library dependencies
-	cstring	sOut = __exec("ldd release/TestDrive_Installer.exe | grep ucrt64");
-	{
-		int iTokenPos = 0;
-
-		while(iTokenPos >= 0) {
-			cstring	sTok = sOut.Tokenize(iTokenPos, "\r\n");
-			sTok.CutBack("=>");
-			sTok.Trim(" \t");
-
-			if(!sTok.Length()) continue;
-
-			g_LibrariesMap[sTok.c_str()]	= 1;
-		}
-	}
-	sToolPath	+= "bin/msys64/ucrt64/bin/";
-
-	// copy libraries to release directory
-	for(auto& i : g_LibrariesMap) {
-		cstring sCmd;
-		printf("Updating '%s'...\n", i.first.c_str());
-		sCmd.Format("cp -r \"%s%s\" release", sToolPath.c_str(), i.first.c_str());
-		__exec(sCmd.c_str());
-	}
+	printf("*I: Copy MinGW libraries...\n");
+	system("codegen collect_lib release/TestDrive_Installer.exe");
 
 	// add extra files
-    for (const auto & file : boost::filesystem::directory_iterator(boost::filesystem::path("release"))) {
-        g_LibrariesMap[file.path().filename().string().c_str()]	= 1;
-    }
+	for (const auto &file : boost::filesystem::directory_iterator(boost::filesystem::path("release"))) {
+		g_LibrariesMap[file.path().filename().string().c_str()] = 1;
+	}
 
-    string path = "/";
-
+	// insert file list of SED description
 	{
 		TextFile f;
 
-		if(!f.Open("TestDriveInstaller.sed.default")) {
+		if (!f.Open("TestDriveInstaller.sed.default")) {
 			printf("*E: No installer SED.\n");
 			exit(1);
 		}
@@ -145,7 +113,7 @@ int main(int argc, const char* argv[])
 		f.GetAll(sSED);
 		f.Close();
 
-		if(!f.Create("TestDriveInstaller.sed")) {
+		if (!f.Create("TestDriveInstaller.sed")) {
 			printf("*E: Can't create installer SED.\n");
 			exit(1);
 		}
@@ -154,8 +122,8 @@ int main(int argc, const char* argv[])
 		{
 			cstring sFileList;
 			cstring sSourceFiles;
-			int index	= 0;
-			for(auto& i : g_LibrariesMap) {
+			int		index = 0;
+			for (auto &i : g_LibrariesMap) {
 				sFileList.AppendFormat("FILE%d=\"%s\"\n", index, i.first.c_str());
 				sSourceFiles.AppendFormat("%%FILE%d%%==\n", index);
 				index++;
