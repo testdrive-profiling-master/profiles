@@ -16,7 +16,7 @@ If WScript.Arguments.Count > 0 Then
 	svgPath	= fso.GetParentFolderName(vsdPath) & "\" & svgPath
 	
 	
-	'SVG 파일이 잠겨 있는지 채크
+	'check target SVG file is locking...
 	If fso.FileExists(svgPath) Then
 		fso.DeleteFile(svgPath)
 		If fso.FileExists(svgPath) Then
@@ -27,7 +27,7 @@ If WScript.Arguments.Count > 0 Then
 	
 	
 	If LCase(Right(vsdPath, 4)) = ".vsd" Or LCase(Right(vsdPath, 5)) = ".vsdx" Then
-		On Error Resume Next	'오류 강제 처리
+		On Error Resume Next	'forced error handling
 
 		Set objVisio			= CreateObject("Visio.InvisibleApp")
 
@@ -39,12 +39,12 @@ If WScript.Arguments.Count > 0 Then
 
 		Set objDraw = objVisio.documents.open(vsdPath)
 
-		'SVG 로 저장
+		'Save to SVG file
 		If page_name = "" Then
-			'첫 페이지
+			'first page
 			objDraw.Pages(1).Export (svgPath)
 		Else
-			'페이지 찾기
+			'search page
 			bFoundPage	= False
 			For Each page in objDraw.Pages
 				If page.Name = page_name Then

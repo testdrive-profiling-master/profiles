@@ -23,7 +23,7 @@ If WScript.Arguments.Count = 2 Then
 		WScript.Quit(1)
 	End If
 	
-	'타겟 파일이 잠겨 있는지 채크
+	'check target file is locking...
 	If fso.FileExists(save_Path) Then
 		fso.DeleteFile(save_Path)
 		If fso.FileExists(save_Path) Then
@@ -33,7 +33,7 @@ If WScript.Arguments.Count = 2 Then
 	End If
 	
 	If LCase(Right(docPath, 4)) = ".doc" Or LCase(Right(docPath, 5)) = ".docx" Then
-		On Error Resume Next	'오류 강제 처리
+		On Error Resume Next	'forced error handling
 		Set objWord				= CreateObject("Word.Application")
 		
 		If Err.Number <> 0 Then
@@ -48,12 +48,12 @@ If WScript.Arguments.Count = 2 Then
 		
 		Set objDoc = objWord.documents.open(docPath)
 		
-		'sub 도큐먼트 확장
+		'sub document expansion
 		If objDoc.Subdocuments.Count >= 1 Then 
 			objDoc.Subdocuments.Expanded = True 
 		End If
 			
-		'모든 field 및 목차 갱신
+		'update all field and table
 		objDoc.Fields.Update()
 		For t = 1 To objDoc.TablesOfContents.Count
 			objDoc.TablesOfContents(t).Update()
@@ -62,7 +62,7 @@ If WScript.Arguments.Count = 2 Then
 			objDoc.TablesOfFigures(t).Update()
 		Next
 		
-		'모든 수식 갱신
+		'update all equations
 		For t = 1 To objDoc.OMaths.Count
 			objDoc.OMaths(t).BuildUp()
 		Next
@@ -128,7 +128,7 @@ If WScript.Arguments.Count = 2 Then
 			End If
 		Next
 
-		'HTML 로 저장
+		'Save to required format file
 		objDoc.SaveAs2 save_Path, output_id
 	Else
 		Wscript.Echo "*E: Not a Word file."

@@ -7,7 +7,7 @@ If WScript.Arguments.Count > 0 Then
 	watermark_text	= ""
 	do_save_pdf		= true
 	
-	'PDF 파일이 잠겨 있는지 채크
+	'check PDF locking...
 	If fso.FileExists(pdfPath) Then
 		fso.DeleteFile(pdfPath)
 		If fso.FileExists(pdfPath) Then
@@ -28,7 +28,7 @@ If WScript.Arguments.Count > 0 Then
 	End If
 	
 	If LCase(Right(docPath, 4)) = ".doc" Or LCase(Right(docPath, 5)) = ".docx" Then
-		On Error Resume Next	'오류 강제 처리
+		On Error Resume Next	'forced error handling
 		Set objWord				= CreateObject("Word.Application")
 		
 		If Err.Number <> 0 Then
@@ -43,12 +43,12 @@ If WScript.Arguments.Count > 0 Then
 		
 		Set objDoc = objWord.documents.open(docPath)
 		
-		'sub 도큐먼트 확장
+		'sub document expansion
 		If objDoc.Subdocuments.Count >= 1 Then 
 			objDoc.Subdocuments.Expanded = True 
 		End If
 			
-		'모든 field 및 목차 갱신
+		'update all field and table
 		objDoc.Fields.Update()
 		For t = 1 To objDoc.TablesOfContents.Count
 			objDoc.TablesOfContents(t).Update()
@@ -57,7 +57,7 @@ If WScript.Arguments.Count > 0 Then
 			objDoc.TablesOfFigures(t).Update()
 		Next
 		
-		'모든 수식 갱신
+		'update all equations
 		For t = 1 To objDoc.OMaths.Count
 			objDoc.OMaths(t).BuildUp()
 		Next
@@ -124,7 +124,7 @@ If WScript.Arguments.Count > 0 Then
 		Next
 		
 		
-		'water mark 설정
+		'setup water mark
 		If watermark_text <> "" Then
 			For Each sec in objDoc.Sections
 				'sec.Fields.Update()
@@ -155,8 +155,13 @@ If WScript.Arguments.Count > 0 Then
 		End If
 
 		If do_save_pdf Then
-			'PDF 로 저장
+			'Save to PDF
 			objDoc.ExportAsFixedFormat pdfPath, 17, False, 0, 0, 1, 1, 0, True, True, 1, True, True, False
+			
+			If Err.Number <> 0 Then
+				Wscript.Echo "*E: " & Err.Description
+				Err.Clear
+			End If
 		End If
 	Else
 		Wscript.Echo "*E: Not a Word file."

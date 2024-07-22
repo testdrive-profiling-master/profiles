@@ -5,9 +5,9 @@ If WScript.Arguments.Count > 0 Then
 	excel_path		= fso.GetAbsolutePathName(WScript.Arguments(0))
 	
 	If LCase(Right(excel_path, 5)) = ".xlsx" Then
-		On Error Resume Next	'오류 강제 처리
+		On Error Resume Next	'forced error handling
 		
-		set objBooks	= GetObject(excel_path)		'workbook 얻기
+		set objBooks	= GetObject(excel_path)		'get workbook
 
 		If Err.Number <> 0 or objBooks Is Nothing Then
 			Err.Clear
@@ -15,7 +15,7 @@ If WScript.Arguments.Count > 0 Then
 			WScript.Quit(1)
 		End If
 
-		If objBooks.parent.Visible = false Then		' 열려 있지 않으니 새로 열기
+		If objBooks.parent.Visible = false Then		' it's not opened, so do open new one
 			Set	objBooks			= Nothing
 			Set objExcel			= CreateObject("Excel.Application")
 			
@@ -43,7 +43,7 @@ If WScript.Arguments.Count > 0 Then
 				End if
 			End if
 			
-			'화면을 전면으로 옮기기
+			'set foreground window
 			Dim ObjShell
 			Set ObjShell = CreateObject("Wscript.Shell")
 			ObjShell.AppActivate(objBooks.Application.ActiveWindow.Caption)
