@@ -151,22 +151,20 @@ else
 endif
 
 # version management
-.$(TARGETNAME)_version.inl: $(SRCS)
 ifeq ($(BUILD_VERSION), 1)
+$(VERSION_HEADER): $(SRCS)
 	@codegen gen_version -p $(TARGETNAME) .$(TARGETNAME)_version.inl
-endif
 
 version_minor:
-ifeq ($(BUILD_VERSION), 1)
 	@codegen gen_version -n -p $(TARGETNAME) .$(TARGETNAME)_version.inl
-else
-	@echo *E: Version control is not enabled for this project.
-endif
 
 version_major:
-ifeq ($(BUILD_VERSION), 1)
 	@codegen gen_version -m -p $(TARGETNAME) .$(TARGETNAME)_version.inl
 else
+version_minor:
+	@echo *E: Version control is not enabled for this project.
+	
+version_major:
 	@echo *E: Version control is not enabled for this project.
 endif
 
@@ -204,37 +202,27 @@ endif
 #-------------------------------------------------
 # generic rules
 #-------------------------------------------------
-%.o: %.c $(VERSION_HEADER)
+%.o: %.c
 	@echo '- Compiling... : $<'
 	@ccache $(CC) $(CDEFS) $(CFLAGS) $(INC) -MD -c $< -o $@
 # ccache bug fix "D\:/" -> "D:/"
 	@sed -i 's/\\\:/\:/g' $*.d
-# version management update file ignore
-ifeq ($(BUILD_VERSION), 1)
-	@sed -i 's/.$(TARGETNAME)_version.inl//' $*.d
-endif
 
-%.o: %.cpp $(VERSION_HEADER)
+%.o: %.cpp
 	@echo '- Compiling... : $<'
 	@ccache $(CXX) $(CDEFS) $(CPPFLAGS) -Weffc++ $(INC) -MD -c $< -o $@
 	@sed -i 's/\\\:/\:/g' $*.d
-ifeq ($(BUILD_VERSION), 1)
-	@sed -i 's/.$(TARGETNAME)_version.inl//' $*.d
-endif
 	
-%.o: %.cc $(VERSION_HEADER)
+%.o: %.cc
 	@echo '- Compiling... : $<'
 	@ccache $(CXX) $(CDEFS) $(CPPFLAGS) -Weffc++ $(INC) -MD -c $< -o $@
 	@sed -i 's/\\\:/\:/g' $*.d
-ifeq ($(BUILD_VERSION), 1)
-	@sed -i 's/.$(TARGETNAME)_version.inl//' $*.d
-endif
 
-%.o: %.rc $(VERSION_HEADER)
+%.o: %.rc
 	@echo '- Compiling... : $<'
 	@windres $(INC) $< -o $@
 
-$(TARGET_EXE):$(OBJS) $(OBJS_RES) $(TARGET_DEP)
+$(TARGET_EXE):$(VERSION_HEADER) $(OBJS) $(OBJS_RES) $(TARGET_DEP)
 	@echo
 	@echo '*** Build execution file ***'
 	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(OBJS_RES) $(LIBDIR)
@@ -248,13 +236,13 @@ ifdef POST_BUILD
 	@$(POST_BUILD)
 endif
 
-$(TARGET_A):$(OBJS_LIB) $(OBJS_RES) $(TARGET_DEP)
+$(TARGET_A):$(VERSION_HEADER) $(OBJS_LIB) $(OBJS_RES) $(TARGET_DEP)
 	@echo
 	@echo '*** Build Static Library ***'
 	$(AR) $(ARFLAGS) $@ $(OBJS_LIB) $(OBJS_RES)
 	$(RANLIB) $@
 
-$(TARGET_SO):$(OBJS_LIB) $(OBJS_RES) $(TARGET_DEP)
+$(TARGET_SO):$(VERSION_HEADER) $(OBJS_LIB) $(OBJS_RES) $(TARGET_DEP)
 	@echo
 ifeq ($(BUILD_TARGET), $(TARGET_SO_A))
 ifdef SIMPATH
