@@ -186,7 +186,7 @@ define MAKEFILE_USAGE
 
   - Build
     [all]         : Build output binaries.
-    deploy        : Gethering required MinGW libries in same output folder
+    deploy        : Gethering required MinGW libraries in same output folder
     clean         : Clean up output and intermediate files.
     distclean     : Clean up output, intermediate files and unecryped source files.
     dep           : Build all dependencies.
