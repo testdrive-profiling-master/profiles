@@ -181,6 +181,34 @@ else
 	@DependencyPrepare -s $(DEPS)
 endif
 
+define MAKEFILE_USAGE
+** TestDrive Profiling Master's Makefile command list **
+
+  - Build
+    [all]         : Build output binaries.
+    deploy        : Gethering required MinGW libries in same output folder
+    clean         : Clean up output and intermediate files.
+    distclean     : Clean up output, intermediate files and unecryped source files.
+    dep           : Build all dependencies.
+    static        : Do static code analysis(cppcheck).
+
+  - Version control (must set 'BUILD_VERSION' to 1)
+    version_minor : Increase minor version number.
+    version_major : Increase major version number.
+ 
+  - Encryption & Decryption (must set 'SRCS_ENCRYPTED')
+    encrypt       : Encrypt sources.
+    decrypt       : Decrypt sources.
+endef
+
+define MAKEFILE_USAGE_newline
+
+
+endef
+
+help:
+	@printf "$(subst $(MAKEFILE_USAGE_newline),\n,$(MAKEFILE_USAGE))\n"
+
 #-------------------------------------------------
 # dependencies
 #-------------------------------------------------
