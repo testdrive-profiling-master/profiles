@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 5/27/2024 Mon (clonextop@gmail.com)
+// Rev.  : 7/24/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __STD_INTERFACE_H__
 #define __STD_INTERFACE_H__
@@ -40,7 +40,9 @@
 #include <memory.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+#ifdef __GNUC__
+#	include <unistd.h>
+#endif
 
 #ifdef WIN32
 #	ifndef WIN32_LEAN_AND_MEAN
@@ -89,20 +91,20 @@ typedef DWORD KPTR;
 #endif
 
 // Safe memory deletion
-#define SAFE_DELETE(x)                                                                                                 \
-	if (x) {                                                                                                           \
-		delete x;                                                                                                      \
-		(x) = NULL;                                                                                                    \
+#define SAFE_DELETE(x)                                                                                                                          \
+	if (x) {                                                                                                                                    \
+		delete x;                                                                                                                               \
+		(x) = NULL;                                                                                                                             \
 	}
-#define SAFE_DELETE_ARRAY(x)                                                                                           \
-	if (x) {                                                                                                           \
-		delete[] x;                                                                                                    \
-		(x) = NULL;                                                                                                    \
+#define SAFE_DELETE_ARRAY(x)                                                                                                                    \
+	if (x) {                                                                                                                                    \
+		delete[] x;                                                                                                                             \
+		(x) = NULL;                                                                                                                             \
 	}
-#define SAFE_RELEASE(x)                                                                                                \
-	if (x) {                                                                                                           \
-		(x)->Release();                                                                                                \
-		(x) = NULL;                                                                                                    \
+#define SAFE_RELEASE(x)                                                                                                                         \
+	if (x) {                                                                                                                                    \
+		(x)->Release();                                                                                                                         \
+		(x) = NULL;                                                                                                                             \
 	}
 
 #endif //__STD_INTERFACE_H__
