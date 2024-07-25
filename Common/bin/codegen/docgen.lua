@@ -433,19 +433,30 @@ docgen.terms.insert		= function(sTag, sDescription)
 end
 AddTerm	= docgen.terms.insert
 
+-- 문서 끝
+docgen.doc_last			= docgen.doc_body:last_child()
+
 -- 지역 변수들...
-local	doc_last		= docgen.doc_body:last_child()
-local	chapture_id		= 0
-local	chapture_sid	= 0
-local	table_id		= 0
-local	figure_id		= 0
-local	table_count		= 0
-local	figure_count	= 0
-local	bookmark_id		= 70
-local	bookmark_list	= {}
+-- chapters
+docgen.chapter			= {}
+docgen.chapter.id		= 0
+docgen.chapter.sid		= 0		-- bookmark reference id
+docgen.chapter[1]		= 0
+-- tables
+docgen.table			= {}
+docgen.table.count		= 0
+docgen.table.id			= 0
+-- figures
+docgen.figure			= {}
+docgen.figure.count		= 0
+docgen.figure.id		= 0
+-- bookmark
+docgen.bookmark			= {}
+docgen.bookmark.id		= 70	-- initial gap
+docgen.bookmark.list	= {}
 
 do	-- delete latest "paragraph"
-	local	last_pr	= doc_last:previous_sibling("w:p")
+	local	last_pr	= docgen.doc_last:previous_sibling("w:p")
 	last_pr:Destroy(1)
 end
 
@@ -472,43 +483,43 @@ function GenerateChapter(level, title)
 	local	reference_id	= 0
 	
 	if level == 1 then
-		table_restart	= true
-		chapture_id		= chapture_id + 1
-		chapture_sid	= 0
-		table_id		= 1
-		figure_id		= 1
-		reference_id	= 70000000 + (chapture_id*1000000)
+		table_restart			= true
+		docgen.chapter.id		= docgen.chapter.id + 1
+		docgen.chapter.sid		= 0
+		docgen.table.id			= 1
+		docgen.figure.id		= 1
+		reference_id			= 70000000 + (docgen.chapter.id*1000000)
 		
-		print(chapture_id .. ". " .. sChapterTitle)
+		print(docgen.chapter.id .. ". " .. sChapterTitle)
 	else
-		local sNum		= "" .. chapture_id .. ". "
+		local sNum		= "" .. docgen.chapter.id .. ". "
 		local sSpace	= ""
 		for i = 1,#sNum do
 			sSpace	= sSpace .. " "
 		end
 		print(sSpace .. sChapterTitle)
 		
-		reference_id	= 70000000 + (chapture_id*1000000) + (chapture_sid*10)
+		reference_id	= 70000000 + (docgen.chapter.id*1000000) + (docgen.chapter.sid*10)
 	end
 	
-	reference_id	= 70000000 + (chapture_id*1000000) + (chapture_sid*10)
-	chapture_sid	= chapture_sid + 1
+	reference_id		= 70000000 + (docgen.chapter.id*1000000) + (docgen.chapter.sid*10)
+	docgen.chapter.sid	= docgen.chapter.sid + 1
 	
-	bookmark_list[title]	= reference_id
+	docgen.bookmark.list[title]	= reference_id
 	
 	local	sTitle	= "<w:p>\
 			<w:pPr>\
 				<w:pStyle w:val=\"" .. iStyleList[level] .. "\"/>\
 				<w:rPr><w:rFonts w:cs=\"Arial\"/></w:rPr>\
 			</w:pPr>\
-			<w:bookmarkStart w:id=\"" .. bookmark_id .. "\" w:name=\"_Ref" .. reference_id .. "\"/>\
+			<w:bookmarkStart w:id=\"" .. docgen.bookmark.id .. "\" w:name=\"_Ref" .. reference_id .. "\"/>\
 			<w:r>"
 				.. ((level == 1) and "<w:lastRenderedPageBreak/>" or "<w:rPr><w:rFonts w:cs=\"Arial\" w:hint=\"eastAsia\"/></w:rPr>") ..
 				"<w:t>" .. title .. "</w:t>\
 			</w:r>\
-			<w:bookmarkEnd w:id=\"" .. bookmark_id .. "\"/>\
+			<w:bookmarkEnd w:id=\"" .. docgen.bookmark.id .. "\"/>\
 		</w:p>"
-	bookmark_id		= bookmark_id + 1
+	docgen.bookmark.id		= docgen.bookmark.id + 1
 	return sTitle
 end
 
@@ -528,35 +539,35 @@ function GenerateCaption(sType, content)
 	end
 	
 	if sType == "Table" then
-		caption_id		= 20000000 + (chapture_id*100000) + (table_id*10)
-		bFirst			= (table_id == 1)
-		table_id		= table_id + 1
-		table_count		= table_count + 1
-		sID				= table_id
+		caption_id				= 20000000 + (docgen.chapter.id*100000) + (docgen.table.id*10)
+		bFirst					= (docgen.table.id == 1)
+		docgen.table.id			= docgen.table.id + 1
+		docgen.table.count		= docgen.table.count + 1
+		sID						= docgen.table.id
 	else
-		caption_id		= 30000000 + (chapture_id*100000) + (figure_id*10)
-		bFirst			= (figure_id == 1)
-		figure_id		= figure_id + 1
-		figure_count	= figure_count + 1
-		sID				= figure_id
+		caption_id				= 30000000 + (docgen.chapter.id*100000) + (docgen.figure.id*10)
+		bFirst					= (docgen.figure.id == 1)
+		docgen.figure.id		= docgen.figure.id + 1
+		docgen.figure.count		= docgen.figure.count + 1
+		sID						= docgen.figure.id
 	end
 	
 	reference_id		= caption_id + 30000000
-	bookmark_list[content]	= reference_id
+	docgen.bookmark.list[content]	= reference_id
 
 	local sXML = "<w:p>\
 		<w:pPr>\
 			<w:pStyle w:val=\"" .. sType .. "Caption\"/>\
 		</w:pPr>\
-		<w:bookmarkStart w:id=\"" .. tostring(bookmark_id) .. "\" w:name=\"_Toc" .. tostring(caption_id) .. "\"/>\
-		<w:bookmarkStart w:id=\"" .. tostring(bookmark_id + 1) .. "\" w:name=\"_Toc" .. tostring(caption_id + 1) .. "\"/>\
-		<w:bookmarkStart w:id=\"" .. tostring(bookmark_id + 2) .. "\" w:name=\"_Ref" .. tostring(reference_id) .. "\"/>\
+		<w:bookmarkStart w:id=\"" .. tostring(docgen.bookmark.id) .. "\" w:name=\"_Toc" .. tostring(caption_id) .. "\"/>\
+		<w:bookmarkStart w:id=\"" .. tostring(docgen.bookmark.id + 1) .. "\" w:name=\"_Toc" .. tostring(caption_id + 1) .. "\"/>\
+		<w:bookmarkStart w:id=\"" .. tostring(docgen.bookmark.id + 2) .. "\" w:name=\"_Ref" .. tostring(reference_id) .. "\"/>\
 		<w:r><w:t xml:space=\"preserve\">" .. sType .. " </w:t></w:r>\
 		<w:r>\
 			<w:fldChar w:fldCharType=\"begin\"/>\
 			<w:instrText xml:space=\"preserve\"> STYLEREF  \\s Heading1,H1 </w:instrText>\
 			<w:fldChar w:fldCharType=\"separate\"/>\
-			<w:t>" .. chapture_id .. "</w:t>\
+			<w:t>" .. docgen.chapter.id .. "</w:t>\
 			<w:fldChar w:fldCharType=\"end\"/>\
 		</w:r>\
 		<w:r><w:noBreakHyphen/></w:r>\
@@ -567,13 +578,13 @@ function GenerateCaption(sType, content)
 			<w:t>" .. sID .. "</w:t>\
 			<w:fldChar w:fldCharType=\"end\"/>\
 		</w:r>\
-		<w:bookmarkEnd w:id=\"" .. tostring(bookmark_id + 2) .. "\"/>\
+		<w:bookmarkEnd w:id=\"" .. tostring(docgen.bookmark.id + 2) .. "\"/>\
 		<w:r><w:t xml:space=\"preserve\">. </w:t></w:r>\
-		<w:bookmarkEnd w:id=\"" .. tostring(bookmark_id) .. "\"/>\
+		<w:bookmarkEnd w:id=\"" .. tostring(docgen.bookmark.id) .. "\"/>\
 		<w:r><w:t xml:space=\"preserve\">" .. content .. "</w:t></w:r>\
-		<w:bookmarkEnd w:id=\"" .. tostring(bookmark_id + 1) .. "\"/>\
+		<w:bookmarkEnd w:id=\"" .. tostring(docgen.bookmark.id + 1) .. "\"/>\
 	</w:p>"
-	bookmark_id		= bookmark_id + 3
+	docgen.bookmark.id		= docgen.bookmark.id + 3
 	return sXML
 end
 
@@ -2060,7 +2071,7 @@ function EncodeParagraph(sText, sExtra)
 end
 
 AddPageBreak = function()
-	docgen.doc_body:AddChildBeforeFromBuffer(doc_last,"\
+	docgen.doc_body:AddChildBeforeFromBuffer(docgen.doc_last,"\
 		<w:p>\
 			<w:r>\
 				<w:br w:type=\"page\"/>\
@@ -2069,20 +2080,20 @@ AddPageBreak = function()
 end
 
 AddParagraph = function(content)
-	docgen.doc_body:AddChildBeforeFromBuffer(doc_last, EncodeParagraph(content, {pPr="<w:pStyle w:val=\"BodyText10\"/>"}))
+	docgen.doc_body:AddChildBeforeFromBuffer(docgen.doc_last, EncodeParagraph(content, {pPr="<w:pStyle w:val=\"BodyText10\"/>"}))
 end
 
 AddTable = function(sCaption, sExcelFileName, sSheetName)
 	if sCaption ~= nil and sCaption ~= "" then
-		docgen.doc_body:AddChildBeforeFromBuffer(doc_last, GenerateCaption("Table", sCaption))
+		docgen.doc_body:AddChildBeforeFromBuffer(docgen.doc_last, GenerateCaption("Table", sCaption))
 	end
 	
-	docgen.doc_body:AddChildBeforeFromBuffer(doc_last, GenerateTable(sExcelFileName, sSheetName))
+	docgen.doc_body:AddChildBeforeFromBuffer(docgen.doc_last, GenerateTable(sExcelFileName, sSheetName))
 end
 
 AddSubDocument = function(sDocFileName)
 	local	id	= docgen.doc:AddSubDocument(sDocFileName)
-	docgen.doc_body:AddChildBeforeFromBuffer(doc_last, "\
+	docgen.doc_body:AddChildBeforeFromBuffer(docgen.doc_last, "\
 		<w:p>\
 			<w:subDoc r:id=\"" .. id .. "\"/>\
 		</w:p>"
@@ -2146,11 +2157,11 @@ if docgen.revision.count == 0 then
 	DeleteDocSection(docgen.revision.title)
 end
 
-if table_count == 0 then
+if docgen.table.count == 0 then
 	DeleteDocSection("List of Tables")
 end
 
-if figure_count == 0 then
+if docgen.figure.count == 0 then
 	DeleteDocSection("List of Figures")
 end
 
@@ -2177,7 +2188,7 @@ while true do
 		sTarget:erase(0, 1)
 	end
 	
-	local	bookmark_num	= bookmark_list[sTarget.s]
+	local	bookmark_num	= docgen.bookmark.list[sTarget.s]
 	
 	if bookmark_num == nil then
 		error("bookmark \"" .. sTarget.s .. "\" is not found.")
