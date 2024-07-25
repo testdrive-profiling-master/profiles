@@ -441,7 +441,6 @@ docgen.doc_last			= docgen.doc_body:last_child()
 docgen.chapter			= {}
 docgen.chapter.id		= 0
 docgen.chapter.sid		= 0		-- bookmark reference id
-docgen.chapter[1]		= 0
 -- tables
 docgen.table			= {}
 docgen.table.count		= 0
@@ -490,14 +489,11 @@ function GenerateChapter(level, title)
 		docgen.figure.id		= 1
 		reference_id			= 70000000 + (docgen.chapter.id*1000000)
 		
-		print(docgen.chapter.id .. ". " .. sChapterTitle)
+		print("    " .. docgen.chapter.id .. ". " .. sChapterTitle)
 	else
 		local sNum		= "" .. docgen.chapter.id .. ". "
-		local sSpace	= ""
-		for i = 1,#sNum do
-			sSpace	= sSpace .. " "
-		end
-		print(sSpace .. sChapterTitle)
+		local sSpace	= string.char(0x20):rep(#sNum)
+		print("    " .. sSpace .. sChapterTitle)
 		
 		reference_id	= 70000000 + (docgen.chapter.id*1000000) + (docgen.chapter.sid*10)
 	end
@@ -2107,6 +2103,8 @@ do
 	__sExt:CutFront(".", true)
 	__sExt:MakeLower()
 	
+	print("\n[[ Contents ]]")
+	
 	if __sExt.s == "md" then
 		AddParagraph("[[" .. docgen.sInFilename .. "]]")
 	else
@@ -2114,6 +2112,7 @@ do
 			return
 		end
 	end
+	print("")	-- end of document
 end
 
 -- 속성 갱신
