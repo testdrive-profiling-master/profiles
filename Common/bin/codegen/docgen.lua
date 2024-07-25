@@ -1973,7 +1973,8 @@ function EncodeParagraph(sText, sExtra)
 								sLine:insert(sLine.TokenizePos, sProperty)
 							end
 						elseif sTag.s == "bookmark" then
-							local	sBookmark	= sVar:Tokenize("")
+							local	sBookmark		= sVar:Tokenize("")
+							local	sBookmark_rPr	= ""
 							sBookmark:TrimLeft(" :")
 							sBookmark:TrimRight(" ")
 							local	bAll		= sBookmark:CompareFront("@")
@@ -1982,18 +1983,45 @@ function EncodeParagraph(sText, sExtra)
 								sLine:insert(sLine.TokenizePos, ". @<bookmark:" .. sBookmark.s .. ">")
 								sBookmark:insert(0, "#")
 							end
+							
+							do
+								if bBold then
+									sBookmark_rPr	= sBookmark_rPr .. "<w:b/><w:bCs/>"
+								end
+								if bItalic then
+									sBookmark_rPr	= sBookmark_rPr .. "<w:i/><w:iCs/>"
+								end
+								if bUnderline then
+									sBookmark_rPr	= sBookmark_rPr .. "<w:u w:val=\"single\"/>"
+								end
+								if bStrike then
+									sBookmark_rPr	= sBookmark_rPr .. "<w:strike/>"
+								end
+								if bFixed then
+									sBookmark_rPr	= sBookmark_rPr .. "<w:rFonts w:ascii=\"" .. docgen.fixed_font .. "\" w:eastAsia=\"" .. docgen.fixed_font .. "\" w:hAnsi=\"" .. docgen.fixed_font .. "\"/>"
+								end
+								if bColor then
+									sBookmark_rPr	= sBookmark_rPr .. "<w:color w:val=\"" .. sColor .. "\"/>"
+								end
+								if bBgColor then
+									sBookmark_rPr	= sBookmark_rPr .. "<w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"" .. sBgColor .. "\"/>"
+								end
+								if bSize then
+									sBookmark_rPr	= sBookmark_rPr .. "<w:sz w:val=\"" .. iSize .. "\"/><w:szCs w:val=\"" .. iSize .. "\"/>"
+								end
+								
+								if #sBookmark_rPr ~= 0 then
+									sBookmark_rPr	= "<w:rPr>" .. sBookmark_rPr .. "</w:rPr>"
+								end
+							end
+							
 							sResult:Append("\
-								<w:r><w:fldChar w:fldCharType=\"begin\"/></w:r>\
-								<w:r><w:instrText xml:space=\"preserve\">BOOKMARK</w:instrText><w:t>" .. sBookmark.s .."</w:t></w:r>")
-							if #s_rPr ~= 0 then
-								sResult:Append("<w:r><w:instrText xml:space=\"preserve\"> \\* MERGEFORMAT </w:instrText></w:r>")
-							end
-							sResult:Append("<w:r><w:fldChar w:fldCharType=\"separate\"/></w:r><w:r>")
-							if #s_rPr ~= 0 then
-								sResult:Append("<w:rPr>" .. s_rPr .. "</w:rPr>")
-							end
-							sResult:Append("<w:t xml:space=\"preserve\">[" .. sBookmark.s .. "]</w:t></w:r>")
-							sResult:Append("<w:r><w:fldChar w:fldCharType=\"end\"/></w:r>")
+								<w:r>" .. sBookmark_rPr .. "<w:fldChar w:fldCharType=\"begin\"/></w:r>\
+								<w:r>" .. sBookmark_rPr .. "<w:instrText xml:space=\"preserve\">BOOKMARK</w:instrText><w:t>" .. sBookmark.s .."</w:t></w:r>")
+							sResult:Append("<w:r>" .. sBookmark_rPr .. "<w:instrText xml:space=\"preserve\"> \\* MERGEFORMAT </w:instrText></w:r>")
+							sResult:Append("<w:r>" .. sBookmark_rPr .. "<w:fldChar w:fldCharType=\"separate\"/></w:r>")
+							sResult:Append("<w:r>" .. sBookmark_rPr .. "<w:t xml:space=\"preserve\">[" .. sBookmark.s .. "]</w:t></w:r>")
+							sResult:Append("<w:r>" .. sBookmark_rPr .. "<w:fldChar w:fldCharType=\"end\"/></w:r>")
 						elseif sTag.s == "link" then
 							local	sLink		= sVar:Tokenize(";")
 							local	sComment	= sVar:Tokenize(";")
