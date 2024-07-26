@@ -8,7 +8,7 @@ Lua 기능엔 codegen에서 추가된 기능을 모두 사용할 수 있고, 추
 
 * 외부 Lua 관련 링크
 ** @<link:https://librewiki.net/wiki/%EC%8B%9C%EB%A6%AC%EC%A6%88:%EC%89%BD%EA%B2%8C_%EB%B0%B0%EC%9A%B0%EB%8A%94_%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D_%EC%9E%85%EB%AC%B8/Lua;쉽게 배우는 프로그래밍 입문/Lua>
-** property[] 속성 객체
+** docgen 변수들
 ** AddRevision() 함수
 ** AddTerm() 함수
 ** AddParagraph() 함수
@@ -24,7 +24,7 @@ All functions added in codegen can be used for Lua functions, and the syntax bel
 
 * External Lua-related links
 ** @<link:https://en.wikipedia.org/wiki/Lua_(programming_language)/Lua wiki>
-** property[] property object
+** docgen variables
 ** AddRevision() function
 ** AddTerm() function
 ** AddParagraph() function
@@ -38,17 +38,33 @@ Here, only the features added to docgen are explained, and documents can be crea
 
 ;;;
 %%% ko
-## 속성 객체
+## docgen 변수들
+
+Lua 에서 사용 가능한 변수 목록은 아래와 같습니다.
+
+@<tbl:media/docgen_variables.xlsx;ko;docgen 변수 목록>
+%%% en
+## docgen variables
+
+Here is a list of variables available in Lua:
+
+@<tbl:media/docgen_variables.xlsx;en;docgen variables list>
+%%%
+
+
+ 
+%%% ko
+### Property 객체
 ```lua
-property["Document_Name"]			-- 문서 이름
-property["IP_Version"]				-- IP 버전 (예:"1.00")
-property["Main_Title"]				-- 문서 첫장의 메인 타이틀 이름
-property["Sub_Title"]				-- 문서 첫장의 서브 타이틀 이름 (생략 가능)
-property["IP_Name_First_Page"]		-- 문서 첫장의 이름
-property["IP_Name_Header"]			-- 해더 및 파일 상의 이름 (예 : "doc_guide")
-property["Ownership"]				-- 오너쉽 명
-property["Document_Name_Header"]	-- 해더 이름 (...)
-property["Water_Mark"]				-- 워터마킹 문구 (사용하지 않을 경우 비워 둔다.)
+docgen.property["Document_Name"]			-- 문서 이름
+docgen.property["IP_Version"]				-- IP 버전 (예:"1.00")
+docgen.property["Main_Title"]				-- 문서 첫장의 메인 타이틀 이름
+docgen.property["Sub_Title"]				-- 문서 첫장의 서브 타이틀 이름 (생략 가능)
+docgen.property["IP_Name_First_Page"]		-- 문서 첫장의 이름
+docgen.property["IP_Name_Header"]			-- 해더 및 파일 상의 이름
+docgen.property["Ownership"]				-- 오너쉽 명
+docgen.property["Document_Name_Header"]		-- 해더 이름 (...)
+docgen.property["Water_Mark"]				-- 워터마킹 문구 (생략 가능)
 ```
 
 워드에는 메뉴 "파일/정보" 에 @<bookmark:WORD 속성 탭>와 같이 '속성' 탭이 존재합니다.
@@ -61,17 +77,17 @@ property["Water_Mark"]				-- 워터마킹 문구 (사용하지 않을 경우 비
 
 예) 이 문서의 Field 지정 예시 ("--" 로 시작하는 문장은 Lua에서 '주석' 표기를 의미합니다.)
 %%% en
-## Property object
+### Property object
 ```lua
-property["Document_Name"]			-- Document name
-property["IP_Version"]				-- IP version (예:"1.00")
-property["Main_Title"]				-- Main title name on the first page of the document
-property["Sub_Title"]				-- Sub title name on the first page of the document (Can be skipped)
-property["IP_Name_First_Page"]		-- Name of the first page of the document
-property["IP_Name_Header"]			-- Header and name on file (예 : "doc_guide")
-property["Ownership"]				-- Ownership name
-property["Document_Name_Header"]	-- header name (...)
-property["Water_Mark"]				-- watermarking text (Leave blank if not used.)
+docgen.property["Document_Name"]			-- Document name
+docgen.property["IP_Version"]				-- IP version (예:"1.00")
+docgen.property["Main_Title"]				-- Main title name on the first page of the document
+docgen.property["Sub_Title"]				-- Sub title name on the first page of the document (Can be skipped)
+docgen.property["IP_Name_First_Page"]		-- Name of the first page of the document
+docgen.property["IP_Name_Header"]			-- Header and name on file
+docgen.property["Ownership"]				-- Ownership name
+docgen.property["Document_Name_Header"]		-- header name (...)
+docgen.property["Water_Mark"]				-- watermarking text (Can be skipped)
 ```
 
 In Word, there is a 'Property' tab in the menu "File/Information" as like @<bookmark:Property tab in WORD>.
@@ -85,14 +101,14 @@ Alternatively, direct reference is possible within markdown sentences, such as @
 ex) Example of field designation in this document (Sentences starting with "--" refer to 'comment' notation in Lua.)
 %%%
 ```lua
-property["Document_Name"]			= "UserGuide"
-property["IP_Version"]				= "1.00"
-property["Main_Title"]				= "Document Generator"
-property["IP_Name_First_Page"]		= "User Guide"
-property["IP_Name_Header"]			= "document_generator"
-property["Ownership"]				= "TestDrive"
-property["Document_Name_Header"]	= "userguide"
-property["Water_Mark"]				= "TESTDRIVE CONFIDENTIAL"
+docgen.property["Document_Name"]			= "UserGuide"
+docgen.property["IP_Version"]				= "1.00"
+docgen.property["Main_Title"]				= "Document Generator"
+docgen.property["IP_Name_First_Page"]		= "User Guide"
+docgen.property["IP_Name_Header"]			= "document_generator"
+docgen.property["Ownership"]				= "TestDrive"
+docgen.property["Document_Name_Header"]		= "userguide"
+docgen.property["Water_Mark"]				= "TESTDRIVE CONFIDENTIAL"
 ```
 
 

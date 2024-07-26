@@ -193,12 +193,12 @@ build.bat  main.md  media
 
 %%% ko
 ### 제한
-WORD의 VBA가 사용되므로 WORD가 설치된 윈도우즈 PC 환경이 필요합니다. \
+WORD의 VBA가 사용되므로 WORD가 설치된 윈도우즈 PC 환경이 필요합니다. (웹용 Office 365 인 경우엔 앱 버전으로 설치가 필요합니다.) \
 또한 @<bookmark:그림 삽입>에 Visio 파일(vsd/vsdx)을 바로 지정하기 위해서는 Visio 설치가 별도로 필요하며, Excel 차트를 이용하기 위해서 Excel 설치가 추가적으로 필요합니다. \
 리눅스 상에서도 생성은 가능하나, 문서 전체 필드 업데이트(WORD에서 직접 열어 수동으로 업데이트는 가능)/워터마킹/pdf변환 등의 기능이 수행되지 않습니다.
 %%% en
 ### Limitation
-Since WORD's VBA is used, a Windows PC environment with WORD installed is required. \
+Since WORD's VBA is used, a Windows PC environment with WORD installed is required. (If it is Office 365 for the web, you need to install it as an App. version.) \
 Additionally, in order to directly specify a Visio file (vsd/vsdx) in @<bookmark:Picture insertion>, \
 Visio installation is required separately. \
 And to use Excel charts, additional installation of Excel is required. \

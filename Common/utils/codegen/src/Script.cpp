@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 7/16/2024 Tue (clonextop@gmail.com)
+// Rev.  : 7/26/2024 Fri (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -362,13 +362,13 @@ class lua_DocNode : public DocXML
 public:
 	lua_DocNode(void) {}
 	lua_DocNode(xml_node node) : DocXML(node) {}
-	lua_DocNode next_sibling(const char *name) const
+	lua_DocNode next_sibling(LuaRef name) const
 	{
-		return name ? xml_node::next_sibling(name) : xml_node::next_sibling();
+		return name.isString() ? xml_node::next_sibling(name) : xml_node::next_sibling();
 	}
-	lua_DocNode previous_sibling(const char *name) const
+	lua_DocNode previous_sibling(LuaRef name) const
 	{
-		return name ? xml_node::previous_sibling(name) : xml_node::previous_sibling();
+		return name.isString() ? xml_node::previous_sibling(name) : xml_node::previous_sibling();
 	}
 	string path(void)
 	{

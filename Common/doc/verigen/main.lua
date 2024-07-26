@@ -1,14 +1,14 @@
 -- document properties
-property["Document_Name"]			= "Verigen user guide"
-property["IP_Version"]				= "1.06"
-property["Main_Title"]				= "Verigen"
-property["Sub_Title"]				= "(verilog generator)"
-property["IP_Name_First_Page"]		= "User Guide"
-property["IP_Name_Header"]			= "document_generator"
-property["Ownership"]				= "clonextop@gmail.com"
-property["Document_Name_Header"]	= "userguide"
-property["Security_Level"]			= "BSD License."
---property["Water_Mark"]				= "TESTDRIVE OPENSOURCE"		-- watermark text, if you don't wan't it, comment it.
+docgen.property["Document_Name"]			= "Verigen user guide"
+docgen.property["IP_Version"]				= "1.06"
+docgen.property["Main_Title"]				= "Verigen"
+docgen.property["Sub_Title"]				= "(verilog generator)"
+docgen.property["IP_Name_First_Page"]		= "User Guide"
+docgen.property["IP_Name_Header"]			= "document_generator"
+docgen.property["Ownership"]				= "clonextop@gmail.com"
+docgen.property["Document_Name_Header"]		= "userguide"
+docgen.property["Security_Level"]			= "BSD License."
+--docgen.property["Water_Mark"]				= "TESTDRIVE OPENSOURCE"		-- watermark text, if you don't wan't it, comment it.
 
 -- Revision history (버전, 연도, 월, 일, 설명) : 마지막 버전/날짜가 도큐먼트의 버전/날짜가 됩니다. 날짜 순으로 나열할 것!!!
 AddRevision("1.00",	2023, 5,  8,	"Initial relase.")

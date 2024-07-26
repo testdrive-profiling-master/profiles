@@ -621,7 +621,8 @@ Result : @<bookmark:@Restrictions on use, licensing and prerequisites>
 %%% ko
 ## 속성(Property) 참조
 @<size:30>@<b>표현식 : @@<property:@<color:FF0000>속성이름@</color>>@</b>@</size>
-'@<bookmark:Lua 표현>' 중 '@<bookmark:속성 객체>'로 다양한 이름의 속성을 만들 수 있으며, 이를 본문에서 사용하는 방법을 제공한다.
+'@<bookmark:Lua 표현>' 중 '@<b>@<bookmark:Property 객체>@</b>'로 다양한 이름의 속성을 만들 수 있으며, \
+이를 본문에서 인용할 수 있는 방법을 제공한다.
 예)
 ```html
 @<property:Main_Title>, @<property:Ownership>
@@ -630,7 +631,8 @@ Result : @<bookmark:@Restrictions on use, licensing and prerequisites>
 %%% en
 ## Property reference
 @<size:30>@<b>Expression : @@<property:@<color:FF0000>property_name@</color>>@</b>@</size>
-You can create properties with various names using '@<bookmark:Property object>' among '@<bookmark:Lua expression>', and methods for using them in the text are provided.
+You can create properties with various names using '@<b>@<bookmark:Property object>@</b>' among '@<bookmark:Lua expression>', \
+and it provides a way to quote these in the text.
 예)
 ```html
 @<property:Main_Title>, @<property:Ownership>

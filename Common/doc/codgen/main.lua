@@ -1,14 +1,14 @@
 -- 문서 속성들
-property["Document_Name"]			= "UserGuide"
-property["IP_Version"]				= "1.00"
-property["Main_Title"]				= "Codegen"
-property["Sub_Title"]				= "(Code Generator)"
-property["IP_Name_First_Page"]		= "User Guide"
-property["IP_Name_Header"]			= "code generator"
-property["Ownership"]				= "clonextop@gmail.com"
-property["Document_Name_Header"]	= "userguide"
-property["Security_Level"]			= "BSD License."
---property["Water_Mark"]				= "TESTDRIVE OPENSOURCE"		-- 워터마크를 쓰지 않으려면 이부분을 주석 처리 합니다.
+docgen.property["Document_Name"]			= "UserGuide"
+docgen.property["IP_Version"]				= "1.00"
+docgen.property["Main_Title"]				= "Codegen"
+docgen.property["Sub_Title"]				= "(Code Generator)"
+docgen.property["IP_Name_First_Page"]		= "User Guide"
+docgen.property["IP_Name_Header"]			= "code generator"
+docgen.property["Ownership"]				= "clonextop@gmail.com"
+docgen.property["Document_Name_Header"]		= "userguide"
+docgen.property["Security_Level"]			= "BSD License."
+--docgen.property["Water_Mark"]				= "TESTDRIVE OPENSOURCE"		-- 워터마크를 쓰지 않으려면 이부분을 주석 처리 합니다.
 
 -- Revision history (버전, 연도, 월, 일, 설명) : 마지막 버전/날짜가 도큐먼트의 버전/날짜가 됩니다. 날짜 순으로 나열할 것!!!
 AddRevision("1.0",	2023, 5,  7,	"Initial relase")

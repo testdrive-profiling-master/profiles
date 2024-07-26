@@ -4,12 +4,13 @@ RunScript("codegen_utils")
 -- Initialize configuration
 ---------------------------------------------------------------------------------
 docgen					= {}
+docgen.contents_only	= false					-- only contents, delete all first page, table list...
 docgen.code_format		= "cpp"					-- default code format
 docgen.code_bgcolor		= "F7F7F7"				-- code background color
 docgen.boarder_color	= "AEAAAA"				-- table's boarder color
 docgen.fixed_font		= "Cascadia Mono"		-- fixed font name
-docgen.profile_path		= String(nil)
-docgen.template_path	= String(nil)
+docgen.profile_path		= String()
+docgen.template_path	= String()
 docgen.profile_path:GetEnvironment("TESTDRIVE_PROFILE")
 docgen.template_path.s	= docgen.profile_path.s
 
@@ -224,21 +225,23 @@ if docgen.doc:Open(docgen.template_path.s) == false then
 	os.exit()		-- template document is not existed
 end
 
-local	sDate = String(nil)
-
-property = {}
-sDate:FormatDate("%Y", 0)
-property["Year"]					= sDate.s		-- 라이센스 연도 반영
-property["Document_Name"]			= ""
-sDate:FormatDate("%B %d, %Y", 0)
-property["Revision_Date"]			= sDate.s
-property["Doc_Version"]				= ""
-property["Main_Title"]				= ""
-property["Sub_Title"]				= ""
-property["IP_Name_Header"]			= ""
-property["Ownership"]				= ""
-property["Document_Name_Header"]	= ""
-property["Water_Mark"]				= ""			-- 지정할 경우 워터마크가 overlay 된다.
+do
+	local	sDate = String()
+	docgen.property								= {}
+	property									= docgen.property	-- deprecated : 1년간 유지할 예정임.(~2025/7)
+	sDate:FormatDate("%Y", 0)
+	docgen.property["Year"]						= sDate.s		-- 라이센스 연도 반영
+	docgen.property["Document_Name"]			= ""
+	sDate:FormatDate("%B %d, %Y", 0)
+	docgen.property["Revision_Date"]			= sDate.s
+	docgen.property["Doc_Version"]				= ""
+	docgen.property["Main_Title"]				= ""
+	docgen.property["Sub_Title"]				= ""
+	docgen.property["IP_Name_Header"]			= ""
+	docgen.property["Ownership"]				= ""
+	docgen.property["Document_Name_Header"]		= ""
+	docgen.property["Water_Mark"]				= ""			-- 지정할 경우 워터마크가 overlay 된다.
+end
 
 -- Revision 추가 함수
 docgen.doc_body						= docgen.doc:GetNode("word/document.xml", false):child("w:document"):child("w:body")
@@ -381,8 +384,8 @@ if docgen.revision.tbl_top:empty() then
 end
 
 docgen.revision.insert	= function(sVer, iYear, iMonth, iDay, sDescription)
-	property["Doc_Version"]		= sVer
-	property["Revision_Date"]	= month_list[iMonth] .. " " .. tostring(iDay) .. ", " .. tostring(iYear)
+	docgen.property["Doc_Version"]		= sVer
+	docgen.property["Revision_Date"]	= month_list[iMonth] .. " " .. tostring(iDay) .. ", " .. tostring(iYear)
 	docgen.revision.tbl:AddChildAfterFromBuffer(docgen.revision.tbl_top, "<w:tr>\
 				<w:tc>\
 					<w:tcPr><w:tcW w:w=\"1985\" w:type=\"dxa\"/></w:tcPr>"
@@ -390,7 +393,7 @@ docgen.revision.insert	= function(sVer, iYear, iMonth, iDay, sDescription)
 				"</w:tc>\
 				<w:tc>\
 					<w:tcPr><w:tcW w:w=\"2249\" w:type=\"dxa\"/></w:tcPr>"
-					.. EncodeParagraph(property["Revision_Date"], {pPr="<w:pStyle w:val=\"tabletext\"/><w:jc w:val=\"center\"/>", rPr="<w:color w:val=\"auto\"/>"}) ..
+					.. EncodeParagraph(docgen.property["Revision_Date"], {pPr="<w:pStyle w:val=\"tabletext\"/><w:jc w:val=\"center\"/>", rPr="<w:color w:val=\"auto\"/>"}) ..
 				"</w:tc>\
 				<w:tc>\
 					<w:tcPr><w:tcW w:w=\"5834\" w:type=\"dxa\"/></w:tcPr>"
@@ -436,6 +439,13 @@ AddTerm	= docgen.terms.insert
 -- 문서 끝
 docgen.doc_last			= docgen.doc_body:last_child()
 
+do	-- delete latest "paragraph" : 빈 paragraph 를 제거한다.
+	local	last_pr	= docgen.doc_last:previous_sibling("w:p")
+	last_pr:Destroy(1)
+end
+
+docgen.doc_previous		= docgen.doc_last:previous_sibling()	-- contents 바로 앞 마지막 수식
+
 -- 지역 변수들...
 -- chapters
 docgen.chapter			= {}
@@ -453,11 +463,6 @@ docgen.figure.id		= 0
 docgen.bookmark			= {}
 docgen.bookmark.id		= 70	-- initial gap
 docgen.bookmark.list	= {}
-
-do	-- delete latest "paragraph"
-	local	last_pr	= docgen.doc_last:previous_sibling("w:p")
-	last_pr:Destroy(1)
-end
 
 function GenerateChapter(level, title)
 	-- make log title
@@ -1972,9 +1977,9 @@ function EncodeParagraph(sText, sExtra)
 							sName:TrimLeft(" :")
 							sName:TrimRight(" ")
 							do
-								local sProperty = property[sName.s]
+								local sProperty = docgen.property[sName.s]
 								if sProperty == nil then
-									LOGW("property[" .. sName.s .. "] is not found.")
+									LOGW("docgen.property[" .. sName.s .. "] is not found.")
 									sProperty	= ""
 								end
 								sLine:insert(sLine.TokenizePos, sProperty)
@@ -2152,20 +2157,33 @@ local function DeleteDocSection(sPara)
 	end
 end
 
-if docgen.revision.count == 0 then
-	DeleteDocSection(docgen.revision.title)
-end
 
-if docgen.table.count == 0 then
-	DeleteDocSection("List of Tables")
-end
+if docgen.contents_only then	-- 내용을 제외한 모두 제거.
+	while(true) do
+		local	last_pr	= docgen.doc_previous:previous_sibling()
+		
+		if last_pr:empty() then
+			break
+		end
+		last_pr:Destroy(1)
+	end
+	docgen.doc_previous:Destroy(1)
+else
+	if docgen.revision.count == 0 then
+		DeleteDocSection(docgen.revision.title)
+	end
 
-if docgen.figure.count == 0 then
-	DeleteDocSection("List of Figures")
-end
+	if docgen.table.count == 0 then
+		DeleteDocSection("List of Tables")
+	end
 
-if docgen.terms.count == 0 then
-	DeleteDocSection(docgen.terms.title)
+	if docgen.figure.count == 0 then
+		DeleteDocSection("List of Figures")
+	end
+
+	if docgen.terms.count == 0 then
+		DeleteDocSection(docgen.terms.title)
+	end
 end
 
 -- 북마크 갱신
@@ -2202,16 +2220,16 @@ end
 do
 	-- 저장 이름 없을 시 생성
 	if #docgen.sOutFilename == 0 then
-		if(#property["IP_Name_Header"] > 0) then
-			docgen.sOutFilename	= docgen.sOutFilename .. property["IP_Name_Header"] .. "_"
+		if(#docgen.property["IP_Name_Header"] > 0) then
+			docgen.sOutFilename	= docgen.sOutFilename .. docgen.property["IP_Name_Header"] .. "_"
 		end
 
-		if(#property["Document_Name_Header"] > 0) then
-			docgen.sOutFilename	= docgen.sOutFilename .. property["Document_Name_Header"] .. "_"
+		if(#docgen.property["Document_Name_Header"] > 0) then
+			docgen.sOutFilename	= docgen.sOutFilename .. docgen.property["Document_Name_Header"] .. "_"
 		end
 
-		if(#property["Doc_Version"] > 0) then
-			docgen.sOutFilename	= docgen.sOutFilename .. "rev" .. property["Doc_Version"]
+		if(#docgen.property["Doc_Version"] > 0) then
+			docgen.sOutFilename	= docgen.sOutFilename .. "rev" .. docgen.property["Doc_Version"]
 		end
 		
 		do	-- cut last '_' charactor
@@ -2261,7 +2279,7 @@ do
 	
 	if docgen.output_format == nil then
 		LOGI("Fields calculation...")
-		os.execute("doc2pdf \"" .. docgen.sOutFilename.s .. "\" \"" .. property["Water_Mark"] .. "\" *")
+		os.execute("doc2pdf \"" .. docgen.sOutFilename.s .. "\" \"" .. docgen.property["Water_Mark"] .. "\" *")
 	else
 		-- make pdf first
 		if (docgen.output_format["pdf"] == true) or (docgen.output_format["djvu"] == true) then
@@ -2271,7 +2289,7 @@ do
 				LOGI("Fields calculation...")
 			end
 			docgen.output_format["pdf"]	= nil
-			os.execute("doc2pdf \"" .. docgen.sOutFilename.s .. "\" \"" .. property["Water_Mark"] .. "\"")
+			os.execute("doc2pdf \"" .. docgen.sOutFilename.s .. "\" \"" .. docgen.property["Water_Mark"] .. "\"")
 		end
 		-- the others save as
 		for ext, bOut in key_pairs(docgen.output_format) do
