@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 7/4/2024 Thu (clonextop@gmail.com)
+// Rev.  : 7/29/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #include ".codegen_version.inl"
 #include "ArgTable.h"
@@ -131,8 +131,8 @@ int main(int argc, const char *argv[])
 			}
 
 			if (f.WasEncrypted() == bEncrypt) {
-				LOGI("Already this Lua file is %s : %s", bEncrypt ? "encrypted" : "decrypted", __sLuaFileName);
-				return 0;
+				LOGE("Already this Lua file is %s : %s", bEncrypt ? "encrypted" : "decrypted", __sLuaFileName);
+				return 1;
 			}
 
 			if (!f.Save(__sLuaFileName, bEncrypt)) {

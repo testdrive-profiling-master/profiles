@@ -449,7 +449,8 @@ docgen.doc_previous		= docgen.doc_last:previous_sibling()	-- contents 바로 앞
 -- 지역 변수들...
 -- chapters
 docgen.chapter			= {}
-docgen.chapter.id		= 0
+docgen.chapter[0]		= 0		-- first chapter ID
+docgen.chapter.level	= 0
 docgen.chapter.sid		= 0		-- bookmark reference id
 -- tables
 docgen.table			= {}
@@ -469,9 +470,6 @@ function GenerateChapter(level, title)
 	local sChapterTitle = String(title)
 	sChapterTitle:Trim(" \t")
 	sChapterTitle:ChangeCharsetToUTF8()
-	for i=3,level do
-		sChapterTitle:insert(0, "    ")
-	end
 	sChapterTitle	= sChapterTitle.s
 
 	do	-- trim off space
@@ -486,24 +484,52 @@ function GenerateChapter(level, title)
 	local	iStyleList		= {1, 20, 30, 41, 51}
 	local	reference_id	= 0
 	
+	-- chapter level ID 값 증가 갱신
+	if docgen.chapter.level ~= level then
+		if docgen.chapter.level	< level then
+			for i=(docgen.chapter.level+1),level do
+				docgen.chapter[i] = 0
+			end
+		end
+		if docgen.chapter[level] == nil then
+			docgen.chapter[level]	= 0
+		end
+		
+		docgen.chapter.level	= level
+	end
+	docgen.chapter[level]	= docgen.chapter[level] + 1
+	
+	-- chapter 번호 생성
+	local	chapter_num			= ""
+	for i=1,level do
+		if i > 2 then
+			chapter_num	= chapter_num .. "."
+		end
+		chapter_num	= chapter_num .. docgen.chapter[i]
+		if i == 1 then
+			chapter_num	= chapter_num .. "."
+		end
+	end
+	
 	if level == 1 then
 		table_restart			= true
-		docgen.chapter.id		= docgen.chapter.id + 1
 		docgen.chapter.sid		= 0
 		docgen.table.id			= 1
 		docgen.figure.id		= 1
-		reference_id			= 70000000 + (docgen.chapter.id*1000000)
+		reference_id			= 70000000 + (docgen.chapter[1]*1000000)
 		
-		print("    " .. docgen.chapter.id .. ". " .. sChapterTitle)
+		LOGI("@^0    " .. chapter_num .. " ")
+		print(sChapterTitle)
+		LOGI("@0")
 	else
-		local sNum		= "" .. docgen.chapter.id .. ". "
-		local sSpace	= string.char(0x20):rep(#sNum)
-		print("    " .. sSpace .. sChapterTitle)
+		--local sNum		= "" .. docgen.chapter[1] .. ". "
+		local sSpace	= string.char(0x20):rep(level * 4)
+		print(sSpace .. chapter_num .. " " .. sChapterTitle)
 		
-		reference_id	= 70000000 + (docgen.chapter.id*1000000) + (docgen.chapter.sid*10)
+		reference_id	= 70000000 + (docgen.chapter[1]*1000000) + (docgen.chapter.sid*10)
 	end
 	
-	reference_id		= 70000000 + (docgen.chapter.id*1000000) + (docgen.chapter.sid*10)
+	reference_id		= 70000000 + (docgen.chapter[1]*1000000) + (docgen.chapter.sid*10)
 	docgen.chapter.sid	= docgen.chapter.sid + 1
 	
 	docgen.bookmark.list[title]	= reference_id
@@ -540,13 +566,13 @@ function GenerateCaption(sType, content)
 	end
 	
 	if sType == "Table" then
-		caption_id				= 20000000 + (docgen.chapter.id*100000) + (docgen.table.id*10)
+		caption_id				= 20000000 + (docgen.chapter[1]*100000) + (docgen.table.id*10)
 		bFirst					= (docgen.table.id == 1)
 		docgen.table.id			= docgen.table.id + 1
 		docgen.table.count		= docgen.table.count + 1
 		sID						= docgen.table.id
 	else
-		caption_id				= 30000000 + (docgen.chapter.id*100000) + (docgen.figure.id*10)
+		caption_id				= 30000000 + (docgen.chapter[1]*100000) + (docgen.figure.id*10)
 		bFirst					= (docgen.figure.id == 1)
 		docgen.figure.id		= docgen.figure.id + 1
 		docgen.figure.count		= docgen.figure.count + 1
@@ -568,7 +594,7 @@ function GenerateCaption(sType, content)
 			<w:fldChar w:fldCharType=\"begin\"/>\
 			<w:instrText xml:space=\"preserve\"> STYLEREF  \\s Heading1,H1 </w:instrText>\
 			<w:fldChar w:fldCharType=\"separate\"/>\
-			<w:t>" .. docgen.chapter.id .. "</w:t>\
+			<w:t>" .. docgen.chapter[1] .. "</w:t>\
 			<w:fldChar w:fldCharType=\"end\"/>\
 		</w:r>\
 		<w:r><w:noBreakHyphen/></w:r>\
@@ -2108,7 +2134,7 @@ do
 	__sExt:CutFront(".", true)
 	__sExt:MakeLower()
 	
-	print("\n[[ Contents ]]")
+	LOGI("@1\n[[ Contents ]]\n")
 	
 	if __sExt.s == "md" then
 		AddParagraph("[[" .. docgen.sInFilename .. "]]")
@@ -2187,7 +2213,7 @@ else
 end
 
 -- 북마크 갱신
-LOGI("Link all bookmarks.")
+LOGI("*0Link all bookmarks.")
 while true do
 	local	bookmark_node	= docgen.doc_body:child_in_depth("w:instrText", "BOOKMARK")
 	
@@ -2266,7 +2292,7 @@ do
 	end
 	
 	-- 결과 저장
-	LOGI("Build document : " .. docgen.sOutFilename.s)
+	LOGI("*0Build document : " .. docgen.sOutFilename.s)
 	if docgen.doc:Save(docgen.sOutFilename.s) == false then
 		error("Can't create : " .. docgen.sOutFilename.s)
 	end
@@ -2278,15 +2304,15 @@ do
 	end	
 	
 	if docgen.output_format == nil then
-		LOGI("Fields calculation...")
+		LOGI("*0Fields calculation...")
 		os.execute("doc2pdf \"" .. docgen.sOutFilename.s .. "\" \"" .. docgen.property["Water_Mark"] .. "\" *")
 	else
 		-- make pdf first
 		if (docgen.output_format["pdf"] == true) or (docgen.output_format["djvu"] == true) then
 			if docgen.output_format["pdf"] == true then
-				LOGI("Save as 'pdf' file...")
+				LOGI("*0Save as 'pdf' file...")
 			else
-				LOGI("Fields calculation...")
+				LOGI("*0Fields calculation...")
 			end
 			docgen.output_format["pdf"]	= nil
 			os.execute("doc2pdf \"" .. docgen.sOutFilename.s .. "\" \"" .. docgen.property["Water_Mark"] .. "\"")
@@ -2299,13 +2325,13 @@ do
 					local sDJVU_filename	= String(sOutFilename_PDF.s)
 					sDJVU_filename:DeleteBack("pdf")
 					sDJVU_filename:Append("djvu")
-					LOGI("Save as '" .. ext .. "' file...")
+					LOGI("*0Save as '" .. ext .. "' file...")
 					exec("pdf2djvu -j 2 -d 600 \"" .. sOutFilename_PDF.s .. "\" -o \"" .. sDJVU_filename.s .. "\"")	-- 600 dpi output
 					if docgen.output_format["pdf"] ~= true then
 						exec("rm -f \"" .. sOutFilename_PDF.s .. "\"")
 					end
 				else
-					LOGI("Save as '" .. ext .. "' file...")
+					LOGI("*0Save as '" .. ext .. "' file...")
 					os.execute("doc2save \"" .. docgen.sOutFilename.s .. "\" " .. ext)
 				end
 			end
