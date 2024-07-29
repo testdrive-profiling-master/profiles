@@ -14,7 +14,7 @@ INC				:= -I.
 LIBDIR			:=
 CDEFS			:=
 EXTRA_CFLAGS	:= -O0 -std=c++20 -DDEBUG -g
-#MAIN_COMPILER	:= clang		# uncomment this code to using clang compiler
+#MAIN_COMPILER	:= clang		# uncomment this code to use clang compiler
 
 #-------------------------------------------------
 # common document config

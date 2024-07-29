@@ -11,6 +11,7 @@ Arg:AddOptionString		("type", nil, nil, nil, "type", "Template project type")
 Arg:AddRemark			(nil, "'testdrive'              : TestDrive project")
 Arg:AddRemark			(nil, "'c', 'c++', 'cpp'        : C++(Pure) project")
 Arg:AddRemark			(nil, "'util'                   : C++(Util) project")
+Arg:AddRemark			(nil, "'lua'                    : C++(Util + Lua) project")
 Arg:AddRemark			(nil, "'v', 'verilog'           : verilog project")
 Arg:AddRemark			(nil, "'v_bare', 'verilog_bare' : bared verilog project")
 Arg:AddRemark			(nil, "'verigen'                : verigen project")
@@ -175,6 +176,21 @@ elseif (sType == "util") then
 	os.execute("sed \"s/PROJECT_LOWER/" .. sProjectNameLower .. "/\" -i ./" .. sProjectName .. "/main.cpp")
 	os.execute("sed \"s/PROJECT_UPPER/" .. sProjectNameUpper .. "/\" -i ./" .. sProjectName .. "/main.cpp")
 	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/main.cpp")
+	
+	os.execute("explorer " .. sProjectName)
+elseif (sType == "lua") then
+	sProjectPath	= MakeDir(sProjectName)
+	LOGI("Create C++(Util + Lua) project : '" .. sProjectName .. "'")
+	
+	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_lua/.\" " .. sProjectName .. "/")
+	os.execute("sed \"s/Test/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/.project")
+	os.execute("sed \"s/Test/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/Makefile")
+	os.execute("sed \"s/Test/" .. sProjectName .. " project/\" -i ./" .. sProjectName .. "/.inception")
+	os.execute("sed \"s/Test/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/test/do_test.bat")
+	os.execute("sed \"s/PROJECT_LOWER/" .. sProjectNameLower .. "/\" -i ./" .. sProjectName .. "/main.cpp")
+	os.execute("sed \"s/PROJECT_UPPER/" .. sProjectNameUpper .. "/\" -i ./" .. sProjectName .. "/main.cpp")
+	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/main.cpp")
+	os.execute("mv \"" .. sProjectPath .. "/.PROJECT_version.inl\" \"" .. sProjectPath .. "/." .. sProjectNameLower .. "_version.inl\"")
 	
 	os.execute("explorer " .. sProjectName)
 elseif (sType == "v" or sType == "verilog") then
