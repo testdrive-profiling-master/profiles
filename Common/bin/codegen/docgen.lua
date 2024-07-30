@@ -3,16 +3,17 @@ RunScript("codegen_utils")
 ---------------------------------------------------------------------------------
 -- Initialize configuration
 ---------------------------------------------------------------------------------
-docgen					= {}
-docgen.contents_only	= false					-- only contents, delete all first page, table list...
-docgen.code_format		= "cpp"					-- default code format
-docgen.code_bgcolor		= "F7F7F7"				-- code background color
-docgen.boarder_color	= "AEAAAA"				-- table's boarder color
-docgen.fixed_font		= "Cascadia Mono"		-- fixed font name
-docgen.profile_path		= String()
-docgen.template_path	= String()
+docgen						= {}
+docgen.contents_only		= false					-- only contents, delete all first page, table list...
+docgen.code_format			= "cpp"					-- default code format
+docgen.code_bgcolor			= "F7F7F7"				-- code background color
+docgen.boarder_color		= "AEAAAA"				-- table's boarder color
+docgen.fixed_font			= "Cascadia Mono"		-- fixed font name
+docgen.profile_path			= String()
+docgen.template_path		= String()
 docgen.profile_path:GetEnvironment("TESTDRIVE_PROFILE")
-docgen.template_path.s	= docgen.profile_path.s
+docgen.template_path.s		= docgen.profile_path.s
+docgen.max_console_chars	= 110
 
 -- check installed document template
 docgen.installed_template	= {}
@@ -38,7 +39,8 @@ do
 			local f = TextFile()
 			if f:Open(docgen.template_path.s .. "common/bin/codegen/docgen_template_" .. sName.s .. ".txt") then
 				local sDesc	= String(f:Get())
-				sDesc:CutBack("\r\n", true)
+				sDesc:Replace("\r", "", true)
+				sDesc:CutBack("\n", true)
 				sDesc:Trim(" \t")
 				
 				if sDesc:CompareFront("*") then
@@ -510,6 +512,9 @@ function GenerateChapter(level, title)
 			chapter_num	= chapter_num .. "."
 		end
 	end
+	
+	-- 이전 출력 상태 지우기
+	io.write((' '):rep(docgen.max_console_chars) .. "\r")
 	
 	if level == 1 then
 		table_restart			= true
@@ -1475,11 +1480,48 @@ end
 
 local	bInline		= false
 
-function EncodeParagraph(sText, sExtra)
+function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 	local	sPara			= String(sText)
 	local	sResult			= String()
 	local	bBypass			= false				-- 내용 무시, docgen.language 일치하지 않음
 	local	bBypassCodeRef	= false				-- code reference in bypass mode
+	
+	-- line 얻기 구현
+	local	line		= {}
+	line.count			= 0
+	line.source			= "str"
+	line.get = function()
+		local	sLine		= sPara:Tokenize("\n")
+		line.count			= line.count + 1
+		
+		if bBypassCodeRef == false then
+			while sLine:CompareBack(" \\") do
+				sLine:DeleteBack("\n")
+				sLine:TrimRight(" \t")
+				sLine:Append(" ")
+				sLine:Append(sPara:Tokenize("\n").s)
+				line.count		= line.count + 1
+			end
+		end
+		
+		-- show current line shortly
+		if sLine:IsEmpty() == false then
+			local	sStatus	= String(line.current() .. sLine.s)
+			sStatus:Replace("\t", "    ", true)
+			if sStatus:Length() > (docgen.max_console_chars - 5) then
+				sStatus:erase((docgen.max_console_chars - 5), -1)
+				sStatus:Append("...")
+			end
+			
+			io.write(sStatus.s .. (' '):rep(docgen.max_console_chars - sStatus:Length()) .. "\r")
+		end
+
+		return sLine
+	end
+	line.current = function()
+		local s = "[" .. line.source .. ":" .. line.count .. "] "
+		return s
+	end
 	
 	if sPara:CompareFront("[[") and sPara:CompareBack("]]") then
 		sPara:erase(0,2)
@@ -1489,17 +1531,28 @@ function EncodeParagraph(sText, sExtra)
 		if txt:Open(sPara.s) == false then
 			error("Text file '" .. sPara.s .. ". is not existed.")
 		end
-		sPara	= String(txt:GetAll(false))
-		sPara:Replace("  \\\n", " ", true);
-		sPara:Replace("  \\\r\n", " ", true);
-		sPara:Replace(" \\\n", " ", true);
-		sPara:Replace(" \\\r\n", " ", true);
+		-- 파일 이름만 따옴
+		sPara:CutFront("\\", true)
+		sPara:CutFront("/", true)
+		line.source	= sPara.s
+		-- 전체 text 얻기
+		sPara		= String(txt:GetAll(false))
+		-- [Space + '\' + Enter] 표현은 다음줄과 이어 붙인다.
 		txt:Close()
 	end
 	
+	-- 사용자 지정 소스 내용
+	if sSourceTarget ~= nil then
+		line.source			= sSourceTarget
+		if sSourceLine ~= nil then
+			line.count			= sSourceLine
+		end
+	end
+	
 	sPara:ChangeCharsetToUTF8()
-	sPara:Replace("@@", "&#64;", true)
-	sPara:Replace("\\$", "&#36;", true)
+	sPara:Replace("@@", "&#64;", true)		-- '@' 문자 대체 표현
+	sPara:Replace("\\$", "&#36;", true)		-- '$' 문자 대체 표현
+	sPara:Replace("\r", "", true);			-- line feed 모두 제거
 
 	-- empty paragraph, but do not ignore
 	if sExtra ~= nil then
@@ -1523,7 +1576,7 @@ function EncodeParagraph(sText, sExtra)
 	end
 
 	while true do
-		local	sLine	= sPara:Tokenize("\r\n")	-- enter code process
+		local	sLine	= line.get()	-- enter code process
 		local	s_pPr	= ""
 
 		if sPara.TokenizePos < 0 then
@@ -1558,7 +1611,7 @@ function EncodeParagraph(sText, sExtra)
 					local	iEndPos	= sLine:find("$$", 0)
 					
 					while iEndPos < 0 do
-						sLine:Append(sPara:Tokenize("\r\n").s)
+						sLine:Append(sPara:Tokenize("\n").s)
 						iEndPos	= sLine:find("$$", iPos)
 						if sPara.TokenizePos < 0 then break end
 					end
@@ -1621,7 +1674,7 @@ function EncodeParagraph(sText, sExtra)
 				-- get code length
 				local	iCodeLen	= 0
 				while sPara.TokenizePos >= 0 do
-					sLine	= sPara:Tokenize("\r\n")
+					sLine	= line.get()
 					if sLine:CompareFront("```") then
 						sLine:Trim(" \t")
 						if sLine.s ~= "```" then
@@ -1715,7 +1768,7 @@ function EncodeParagraph(sText, sExtra)
 				s_pPr:DeleteBlock("<w:pStyle*/>", 0)
 				s_pPr:Append("<w:pStyle w:val=\"" .. ConvertStyleIDString(sLine.s) .. "\"/>")
 				s_pPr	= s_pPr.s
-				sLine	= sPara:Tokenize("\r\n")
+				sLine	= line.get()
 				goto new_line
 			elseif sLine:CompareFront("%%%") then
 				sLine:CutFront("%", true)
@@ -2106,8 +2159,8 @@ AddPageBreak = function()
 		</w:p>")
 end
 
-AddParagraph = function(content)
-	docgen.doc_body:AddChildBeforeFromBuffer(docgen.doc_last, EncodeParagraph(content, {pPr="<w:pStyle w:val=\"BodyText10\"/>"}))
+AddParagraph = function(content, sSourceTarget)
+	docgen.doc_body:AddChildBeforeFromBuffer(docgen.doc_last, EncodeParagraph(content, {pPr="<w:pStyle w:val=\"BodyText10\"/>"}), sSourceTarget)
 end
 
 AddTable = function(sCaption, sExcelFileName, sSheetName)
@@ -2143,7 +2196,9 @@ do
 			return
 		end
 	end
-	print("")	-- end of document
+
+	-- 현재 라인 상태 모두 지우기
+	print((' '):rep(docgen.max_console_chars) .. "\r")	-- end of document
 end
 
 -- 속성 갱신

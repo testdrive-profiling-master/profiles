@@ -192,17 +192,21 @@ Result)
 ;;;
 %%% ko
 ## AddParagraph() 함수
-@<size:30>@<b>함수 원형 : AddParagraph(@<color:FF0000>단어@</color>, @<color:FF0000>문장@</color>)@</b>@</size>
+@<size:30>@<b>함수 원형 : AddParagraph(@<color:FF0000>문장@</color>, [@<color:FF0000>소스명@</color>])@</b>@</size>
 
 실제 문서 내용을 채울 수 있으며, @<color:FF0000>문장@</color>은 "@<b>@<bookmark:@Paragraph 표현>@</b>"을 사용할 수 있습니다.
-@<color:FF0000>문장@</color>의 내용을 직접 문자열로 기술할 수 있지만, @<color:FF0000>문장@</color>을 "@<b>[[@<color:FF0000>파일명@</color>]]@</b>"으로 기술하면 외부 text 파일로 참조하게 되며, 직접 문장 표기는 POSIX 이스케이프 문자 표기법에 영향을 받으므로 소프트 프로그래밍에 익숙하지 않은 사용자는 "예 #2)"와 같이 외부 text 파일로 기술하는 것을 권장합니다.
+@<color:FF0000>문장@</color>의 내용을 직접 문자열로 기술할 수 있지만, \
+@<color:FF0000>문장@</color>을 "@<b>[[@<color:FF0000>파일명@</color>]]@</b>"으로 기술하면 외부 text 파일로 참조하게 되며, \
+직접 문장 표기는 POSIX 이스케이프 문자 표기법에 영향을 받으므로 소프트 프로그래밍에 익숙하지 않은 사용자는 "예 #2)"와 같이 외부 text 파일로 기술하는 것을 권장합니다.
+@<color:FF0000>소스명@</color>은 문장의 이름을 부여합니다. 이는 실시간 상태 추적을 보일 때, 소스 출처 확인용도로 사용됩니다. \
+소스명이 지정되지 않고 문장에 파일로 지정되면, 소스명은 파일 이름을 자동으로 지정됩니다.
 
 
 예 #1) 직접 구현
 ```lua
 AddParagraph("#제목\
 문단 내용 1\
-문단 내용 2")
+문단 내용 2", "본문1")
 ```
  
 예 #2) 외부 markdown 표현 text 파일 구현
@@ -237,19 +241,22 @@ end
 ```
 %%% en
 ## AddParagraph() function
-@<size:30>@<b>Function prototype : AddParagraph(@<color:FF0000>word@</color>, @<color:FF0000>sentence@</color>)@</b>@</size>
+@<size:30>@<b>Function prototype : AddParagraph(@<color:FF0000>sentence@</color>, [@<color:FF0000>source_name@</color>])@</b>@</size>
 
 You can fill in the actual document content, and @<color:FF0000>sentence@</color> can use "@<b>@<bookmark:@Paragraph expression>@</b>".
 
-The contents of @<color:FF0000>sentence@</color> can be directly described as a string, but the @<color:FF0000>sentence@</color> can be converted to "@<b>[[@<color:FF0000>file_name@</color>]]@</b>" refers to an external text file, \
-and direct sentence notation is affected by the POSIX escape character notation, so users unfamiliar with soft programming can use "Example #2) It is recommended to describe it in an external text file like "
+The contents of @<color:FF0000>sentence@</color> can be directly described as a string, \
+but the @<color:FF0000>sentence@</color> can be converted to "@<b>[[@<color:FF0000>file_name@</color>]]@</b>" refers to an external text file, \
+and direct sentence notation is affected by the POSIX escape character notation, so users unfamiliar with soft programming can use "Example #2)" It is recommended to describe it in an external text file like.
+@<color:FF0000>source_name@</color> gives the sentence a name. This is used to identify the source when showing real-time status tracking. \
+If the source name is not specified and a file is specified in the sentence, the source name is automatically assigned to the file name.
 
 
 ex #1) Direct implementation
 ```lua
 AddParagraph("#Title\
 Paragraph content 1\
-Paragraph content 2")
+Paragraph content 2", "contents_1")
 ```
  
 ex #2) External markdown expression text file implementation
