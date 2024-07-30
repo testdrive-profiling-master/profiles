@@ -1486,13 +1486,16 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 	local	bBypass			= false				-- 내용 무시, docgen.language 일치하지 않음
 	local	bBypassCodeRef	= false				-- code reference in bypass mode
 	
+	if sSourceTarget == "Pragraph_expression.md" then
+		print("")
+	end
 	-- line 얻기 구현
 	local	line		= {}
 	line.count			= 0
 	line.source			= "str"
 	line.get = function()
+		local	sTokStart	= sPara.TokenizePos
 		local	sLine		= sPara:Tokenize("\n")
-		line.count			= line.count + 1
 		
 		if bBypassCodeRef == false then
 			while sLine:CompareBack(" \\") do
@@ -1500,10 +1503,17 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 				sLine:TrimRight(" \t")
 				sLine:Append(" ")
 				sLine:Append(sPara:Tokenize("\n").s)
-				line.count		= line.count + 1
 			end
 		end
 		
+		-- ignore front enter code
+		while sPara:at(sTokStart) == '\n' do
+			line.count	= line.count + 1
+			sTokStart = sTokStart + 1
+		end
+		
+		local	sTokEnd		= sPara.TokenizePos	-- end of token
+
 		-- show current line shortly
 		if sLine:IsEmpty() == false then
 			local	sStatus	= String(line.current() .. sLine.s)
@@ -1515,11 +1525,23 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 			
 			io.write(sStatus.s .. (' '):rep(docgen.max_console_chars - sStatus:Length()) .. "\r")
 		end
+		
+		-- enter code counting...
+		while sTokStart >= 0 do
+			sTokStart	= sPara:find("\n", sTokStart)
+
+			if (sTokStart < 0) or (sTokStart >= sTokEnd) then
+				break
+			end
+			
+			line.count		= line.count + 1
+			sTokStart		= sTokStart + 1
+		end
 
 		return sLine
 	end
 	line.current = function()
-		local s = "[" .. line.source .. ":" .. line.count .. "] "
+		local s = "[" .. line.source .. ":" .. (line.count + 1) .. "] "
 		return s
 	end
 	
@@ -1611,7 +1633,7 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 					local	iEndPos	= sLine:find("$$", 0)
 					
 					while iEndPos < 0 do
-						sLine:Append(sPara:Tokenize("\n").s)
+						sLine:Append(line.get().s)
 						iEndPos	= sLine:find("$$", iPos)
 						if sPara.TokenizePos < 0 then break end
 					end
