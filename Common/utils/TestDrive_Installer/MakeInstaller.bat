@@ -23,6 +23,12 @@ REM --> If error flag set, we do not have admin.
      CD /D "%~dp0"
 
 
+:getVC_redist
+if not exist "release\vc_redist.x64.exe" (
+	wget https://aka.ms/vs/17/release/vc_redist.x64.exe
+	mv vc_redist.x64.exe release/
+)
+
 REM build main tools
 make
 

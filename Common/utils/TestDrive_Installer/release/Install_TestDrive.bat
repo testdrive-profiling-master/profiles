@@ -2,6 +2,9 @@
 title TestDrive Installer
 setlocal
 
+echo *I: Install Microsoft Visual C++ Redistributable first...
+vc_redist.x64.exe /install /passive /norestart
+
 echo ******************************************************
 echo ****        TestDrive Automatic Installer.        ****
 echo ******************************************************
