@@ -1097,7 +1097,7 @@ vfunction("MULTICYCLE", function(module_inst_name, if_name, cycle_count, instanc
 	sOutput_temp:Replace("$", "__temp", true)
 	
 	m.code.prefix	= m.code.prefix..
-		"// multicycle design for " .. module_inst_name .. "\n" ..
+		"// multicycle(" .. (bEx and (instance_count .. " instance" .. ((instance_count == 1) and "" or "s") .. " / ") or "fully ") .. cycle_count .. " cycles) design for " .. module_inst_name .. "\n" ..
 		"i_" .. _i.interface.name .. "	" .. if_name .. "();\n"..
 		"wire	" .. if_name .. "_ie, " .. if_name .. "_oe" .. (bEx and (", " .. if_name .. "_iready") or "").. ";\n"..
 		"generate\n" ..

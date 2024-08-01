@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 3/8/2024 Fri (clonextop@gmail.com)
+// Rev.  : 7/31/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include "LuaFile.h"
 
@@ -116,7 +116,7 @@ bool LuaFile::Load(const char *sFileName)
 						Close();
 					}
 				} else {
-					LOGE("Invalid KeyCode.");
+					LOGE("Need a correct KeyCode.");
 					Close();
 				}
 
@@ -156,7 +156,7 @@ bool LuaFile::Save(const char *sFileName, bool bEncrypt)
 				header.dwCompressedByteSize = zf.CompressedSize();
 				{
 					// encrypt buffer
-					size_t encrypt_size = ((size_t)header.dwCompressedByteSize + 8 + 15) & (~(size_t)15); // align to 16
+					size_t encrypt_size	 = ((size_t)header.dwCompressedByteSize + 8 + 15) & (~(size_t)15); // align to 16
 					BYTE  *pEncyptedBuff = new BYTE[encrypt_size];
 					memset(&pEncyptedBuff[encrypt_size - 16], 0xED, 16);		 // dummy tail reset
 					((DWORD *)pEncyptedBuff)[0] = zf.CompressedSize();			 // compressed size

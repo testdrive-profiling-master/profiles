@@ -31,7 +31,7 @@
 ```txt
 > codegen
 
-Code generator for TestDrive Profiling Master. v1.0 (build #166 date : Jun 20 2024)
+Code generator for TestDrive Profiling Master. v1.0 (build #190 date : Jul 29 2024)
 Usage: codegen  [--help] [-e|--encrypt] [-d|--decrypt] [--trace] [-k|--key=key_code] lua_file ...
 
       --help                display this help and exit
@@ -54,8 +54,13 @@ However, in the case of an encrypted lua file, you must enter the encryption key
 ```txt
 > codegen -k key_code lua_file
 ```
+or you have to register the private_key for encryption as like below.
+```txt
+> TestDrive_LM register [private_key]
+```
 
-Also, to pass an argument to lua_file, it must be written after the lua file name.
+ 
+And, to pass an argument to lua_file, it must be written after the lua file name.
 ```txt
 > codegen lua_file arguments ...
 ```
