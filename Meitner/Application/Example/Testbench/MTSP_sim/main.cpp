@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Testbench
-// Rev.  : 7/19/2024 Fri (clonextop@gmail.com)
+// Rev.  : 8/7/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Testbench_MTSP.h"
 #include <thread>
@@ -54,15 +54,16 @@ public:
 		DWORD *pInst = (DWORD *)m_pInst->Virtual();
 		memset(pInst, 0, m_pInst->ByteSize());
 		//            end                 phase       mo:branch     end
-		/*
-		pInst[0]	= ((DWORD)1 << 31) | (1 << 30) | (0xE << 26) | (1 << 22);	// all
-		pInst[1]	= ((DWORD)1 << 31) | (1 << 30) | (0xE << 26) | (3 << 22);	// sync
-		pInst[2]	= ((DWORD)1 << 31) | (1 << 30) | (0xE << 26) | (7 << 22);	// sync.global
+#if FULL_THREAD_TEST
+		pInst[0] = ((DWORD)1 << 31) | (1 << 30) | (0xE << 26) | (1 << 22); // all
+		pInst[1] = ((DWORD)1 << 31) | (1 << 30) | (0xE << 26) | (3 << 22); // sync
+		pInst[2] = ((DWORD)1 << 31) | (1 << 30) | (0xE << 26) | (7 << 22); // sync.global
 		//                                            MOV           r3          r5          wmask        swX        swY        swZ        swW
-		pInst[3]	= ((DWORD)1 << 31) | (0 << 30) | (0x0 << 26) | (3 << 21) | (5 << 16) | (0xF << 8) | (0 << 6) | (1 << 4) | (2 << 2) | (3 <<
-		0);	// mov r3, r5 pInst[4]	= ((DWORD)1 << 31) | (1 << 30) | (0xF << 26);				// mem pInst[5]	= ((DWORD)1 << 31) | (1 << 30) |
-		(0xE << 26) | (2 << 22);	// end
-		*/
+		pInst[3] = ((DWORD)1 << 31) | (0 << 30) | (0x0 << 26) | (3 << 21) | (5 << 16) | (0xF << 8) | (0 << 6) | (1 << 4) | (2 << 2) |
+				   (3 << 0);											   // mov r3, r5
+		pInst[4] = ((DWORD)1 << 31) | (1 << 30) | (0xF << 26);			   // mem
+		pInst[5] = ((DWORD)1 << 31) | (1 << 30) | (0xE << 26) | (2 << 22); // end
+#else
 		//            end                 phase       mo:branch     end
 		// pInst[0]	= ((DWORD)1 << 31) | (1 << 30) | (0xE << 26) | (7 << 22);	// sync.global
 		//                                            MOV           r3          r5          wmask        swX        swY        swZ        swW
@@ -71,6 +72,7 @@ public:
 		pInst[1] = ((DWORD)1 << 31) | (0 << 30) | (0x3 << 26) | (5 << 21) | (6 << 16) | (0xF << 8) | (3 << 6) | (2 << 4) | (1 << 2) |
 				   (0 << 0);											   // mov r3, r5
 		pInst[2] = ((DWORD)1 << 31) | (1 << 30) | (0xE << 26) | (2 << 22); // end
+#endif
 		m_pInst->Flush();
 		return true;
 	}
