@@ -1,24 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2019. HyungKi Jeong(clonextop@gmail.com)
-// All rights reserved.
-// 
-// The 3-Clause BSD License (https://opensource.org/licenses/BSD-3-Clause)
-// 
+// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Freely available under the terms of the 3-Clause BSD License
+// (https://opensource.org/licenses/BSD-3-Clause)
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -30,143 +29,145 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : Testbench
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
+// Rev.  : 8/7/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Ge.h"
 #include "GeUtil.h"
+#include "TestDriver.inl"
 
-static CGe*	__pGE	= NULL;
+static CGe *__pGE = NULL;
 
-void SysLog(DWORD dwColor, const char* sFormat, ...)
+void		SysLog(DWORD dwColor, const char *sFormat, ...)
 {
-	char sMsg[1024];
-	va_list		ap;
+	char	sMsg[1024];
+	va_list ap;
 	va_start(ap, sFormat);
 	vsprintf(sMsg, sFormat, ap);
 	va_end(ap);
 
-	if(__pGE) __pGE->Log().SetMessage(sMsg, dwColor, 4000);
+	if (__pGE)
+		__pGE->Log().SetMessage(sMsg, dwColor, 4000);
 }
 
 CGe::CGe(void)
 {
-	m_bDeviceObjectsRestored	= FALSE;
-	m_bDeviceObjectsInited		= FALSE;
-	m_pFont						= new CGeFont(_T("Arial"), 14, D3DFONT_BOLD | D3DFONT_FILTERED);
-	m_pRankFont					= new CGeFont(_T("Alien Encounters Solid"), 18, D3DFONT_BOLD | D3DFONT_FILTERED);	// ref. (https://www.dafont.com/alien-encounters.font)
-	m_pResultFont				= new CGeFont(_T("Alien Encounters Solid"), 14, D3DFONT_BOLD | D3DFONT_FILTERED);
+	m_bDeviceObjectsRestored = FALSE;
+	m_bDeviceObjectsInited	 = FALSE;
+	m_pFont					 = new CGeFont(_T("Arial"), 14, D3DFONT_BOLD | D3DFONT_FILTERED);
+	m_pRankFont =
+		new CGeFont(_T("Alien Encounters Solid"), 18, D3DFONT_BOLD | D3DFONT_FILTERED); // ref. (https://www.dafont.com/alien-encounters.font)
+	m_pResultFont = new CGeFont(_T("Alien Encounters Solid"), 14, D3DFONT_BOLD | D3DFONT_FILTERED);
 	D3DXMatrixIdentity(&m_matIdentity);
-	m_matW						= m_matIdentity;
-	m_matIW						= m_matW;
-	m_matIW._22					= -m_matW._22;
-	m_fProcessingTime			= 0;
-	m_fDNNMax					= 0;
-	m_bFound					= FALSE;
-	m_DNNType					= DNN_TYPE_1;
-	m_fChangeImpact				= 0;
+	m_matW			  = m_matIdentity;
+	m_matIW			  = m_matW;
+	m_matIW._22		  = -m_matW._22;
+	m_fProcessingTime = 0;
+	m_fDNNMax		  = 0;
+	m_bFound		  = FALSE;
+	m_DNNType		  = DNN_TYPE_1;
+	m_fChangeImpact	  = 0;
 	{
 		int t = 0;
 
-		for(int i = 0; i < 128; i++) {	// black to blue
-			DWORD factor	= 2 * i;
+		for (int i = 0; i < 128; i++) { // black to blue
+			DWORD factor		 = 2 * i;
 			m_ColorBarTable[t++] = 0xFF000000 | factor;
 		}
 
-		for(int i = 0; i < 128; i++) {	// blue to cyan
-			DWORD factor	= 2 * i;
+		for (int i = 0; i < 128; i++) { // blue to cyan
+			DWORD factor		 = 2 * i;
 			m_ColorBarTable[t++] = 0xFF0000FF | (factor << 8);
 		}
 
-		for(int i = 0; i < 128; i++) {	// cyan to green
-			DWORD factor	= 255 - 2 * i;
+		for (int i = 0; i < 128; i++) { // cyan to green
+			DWORD factor		 = 255 - 2 * i;
 			m_ColorBarTable[t++] = 0xFF00FF00 | factor;
 		}
 
-		for(int i = 0; i < 128; i++) {	// green to yellow
-			DWORD factor	= 2 * i;
+		for (int i = 0; i < 128; i++) { // green to yellow
+			DWORD factor		 = 2 * i;
 			m_ColorBarTable[t++] = 0xFF00FF00 | (factor << 16);
 		}
 
-		for(int i = 0; i < 512; i++) {	// yellow to red
-			DWORD factor	= (511 - i) >> 1;
+		for (int i = 0; i < 512; i++) { // yellow to red
+			DWORD factor		 = (511 - i) >> 1;
 			m_ColorBarTable[t++] = 0xFFFF0000 | (factor << 8);
 		}
 	}
-	__pGE	= this;
+	__pGE = this;
 }
 
 CGe::~CGe(void)
 {
-	__pGE	= NULL;
+	__pGE = NULL;
 	ReleaseAll();
 }
 
-//------------------------------------- ÀÎÅÍÆäÀÌ½º -------------------------------------
+//------------------------------------- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ -------------------------------------
 //--------------------------------------------
-//	Create : »ý¼º.
+//	Create : ï¿½ï¿½ï¿½ï¿½.
 //--------------------------------------------
 HRESULT CGe::Create(void)
 {
-	m_pDDK					= CreateDDK();
+	m_pDDK = CreateDDK();
 
-	if(!m_pDDK) {
+	if (!m_pDDK) {
 		MessageBox(NULL, "Driver is not initialized!", "DDK Error", MB_ICONHAND | MB_OK);
 		return E_FAIL;
 	}
 
-	if(m_pDDK) {
-		const char* sDesc	= m_pDDK->GetSystemDescription();
+	if (m_pDDK) {
+		const char *sDesc = m_pDDK->GetSystemDescription();
 		SysLog(0xFFFFFF, "Current system is '%s'", sDesc);
 
-		if(strstr(sDesc, "Simplified"))
+		if (strstr(sDesc, "Simplified"))
 			SysLog(0xFF3F3F, "    - Warning : Maybe, this 'Simplified' system is not workable...");
 	}
 
 	//--------------------------------------------------------------------
-	// 3D ÄÄÆ÷³ÍÆ® ÃÊ±âÈ­
+	// 3D ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½Ê±ï¿½È­
 	//
 	m_bActive = FALSE;
 	SAFE_RELEASE(m_pd3dDevice);
 	SAFE_RELEASE(m_pD3D);
-	// ÀÌÀüÀÇ À©µµ¿ì Å©±â¸¦ ÀúÀåÇÑ´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å©ï¿½â¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	GetWindowRect(m_hWndWindow, &m_rcWindowBounds);
 
-	// D3D °´Ã¼ »ý¼º
-	if(NULL == (m_pD3D = Direct3DCreate9(D3D_SDK_VERSION)))  return E_FAIL;
+	// D3D ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½
+	if (NULL == (m_pD3D = Direct3DCreate9(D3D_SDK_VERSION)))
+		return E_FAIL;
 
-	// D3D µð¹ÙÀÌ½º ÆÄ¶ó¸ÞÅÍ¸¦ ¼³Á¤ÇÕ´Ï´Ù.
-	m_d3dpp.Windowed			= m_bWindow;
-	m_d3dpp.BackBufferWidth		= m_iScreenWidth;
-	m_d3dpp.BackBufferHeight	= m_iScreenHeight;
-	m_d3dpp.BackBufferFormat	= m_bWindow ? D3DFMT_UNKNOWN : m_ColorFormat;
+	// D3D ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½Ä¶ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+	m_d3dpp.Windowed		 = m_bWindow;
+	m_d3dpp.BackBufferWidth	 = m_iScreenWidth;
+	m_d3dpp.BackBufferHeight = m_iScreenHeight;
+	m_d3dpp.BackBufferFormat = m_bWindow ? D3DFMT_UNKNOWN : m_ColorFormat;
 
 	// Create the D3DDevice
-	if(!m_hWndFullscreen) m_hWndFullscreen = m_hWndWindow;
+	if (!m_hWndFullscreen)
+		m_hWndFullscreen = m_hWndWindow;
 
-	if(FAILED(m_pD3D->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hWndFullscreen,
-								   D3DCREATE_SOFTWARE_VERTEXPROCESSING,
-								   &m_d3dpp, &m_pd3dDevice))) {
+	if (FAILED(m_pD3D->CreateDevice(
+			D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, m_hWndFullscreen, D3DCREATE_SOFTWARE_VERTEXPROCESSING, &m_d3dpp, &m_pd3dDevice))) {
 		return E_FAIL;
 	}
 
 	g_pd3dDevice = m_pd3dDevice;
 
-	if(FAILED(InitDeviceObjects())) {
+	if (FAILED(InitDeviceObjects())) {
 		DeleteDeviceObjects();
 		return E_FAIL;
-	} else if(FAILED(RestoreDeviceObjects())) {
+	} else if (FAILED(RestoreDeviceObjects())) {
 		InvalidateDeviceObjects();
 		return E_FAIL;
 	}
 
-	if(m_bWindow) {
-		SetWindowPos(m_hWndFullscreen, HWND_NOTOPMOST,
-					 m_rcWindowBounds.left, m_rcWindowBounds.top,
-					 (m_rcWindowBounds.right - m_rcWindowBounds.left),
-					 (m_rcWindowBounds.bottom - m_rcWindowBounds.top),
-					 SWP_SHOWWINDOW);
+	if (m_bWindow) {
+		SetWindowPos(
+			m_hWndFullscreen, HWND_NOTOPMOST, m_rcWindowBounds.left, m_rcWindowBounds.top, (m_rcWindowBounds.right - m_rcWindowBounds.left),
+			(m_rcWindowBounds.bottom - m_rcWindowBounds.top), SWP_SHOWWINDOW);
 	} else {
 	}
 
@@ -174,15 +175,15 @@ HRESULT CGe::Create(void)
 	return S_OK;
 }
 //--------------------------------------------
-//	ReleaseAll : ÇØÁ¦.
+//	ReleaseAll : ï¿½ï¿½ï¿½ï¿½.
 //--------------------------------------------
 void CGe::ReleaseAll()
 {
-	m_bActive		= FALSE;
+	m_bActive = FALSE;
 	InvalidateDeviceObjects();
 	DeleteDeviceObjects();
 
-	for(int i = 0; i < STATE_BLOCK_SIZE; i++) m_StateBlock[i].ReleaseAll();
+	for (int i = 0; i < STATE_BLOCK_SIZE; i++) m_StateBlock[i].ReleaseAll();
 
 	SAFE_DELETE(m_pFont);
 	SAFE_DELETE(m_pRankFont);
@@ -193,42 +194,44 @@ void CGe::ReleaseAll()
 }
 
 //--------------------------------------------
-//	3DEnvironment : È­¸é Ãâ·Â.
+//	3DEnvironment : È­ï¿½ï¿½ ï¿½ï¿½ï¿½.
 //--------------------------------------------
 HRESULT CGe::Render3DEnvironment(void)
 {
 	HRESULT hr;
 
-	if(!Main()) return E_FAIL;
+	if (!Main())
+		return E_FAIL;
 
-	if(!m_bActive) return S_OK;
+	if (!m_bActive)
+		return S_OK;
 
-	if(m_bDeviceLost) {	// ÀÌÀü¿¡ µð¹ÙÀÌ½º¸¦ ÀÒ¾î¹ö·ÈÀ½ ¸®¼ÂÀÌ ÇÊ¿äÇÒ ¼ö ÀÖÀ½.
-		if(FAILED(hr = m_pd3dDevice->TestCooperativeLevel())) {
-			if(D3DERR_DEVICELOST == hr)	// µð¹ÙÀÌ½º¸¦ ¶Ç ÀÒ¾î¹ö·È´Ù. º¹±¸ÇÏ´Âµ¥ ¾à°£ÀÇ ½Ã°£ÀÌ ÇÊ¿äÇÒ ¼ö ÀÖ½À´Ï´Ù.
+	if (m_bDeviceLost) { // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½Ò¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+		if (FAILED(hr = m_pd3dDevice->TestCooperativeLevel())) {
+			if (D3DERR_DEVICELOST == hr) // ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ò¾ï¿½ï¿½ï¿½È´ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½Ï´Âµï¿½ ï¿½à°£ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.
 				return S_OK;
 
-			// µð¹ÙÀÌ½º ¸®¼Â
-			if(D3DERR_DEVICENOTRESET == hr) {
-				if(FAILED(hr = Reset3DEnvironment()))
+			// ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½
+			if (D3DERR_DEVICENOTRESET == hr) {
+				if (FAILED(hr = Reset3DEnvironment()))
 					return hr;
 			}
 
 			return hr;
 		}
 
-		m_bDeviceLost = FALSE;	// ÇØ°áµÆÀ½.
+		m_bDeviceLost = FALSE; // ï¿½Ø°ï¿½ï¿½ï¿½ï¿½.
 	} else {
 		m_imCamera.Lock();
 
-		if(FAILED(hr = Render())) {
+		if (FAILED(hr = Render())) {
 			m_imCamera.Unlock();
 			return hr;
 		}
 
-		hr = m_pd3dDevice->Present(NULL, NULL, NULL, NULL);	// È­¸é¿¡ Ãâ·Â
+		hr = m_pd3dDevice->Present(NULL, NULL, NULL, NULL); // È­ï¿½é¿¡ ï¿½ï¿½ï¿½
 
-		if(D3DERR_DEVICELOST == hr)	// µð¹ÙÀÌ½º¸¦ ÀÒ¾îº­·ÈÀ½.
+		if (D3DERR_DEVICELOST == hr) // ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½Ò¾îº­ï¿½ï¿½ï¿½ï¿½.
 			m_bDeviceLost = TRUE;
 
 		m_imCamera.Unlock();
@@ -237,55 +240,60 @@ HRESULT CGe::Render3DEnvironment(void)
 	return S_OK;
 }
 
-//--------------------------------------- ±¸ÇöºÎ ---------------------------------------
+//--------------------------------------- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ---------------------------------------
 //--------------------------------------------
-//	MsgProc : ¸Þ½ÃÁö ÇÁ·Î½ÃÁ®.
+//	MsgProc : ï¿½Þ½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î½ï¿½ï¿½ï¿½.
 //--------------------------------------------
 LRESULT CGe::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	switch(uMsg) {
-	case WM_ACTIVATE:	// ALT + TAB µîÀÌ ´­·¯Áö°Å³ª ¸¶¿ì½º·Î È°¼º&ºñÈ°¼ºÈ­ ½ÃÅ³°æ¿ì
-		if(m_bFullScreenOnly) m_bActive = (wParam & (WA_ACTIVE | WA_CLICKACTIVE)) != 0;
+	switch (uMsg) {
+	case WM_ACTIVATE: // ALT + TAB ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å³ï¿½ ï¿½ï¿½ï¿½ì½ºï¿½ï¿½ È°ï¿½ï¿½&ï¿½ï¿½È°ï¿½ï¿½È­ ï¿½ï¿½Å³ï¿½ï¿½ï¿½
+		if (m_bFullScreenOnly)
+			m_bActive = (wParam & (WA_ACTIVE | WA_CLICKACTIVE)) != 0;
 
-		//if(!m_bActive) ShowCursor(TRUE);
-		//else ShowCursor(FALSE);
+		// if(!m_bActive) ShowCursor(TRUE);
+		// else ShowCursor(FALSE);
 		break;
 
 	case WM_SETCURSOR:
 
-		// Ç®½ºÅ©¸°½Ã ÀÓÀÇ·Î À©µµ¿ì°¡ ¸ð·¡½Ã°è Ä¿¼­¸¦ º¸ÀÌ°Ô ÇÏ´Â °ÍÀ» ¸·¾ÆÁÝ´Ï´Ù.
-		if(m_bActive && !m_bWindow) {
+		// Ç®ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ç·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ì°¡ ï¿½ð·¡½Ã°ï¿½ Ä¿ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì°ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½
+		// ï¿½ï¿½ï¿½ï¿½ï¿½Ý´Ï´ï¿½.
+		if (m_bActive && !m_bWindow) {
 			SetCursor(NULL);
 
-			if(m_pd3dDevice) m_pd3dDevice->ShowCursor(FALSE);
+			if (m_pd3dDevice)
+				m_pd3dDevice->ShowCursor(FALSE);
 		}
 
-		return true; // ±âº» ÇÁ·Î½ÃÁ®ÀÇ Ä¿¼­°ü¸®¸¦ ¸·´Â´Ù.
+		return true; // ï¿½âº» ï¿½ï¿½ï¿½Î½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â´ï¿½.
 
 	case WM_NCHITTEST:
 
-		// ¸Þ´º¸¦ »ç¿ëÇÒ °æ¿ì ÀüÃ¼È­¸é¿¡¼­ ¸Þ´º¸¦ ¼±ÅÃÇÒ ¼ö ÀÖ´Â °ÍÀ» ¹æÁö.
-		if(!m_bWindow) return HTCLIENT;
+		// ï¿½Þ´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼È­ï¿½é¿¡ï¿½ï¿½ ï¿½Þ´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½
+		// ï¿½ï¿½ï¿½ï¿½.
+		if (!m_bWindow)
+			return HTCLIENT;
 
 		break;
 
 	case WM_POWERBROADCAST:
-		switch(wParam) {
+		switch (wParam) {
 #ifndef PBT_APMQUERYSUSPEND
-#define PBT_APMQUERYSUSPEND 0x0000
+#	define PBT_APMQUERYSUSPEND 0x0000
 #endif
 
 		case PBT_APMQUERYSUSPEND:
-			// ½Ã½ºÅÛÀÌ ¼­½ºÆæµå ¸ðµå¿¡ µé¾î°¡±â ½ÃÀÛÇÑ´Ù.
-			// ³×Æ®¿÷ ¿¬°áÀÌ´Ù¸¥Áö ¿­¸° ÆÄÀÏÀÌ¶óµçÁö ¼­½ºÆæµå ¸ðµå¸¦ ÁØºñÇØ¾ß ÇÑ´Ù.
+			// ï¿½Ã½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å¿¡ ï¿½ï¿½î°¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
+			// ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì´Ù¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å¸¦ ï¿½Øºï¿½ï¿½Ø¾ï¿½ ï¿½Ñ´ï¿½.
 			return true;
 #ifndef PBT_APMRESUMESUSPEND
-#define PBT_APMRESUMESUSPEND 0x0007
+#	define PBT_APMRESUMESUSPEND 0x0007
 #endif
 
 		case PBT_APMRESUMESUSPEND:
-			// ¼­½ºÆæµå ¸ðµå¿¡¼­ ÇØÁ¦ µÇ¾ú´Ù.
-			// º¹±¸ ÁØºñ¸¦ ÇÏµçÁö Á¾·á¸¦ ÇÏµçÁö... ¹º°¡ ÇØ¾ßÇÑ´Ù.--;;; ¹¹ °ÅÀÇ ÀÌ·± °æ¿ì ¾øÀ¸´Ï.
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½å¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ç¾ï¿½ï¿½ï¿½.
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½Øºï¿½ ï¿½Ïµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½á¸¦ ï¿½Ïµï¿½ï¿½ï¿½... ï¿½ï¿½ï¿½ï¿½ ï¿½Ø¾ï¿½ï¿½Ñ´ï¿½.--;;; ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ì·ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 			return true;
 		}
 
@@ -293,14 +301,15 @@ LRESULT CGe::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_SYSCOMMAND:
 
-		// Ç®½ºÅ©¸°ÀÏ °æ¿ì À©µµ¿ì »çÀÌÁî º¯°æ, ÀÌµ¿, ÀýÀü ¸ðµå ¼öÇàÀ» ÇÏÁö ¾Ê´Â´Ù.
-		switch(wParam) {
+		// Ç®ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½Ìµï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
+		switch (wParam) {
 		case SC_MOVE:
 		case SC_SIZE:
 		case SC_MAXIMIZE:
 		case SC_KEYMENU:
 		case SC_MONITORPOWER:
-			if(!m_bWindow) return 1;
+			if (!m_bWindow)
+				return 1;
 
 			break;
 		}
@@ -308,9 +317,10 @@ LRESULT CGe::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_COMMAND:
-		switch(LOWORD(wParam)) {
-		case IDC_TOGGLE_FULLSCREEN:	// "ALT + ENTER" ¸¦ Áö¿øÇÑ´Ù. À©µµ¿ì ¸ðµå¿Í Ç®½ºÅ°¸° ¸ðµå¸¦ Áö¿ø.
-			if(!m_bFullScreenOnly) ToggleFullScreen();
+		switch (LOWORD(wParam)) {
+		case IDC_TOGGLE_FULLSCREEN: // "ALT + ENTER" ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ç®ï¿½ï¿½Å°ï¿½ï¿½ ï¿½ï¿½å¸¦ ï¿½ï¿½ï¿½ï¿½.
+			if (!m_bFullScreenOnly)
+				ToggleFullScreen();
 			else {
 				m_bActive = FALSE;
 				PostMessage(m_hWndFullscreen, WM_SYSCOMMAND, SC_MINIMIZE, NULL);
@@ -318,11 +328,11 @@ LRESULT CGe::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 			return 0;
 
-		case IDC_CAPTURE_SCREEN:		// "F12" ½ºÅ©¸°¼¦ Å°
+		case IDC_CAPTURE_SCREEN: // "F12" ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½ Å°
 			CaptureScreenShot();
 			return 0;
 
-		case IDC_EXIT:				// "ESC" ÇÁ·Î±×·¥ Á¾·á.
+		case IDC_EXIT: // "ESC" ï¿½ï¿½ï¿½Î±×·ï¿½ ï¿½ï¿½ï¿½ï¿½.
 			PostMessage(m_hWndWindow, WM_DESTROY, 0, 0);
 			return 0;
 		}
@@ -338,23 +348,23 @@ LRESULT CGe::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 //--------------------------------------------
-//	Reset3DEnvironment : µð¹ÙÀÌ½º¸¦ ÀÒÀ» °æ¿ì,
-//  ¶Ç´Â 3DÈ¯°æÀ» ¹Ù²Ü °æ¿ì È£ÃâµÇ°Ô µË´Ï´Ù.
+//	Reset3DEnvironment : ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½,
+//  ï¿½Ç´ï¿½ 3DÈ¯ï¿½ï¿½ï¿½ï¿½ ï¿½Ù²ï¿½ ï¿½ï¿½ï¿½ È£ï¿½ï¿½Ç°ï¿½ ï¿½Ë´Ï´ï¿½.
 //--------------------------------------------
 HRESULT CGe::Reset3DEnvironment()
 {
 	HRESULT hr;
-	// ºñµð¿À ¸Þ¸ð¸®ÀÇ ¸ðµç ÀåÄ¡¸¦ ÇØÁ¦ÇÕ´Ï´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 	InvalidateDeviceObjects();
 
-	// ÀåÄ¡¸¦ ¸®¼ÂÇÕ´Ï´Ù.
-	if(FAILED(hr = m_pd3dDevice->Reset(&m_d3dpp)))
+	// ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+	if (FAILED(hr = m_pd3dDevice->Reset(&m_d3dpp)))
 		return hr;
 
-	// ÀåÄ¡¸¦ º¹±¸ÇÕ´Ï´Ù.
+	// ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 	hr = RestoreDeviceObjects();
 
-	if(FAILED(hr)) {
+	if (FAILED(hr)) {
 		InvalidateDeviceObjects();
 		return hr;
 	}
@@ -363,73 +373,76 @@ HRESULT CGe::Reset3DEnvironment()
 }
 
 //--------------------------------------------
-//	ToggleFullScreen : Ã¢¸ðµå¿Í Ç®½ºÅ©¸° ¸ðµå¸¦
-//  Åä±Û ÀüÈ¯ÇÏ°Ô µË´Ï´Ù.
+//	ToggleFullScreen : Ã¢ï¿½ï¿½ï¿½ï¿½ Ç®ï¿½ï¿½Å©ï¿½ï¿½ ï¿½ï¿½å¸¦
+//  ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ï°ï¿½ ï¿½Ë´Ï´ï¿½.
 //--------------------------------------------
 HRESULT CGe::ToggleFullScreen(BOOL bToggle)
 {
-	HRESULT hr	= S_OK;
+	HRESULT hr = S_OK;
 
-	if(!m_pd3dDevice) return E_FAIL;
+	if (!m_pd3dDevice)
+		return E_FAIL;
 
-	if(bToggle) {
+	if (bToggle) {
 		SysLog(0xFFFFFF, "Toggle FullScreen");
 		m_bWindow = !m_bWindow;
 	}
 
-	if(m_bWindow) {
-		SetWindowPos(m_hWndFullscreen, HWND_NOTOPMOST,
-					 m_rcWindowBounds.left, m_rcWindowBounds.top,
-					 (m_rcWindowBounds.right - m_rcWindowBounds.left),
-					 (m_rcWindowBounds.bottom - m_rcWindowBounds.top),
-					 SWP_SHOWWINDOW);
+	if (m_bWindow) {
+		SetWindowPos(
+			m_hWndFullscreen, HWND_NOTOPMOST, m_rcWindowBounds.left, m_rcWindowBounds.top, (m_rcWindowBounds.right - m_rcWindowBounds.left),
+			(m_rcWindowBounds.bottom - m_rcWindowBounds.top), SWP_SHOWWINDOW);
 	} else {
-		if(IsIconic(m_hWndFullscreen)) ShowWindow(m_hWndFullscreen, SW_RESTORE);
+		if (IsIconic(m_hWndFullscreen))
+			ShowWindow(m_hWndFullscreen, SW_RESTORE);
 
 		ShowWindow(m_hWndFullscreen, SW_SHOW);
 		GetWindowRect(m_hWndWindow, &m_rcWindowBounds);
 	}
 
-	if(bToggle) {
-		m_bActive					= FALSE;
-		m_d3dpp.Windowed			= m_bWindow;
-		m_d3dpp.BackBufferWidth		= m_iScreenWidth;
-		m_d3dpp.BackBufferHeight	= m_iScreenHeight;
-		m_d3dpp.BackBufferFormat	= m_bWindow ? D3DFMT_UNKNOWN : m_ColorFormat;
-		hr = Reset3DEnvironment();
+	if (bToggle) {
+		m_bActive				 = FALSE;
+		m_d3dpp.Windowed		 = m_bWindow;
+		m_d3dpp.BackBufferWidth	 = m_iScreenWidth;
+		m_d3dpp.BackBufferHeight = m_iScreenHeight;
+		m_d3dpp.BackBufferFormat = m_bWindow ? D3DFMT_UNKNOWN : m_ColorFormat;
+		hr						 = Reset3DEnvironment();
 	}
 
 	ShowCursor(m_bWindow);
 
-	if(m_pd3dDevice) m_pd3dDevice->ShowCursor(m_bWindow);
+	if (m_pd3dDevice)
+		m_pd3dDevice->ShowCursor(m_bWindow);
 
 	m_bActive = TRUE;
 	return hr;
 }
 
 //--------------------------------------------
-//	CaptureScreenShot : È­¸éÀ» Ä¸ÃÄÇÏ¿© ÆÄÀÏ·Î ÀúÀåÇÕ´Ï´Ù.
-//  ½ºÅ©¸°¼¦ ±â´É SHOT(XXXX).png
+//	CaptureScreenShot : È­ï¿½ï¿½ï¿½ï¿½ Ä¸ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½Ï·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+//  ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ SHOT(XXXX).png
 //--------------------------------------------
-const char* SCREENSHOT_DIR = "ScreenShot";
-const char* SCREENSHOT_NAME = "ScreenShot\\SHOT%04d.png";
-HRESULT CGe::CaptureScreenShot(void)
+const char *SCREENSHOT_DIR	= "ScreenShot";
+const char *SCREENSHOT_NAME = "ScreenShot\\SHOT%04d.png";
+HRESULT		CGe::CaptureScreenShot(void)
 {
 	static DWORD dwShotCount = 0;
 
-	if(!m_pd3dDevice) return E_FAIL;
+	if (!m_pd3dDevice)
+		return E_FAIL;
 
 	char filename[32];
 
-	// "ScreenShot" µð·ºÅä¸® Á¸Àç ¿©ºÎ È®ÀÎ
-	switch(GetFileAttributes(SCREENSHOT_DIR)) {
+	// "ScreenShot" ï¿½ï¿½ï¿½ä¸® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
+	switch (GetFileAttributes(SCREENSHOT_DIR)) {
 	case FILE_ATTRIBUTE_DIRECTORY:
 		break;
 
 	case INVALID_FILE_ATTRIBUTES:
 		CreateDirectory(SCREENSHOT_DIR, NULL);
 
-		if(GetFileAttributes(SCREENSHOT_DIR) != FILE_ATTRIBUTE_DIRECTORY) return E_FAIL;
+		if (GetFileAttributes(SCREENSHOT_DIR) != FILE_ATTRIBUTE_DIRECTORY)
+			return E_FAIL;
 
 		break;
 
@@ -437,30 +450,31 @@ HRESULT CGe::CaptureScreenShot(void)
 		return E_FAIL;
 	}
 
-	// ÆÄÀÏ ÀÌ¸§ Áßº¹ ¹æÁö
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ ï¿½ßºï¿½ ï¿½ï¿½ï¿½ï¿½
 	do {
 		dwShotCount++;
 		wsprintf(filename, SCREENSHOT_NAME, dwShotCount);
-	} while(GetFileAttributes(filename) != INVALID_FILE_ATTRIBUTES);
+	} while (GetFileAttributes(filename) != INVALID_FILE_ATTRIBUTES);
 
-	// PNG ÆÄÀÏ·Î ½ºÅ©¸°¼¦ ÀúÀå
-	IDirect3DSurface9* pSurface	= NULL;
+	// PNG ï¿½ï¿½ï¿½Ï·ï¿½ ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	IDirect3DSurface9 *pSurface = NULL;
 	m_imCamera.Lock();
-	m_pd3dDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pSurface);	// Back Surface¸¦ ¾ò¾î¿Í¼­...
-	D3DXSaveSurfaceToFile(filename, D3DXIFF_PNG, pSurface, NULL, NULL);	// ÀúÀåÇÔ
-	SAFE_RELEASE(pSurface);	// ¸Þ¸ð¸® ´©¼ö ¹æÁö
+	m_pd3dDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pSurface); // Back Surfaceï¿½ï¿½ ï¿½ï¿½ï¿½Í¼ï¿½...
+	D3DXSaveSurfaceToFile(filename, D3DXIFF_PNG, pSurface, NULL, NULL);	   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	SAFE_RELEASE(pSurface);												   // ï¿½Þ¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	SysLog(0xFFFFFF, "Capture Image to '%s'...", filename);
 	m_imCamera.Unlock();
 	return S_OK;
 }
 
 //--------------------------------------------
-//	InitDeviceObjects : »ç¿ëµÉ ±×·¡ÇÈ ÀåÄ¡¸¦
-//  ÃÊ±âÈ­ÇÕ´Ï´Ù.
+//	InitDeviceObjects : ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½
+//  ï¿½Ê±ï¿½È­ï¿½Õ´Ï´ï¿½.
 //--------------------------------------------
 HRESULT CGe::InitDeviceObjects(void)
 {
-	if(m_bDeviceObjectsInited) return S_OK;
+	if (m_bDeviceObjectsInited)
+		return S_OK;
 
 	m_bDeviceObjectsInited = TRUE;
 	m_pFont->InitDeviceObjects();
@@ -468,9 +482,9 @@ HRESULT CGe::InitDeviceObjects(void)
 	m_pResultFont->InitDeviceObjects();
 	m_imTitle.LoadImage("media\\DxVideo\\title.png");
 	{
-		const char* _sNode[] = {"Net1", "Net2"};
+		const char *_sNode[] = {"Net1", "Net2"};
 
-		for(int i = 0; i < DNN_TYPE_SIZE; i++) {
+		for (int i = 0; i < DNN_TYPE_SIZE; i++) {
 			char sPath[1024];
 			sprintf(sPath, "media\\DxVideo\\%s\\pannel.png", _sNode[i]);
 			m_imSidePannel[i].LoadImage(sPath);
@@ -491,10 +505,11 @@ HRESULT CGe::InitDeviceObjects(void)
 	m_imPreview.SetUpDraw(SCREEN_POINT_RD, -380, -270);
 	m_imRedLight.SetUpDraw(SCREEN_POINT_RD, -396, -297);
 
-	if(m_imCamera.Create(1920, 1080) || m_imCamera.Create(1280, 720) || m_imCamera.Create(640, 480)) {
+	if (m_imCamera.Create(1920, 1080) || m_imCamera.Create(1280, 720) || m_imCamera.Create(640, 480)) {
 		m_imCamera.RegisterPost(this);
 		SysLog(0xFFFFFF, "Camera is initialized...");
-	} else SysLog(0xFF3F3F, "Camera initialization is failed!");
+	} else
+		SysLog(0xFF3F3F, "Camera initialization is failed!");
 
 	m_imFrameFullScreen.InitVertexBuffer();
 	m_imFrameFullScreen.SetUpDraw(SCREEN_POINT_LD, 0, 0, m_iScreenWidth, -m_iScreenHeight);
@@ -504,22 +519,23 @@ HRESULT CGe::InitDeviceObjects(void)
 }
 
 //--------------------------------------------
-//	RestoreDeviceObjects : ºñµð¿À ¸Þ¸ð¸® ³»¿ëÀ»
-//  ´Ù½Ã ¼³Á¤ÇØ ÁÝ´Ï´Ù.
-//  ¿äÁò ºñµð¿À ¸Þ¸ð¸®´Â °ÅÀÇ ³¯¾Æ°¡Áö ¾Ê½À´Ï´Ù.
-//  µû¶ó¼­ ÁÖ·Î RenderStateµîÀ¸·Î ¼³Á¤ÇÑ »óÅÂ¸¦
-//  ´Ù½Ã ¼ÂÆÃÇØ ÁÖ½Ã¸é µË´Ï´Ù.
+//	RestoreDeviceObjects : ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//  ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ý´Ï´ï¿½.
+//  ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¸ð¸®´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Æ°ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½.
+//  ï¿½ï¿½ï¿½ï¿½ ï¿½Ö·ï¿½ RenderStateï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â¸ï¿½
+//  ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö½Ã¸ï¿½ ï¿½Ë´Ï´ï¿½.
 //--------------------------------------------
 HRESULT CGe::RestoreDeviceObjects(void)
 {
-	if(m_bDeviceObjectsRestored) return S_OK;
+	if (m_bDeviceObjectsRestored)
+		return S_OK;
 
 	m_bDeviceObjectsRestored = TRUE;
 	// Set the projection matrix
-	D3DXMATRIX matView;
-	D3DXVECTOR3 vFromPt   = D3DXVECTOR3(0.0f, 0.0f, -5.0f);
+	D3DXMATRIX	matView;
+	D3DXVECTOR3 vFromPt	  = D3DXVECTOR3(0.0f, 0.0f, -5.0f);
 	D3DXVECTOR3 vLookatPt = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
-	D3DXVECTOR3 vUpVec    = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
+	D3DXVECTOR3 vUpVec	  = D3DXVECTOR3(0.0f, 1.0f, 0.0f);
 	D3DXMatrixLookAtLH(&matView, &vFromPt, &vLookatPt, &vUpVec);
 	m_pd3dDevice->SetTransform(D3DTS_VIEW, &matView);
 	D3DXMATRIX matProj;
@@ -536,7 +552,7 @@ HRESULT CGe::RestoreDeviceObjects(void)
 	m_imPreview.Restore();
 	m_imRedLight.Restore();
 
-	for(int i = 0; i < DNN_TYPE_SIZE; i++) m_imSidePannel[i].Restore();
+	for (int i = 0; i < DNN_TYPE_SIZE; i++) m_imSidePannel[i].Restore();
 
 	m_imTarget.Restore();
 	m_imTargets.Restore();
@@ -575,43 +591,48 @@ HRESULT CGe::RestoreDeviceObjects(void)
 		m_StateBlock[STATE_BLOCK_IMAGE].SetAlphaBlend(STATE_ALPHA_BLEND_NORMAL);
 		m_StateBlock[STATE_BLOCK_CAMERA].End();
 	}
-	m_pd3dDevice->SetTransform(D3DTS_WORLD,  &m_matIdentity);
+	m_pd3dDevice->SetTransform(D3DTS_WORLD, &m_matIdentity);
 	m_StateBlock[STATE_BLOCK_BACKGROUND].Apply();
 	return S_OK;
 }
 
 //--------------------------------------------
-//	InvalidateDeviceObjects : µð¹ÙÀÌ½º ÀåÄ¡¸¦
-//  ÀÒ¾î¹ö·ÈÀ» ¶§, ºñµð¿À ¸Þ¸ð¸®¸¦ »ç¿ëÇÏ´Â
-//  ÀåÄ¡¸¦ ÇØÁ¦ÇÕ´Ï´Ù.
-//	Âü°í : Managed pool·Î ¼³Á¤ÇÏ¸é ÅØ½ºÃÄ³ª
-//  ¹öÅØ½º Á¤º¸¸¦ ÀÒ¾î¹ö¸®Áö ¾Ê½À´Ï´Ù.
-//  µû¶ó¼­ ±¸Áö ÇØÁ¦ÇÒ ÇÊ¿ä´Â ¾ø½À´Ï´Ù.
-//  ÇØ»óµµ¸¦ ¹Ù²Ù°Å³ª µð¹ÙÀÌ½º ÀÚÃ¼¸¦ ¹Ù²Ü¶§´Â
-//  ÀüºÎ ´Ù½Ã ¸Þ¸ð¸®¸¦ ¿Ã¸®´Â ÀÛ¾÷ÀÌ ÇÊ¿äÇÕ´Ï´Ù.
+//	InvalidateDeviceObjects : ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½
+//  ï¿½Ò¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¸ð¸®¸ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½
+//  ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+//	ï¿½ï¿½ï¿½ï¿½ : Managed poolï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½Ø½ï¿½ï¿½Ä³ï¿½
+//  ï¿½ï¿½ï¿½Ø½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½.
+//  ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
+//  ï¿½Ø»óµµ¸ï¿½ ï¿½Ù²Ù°Å³ï¿½ ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Ù²Ü¶ï¿½ï¿½ï¿½
+//  ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½Þ¸ð¸®¸ï¿½ ï¿½Ã¸ï¿½ï¿½ï¿½ ï¿½Û¾ï¿½ï¿½ï¿½ ï¿½Ê¿ï¿½ï¿½Õ´Ï´ï¿½.
 //--------------------------------------------
 HRESULT CGe::InvalidateDeviceObjects(void)
 {
-	if(!m_bDeviceObjectsRestored) return S_OK;
+	if (!m_bDeviceObjectsRestored)
+		return S_OK;
 
 	m_bDeviceObjectsRestored = FALSE;
 
-	if(m_pFont) m_pFont->InvalidateDeviceObjects();
+	if (m_pFont)
+		m_pFont->InvalidateDeviceObjects();
 
-	if(m_pRankFont) m_pRankFont->InitDeviceObjects();
+	if (m_pRankFont)
+		m_pRankFont->InitDeviceObjects();
 
-	if(m_pResultFont) m_pResultFont->InvalidateDeviceObjects();
+	if (m_pResultFont)
+		m_pResultFont->InvalidateDeviceObjects();
 
 	return S_OK;
 }
 
 //--------------------------------------------
-//	DeleteDeviceObjects : ±×·¡ÇÈ ÀåÄ¡¸¦ ¸ðµÎ
-//  ¸Þ¸ð¸®¿¡¼­ ÇØÁ¦ÇÕ´Ï´Ù.
+//	DeleteDeviceObjects : ï¿½×·ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½
+//  ï¿½Þ¸ð¸®¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
 //--------------------------------------------
 HRESULT CGe::DeleteDeviceObjects(void)
 {
-	if(!m_bDeviceObjectsInited) return S_OK;
+	if (!m_bDeviceObjectsInited)
+		return S_OK;
 
 	m_bDeviceObjectsInited = FALSE;
 	m_pFont->DeleteDeviceObjects();
@@ -626,7 +647,7 @@ HRESULT CGe::DeleteDeviceObjects(void)
 	m_imPreview.ReleaseAll();
 	m_imRedLight.ReleaseAll();
 
-	for(int i = 0; i < DNN_TYPE_SIZE; i++) m_imSidePannel[i].ReleaseAll();
+	for (int i = 0; i < DNN_TYPE_SIZE; i++) m_imSidePannel[i].ReleaseAll();
 
 	m_imTarget.ReleaseAll();
 	m_imTargets.ReleaseAll();
@@ -643,15 +664,16 @@ BOOL CGe::Main(void)
 HRESULT CGe::Render(void)
 {
 	// Clear the viewport
-	//m_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 127), 1.0f, 0);
-	m_pd3dDevice->Clear(0L, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 127), 1.0f, 0L);	// no 'Z' buffer
+	// m_pd3dDevice->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 127), 1.0f, 0);
+	m_pd3dDevice->Clear(0L, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 127), 1.0f, 0L); // no 'Z' buffer
 
-	if(SUCCEEDED(m_pd3dDevice->BeginScene())) {
-		// ·Î°í Ãâ·Â
-		m_pd3dDevice->SetTransform(D3DTS_WORLD,  &m_matIdentity);
+	if (SUCCEEDED(m_pd3dDevice->BeginScene())) {
+		// ï¿½Î°ï¿½ ï¿½ï¿½ï¿½
+		m_pd3dDevice->SetTransform(D3DTS_WORLD, &m_matIdentity);
 		m_StateBlock[STATE_BLOCK_BACKGROUND].Apply();
 
-		if(m_imCamera.IsInitialized()) m_imFrameFullScreen.Present(m_imCamera.Texture());
+		if (m_imCamera.IsInitialized())
+			m_imFrameFullScreen.Present(m_imCamera.Texture());
 
 		m_StateBlock[STATE_BLOCK_IMAGE].Apply();
 		m_imTitle.Present();
@@ -659,45 +681,48 @@ HRESULT CGe::Render(void)
 		m_imPreview.Present();
 		m_imBoard.Present();
 
-		if(m_imCamera.IsInitialized()) {
+		if (m_imCamera.IsInitialized()) {
 			// camera online... preview image
 			m_StateBlock[STATE_BLOCK_CAMERA].Apply();
 			m_imFrameProcess.Present(m_imCamera.Texture());
 			// blinking red light
-			DWORD dwBlink	= DWORD(m_fProceedTime * 1000.f);
+			DWORD dwBlink = DWORD(m_fProceedTime * 1000.f);
 
-			if(dwBlink & 0x100) dwBlink ^= 0xFF;
+			if (dwBlink & 0x100)
+				dwBlink ^= 0xFF;
 
 			m_StateBlock[STATE_BLOCK_LIGHT_BLEND].Apply();
 			m_StateBlock[STATE_BLOCK_LIGHT_BLEND].SetTextureFactor((dwBlink) << 24);
 
-			if(m_bFound) m_imTargets.Present();
+			if (m_bFound)
+				m_imTargets.Present();
 
 			{
-				static DWORD	dwTime	= 0;
-				DWORD	dwFactor;
+				static DWORD dwTime = 0;
+				DWORD		 dwFactor;
 				dwFactor = (dwTime += 6);
 
-				if(dwFactor & 0x100) dwFactor ^= 0xFF;
+				if (dwFactor & 0x100)
+					dwFactor ^= 0xFF;
 
 				dwFactor &= 0xFF;
 				m_StateBlock[STATE_BLOCK_LIGHT_BLEND].Apply();
 				m_StateBlock[STATE_BLOCK_LIGHT_BLEND].SetTextureFactor((dwFactor) << 24);
 			}
 			m_imRedLight.Present();
-			m_bFound	= TRUE;	// for test
+			m_bFound = TRUE; // for test
 		}
 
-		// ½Ã½ºÅÛ ¸Þ½ÃÁö Ãâ·Â
+		// ï¿½Ã½ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 		{
-			int i = m_iScreenHeight - 132 - 8;
+			int i	  = m_iScreenHeight - 132 - 8;
 			int Index = m_cSystemMsg.GetSize();
 
-			while(Index) {
+			while (Index) {
 				Index--;
-				const char* msgline = m_cSystemMsg.GetMessage(Index);
+				const char *msgline = m_cSystemMsg.GetMessage(Index);
 
-				if(msgline) {
+				if (msgline) {
 					m_pFont->DrawText(117 + 1, i + 1, 0xFF000000, msgline);
 					m_pFont->DrawText(117, i, m_cSystemMsg.GetColor(Index), msgline);
 				}
@@ -707,9 +732,9 @@ HRESULT CGe::Render(void)
 		}
 		{
 			// result out.
-			static float fScore = 0;	//@TODO: for test. delete this...
+			static float fScore = 0; //@TODO: for test. delete this...
 
-			if((fScore++) > 100) {
+			if ((fScore++) > 100) {
 				fScore = 0;
 			}
 
@@ -717,8 +742,8 @@ HRESULT CGe::Render(void)
 				// show bar graph.
 				m_StateBlock[STATE_BLOCK_IMAGE_MODULATE].Apply();
 
-				for(int i = 0; i < 5; i++) {
-					float width	= (574 * fScore) / 100.f;
+				for (int i = 0; i < 5; i++) {
+					float width = (574 * fScore) / 100.f;
 					m_StateBlock[STATE_BLOCK_IMAGE_MODULATE].SetTextureFactor(m_ColorBarTable[(int)(fScore * (1023.f / 100.f))]);
 					m_imWhiteBox.SetUpDraw(SCREEN_POINT_LT, 1174, 225 + i * 88, width, 9);
 					m_imWhiteBox.Present();
@@ -728,14 +753,14 @@ HRESULT CGe::Render(void)
 			m_StateBlock[STATE_BLOCK_IMAGE_BLNED].Apply();
 			m_imSidePannel[m_DNNType].Present();
 
-			if(m_fChangeImpact) {
-				DWORD dwFactor	= (DWORD)(m_fChangeImpact * 255);
+			if (m_fChangeImpact) {
+				DWORD dwFactor = (DWORD)(m_fChangeImpact * 255);
 				m_StateBlock[STATE_BLOCK_LIGHT_BLEND].Apply();
 				m_StateBlock[STATE_BLOCK_IMAGE_MODULATE].SetTextureFactor(dwFactor << 24);
 				m_imSidePannel[m_DNNType].Present();
-				m_fChangeImpact	-= m_fElpasedTime;
+				m_fChangeImpact -= m_fElpasedTime;
 
-				if(m_fChangeImpact < 0)
+				if (m_fChangeImpact < 0)
 					m_fChangeImpact = 0;
 			}
 
@@ -743,7 +768,7 @@ HRESULT CGe::Render(void)
 				// show label & score
 				char sMsg[1024];
 
-				for(int i = 0; i < 5; i++) {
+				for (int i = 0; i < 5; i++) {
 					sprintf(sMsg, "Test Label #1", i);
 					m_pRankFont->DrawText(1143, 252 + i * 88, 0xFFFFFFFF, sMsg);
 					sprintf(sMsg, "%.2f %%", fScore);
@@ -755,7 +780,9 @@ HRESULT CGe::Render(void)
 			// show performance
 			char sMsg[1024];
 			m_StateBlock[STATE_BLOCK_IMAGE].Apply();
-			sprintf(sMsg, "Elpased Time : %.2f msec \nPerformance : %3.1f fps", m_fProcessingTime * 1000.f, m_fProcessingTime ? (1.f / m_fProcessingTime) : 0.f);
+			sprintf(
+				sMsg, "Elpased Time : %.2f msec \nPerformance : %3.1f fps", m_fProcessingTime * 1000.f,
+				m_fProcessingTime ? (1.f / m_fProcessingTime) : 0.f);
 			m_pResultFont->DrawText(1065 + 3, 664 + 3, 0xFF000000, sMsg);
 			m_pResultFont->DrawText(1065, 664, 0xFFFFFFFF, sMsg);
 		}
