@@ -1499,7 +1499,7 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 		
 		if bBypassCodeRef == false then
 			while sLine:CompareBack(" \\") do
-				sLine:DeleteBack("\n")
+				sLine:DeleteBack(" \\")
 				sLine:TrimRight(" \t")
 				sLine:Append(" ")
 				sLine:Append(sPara:Tokenize("\n").s)
@@ -1784,13 +1784,30 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 				sLine:CutBack("\t", true)
 				sLine:CutBack("//", true)
 				sLine:CutBack("--", true)
-				sLine:CutBack(";", true)
 				sLine:Trim(" \t")
-				s_pPr	= String(s_pPr)
-				s_pPr:DeleteBlock("<w:pStyle*/>", 0)
-				s_pPr:Append("<w:pStyle w:val=\"" .. ConvertStyleIDString(sLine.s) .. "\"/>")
-				s_pPr	= s_pPr.s
-				sLine	= line.get()
+				
+				do
+					local sTok = sLine:Tokenize(",;/")
+				
+					while sTok ~= nil do
+						sTok:Trim(" \t")
+						if sTok:IsEmpty() == false then
+							s_pPr	= String(s_pPr)
+							if (sTok.s == "left") or (sTok.s == "right") or (sTok.s == "center") then	-- alignment
+								s_pPr:DeleteBlock("<w:jc */>", 0)
+								s_pPr:Append("<w:jc w:val=\"" .. sTok.s .. "\"/>")
+							else
+								s_pPr:DeleteBlock("<w:pStyle*/>", 0)
+								s_pPr:Append("<w:pStyle w:val=\"" .. ConvertStyleIDString(sTok.s) .. "\"/>")	-- style
+							end
+							s_pPr	= s_pPr.s
+						else
+							break
+						end
+						sTok = sLine:Tokenize(",;/")
+					end
+					sLine	= line.get()
+				end
 				goto new_line
 			elseif sLine:CompareFront("%%%") then
 				sLine:CutFront("%", true)

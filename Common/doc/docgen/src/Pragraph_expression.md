@@ -3,7 +3,8 @@
 
 Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph 의 인자 @<color:FF0000>설명@</color> 및 @<color:FF0000>문장@</color>을 기술하는 법을 의미합니다. \
 표기 방법은 markdown 과 몇몇 html 표기법을 혼합하여 취하고 있으며, 표현의 다향성을 위해 추가적으로 자체 문법도 가지고 있습니다. \
-또한 각 수식은 문단, 표등 문장이 쓰이는 어디서든 동등하게 사용할 수 있습니다.
+또한 각 수식은 문단, 표등 문장이 쓰이는 어디서든 동등하게 사용할 수 있습니다. \
+긴 문장을 짧게 여러 줄로 나눌 수 있도록, 문단 내에서 " \"(space + '\') 로 끝날 경우 다음 줄과 자동으로 이어붙입니다.
 
 :::NoteHeading
 Paragraph 표현에 대한 건의 사항이 개선 요청은 언제든지 저에게 연락해 주세요. (@<bookmark:@소개> 참조.)
@@ -12,7 +13,8 @@ Paragraph 표현에 대한 건의 사항이 개선 요청은 언제든지 저에
 
 Paragraph expression refers to how to describe the arguments @<color:FF0000>description@</color> and @<color:FF0000>sentence@</color> of the Lua functions of AddRevision, AddTerm, and AddParagraph. \
 The notation method is a mixture of markdown and some html notation, and it additionally has its own grammar for versatility in expression. \
-Additionally, each formula can be used equally wherever sentences are used, such as paragraphs and tables.
+Additionally, each formula can be used equally wherever sentences are used, such as paragraphs and tables. \
+To allow long sentences to be split into several shorter lines, paragraphs that end with " \ " (space + '\') are automatically connected to the next line.
 
 :::NoteHeading
 If you have any suggestions for paragraph expressions or requests for improvement, please contact me at any time. (Refer to @<bookmark:@Introduction>.)
@@ -451,36 +453,72 @@ Result : @<fixed>Fixed font@</fixed> expression.
  
 %%% ko
 ### 문단 스타일
-@<size:30>@<b>표현식 : :::@<color:FF0000>스타일_이름@</color>@</b>@</size>
+@<size:30>@<b>표현식 : :::@<color:FF0000>스타일_이름[,정렬]@</color>@</b>@</size>
 
-다음 줄의 문단 스타일을 '@<color:FF0000>스타일_이름@</color>'로 변경합니다. 한 줄에 대해서만 스타일이 변경되며, 다음 라인에 대해서는 원래의 스타일 서식으로 다시 돌아갑니다.
-스타일 서식은 초기 템플릿 문서에 지정된 스타일이 참조되어 구현되며, WORD 상에 '텍스트 스타일'로 검색하여 변경 및 추가할 수 있습니다. \
+다음 줄의 문단 스타일을 '@<color:FF0000>스타일_이름@</color>'로 변경합니다. 한 줄에 대해서만 스타일이 변경되며, \
+다음 라인에 대해서는 원래의 스타일 서식으로 다시 돌아갑니다.
+스타일 서식은 초기 템플릿 WORD 문서에 지정된 스타일이 참조되어 구현되며, WORD 상에 '텍스트 스타일'로 검색하여 변경 및 추가할 수 있습니다. \
 스타일 이름에 탭 문자나 "//", "--" 또는 ";" 문자 뒤의 내용은 무시됩니다. 스타일 이름이 아닌 스타일 ID 를 입력하여도 상관 없습니다.
+'@<color:FF0000>정렬@</color>'은 '@<code>left@</code>', '@<code>right@</code>', '@<code>center@</code>' 중에 하나를 선택할 수 있으며, \
+생략될 경우 양쪽 정렬로 간주되며, '@<color:FF0000>스타일_이름@</color>' 없이 '@<color:FF0000>정렬@</color>'만 지정할 수도 있다.
 
 예) 노트 서식을 적용
 ```html
 :::NoteHeading			-- 추가 설명
-민간인과 군인 사망자를 모두 합하여 약 6,000만~7,000만 명에 달하는 사람들이 제2차 세계 대전으로 인해 사망했다. 이 전쟁의 여파로 서구권에서는 그동안 사회 주류였던 집단주의 사상이 쇠퇴하고 개인주의 사상이 대두되어 오늘날까지 이어지게 된다.
+민간인과 군인 사망자를 모두 합하여 약 6,000만~7,000만 명에 달하는 사람들이 \ 
+제2차 세계 대전으로 인해 사망했다. \ 
+이 전쟁의 여파로 서구권에서는 그동안 사회 주류였던 집단주의 사상이 쇠퇴하고 \ 
+개인주의 사상이 대두되어 오늘날까지 이어지게 된다.
+:::center
+가운데 정렬
+:::right
+오른쪽 정렬
 ```
 결과)
 :::NoteHeading			-- 추가 설명
-민간인과 군인 사망자를 모두 합하여 약 6,000만~7,000만 명에 달하는 사람들이 제2차 세계 대전으로 인해 사망했다. 이 전쟁의 여파로 서구권에서는 그동안 사회 주류였던 집단주의 사상이 쇠퇴하고 개인주의 사상이 대두되어 오늘날까지 이어지게 된다.
+민간인과 군인 사망자를 모두 합하여 약 6,000만~7,000만 명에 달하는 사람들이 \
+제2차 세계 대전으로 인해 사망했다. \
+이 전쟁의 여파로 서구권에서는 그동안 사회 주류였던 집단주의 사상이 쇠퇴하고 \
+개인주의 사상이 대두되어 오늘날까지 이어지게 된다.
+:::center
+가운데 정렬
+:::right
+오른쪽 정렬
 %%% en
 ### Paragraph style
-@<size:30>@<b>Expression : :::@<color:FF0000>style_name@</color>@</b>@</size>
+@<size:30>@<b>Expression : :::@<color:FF0000>style_name[,alignment]@</color>@</b>@</size>
 
-Change the paragraph style of the next line to '@<color:FF0000>style_name@</color>'. The style changes for only one line, and reverts to the original style formatting for the next line.
-Style formatting is implemented by referencing the style specified in the initial template document, and can be changed or added by searching for 'text style' in WORD. \
+Change the paragraph style of the next line to '@<color:FF0000>style_name@</color>'. \
+The style changes for only one line, and reverts to the original style formatting for the next line. \
+Style formatting is implemented by referencing the style specified in the initial template WORD document, and can be changed or added by searching for 'text style' in WORD. \
 Style names include tab characters, "//", "--", or ";" Anything after the character is ignored. It doesn't matter if you enter the style ID rather than the style name.
+'@<color:FF0000>alignment@</color>' can be one of '@<code>left@</code>', '@<code>right@</code>', '@<code>center@</code>', and \
+If omitted, it is considered as two-sided alignment. And you can also specify only '@<color:FF0000>alignment@</color>' without 'style_name@</color>'.
 
 ex) Apply note style
 ```html
 :::NoteHeading			-- Additional explanation
-Including both civilian and military deaths, an estimated 60 to 70 million people died as a result of World War II. In the aftermath of this war, collectivistic ideology, which had been the mainstream of society, declined in the Western world and individualistic ideology emerged, which continues to this day.
+Including both civilian and military deaths, an estimated 60 to 70 million \ 
+people died as a result of World War II. \ 
+In the aftermath of this war, collectivistic ideology, which had been \ 
+the mainstream of society, declined in the Western world and individualistic \ 
+ideology emerged, which continues to this day.
+:::center
+center alignment
+:::right
+right alignment
 ```
 Result)
 :::NoteHeading			-- Additional explanation
-Including both civilian and military deaths, an estimated 60 to 70 million people died as a result of World War II. In the aftermath of this war, collectivistic ideology, which had been the mainstream of society, declined in the Western world and individualistic ideology emerged, which continues to this day.
+Including both civilian and military deaths, an estimated 60 to 70 million \
+people died as a result of World War II. \
+In the aftermath of this war, collectivistic ideology, which had been \
+the mainstream of society, declined in the Western world and individualistic \
+ideology emerged, which continues to this day.
+:::center
+center alignment
+:::right
+right alignment
 %%%
 
 
