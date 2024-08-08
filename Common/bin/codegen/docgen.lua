@@ -334,6 +334,43 @@ local	excel_numbered_color_codes = {
 	"333333"
 }
 
+local table_wrapper	= {}	-- table 이나 figure 인용시 bookmark 와 함께 wrapper 시킴
+table_wrapper.prefix	= "<w:tbl>\
+<w:tblPr>\
+	<w:tblStyle w:val=\"ac\"/>\
+	<w:tblW w:w=\"5020\" w:type=\"pct\"/>\
+	<w:tblBorders>\
+		<w:top w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"auto\"/>\
+		<w:left w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"auto\"/>\
+		<w:bottom w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"auto\"/>\
+		<w:right w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"auto\"/>\
+		<w:insideH w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"auto\"/>\
+		<w:insideV w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"auto\"/>\
+	</w:tblBorders>\
+	<w:tblLook w:val=\"04A0\" w:firstRow=\"1\" w:lastRow=\"0\" w:firstColumn=\"1\" w:lastColumn=\"0\" w:noHBand=\"0\" w:noVBand=\"1\"/>\
+</w:tblPr>\
+<w:tblGrid>\
+	<w:gridCol w:w=\"9224\"/>\
+</w:tblGrid>\
+<w:tr>\
+	<w:trPr>\
+		<w:cantSplit/>\
+	</w:trPr>\
+	<w:tc>\
+	<w:tcPr>\
+		<w:tcW w:w=\"9224\" w:type=\"dxa\"/>\
+		<w:tcBorders>\
+			<w:top w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"auto\"/>\
+			<w:left w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"auto\"/>\
+			<w:bottom w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"auto\"/>\
+			<w:right w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"auto\"/>\
+			<w:insideH w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"auto\"/>\
+			<w:insideV w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"auto\"/>\
+		</w:tcBorders>\
+		<w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"auto\"/>\
+	</w:tcPr>"
+table_wrapper.postfix	= "</w:tc></w:tr></w:tbl>"
+
 function GetExcelColorCode(sName)
 	local	sColorName	= String(sName)
 	local	iColorCode	= -1
@@ -2030,18 +2067,26 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 							sFileName:Trim(" ")
 							sVar:erase(0, sVar.TokenizePos)
 							sVar:Trim(" \t;")
+							
 							local	sCaption	= sVar.s
 							if fRatio == nil then
 								fRatio	= 1.0
 							end
 							sResult:CutBack("<w:p>", false)
+							
+							sResult:Append(table_wrapper.prefix)
+							
 							if sFileName.s ~= "nil" then
 								sResult:Append(GenerateFigure(sFileName.s, fRatio))
 							end
 							
 							if sCaption ~= nil and sCaption ~= "" then
 								sResult:Append(GenerateCaption("Figure", sCaption))
+							else
+								sResult:Append("<w:p/>")	-- tc 마지막에 없으면 table 에러 발생
 							end
+							
+							sResult:Append(table_wrapper.postfix)
 
 							goto continue
 						elseif sTag.s == "tbl" then
@@ -2051,8 +2096,11 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 							sVar:erase(0, sVar.TokenizePos)
 							sVar:Trim(" \t;")
 							sSubName:Trim(" \t")
+							
 							local	sCaption	= sVar.s
 							sResult:CutBack("<w:p>", false)
+							
+							sResult:Append(table_wrapper.prefix)
 							
 							if sCaption ~= nil and sCaption ~= "" then
 								sResult:Append(GenerateCaption("Table", sCaption))
@@ -2064,7 +2112,10 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 								else
 									sResult:Append(GenerateTable(sMainName.s, sSubName.s))	-- file_name, sheet_name
 								end
+								sResult:Append("<w:p/>")	-- tc 마지막에 없으면 table 에러 발생
 							end
+							
+							sResult:Append(table_wrapper.postfix)
 							goto continue
 						elseif sTag.s == "code" then	-- inline code block
 							if bSet then
