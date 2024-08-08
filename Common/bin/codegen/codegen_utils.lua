@@ -111,6 +111,45 @@ function excel_read_table(filename, sheet_name, tag_name, auto_parsing, position
 	return nil
 end
 
+function excel_read_list(filename, sheet_name, position_a, position_b)
+	local xls = DocExcel()
+	
+	if xls:Open(filename) then
+		local sheet		= xls:GetSheet(sheet_name)
+		
+		if sheet ~= nil then
+			local	contents	= {}
+
+			-- set position
+			if position_a ~= nil then
+				if type(position_a) == "string" then
+					sheet:SetPosition(position_a)
+				else
+					sheet:SetPos(position_a, position_b)
+				end
+			end
+			
+			-- get list data
+			while sheet:GetRow() do
+				-- first column : name
+				if sheet:GetColumn() then
+					local name = sheet:GetValue()
+					
+					-- second column : data
+					sheet:GetColumn()
+					contents[name]	= sheet:GetValue()
+				end
+			end
+			
+			xls:Close()
+			
+			return contents
+		end
+	end
+	
+	return nil
+end
+
 --[[
 	read text from file.
 	filename 		: text file path

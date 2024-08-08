@@ -299,9 +299,11 @@ bool DocWord::SetProperty(const char *sID, const char *sValue)
 
 		if (!sValue)
 			sValue = "";
+		cstring	sPropertyValue(sValue);
+		sPropertyValue.ChangeCharsetToUTF8();
 
 		if (!node.empty()) { // already existed.
-			node.child("vt:lpwstr").text().set(sValue);
+			node.child("vt:lpwstr").text().set(sPropertyValue.c_str());
 			return true;
 		} else {
 			// find last PID first
@@ -321,7 +323,7 @@ bool DocWord::SetProperty(const char *sID, const char *sValue)
 			node.append_attribute("fmtid").set_value("{D5CDD505-2E9C-101B-9397-08002B2CF9AE}");
 			node.append_attribute("pid").set_value(iLastPID + 1);
 			node.append_attribute("name").set_value(sID);
-			node.append_child("vt:lpwstr").text().set(sValue);
+			node.append_child("vt:lpwstr").text().set(sPropertyValue.c_str());
 			return true;
 		}
 	}

@@ -2292,7 +2292,7 @@ do
 end
 
 -- 속성 갱신
-for key, value in pairs(property) do
+for key, value in pairs(docgen.property) do
 	if key ~= "Water_Mark" then
 		docgen.doc:SetProperty(key, value)
 	end
@@ -2304,7 +2304,7 @@ local function DeleteDocSection(sPara)
 	local node = docgen.doc_body:child_by_text("w:p", "w:t", sPara)
 
 	if node:empty() then
-		error("Can't find page paragraph : '" .. sPara .. "'")
+		return
 	else
 		-- search to top paragraph
 		while node:child_in_depth("w:lastRenderedPageBreak", nil):empty() do
@@ -2322,7 +2322,7 @@ local function DeleteDocSection(sPara)
 		while node:child_in_depth("w:lastRenderedPageBreak", nil):empty() do
 			if node:Destroy(1) == false then
 				error("It's last page paragraph. : " .. sPara)
-				break;
+				break
 			end
 		end
 	end
@@ -2437,9 +2437,16 @@ do
 	end
 	
 	-- 결과 저장
-	LOGI("*0Build document : " .. docgen.sOutFilename.s)
-	if docgen.doc:Save(docgen.sOutFilename.s) == false then
-		error("Can't create : " .. docgen.sOutFilename.s)
+	do
+		sutf8_Name	= String(docgen.sOutFilename.s)
+		sutf8_Name:ChangeCharsetToUTF8()
+		LOGI("@0*I: Build document : ")
+		print(sutf8_Name.s)
+		if docgen.doc:Save(docgen.sOutFilename.s) == false then
+			LOGI("@2*E: Can't create : ")
+			print(sutf8_Name.s)
+			os.exit(1)
+		end
 	end
 	docgen.doc:Close()
 	
