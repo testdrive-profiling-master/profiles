@@ -460,7 +460,7 @@ Result : @<fixed>Fixed font@</fixed> expression.
 스타일 서식은 초기 템플릿 WORD 문서에 지정된 스타일이 참조되어 구현되며, WORD 상에 '텍스트 스타일'로 검색하여 변경 및 추가할 수 있습니다. \
 스타일 이름에 탭 문자나 "//", "--" 또는 ";" 문자 뒤의 내용은 무시됩니다. 스타일 이름이 아닌 스타일 ID 를 입력하여도 상관 없습니다.
 '@<color:FF0000>정렬@</color>'은 '@<code>left@</code>', '@<code>right@</code>', '@<code>center@</code>' 중에 하나를 선택할 수 있으며, \
-생략될 경우 양쪽 정렬로 간주되며, '@<color:FF0000>스타일_이름@</color>' 없이 '@<color:FF0000>정렬@</color>'만 지정할 수도 있다.
+생략될 경우 양쪽 정렬로 간주되고, '@<color:FF0000>스타일_이름@</color>' 없이 '@<color:FF0000>정렬@</color>'만 지정할 수도 있다.
 
 예) 노트 서식을 적용
 ```html
