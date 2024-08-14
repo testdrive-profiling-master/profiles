@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Testbench
-// Rev.  : 6/26/2024 Wed (clonextop@gmail.com)
+// Rev.  : 8/14/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "Display.h"
@@ -88,7 +88,7 @@ class Testbench : public TestbenchFramework
 		if (!CheckSimulation("HDMI controller"))
 			return false;
 
-		m_pHDMI = new HDMI_Controller(m_pDDK, 0x10000, 200.f); // 0x10000 base address, @200Mhz
+		m_pHDMI = new HDMI_Controller(m_pDDK, 0x10000, 250.f); // 0x10000 base address, @250Mhz from PCIe's ACLK
 
 		if (!m_pHDMI->SetScreen(1920, 1080, 60, TRUE))
 			return false;
