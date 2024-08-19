@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Code Analysis
-// Rev.  : 6/3/2024 Mon (clonextop@gmail.com)
+// Rev.  : 8/19/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #include "CodeAnalysis.h"
 #include "testdrive_document.inl"
@@ -68,13 +68,12 @@ CodeAnalysis::CodeAnalysis(ITDDocument *pDoc)
 	{
 		ITDPropertyData *pProperty;
 		// Log suppression
-		pProperty = pDoc->AddPropertyData(PROPERTY_TYPE_BOOL, 0, _L(LOG_SURPPRESS), (DWORD_PTR)&g_bLogSuppress,
-										  _L(DESC_LOG_SURPPRESS));
+		pProperty = pDoc->AddPropertyData(PROPERTY_TYPE_BOOL, 0, _L(LOG_SURPPRESS), (DWORD_PTR)&g_bLogSuppress, _L(DESC_LOG_SURPPRESS));
 		pProperty->UpdateConfigFile();
 		// Error suppression
 		m_sErrorSuppress.GetBuffer(4096);
-		pProperty = pDoc->AddPropertyData(PROPERTY_TYPE_STRING, 1, _L(STATIC_ANALYSIS_SURPPRESS),
-										  (DWORD_PTR)(LPCTSTR)m_sErrorSuppress, _L(DESC_STATIC_ANALYSIS_SURPPRESS));
+		pProperty = pDoc->AddPropertyData(
+			PROPERTY_TYPE_STRING, 1, _L(STATIC_ANALYSIS_SURPPRESS), (DWORD_PTR)(LPCTSTR)m_sErrorSuppress, _L(DESC_STATIC_ANALYSIS_SURPPRESS));
 		pProperty->UpdateConfigFile();
 	}
 	m_pReport->SetText(_T("Code Analysis.\n"));
@@ -178,7 +177,8 @@ const char *Log_StaticAnalysis(LPCTSTR lpszLog, int iID)
 	CodeAnalysis *pAnalysis	 = CodeAnalysis::GetCurrent();
 	ITDReport	 *pReport	 = pAnalysis->Report();
 	static long	  start		 = -1;
-	static BOOL	  bSupressed = TRUE;
+	static bool	  bSupressed = true;
+	static bool	  bPrevInfo	 = false;
 
 	if (!lpszLog) {
 		start = -1;
@@ -191,6 +191,12 @@ const char *Log_StaticAnalysis(LPCTSTR lpszLog, int iID)
 
 		if (!str.GetLength())
 			return NULL;
+
+		if (g_bLogSuppress && bPrevInfo && (str.GetAt(0) == _T('^'))) {
+			bPrevInfo  = false;
+			bSupressed = true;
+			return NULL;
+		}
 
 		if (g_bLogSuppress && start >= 0 && !iID && bSupressed) {
 			pReport->ReplaceText(start, -1, _T(""));
@@ -266,7 +272,7 @@ const char *Log_StaticAnalysis(LPCTSTR lpszLog, int iID)
 				}
 			}
 
-			bSupressed = FALSE;
+			bSupressed = false;
 		} break;
 
 		default: { // not error
@@ -325,13 +331,14 @@ const char *Log_StaticAnalysis(LPCTSTR lpszLog, int iID)
 				}
 				pReport->AppendText(_T("%s"), (LPCTSTR)str);
 				pReport->AppendText(_T("%s"), (LPCTSTR)strLast);
-				bSupressed = TRUE;
+				bSupressed = true;
 			} else {
 				pReport->AppendText(_T("\t%s"), (LPCTSTR)str);
 				bSupressed = (str.GetAt(0) != _T(' '));
 			}
 		} break;
 		}
+		bPrevInfo = (iID == 2); // previous log is info message.
 	}
 
 	pReport->ScrollToLastLine();
@@ -380,10 +387,9 @@ BOOL CodeAnalysis::StaticCodeAnalysisPrivate(LPCTSTR lpszTitle, LPCTSTR lpszPath
 			// Do static analysis
 			g_sCurrentDir = sPath;
 
-			if (g_pSystem->ExecuteFile(_T("make"), _T("static"), TRUE, Log_StaticAnalysis, (LPCTSTR)sPath,
-									   __sCppcheckTokenList[CPPCHECK_TOKEN_ERROR], -1,
-									   __sCppcheckTokenList[CPPCHECK_TOKEN_WARNING], -2,
-									   __sCppcheckTokenList[CPPCHECK_TOKEN_INFORMATION], 2, NULL) >= 0) {
+			if (g_pSystem->ExecuteFile(
+					_T("make"), _T("static"), TRUE, Log_StaticAnalysis, (LPCTSTR)sPath, __sCppcheckTokenList[CPPCHECK_TOKEN_ERROR], -1,
+					__sCppcheckTokenList[CPPCHECK_TOKEN_WARNING], -2, __sCppcheckTokenList[CPPCHECK_TOKEN_INFORMATION], 2, NULL) >= 0) {
 				m_pReport->SetColor(RGB(0, 0, 255));
 				m_pReport->AppendText(_L(NO_ERROR_FOUND));
 			} else
@@ -406,8 +412,7 @@ BOOL CodeAnalysis::StaticCodeAnalysisPrivate(LPCTSTR lpszTitle, LPCTSTR lpszPath
 			BOOL bSearch = TRUE;
 
 			while (bSearch) {
-				if ((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
-					FindFileData.cFileName[0] != _T('.')) {
+				if ((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && FindFileData.cFileName[0] != _T('.')) {
 					sPath.Format(_T("%s/%s"), lpszPath, FindFileData.cFileName);
 
 					if (!StaticCodeAnalysisPrivate(lpszTitle, sPath))
