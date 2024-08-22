@@ -13,11 +13,7 @@ LIBDIR			:= -L$(LIBPATH) -lSystemHAL -lz
 INC				:= -I$(SRC_PATH)
 
 CDEFS			:= -DDDK_EXPORTS -DUSE_TESTDRIVE
-CFLAGS			:= -O3
-
-ifdef DEBUG
-CFLAGS			:= $(CFLAGS) -g
-endif
+CFLAGS			:=
 
 BUILD_TARGET	= $(TARGET_SO_A)
 

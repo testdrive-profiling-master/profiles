@@ -5,6 +5,9 @@ SRC_PATH		:= .
 TARGETPATH		:= .
 INSTALL_PATH	:= .
 TARGETNAME		:= ToolAutoDownload
+#USE_DEBUG		:= 1			# comment out if you not need a debug mode
+#CPP_STANDARD	:= c++20		# C++ standard
+#MAIN_COMPILER	:= clang		# uncomment this to use clang compiler (default : gcc)
 
 SRCS			:= \
 	$(wildcard $(SRC_PATH)/../framework/argtable3/src/*.c) \
@@ -16,8 +19,6 @@ SRCS			:= \
 INC				:= -I. -I../framework/
 LIBDIR			:=
 CDEFS			:= -DUNUSE_CSTRING_ICONV
-EXTRA_CFLAGS	:= -O3 -std=c++20 -DNDEBUG
-#MAIN_COMPILER	:= clang		# uncomment this code to using clang compiler
 
 #-------------------------------------------------
 # common document config

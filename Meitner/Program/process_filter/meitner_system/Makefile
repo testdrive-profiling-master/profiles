@@ -12,7 +12,7 @@ SRCS			:= \
 INC				:= -I../../../Application/include -I$(TESTDRIVE_PROFILE)Common/include
 
 CDEFS			:= 
-CFLAGS			:= -O3
+CFLAGS			:=
 
 #-------------------------------------------------
 # common document config

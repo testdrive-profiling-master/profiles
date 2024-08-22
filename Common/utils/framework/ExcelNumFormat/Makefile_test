@@ -5,6 +5,9 @@ SRC_PATH		:= .
 TARGETPATH		:= .
 INSTALL_PATH	:= .
 TARGETNAME		:= xls_num_test
+#USE_DEBUG		:= 1			# comment out if you not need a debug mode
+#CPP_STANDARD	:= c++20		# C++ standard
+#MAIN_COMPILER	:= clang		# uncomment this to use clang compiler (default : gcc)
 
 SRCS			:= \
 	$(wildcard $(SRC_PATH)/*.cpp) \
@@ -12,8 +15,7 @@ SRCS			:= \
 	
 INC				:= -I.
 LIBDIR			:=
-CDEFS			:= -O3 -std=c++20 -DNDEBUG -DEXCEL_NUM_FORMAT_TEST
-EXTRA_CFLAGS	:=
+CDEFS			:= -DEXCEL_NUM_FORMAT_TEST
 
 #-------------------------------------------------
 # common document config

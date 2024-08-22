@@ -5,6 +5,10 @@ SRC_PATH		:= .
 TARGETPATH		:= .
 TARGETNAME		:= iStyle
 INSTALL_PATH	:= $(TESTDRIVE_PROFILE)Common/bin
+#USE_DEBUG		:= 1			# comment out if you not need a debug mode
+CPP_STANDARD	:= c++14		# C++ standard
+#MAIN_COMPILER	:= clang		# uncomment this to use clang compiler (default : gcc)
+
 SRCS			:= \
 	$(wildcard $(SRC_PATH)/*.cpp)
 	
@@ -12,7 +16,6 @@ INC				:=
 
 CDEFS			:= -s
 CFLAGS			:=
-EXTRA_CFLAGS	:= -O3 -std=c++14 -DNDEBUG
 
 #-------------------------------------------------
 # common document config

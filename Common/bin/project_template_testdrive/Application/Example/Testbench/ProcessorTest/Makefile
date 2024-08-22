@@ -9,6 +9,9 @@ SRC_PATH		:= .
 TARGETPATH		:= ../../../../Program
 #TD_FILE_NAME	:= %%PROJECT%%Program\%s.exe
 TARGETNAME		:= Testbench_ProcessorTest
+#USE_DEBUG		:= 1			# comment out if you not need a debug mode
+#CPP_STANDARD	:= c++20		# C++ standard
+#MAIN_COMPILER	:= clang		# uncomment this to use clang compiler (default : gcc)
 
 SRCS			:= \
 	$(wildcard $(SRC_PATH)/*.cpp) \

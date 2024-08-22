@@ -85,11 +85,21 @@ ifdef CROSS
 	CDEFS			:= $(CDEFS) -DCROSS_COMPILE
 endif
 
-ifeq ($(EXTRA_CFLAGS),)
+# C++ standard
+ifeq ($(CPP_STANDARD),)
+	CPP_STANDARD			:= c++20
+endif
+
+# enable debugging
 ifdef USE_DEBUG
-	EXTRA_CFLAGS	:= -O0 -std=c++20 -DDEBUG -g
+	CFLAGS		:= $(CFLAGS) -O0 -DDEBUG -g
+	CDEFS		:= $(CDEFS) -DUSE_DEBUG
 else
-	EXTRA_CFLAGS	:= -O3 -std=c++20 -DNDEBUG
+	CFLAGS		:= $(CFLAGS) -DNDEBUG
+ifdef SIMPATH
+	CFLAGS		:= $(CFLAGS) -Os -fno-stack-protector
+else
+	CFLAGS		:= $(CFLAGS) -O3
 endif
 endif
 
@@ -101,11 +111,7 @@ endif
 
 OPTFLAGS		:= -w -Wall -Wextra -m64 -mfpmath=sse -mieee-fp -mmmx -msse -msse2 -mavx -mavx2 -march=native
 CFLAGS			:= $(CFLAGS) $(OPTFLAGS) $(INCDIR) $(EXTRA_CFLAGS)
-CPPFLAGS		:= $(CFLAGS)
-CFLAGS			:= $(subst -std=c++11,,$(CFLAGS))
-CFLAGS			:= $(subst -std=c++14,,$(CFLAGS))
-CFLAGS			:= $(subst -std=c++17,,$(CFLAGS))
-CFLAGS			:= $(subst -std=c++20,,$(CFLAGS))
+CPPFLAGS		:= $(CFLAGS) -std=$(CPP_STANDARD)
 ARFLAGS			:= crv
 CDEFS			:= $(CDEFS) -D__int64="long long" -DWIN32 -D_WIN32 -DWIN64 -D_WIN64 -D_FILE_OFFSET_BITS=64
 
@@ -113,7 +119,7 @@ CDEFS			:= $(CDEFS) -D__int64="long long" -DWIN32 -D_WIN32 -DWIN64 -D_WIN64 -D_F
 # Build commands
 #-------------------------------------------------
 
-all: $(COMPILE_TARGET)
+all: dep $(COMPILE_TARGET)
 	@echo Compilation is done!
 
 encrypt: $(ENCRYPT_EXTRA:=.encrypted) $(SRCS:=.encrypted) $(SRCS_RES:=.encrypted)
