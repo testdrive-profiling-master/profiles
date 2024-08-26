@@ -29,6 +29,8 @@ function interface:new(name)
 	if type(name) ~= "string" then
 		error("Invalid interface name.", 2)
 	end
+	
+	verigen.reserved.check(name)
 
 	-- create instance
 	local	t		= setmetatable({}, self)

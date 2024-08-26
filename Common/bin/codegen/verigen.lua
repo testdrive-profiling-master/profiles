@@ -69,7 +69,24 @@ function __retrieve_param(param_list, t)
 end
 
 __vfunctions	= {}
-local __vfunction_reserved = {
+verigen.reserved	= {}
+verigen.reserved.keywords	= {
+	["module"]		= 1,
+	["endmodule"]	= 1,
+	["wire"]		= 1,
+	["reg"]			= 1,
+	["logic"]		= 1,
+	["bit"]			= 1,
+	["assign"]		= 1,
+	["io"]			= 1,
+	["if"]			= 1,
+	["for"]			= 1,
+	["then"]		= 1,
+	["begin"]		= 1,
+	["end"]			= 1
+	
+}
+verigen.reserved.functions = {
 	["display"] = 1,
 	["write"] = 1,
 	["strobe"] = 1,
@@ -120,14 +137,28 @@ local __vfunction_reserved = {
 	["sdf_annotate"] = 1
 }
 
+verigen.reserved.check = function(name, sDesc)
+	if sDesc == nil then
+		sDesc	= ""
+	else
+		sDesc	= sDesc .. " "
+	end
+
+	if verigen.reserved.functions[name] ~= nil then
+		error(sDesc .. "'" .. name .. "' is reserved by verilog system call.", 2)
+	end
+	if verigen.reserved.keywords[name] ~= nil then
+		error(sDesc .. "'" .. name .. "' is reserved keyword.", 2)
+	end
+end
+
+
 function vfunction(name, func)
 	if type(name) ~= "string" then
 		error("vfunction name must be a string type.", 2)
 	end
 	
-	if __vfunction_reserved[name] ~= nil then
-		error("vfunction name[" .. name .. "] is reserved by verilog system call.", 2)
-	end
+	verigen.reserved.check(name, "vfunction")
 	
 	if __vfunctions[name] ~= nil then
 		error("vfunction name[" .. name .. "] is already defined.", 2)
