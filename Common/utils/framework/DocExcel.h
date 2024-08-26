@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 5/29/2024 Wed (clonextop@gmail.com)
+// Rev.  : 8/26/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __DOC_EXCEL_H__
 #define __DOC_EXCEL_H__
@@ -221,6 +221,7 @@ public:
 
 	string	   AlignmentHorizontal(void);
 	string	   BackgroundColor(void);
+	int		   TextRotation(void);
 
 	inline int ID(void)
 	{
@@ -249,15 +250,14 @@ public:
 	DocExcelStyle *GetStyleByIndex(int iIndex);
 	DocXML		   GetThemeColorByIndex(int iIndex);
 	void		   DeleteSheet(DocExcelSheet *pSheet);
-	int			   StyleFont(const char *sFontName, int iFontSize, bool bBold = false, bool bItalic = false,
-							 unsigned int dwARGB = 0);
+	int			   StyleFont(const char *sFontName, int iFontSize, bool bBold = false, bool bItalic = false, unsigned int dwARGB = 0);
 	int			   StyleFill(unsigned int dwColorARGB);
 	int			   StyleBorder(const char *sBorderStyle);
 	int			   StyleNumberFormat(const char *sFormat = NULL);
 	string		   StyleNumberFormatString(int iID);
-	int	 StyleCell(int iStyleFont, int iStyleFill, int iStyleBorder, int iStyleNumberFormat, const char *sAlignment);
-	int	 StyleFormat(const char *sFormat);
-	bool ReplaceSheetName(DocExcelSheet *pSheet, const char *sName);
+	int			   StyleCell(int iStyleFont, int iStyleFill, int iStyleBorder, int iStyleNumberFormat, const char *sAlignment);
+	int			   StyleFormat(const char *sFormat);
+	bool		   ReplaceSheetName(DocExcelSheet *pSheet, const char *sName);
 	inline DocXML &Workbook(void)
 	{
 		return m_Workbook;

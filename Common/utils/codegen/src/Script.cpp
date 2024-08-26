@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 7/26/2024 Fri (clonextop@gmail.com)
+// Rev.  : 8/26/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -1318,6 +1318,7 @@ Script::Script(void)
 				.addFunction("ID", &DocExcelStyle::ID)
 				.addFunction("AlignmentHorizontal", &DocExcelStyle::AlignmentHorizontal)
 				.addFunction("BackgroundColor", &DocExcelStyle::BackgroundColor)
+				.addFunction("TextRotation", &DocExcelStyle::TextRotation)
 				.endClass()
 				.beginClass<DocExcelSheet>("DocExcelSheet")
 				.addFunction("SetPosition", &DocExcelSheet::SetPosition)

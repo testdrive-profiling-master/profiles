@@ -1132,6 +1132,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 					end
 					
 					local back_color_doc	= ""
+					local text_rotate_doc	= ""
 					-- set horizontal alignment
 					local cell_alignment	= "TableTextLeft"
 					
@@ -1151,6 +1152,21 @@ function GenerateTable(sExcelFileName, sSheetName)
 						       w:color=\"auto\"\
 						       w:fill=\"" .. cell_backcolor .. "\"/>"
 						end
+						
+						-- text rotation
+						local	cell_textRotation = col_cells[i].style:TextRotation()
+						
+						if cell_textRotation ~= 0 then
+							if cell_textRotation == 90 then
+								text_rotate_doc	= "<w:textDirection w:val=\"btLr\"/>"
+							elseif cell_textRotation == -90 then
+								text_rotate_doc	= "<w:textDirection w:val=\"tbRl\"/>"
+							elseif cell_textRotation == 255 then	-- vertical (not identical...)
+								text_rotate_doc	= "<w:textDirection w:val=\"tbRlV\"/>"
+							else
+								LOGW("Excel cell's custom text rotation(" .. cell_textRotation .. ") is not supported. (only 90 or -90 is supported.)")
+							end
+						end
 					elseif col_cells[i][3] then
 						cell_alignment		= "TableTextCenter"
 					end
@@ -1162,7 +1178,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 					end
 					
 					table_code:Append("\
-							</w:tcBorders>" .. back_color_doc ..
+							</w:tcBorders>" .. back_color_doc .. text_rotate_doc ..
 						"</w:tcPr>"
 						.. EncodeParagraph(col_cells[i].text,
 						{

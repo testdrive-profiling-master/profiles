@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 7/24/2024 Wed (clonextop@gmail.com)
+// Rev.  : 8/26/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #include "DocExcel.h"
 #include "ExcelNumFormat/ExcelNumFormat.h"
@@ -1067,6 +1067,11 @@ string DocExcelStyle::BackgroundColor(void)
 		}
 	}
 	return "";
+}
+
+int DocExcelStyle::TextRotation(void)
+{
+	return child("alignment").attribute("textRotation").as_int(0);
 }
 
 DocExcel::DocExcel(void)
