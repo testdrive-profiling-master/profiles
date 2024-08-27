@@ -4,9 +4,9 @@
 SRC_PATH		:= .
 TARGETNAME		:= codegen
 BUILD_VERSION	:= 1
-#USE_DEBUG		:= 1			# comment out if you not need a debug mode
-#CPP_STANDARD	:= c++20		# C++ standard
-#MAIN_COMPILER	:= clang		# uncomment this to use clang compiler (default : gcc)
+#USE_DEBUG		:= 1
+#CPP_STANDARD	:= c++20
+#MAIN_COMPILER	:= clang
 
 SRCS			:= \
 	$(wildcard $(SRC_PATH)/src/clipper/*.cpp) \
