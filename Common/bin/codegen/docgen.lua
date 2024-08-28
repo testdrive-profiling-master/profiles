@@ -2473,19 +2473,18 @@ do
 	
 	if docgen.output_format == nil then
 		LOGI("*0Fields calculation...")
-		os.execute("doc2pdf \"" .. docgen.sOutFilename.s .. "\" \"" .. docgen.property["Water_Mark"] .. "\" *")
+		os.execute("doc2pdf \"" .. docgen.sOutFilename.s .. "\" \"" .. docgen.property["Water_Mark"] .. "\" *")	-- no save as
 	else
 		-- make pdf first
 		if (docgen.output_format["pdf"] == true) or (docgen.output_format["djvu"] == true) then
 			if docgen.output_format["pdf"] == true then
-				LOGI("*0Save as 'pdf' file...")
+				LOGI("*0Save as 'pdf'(" .. docgen.supported_format["pdf"] .. ") file...")
 			else
 				LOGI("*0Fields calculation...")
 			end
-			docgen.output_format["pdf"]	= nil
 			os.execute("doc2pdf \"" .. docgen.sOutFilename.s .. "\" \"" .. docgen.property["Water_Mark"] .. "\"")
 		end
-		-- the others save as
+		-- then save as others
 		for ext, bOut in key_pairs(docgen.output_format) do
 			if bOut then
 				if ext == "pdf" then
@@ -2493,13 +2492,13 @@ do
 					local sDJVU_filename	= String(sOutFilename_PDF.s)
 					sDJVU_filename:DeleteBack("pdf")
 					sDJVU_filename:Append("djvu")
-					LOGI("*0Save as '" .. ext .. "' file...")
+					LOGI("*0Save as '" .. ext .. "'(" .. docgen.supported_format[ext] .. ") file...")
 					exec("pdf2djvu -j 2 -d 600 \"" .. sOutFilename_PDF.s .. "\" -o \"" .. sDJVU_filename.s .. "\"")	-- 600 dpi output
 					if docgen.output_format["pdf"] ~= true then
 						exec("rm -f \"" .. sOutFilename_PDF.s .. "\"")
 					end
 				else
-					LOGI("*0Save as '" .. ext .. "' file...")
+					LOGI("*0Save as '" .. ext .. "'(" .. docgen.supported_format[ext] .. ") file...")
 					os.execute("doc2save \"" .. docgen.sOutFilename.s .. "\" " .. ext)
 				end
 			end
