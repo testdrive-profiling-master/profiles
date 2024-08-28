@@ -1037,18 +1037,19 @@ Result)
 문서 활성화는 다음 문장들이 실제 문서에 적용할지에 대한 여부를 결정합니다. \
 문서 활성화에 조건은 "언어_코드명" 또는 소괄호 "()" 로 감싸진 "Lua_코드" 의 반환 값으로 지정할 수 있습니다.
 
-"언어_코드명" 의 경우, '@<bookmark:@실행 방법>'에서 지정한 '-l' 옵션에서 지정한 '언어 코드명'과 비교합니다. \
+"언어_코드명" 의 경우, '@<bookmark:@실행 방법>'에서 지정한 @<fixed>'-l'@</fixed> 옵션에서 지정한 '언어 코드명'과 비교합니다. \
 만약 같지 않으면, 다음 문서 활성화 지정까지 문서 내용을 무시합니다. \
 이로써 원하는 언어로 작성된 문장만 문서에 사용할 수 있습니다.
 
 "Lua_코드" 의 경우, 반드시 소괄호 "()" 로 감싸져야 합니다. \
-Lua 코드 실행의 반환 값이 'true'(boolean) 일 경우, 다음 문서 내용을 사용하며, \
+Lua 코드 실행의 반환 값이 @<fixed>'true'@</fixed>(boolean) 일 경우, 다음 문서 내용을 사용하며, \
 그외의 값일 경우, 다음 문서 내용은 무시됩니다.
 
-만약 언어 코드나 Lua 코드 없이 '%%%' 로 끝났다면, 다음 줄부터 문서 내용이 활성화됩니다.
+만약 언어 코드나 Lua 코드 없이 @<fixed>'%%%'@</fixed> 로 끝났다면, 다음 줄부터 문서 내용이 활성화됩니다.
 
 :::NoteHeading
-언어코드 이름은 대소문자를 구별하며, 언어 코드 이름 뒤에 '-', '=' 또는 '%' 문자들을 나열하여 가독성을 높일 수 있습니다. 기본값은 'en' 을 가집니다. 언어코드는 Lua 에서 'docgen.language' 변수로 사용할 수 있습니다.
+언어코드 이름은 대소문자를 구별하며, 언어 코드 이름 뒤에 @<fixed>'-'@</fixed>, @<fixed>'='@</fixed> 또는 @<fixed>'%'@</fixed> 문자들을 나열하여 가독성을 높일 수 있습니다. 기본값은 @<fixed>'en'@</fixed> 을 가집니다. \
+언어코드는 Lua 에서 @<fixed>'docgen.language'@</fixed> 변수로 사용할 수 있습니다.
 
 %%% en
 ## Document activation
@@ -1059,18 +1060,19 @@ Lua 코드 실행의 반환 값이 'true'(boolean) 일 경우, 다음 문서 내
 Document activation determines whether the following statements will be applied to the actual document. \
 The condition for document activation can be specified as a return value of "language_code name" or "Lua_code" enclosed in parentheses "()".
 
-In the case of "language_code", it is compared with the 'language code name' specified in the '-l' option. (Refer to '@<bookmark:@How to run>'). \
+In the case of "language_code", it is compared with the 'language code name' specified in the @<fixed>'-l'@</fixed> option. (Refer to '@<bookmark:@How to run>'). \
 If not equal, the next document content is ignored until the next document activation specified. \
 This ensures that only sentences written in your desired language can be used in your document.
 
 For "Lua_code", it must be enclosed in parentheses "()". \
 If the return value of Lua code execution is 'true'(boolean), then use the following document contents. \
-If not same as 'true', the next document contents will be ignored.
+If not same as @<fixed>'true'@</fixed>, the next document contents will be ignored.
 
-If it ends with '%%%' without language code or Lua code definition, the document content is activated from the next line.
+If it ends with @<fixed>'%%%'@</fixed> without language code or Lua code definition, the document content is activated from the next line.
 
 :::NoteHeading
-Language code names are case-sensitive, and you can improve readability by listing '-', '=', or '%' characters after the language code name. The default value is 'en'. The language code can be used as the 'docgen.language' variable in Lua.
+Language code names are case-sensitive, and you can improve readability by listing @<fixed>'-'@</fixed>, @<fixed>'='@</fixed>, or @<fixed>'%'@</fixed> characters after the language code name. \
+The default value is @<fixed>'en'@</fixed>. The language code can be used as the @<fixed>'docgen.language'@</fixed> variable in Lua.
 %%%
 
 %%% ko -------------------------
@@ -1084,7 +1086,7 @@ It's an english output.
 모든 출력입니다.
 ```
 
-결과) '-l ko' 옵션 사용시.
+결과) @<fixed>'-l ko'@</fixed> 옵션 사용시.
 ```txt
 한글 출력입니다.
 모든 출력입니다.
@@ -1121,7 +1123,7 @@ It's an english output.
 %%% ----------------------------
 It's all output.
 ```
-Result) When using the '-l en' option.
+Result) When using the @<fixed>'-l en'@</fixed> option.
 ```txt
 It's an english output.
 It's all output.

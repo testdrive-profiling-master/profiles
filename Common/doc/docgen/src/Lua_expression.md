@@ -66,21 +66,29 @@ docgen.property["Ownership"]				-- 오너쉽 명
 docgen.property["Document_Name_Header"]		-- 해더 이름 (...)
 docgen.property["Water_Mark"]				-- 워터마킹 문구 (생략 가능)
 ```
+:::NoteHeading
+Lua에서 "--" 로 시작하는 문장은 '주석' 표기를 의미합니다. \
+위 속성 이름은 문서에 따라 다를 수 있으며, 위에 나열된 이름들은 기본 TestDrive 문서에 사용된 한 예시이며, \
+"Water_Mark" 를 제외하고 고정된 이름이 아닙니다.
 
+ 
 워드에는 메뉴 "파일/정보" 에 @<bookmark:WORD 속성 탭>와 같이 '속성' 탭이 존재합니다.
 
-@<img:#media/word_property.png;0.4;WORD 속성 탭>
 
-이 메뉴에서 사용자가 원하는 Field 속성을 추가하거나, 기존 Property를 변경할 수 있습니다. 선언된 Property 는 문서 전체의 Field 정보에 반영됩니다.
+@<img:media/advanced_properties.jpg;0.8;WORD 속성 탭>
+
+이 메뉴에서 사용자가 원하는 Field 속성을 추가하거나, 기존 Property를 변경할 수 있으며, \
+선언된 Property 는 문서 전체의 Field 정보에 반영됩니다.
+
 이걸 lua 코드 내에서는 아래와 같은 방법으로 템플릿 문서에 이미 존재하는 필드 값을 변경 가능합니다.
 또는 @<bookmark:속성(Property) 참조>에서 처럼 markdown 문장 내에서 직접적인 참조가 가능합니다.
 
-예) 이 문서의 Field 지정 예시 ("--" 로 시작하는 문장은 Lua에서 '주석' 표기를 의미합니다.)
+예) 이 문서의 Field 지정 예시
 %%% en
 ### Property object
 ```lua
 docgen.property["Document_Name"]			-- Document name
-docgen.property["IP_Version"]				-- IP version (예:"1.00")
+docgen.property["IP_Version"]				-- IP version (ex."1.00")
 docgen.property["Main_Title"]				-- Main title name on the first page of the document
 docgen.property["Sub_Title"]				-- Sub title name on the first page of the document (Can be skipped)
 docgen.property["IP_Name_First_Page"]		-- Name of the first page of the document
@@ -89,16 +97,23 @@ docgen.property["Ownership"]				-- Ownership name
 docgen.property["Document_Name_Header"]		-- header name (...)
 docgen.property["Water_Mark"]				-- watermarking text (Can be skipped)
 ```
+:::NoteHeading
+Sentences starting with "--" is 'comment' notation in Lua. \
+The above property names may vary across documents, \
+the names listed above are examples used in the default TestDrive document and are not fixed names, except for "Water_Mark".
 
+ 
 In Word, there is a 'Property' tab in the menu "File/Information" as like @<bookmark:Property tab in WORD>.
 
-@<img:#media/word_property_en.png;0.4;Property tab in WORD>
+@<img:media/advanced_properties_en.jpg;0.8;Property tab in WORD>
 
-In this menu, you can add the <b>Field</b> property you want or change the existing <b>Property</b>. The declared <b>property</b> is reflected in the <b>Field</b> information throughout the document.
+In this menu, you can add the <b>Field</b> property you want or change the existing <b>Property</b>, and \
+the declared <b>property</b> is reflected in the <b>Field</b> information throughout the document.
+
 Within the lua code, you can change the field value that already exists in the template document in the following way.
 Alternatively, direct reference is possible within markdown sentences, such as @<bookmark:Property reference>.
 
-ex) Example of field designation in this document (Sentences starting with "--" refer to 'comment' notation in Lua.)
+ex) Example of field designation in this document
 %%%
 ```lua
 docgen.property["Document_Name"]			= "UserGuide"
