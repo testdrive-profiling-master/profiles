@@ -225,7 +225,7 @@ docgen.doc	 	= DocWord()
 
 if docgen.doc:Open(docgen.template_path.s) == false then
 	LOGE("Invalid template document : " .. docgen.sDocTemplate.s)
-	os.exit()		-- template document is not existed
+	os.exit(1)		-- template document is not existed
 end
 
 do
