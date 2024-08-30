@@ -2335,6 +2335,32 @@ local function DeleteDocSection(sPara)
 		
 		-- delete paragraph until page break
 		while node:child_in_depth("w:lastRenderedPageBreak", nil):empty() do
+		
+			-- 새로운 색션(페이지 나눔 포함) 시작일 경우 이전 세션 정보를 위로 올려줘야 한다.
+			if node:child_in_depth("w:br", nil):empty() == false then	-- page break
+				local w_type	= node:child_in_depth("w:br", nil):get_attribute("w:type")
+				local section	= node:child_in_depth("w:sectPr", nil):as_xml()
+				local prev_para	= node:previous_sibling("w:p")
+				local prev_rex	= prev_para:child("w:r")
+				local prev_pPr	= prev_para:child("w:pPr")
+
+				-- set page break
+				if prev_rex:empty() then
+					prev_rex	= prev_para:append_child("w:r")
+				end
+				if prev_rex:child("w:br"):empty() then
+					prev_rex:append_child("w:br"):set_attribute("w:type", w_type)
+				else
+					prev_rex:child("w:br"):set_attribute("w:type", w_type)
+				end
+				
+				-- set section description
+				if prev_pPr:child("w:sectPr"):empty() == false then	-- if already exist section description, must delete it
+					prev_pPr:child("w:sectPr"):Destroy()
+				end
+				prev_pPr:AddChildFromBuffer(section)
+			end
+		
 			if node:Destroy(1) == false then
 				error("It's last page paragraph. : " .. sPara)
 				break

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 8/26/2024 Mon (clonextop@gmail.com)
+// Rev.  : 8/30/2024 Fri (HyungKi)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -587,6 +587,12 @@ public:
 	bool as_bool(void)
 	{
 		return xml_node::text().as_bool();
+	}
+	string as_xml(void)
+	{
+		stringstream ss;
+		xml_node::print(ss);
+		return ss.str();
 	}
 
 	void set_attribute(const char *sName, const char *sValue)
@@ -1287,6 +1293,7 @@ Script::Script(void)
 				.addFunction("as_int", &lua_DocNode::as_int)
 				.addFunction("as_double", &lua_DocNode::as_double)
 				.addFunction("as_bool", &lua_DocNode::as_bool)
+				.addFunction("as_xml", &lua_DocNode::as_xml)
 				.addFunction("set_attribute", &lua_DocNode::set_attribute)
 				.addFunction("get_attribute", &lua_DocNode::get_attribute)
 				.endClass()
