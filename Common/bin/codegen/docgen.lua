@@ -2111,11 +2111,17 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 							sVar:erase(0, sVar.TokenizePos)
 							sVar:Trim(" \t;")
 							sSubName:Trim(" \t")
-							
+							local	bUnGroup	= sMainName:CompareFront("#")	-- 테이블 크기에 따른 페이지 넘김 무시
 							local	sCaption	= sVar.s
 							sResult:CutBack("<w:p>", false)
 							
-							sResult:Append(table_wrapper.prefix)
+							if bUnGroup then
+								sMainName:erase(0, 1)
+							end
+							
+							if bUnGroup == false then
+								sResult:Append(table_wrapper.prefix)
+							end
 							
 							if sCaption ~= nil and sCaption ~= "" then
 								sResult:Append(GenerateCaption("Table", sCaption))
@@ -2127,10 +2133,14 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 								else
 									sResult:Append(GenerateTable(sMainName.s, sSubName.s))	-- file_name, sheet_name
 								end
-								sResult:Append("<w:p/>")	-- tc 마지막에 없으면 table 에러 발생
+								if bUnGroup == false then
+									sResult:Append("<w:p/>")	-- tc 마지막에 없으면 table 에러 발생
+								end
 							end
 							
-							sResult:Append(table_wrapper.postfix)
+							if bUnGroup == false then
+								sResult:Append(table_wrapper.postfix)
+							end
 							goto continue
 						elseif sTag.s == "code" then	-- inline code block
 							if bSet then

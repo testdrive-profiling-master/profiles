@@ -1187,7 +1187,7 @@ Lua variable 'docgen.language' is @<lua:docgen.language>
 %%% ko
 ## 그림 삽입
 
-@<size:30>@<b>표현식 : @@<img:@<color:FF0000>파일명@</color>;@<color:FF0000>스케일@</color>;@<color:FF0000>캡션@</color>>@</b>@</size>
+@<size:30>@<b>표현식 : @@<img:[@<color:FF0000>#@</color>]@<color:FF0000>파일명@</color>;@<color:FF0000>스케일@</color>[;@<color:FF0000>캡션@</color>]>@</b>@</size>
 그림은 jpg, png, bmp, gif, tif, svg, wmf, vsd/vsdx(Visio 설치 필요), xls/xlsx(Excel 설치 필요) 포멧을 지원하고 있습니다. @<color:FF0000>파일명@</color>은 표시할 파일명을 지정하게 되며, \
 그림에 외각선 경계가 필요할 경우 "@<color:0000FF>#@</color>@<color:FF0000>파일명@</color>"으로 표시합니다. \
 Visio 파일일 경우는 "@<color:FF0000>파일명@</color>[@<color:FF0000>페이지명@</color>]"으로 별도의 페이지 이름을 지정할 수 있으며, \
@@ -1202,7 +1202,7 @@ Excel 파일일 경우는 "@<color:FF0000>파일명@</color>[@<color:FF0000>시�
 %%% en
 ## Picture insertion
 
-@<size:30>@<b>Expression : @@<img:@<color:FF0000>filename@</color>;@<color:FF0000>scale@</color>;@<color:FF0000>caption@</color>>@</b>@</size>
+@<size:30>@<b>Expression : @@<img:[@<color:FF0000>#@</color>]@<color:FF0000>filename@</color>;@<color:FF0000>scale@</color>[;@<color:FF0000>caption@</color>]>@</b>@</size>
 Pictures support jpg, png, bmp, gif, tif, svg, wmf, and vsd/vsdx (Visio installation required), xls/xlsx(Excel installation required) formats. @<color:FF0000>file name@</color> specifies the file name to display, \
 if the picture requires an outline border, indicate it as "@<color:0000FF>#@</color>@<color:FF0000>filename@</color>". \
 In the case of a Visio file, a separate page name can be specified as "@<color:FF0000>filename@</color>[@<color:FF0000>page name@</color>]", and \
@@ -1312,10 +1312,17 @@ If the table is too long and you move to the next page, the header is automatica
 %%% ko
 ### 엑셀 파일로부터 표 삽입
 
-@<size:30>@<b>표현식 : @@<tbl:@<color:FF0000>파일명@</color>;@<color:FF0000>시트명@</color>;@<color:FF0000>캡션@</color>>@</b>@</size>
+@<size:30>@<b>표현식 : @@<tbl:[@<color:FF0000>#@</color>]@<color:FF0000>파일명@</color>;@<color:FF0000>시트명@</color>[;@<color:FF0000>캡션@</color>]>@</b>@</size>
 
 표 삽입의 경우 엑셀에서 작상된 내용을 옮겨 넣을 수 있으며, 엑셀상 Merge 된 셀들과 폭은 최대한 동일하게 적용됩니다.
 표의 첫 줄은 상단 제목이며, 하위 데이터 열을 가운데 정렬을 하고자 할 때에는 제목 이름 앞에 '*'문자를 삽입합니다.
+
+:::NoteHeading
+그림 또는 표는 캡션과 분리되어 표시되지 않도록, 기본적으로 캡션과 하나의 객체로 묶여 있습니다. \
+때문에 남은 페이지 영역에 한번에 표시할 수 없을 때, 다음 페이지에 표시됩니다. \
+그러나 매우 긴 표의 경우, 앞의 여분의 빈 공간이 어색해 보일 수 있습니다. \
+이때 '파일명' 앞에 '#' 문자를 넣으면, 이를 방지할 수 있습니다.
+ 
 
 예1) 입력 엑셀 파일 : "media/table_sample.xlsx"
 ```html
@@ -1336,10 +1343,17 @@ If the table is too long and you move to the next page, the header is automatica
 %%% en
 ### Table insertion from excel file
 
-@<size:30>@<b>Expression : @@<tbl:@<color:FF0000>file_name@</color>;@<color:FF0000>sheet_name@</color>;@<color:FF0000>caption@</color>>@</b>@</size>
+@<size:30>@<b>Expression : @@<tbl:[@<color:FF0000>#@</color>]@<color:FF0000>file_name@</color>;@<color:FF0000>sheet_name@</color>[;@<color:FF0000>caption@</color>]>@</b>@</size>
 
 In the case of inserting a table, you can move the content created in Excel, and the width will be the same as possible for the cells merged in Excel.
 The first line of the table is the top title, and when you want to align lower data columns in the center, insert the character '*' front of the title name.
+
+:::NoteHeading
+Figures or tables are basically grouped together with captions as one object so that they are not displayed separately from the caption. \
+Therefore, when they cannot be displayed at once in the remaining page area, they are displayed on the next page. \
+However, for very long tables, the extra blank space at the beginning can look awkward. \
+In this case, you can prevent this by inserting the '#' character in front of the 'file_name'.
+ 
 
 ex1) Table from excel file : "media/table_sample.xlsx"
 ```html
