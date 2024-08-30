@@ -1030,7 +1030,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 			for t = 0, ((col_cells[i].merge.width == 0) and 0 or (col_cells[i].merge.width - 1)) do
 				cell_width	= cell_width + col_width[i + t]
 			end
-		
+
 			table_code:Append("\
 				<w:tc>\
 					<w:tcPr>\
@@ -1537,6 +1537,7 @@ local	bInline		= false
 function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 	local	sPara			= String(sText)
 	local	sResult			= String()
+	local	bEmpty			= false
 	local	bBypass			= false				-- 내용 무시, docgen.language 일치하지 않음
 	local	bBypassCodeRef	= false				-- code reference in bypass mode
 	
@@ -1632,22 +1633,9 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 
 	-- empty paragraph, but do not ignore
 	if sExtra ~= nil then
-		if (#sPara.s == 0) and sExtra.bDontIgnoreEmpty then
-			sResult:Append("<w:p>")
-			sResult:Append("<w:rPr>")
-			if sExtra.pPr ~= nil then
-				sResult:Append(sExtra.pPr)
-			end
-			sResult:Append("</w:rPr>")
-			sResult:Append("<w:r>")
-			sResult:Append("<w:rPr>")
-			if sExtra.rPr ~= nil then
-				sResult:Append(sExtra.rPr)
-			end
-			sResult:Append("</w:rPr>")
-			sResult:Append("</w:r>")
-			sResult:Append("</w:p>")
-			return sResult.s
+		if (#sPara.s == 0) and (sExtra.bDontIgnoreEmpty == true) then
+			sPara.s = " "
+			bEmpty	= true
 		end
 	end
 
