@@ -2099,8 +2099,6 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 							
 							if sCaption ~= nil and sCaption ~= "" then
 								sResult:Append(GenerateCaption("Figure", sCaption))
-							else
-								sResult:Append("<w:p/>")	-- tc 마지막에 없으면 table 에러 발생
 							end
 							
 							sResult:Append(table_wrapper.postfix)
@@ -2320,7 +2318,7 @@ end
 local function DeleteDocSection(sPara)
 	local node = docgen.doc_body:child_by_text("w:p", "w:t", sPara)
 
-	if node:empty() then
+	if node:empty() then	-- not found
 		return
 	else
 		-- search to top paragraph
