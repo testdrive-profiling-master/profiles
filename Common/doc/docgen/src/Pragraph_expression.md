@@ -221,26 +221,30 @@ Result : @<i>italic@</i> Non italic
  
 %%% ko
 ### 밑줄
-@<size:30>@<b>표현식 : @@<u>@<color:FF0000>표현식@</color>@@</u>@</b>@</size>
+@<size:30>@<b>표현식(단일선) : @@<u>@<color:FF0000>표현식@</color>@@</u>@</b>@</size>
+@<size:30>@<b>표현식(이중선) : @@<U>@<color:FF0000>표현식@</color>@@</U>@</b>@</size>
 
-밑줄 글씨 표현은 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'u' 태그로 둘러쌓아 표현합니다.
+밑줄 글씨 표현은 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'u' 태그로 둘러쌓아 표현합니다. \
+대문자로 수식을 표현하면 이중밑줄이 됩니다.
 
 예)
 ```html
-@<u>밑줄 글자@</u>
+@<u>밑줄 글자@</u>, @<U>이중 밑줄 글자@</U>
 ```
-결과 : @<u>밑줄 글자@</u>
+결과 : @<u>밑줄 글자@</u>, @<U>이중 밑줄 글자@</U>
 %%% en
 ### Underline
-@<size:30>@<b>Expression : @@<u>@<color:FF0000>expression@</color>@@</u>@</b>@</size>
+@<size:30>@<b>Expression(single) : @@<u>@<color:FF0000>expression@</color>@@</u>@</b>@</size>
+@<size:30>@<b>Expression(double) : @@<U>@<color:FF0000>expression@</color>@@</U>@</b>@</size>
 
-The underlined text is expressed by surrounding @<color:FF0000>expression@</color> with a 'u' tag, similar to HTML.
+The underlined text is expressed by surrounding @<color:FF0000>expression@</color> with a 'u' tag, similar to HTML. \
+When you write a formula in capital letters, it is double underlined.
 
 ex)
 ```html
-@<u>underlined text@</u>
+@<u>underlined text@</u>, @<U>double underlined text@</U>
 ```
-Result : @<u>underlined text@</u>
+Result : @<u>underlined text@</u>, @<U>double underlined text@</U>
 %%%
 
 
