@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 8/26/2024 Mon (clonextop@gmail.com)
+// Rev.  : 8/31/2024 Sat (clonextop@gmail.com)
 //================================================================================
 #include "DocExcel.h"
 #include "ExcelNumFormat/ExcelNumFormat.h"
@@ -552,8 +552,36 @@ string DocExcelSheet::GetValue(bool bUseMergedData, bool bIgnoreFormat)
 			}
 			// underline
 			if (!font.child("u").empty()) {
-				sValue.insert(0, "@<u>");
-				sValue.Append("@</u>");
+				string sVal = font.child("u").attribute("val").as_string();
+				if (sVal == "double") {
+					// double
+					sValue.insert(0, "@<U>");
+					sValue.Append("@</U>");
+				} else {
+					// single
+					sValue.insert(0, "@<u>");
+					sValue.Append("@</u>");
+				}
+			}
+			// superscript / subscript
+			if (!font.child("vertAlign").empty()) {
+				string sVal = font.child("vertAlign").attribute("val").as_string();
+				if (sVal == "superscript") {
+					// double
+					sValue.insert(0, "@<sup>");
+					sValue.Append("@</sup>");
+				} else if (sVal == "subscript") {
+					// single
+					sValue.insert(0, "@<sub>");
+					sValue.Append("@</sub>");
+				} else {
+					LOGW("Invalid excel's vertAlign in font style : %s", sVal.c_str());
+				}
+			}
+			// strike
+			if (!font.child("strike").empty()) {
+				sValue.insert(0, "@<s>");
+				sValue.Append("@</s>");
 			}
 		}
 	}
@@ -1182,16 +1210,41 @@ bool DocExcel::OnOpen(void)
 						prefix.Append("@<b>");
 						postfix.insert(0, "@</b>");
 					}
-
-					// bold
+					// underline
 					if (!rPr.child("u").empty()) {
-						prefix.Append("@<u>");
-						postfix.insert(0, "@</u>");
+						string sVal = rPr.child("u").attribute("val").as_string();
+						if (sVal == "double") {
+							// double
+							prefix.Append("@<U>");
+							postfix.insert(0, "@</U>");
+						} else {
+							// single
+							prefix.Append("@<u>");
+							postfix.insert(0, "@</u>");
+						}
 					}
 					// italic
 					if (!rPr.child("i").empty()) {
 						prefix.Append("@<i>");
 						postfix.insert(0, "@</i>");
+					}
+					// superscript / subscript
+					if (!rPr.child("vertAlign").empty()) {
+						string sVertAlign = rPr.child("vertAlign").attribute("val").as_string();
+						if (sVertAlign == "superscript") {
+							prefix.Append("@<sup>");
+							postfix.insert(0, "@</sup>");
+						} else if (sVertAlign == "subscript") {
+							prefix.Append("@<sub>");
+							postfix.insert(0, "@</sub>");
+						} else {
+							LOGW("Invalid excel's vertAlign in string : %s", sVertAlign.c_str());
+						}
+					}
+					// strike
+					if (!rPr.child("strike").empty()) {
+						prefix.Append("@<s>");
+						postfix.insert(0, "@</s>");
 					}
 
 					pTable->sText.AppendFormat("%s%s%s", prefix.c_str(), node.text().get(), postfix.c_str());

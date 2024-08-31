@@ -1940,6 +1940,7 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 			local		bBold			= false
 			local		bItalic			= false
 			local		bUnderline		= false
+			local		sUnderline		= "single"
 			local		bStrike			= false
 			local		bSuperscript	= false
 			local		bSubscript		= false
@@ -1973,7 +1974,7 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 						s_rPr	= s_rPr .. "<w:i/><w:iCs/>"
 					end
 					if bUnderline then
-						s_rPr	= s_rPr .. "<w:u w:val=\"single\"/>"
+						s_rPr	= s_rPr .. "<w:u w:val=\"" .. sUnderline .. "\"/>"
 					end
 					if bStrike then
 						s_rPr	= s_rPr .. "<w:strike/>"
@@ -2021,6 +2022,10 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 							bItalic	= bSet
 						elseif sVar.s == "u" then
 							bUnderline	= bSet
+							sUnderline	= "single"
+						elseif sVar.s == "U" then
+							bUnderline	= bSet
+							sUnderline	= "double"
 						elseif sVar.s == "s" then
 							bStrike		= bSet
 						elseif sVar.s == "*" then	-- bypass XML expression
