@@ -1537,7 +1537,6 @@ local	bInline		= false
 function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 	local	sPara			= String(sText)
 	local	sResult			= String()
-	local	bEmpty			= false
 	local	bBypass			= false				-- 내용 무시, docgen.language 일치하지 않음
 	local	bBypassCodeRef	= false				-- code reference in bypass mode
 	
@@ -1635,7 +1634,6 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 	if sExtra ~= nil then
 		if (#sPara.s == 0) and (sExtra.bDontIgnoreEmpty == true) then
 			sPara.s = " "
-			bEmpty	= true
 		end
 	end
 
