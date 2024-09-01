@@ -1072,13 +1072,9 @@ function GenerateTable(sExcelFileName, sSheetName)
 					<w:rPr>\
 						<w:color w:val=\"FFFFFF\"\
 								 w:themeColor=\"background1\"/>\
-						<w:sz w:val=\"22\"/>\
-						<w:szCs w:val=\"22\"/>\
 					</w:rPr>", rPr="\
 					<w:rFonts w:hint=\"eastAsia\"/>\
-					<w:color w:val=\"FFFFFF\" w:themeColor=\"background1\"/>\
-					<w:sz w:val=\"22\"/>\
-					<w:szCs w:val=\"22\"/>", bDontIgnoreEmpty=true}) ..
+					<w:color w:val=\"FFFFFF\" w:themeColor=\"background1\"/>", bDontIgnoreEmpty=true}) ..
 				"</w:tc>"
 			)
 		end
@@ -1480,13 +1476,9 @@ function GenerateTableFromLua(sLuaTable)
 						<w:rPr>\
 							<w:color w:val=\"FFFFFF\"\
 									 w:themeColor=\"background1\"/>\
-							<w:sz w:val=\"22\"/>\
-							<w:szCs w:val=\"22\"/>\
 						</w:rPr>", rPr="\
 						<w:rFonts w:hint=\"eastAsia\"/>\
-						<w:color w:val=\"FFFFFF\" w:themeColor=\"background1\"/>\
-						<w:sz w:val=\"22\"/>\
-						<w:szCs w:val=\"22\"/>"}))
+						<w:color w:val=\"FFFFFF\" w:themeColor=\"background1\"/>"}))
 					else
 						table_code:Append(EncodeParagraph(col_string,
 								{
