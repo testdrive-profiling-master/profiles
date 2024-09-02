@@ -881,6 +881,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 	local function GetTableCellData(sheet, bGetWidth)
 		local col	= {}
 		col.text	= sheet:GetValue()
+		col.type	= sheet:GetLatestValueType()
 		if bGetWidth == true then
 			col.width	= sheet:GetColumnWidth()
 		end
@@ -1015,19 +1016,6 @@ function GenerateTable(sExcelFileName, sSheetName)
 		</w:tblGrid>\
 		<w:tr>\
 			<w:trPr>\
-				<w:cnfStyle w:val=\"100000000000\"\
-							w:firstRow=\"1\"\
-							w:lastRow=\"0\"\
-							w:firstColumn=\"0\"\
-							w:lastColumn=\"0\"\
-							w:oddVBand=\"0\"\
-							w:evenVBand=\"0\"\
-							w:oddHBand=\"0\"\
-							w:evenHBand=\"0\"\
-							w:firstRowFirstColumn=\"0\"\
-							w:firstRowLastColumn=\"0\"\
-							w:lastRowFirstColumn=\"0\"\
-							w:lastRowLastColumn=\"0\"/>\
 				<w:trHeight w:val=\"45\"/>\
 				<w:tblHeader/>\
 			</w:trPr>"
@@ -1104,19 +1092,6 @@ function GenerateTable(sExcelFileName, sSheetName)
 			table_code:Append("<w:tr>")
 			if header_rows > 0 then
 				table_code:Append("<w:trPr>\
-					<w:cnfStyle w:val=\"100000000000\"\
-								w:firstRow=\"1\"\
-								w:lastRow=\"0\"\
-								w:firstColumn=\"0\"\
-								w:lastColumn=\"0\"\
-								w:oddVBand=\"0\"\
-								w:evenVBand=\"0\"\
-								w:oddHBand=\"0\"\
-								w:evenHBand=\"0\"\
-								w:firstRowFirstColumn=\"0\"\
-								w:firstRowLastColumn=\"0\"\
-								w:lastRowFirstColumn=\"0\"\
-								w:lastRowLastColumn=\"0\"/>\
 					<w:trHeight w:val=\"45\"/>\
 					<w:tblHeader/>\
 				</w:trPr>")
@@ -1126,8 +1101,13 @@ function GenerateTable(sExcelFileName, sSheetName)
 			for i=1, col_count do
 				if col_cells[i].merge.downed == false then
 					local cell_width = 0
-					for t = 0, (col_cells[i].merge.width - 1) do
-						cell_width	= cell_width + col_width[i + t]
+					
+					if col_cells[i].merge.enable then
+						for t = 0, (col_cells[i].merge.width - 1) do
+							cell_width	= cell_width + col_width[i + t]
+						end
+					else
+						cell_width	= col_width[i]
 					end
 			
 					table_code:Append("\
@@ -1158,7 +1138,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 					local back_color_doc	= ""
 					local text_rotate_doc	= ""
 					-- set horizontal alignment
-					local cell_alignment	= "TableTextLeft"
+					local cell_alignment	= (col_cells[i].type == "value") and "TableTextRight" or "TableTextLeft"
 					
 					if col_cells[i].style ~= nil then
 						if col_cells[i].style:AlignmentHorizontal() == "center"  then

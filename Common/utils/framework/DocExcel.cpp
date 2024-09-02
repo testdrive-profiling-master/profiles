@@ -386,15 +386,15 @@ double DocExcelSheet::GetColumnWidth(void)
 		int	   iCol;
 		double fWidth;
 	} __private_data;
-	__private_data p	= {m_CurPos.x, 8.5};
+	__private_data p	= {m_CurPos.x, 8.38};
 	DocXML		   cols = child("cols");
 	cols.Enumerate("col", &p, [](DocXML node, void *pPrivate) -> bool {
 		__private_data &p	 = *((__private_data *)pPrivate);
 		int				iMin = node.attribute("min").as_int(0);
-		int				iMax = node.attribute("max").as_int(0);
+		int				iMax = node.attribute("max").as_int(iMin);
 
 		if (p.iCol >= iMin && p.iCol <= iMax) {
-			p.fWidth = node.attribute("width").as_double(8.5);
+			p.fWidth = node.attribute("width").as_double(8.38);
 			return false;
 		}
 
