@@ -878,9 +878,17 @@ function GenerateTable(sExcelFileName, sSheetName)
 		error("Can't open sheet table : " .. sExcelFileName .. "(" .. sSheetName .. ")")
 	end
 	
+	local function GetSheetValue(sheet)
+		local s = String(sheet:GetValue())
+		if s:CompareFront("#") then
+			s:insert(0, "@")
+		end
+		return s.s
+	end
+	
 	local function GetTableCellData(sheet, bGetWidth)
 		local col	= {}
-		col.text	= sheet:GetValue()
+		col.text	= GetSheetValue(sheet)
 		col.type	= sheet:GetLatestValueType()
 		if bGetWidth == true then
 			col.width	= sheet:GetColumnWidth()
@@ -1595,6 +1603,7 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 	
 	sPara:ChangeCharsetToUTF8()
 	sPara:Replace("@@", "&#64;", true)		-- '@' 문자 대체 표현
+	sPara:Replace("@#", "&#35;", true)		-- '#' 문자 대체 표현
 	sPara:Replace("\\$", "&#36;", true)		-- '$' 문자 대체 표현
 	sPara:Replace("\r", "", true);			-- line feed 모두 제거
 
