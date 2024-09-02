@@ -926,6 +926,10 @@ function GenerateTable(sExcelFileName, sSheetName)
 		return col
 	end
 	
+	-- pane split 나누기 얻기
+	local header_rows = sheet:GetPanePosY()
+	
+
 	-- 첫 줄 목록 얻기
 	if sheet:GetRow(false) then
 		while sheet:GetColumn(false) do
@@ -1080,6 +1084,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 		end
 	end
 	table_code:Append("</w:tr>")
+	header_rows = header_rows - 1
 	
 	-- 데이터 줄 얻기
 	if sheet:GetRow(false) then
@@ -1093,8 +1098,27 @@ function GenerateTable(sExcelFileName, sSheetName)
 			bLast	= (sheet:GetRow(false) == false)
 			
 			-- 한줄 채우기
-			table_code:Append("\
-			<w:tr>")
+			table_code:Append("<w:tr>")
+			if header_rows > 0 then
+				table_code:Append("<w:trPr>\
+					<w:cnfStyle w:val=\"100000000000\"\
+								w:firstRow=\"1\"\
+								w:lastRow=\"0\"\
+								w:firstColumn=\"0\"\
+								w:lastColumn=\"0\"\
+								w:oddVBand=\"0\"\
+								w:evenVBand=\"0\"\
+								w:oddHBand=\"0\"\
+								w:evenHBand=\"0\"\
+								w:firstRowFirstColumn=\"0\"\
+								w:firstRowLastColumn=\"0\"\
+								w:lastRowFirstColumn=\"0\"\
+								w:lastRowLastColumn=\"0\"/>\
+					<w:trHeight w:val=\"45\"/>\
+					<w:tblHeader/>\
+				</w:trPr>")
+				header_rows	= header_rows - 1
+			end
 			-- 컬럼 채우기
 			for i=1, col_count do
 				if col_cells[i].merge.downed == false then

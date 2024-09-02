@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 8/30/2024 Fri (HyungKi)
+// Rev.  : 9/2/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -1328,6 +1328,17 @@ Script::Script(void)
 				.addFunction("TextRotation", &DocExcelStyle::TextRotation)
 				.endClass()
 				.beginClass<DocExcelSheet>("DocExcelSheet")
+				.addFunction("GetPane", &DocExcelSheet::GetPane)
+				.addFunction("GetPanePosX", std::function<int(DocExcelSheet * pSheet)>([](DocExcelSheet *pSheet) -> int {
+								 int x, y;
+								 pSheet->GetPanePos(x, y);
+								 return x;
+							 }))
+				.addFunction("GetPanePosY", std::function<int(DocExcelSheet * pSheet)>([](DocExcelSheet *pSheet) -> int {
+								 int x, y;
+								 pSheet->GetPanePos(x, y);
+								 return y;
+							 }))
 				.addFunction("SetPosition", &DocExcelSheet::SetPosition)
 				.addFunction("SetPos", &DocExcelSheet::SetPos)
 				.addFunction("GetPosition", &DocExcelSheet::GetPosition)

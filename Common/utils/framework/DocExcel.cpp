@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 8/31/2024 Sat (clonextop@gmail.com)
+// Rev.  : 9/2/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #include "DocExcel.h"
 #include "ExcelNumFormat/ExcelNumFormat.h"
@@ -734,6 +734,22 @@ void DocExcelSheet::SetPane(const char *sPos)
 		node.append_attribute("topLeftCell") = sPos;
 		node.append_attribute("activePane")	 = "bottomLeft";
 		node.append_attribute("state")		 = "frozen";
+	}
+}
+
+string DocExcelSheet::GetPane(void)
+{
+	string sPane = child("sheetViews").child("sheetView").child("pane").attribute("topLeftCell").as_string("");
+	return sPane;
+}
+
+void DocExcelSheet::GetPanePos(int &x, int &y)
+{
+	cstring sPane = GetPane();
+	if (sPane.IsEmpty()) {
+		x = y = 1;
+	} else {
+		Excel_PosDecode(sPane.c_string(), x, y);
 	}
 }
 

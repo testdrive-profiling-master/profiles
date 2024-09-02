@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 8/26/2024 Mon (clonextop@gmail.com)
+// Rev.  : 9/2/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __DOC_EXCEL_H__
 #define __DOC_EXCEL_H__
@@ -169,6 +169,8 @@ public:
 	bool		   SetString(const char *sValue);
 	bool		   SetFunction(const char *sFunction);
 	void		   SetPane(const char *sPos);
+	string		   GetPane(void);
+	void		   GetPanePos(int &x, int &y);
 	bool		   SetStyle(int iCellStyle);
 	bool		   SetColumnWidth(double fWidth, bool bBestFit = true);
 	void		   SetTabColor(unsigned int dwColorRGB);
