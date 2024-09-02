@@ -963,39 +963,27 @@ function GenerateTable(sExcelFileName, sSheetName)
 				<w:top w:val=\"single\"\
 					   w:sz=\"4\"\
 					   w:space=\"0\"\
-					   w:color=\"" .. docgen.boarder_color .. "\"\
-					   w:themeColor=\"background2\"\
-					   w:themeShade=\"BF\"/>\
+					   w:color=\"" .. docgen.boarder_color .. "\"/>\
 				<w:left w:val=\"single\"\
 						w:sz=\"4\"\
 						w:space=\"0\"\
-						w:color=\"" .. docgen.boarder_color .. "\"\
-						w:themeColor=\"background2\"\
-						w:themeShade=\"BF\"/>\
+						w:color=\"" .. docgen.boarder_color .. "\"/>\
 				<w:bottom w:val=\"single\"\
 						  w:sz=\"4\"\
 						  w:space=\"0\"\
-						  w:color=\"" .. docgen.boarder_color .. "\"\
-						  w:themeColor=\"background2\"\
-						  w:themeShade=\"BF\"/>\
+						  w:color=\"" .. docgen.boarder_color .. "\"/>\
 				<w:right w:val=\"single\"\
 						 w:sz=\"4\"\
 						 w:space=\"0\"\
-						 w:color=\"" .. docgen.boarder_color .. "\"\
-						 w:themeColor=\"background2\"\
-						 w:themeShade=\"BF\"/>\
+						 w:color=\"" .. docgen.boarder_color .. "\"/>\
 				<w:insideH w:val=\"single\"\
 						   w:sz=\"4\"\
 						   w:space=\"0\"\
-						   w:color=\"" .. docgen.boarder_color .. "\"\
-						   w:themeColor=\"background2\"\
-						   w:themeShade=\"BF\"/>\
+						   w:color=\"" .. docgen.boarder_color .. "\"/>\
 				<w:insideV w:val=\"single\"\
 						   w:sz=\"4\"\
 						   w:space=\"0\"\
-						   w:color=\"" .. docgen.boarder_color .. "\"\
-						   w:themeColor=\"background2\"\
-						   w:themeShade=\"BF\"/>\
+						   w:color=\"" .. docgen.boarder_color .. "\"/>\
 			</w:tblBorders>\
 			<w:tblLook w:val=\"06A0\"\
 					   w:firstRow=\"1\"\
@@ -1037,27 +1025,19 @@ function GenerateTable(sExcelFileName, sSheetName)
 							<w:top w:val=\"single\"\
 								   w:sz=\"4\"\
 								   w:space=\"0\"\
-								   w:color=\"" .. docgen.boarder_color .. "\"\
-								   w:themeColor=\"background2\"\
-								   w:themeShade=\"BF\"/>\
+								   w:color=\"" .. docgen.boarder_color .. "\"/>\
 							<w:left w:val=\"single\"\
 									w:sz=\"4\"\
 									w:space=\"0\"\
-									w:color=\"" .. docgen.boarder_color .. "\"\
-									w:themeColor=\"background2\"\
-									w:themeShade=\"BF\"/>\
+									w:color=\"" .. docgen.boarder_color .. "\"/>\
 							<w:bottom w:val=\"single\"\
 									  w:sz=\"4\"\
 									  w:space=\"0\"\
-									  w:color=\"" .. docgen.boarder_color .. "\"\
-									  w:themeColor=\"background2\"\
-									  w:themeShade=\"BF\"/>\
+									  w:color=\"" .. docgen.boarder_color .. "\"/>\
 							<w:right w:val=\"single\"\
 									 w:sz=\"4\"\
 									 w:space=\"0\"\
-									 w:color=\"" .. docgen.boarder_color .. "\"\
-									 w:themeColor=\"background2\"\
-									 w:themeShade=\"BF\"/>\
+									 w:color=\"" .. docgen.boarder_color .. "\"/>\
 						</w:tcBorders>\
 						<w:shd w:val=\"clear\"\
 							   w:color=\"auto\"\
@@ -1090,12 +1070,13 @@ function GenerateTable(sExcelFileName, sSheetName)
 			
 			-- 한줄 채우기
 			table_code:Append("<w:tr>")
-			if header_rows > 0 then
+			local bHeader	= (header_rows > 0)
+			header_rows		= header_rows - 1
+			if bHeader then
 				table_code:Append("<w:trPr>\
 					<w:trHeight w:val=\"45\"/>\
 					<w:tblHeader/>\
 				</w:trPr>")
-				header_rows	= header_rows - 1
 			end
 			-- 컬럼 채우기
 			for i=1, col_count do
@@ -1122,17 +1103,23 @@ function GenerateTable(sExcelFileName, sSheetName)
 								<w:top w:val=\"single\"\
 									   w:sz=\"4\"\
 									   w:space=\"0\"\
-									   w:color=\"" .. docgen.boarder_color .. "\"\
-									   w:themeColor=\"background2\"\
-									   w:themeShade=\"BF\"/>"
+									   w:color=\"" .. docgen.boarder_color .. "\"/>"
 					)
 					
 					-- 좌/우 경계선 비우기
 					if i == 1 then	-- first column
 						table_code:Append("<w:left w:val=\"nil\"/>")
+					elseif bHeader then
+						table_code:Append("<w:left w:val=\"single\" w:color=\"" .. docgen.boarder_color .. "\"/>")
 					end
 					if i == (col_count - ((col_cells[i].merge.width ~= 0) and (col_cells[i].merge.width-1) or 0)) then	-- last column
 						table_code:Append("<w:right w:val=\"nil\"/>")
+					elseif bHeader then
+						table_code:Append("<w:right w:val=\"single\" w:color=\"" .. docgen.boarder_color .. "\"/>")
+					end
+					
+					if bHeader then
+						table_code:Append("<w:bottom w:val=\"single\" w:color=\"" .. docgen.boarder_color .. "\"/>")
 					end
 					
 					local back_color_doc	= ""
@@ -1186,7 +1173,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 						"</w:tcPr>"
 						.. EncodeParagraph(col_cells[i].text,
 						{
-							pPr=("<w:pStyle w:val=\"" .. cell_alignment .. "\"/>"),
+							pPr="<w:pStyle w:val=\"" .. cell_alignment .. "\"/>",
 							rPr="<w:rFonts w:hint=\"eastAsia\"/>" .. color_field,
 							bDontIgnoreEmpty=true
 						}) .. 
@@ -1225,39 +1212,27 @@ function GenerateTableFromLua(sLuaTable)
 				<w:top w:val=\"single\"\
 					   w:sz=\"4\"\
 					   w:space=\"0\"\
-					   w:color=\"" .. docgen.boarder_color .. "\"\
-					   w:themeColor=\"background2\"\
-					   w:themeShade=\"BF\"/>\
+					   w:color=\"" .. docgen.boarder_color .. "\"/>\
 				<w:left w:val=\"single\"\
 						w:sz=\"4\"\
 						w:space=\"0\"\
-						w:color=\"" .. docgen.boarder_color .. "\"\
-						w:themeColor=\"background2\"\
-						w:themeShade=\"BF\"/>\
+						w:color=\"" .. docgen.boarder_color .. "\"/>\
 				<w:bottom w:val=\"single\"\
 						  w:sz=\"4\"\
 						  w:space=\"0\"\
-						  w:color=\"" .. docgen.boarder_color .. "\"\
-						  w:themeColor=\"background2\"\
-						  w:themeShade=\"BF\"/>\
+						  w:color=\"" .. docgen.boarder_color .. "\"/>\
 				<w:right w:val=\"single\"\
 						 w:sz=\"4\"\
 						 w:space=\"0\"\
-						 w:color=\"" .. docgen.boarder_color .. "\"\
-						 w:themeColor=\"background2\"\
-						 w:themeShade=\"BF\"/>\
+						 w:color=\"" .. docgen.boarder_color .. "\"/>\
 				<w:insideH w:val=\"single\"\
 						   w:sz=\"4\"\
 						   w:space=\"0\"\
-						   w:color=\"" .. docgen.boarder_color .. "\"\
-						   w:themeColor=\"background2\"\
-						   w:themeShade=\"BF\"/>\
+						   w:color=\"" .. docgen.boarder_color .. "\"/>\
 				<w:insideV w:val=\"single\"\
 						   w:sz=\"4\"\
 						   w:space=\"0\"\
-						   w:color=\"" .. docgen.boarder_color .. "\"\
-						   w:themeColor=\"background2\"\
-						   w:themeShade=\"BF\"/>\
+						   w:color=\"" .. docgen.boarder_color .. "\"/>\
 			</w:tblBorders>\
 			<w:tblLook w:val=\"06A0\"\
 					   w:firstRow=\"1\"\
@@ -1430,27 +1405,19 @@ function GenerateTableFromLua(sLuaTable)
 							<w:top w:val=\"single\"\
 								   w:sz=\"4\"\
 								   w:space=\"0\"\
-								   w:color=\"" .. docgen.boarder_color .. "\"\
-								   w:themeColor=\"background2\"\
-								   w:themeShade=\"BF\"/>\
+								   w:color=\"" .. docgen.boarder_color .. "\"/>\
 							<w:left w:val=\"single\"\
 									w:sz=\"4\"\
 									w:space=\"0\"\
-									w:color=\"" .. docgen.boarder_color .. "\"\
-									w:themeColor=\"background2\"\
-									w:themeShade=\"BF\"/>\
+									w:color=\"" .. docgen.boarder_color .. "\"/>\
 							<w:bottom w:val=\"single\"\
 									  w:sz=\"4\"\
 									  w:space=\"0\"\
-									  w:color=\"" .. docgen.boarder_color .. "\"\
-									  w:themeColor=\"background2\"\
-									  w:themeShade=\"BF\"/>\
+									  w:color=\"" .. docgen.boarder_color .. "\"/>\
 							<w:right w:val=\"single\"\
 									 w:sz=\"4\"\
 									 w:space=\"0\"\
-									 w:color=\"" .. docgen.boarder_color .. "\"\
-									 w:themeColor=\"background2\"\
-									 w:themeShade=\"BF\"/>\
+									 w:color=\"" .. docgen.boarder_color .. "\"/>\
 						</w:tcBorders>\
 						<w:shd w:val=\"clear\"\
 							   w:color=\"auto\"\
