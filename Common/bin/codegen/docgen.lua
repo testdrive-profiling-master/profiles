@@ -3,17 +3,22 @@ RunScript("codegen_utils")
 ---------------------------------------------------------------------------------
 -- Initialize configuration
 ---------------------------------------------------------------------------------
-docgen						= {}
-docgen.contents_only		= false					-- only contents, delete all first page, table list...
-docgen.code_format			= "cpp"					-- default code format
-docgen.code_bgcolor			= "F7F7F7"				-- code background color
-docgen.boarder_color		= "AEAAAA"				-- table's boarder color
-docgen.fixed_font			= "Cascadia Mono"		-- fixed font name
-docgen.profile_path			= String()
-docgen.template_path		= String()
+docgen							= {}
+docgen.contents_only			= false					-- only contents, delete all first page, table list...
+docgen.code_format				= "cpp"					-- default code format
+docgen.code_bgcolor				= "F7F7F7"				-- code background color
+docgen.boarder_color			= "AEAAAA"				-- table's boarder color
+docgen.fixed_font				= "Cascadia Mono"		-- fixed font name
+docgen.profile_path				= String()
+docgen.template_path			= String()
 docgen.profile_path:GetEnvironment("TESTDRIVE_PROFILE")
-docgen.template_path.s		= docgen.profile_path.s
-docgen.max_console_chars	= 110
+docgen.template_path.s			= docgen.profile_path.s
+docgen.max_console_chars		= 110
+
+docgen.table_header				= {}
+docgen.table_header.text_color	= "FFFFFF"				-- table's header text color
+docgen.table_header.bgcolor		= "AFAFAF"				-- table's background color
+
 
 -- check installed document template
 docgen.installed_template	= {}
@@ -1068,17 +1073,15 @@ function GenerateTable(sExcelFileName, sSheetName)
 						</w:tcBorders>\
 						<w:shd w:val=\"clear\"\
 							   w:color=\"auto\"\
-							   w:fill=\"7F7F7F\"\
+							   w:fill=\"" .. docgen.table_header.bgcolor.. "\"\
 							   w:themeFill=\"text1\"\
 							   w:themeFillTint=\"80\"/>\
 					</w:tcPr>"
-					.. EncodeParagraph(col_cells[i].text, {pPr="<w:pStyle w:val=\"TableColumn\"/>\
-					<w:rPr>\
-						<w:color w:val=\"FFFFFF\"\
-								 w:themeColor=\"background1\"/>\
-					</w:rPr>", rPr="\
-					<w:rFonts w:hint=\"eastAsia\"/>\
-					<w:color w:val=\"FFFFFF\" w:themeColor=\"background1\"/>", bDontIgnoreEmpty=true}) ..
+					.. EncodeParagraph(col_cells[i].text, {
+						pPr="<w:pStyle w:val=\"TableColumn\"/>",
+						rPr="<w:rFonts w:hint=\"eastAsia\"/>",
+						text_color=docgen.table_header.text_color,
+						bDontIgnoreEmpty=true}) ..
 				"</w:tc>"
 			)
 		end
@@ -1496,11 +1499,7 @@ function GenerateTableFromLua(sLuaTable)
 					table_code:Append("</w:tcPr>")
 					
 					if bHeader then
-						table_code:Append(EncodeParagraph(col_string, {pPr="<w:pStyle w:val=\"TableColumn\"/>\
-						<w:rPr>\
-							<w:color w:val=\"FFFFFF\"\
-									 w:themeColor=\"background1\"/>\
-						</w:rPr>", rPr="\
+						table_code:Append(EncodeParagraph(col_string, {pPr="<w:pStyle w:val=\"TableColumn\"/>", rPr="\
 						<w:rFonts w:hint=\"eastAsia\"/>\
 						<w:color w:val=\"FFFFFF\" w:themeColor=\"background1\"/>"}))
 					else
@@ -1550,7 +1549,7 @@ end
 
 local	bInline		= false
 
-function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
+function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 	local	sPara			= String(sText)
 	local	sResult			= String()
 	local	bBypass			= false				-- 내용 무시, docgen.language 일치하지 않음
@@ -1559,6 +1558,12 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 	if sSourceTarget == "Pragraph_expression.md" then
 		print("")
 	end
+	
+	-- initialize configuration
+	if config == nil then config = {} end
+	if config.pPr == nil then config.pPr = "" end
+	if config.rPr == nil then config.rPr = "" end
+	
 	-- line 얻기 구현
 	local	line		= {}
 	line.count			= 0
@@ -1647,15 +1652,13 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 	sPara:Replace("\r", "", true);			-- line feed 모두 제거
 
 	-- empty paragraph, but do not ignore
-	if sExtra ~= nil then
-		if (#sPara.s == 0) and (sExtra.bDontIgnoreEmpty == true) then
-			sPara.s = " "
-		end
+	if (#sPara.s == 0) and (config.bDontIgnoreEmpty == true) then
+		sPara.s = " "
 	end
 
 	while true do
 		local	sLine	= line.get()	-- enter code process
-		local	s_pPr	= ""
+		local	s_pPr	= config.pPr
 
 		if sPara.TokenizePos < 0 then
 			break
@@ -1673,9 +1676,6 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 		end
 		
 		sResult:Append("<w:p>")
-		if sExtra ~= nil and sExtra.pPr ~= nil then
-			s_pPr	= sExtra.pPr
-		end
 		
 ::new_line::
 		sLine:TrimRight(" \t")
@@ -1959,8 +1959,8 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 			local		bSuperscript	= false
 			local		bSubscript		= false
 			local		bFixed			= false
-			local		bColor			= false
-			local		sColor			= ""
+			local		bColor			= (config.text_color ~= nil)
+			local		sColor			= (config.text_color ~= nil) and (config.text_color) or ""
 			local		bBgColor		= false
 			local		sBgColor		= ""
 			local		bSize			= false
@@ -1969,17 +1969,13 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 			
 			while sLine.TokenizePos >= 0 do
 				local	sWord	= sLine:TokenizeVariable("@<*>")
-				local	s_rPr	= ""
+				local	s_rPr	= config.rPr
 
 				sWord:Replace("<", "&lt;", true)
 				sWord:Replace(">", "&gt;", true)
 
 				if #(sWord.s) ~= 0 then
 					sResult:Append("<w:r>")
-					
-					if sExtra ~= nil and sExtra.rPr ~= nil then
-						s_rPr	= sExtra.rPr
-					end
 					
 					if bBold then
 						s_rPr	= s_rPr .. "<w:b/><w:bCs/>"
@@ -2069,18 +2065,18 @@ function EncodeParagraph(sText, sExtra, sSourceTarget, sSourceLine)
 						elseif sTag.s == "fixed" then
 							bFixed			= bSet
 						elseif sTag.s == "color" then
-							bColor			= bSet
-							if bColor then
+							bColor			= bSet or (config.text_color ~= nil)
+							if bSet and (config.text_color == nil) then
 								sColor		= sVar:Tokenize(": ").s
 							end
 						elseif sTag.s == "bgcolor" then
 							bBgColor		= bSet
-							if bBgColor then
+							if bSet then
 								sBgColor	= sVar:Tokenize(": ").s
 							end
 						elseif sTag.s == "size" then
 							bSize			= bSet
-							if bSize then
+							if bSet then
 								iSize		= tonumber(sVar:Tokenize(": ").s)
 							end
 						elseif sTag.s == "img" then
