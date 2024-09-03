@@ -18,6 +18,10 @@ docgen.max_console_chars		= 110
 docgen.table_header				= {}
 docgen.table_header.text_color	= "FFFFFF"				-- table's header text color
 docgen.table_header.bgcolor		= "808080"				-- table's background color
+docgen.table_header.height		= 0						-- default auto
+
+docgen.table_content			= {}
+docgen.table_content.height		= 0						-- default auto
 
 
 -- check installed document template
@@ -1022,7 +1026,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 		</w:tblGrid>\
 		<w:tr>\
 			<w:trPr>\
-				<w:trHeight w:val=\"45\"/>\
+				<w:trHeight w:val=\"" .. ((docgen.table_header.height == 0) and "auto" or tostring(docgen.table_header.height)) .. "\"/>\
 				<w:tblHeader/>\
 			</w:trPr>"
 		)
@@ -1032,6 +1036,25 @@ function GenerateTable(sExcelFileName, sSheetName)
 			local cell_width = 0
 			for t = 0, ((col_cells[i].merge.width == 0) and 0 or (col_cells[i].merge.width - 1)) do
 				cell_width	= cell_width + col_width[i + t]
+			end
+
+			local text_rotate_doc	= ""
+			
+			if col_cells[i].style ~= nil then
+				-- text rotation
+				local	cell_textRotation = col_cells[i].style:TextRotation()
+				
+				if cell_textRotation ~= 0 then
+					if cell_textRotation == 90 then
+						text_rotate_doc	= "<w:textDirection w:val=\"btLr\"/>"
+					elseif cell_textRotation == -90 then
+						text_rotate_doc	= "<w:textDirection w:val=\"tbRl\"/>"
+					elseif cell_textRotation == 255 then	-- vertical (not identical...)
+						text_rotate_doc	= "<w:textDirection w:val=\"tbRlV\"/>"
+					else
+						LOGW("Excel cell's custom text rotation(" .. cell_textRotation .. ") is not supported. (only 90 or -90 is supported.)")
+					end
+				end
 			end
 
 			table_code:Append("\
@@ -1059,8 +1082,8 @@ function GenerateTable(sExcelFileName, sSheetName)
 						</w:tcBorders>\
 						<w:shd w:val=\"clear\"\
 							   w:color=\"auto\"\
-							   w:fill=\"" .. docgen.table_header.bgcolor.. "\"/>\
-					</w:tcPr>"
+							   w:fill=\"" .. docgen.table_header.bgcolor.. "\"/>" .. text_rotate_doc ..
+					"</w:tcPr>"
 					.. EncodeParagraph(col_cells[i].text, {
 						pPr="<w:pStyle w:val=\"TableColumn\"/>",
 						rPr="<w:rFonts w:hint=\"eastAsia\"/>",
@@ -1085,15 +1108,11 @@ function GenerateTable(sExcelFileName, sSheetName)
 			bLast	= (sheet:GetRow(false) == false)
 			
 			-- 한줄 채우기
-			table_code:Append("<w:tr>")
+			table_code:Append("<w:tr><w:trPr><w:trHeight w:val=\"" .. ((docgen.table_content.height == 0) and "auto" or tostring(docgen.table_content.height)) ..  "\"/>")
 			local bHeader	= (header_rows > 0)
 			header_rows		= header_rows - 1
-			if bHeader then
-				table_code:Append("<w:trPr>\
-					<w:trHeight w:val=\"45\"/>\
-					<w:tblHeader/>\
-				</w:trPr>")
-			end
+			if bHeader then table_code:Append("<w:tblHeader/>") end
+			table_code:Append("</w:trPr>")
 			-- 컬럼 채우기
 			for i=1, col_count do
 				if col_cells[i].merge.downed == false then
@@ -1200,6 +1219,9 @@ function GenerateTable(sExcelFileName, sSheetName)
 		end
 	end
 	table_code:Append("</w:tbl>")
+	
+	docgen.table_header.height		= 0
+	docgen.table_content.height		= 0
 	
 	return table_code.s
 end
@@ -1344,7 +1366,7 @@ function GenerateTableFromLua(sLuaTable)
 								w:firstRowLastColumn=\"0\"\
 								w:lastRowFirstColumn=\"0\"\
 								w:lastRowLastColumn=\"0\"/>\
-						<w:trHeight w:val=\"45\"/>\
+						<w:trHeight w:val=\"auto\"/>\
 						<w:tblHeader/>\
 						</w:trPr>")
 				end
