@@ -456,6 +456,37 @@ Result : @<fixed>Fixed font@</fixed> expression.
 
  
 %%% ko
+### 글꼴 지정
+@<size:30>@<b>표현식 : @@<font:@<color:FF0000>폰트명@</color>>@<color:FF0000>표현식@</color>@@</font>@</b>@</size>
+
+"폰트명"의 글꼴을 지정하여 특수 문자를 표현할 수 있다. @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'font' 태그로 둘러쌓아 표현합니다.
+
+ 
+예)
+```html
+A @<font:Wingdings>à@</font> B
+```
+결과 : A @<font:Wingdings>à@</font> B
+%%% en
+### Apply font
+@<size:30>@<b>Expression : @@<font:@<color:FF0000>font_name@</color>>@<color:FF0000>expression@</color>@@</font>@</b>@</size>
+
+You can express special characters by specifying the font of "font_name".To apply specific font, the @<color:FF0000>expression@</color> is surrounded by 'font' tags similar to HTML.
+
+ 
+ex)
+```html
+A @<font:Wingdings>à@</font> B
+```
+결과 : A @<font:Wingdings>à@</font> B
+%%%
+
+
+
+
+
+ 
+%%% ko
 ### 문단 스타일
 @<size:30>@<b>표현식 : :::@<color:FF0000>스타일_이름[,정렬]@</color>@</b>@</size>
 
