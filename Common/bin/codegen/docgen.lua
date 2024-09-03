@@ -878,11 +878,21 @@ function GenerateTable(sExcelFileName, sSheetName)
 		error("Can't open sheet table : " .. sExcelFileName .. "(" .. sSheetName .. ")")
 	end
 	
-	local function GetSheetValue(sheet)
+	local function GetSheetValue(sheet)		-- table 내에서 오류를 일으킬 표현법 제거
 		local s = String(sheet:GetValue())
-		if s:CompareFront("#") then
+		if s:CompareFront("#") then			-- 절표시 제거
 			s:insert(0, "@")
 		end
+		s:Replace("\n#","\n@#", true)
+		while s:CompareFront(";;;") do		-- 페이지 나눔 제거
+			s:insert(0, "@")
+		end
+		s:Replace("\n;;;","\n@;;;", true)
+		while s:CompareFront("---") do		-- 수평선 제거
+			s:insert(0, "@")
+		end
+		s:Replace("\n---","\n@---", true)
+		s:Replace("@<tbl:","<tbl:", true)	-- 테이블 안에 테이블 허용 안함
 		return s.s
 	end
 	
@@ -1604,6 +1614,8 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 	sPara:ChangeCharsetToUTF8()
 	sPara:Replace("@@", "&#64;", true)		-- '@' 문자 대체 표현
 	sPara:Replace("@#", "&#35;", true)		-- '#' 문자 대체 표현
+	sPara:Replace("@-", "&#45;", true)		-- '-' 문자 대체 표현
+	sPara:Replace("@;", "&#59;", true)		-- ';' 문자 대체 표현
 	sPara:Replace("\\$", "&#36;", true)		-- '$' 문자 대체 표현
 	sPara:Replace("\r", "", true);			-- line feed 모두 제거
 
