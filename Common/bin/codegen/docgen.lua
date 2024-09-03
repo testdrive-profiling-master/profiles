@@ -17,7 +17,7 @@ docgen.max_console_chars		= 110
 
 docgen.table_header				= {}
 docgen.table_header.text_color	= "FFFFFF"				-- table's header text color
-docgen.table_header.bgcolor		= "AFAFAF"				-- table's background color
+docgen.table_header.bgcolor		= "808080"				-- table's background color
 
 
 -- check installed document template
@@ -1059,9 +1059,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 						</w:tcBorders>\
 						<w:shd w:val=\"clear\"\
 							   w:color=\"auto\"\
-							   w:fill=\"" .. docgen.table_header.bgcolor.. "\"\
-							   w:themeFill=\"text1\"\
-							   w:themeFillTint=\"80\"/>\
+							   w:fill=\"" .. docgen.table_header.bgcolor.. "\"/>\
 					</w:tcPr>"
 					.. EncodeParagraph(col_cells[i].text, {
 						pPr="<w:pStyle w:val=\"TableColumn\"/>",
@@ -1439,9 +1437,7 @@ function GenerateTableFromLua(sLuaTable)
 						</w:tcBorders>\
 						<w:shd w:val=\"clear\"\
 							   w:color=\"auto\"\
-							   w:fill=\"7F7F7F\"\
-							   w:themeFill=\"text1\"\
-							   w:themeFillTint=\"80\"/>")
+							   w:fill=\"" .. docgen.table_header.bgcolor .. "\"/>")
 					else
 						table_code:Append("\
 							<w:tcBorders>\
