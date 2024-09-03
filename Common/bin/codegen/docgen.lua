@@ -512,7 +512,20 @@ docgen.figure.id		= 0
 -- bookmark
 docgen.bookmark			= {}
 docgen.bookmark.id		= 70	-- initial gap
-docgen.bookmark.list	= {}
+docgen.bookmark.__list	= {}
+docgen.bookmark.Set		= function (type_part, num_part, name, id)
+	if docgen.bookmark.__list[name] ~= nil then
+		LOGW("'" .. name .. "'(" .. docgen.bookmark.__list[name].type_part .. ") is duplicated with '" .. name .. "'(" .. type_part .. ").")
+	end
+	docgen.bookmark.__list[name]			= {}
+	docgen.bookmark.__list[name].type_part	= type_part
+	docgen.bookmark.__list[name].num_part	= num_part
+	docgen.bookmark.__list[name].name		= name
+	docgen.bookmark.__list[name].id			= id
+end
+docgen.bookmark.Get		= function (name)
+	return docgen.bookmark.__list[name]
+end
 
 function GenerateChapter(level, title)
 	-- make log title
@@ -574,7 +587,6 @@ function GenerateChapter(level, title)
 		print(sChapterTitle)
 		LOGI("@0")
 	else
-		--local sNum		= "" .. docgen.chapter[1] .. ". "
 		local sSpace	= string.char(0x20):rep(level * 4)
 		print(sSpace .. chapter_num .. " " .. sChapterTitle)
 		
@@ -584,7 +596,7 @@ function GenerateChapter(level, title)
 	reference_id		= 70000000 + (docgen.chapter[1]*1000000) + (docgen.chapter.sid*10)
 	docgen.chapter.sid	= docgen.chapter.sid + 1
 	
-	docgen.bookmark.list[title]	= reference_id
+	docgen.bookmark.Set("Chapter", chapter_num, title, reference_id)
 	
 	local	sTitle	= "<w:p>\
 			<w:pPr>\
@@ -617,14 +629,18 @@ function GenerateCaption(sType, content)
 		content	= sContent.s
 	end
 	
+	local	sNumPart		= ""
+	
 	if sType == "Table" then
 		caption_id				= 20000000 + (docgen.chapter[1]*100000) + (docgen.table.id*10)
+		sNumPart				= tostring(docgen.chapter[0]) .. "-" .. tostring(docgen.table.id)
 		bFirst					= (docgen.table.id == 1)
 		docgen.table.id			= docgen.table.id + 1
 		docgen.table.count		= docgen.table.count + 1
 		sID						= docgen.table.id
 	else
 		caption_id				= 30000000 + (docgen.chapter[1]*100000) + (docgen.figure.id*10)
+		sNumPart				= tostring(docgen.chapter[0]) .. "-" .. tostring(docgen.figure.id)
 		bFirst					= (docgen.figure.id == 1)
 		docgen.figure.id		= docgen.figure.id + 1
 		docgen.figure.count		= docgen.figure.count + 1
@@ -632,7 +648,7 @@ function GenerateCaption(sType, content)
 	end
 	
 	reference_id		= caption_id + 30000000
-	docgen.bookmark.list[content]	= reference_id
+	docgen.bookmark.Set(sType, sNumPart, content, reference_id)
 
 	local sXML = "<w:p>\
 		<w:pPr>\
@@ -2429,15 +2445,15 @@ while true do
 		sTarget:erase(0, 1)
 	end
 	
-	local	bookmark_num	= docgen.bookmark.list[sTarget.s]
+	local	bookmark	= docgen.bookmark.Get(sTarget.s)
 	
-	if bookmark_num == nil then
+	if bookmark == nil then
 		error("bookmark \"" .. sTarget.s .. "\" is not found.")
 	end
 	
 	bookmark_text:Destroy(1)
 	
-	bookmark_node:set_string(" " .. (bPage and "PAGEREF" or "REF") .. " _Ref" .. bookmark_num .. (bNumber and " \\w" or "") .. " \\h ")
+	bookmark_node:set_string(" " .. (bPage and "PAGEREF" or "REF") .. " _Ref" .. bookmark.id .. (bNumber and " \\w" or "") .. " \\h ")
 end
 
 -- 파일 저장
