@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 9/2/2024 Mon (clonextop@gmail.com)
+// Rev.  : 9/3/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #include "DocExcel.h"
 #include "ExcelNumFormat/ExcelNumFormat.h"
@@ -473,9 +473,8 @@ string DocExcelSheet::GetValue(bool bUseMergedData, bool bIgnoreFormat)
 		cstring sFormat = bIgnoreFormat ? "" : GetNumberFormat();
 		sValue			= m_Column.child("v").text().get();
 
-		if (sType == "s") { // string
-			sValue = m_pExcel->GetString(atoi(sValue.c_str()));
-			sValue.ChangeCharsetToANSI();
+		if (sType == "s") {										// string
+			sValue = m_pExcel->GetString(atoi(sValue.c_str())); // utf-8 format
 
 			if (!bIgnoreFormat && !sFormat.IsEmpty() && sFormat != "@") {
 				excel_number_format::ExcelNumFormat num_fmt(sFormat);
@@ -586,7 +585,7 @@ string DocExcelSheet::GetValue(bool bUseMergedData, bool bIgnoreFormat)
 		}
 	}
 
-	return sValue.c_str();
+	return sValue.c_string();
 }
 
 string DocExcelSheet::GetNumberFormat(void)
@@ -1212,13 +1211,20 @@ bool DocExcel::OnOpen(void)
 				if (pTable->bUseDocGenStyle) {
 					DocXML	rPr = node.parent().child("rPr");
 					cstring prefix, postfix;
-					cstring sTok = rPr.child("color").attribute("rgb").as_string();
 
 					// text color
+					cstring sTok = rPr.child("color").attribute("rgb").as_string();
 					if (!sTok.IsEmpty()) {
 						sTok.erase(0, 2); // delete alpha
 						prefix.AppendFormat("@<color:%s>", sTok.c_str());
 						postfix.insert(0, "@</color>");
+					}
+
+					// font
+					sTok = rPr.child("rFont").attribute("val").as_string();
+					if (sTok == "Wingdings") {
+						prefix.AppendFormat("@<font:%s>", sTok.c_str());
+						postfix.insert(0, "@</font>");
 					}
 
 					// bold
@@ -1271,7 +1277,7 @@ bool DocExcel::OnOpen(void)
 				return true;
 			});
 			pTable->sText.Replace("_x000D_", "", true);
-			pTable->table->push_back(pTable->sText.c_str());
+			pTable->table->push_back(pTable->sText.c_string());
 			return true;
 		});
 	}

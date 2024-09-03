@@ -1788,7 +1788,7 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 						<w:tc>\
 							<w:tcPr>\
 								<w:tcW w:w=\"10094\" w:type=\"dxa\"/>\
-								<w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"F8F8F8\" w:themeFill=\"background1\" w:themeFillShade=\"F8\"/>\
+								<w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"F8F8F8\"/>\
 							</w:tcPr>"
 					.. EncodeParagraph(sContent, {pPr=("<w:jc w:val=\"left\"/><w:spacing w:after=\"0\"/>" .. sIndent), rPr="<w:rFonts w:ascii=\"" .. docgen.fixed_font .. "\" w:eastAsia=\"" .. docgen.fixed_font .. "\" w:hAnsi=\"" .. docgen.fixed_font .. "\"/>"}) ..
 					"</w:tc></w:tr></w:tbl>"
@@ -1929,6 +1929,8 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 			local		sBgColor		= ""
 			local		bSize			= false
 			local		iSize			= 0
+			local		bFont			= false
+			local		sFont			= ""
 			sLine.TokenizePos	= 0
 			
 			while sLine.TokenizePos >= 0 do
@@ -1959,7 +1961,7 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 						s_rPr	= s_rPr .. "<w:vertAlign w:val=\"subscript\"/>"
 					end
 					if bFixed then
-						s_rPr	= s_rPr .. "<w:rFonts w:ascii=\"" .. docgen.fixed_font .. "\" w:eastAsia=\"" .. docgen.fixed_font .. "\" w:hAnsi=\"" .. docgen.fixed_font .. "\"/>"
+						s_rPr	= s_rPr .. "<w:rFonts w:ascii=\"" .. docgen.fixed_font .. "\" w:hAnsi=\"" .. docgen.fixed_font .. "\"/>"
 					end
 					if bColor then
 						s_rPr	= s_rPr .. "<w:color w:val=\"" .. sColor .. "\"/>"
@@ -1969,6 +1971,9 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 					end
 					if bSize then
 						s_rPr	= s_rPr .. "<w:sz w:val=\"" .. iSize .. "\"/><w:szCs w:val=\"" .. iSize .. "\"/>"
+					end
+					if bFont then
+						s_rPr	= s_rPr .. "<w:rFonts w:ascii=\"" .. sFont .. "\" w:hAnsi=\"" .. sFont .. "\"/>"
 					end
 					
 					if #s_rPr ~= 0 then
@@ -2042,6 +2047,11 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 							bSize			= bSet
 							if bSet then
 								iSize		= tonumber(sVar:Tokenize(": ").s)
+							end
+						elseif sTag.s == "font" then
+							bFont			= bSet
+							if bSet then
+								sFont			= sVar:Tokenize(": ").s
 							end
 						elseif sTag.s == "img" then
 							local	sFileName	= sVar:Tokenize(";")
@@ -2171,7 +2181,7 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 									sBookmark_rPr	= sBookmark_rPr .. "<w:strike/>"
 								end
 								if bFixed then
-									sBookmark_rPr	= sBookmark_rPr .. "<w:rFonts w:ascii=\"" .. docgen.fixed_font .. "\" w:eastAsia=\"" .. docgen.fixed_font .. "\" w:hAnsi=\"" .. docgen.fixed_font .. "\"/>"
+									sBookmark_rPr	= sBookmark_rPr .. "<w:rFonts w:ascii=\"" .. docgen.fixed_font .. "\" w:hAnsi=\"" .. docgen.fixed_font .. "\"/>"
 								end
 								if bColor then
 									sBookmark_rPr	= sBookmark_rPr .. "<w:color w:val=\"" .. sColor .. "\"/>"
@@ -2181,6 +2191,9 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 								end
 								if bSize then
 									sBookmark_rPr	= sBookmark_rPr .. "<w:sz w:val=\"" .. iSize .. "\"/><w:szCs w:val=\"" .. iSize .. "\"/>"
+								end
+								if bFont then
+									sBookmark_rPr	= sBookmark_rPr .. "<w:rFonts w:ascii=\"" .. sFont .. "\" w:hAnsi=\"" .. sFont .. "\"/>"
 								end
 								
 								if #sBookmark_rPr ~= 0 then
