@@ -42,7 +42,7 @@ Here, only the features added to docgen are explained, and documents can be crea
 
 Lua 에서 사용 가능한 변수 목록은 아래와 같습니다.
 
-@<tbl:media/docgen_variables.xlsx;ko;docgen 변수 목록>
+@<tbl:#media/docgen_variables.xlsx;ko;docgen 변수 목록>
 %%% en
 ## docgen variables
 
