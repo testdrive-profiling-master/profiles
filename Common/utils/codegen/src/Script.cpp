@@ -87,6 +87,18 @@ public:
 	{
 		return cstring::CompareBack(s);
 	}
+	int RetrieveTag(LuaRef t) const
+	{
+		if(t.isTable()) {
+			for(int i=1;;i++) {
+				LuaRef v = t[i];
+				if(!v.isString()) break;
+				if(m_sStr == (string)v)
+					return i;
+			}
+		}
+		return 0;
+	}
 	bool IsEmpty(void) const
 	{
 		return cstring::IsEmpty();
@@ -1404,6 +1416,7 @@ Script::Script(void)
 				.addFunction("Compare", &lua_cstring::Compare)
 				.addFunction("CompareFront", &lua_cstring::CompareFront)
 				.addFunction("CompareBack", &lua_cstring::CompareBack)
+				.addFunction("RetrieveTag", &lua_cstring::RetrieveTag)
 				.addFunction("IsEmpty", &lua_cstring::IsEmpty)
 				.addFunction("CutFront", &lua_cstring::CutFront)
 				.addFunction("CutBack", &lua_cstring::CutBack)

@@ -1548,15 +1548,84 @@ end
 
 local	bInline		= false
 
+-- 한글 접미사 자동 수정
+docgen.hangul					= {}
+docgen.hangul.auto_postfix		= true
+docgen.hangul.postfix_list		= {"을","를","은","는","이","가","와","과"}
+docgen.hangul.postfix_enable	= false
+docgen.hangul.postfix_hint		= nil
+docgen.hangul.postfix_bookmark	= nil
+docgen.hangul.postfix_deferred	= {}		-- 나중을 위한 접미사 리스트
+docgen.hangul.postfix_disable	= function ()
+	docgen.hangul.postfix_enable	= false
+end
+docgen.hangul.postfix_set_hint	= function (s)
+	if docgen.hangul.auto_postfix then
+		docgen.hangul.postfix_hint		= s
+		docgen.hangul.postfix_bookmark	= nil	
+		docgen.hangul.postfix_enable	= true
+	end
+end
+docgen.hangul.postfix_set_bookmark	= function (s)
+	if docgen.hangul.auto_postfix then
+		docgen.hangul.postfix_hint		= nil
+		docgen.hangul.postfix_bookmark	= s	
+		docgen.hangul.postfix_enable	= true
+	end
+end
+-- ASCII 에서의 자음 접미사가 오는 것들 = 밭침이 없는 발음, (대문자는 모두 자음 접미사)
+docgen.hangul.postfix_ascii_vowels		= {}
+docgen.hangul.postfix_ascii_vowels["2"]	= 1
+docgen.hangul.postfix_ascii_vowels["4"]	= 1
+docgen.hangul.postfix_ascii_vowels["5"]	= 1
+docgen.hangul.postfix_ascii_vowels["9"]	= 1
+docgen.hangul.postfix_ascii_vowels["a"]	= 1
+docgen.hangul.postfix_ascii_vowels["e"]	= 1
+docgen.hangul.postfix_ascii_vowels["i"]	= 1
+docgen.hangul.postfix_ascii_vowels["o"]	= 1
+docgen.hangul.postfix_fix = function (sHint, iPostfix)
+	local do_postfix = function(sHint)
+		local s = String(sHint)
+		s:TrimRight(" .")
+		if #s.s > 0 then
+			if string.byte(s.s, #s.s) < 128 then	-- case : ascii
+				s:erase(0, #s.s - 1)
+				if ((string.byte(s.s) >= string.byte("A")) and (string.byte(s.s) >= string.byte("Z"))) or (docgen.hangul.postfix_ascii_vowels[s.s] ~= nil) then
+					return 1
+				end
+				return 0
+			elseif #s.s >= 3 then				-- case : utf-8 (한글 표현 -> 3bytes)
+				s:erase(0, #s.s - 3)			-- 마지막 3글자만 남김 
+				
+				if string.byte(s.s) >= 224 then	-- utf-8 type 임
+					local	ich = ((string.byte(s.s) & 0x1F) << 12) | ((string.byte(s.s, 2) & 0x3F) << 6) | (string.byte(s.s, 3) & 0x3F)
+					
+					if (ich >= 0x3130) and (ich <= 0x318F) then	-- 완성형 자모 표현
+						return (s.s == "ㅇ") and 0 or 1
+					end
+					if (ich >= 0xAC00) and (ich <= 0xD7A3) then	-- 완성형 글자
+						return (((ich - 0xAC00) % 28) ~= 0) and 0 or 1
+					end
+				end
+			end
+		end
+		return -1
+	end
+	
+	local i_val = do_postfix(sHint)
+	
+	if i_val ~= -1 then
+		iPostfix	= (((iPostfix - 1) & 0xFE) + i_val + 1)
+	end
+	
+	return iPostfix
+end
+
 function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 	local	sPara			= String(sText)
 	local	sResult			= String()
 	local	bBypass			= false				-- 내용 무시, docgen.language 일치하지 않음
 	local	bBypassCodeRef	= false				-- code reference in bypass mode
-	
-	if sSourceTarget == "Pragraph_expression.md" then
-		print("")
-	end
 	
 	-- initialize configuration
 	if config == nil then config = {} end
@@ -1731,6 +1800,7 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 				sResult:CutBack("<w:p>", false)
 				-- code type 얻기
 				sLine:CutFront("`", true)
+				sLine:CutBack("//", true)	-- comment out
 				sLine:Trim(" ")
 				sLine:Replace(" ", "", true)	-- 내부 space 모두 제거 "[lua]" 구별을 위해
 				sLine:MakeLower()
@@ -1969,7 +2039,9 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 			local		iSize			= 0
 			local		bFont			= false
 			local		sFont			= ""
-			sLine.TokenizePos	= 0
+			
+			docgen.hangul.postfix_disable()
+			sLine.TokenizePos			= 0
 			
 			while sLine.TokenizePos >= 0 do
 				local	sWord	= sLine:TokenizeVariable("@<*>")
@@ -2016,6 +2088,33 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 					
 					if #s_rPr ~= 0 then
 						sResult:Append("<w:rPr>" .. s_rPr .. "</w:rPr>")
+					end
+					
+					if docgen.hangul.postfix_enable then	-- 한글 접미사 체크
+						local s = String(sWord.s)
+						s:TrimLeft(" }])'\"")
+						s:CutBack(" ", true)
+						local iPostfix	= s:RetrieveTag(docgen.hangul.postfix_list)
+						
+						if iPostfix > 0 then
+							if docgen.hangul.postfix_hint == nil then
+								-- bookmark 에 의한 참조 나중으로 미룸.
+								local	t	= {}
+								t.hint		= docgen.hangul.postfix_bookmark
+								t.iPostfix	= iPostfix
+								docgen.hangul.postfix_deferred[#docgen.hangul.postfix_deferred + 1]	= t
+								
+								sWord:Replace(docgen.hangul.postfix_list[iPostfix], "[[::han_postfix::" .. #docgen.hangul.postfix_deferred .. "]]")
+							else
+								-- 바로 고칠 수 있음
+								local iPostfix_fixed = docgen.hangul.postfix_fix(docgen.hangul.postfix_hint, iPostfix)
+
+								if iPostfix_fixed > 0 and iPostfix_fixed ~= iPostfix then
+									sWord:Replace(docgen.hangul.postfix_list[iPostfix], docgen.hangul.postfix_list[iPostfix_fixed])
+								end
+							end
+						end
+						docgen.hangul.postfix_disable()
 					end
 					
 					sResult:Append("<w:t xml:space=\"preserve\">" .. sWord.s .. "</w:t>")
@@ -2117,6 +2216,7 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 							end
 							
 							sResult:Append(table_wrapper.postfix)
+							docgen.hangul.postfix_disable()
 
 							goto continue
 						elseif sTag.s == "tbl" then
@@ -2156,6 +2256,8 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 							if bUnGroup == false then
 								sResult:Append(table_wrapper.postfix)
 							end
+							docgen.hangul.postfix_disable()
+							
 							goto continue
 						elseif sTag.s == "code" then	-- inline code block
 							if bSet then
@@ -2193,16 +2295,19 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 								end
 								sLine:insert(sLine.TokenizePos, sProperty)
 							end
+							docgen.hangul.postfix_set_hint(sProperty)
 						elseif sTag.s == "bookmark" then
 							local	sBookmark		= sVar:Tokenize("")
 							local	sBookmark_rPr	= ""
 							sBookmark:TrimLeft(" :")
 							sBookmark:TrimRight(" ")
 							local	bAll		= sBookmark:CompareFront("@")
-							if bAll then	-- recursive '#' + 'title'
+							if bAll then	-- recursive '#' + 'title' (number 를 먼저 찍고, 이름을 나중에 또 찍기 위해.)
 								sBookmark:erase(0, 1)
 								sLine:insert(sLine.TokenizePos, ". @<bookmark:" .. sBookmark.s .. ">")
 								sBookmark:insert(0, "#")
+							else
+								docgen.hangul.postfix_set_bookmark(sBookmark.s)
 							end
 							
 							do
@@ -2252,6 +2357,9 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 							sLink:CutFront(":", false)
 							if sComment:Length() == 0 then
 								sComment:Append(sLink.s)
+								docgen.hangul.postfix_set_hint(sLink.s)
+							else
+								docgen.hangul.postfix_set_hint(sComment.s)
 							end
 							sResult:Append("<w:hyperlink r:id=\"" .. docgen.doc:AddHyperlink(sLink.s) .. "\"><w:r>\
 									<w:rPr><w:rStyle w:val=\"af0\"/></w:rPr>\
@@ -2265,8 +2373,10 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 							
 							if type(ReturnCode) == "string" then
 								sLine:insert(sLine.TokenizePos, ReturnCode)
+								docgen.hangul.postfix_set_hint(ReturnCode)
 							else
 								sLine:insert(sLine.TokenizePos, tostring(ReturnCode))
+								docgen.hangul.postfix_set_hint(tostring(ReturnCode))
 							end
 						else
 							error("Can't recognize paragraph command : " .. sTag.s)
@@ -2456,6 +2566,58 @@ while true do
 	bookmark_node:set_string(" " .. (bPage and "PAGEREF" or "REF") .. " _Ref" .. bookmark.id .. (bNumber and " \\w" or "") .. " \\h ")
 end
 
+-- 한글 접미사 수정
+if #docgen.hangul.postfix_deferred > 0 then
+	-- 먼저 올바른 postfix 찾기
+	for i, v in ipairs(docgen.hangul.postfix_deferred) do
+		local	name		= String(v.hint)
+		
+		if name:CompareFront("&") == false then	-- page 는 무시
+			local	bNumber	= name:CompareFront("#")	-- num part 만
+			if bNumber then	
+				name:erase(0, 1)
+			end
+			local	bookmark	= docgen.bookmark.Get(name.s)
+			
+			if bookmark ~= nil then
+				if bookmark.type_part ~= "Chapter" then
+					bNumber	= true
+				end
+				v.iPostfix = docgen.hangul.postfix_fix((bNumber and bookmark.num_part or name.s), v.iPostfix)
+			end
+		end
+	end
+	-- 모두 바꾸기
+	while true do
+		local	text_node	= docgen.doc_body:child_in_depth("w:t", "[[::han_postfix::")
+		
+		if text_node:empty() then
+			break
+		end
+		
+		local s = String(text_node:text())
+		
+		while true do
+			local iStart	= s:find("[[::han_postfix::")
+			local iEnd		= s:find("]]", iStart + 17)
+			if iStart < 0 or iEnd < 0 then
+				break
+			end
+			local	iNum	= tonumber(string.sub(s.s, iStart + 18, iEnd))
+			s:erase(iStart, iEnd - iStart + 2)
+			local	postfix	= docgen.hangul.postfix_deferred[iNum]
+			
+			if postfix == nil then
+				error("Got unexpected error on hangul postfix autofix.")
+			end
+			
+			s:insert(iStart, docgen.hangul.postfix_list[postfix.iPostfix])
+		end
+		
+		text_node:set_string(s.s)
+	end
+end
+
 -- 파일 저장
 do
 	-- 저장 이름 없을 시 생성
@@ -2522,7 +2684,7 @@ do
 	-- 중간 생성 파일들 제거
 	for i=1, #temporary_file_list do
 		os.execute("rm -f \"" .. temporary_file_list[i] .. "\"")
-	end	
+	end
 	
 	if docgen.output_format == nil then
 		LOGI("*0Fields calculation...")
