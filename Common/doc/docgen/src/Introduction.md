@@ -5,7 +5,7 @@
 
 docgen은 템플릿 WORD(.docx) 파일을 참조하여, Markdown + HTML + Lua 스크립트를 통해 새로운 WORD(.docx)와 PDF/HTML/RTF등의 다양한 문서를 생성하는 도구입니다.
 
-:::NoteHeading
+:::Note
 만약 소개 과정을 생략하고 바로 사용하고자 한다면, 반드시 '@<bookmark:@선행 과정>'을 참고하여 진행해 주시기 바랍니다. \
 신규 기능이 필요하거나 개선사항이나 버그를 발견하시면, 정형기(@<link:mailto:clonextop@gmail.com;clonextop@gmail.com>)에게 건의 부탁드리며, 이 문서 또한 docgen으로 작성 및 생성 되었음을 알려드립니다.
 %%% en
@@ -15,7 +15,7 @@ docgen은 템플릿 WORD(.docx) 파일을 참조하여, Markdown + HTML + Lua �
 
 docgen is a tool that refers to a template WORD (.docx) file and creates a new WORD (.docx) and various documents such as PDF/HTML/RTF through Markdown + HTML + Lua script.
 
-:::NoteHeading
+:::Note
 If you want to skip the introduction process and use it right away, please be sure to refer to '@<bookmark:@Prerequisites>'. \
 If you need new features or find improvements or bugs, please make suggestions to Hyunng-Ki Jeong(@<link:mailto:clonextop@gmail.com;clonextop@gmail.com>). Please note that this document was also written and created with docgen.
 %%%
@@ -127,7 +127,7 @@ Usage: docgen  [--help] [-t template] [-i template_desc] [-f format] [-l languag
 '-l' 옵션은 임의의 언어코드를 지정합니다. Lua 에서는 'docgen.language' 변수로 확인할 수 있고, 문장에서는 @<b>'@<bookmark:@문서 활성화>'@</b> 표현식을 사용하여, 원하는 언어 코드를 선택할 수 있습니다.
 '-r' 옵션은 임의의 선행 Lua 코드를 지정합니다. 이 코드는 문서 구조를 변경을 위한 조건을 넣을 수 있습니다.
 
-:::NoteHeading
+:::Note
 기본 설정은 'en'(english) 이며, 이 'language' 설정을 사용하지 않는 문서에는 영향을 주지 않습니다.
 
 %%% en
@@ -140,7 +140,7 @@ The '-f' option specifies saving as a file other than .docx format. You can spec
 The '-l' option specifies an arbitrary language code. In Lua, you can check it with the 'docgen.language' variable, and in sentences, you can use the expression @<b>'@<bookmark:@Document activation>'@</b> to select the desired language code.
 The '-r' option specifies arbitrary preceding Lua code. This code can contain conditions for changing the document structure.
 
-:::NoteHeading
+:::Note
 The default setting is 'en' (english) and will have no effect on documents that do not use this 'language' setting.
 %%%
 ;;;
@@ -235,10 +235,10 @@ If you want to express this in "LaTeX", tab 'Equation/Conversions' on the ribbon
 %%%
 
 %%% ko
-:::NoteHeading
+:::Note
 Microsoft 에서는 현재 이 부분에서 자동 변경 방법을 제공하지 않고 있으며, 왜 변경 기능을 막아놨는지 모르겠음.
 %%% en
-:::NoteHeading
+:::Note
 Microsoft currently does not provide an automatic change method in this area, and I do not know why the change function is blocked.
 %%%
 

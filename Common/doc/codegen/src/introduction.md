@@ -81,7 +81,7 @@ To decrypt the encrypted lua file again, run the command below.
 > codegen -k key_code -d lua_file
 ```
  
-:::NoteHeading
+:::Note
 However, if the password begins with the '@~' character, decryption is not possible and only execution is allowed.
 
  
@@ -92,7 +92,7 @@ You can enter luarocks directly as a command, \
 or use the [@<code>codegen lib@</code>] command. Additionally, \
 a modified [@<code>require@</code>] Lua fuction is provided to enable automatic installation.
 
-:::NoteHeading
+:::Note
 For more information, see '@<bookmark:@Require Lua package library>'.
 
  

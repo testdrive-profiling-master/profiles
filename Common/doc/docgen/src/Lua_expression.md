@@ -66,7 +66,7 @@ docgen.property["Ownership"]				-- 오너쉽 명
 docgen.property["Document_Name_Header"]		-- 해더 이름 (...)
 docgen.property["Water_Mark"]				-- 워터마킹 문구 (생략 가능)
 ```
-:::NoteHeading
+:::Note
 Lua에서 "--" 로 시작하는 문장은 '주석' 표기를 의미합니다. \
 위 속성 이름은 문서에 따라 다를 수 있으며, 위에 나열된 이름들은 기본 TestDrive 문서에 사용된 한 예시이며, \
 "Water_Mark" 를 제외하고 고정된 이름이 아닙니다.
@@ -97,7 +97,7 @@ docgen.property["Ownership"]				-- Ownership name
 docgen.property["Document_Name_Header"]		-- header name (...)
 docgen.property["Water_Mark"]				-- watermarking text (Can be skipped)
 ```
-:::NoteHeading
+:::Note
 Sentences starting with "--" is 'comment' notation in Lua. \
 The above property names may vary across documents, \
 the names listed above are examples used in the default TestDrive document and are not fixed names, except for "Water_Mark".

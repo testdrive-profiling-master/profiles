@@ -17,7 +17,7 @@ and has a function that allows you to check the structured control path as a des
 It can also allow for faster design changes and sharing of designs with other team members.
 
 
-:::NoteHeading
+:::Note
 If you have a new feature to suggest, or find improvements or bugs, please contact me (@<link:mailto:clonextop@gmail.com;clonextop@gmail.com>).
  
 
@@ -60,7 +60,7 @@ Usage: verigen  [--help] input_file [output_path]
                             default : ./output
 ```
 
-:::NoteHeading
+:::Note
 Command : @<fixed>verigen @<color:FF0000>INPUT_LUA_FILE@</color>  @<color:FF0000>OUTPUT_PATH@</color>@</fixed>
  
 A Lua script corresponding to @<color:FF0000>INPUT_LUA_FILE@</color> is created and executed. \

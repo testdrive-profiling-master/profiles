@@ -64,7 +64,7 @@ The resulting design is literally an empty module file, and the hierarchy diagra
 @<b>[Result : test_wrapper_hierarchy.svg]@</b>
 @<img:#media/step1_test_wrapper_hierarchy.svg;0.6;Step #1 Hierarchy Diagram>
 
-:::NoteHeading
+:::Note
 You can view the actual verilog codes by clicking on the module name in this image.
  
 
@@ -172,7 +172,7 @@ test_core test_core_3 (
 );*/
 endmodule
 ```
-:::NoteHeading
+:::Note
 In the code above, since the submodule has no input/output at all, it is commented out to avoid 'DRC (Design Rule Check)' errors.
  
 @<b>[Result : test_wrapper_hierarchy.svg]@</b>
@@ -263,7 +263,7 @@ $add_interface(core_i.inst.modport.m, "ex_inst")
 module core_wb
 $add_interface(core_i.inst.modport.s, "ex_inst")
 ```
-:::NoteHeading
+:::Note
 As above, by declaring 'modport' paired with the name of the same type of interface through the $add_interface() function, \
 the same interfaces declared in two different modules are automatically connected.
 
@@ -300,7 +300,7 @@ $add_interface(bus.maxi4.modport.m, "maxi")
 module reg_ctrl
 $add_interface(core_busy.modport.s)
 ```
-:::NoteHeading
+:::Note
 You can connect directly through the "@<bookmark:module_i:set_param>()" and "@<bookmark:module_i:set_port>()" functions without automatically connecting interfaces or parameters.
 
 After declaring "@<color:0000FF>module@</color> @<color:FF0000><module_name>@</color>"(The use of "@<color:0000FF>endmodule@</color>" can be omitted.) in the added .sv file, the file can be described using both Verilog and Lua grammars. \

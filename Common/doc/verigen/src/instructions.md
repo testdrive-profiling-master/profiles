@@ -113,7 +113,7 @@ interface my_intface;
 	modport m (input a, input  b);		// master modport
 endinterface
 ```
-:::NoteHeading
+:::Note
 A detailed description of the systemverilog interface can be found in external links. \
 See @<link:https://verificationguide.com/systemverilog/systemverilog-modport/;systemverilog modport description>.
  
@@ -720,7 +720,7 @@ assign	E = F;		// ALU's code
 assign	G = H;		// ALU's code
 wire	[15:0]	CORE_SIZE	= $(config.core_size);
 ```
-:::NoteHeading
+:::Note
 You can execute lua code by writing '$(*)' or '${*}' in the middle of verilog code. '$(*)' is a string or number returned code, and '${*}' can describe lua code execution without return.
 
 ;;;

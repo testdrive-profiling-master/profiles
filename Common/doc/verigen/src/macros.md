@@ -26,7 +26,7 @@ assign A = {B[0], B[1], B[2], B[3]};
 
 ## vfunction macro
 @<tbl:media/instruction_macros.xlsx;vfunction>
-:::NoteHeading
+:::Note
 By default, the "_V" macro is declared as vfunction , so you can use the $_V(...) function equivalently within verilog.
  
 ex) vfunction macro example

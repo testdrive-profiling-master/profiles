@@ -6,7 +6,7 @@ Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph 의 인자 @<c
 또한 각 수식은 문단, 표등 문장이 쓰이는 어디서든 동등하게 사용할 수 있습니다. \
 긴 문장을 짧게 여러 줄로 나눌 수 있도록, 문단 내에서 " \"(space + '\') 로 끝날 경우 다음 줄과 자동으로 이어붙입니다.
 
-:::NoteHeading
+:::Note
 Paragraph 표현에 대한 건의 사항이 개선 요청은 언제든지 저에게 연락해 주세요. (@<bookmark:@소개> 참조.)
 %%% en
 # Paragraph expression
@@ -16,7 +16,7 @@ The notation method is a mixture of markdown and some html notation, and it addi
 Additionally, each formula can be used equally wherever sentences are used, such as paragraphs and tables. \
 To allow long sentences to be split into several shorter lines, paragraphs that end with " \ " (space + '\') are automatically connected to the next line.
 
-:::NoteHeading
+:::Note
 If you have any suggestions for paragraph expressions or requests for improvement, please contact me at any time. (Refer to @<bookmark:@Introduction>.)
 %%%
 
@@ -426,7 +426,7 @@ Result : @<size:30>Big text@</size> @<size:10>small text@</size>
 고정폭 글꼴을 사용하기 위해 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'fixed' 태그로 둘러쌓아 표현합니다.
 
  
-:::NoteHeading
+:::Note
 고정폭 폰트는 Lua 의 '@<b>docgen.fixed_font@</b>' 변수로 지정할 수 있으며, 기본 폰트명은 'Cascadia Mono' 입니다.
  
 예)
@@ -441,7 +441,7 @@ Result : @<size:30>Big text@</size> @<size:10>small text@</size>
 To use fixed font, the @<color:FF0000>expression@</color> is surrounded by 'fixed' tags similar to HTML.
 
  
-:::NoteHeading
+:::Note
 Fixed-width fonts can be specified with Lua's '@<b>docgen.fixed_font@</b>' variable, and the default font name is 'Cascadia Mono'.
  
 ex)
@@ -499,22 +499,30 @@ A @<font:Wingdings>à@</font> B
 
 예) 노트 서식을 적용
 ```html
-:::NoteHeading			-- 추가 설명
+:::Note			-- 추가 설명
 민간인과 군인 사망자를 모두 합하여 약 6,000만~7,000만 명에 달하는 사람들이 \ 
 제2차 세계 대전으로 인해 사망했다. \ 
 이 전쟁의 여파로 서구권에서는 그동안 사회 주류였던 집단주의 사상이 쇠퇴하고 \ 
 개인주의 사상이 대두되어 오늘날까지 이어지게 된다.
+:::Warning
+경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!!
+:::Caution
+주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!!
 :::center
 가운데 정렬
 :::right
 오른쪽 정렬
 ```
 결과)
-:::NoteHeading			-- 추가 설명
+:::Note			-- 추가 설명
 민간인과 군인 사망자를 모두 합하여 약 6,000만~7,000만 명에 달하는 사람들이 \
 제2차 세계 대전으로 인해 사망했다. \
 이 전쟁의 여파로 서구권에서는 그동안 사회 주류였던 집단주의 사상이 쇠퇴하고 \
 개인주의 사상이 대두되어 오늘날까지 이어지게 된다.
+:::Warning
+경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!!
+:::Caution
+주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!!
 :::center
 가운데 정렬
 :::right
@@ -532,24 +540,32 @@ If omitted, basically it is considered as two-sided alignment. And you can also 
 
 ex) Apply note style
 ```html
-:::NoteHeading			-- Additional explanation
+:::Note			-- Additional explanation
 Including both civilian and military deaths, an estimated 60 to 70 million \ 
 people died as a result of World War II. \ 
 In the aftermath of this war, collectivistic ideology, which had been \ 
 the mainstream of society, declined in the Western world and individualistic \ 
 ideology emerged, which continues to this day.
+:::Warning
+Keep warning! Keep warning! Keep warning! Keep warning! Keep warning! Keep warning! Keep warning! Keep warning! Keep warning! Keep warning!
+:::Caution
+Keep caution! Keep caution! Keep caution! Keep caution! Keep caution! Keep caution! Keep caution! Keep caution! Keep caution! Keep caution!
 :::center
 center alignment
 :::right
 right alignment
 ```
 Result)
-:::NoteHeading			-- Additional explanation
+:::Note			-- Additional explanation
 Including both civilian and military deaths, an estimated 60 to 70 million \
 people died as a result of World War II. \
 In the aftermath of this war, collectivistic ideology, which had been \
 the mainstream of society, declined in the Western world and individualistic \
 ideology emerged, which continues to this day.
+:::Warning
+Keep warning! Keep warning! Keep warning! Keep warning! Keep warning! Keep warning! Keep warning! Keep warning! Keep warning! Keep warning!
+:::Caution
+Keep caution! Keep caution! Keep caution! Keep caution! Keep caution! Keep caution! Keep caution! Keep caution! Keep caution! Keep caution!
 :::center
 center alignment
 :::right
@@ -808,7 +824,7 @@ You can write this string as a mathematical equation by adding the characters "\
 문장 안에서 인라인 코드를 표현합니다. '코드_형식'은 생략될 수 있으며, 기본 코드 형식은 'cpp' 이고, \
 '@<bookmark:코드 블럭>'에서 지원되는 코드 형식을 동일하게 사용할 수 있습니다.
 
-:::NoteHeading
+:::Note
 Lua 에서 '@<b>docgen.code_format@</b>' 를 지정하여 기본 코드 형식을 변경할 수 있습니다.
 
  
@@ -827,7 +843,7 @@ C 표현의 출력 예는 "@<code>printf("Hello world.");@</code>" 등이 있다
 Statement Represents inline code. 'code_format' can be omitted and, the default code format is 'cpp', \
 and you can use the same code formats supported by '@<bookmark:Code block>'.
 
-:::NoteHeading
+:::Note
 You can change the default code format in Lua by specifying '@<b>docgen.code_format@</b>'.
 
  
@@ -1082,7 +1098,7 @@ Lua 코드 실행의 반환 값이 @<fixed>'true'@</fixed>(boolean) 일 경우, 
 
 만약 언어 코드나 Lua 코드 없이 @<fixed>'%%%'@</fixed> 로 끝났다면, 다음 줄부터 문서 내용이 활성화됩니다.
 
-:::NoteHeading
+:::Note
 언어코드 이름은 대소문자를 구별하며, 언어 코드 이름 뒤에 @<fixed>'-'@</fixed>, @<fixed>'='@</fixed> 또는 @<fixed>'%'@</fixed> 문자들을 나열하여 가독성을 높일 수 있습니다. 기본값은 @<fixed>'en'@</fixed> 을 가집니다. \
 언어코드는 Lua 에서 @<fixed>'docgen.language'@</fixed> 변수로 사용할 수 있습니다.
 
@@ -1105,7 +1121,7 @@ If not same as @<fixed>'true'@</fixed>, the next document contents will be ignor
 
 If it ends with @<fixed>'%%%'@</fixed> without language code or Lua code definition, the document content is activated from the next line.
 
-:::NoteHeading
+:::Note
 Language code names are case-sensitive, and you can improve readability by listing @<fixed>'-'@</fixed>, @<fixed>'='@</fixed>, or @<fixed>'%'@</fixed> characters after the language code name. \
 The default value is @<fixed>'en'@</fixed>. The language code can be used as the @<fixed>'docgen.language'@</fixed> variable in Lua.
 %%%
@@ -1352,7 +1368,7 @@ If the table is too long and you move to the next page, the header is automatica
 표 삽입의 경우 엑셀에서 작상된 내용을 옮겨 넣을 수 있으며, 엑셀상 Merge 된 셀들과 폭은 최대한 동일하게 적용됩니다.
 표의 첫 줄은 상단 제목이며, 하위 데이터 열을 가운데 정렬을 하고자 할 때에는 제목 이름 앞에 '*'문자를 삽입합니다.
 
-:::NoteHeading
+:::Note
 그림 또는 표는 캡션과 분리되어 표시되지 않도록, 기본적으로 캡션과 하나의 객체로 묶여 있습니다. \
 때문에 남은 페이지 영역에 한번에 표시할 수 없을 때, 다음 페이지에 표시됩니다. \
 그러나 매우 긴 표의 경우, 앞의 여분의 빈 공간이 어색해 보일 수 있습니다. \
@@ -1383,7 +1399,7 @@ If the table is too long and you move to the next page, the header is automatica
 In the case of inserting a table, you can move the content created in Excel, and the width will be the same as possible for the cells merged in Excel.
 The first line of the table is the top title, and when you want to align lower data columns in the center, insert the character '*' front of the title name.
 
-:::NoteHeading
+:::Note
 Figures or tables are basically grouped together with captions as one object so that they are not displayed separately from the caption. \
 Therefore, when they cannot be displayed at once in the remaining page area, they are displayed on the next page. \
 However, for very long tables, the extra blank space at the beginning can look awkward. \

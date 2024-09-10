@@ -14,7 +14,7 @@ Implement as follows using the [@<code>os.require@</code>] function.
 os.require("mingw-w64-ucrt-x86_64-opencv")	-- == os.require_library("opencv")
 os.require("git")	-- Verify installation of "git", and try to install if not
 ```
-:::NoteHeading
+:::Note
 The library you install must be the UCRT(Universal C RunTime) version. \
 If you use the [@<code>os.require_library@</code>] function, prefix "mingw-w64-ucrt-x86_64-" is automatically added to the library name.
 
@@ -72,7 +72,7 @@ it will be automatically installed as follows if it does not exist.
 ```lua
 local socket = require("socket", "luasocket")
 ```
-:::NoteHeading
+:::Note
 The module name and its package name may be different.
  
 @<b>[Console]@</b>
@@ -139,5 +139,5 @@ luasocket-unix
    2.0.2-1 (rockspec) - https://luarocks.org
    2.0.2-1 (src) - https://luarocks.org
 ```
-:::NoteHeading
+:::Note
 To see the names of all installable Lua packages, use the [@<code>codegen lib search --all@</code>] command.
