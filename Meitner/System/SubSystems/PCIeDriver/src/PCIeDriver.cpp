@@ -31,11 +31,15 @@
 // OF SUCH DAMAGE.
 //
 // Title : Driver(PCIe) sub-system
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 9/10/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #include "PCIeDriver.h"
 #include "DriverCommand.h"
 #include <assert.h>
+#include <mutex>
+
+static std::mutex __IolLock;
+#define IO_LOCK const std::lock_guard<std::mutex> lock(__IolLock);
 
 DECLARE_NATIVE_DRIVER(PCIeDriver)
 
@@ -69,31 +73,34 @@ bool PCIeDriver::Initialize(const char *sDeviceName)
 			return false;
 		}
 
-		if (DeviceIoControl(
-				m_hDriver, IOCTL_COMMAND_INFOMATION, &info, sizeof(TD_DRIVER_INFO), &info, sizeof(TD_DRIVER_INFO), &dwReadSize, NULL)) {
-			printf("* PCIe Device Driver connection details.\n");
-			printf("\t> Driver version : %d.%d (build %d)\n", info.version.major, info.version.minor, info.version.build);
+		{
+			IO_LOCK
+			if (DeviceIoControl(
+					m_hDriver, IOCTL_COMMAND_INFOMATION, &info, sizeof(TD_DRIVER_INFO), &info, sizeof(TD_DRIVER_INFO), &dwReadSize, NULL)) {
+				printf("* PCIe Device Driver connection details.\n");
+				printf("\t> Driver version : %d.%d (build %d)\n", info.version.major, info.version.minor, info.version.build);
 
-			if (info.version.major != TESTDRIVE_PCIE_DRIVER_VERSION_MAJOR || info.version.minor != TESTDRIVE_PCIE_DRIVER_VERSION_MINOR) {
-				printf(
-					"*E: Driver version does not matched, this reference driver version = %d.%d\n", TESTDRIVE_PCIE_DRIVER_VERSION_MAJOR,
-					TESTDRIVE_PCIE_DRIVER_VERSION_MINOR);
-				return false;
+				if (info.version.major != TESTDRIVE_PCIE_DRIVER_VERSION_MAJOR || info.version.minor != TESTDRIVE_PCIE_DRIVER_VERSION_MINOR) {
+					printf(
+						"*E: Driver version does not matched, this reference driver version = %d.%d\n", TESTDRIVE_PCIE_DRIVER_VERSION_MAJOR,
+						TESTDRIVE_PCIE_DRIVER_VERSION_MINOR);
+					return false;
+				}
+
+				printf("\t> PCIe Cards connection list.\n");
+
+				for (int i = 0; i < info.card_count; i++) {
+					SetCurrentCard(i);
+					printf(
+						"\t\t #%d/%d Card : Main-System(VID:0x%04X,DID:0x%04X), Sub-System(VID:0x%04X,DID:0x%04X), PCIe %d.0 - %d Lanes\n",
+						i + 1, info.card_count, info.device[i].id.main.vendor, info.device[i].id.main.device, info.device[i].id.sub.vendor,
+						info.device[i].id.sub.device, info.device[i].pcie.gen, info.device[i].pcie.lanes);
+				}
+
+				printf("\n");
+				SetCurrentCard(0);
+				m_dwCardCount = info.card_count;
 			}
-
-			printf("\t> PCIe Cards connection list.\n");
-
-			for (int i = 0; i < info.card_count; i++) {
-				SetCurrentCard(i);
-				printf(
-					"\t\t #%d/%d Card : Main-System(VID:0x%04X,DID:0x%04X), Sub-System(VID:0x%04X,DID:0x%04X), PCIe %d.0 - %d Lanes\n", i + 1,
-					info.card_count, info.device[i].id.main.vendor, info.device[i].id.main.device, info.device[i].id.sub.vendor,
-					info.device[i].id.sub.device, info.device[i].pcie.gen, info.device[i].pcie.lanes);
-			}
-
-			printf("\n");
-			SetCurrentCard(0);
-			m_dwCardCount = info.card_count;
 		}
 
 		return true;
@@ -128,7 +135,10 @@ void PCIeDriver::RegWrite(uint64_t ulAddress, uint32_t dwData)
 	reg_transaction.is_write	= 1;
 	reg_transaction.phy_address = ulAddress;
 	reg_transaction.reg_data	= dwData;
-	DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_REG, &reg_transaction, sizeof(TD_TRANSACTION_REG), NULL, 0, &dwReadSize, NULL);
+	{
+		IO_LOCK
+		DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_REG, &reg_transaction, sizeof(TD_TRANSACTION_REG), NULL, 0, &dwReadSize, NULL);
+	}
 }
 
 uint32_t PCIeDriver::RegRead(uint64_t ulAddress)
@@ -140,9 +150,12 @@ uint32_t PCIeDriver::RegRead(uint64_t ulAddress)
 	reg_transaction.is_write	= 0;
 	reg_transaction.phy_address = ulAddress;
 	reg_transaction.reg_data	= 0;
-	DeviceIoControl(
-		m_hDriver, IOCTL_COMMAND_TRANSACTION_REG, &reg_transaction, sizeof(TD_TRANSACTION_REG), &reg_transaction.reg_data, sizeof(uint32_t),
-		&dwReadSize, NULL);
+	{
+		IO_LOCK
+		DeviceIoControl(
+			m_hDriver, IOCTL_COMMAND_TRANSACTION_REG, &reg_transaction, sizeof(TD_TRANSACTION_REG), &reg_transaction.reg_data, sizeof(uint32_t),
+			&dwReadSize, NULL);
+	}
 	return reg_transaction.reg_data;
 }
 
@@ -163,7 +176,10 @@ void PCIeDriver::MemoryWrite(NativeMemory *pNative, uint64_t ulAddress, uint64_t
 		TranDMA.phy_address.addr64 = ulAddress;
 		TranDMA.offset			   = ulOffset;
 		TranDMA.size			   = dwByteSize;
-		DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_DMA, &TranDMA, sizeof(TD_TRANSACTION_DMA), NULL, 0, &dwReadSize, &OverlappedIO);
+		{
+			IO_LOCK
+			DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_DMA, &TranDMA, sizeof(TD_TRANSACTION_DMA), NULL, 0, &dwReadSize, &OverlappedIO);
+		}
 		WaitForSingleObject(OverlappedIO.hEvent, INFINITE);
 		CloseHandle(OverlappedIO.hEvent);
 	}
@@ -186,7 +202,10 @@ void PCIeDriver::MemoryRead(NativeMemory *pNative, uint64_t ulAddress, uint64_t 
 		TranDMA.phy_address.addr64 = ulAddress;
 		TranDMA.offset			   = ulOffset;
 		TranDMA.size			   = dwByteSize;
-		DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_DMA, &TranDMA, sizeof(TD_TRANSACTION_DMA), NULL, 0, &dwReadSize, &OverlappedIO);
+		{
+			IO_LOCK
+			DeviceIoControl(m_hDriver, IOCTL_COMMAND_TRANSACTION_DMA, &TranDMA, sizeof(TD_TRANSACTION_DMA), NULL, 0, &dwReadSize, &OverlappedIO);
+		}
 		WaitForSingleObject(OverlappedIO.hEvent, INFINITE);
 		CloseHandle(OverlappedIO.hEvent);
 	}
@@ -198,7 +217,10 @@ void PCIeDriver::MemoryCreate(NativeMemory *pNative, uint64_t ulByteSize, uint64
 	TD_DMA_MEMORY *pDma = new TD_DMA_MEMORY;
 	memset(pDma, 0, sizeof(TD_DMA_MEMORY));
 	pDma->byte_size = ulByteSize;
-	DeviceIoControl(m_hDriver, IOCTL_COMMAND_DMA_ALLOC, pDma, sizeof(TD_DMA_MEMORY), pDma, sizeof(TD_DMA_MEMORY), &dwReadSize, NULL);
+	{
+		IO_LOCK
+		DeviceIoControl(m_hDriver, IOCTL_COMMAND_DMA_ALLOC, pDma, sizeof(TD_DMA_MEMORY), pDma, sizeof(TD_DMA_MEMORY), &dwReadSize, NULL);
+	}
 
 	if (!pDma->vir_addr.pointer) {
 		delete pDma;
@@ -215,7 +237,10 @@ void PCIeDriver::MemoryFree(NativeMemory *pNative)
 	TD_DMA_MEMORY *pDma = (TD_DMA_MEMORY *)(pNative->pDriver);
 
 	if (pDma) {
-		DeviceIoControl(m_hDriver, IOCTL_COMMAND_DMA_FREE, pDma, sizeof(TD_DMA_MEMORY), pDma, sizeof(TD_DMA_MEMORY), &dwReadSize, NULL);
+		{
+			IO_LOCK
+			DeviceIoControl(m_hDriver, IOCTL_COMMAND_DMA_FREE, pDma, sizeof(TD_DMA_MEMORY), pDma, sizeof(TD_DMA_MEMORY), &dwReadSize, NULL);
+		}
 		delete pDma;
 		pNative->pDriver = NULL;
 		pNative->pMem	 = NULL;
@@ -225,14 +250,20 @@ void PCIeDriver::MemoryFree(NativeMemory *pNative)
 void PCIeDriver::InterruptLock(void)
 {
 	DWORD dwReadSize, dwIntrFlags;
-	DeviceIoControl(m_hDriver, IOCTL_COMMAND_INTERRUPT_LOCK, NULL, 0, &dwIntrFlags, sizeof(uint32_t), &dwReadSize, &m_OverlappedIO);
+	{
+		IO_LOCK
+		DeviceIoControl(m_hDriver, IOCTL_COMMAND_INTERRUPT_LOCK, NULL, 0, &dwIntrFlags, sizeof(uint32_t), &dwReadSize, &m_OverlappedIO);
+	}
 	WaitForSingleObject(m_OverlappedIO.hEvent, INFINITE);
 }
 
 void PCIeDriver::InterruptFree(void)
 {
 	DWORD dwReadSize;
-	DeviceIoControl(m_hDriver, IOCTL_COMMAND_INTERRUPT_FREE, NULL, 0, NULL, 0, &dwReadSize, NULL);
+	{
+		IO_LOCK
+		DeviceIoControl(m_hDriver, IOCTL_COMMAND_INTERRUPT_FREE, NULL, 0, NULL, 0, &dwReadSize, NULL);
+	}
 }
 
 uint32_t PCIeDriver::Command(void *pCommand)
