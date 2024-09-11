@@ -25,6 +25,7 @@ docgen.table_content			= {}
 docgen.table_content.height		= 0						-- default auto
 docgen.table_content.scale		= 1.0					-- table scale
 
+docgen.libreoffice				= {}
 
 -- check installed document template
 docgen.installed_template	= {}
@@ -707,7 +708,7 @@ function GenerateFigure(sFileName, fRatio)
 		sPageName:Trim(" ")
 		sPageName	= sPageName.s
 
-		if sFileName:CompareBack(".vsd") or sFileName:CompareBack(".vsdx") then
+		if sFileName:CompareBack(".vsd") or sFileName:CompareBack(".vsdx") then	-- visio
 			-- convert visio to svg
 			os.execute("vsd2svg \"" .. sFileName.s .. "\" \"" .. sPageName .. "\"")
 			
@@ -731,6 +732,15 @@ function GenerateFigure(sFileName, fRatio)
 			else
 				temporary_file_list[#temporary_file_list + 1]		= sFileName.s	-- clean up list.
 			end
+		elseif sFileName:CompareBack(".odg") then	-- libreoffice draw
+			-- convert odg to svg
+			os.execute("odg2svg \"" .. sFileName.s .. "\" \"" .. sPageName .. "\"")
+			
+			if #sPageName ~= 0 then
+				sFileName:Append("." .. sPageName)
+			end
+			sFileName:Append(".svg")
+			
 		elseif sFileName:CompareBack(".xls") or sFileName:CompareBack(".xlsx") then
 			-- convert Excel chart to svg
 			if #sPageName == 0 then

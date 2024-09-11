@@ -1243,9 +1243,9 @@ Script::Script(void)
 				.addFunction("Put", &TextFile::Puts)
 				.addFunction("Get", &TextFile::Gets)
 				.addFunction(
-					"GetAll", std::function<string(TextFile * pFile, bool bUseComment)>([](TextFile *pFile, bool bUseComment) -> string {
+					"GetAll", std::function<string(TextFile * pFile, LuaRef bUseComment)>([](TextFile *pFile, LuaRef bUseComment) -> string {
 						cstring sContents;
-						pFile->GetAll(sContents, bUseComment);
+						pFile->GetAll(sContents, bUseComment.isBool() ? (bool)bUseComment : false);
 						return sContents.c_string();
 					}))
 				.addFunction("LineNumber", &TextFile::LineNumber)
