@@ -1,8 +1,10 @@
 #-------------------------------------------------
 #	Toolchain.
 #-------------------------------------------------
-ifndef CROSS
-CROSS		:= x86_64-w64-mingw32-
+ifeq ($(OS),Windows_NT)
+	ifndef CROSS
+	CROSS		:= x86_64-w64-mingw32-
+	endif
 endif
 
 ifeq ($(MAIN_COMPILER), clang)

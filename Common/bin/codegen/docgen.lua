@@ -1826,8 +1826,10 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 				while sPara.TokenizePos >= 0 do
 					sLine	= line.get()
 					if sLine:CompareFront("```") then
-						sLine:Trim(" \t")
-						if sLine.s ~= "```" then
+						local s = String(sLine.s)
+						s:CutFront("`", true)
+						s:Trim(" \t")
+						if s:IsEmpty() == false then
 							error("Not a end of code reference.")
 						end
 						break
