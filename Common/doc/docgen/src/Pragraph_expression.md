@@ -82,11 +82,11 @@ Up to 6 levels can be used.
 **** 네번째 #2 요소
 **** >네번째 #2 요소 확장
 **** @<b>@<color:FF0000>목록@</color>(目錄, List)@</b>은 사람의 이름이나 물품의 이름, 책 제목, 목차, 점검 해야할 항목 따위를 일정한 기준과 순서로 적어 알아보기 쉽도록 만든 것을 이르는 말이다.
-* >1). 첫번째 번호 요소
-** >1-1). 두번째 번호 요소
-* >2). 첫번째 번호 요소
-** >2-1). 첫번째 번호 요소
-*** >표식 없는 요소 연장 단락
+*> 1) 첫번째 번호 요소
+**> 1-1) 두번째 번호 요소
+*> 2) 첫번째 번호 요소
+**> 2-1) 첫번째 번호 요소
+***> 표식 없는 요소 연장 단락
 ```
 결과)
 * 첫번째 요소
@@ -96,11 +96,11 @@ Up to 6 levels can be used.
 **** 네번째 #2 요소
 **** >네번째 #2 요소 확장
 **** @<b>@<color:FF0000>목록@</color>(目錄, List)@</b>은 사람의 이름이나 물품의 이름, 책 제목, 목차, 점검 해야할 항목 따위를 일정한 기준과 순서로 적어 알아보기 쉽도록 만든 것을 이르는 말이다.
-* >1). 첫번째 번호 요소
-** >1-1). 두번째 번호 요소
-* >2). 첫번째 번호 요소
-** >2-1). 첫번째 번호 요소
-*** >표식 없는 요소 연장 단락
+*> 1) 첫번째 번호 요소
+**> 1-1) 두번째 번호 요소
+*> 2) 첫번째 번호 요소
+**> 2-1) 첫번째 번호 요소
+***> 표식 없는 요소 연장 단락
 %%% en
 ## Cataloging
 
@@ -123,11 +123,11 @@ ex)
 **** fourth #2 element
 **** >fourth #2 element extension
 **** @<b>@<color:FF0000>Cataloging@</color>(目錄, List)@</b> refers to writing down names of people, names of products, book titles, tables of contents, and items to be checked in a certain standard and order to make them easier to read.
-* >1). first number element
-** >1-1). second number element
-* >2). first number element
-** >2-1). second number element
-*** >Unmarked Element Extended element
+*> 1) first number element
+**> 1-1) second number element
+*> 2) first number element
+**> 2-1) second number element
+***> Unmarked Element Extended element
 ```
 Result)
 * first element
@@ -137,11 +137,11 @@ Result)
 **** fourth #2 element
 **** >fourth #2 element extension
 **** @<b>@<color:FF0000>Cataloging@</color>(目錄, List)@</b> refers to writing down names of people, names of products, book titles, tables of contents, and items to be checked in a certain standard and order to make them easier to read.
-* >1). first number element
-** >1-1). second number element
-* >2). first number element
-** >2-1). second number element
-*** >Unmarked Element Extended element
+*> 1) first number element
+**> 1-1) second number element
+*> 2) first number element
+**> 2-1) second number element
+***> Unmarked Element Extended element
 %%%
 
 
@@ -488,10 +488,16 @@ A @<font:Wingdings>à@</font> B
  
 %%% ko
 ### 문단 스타일
-@<size:30>@<b>표현식 : :::@<color:FF0000>스타일_이름[,정렬]@</color>@</b>@</size>
+@<size:30>@<b>표현식 : :::@<color:FF0000>스타일_이름@</color>,@<color:FF0000>정렬@</color>@</b>@</size>
+
+Microsoft 워드에는 아래와 같이 자신이 원하는 스타일 서식을 추가/수정할 수 있습니다. \
+docgen에서는 템플릿 문서에 존재하는 스타일 서식들을 문단 단위로 적용할 수 있습니다. \
+다시 말해, 사용자가 원하는 다양한 스타일 서식을 생성/적용 가능하다는 의미입니다.
+
+@<img:media/text_style.png;0.6;워드의 텍스트 스타일 수정>
 
 다음 줄의 문단 스타일을 '@<color:FF0000>스타일_이름@</color>'로 변경합니다. 한 줄에 대해서만 스타일이 변경되며, \
-다음 라인에 대해서는 원래의 스타일 서식으로 다시 돌아갑니다.
+다음 라인에 대해서는 표준 스타일 서식으로 다시 돌아갑니다.
 스타일 서식은 초기 템플릿 WORD 문서에 지정된 스타일이 참조되어 구현되며, WORD 상에 '텍스트 스타일'로 검색하여 변경 및 추가할 수 있습니다. \
 스타일 이름에 탭 문자나 "//", "--" 또는 ";" 문자 뒤의 내용은 무시됩니다. 스타일 이름이 아닌 스타일 ID 를 입력하여도 상관 없습니다.
 '@<color:FF0000>정렬@</color>'은 '@<code>left@</code>', '@<code>right@</code>', '@<code>center@</code>' 중에 하나를 선택할 수 있으며, \
@@ -504,12 +510,16 @@ A @<font:Wingdings>à@</font> B
 제2차 세계 대전으로 인해 사망했다. \ 
 이 전쟁의 여파로 서구권에서는 그동안 사회 주류였던 집단주의 사상이 쇠퇴하고 \ 
 개인주의 사상이 대두되어 오늘날까지 이어지게 된다.
+ 
 :::Warning
 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!!
+ 
 :::Caution
 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!!
+ 
 :::center
 가운데 정렬
+ 
 :::right
 오른쪽 정렬
 ```
@@ -519,20 +529,30 @@ A @<font:Wingdings>à@</font> B
 제2차 세계 대전으로 인해 사망했다. \
 이 전쟁의 여파로 서구권에서는 그동안 사회 주류였던 집단주의 사상이 쇠퇴하고 \
 개인주의 사상이 대두되어 오늘날까지 이어지게 된다.
+ 
 :::Warning
 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!! 경고!!!!!!
+ 
 :::Caution
 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!! 주의!!!!!!
+ 
 :::center
 가운데 정렬
+ 
 :::right
 오른쪽 정렬
 %%% en
 ### Paragraph style
-@<size:30>@<b>Expression : :::@<color:FF0000>style_name[,alignment]@</color>@</b>@</size>
+@<size:30>@<b>Expression : :::@<color:FF0000>style_name@</color>,@<color:FF0000>alignment@</color>@</b>@</size>
+
+In Microsoft Word, you can add/edit your own style formats as shown below. \
+In docgen, you can apply the style formats that exist in the template document to paragraph units. \
+In other words, it means that users can create/apply various style formats they want.
+
+@<img:media/text_style_en.png;0.6;Word's text style modification>
 
 Change the paragraph style of the next line to '@<color:FF0000>style_name@</color>'. \
-The style changes for only one line, and reverts to the original style formatting for the next line. \
+The style changes for only one line, and reverts to the default style formatting for the next line. \
 Style formatting is implemented by referencing the style specified in the initial template WORD document, and can be changed or added by searching for 'text style' in WORD. \
 Style names include tab characters, "//", "--", or ";" Anything after the character is ignored. It doesn't matter if you enter the style ID rather than the style name.
 '@<color:FF0000>alignment@</color>' can be one of '@<code>left@</code>', '@<code>right@</code>', '@<code>center@</code>', and \
@@ -546,12 +566,16 @@ people died as a result of World War II. \
 In the aftermath of this war, collectivistic ideology, which had been \ 
 the mainstream of society, declined in the Western world and individualistic \ 
 ideology emerged, which continues to this day.
+ 
 :::Warning
 Keep warning! Keep warning! Keep warning! Keep warning! Keep warning! Keep warning! Keep warning! Keep warning! Keep warning! Keep warning!
+ 
 :::Caution
 Keep caution! Keep caution! Keep caution! Keep caution! Keep caution! Keep caution! Keep caution! Keep caution! Keep caution! Keep caution!
+ 
 :::center
 center alignment
+ 
 :::right
 right alignment
 ```
@@ -562,12 +586,16 @@ people died as a result of World War II. \
 In the aftermath of this war, collectivistic ideology, which had been \
 the mainstream of society, declined in the Western world and individualistic \
 ideology emerged, which continues to this day.
+ 
 :::Warning
 Keep warning! Keep warning! Keep warning! Keep warning! Keep warning! Keep warning! Keep warning! Keep warning! Keep warning! Keep warning!
+ 
 :::Caution
 Keep caution! Keep caution! Keep caution! Keep caution! Keep caution! Keep caution! Keep caution! Keep caution! Keep caution! Keep caution!
+ 
 :::center
 center alignment
+ 
 :::right
 right alignment
 %%%
@@ -819,13 +847,14 @@ You can write this string as a mathematical equation by adding the characters "\
 %%% ko
 ## 인라인 코드 블럭
 
-@<size:30>@<b>표현식 : @@<code[:@<color:FF0000>코드_형식@</color>]>@<color:FF0000>인라인_코드@</color>@@</code>@</b>@</size>
+@<size:30>@<b>표현식 : @@<code:@<color:FF0000>코드_형식@</color>>@<color:FF0000>인라인_코드@</color>@@</code>@</b>@</size>
 
-문장 안에서 인라인 코드를 표현합니다. '코드_형식'은 생략될 수 있으며, 기본 코드 형식은 'cpp' 이고, \
+문장 안에서 인라인 코드를 표현합니다. '@<b>코드_형식@</b>'은 생략 가능하며, \
 '@<bookmark:코드 블럭>'에서 지원되는 코드 형식을 동일하게 사용할 수 있습니다.
 
 :::Note
-Lua 에서 '@<b>docgen.code_format@</b>' 를 지정하여 기본 코드 형식을 변경할 수 있습니다.
+Lua 변수 '@<fixed>docgen.code_format@</fixed>'를 통해, 기본 코드 형식을 변경할 수 있습니다. \
+초기값은 '@<fixed>cpp@</fixed>' 입니다.
 
  
 예)
@@ -838,13 +867,14 @@ C 표현의 출력 예는 "@<code>printf("Hello world.");@</code>" 등이 있다
 %%% en
 ## Inline code block
 
-@<size:30>@<b>Expression : @@<code[:@<color:FF0000>code_format@</color>]>@<color:FF0000>inline_code@</color>@@</code>@</b>@</size>
+@<size:30>@<b>Expression : @@<code:@<color:FF0000>code_format@</color>>@<color:FF0000>inline_code@</color>@@</code>@</b>@</size>
 
-Statement Represents inline code. 'code_format' can be omitted and, the default code format is 'cpp', \
+Statement Represents inline code. '@<b>code_format@</b>' can be omitted and, the default code format is '@<fixed>cpp@</fixed>', \
 and you can use the same code formats supported by '@<bookmark:Code block>'.
 
 :::Note
-You can change the default code format in Lua by specifying '@<b>docgen.code_format@</b>'.
+You can change the default code format in Lua by specifying '@<fixed>docgen.code_format@</fixed>'. \
+Initial value of code format is '@<fixed>cpp@</fixed>'.
 
  
 ex)
@@ -862,19 +892,21 @@ Examples of output from C expressions is "@<code>printf("Hello world.");@</code>
 %%% ko
 ## 코드 블럭
 
-@<size:30>@<b>표현식 : ```@<color:FF0000>코드_형식@</color>@</b>@</size>
-@<size:30>@<b>        @<color:FF0000>코드_내용@</color>@</b>@</size>
+@<size:30>@<b>표현식 : ```@<color:FF0000>코드_형식@</color>:@<color:FF0000>헤더@</color>@</b>@</size>
+@<size:30>@<b>        @<color:FF0000>코드_내용@</color> ...@</b>@</size>
 @<size:30>@<b>        ```@</b>@</size>
 
-@<color:FF0000>코드_형식@</color> 의 경우 아래와 같이 @<fixed>"code_highlighter -l"@</fixed> 명령어 입력을 통해 아래와 같이 지원하는 코드 형식을 확인 할 수 있습니다.
+@<color:FF0000>코드_형식@</color>의 경우 아래와 같이 @<fixed>"code_highlighter -l"@</fixed> 명령어 입력을 통해 아래와 같이 지원하는 코드 형식을 확인 할 수 있습니다. \
+@<color:FF0000>헤더@</color>는 @<color:FF0000>코드_내용@</color> 위에 문구를 삽입하기 위해 사용되며 생략 가능합니다.
 %%% en
 ## Code block
 
-@<size:30>@<b>Expression : ```@<color:FF0000>code_format@</color>@</b>@</size>
-@<size:30>@<b>             @<color:FF0000>code_contents@</color>@</b>@</size>
+@<size:30>@<b>Expression : ```@<color:FF0000>code_format@</color>:@<color:FF0000>header@</color>@</b>@</size>
+@<size:30>@<b>             @<color:FF0000>code_contents@</color> ...@</b>@</size>
 @<size:30>@<b>             ```@</b>@</size>
 
-In the case of @<color:FF0000>code_format@</color>, you can check the supported code formats by entering the @<fixed>"code_highlighter -l"@</fixed> command as shown below.
+In the case of @<color:FF0000>code_format@</color>, you can check the supported code formats by entering the @<fixed>"code_highlighter -l"@</fixed> command as shown below. \
+@<color:FF0000>header@</color> is used to insert text above the @<color:FF0000>code_contents@</color> and can be omitted.
 %%%
 
 ```bash
@@ -902,51 +934,25 @@ In the case of @<color:FF0000>code_format@</color>, you can check the supported 
 ```
 
 %%% ko
-아래는 verilog 코드를 인용하는 예를 나타낸다. 인용시 "```" 문자열을 사용하려면, "@```" 로 표기하여 인용할 수 있으며, 코드에 라인 번호를 삽입하려면 '#' 를 붙여 "@<color:0000FF>#@</color>@<color:FF0000>코드_형식@</color>"으로 표기할 수 있습니다.
+아래는 'C' 코드를 인용하는 예를 나타낸다. 인용시 "```" 문자열을 사용하려면, "@```" 로 표기하여 인용할 수 있으며, \
+코드에 라인 번호를 삽입하려면 '#' 를 붙여 "@<color:0000FF>#@</color>@<color:FF0000>코드_형식@</color>"으로 표기할 수 있습니다.
 
-예) 라인 번호가 있는 verilog 코드 블럭
+예) 라인 번호가 있는 'C' 코드 블럭
 %%% en
-Below is an example of quoting verilog code. To use the string "```" when quoting, you can quote it by writing "@```". To insert a line number in the code, you can add '#' and quote it like this: "@<color:0000FF>#@</color It can be expressed as ">@<color:FF0000>code_format@</color>".
+Below is an example of quoting 'C' code. To use the string "```" when quoting, you can quote it by writing "@```". \
+To insert a line number in the code, you can add '#' and quote it like this: "@<color:0000FF>#@</color>@<color:FF0000>code_format@</color>".
 
-ex) Verilog Code block with line numbers
+ex) 'C' Code block with line numbers
 %%%
 
 ```txt
-@```#verilog
-`ifndef __TESTDRIVE_SRAM_SINGLE_V__
-`define __TESTDRIVE_SRAM_SINGLE_V__
-`timescale 1ns/1ns
+@```#C : @<color:FF0000>[@</color>main.cpp@<color:FF0000>]@</color>
+#include <stdio.h>
 
-module SRAM_Single #(
-	parameter	ADDR_WIDTH			= 4,
-	parameter	DATA_WIDTH			= 4
-) (
-	// System
-	input							CLK,			// clock
-	// SRAM interface
-	input							nCE,			// Chip enable (active low)
-	input							nWE,			// write enable (active low)
-	input	[(ADDR_WIDTH-1):0]		ADDR,			// address
-	input	[(DATA_WIDTH-1):0]		DIN,			// input data
-	output	reg [(DATA_WIDTH-1):0]	DOUT			// output data
-);
-// synopsys template
-
-// definition & assignment ---------------------------------------------------
-reg		[(DATA_WIDTH-1):0]		mem[(2**ADDR_WIDTH)-1:0];
-
-// implementation ------------------------------------------------------------
-always@(posedge CLK) begin
-	if(!nCE) begin
-		if(!nWE)
-			mem[ADDR]	<= DIN;
-		DOUT	<= mem[ADDR];
-	end
-end
-
-endmodule
-
-`endif//__TESTDRIVE_SRAM_SINGLE_V__
+int main(int argc, const char* argv[]) {
+	printf("Hello World.\n");
+	return 0;
+}
 @```
 ```
 
@@ -956,41 +962,13 @@ endmodule
 Result)
 %%%
 
-```#verilog
-`ifndef __TESTDRIVE_SRAM_SINGLE_V__
-`define __TESTDRIVE_SRAM_SINGLE_V__
-`timescale 1ns/1ns
+```#C : @<color:FF0000>[@</color>main.cpp@<color:FF0000>]@</color>
+#include <stdio.h>
 
-module SRAM_Single #(
-	parameter	ADDR_WIDTH			= 4,
-	parameter	DATA_WIDTH			= 4
-) (
-	// System
-	input							CLK,			// clock
-	// SRAM interface
-	input							nCE,			// Chip enable (active low)
-	input							nWE,			// write enable (active low)
-	input	[(ADDR_WIDTH-1):0]		ADDR,			// address
-	input	[(DATA_WIDTH-1):0]		DIN,			// input data
-	output	reg [(DATA_WIDTH-1):0]	DOUT			// output data
-);
-// synopsys template
-
-// definition & assignment ---------------------------------------------------
-reg		[(DATA_WIDTH-1):0]		mem[(2**ADDR_WIDTH)-1:0];
-
-// implementation ------------------------------------------------------------
-always@(posedge CLK) begin
-	if(!nCE) begin
-		if(!nWE)
-			mem[ADDR]	<= DIN;
-		DOUT	<= mem[ADDR];
-	end
-end
-
-endmodule
-
-`endif//__TESTDRIVE_SRAM_SINGLE_V__
+int main(int argc, const char* argv[]) {
+	printf("Hello World.\n");
+	return 0;
+}
 ```
 
 
@@ -999,21 +977,21 @@ endmodule
 %%% ko
 ## 코드 실행
 
-@<size:30>@<b>표현식 : ```[@<color:FF0000>코드_형식@</color>]@</b>@</size>
+@<size:30>@<b>표현식 : ```@<color:0000FF>[@<color:FF0000>코드_형식@<color:0000FF>]@<color>@</b>@</size>
 @<size:30>@<b>        @<color:FF0000>코드_내용@</color>@</b>@</size>
 @<size:30>@<b>        ```@</b>@</size>
 
-'@<bookmark:코드 블럭>'과 비슷한 형식이지만, "코드 형식"이 "[]" 로 둘러 싸여 있을 경우, 코드 내용을 실행한다.
-현재 사용 가능한 코드 형식은 "lua" 만 지원한다.
+'@<bookmark:코드 블럭>'과 비슷한 형식이지만, "코드 형식"이 "[ ]" 로 둘러 싸여 있을 경우, 코드 내용을 실행한다.
+현재 사용 가능한 코드 형식은 "Lua" 만 지원한다.
 %%% en
 ## Code execution
 
-@<size:30>@<b>Expression : ```[@<color:FF0000>code_format@</color>]@</b>@</size>
+@<size:30>@<b>Expression : ```@<color:0000FF>[@<color:FF0000>code_format@<color:0000FF>]@<color>@</b>@</size>
 @<size:30>@<b>             @<color:FF0000>code_contents@</color>@</b>@</size>
 @<size:30>@<b>             ```@</b>@</size>
 
-It has a similar format to '@<bookmark:Code block>', but if the "code format" is surrounded by "[]", the code content is executed.
-The currently available code format supports only "lua".
+It has a similar format to '@<bookmark:Code block>', but if the "code format" is surrounded by "[ ]", the code content is executed.
+The currently available code format supports only "Lua".
 %%%
 
  
@@ -1238,32 +1216,38 @@ Lua variable 'docgen.language' is @<lua:docgen.language>
 %%% ko
 ## 그림 삽입
 
-@<size:30>@<b>표현식 : @@<img:[@<color:FF0000>#@</color>]@<color:FF0000>파일명@</color>;@<color:FF0000>스케일@</color>[;@<color:FF0000>캡션@</color>]>@</b>@</size>
-그림은 jpg, png, bmp, gif, tif, svg, wmf, vsd/vsdx(Visio 설치 필요), xls/xlsx(Excel 설치 필요) 포멧을 지원하고 있습니다. @<color:FF0000>파일명@</color>은 표시할 파일명을 지정하게 되며, \
+@<size:30>@<b>표현식 : @@<img:@<color:FF0000>파일명@</color>;@<color:FF0000>스케일@</color>;@<color:FF0000>캡션@</color>>@</b>@</size>
+
+그림은 jpg, png, bmp, gif, tif, svg, wmf, vsd/vsdx(Visio 설치 필요), xls/xlsx(Excel 설치 필요) 포멧을 지원하고 있습니다. \
+@<color:FF0000>파일명@</color>은 표시할 파일명을 지정하게 되며, \
 그림에 외각선 경계가 필요할 경우 "@<color:0000FF>#@</color>@<color:FF0000>파일명@</color>"으로 표시합니다. \
 Visio 파일일 경우는 "@<color:FF0000>파일명@</color>[@<color:FF0000>페이지명@</color>]"으로 별도의 페이지 이름을 지정할 수 있으며, \
 @<color:FF0000>페이지명@</color>이 지정되지 않을 때는 첫 페이지로 간주합니다.
-Excel 파일일 경우는 "@<color:FF0000>파일명@</color>[@<color:FF0000>시트명@</color>[:@<color:FF0000>차트_제목@</color>]]" 으로 지정하여, 특정 시트의 차트를 이미지로 지정할 수 있습니다. \
+Excel 파일일 경우는 "@<color:FF0000>파일명@</color>[@<color:FF0000>시트명@</color>[:@<color:FF0000>차트_제목@</color>]]" 으로 지정하여, \
+특정 시트의 차트를 이미지로 지정할 수 있습니다. \
 (차트 제목을 생략할 수 있으며, 생략될 경우 해당 시트의 첫번째 차트가 사용됩니다.)
 
 또한 @<color:FF0000>스케일@</color>의 경우, 종이의 폭 기준 최대값 1.0으로 0 초과 1 이하의 값을 넣어 크기를 지정할 수 있습니다. \
 지정되지 않을 경우 기본 1.0으로 간주 합니다.
-@<color:FF0000>캡션@</color>은 말 그대로 캡션 내용을 지정하며, '@<bookmark:@상호 참조>'에서 사용될 수 있습니다. 지정되지 않을 경우 캡션은 삽입되지 않습니다.
+@<color:FF0000>캡션@</color>은 말 그대로 캡션 내용을 지정하며, '@<bookmark:@상호 참조>'에서 사용될 수 있습니다. 캡션은 생략할 수 있습니다.
 
 %%% en
 ## Picture insertion
 
-@<size:30>@<b>Expression : @@<img:[@<color:FF0000>#@</color>]@<color:FF0000>filename@</color>;@<color:FF0000>scale@</color>[;@<color:FF0000>caption@</color>]>@</b>@</size>
-Pictures support jpg, png, bmp, gif, tif, svg, wmf, and vsd/vsdx (Visio installation required), xls/xlsx(Excel installation required) formats. @<color:FF0000>file name@</color> specifies the file name to display, \
+@<size:30>@<b>Expression : @@<img:@<color:FF0000>filename@</color>;@<color:FF0000>scale@</color>;@<color:FF0000>caption@</color>>@</b>@</size>
+
+Pictures support jpg, png, bmp, gif, tif, svg, wmf, and vsd/vsdx (Visio installation required), xls/xlsx(Excel installation required) formats. \
+@<color:FF0000>file name@</color> specifies the file name to display, \
 if the picture requires an outline border, indicate it as "@<color:0000FF>#@</color>@<color:FF0000>filename@</color>". \
 In the case of a Visio file, a separate page name can be specified as "@<color:FF0000>filename@</color>[@<color:FF0000>page name@</color>]", and \
 if @<color:FF0000>page name@</color> is not specified, it is considered the first page.
-In the case of an Excel file, By specifying "@<color:FF0000>file_name@</color>[@<color:FF0000>sheet_name@</color>[:@<color:FF0000>chart_title@</color>]]", you can designate the chart of a specific sheet as an image. \
+In the case of an Excel file, By specifying "@<color:FF0000>file_name@</color>[@<color:FF0000>sheet_name@</color>[:@<color:FF0000>chart_title@</color>]]", \
+you can designate the chart of a specific sheet as an image. \
 (The chart title can be omitted. If omitted, the first chart on the sheet is used.)
 
 Additionally, in the case of @<color:FF0000>scale@</color>, the maximum value based on the width of the paper is 1.0, and you can specify the size by entering a value between 0 and 1. \
 If not specified, the default 1.0 is assumed.
-@<color:FF0000>caption@</color> literally specifies the caption content and can be used in '@<bookmark:@Cross-reference>'. If not specified, the caption will not be inserted.
+@<color:FF0000>caption@</color> literally specifies the caption content and can be used in '@<bookmark:@Cross-reference>'. Captions may be omitted.
 %%%
 
 
@@ -1337,10 +1321,10 @@ Result)
 %%% en
 ex5) Insert chart image from Excel
 ```html
-@<img:media/chart_sample.xlsx[chart_population:Population in the world];1.0;Excel chart example>
+@<img:media/chart_sample.xlsx[chart_population:Population in the world];0.7;Excel chart example>
 ```
 Result)
-@<img:media/chart_sample.xlsx[chart_population:Population in the world];1.0;Excel chart example>
+@<img:media/chart_sample.xlsx[chart_population:Population in the world];0.7;Excel chart example>
 %%%
 
 
@@ -1363,16 +1347,21 @@ If the table is too long and you move to the next page, the header is automatica
 %%% ko
 ### 엑셀 파일로부터 표 삽입
 
-@<size:30>@<b>표현식 : @@<tbl:[@<color:FF0000>#@</color>]@<color:FF0000>파일명@</color>;@<color:FF0000>시트명@</color>[;@<color:FF0000>캡션@</color>]>@</b>@</size>
+@<size:30>@<b>표현식 : @@<tbl:@<color:FF0000>파일명@</color>;@<color:FF0000>시트명@</color>;@<color:FF0000>캡션@</color>>@</b>@</size>
 
-표 삽입의 경우 엑셀에서 작상된 내용을 옮겨 넣을 수 있으며, 엑셀상 Merge 된 셀들과 폭은 최대한 동일하게 적용됩니다.
-표의 첫 줄은 상단 제목이며, 하위 데이터 열을 가운데 정렬을 하고자 할 때에는 제목 이름 앞에 '*'문자를 삽입합니다.
+표 삽입의 경우 엑셀에서 작상된 내용을 옮겨 넣을 수 있으며, 엑셀상 Merge 된 셀들과 폭은 최대한 동일하게 적용됩니다. \
+표의 첫 줄은 상단 제목이며, 하위 데이터 열을 가운데 정렬을 하고자 할 때에는 제목 이름 앞에 '*'문자를 삽입합니다. \
+캡션은 생략 가능합니다.
+기본적으로 표의 너비는 가로가 항상 꽉차 보이도록 표시되지만, \
+@<bookmark:docgen 변수들>의 @<fixed>docgen.table_content.scale@</fixed> 변수를 수정하여, \
+가로 폭을 임의로 줄일 수 있습니다.
+
 
 :::Note
 그림 또는 표는 캡션과 분리되어 표시되지 않도록, 기본적으로 캡션과 하나의 객체로 묶여 있습니다. \
 때문에 남은 페이지 영역에 한번에 표시할 수 없을 때, 다음 페이지에 표시됩니다. \
 그러나 매우 긴 표의 경우, 앞의 여분의 빈 공간이 어색해 보일 수 있습니다. \
-이때 '파일명' 앞에 '#' 문자를 넣으면, 이를 방지할 수 있습니다.
+이때 '@<b>파일명@</b>' 앞에 '#' 문자를 넣으면, 이를 방지할 수 있습니다.
  
 
 예1) 입력 엑셀 파일 : "media/table_sample.xlsx"
@@ -1394,10 +1383,16 @@ If the table is too long and you move to the next page, the header is automatica
 %%% en
 ### Table insertion from excel file
 
-@<size:30>@<b>Expression : @@<tbl:[@<color:FF0000>#@</color>]@<color:FF0000>file_name@</color>;@<color:FF0000>sheet_name@</color>[;@<color:FF0000>caption@</color>]>@</b>@</size>
+@<size:30>@<b>Expression : @@<tbl:@<color:FF0000>file_name@</color>;@<color:FF0000>sheet_name@</color>;@<color:FF0000>caption@</color>>@</b>@</size>
 
-In the case of inserting a table, you can move the content created in Excel, and the width will be the same as possible for the cells merged in Excel.
-The first line of the table is the top title, and when you want to align lower data columns in the center, insert the character '*' front of the title name.
+In the case of inserting a table, you can move the content created in Excel, and the width will be the same as possible for the cells merged in Excel. \
+The first line of the table is the top title, and when you want to align lower data columns in the center, insert the character '*' front of the title name. \
+Captions may be omitted.
+
+By default, the width of the table is displayed so that it always appears full horizontally, \
+but by modifying the @<fixed>docgen.table_content.scale@</fixed> variable of @<bookmark:docgen variables>, \
+you can arbitrarily reduce the horizontal width.
+
 
 :::Note
 Figures or tables are basically grouped together with captions as one object so that they are not displayed separately from the caption. \

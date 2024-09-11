@@ -7,6 +7,7 @@ docgen							= {}
 docgen.contents_only			= false					-- only contents, delete all first page, table list...
 docgen.code_format				= "cpp"					-- default code format
 docgen.code_bgcolor				= "F7F7F7"				-- code background color
+docgen.code_header_bgcolor		= "EDEDED"				-- code header color
 docgen.boarder_color			= "AEAAAA"				-- table's boarder color
 docgen.fixed_font				= "Cascadia Mono"		-- fixed font name
 docgen.profile_path				= String()
@@ -22,6 +23,7 @@ docgen.table_header.height		= 0						-- default auto
 
 docgen.table_content			= {}
 docgen.table_content.height		= 0						-- default auto
+docgen.table_content.scale		= 1.0					-- table scale
 
 
 -- check installed document template
@@ -971,7 +973,10 @@ function GenerateTable(sExcelFileName, sSheetName)
 	end
 	
 	-- pane split 나누기 얻기
-	local header_rows = sheet:GetPanePosY()
+	local header_rows	= sheet:GetPanePosY()
+	
+	-- 테이블 너비
+	local table_width	= math.floor(docgen.table_content.scale * 10094)
 	
 
 	-- 첫 줄 목록 얻기
@@ -984,7 +989,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 
 		-- col grid width 재계산
 		for i=1, col_count do
-			col_width[i]	= math.floor((col_cells[i].width * 10094) / col_total_width);
+			col_width[i]	= math.floor((col_cells[i].width * table_width) / col_total_width);
 		end
 	else
 		LOGW("No table data. : " .. sExcelFileName .. "(" .. sSheetName .. ")")
@@ -995,33 +1000,15 @@ function GenerateTable(sExcelFileName, sSheetName)
 	<w:tbl>\
 		<w:tblPr>\
 			<w:tblStyle w:val=\"ac\"/>\
-			<w:tblW w:w=\"10094\"\
+			<w:tblW w:w=\"" .. table_width .. "\"\
 					w:type=\"auto\"/>\
 			<w:tblBorders>\
-				<w:top w:val=\"single\"\
-					   w:sz=\"4\"\
-					   w:space=\"0\"\
-					   w:color=\"" .. docgen.boarder_color .. "\"/>\
-				<w:left w:val=\"single\"\
-						w:sz=\"4\"\
-						w:space=\"0\"\
-						w:color=\"" .. docgen.boarder_color .. "\"/>\
-				<w:bottom w:val=\"single\"\
-						  w:sz=\"4\"\
-						  w:space=\"0\"\
-						  w:color=\"" .. docgen.boarder_color .. "\"/>\
-				<w:right w:val=\"single\"\
-						 w:sz=\"4\"\
-						 w:space=\"0\"\
-						 w:color=\"" .. docgen.boarder_color .. "\"/>\
-				<w:insideH w:val=\"single\"\
-						   w:sz=\"4\"\
-						   w:space=\"0\"\
-						   w:color=\"" .. docgen.boarder_color .. "\"/>\
-				<w:insideV w:val=\"single\"\
-						   w:sz=\"4\"\
-						   w:space=\"0\"\
-						   w:color=\"" .. docgen.boarder_color .. "\"/>\
+				<w:top w:val=\"single\" w:sz=\"4\" w:space=\"0\" w:color=\"" .. docgen.boarder_color .. "\"/>\
+				<w:left w:val=\"single\" w:sz=\"4\" w:space=\"0\" w:color=\"" .. docgen.boarder_color .. "\"/>\
+				<w:bottom w:val=\"single\" w:sz=\"4\" w:space=\"0\" w:color=\"" .. docgen.boarder_color .. "\"/>\
+				<w:right w:val=\"single\" w:sz=\"4\" w:space=\"0\" w:color=\"" .. docgen.boarder_color .. "\"/>\
+				<w:insideH w:val=\"single\" w:sz=\"4\" w:space=\"0\" w:color=\"" .. docgen.boarder_color .. "\"/>\
+				<w:insideV w:val=\"single\" w:sz=\"4\" w:space=\"0\" w:color=\"" .. docgen.boarder_color .. "\"/>\
 			</w:tblBorders>\
 			<w:tblLook w:val=\"06A0\"\
 					   w:firstRow=\"1\"\
@@ -1079,22 +1066,10 @@ function GenerateTable(sExcelFileName, sSheetName)
 						<w:tcW w:w=\"" .. cell_width .. "\"\
 							   w:type=\"dxa\"/>" .. col_cells[i].merge.doc ..
 						"<w:tcBorders>\
-							<w:top w:val=\"single\"\
-								   w:sz=\"4\"\
-								   w:space=\"0\"\
-								   w:color=\"" .. docgen.boarder_color .. "\"/>\
-							<w:left w:val=\"single\"\
-									w:sz=\"4\"\
-									w:space=\"0\"\
-									w:color=\"" .. docgen.boarder_color .. "\"/>\
-							<w:bottom w:val=\"single\"\
-									  w:sz=\"4\"\
-									  w:space=\"0\"\
-									  w:color=\"" .. docgen.boarder_color .. "\"/>\
-							<w:right w:val=\"single\"\
-									 w:sz=\"4\"\
-									 w:space=\"0\"\
-									 w:color=\"" .. docgen.boarder_color .. "\"/>\
+							<w:top w:val=\"single\" w:sz=\"4\" w:space=\"0\" w:color=\"" .. docgen.boarder_color .. "\"/>\
+							<w:left w:val=\"single\" w:sz=\"4\" w:space=\"0\" w:color=\"" .. docgen.boarder_color .. "\"/>\
+							<w:bottom w:val=\"single\" w:sz=\"4\" w:space=\"0\" w:color=\"" .. docgen.boarder_color .. "\"/>\
+							<w:right w:val=\"single\" w:sz=\"4\" w:space=\"0\" w:color=\"" .. docgen.boarder_color .. "\"/>\
 						</w:tcBorders>\
 						<w:shd w:val=\"clear\"\
 							   w:color=\"auto\"\
@@ -1238,6 +1213,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 	
 	docgen.table_header.height		= 0
 	docgen.table_content.height		= 0
+	docgen.table_content.scale		= 1.0
 	
 	return table_code.s
 end
@@ -1301,12 +1277,14 @@ function GenerateTableFromLua(sLuaTable)
 		table_code:Append("<w:gridCol w:w=\"" .. col_width_list[i] .. "\"/>")
 	end
 	table_code:Append("</w:tblGrid>")
+	
+	local table_width	= math.floor(docgen.table_content.scale * 10094)
 
 	-- 데이터 줄 얻기
 	if #lua_table >= 1 then
 		local	iRowCount		= 0
 		local	HeaderCount		= 1
-		local	HeaderWidth		= 10094
+		local	HeaderWidth		= table_width
 		
 		if lua_table.HeaderCount ~= nil then
 			HeaderCount	= lua_table.HeaderCount
@@ -1802,8 +1780,6 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 				sLine:CutFront("`", true)
 				sLine:CutBack("//", true)	-- comment out
 				sLine:Trim(" ")
-				sLine:Replace(" ", "", true)	-- 내부 space 모두 제거 "[lua]" 구별을 위해
-				sLine:MakeLower()
 				if sLine:CompareFront("#") then
 					bLine	= true
 					sLine:erase(0,1)
@@ -1813,11 +1789,24 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 					if bScript then
 						sLine:DeleteFront("[")
 						sLine:DeleteBack("]")
+						sLine:Trim(" ")
 					end
 				end
 				
-				local	sCodeFormat	= sLine.s
+				local	sCodeFormat	= sLine:Tokenize(":")
+				local	sTitle		= sLine:Tokenize("")
 				local	sIndent		= ""
+				
+				sCodeFormat:Trim(" ")
+				sCodeFormat:MakeLower()
+				sCodeFormat	= sCodeFormat.s
+				
+				if #sTitle.s > 0 then
+					sTitle:DeleteFront(":")
+					sTitle:Trim(" ")
+				end
+				sTitle	= sTitle.s
+				
 				-- cut off front
 				sPara:erase(0, sPara.TokenizePos)
 				sPara.TokenizePos	= 0
@@ -1847,7 +1836,7 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 					sContent:erase(iCodeLen, -1)
 					if bScript == false then
 						sContent:Replace("\r", "", true)
-						sContent:Replace("\n\n", "\n \n", true)
+						sContent:Replace("\n\n", "\n \n", true)	-- for EncodeParagraph's to keep a enter code
 						sContent:TrimLeft("\n")
 						sContent:TrimRight(" \n")
 						sContent:Replace("@```", "```", true)
@@ -1875,16 +1864,29 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 						end
 					end
 					bInline	= true
+					
+					if #sTitle ~= 0 then
+						sTitle = "<w:tr><w:trPr><w:tblHeader/></w:trPr><w:tc>\
+							<w:tcPr>\
+								<w:tcW w:w=\"10094\" w:type=\"dxa\"/>\
+								<w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"" .. docgen.code_header_bgcolor .. "\"/>\
+							</w:tcPr>" ..
+							EncodeParagraph(sTitle, {pPr=("<w:jc w:val=\"center\"/><w:spacing w:after=\"0\"/>" .. sIndent), rPr="<w:rFonts w:ascii=\"" .. docgen.fixed_font .. "\" w:eastAsia=\"" .. docgen.fixed_font .. "\" w:hAnsi=\"" .. docgen.fixed_font .. "\"/>"}) ..
+							"</w:tc></w:tr>"
+					end
+					
 					sResult:Append(
 					"<w:tbl>\
 					<w:tblPr>\
 						<w:tblStyle w:val=\"ae\"/>\
 						<w:tblW w:w=\"0\" w:type=\"auto\"/>\
 						<w:tblBorders>\
-							<w:top w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"F7F7F7\"/>\
-							<w:left w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"F7F7F7\"/>\
-							<w:bottom w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"F7F7F7\"/>\
-							<w:right w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"F7F7F7\"/>\
+							<w:top w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"" .. docgen.boarder_color .. "\"/>\
+							<w:left w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"" .. docgen.boarder_color .. "\"/>\
+							<w:bottom w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"" .. docgen.boarder_color .. "\"/>\
+							<w:right w:val=\"none\" w:sz=\"0\" w:space=\"0\" w:color=\"" .. docgen.boarder_color .. "\"/>\
+							<w:insideH w:val=\"none\"  w:sz=\"0\" w:space=\"0\" w:color=\"" .. docgen.boarder_color .. "\"/>\
+							<w:insideV w:val=\"single\" w:sz=\"4\" w:space=\"0\" w:color=\"" .. docgen.boarder_color .. "\"/>\
 						</w:tblBorders>\
 						<w:tblCellMar>\
 							<w:top w:w=\"32\" w:type=\"dxa\"/>\
@@ -1893,12 +1895,13 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 					</w:tblPr>\
 					<w:tblGrid>\
 						<w:gridCol w:w=\"10094\"/>\
-					</w:tblGrid>\
-					<w:tr>\
+					</w:tblGrid>" ..
+					sTitle ..
+					"<w:tr>\
 						<w:tc>\
 							<w:tcPr>\
 								<w:tcW w:w=\"10094\" w:type=\"dxa\"/>\
-								<w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"F8F8F8\"/>\
+								<w:shd w:val=\"clear\" w:color=\"auto\" w:fill=\"" .. docgen.code_bgcolor .. "\"/>\
 							</w:tcPr>"
 					.. EncodeParagraph(sContent, {pPr=("<w:jc w:val=\"left\"/><w:spacing w:after=\"0\"/>" .. sIndent), rPr="<w:rFonts w:ascii=\"" .. docgen.fixed_font .. "\" w:eastAsia=\"" .. docgen.fixed_font .. "\" w:hAnsi=\"" .. docgen.fixed_font .. "\"/>"}) ..
 					"</w:tc></w:tr></w:tbl>"
@@ -2380,6 +2383,8 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 								sLine:insert(sLine.TokenizePos, tostring(ReturnCode))
 								docgen.hangul.postfix_set_hint(tostring(ReturnCode))
 							end
+						elseif sTag.s == "emoji" then
+							-- do something...
 						else
 							error("Can't recognize paragraph command : " .. sTag.s)
 						end
