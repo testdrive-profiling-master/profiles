@@ -56,7 +56,11 @@ do
 		if iPos > 0 then
 			sXML:erase(0, iPos)
 			sXML:CutFront("draw:name")
-			page_list[sXML:Tokenize("=\"").s]	= iID
+			local name = sXML:Tokenize("=\"").s
+			if #page_name == 0 then
+				page_name	= name
+			end
+			page_list[name]	= iID
 			iID = iID + 1
 		end
 	end
@@ -64,4 +68,34 @@ do
 	for key, value in pairs(page_list) do
 		print("Page[" .. key .. "] = " .. value)
 	end
+end
+
+-- check page exist
+if page_list[page_name] == nil then
+	LOGE("No page existed : '" .. page_name .. "'")
+end
+
+print("*I: Retrieving page : '" .. page_name .. "'")
+
+-- Make SVG
+run(".run \"" .. office_path .. "\" --draw --headless --convert-to svg:\"draw_svg_Export\" --outdir .odg2svg \"" .. file_name .. "\"")
+
+do
+	local xml = DocXML()
+
+	do
+		local xml_file_name		= String(file_name)
+		xml_file_name:DeleteBack("odg")
+		xml_file_name:Append("svg")
+		
+		if xml:Open(".odg2svg/" .. xml_file_name.s) == false then
+			LOGE("SVG file can't create.")
+			os.exit(1)
+		end
+	end
+	local node = xml:Node()
+	print("node[" .. node:name() .. "] = " .. tostring(node:empty()))
+	node = node:child(nil)
+	node = xml:Node():child("svg"):child_by_attribute("g", "class", "SlideGroup")
+	print("d : " .. node:name() .. " : " .. tostring(node:empty()))
 end

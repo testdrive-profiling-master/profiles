@@ -458,6 +458,7 @@ public:
 
 	lua_DocNode child(const char *name) const
 	{
+		if(!name) xml_node::first_child();
 		return xml_node::child(name);
 	}
 
@@ -624,6 +625,22 @@ public:
 			return NULL;
 
 		return attr.as_string();
+	}
+};
+
+class lua_DocXML : public pugi::xml_document{
+
+public:
+	lua_DocXML(void) {}
+	~lua_DocXML(void) {}
+
+	bool Open(const char *sFileName) {
+		return load_file(sFileName, pugi::parse_default | pugi::parse_ws_pcdata | pugi::parse_declaration);
+	}
+
+	lua_DocNode Node(LuaRef sName) {
+		if(sName.isString()) return child(sName.tostring().c_str());
+		return first_child();
 	}
 };
 
@@ -1308,6 +1325,11 @@ Script::Script(void)
 				.addFunction("as_xml", &lua_DocNode::as_xml)
 				.addFunction("set_attribute", &lua_DocNode::set_attribute)
 				.addFunction("get_attribute", &lua_DocNode::get_attribute)
+				.endClass()
+				.beginClass<lua_DocXML>("DocXML")
+				.addConstructor<void (*)(void)>()
+				.addFunction("Open", &lua_DocXML::Open)
+				.addFunction("Node", &lua_DocXML::Node)
 				.endClass()
 				.beginClass<DocFile>("DocFile")
 				.addFunction("Open", &DocFile::Open)
