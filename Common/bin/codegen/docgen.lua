@@ -709,6 +709,10 @@ function GenerateFigure(sFileName, fRatio)
 		sPageName	= sPageName.s
 
 		if sFileName:CompareBack(".vsd") or sFileName:CompareBack(".vsdx") then	-- visio
+			if #sPageName == 0 then
+				error("The page names in the visio file(" .. sFileName.s .. ") must be specified.")
+			end
+			
 			-- convert visio to svg
 			os.execute("vsd2svg \"" .. sFileName.s .. "\" \"" .. sPageName .. "\"")
 			
@@ -726,27 +730,43 @@ function GenerateFigure(sFileName, fRatio)
 				sFileName:Append(sFixedFileName.s)
 			end
 			
-			if lfs.attributes(sFileName.s) == false then	-- no visio
-				LOGE("Visio is not installed.")
-				sFileName.s	= docgen.profile_path.s .. "common/bin/codegen/media/no_visio.svg"
-			else
-				temporary_file_list[#temporary_file_list + 1]		= sFileName.s	-- clean up list.
+			if lfs.IsExist(sFileName.s) == false then	-- no visio
+				error("Can't create .svg file from Visio file(" .. sFileName.s .. "[".. sPageName .. ").\nis not installed.Make sure Visio is installed properly.")
 			end
+			
+			temporary_file_list[#temporary_file_list + 1]		= sFileName.s	-- clean up list.
 		elseif sFileName:CompareBack(".odg") then	-- libreoffice draw
-			-- convert odg to svg
-			os.execute("odg2svg \"" .. sFileName.s .. "\" \"" .. sPageName .. "\"")
-			
-			if #sPageName ~= 0 then
-				sFileName:Append("." .. sPageName)
+			if #sPageName == 0 then
+				error("The page names in the OpenDocument Grapgic file(" .. sFileName.s .. ") must be specified.")
 			end
-			sFileName:Append(".svg")
 			
+			local sOutFileName = String(sFileName.s)
+			
+			do	-- whitespace bug fix. convert " " to "_"
+				local sFixedFileName = String(sFileName.s)
+				sFixedFileName:CutFront("\\", true)
+				sFixedFileName:CutFront("/", true)
+				sFixedFileName:Replace(" ", "_", true)
+				sOutFileName:erase(#sFileName.s - #sFixedFileName.s, -1);
+				sOutFileName:Append(sFixedFileName.s .. "." .. sPageName .. ".svg")
+				
+				print("\nsOutFileName = " .. sOutFileName.s ..  "\n")
+			end
+			-- convert odg to svg
+			os.execute("odg2svg \"" .. sFileName.s .. "\" -p \"" .. sPageName .. "\" -o \"" .. sOutFileName.s .. "\"")
+			
+			if lfs.IsExist(sOutFileName.s) == false then	-- no visio
+				error("Can't create .svg file from OpenDocument file(" .. sFileName.s .. "[".. sPageName .. "]).\nMake sure LibreOffice is installed properly.")
+			end
+			
+			sFileName.s = sOutFileName.s
+			temporary_file_list[#temporary_file_list + 1]		= sFileName.s
 		elseif sFileName:CompareBack(".xls") or sFileName:CompareBack(".xlsx") then
-			-- convert Excel chart to svg
 			if #sPageName == 0 then
 				error("Excel sheet name of chart must be existed.")
 			end
 			
+			-- convert Excel chart to svg
 			os.execute("xlsx_chart \"" .. sFileName.s .. "\" \"" .. sPageName .. "\"")
 			sPageName	= String(sPageName)
 			sPageName:Replace(":", ".", true)
@@ -760,7 +780,7 @@ function GenerateFigure(sFileName, fRatio)
 				sFileName:Append(sFixedFileName.s)
 			end
 			
-			if lfs.attributes(sFileName.s) then	-- existed
+			if lfs.IsExist(sFileName.s) then	-- existed
 				temporary_file_list[#temporary_file_list + 1]		= sFileName.s	-- clean up list.
 			end
 		end

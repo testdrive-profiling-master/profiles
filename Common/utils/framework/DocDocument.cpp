@@ -31,23 +31,16 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 6/4/2024 Tue (clonextop@gmail.com)
+// Rev.  : 9/12/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "DocDocument.h"
 
 #include <cctype>
 
-// Hack on pugixml
-// We need to write xml to std string (or char *)
-// So overload the write function
-struct xml_string_writer : pugi::xml_writer {
-	string		 result;
-
-	virtual void write(const void *data, size_t size)
-	{
-		result.append(static_cast<const char *>(data), size);
-	}
-};
+void xml_string_writer::write(const void *data, size_t size)
+{
+	result.append(static_cast<const char *>(data), size);
+}
 
 duckx::Run::Run(void) {}
 
@@ -649,8 +642,7 @@ bool DocFile::DeleteFile(const char *sEntryName)
 	return false;
 }
 
-static bool __create_zip_entry_from_buffer(zip_t *pZip, const char *sEntryName, const void *pBuff = NULL,
-										   size_t dwByteSize = 0)
+static bool __create_zip_entry_from_buffer(zip_t *pZip, const char *sEntryName, const void *pBuff = NULL, size_t dwByteSize = 0)
 {
 	if (pZip && sEntryName) {
 		if (!zip_entry_open(pZip, sEntryName)) {
@@ -735,17 +727,15 @@ bool DocFile::Save(const char *sFileName)
 			for (int i = 0; i < zip_total_entries(m_pZipFile); i++) {
 				zip_entry_openbyindex(m_pZipFile, i);
 				string				entry_name = zip_entry_name(m_pZipFile);
-				pugi::xml_document *pNode	   = m_FileReplacements.count(entry_name)
-													 ? NULL
-													 : (m_Documents.count(entry_name) ? m_Documents.at(entry_name) : NULL);
-				saved_entries[entry_name]	   = true;
+				pugi::xml_document *pNode =
+					m_FileReplacements.count(entry_name) ? NULL : (m_Documents.count(entry_name) ? m_Documents.at(entry_name) : NULL);
+				saved_entries[entry_name] = true;
 
 				if (!pNode) { // from external file or unmanaged file
 					if (m_FileReplacements.count(entry_name)) {
 						// file replacement if target path is existed, or delete it.
 						if (m_FileReplacements[entry_name].size() &&
-							!__create_zip_entry_from_file(new_zip, entry_name.c_str(),
-														  m_FileReplacements[entry_name].c_str())) {
+							!__create_zip_entry_from_file(new_zip, entry_name.c_str(), m_FileReplacements[entry_name].c_str())) {
 							bRet = false;
 							break;
 						}
@@ -765,8 +755,7 @@ bool DocFile::Save(const char *sFileName)
 					}
 				} else { // managed XML file
 					xml_string_writer writer;
-					pNode->print(writer, PUGIXML_TEXT("\t"),
-								 pugi::format_default | pugi::parse_ws_pcdata | pugi::format_write_bom);
+					pNode->print(writer, PUGIXML_TEXT("\t"), pugi::format_default | pugi::parse_ws_pcdata | pugi::format_write_bom);
 					const char *buf = writer.result.c_str();
 
 					if (!__create_zip_entry_from_buffer(new_zip, entry_name.c_str(), buf, strlen(buf))) {
@@ -783,8 +772,7 @@ bool DocFile::Save(const char *sFileName)
 				if (!saved_entries.count(i.first)) {
 					pugi::xml_document *pNode = i.second;
 					xml_string_writer	writer;
-					pNode->print(writer, PUGIXML_TEXT("\t"),
-								 pugi::format_default | pugi::parse_ws_pcdata | pugi::format_write_bom);
+					pNode->print(writer, PUGIXML_TEXT("\t"), pugi::format_default | pugi::parse_ws_pcdata | pugi::format_write_bom);
 					const char *buf = writer.result.c_str();
 
 					if (!__create_zip_entry_from_buffer(new_zip, i.first.c_str(), buf, strlen(buf))) {

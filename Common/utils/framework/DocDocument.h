@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 6/4/2024 Tue (clonextop@gmail.com)
+// Rev.  : 9/12/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __DOCX_DOCUMENT_H__
 #define __DOCX_DOCUMENT_H__
@@ -159,6 +159,17 @@ public:
 };
 
 } // namespace duckx
+
+// Hack on pugixml
+// We need to write xml to std string (or char *)
+// So overload the write function
+class xml_string_writer : public pugi::xml_writer
+{
+public:
+	string		 result;
+
+	virtual void write(const void *data, size_t size);
+};
 
 class DocXML;
 typedef bool (*DOCX_NODE_ENUMERATOR_FUNC)(DocXML node, void *pPrivate);

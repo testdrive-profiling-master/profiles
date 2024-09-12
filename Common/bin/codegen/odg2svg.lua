@@ -1,16 +1,24 @@
-local	Arg		= ArgTable("convert LibreOffice draw(.odg) to .SVG")
+local	Arg		= ArgTable("Convert LibreOffice draw(.odg) to .SVG for TestDrive Profiling Master")
 
 Arg:AddOptionString	("page_name", "", "p", nil, "page_name", "Specify page name")
 Arg:AddRemark		(nil, "(default : first page)")
-Arg:AddOptionFile	("odg_file", nil, nil, nil, "input_file", "input .odg file")
+Arg:AddOptionFile	("out_file", "", "o", nil, "output_file", "Specify output .svg file name")
+Arg:AddOptionFile	("input_file", nil, nil, nil, "input_file", "input .odg file name")
 
 if (Arg:DoParse() == false) then
 	return
 end
 
-page_name	= Arg:GetOptionString("page_name")
-file_name	= Arg:GetOptionFile("odg_file", 0)
+page_name		= Arg:GetOptionString("page_name")
+in_file_name	= Arg:GetOptionFile("input_file", 0)
+out_file_name	= Arg:GetOptionFile("out_file", 0)
 office_path	= nil
+
+function ERROR(msg)
+	LOGE(msg)
+	run("rm -rf .odg2svg")
+	os.exit(1)
+end
 
 -- 1st : get libreoffice path
 for i=0,7 do	-- 'C'~'H' drive
@@ -25,25 +33,25 @@ for i=0,7 do	-- 'C'~'H' drive
 end
 
 if office_path == nil then
-	LOGE("Libreoffice must be installed first.")
-	os.exit(1)
+	ERROR("Libreoffice must be installed first.")
 end
 
 -- Get page name list
-run(".run \"" .. office_path .. "\" --draw --headless --convert-to xml --outdir .odg2svg \"" .. file_name .. "\"")
+run(".run \"" .. office_path .. "\" --draw --headless --convert-to xml --outdir .odg2svg \"" .. in_file_name .. "\"")
 
 local	page_list	= {}
 do
 	local sXML	= String()
 	do	-- read from file
 		local	f				= TextFile()
-		local xml_file_name		= String(file_name)
+		local xml_file_name		= String(in_file_name)
+		xml_file_name:CutFront("/", true)
+		xml_file_name:CutFront("\\", true)
 		xml_file_name:DeleteBack("odg")
 		xml_file_name:Append("xml")
 		
 		if f:Open(".odg2svg/" .. xml_file_name.s) == false then
-			LOGE("Information check is failed.")
-			os.exit(1)
+			ERROR("Information check is failed.")
 		end
 		sXML.s	= f:GetAll()
 		f:Close()
@@ -64,38 +72,65 @@ do
 			iID = iID + 1
 		end
 	end
-	
-	for key, value in pairs(page_list) do
-		print("Page[" .. key .. "] = " .. value)
-	end
 end
 
 -- check page exist
 if page_list[page_name] == nil then
-	LOGE("No page existed : '" .. page_name .. "'")
+	ERROR("No page existed : '" .. page_name .. "'")
 end
 
 print("*I: Retrieving page : '" .. page_name .. "'")
 
 -- Make SVG
-run(".run \"" .. office_path .. "\" --draw --headless --convert-to svg:\"draw_svg_Export\" --outdir .odg2svg \"" .. file_name .. "\"")
+run(".run \"" .. office_path .. "\" --draw --headless --convert-to svg:\"draw_svg_Export\" --outdir .odg2svg \"" .. in_file_name .. "\"")
 
 do
 	local xml = DocXML()
 
 	do
-		local xml_file_name		= String(file_name)
+		local xml_file_name		= String(in_file_name)
+		xml_file_name:CutFront("/", true)
+		xml_file_name:CutFront("\\", true)
 		xml_file_name:DeleteBack("odg")
 		xml_file_name:Append("svg")
 		
-		if xml:Open(".odg2svg/" .. xml_file_name.s) == false then
-			LOGE("SVG file can't create.")
-			os.exit(1)
+		if xml:LoadFromFile(".odg2svg/" .. xml_file_name.s) == false then
+			ERROR("SVG file can't create.")
 		end
 	end
-	local node = xml:Node()
-	print("node[" .. node:name() .. "] = " .. tostring(node:empty()))
-	node = node:child(nil)
-	node = xml:Node():child("svg"):child_by_attribute("g", "class", "SlideGroup")
-	print("d : " .. node:name() .. " : " .. tostring(node:empty()))
+	
+	local page_id	= page_list[page_name]
+	local node		= xml:Node("svg"):child_by_attribute("g", "class", "SlideGroup")
+	
+	
+	if node:empty() then
+		ERROR("SVG file can't create.")
+	end
+
+	-- delete other pages
+	local	child		= node:first_child()
+	local	slide_id	= 1
+	while (child:empty() == false) do
+		if slide_id ~= page_id then
+			child:Destroy()
+		else
+			child		= child:next_sibling()
+		end
+		slide_id	= slide_id + 1
+	end
+	
+	-- save to file
+	page_name	= String(page_name)
+	page_name:Replace(" ", "_", true)
+	
+	if #out_file_name == 0 then
+		out_file_name	= in_file_name .. "." .. page_name.s .. ".svg"
+	end
+	
+	if xml:SaveToFile(out_file_name) == false then
+		ERROR("Save to '" .. out_file_name .. "' is failed.")
+	end
+
+	LOGI("Save to '" .. out_file_name .. "' is done!")
+	run("rm -rf .odg2svg")
 end

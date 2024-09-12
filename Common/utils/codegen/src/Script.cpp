@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 9/2/2024 Mon (clonextop@gmail.com)
+// Rev.  : 9/12/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -89,11 +89,12 @@ public:
 	}
 	int RetrieveTag(LuaRef t) const
 	{
-		if(t.isTable()) {
-			for(int i=1;;i++) {
+		if (t.isTable()) {
+			for (int i = 1;; i++) {
 				LuaRef v = t[i];
-				if(!v.isString()) break;
-				if(m_sStr == (string)v)
+				if (!v.isString())
+					break;
+				if (m_sStr == (string)v)
 					return i;
 			}
 		}
@@ -387,11 +388,12 @@ public:
 		return xml_node::path();
 	}
 
-	bool Destroy(int iCount)
+	bool Destroy(LuaRef v)
 	{
+		int		 iCount = v.isNumber() ? (int)v : 1;
 		xml_node node, next_node;
 
-		while (iCount) {
+		while (iCount > 0) {
 			node = *this;
 
 			if (!node.empty()) {
@@ -458,7 +460,8 @@ public:
 
 	lua_DocNode child(const char *name) const
 	{
-		if(!name) xml_node::first_child();
+		if (!name)
+			xml_node::first_child();
 		return xml_node::child(name);
 	}
 
@@ -478,6 +481,35 @@ public:
 			p->node = node;
 			return false;
 		});
+		return p.node;
+	}
+
+	lua_DocNode child_in_depth_by_attribute(const char *sName, const char *sAttribute, const char *sValue)
+	{
+		typedef struct {
+			DocXML		node;
+			const char *sAttribute;
+			const char *sValue;
+		} __private;
+		__private p;
+		if (sAttribute) {
+			p.sAttribute = sAttribute;
+			p.sValue	 = sValue;
+			EnumerateInDepth(sName, &p, [](DocXML node, void *pPrivate) -> bool {
+				__private *p = (__private *)pPrivate;
+
+				auto	   attr = node.attribute(p->sAttribute);
+
+				if (attr.empty())
+					return true;
+
+				if (p->sValue && !strstr(p->sValue, attr.as_string()))
+					return true;
+
+				p->node = node;
+				return false;
+			});
+		}
 		return p.node;
 	}
 
@@ -628,19 +660,45 @@ public:
 	}
 };
 
-class lua_DocXML : public pugi::xml_document{
+class lua_DocXML : public pugi::xml_document
+{
 
 public:
 	lua_DocXML(void) {}
 	~lua_DocXML(void) {}
 
-	bool Open(const char *sFileName) {
-		return load_file(sFileName, pugi::parse_default | pugi::parse_ws_pcdata | pugi::parse_declaration);
+	bool LoadFromFile(const char *sFileName)
+	{
+		return load_file(sFileName, pugi::parse_full);
 	}
 
-	lua_DocNode Node(LuaRef sName) {
-		if(sName.isString()) return child(sName.tostring().c_str());
+	bool LoadFromString(const char *sStr)
+	{
+		return load_string(sStr, pugi::parse_full);
+	}
+
+	bool SaveToFile(const char *sFileName)
+	{
+		return save_file(sFileName);
+	}
+
+	string SaveToString(void)
+	{
+		xml_string_writer writer;
+		save(writer);
+		return writer.result;
+	}
+
+	lua_DocNode Node(LuaRef sName)
+	{
+		if (sName.isString())
+			return child(sName.tostring().c_str());
 		return first_child();
+	}
+
+	void Reset(void)
+	{
+		reset();
 	}
 };
 
@@ -1300,6 +1358,7 @@ Script::Script(void)
 				.addFunction("insert_child_before", &lua_DocNode::insert_child_before)
 				.addFunction("child", &lua_DocNode::child)
 				.addFunction("child_in_depth", &lua_DocNode::child_in_depth)
+				.addFunction("child_in_depth_by_attribute", &lua_DocNode::child_in_depth_by_attribute)
 				.addFunction("first_child", &lua_DocNode::first_child)
 				.addFunction("last_child", &lua_DocNode::last_child)
 				.addFunction("next_sibling", &lua_DocNode::next_sibling)
@@ -1328,8 +1387,12 @@ Script::Script(void)
 				.endClass()
 				.beginClass<lua_DocXML>("DocXML")
 				.addConstructor<void (*)(void)>()
-				.addFunction("Open", &lua_DocXML::Open)
+				.addFunction("LoadFromFile", &lua_DocXML::LoadFromFile)
+				.addFunction("LoadFromString", &lua_DocXML::LoadFromString)
+				.addFunction("SaveToFile", &lua_DocXML::SaveToFile)
+				.addFunction("SaveToString", &lua_DocXML::SaveToString)
 				.addFunction("Node", &lua_DocXML::Node)
+				.addFunction("Reset", &lua_DocXML::Reset)
 				.endClass()
 				.beginClass<DocFile>("DocFile")
 				.addFunction("Open", &DocFile::Open)
