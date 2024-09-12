@@ -79,8 +79,6 @@ if page_list[page_name] == nil then
 	ERROR("No page existed : '" .. page_name .. "'")
 end
 
-print("*I: Retrieving page : '" .. page_name .. "'")
-
 -- Make SVG
 run(".run \"" .. office_path .. "\" --draw --headless --convert-to svg:\"draw_svg_Export\" --outdir .odg2svg \"" .. in_file_name .. "\"")
 
@@ -102,21 +100,100 @@ do
 	local page_id	= page_list[page_name]
 	local node		= xml:Node("svg"):child_by_attribute("g", "class", "SlideGroup")
 	
-	
 	if node:empty() then
 		ERROR("SVG file can't create.")
 	end
 
 	-- delete other pages
 	local	child		= node:first_child()
-	local	slide_id	= 1
-	while (child:empty() == false) do
-		if slide_id ~= page_id then
-			child:Destroy()
-		else
-			child		= child:next_sibling()
+	do
+		local	slide_id	= 1
+		while (child:empty() == false) do
+			if slide_id ~= page_id then
+				child:Destroy()
+			else
+				child		= child:next_sibling()
+			end
+			slide_id	= slide_id + 1
 		end
-		slide_id	= slide_id + 1
+	end
+	
+	-- calculate view port area
+	do
+		local	BoundingBox			= {}
+		BoundingBox.iCount			= 0
+		BoundingBox.sx				= 1000000000000000000000
+		BoundingBox.sy				= 1000000000000000000000
+		BoundingBox.ex				= -1000000000000000000000
+		BoundingBox.ey				= -1000000000000000000000
+		child						= node:child_in_depth_by_attribute("rect", "class", "BoundingBox")
+		
+		-- 모든 boundingbox 조사
+		while child:empty() == false do
+			local	sx		= tonumber(child:get_attribute("x"))
+			local	sy		= tonumber(child:get_attribute("y"))
+			local	ex		= sx + tonumber(child:get_attribute("width"))
+			local	ey		= sy + tonumber(child:get_attribute("height"))
+			child:set_attribute("class", "BoundingBox_done")
+			child	= node:child_in_depth_by_attribute("rect", "class", "BoundingBox")
+			
+			if sx < BoundingBox.sx then BoundingBox.sx = sx end
+			if sy < BoundingBox.sy then BoundingBox.sy = sy end
+			if ex > BoundingBox.ex then BoundingBox.ex = ex end
+			if ey > BoundingBox.ey then BoundingBox.ey = ey end
+			BoundingBox.iCount	= BoundingBox.iCount + 1
+		end
+
+		-- 임시 수정한 내용 원복
+		child						= node:child_in_depth_by_attribute("rect", "class", "BoundingBox_done")
+		while child:empty() == false do
+			child:set_attribute("class", "BoundingBox")
+			child	= node:child_in_depth_by_attribute("rect", "class", "BoundingBox_done")
+		end
+		
+		if BoundingBox.sx < 0 then BoundingBox.sx = 0 end
+		if BoundingBox.sy < 0 then BoundingBox.sy = 0 end
+
+		-- 사이즈 적용
+		if BoundingBox.iCount > 0 then
+			local	width	= BoundingBox.ex - BoundingBox.sx
+			local	height	= BoundingBox.ey - BoundingBox.sy
+			node		= xml:Node("svg"):child_in_depth_by_attribute("defs", "class", "ClipPathGroup")
+
+			if node:empty() == false then
+				local rect	= node:child_in_depth_by_attribute("clipPath", "id", "presentation_clip_path_shrink")
+				if rect:empty() == false then
+					rect	= rect:child("rect")
+					rect:set_attribute("x", tostring(BoundingBox.sx))
+					rect:set_attribute("y", tostring(BoundingBox.sy))
+					rect:set_attribute("width", tostring(width))
+					rect:set_attribute("height", tostring(height))
+				end
+			end
+			
+			-- 마진 적용
+			local	margin	= math.ceil((width / 2) * 0.01)	-- 1% 마진
+			BoundingBox.sx	= BoundingBox.sx - margin
+			BoundingBox.sy	= BoundingBox.sy - margin
+			BoundingBox.ex	= BoundingBox.ex + margin
+			BoundingBox.ey	= BoundingBox.ey + margin
+			width			= BoundingBox.ex - BoundingBox.sx
+			height			= BoundingBox.ey - BoundingBox.sy
+			if node:empty() == false then
+				local rect	= node:child_in_depth_by_attribute("clipPath", "id", "presentation_clip_path")
+				if rect:empty() == false then
+					rect	= rect:child("rect")
+					rect:set_attribute("x", tostring(BoundingBox.sx))
+					rect:set_attribute("y", tostring(BoundingBox.sy))
+					rect:set_attribute("width", tostring(width))
+					rect:set_attribute("height", tostring(height))
+				end
+			end
+			node		= xml:Node("svg")
+			node:set_attribute("viewBox", tostring(BoundingBox.sx) .. " " .. tostring(BoundingBox.sy) .. " " .. tostring(width) .. " " .. tostring(height))
+			node:set_attribute("width", tostring(math.ceil(width/100)) .. "mm")
+			node:set_attribute("height", tostring(math.ceil(height/100)) .. "mm")
+		end
 	end
 	
 	-- save to file
@@ -131,6 +208,5 @@ do
 		ERROR("Save to '" .. out_file_name .. "' is failed.")
 	end
 
-	LOGI("Save to '" .. out_file_name .. "' is done!")
 	run("rm -rf .odg2svg")
 end

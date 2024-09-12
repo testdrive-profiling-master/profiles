@@ -386,24 +386,25 @@ void DocXML::AddChildFromBuffer(const char *sBuffer)
 static bool __EnumerateNodeInDepth(cstring &sChild, DocXML node, void *pPrivate, DOCX_NODE_ENUMERATOR_FUNC func)
 {
 	int		iPos  = 0;
+	bool	bRet  = true;
 	cstring sTag  = sChild.Tokenize(iPos, "/");
 	cstring sRest = sChild.Tokenize(iPos, "");
 	for (auto &i : node) {
 		if (sTag == i.name()) {
 			if (!sRest.IsEmpty()) {
-				if (!__EnumerateNodeInDepth(sRest, i, pPrivate, func))
+				if (!(bRet = __EnumerateNodeInDepth(sRest, i, pPrivate, func)))
 					break;
 			} else {
-				if (!func(i, pPrivate))
+				if (!(bRet = func(i, pPrivate)))
 					break;
 			}
 		} else {
-			if (!__EnumerateNodeInDepth(sChild, i, pPrivate, func))
+			if (!(bRet = __EnumerateNodeInDepth(sChild, i, pPrivate, func)))
 				break;
 		}
 	}
 
-	return true;
+	return bRet;
 }
 
 void DocXML::EnumerateInDepth(const char *sChild, void *pPrivate, DOCX_NODE_ENUMERATOR_FUNC func)

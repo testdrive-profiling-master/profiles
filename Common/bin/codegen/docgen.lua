@@ -746,11 +746,9 @@ function GenerateFigure(sFileName, fRatio)
 				local sFixedFileName = String(sFileName.s)
 				sFixedFileName:CutFront("\\", true)
 				sFixedFileName:CutFront("/", true)
-				sFixedFileName:Replace(" ", "_", true)
 				sOutFileName:erase(#sFileName.s - #sFixedFileName.s, -1);
 				sOutFileName:Append(sFixedFileName.s .. "." .. sPageName .. ".svg")
-				
-				print("\nsOutFileName = " .. sOutFileName.s ..  "\n")
+				sOutFileName:Replace(" ", "_", true)
 			end
 			-- convert odg to svg
 			os.execute("odg2svg \"" .. sFileName.s .. "\" -p \"" .. sPageName .. "\" -o \"" .. sOutFileName.s .. "\"")
@@ -2599,7 +2597,7 @@ while true do
 	end
 	
 	bookmark_text:Destroy(1)
-	
+
 	bookmark_node:set_string(" " .. (bPage and "PAGEREF" or "REF") .. " _Ref" .. bookmark.id .. (bNumber and " \\w" or "") .. " \\h ")
 end
 
@@ -2624,22 +2622,23 @@ if #docgen.hangul.suffix_deferred > 0 then
 			end
 		end
 	end
+
 	-- 모두 바꾸기
 	while true do
 		local	text_node	= docgen.doc_body:child_in_depth("w:t", "[[::han_suffix::")
 		
-		if text_node:empty() then
-			break
-		end
-		
+		if text_node:empty() then break end
+
 		local s = String(text_node:text())
-		
+
 		while true do
 			local iStart	= s:find("[[::han_suffix::")
 			local iEnd		= s:find("]]", iStart + 16)
+
 			if iStart < 0 or iEnd < 0 then
 				break
 			end
+
 			local	iNum	= tonumber(string.sub(s.s, iStart + 17, iEnd))
 			s:erase(iStart, iEnd - iStart + 2)
 			local	node	= docgen.hangul.suffix_deferred[iNum]
@@ -2650,8 +2649,9 @@ if #docgen.hangul.suffix_deferred > 0 then
 			
 			s:insert(iStart, docgen.hangul.suffix_list[node.iSuffix])
 		end
-		
+
 		text_node:set_string(s.s)
+		break
 	end
 end
 

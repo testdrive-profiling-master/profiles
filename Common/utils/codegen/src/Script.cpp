@@ -496,14 +496,13 @@ public:
 			p.sAttribute = sAttribute;
 			p.sValue	 = sValue;
 			EnumerateInDepth(sName, &p, [](DocXML node, void *pPrivate) -> bool {
-				__private *p = (__private *)pPrivate;
-
+				__private *p	= (__private *)pPrivate;
 				auto	   attr = node.attribute(p->sAttribute);
 
 				if (attr.empty())
 					return true;
 
-				if (p->sValue && !strstr(p->sValue, attr.as_string()))
+				if (p->sValue && strcmp(p->sValue, attr.as_string()) != 0)
 					return true;
 
 				p->node = node;
@@ -647,7 +646,7 @@ public:
 		if (attr.empty())
 			attr = xml_node::append_attribute(sName);
 
-		attr.set_name(sValue);
+		attr.set_value(sValue);
 	}
 	const char *get_attribute(const char *sName)
 	{
