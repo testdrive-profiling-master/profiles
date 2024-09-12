@@ -713,13 +713,14 @@ function GenerateFigure(sFileName, fRatio)
 				error("The page names in the visio file(" .. sFileName.s .. ") must be specified.")
 			end
 			
+			if lfs.IsExist(sFileName.s) == false then
+				error("File is not found : " .. sFileName.s)
+			end
+			
 			-- convert visio to svg
 			os.execute("vsd2svg \"" .. sFileName.s .. "\" \"" .. sPageName .. "\"")
 			
-			if #sPageName ~= 0 then
-				sFileName:Append("." .. sPageName)
-			end
-			sFileName:Append(".svg")
+			sFileName:Append("." .. sPageName .. ".svg")
 			
 			do	-- whitespace bug fix. convert " " to "_"
 				local sFixedFileName = String(sFileName.s)
@@ -738,6 +739,10 @@ function GenerateFigure(sFileName, fRatio)
 		elseif sFileName:CompareBack(".odg") then	-- libreoffice draw
 			if #sPageName == 0 then
 				error("The page names in the OpenDocument Grapgic file(" .. sFileName.s .. ") must be specified.")
+			end
+			
+			if lfs.IsExist(sFileName.s) == false then
+				error("File is not found : " .. sFileName.s)
 			end
 			
 			local sOutFileName = String(sFileName.s)
@@ -782,6 +787,10 @@ function GenerateFigure(sFileName, fRatio)
 				temporary_file_list[#temporary_file_list + 1]		= sFileName.s	-- clean up list.
 			end
 		end
+	end
+	
+	if lfs.IsExist(sFileName.s) == false then
+		error("File is not found : " .. sFileName.s)
 	end
 	
 	sFileName	= sFileName.s
