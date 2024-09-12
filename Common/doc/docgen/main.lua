@@ -30,6 +30,8 @@ AddTerm("WORD", "Microsft Office's word processor")
 AddTerm("Excel", "Microsoft's spreadsheet editor")
 AddTerm("Visio", "Microsoft Office's Visio\
 - Diagramming and vector graphics application")
+AddTerm("LibreOffice", "@<link:https://www.libreoffice.org;LibreOffice> The Document Foundation")
+AddTerm("Draw", "LibreOffice's vector graphics editor")
 AddTerm("PDF", "Portable Document Format (@<link:https://ko.wikipedia.org/wiki/PDF;Wiki>)")
 AddTerm("markdown", "Mark-up language (@<link:https://ko.wikipedia.org/wiki/%EB%A7%88%ED%81%AC%EB%8B%A4%EC%9A%B4;Wiki>)")
 AddTerm("VBA", "Microsoft's Visual Basic for Application")
