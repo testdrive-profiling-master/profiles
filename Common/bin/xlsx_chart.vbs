@@ -35,6 +35,7 @@ If (WScript.Arguments.Count > 1) And (WScript.Arguments.Count < 3) Then
 
 		objExcel.Visible			= False
 		objExcel.DisplayAlerts		= False
+		objExcel.AlertResponse		= vbNo
 		
 		set objBooks	= objExcel.Workbooks.open(excel_path)
 		

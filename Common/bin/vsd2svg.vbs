@@ -30,6 +30,7 @@ If WScript.Arguments.Count > 0 Then
 		On Error Resume Next	'forced error handling
 
 		Set objVisio			= CreateObject("Visio.InvisibleApp")
+		objVisio.AlertResponse	= vbNo
 
 		If Err.Number <> 0 Then
 			Wscript.Echo "*E: Microsoft Visio is not installed."

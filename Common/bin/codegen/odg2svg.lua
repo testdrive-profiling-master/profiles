@@ -12,7 +12,11 @@ end
 page_name		= Arg:GetOptionString("page_name")
 in_file_name	= Arg:GetOptionFile("input_file", 0)
 out_file_name	= Arg:GetOptionFile("out_file", 0)
-office_path	= nil
+
+if lfs.IsExist(in_file_name) == false then
+	LOGE("Input file is not found : " .. in_file_name)
+	os.exit(1)
+end
 
 function ERROR(msg)
 	LOGE(msg)
@@ -21,6 +25,7 @@ function ERROR(msg)
 end
 
 -- 1st : get libreoffice path
+office_path	= nil
 for i=0,7 do	-- 'C'~'H' drive
 	local sPath = string.char(67+i) .. ":\\Program Files\\LibreOffice\\program\\soffice.exe"
 
@@ -151,9 +156,6 @@ do
 			child	= node:child_in_depth_by_attribute("rect", "class", "BoundingBox_done")
 		end
 		
-		if BoundingBox.sx < 0 then BoundingBox.sx = 0 end
-		if BoundingBox.sy < 0 then BoundingBox.sy = 0 end
-
 		-- 사이즈 적용
 		if BoundingBox.iCount > 0 then
 			local	width	= BoundingBox.ex - BoundingBox.sx
@@ -172,7 +174,7 @@ do
 			end
 			
 			-- 마진 적용
-			local	margin	= math.ceil((width / 2) * 0.01)	-- 1% 마진
+			local	margin	= math.floor((width / 2) * 0.02)	-- 2% 마진
 			BoundingBox.sx	= BoundingBox.sx - margin
 			BoundingBox.sy	= BoundingBox.sy - margin
 			BoundingBox.ex	= BoundingBox.ex + margin
@@ -191,8 +193,8 @@ do
 			end
 			node		= xml:Node("svg")
 			node:set_attribute("viewBox", tostring(BoundingBox.sx) .. " " .. tostring(BoundingBox.sy) .. " " .. tostring(width) .. " " .. tostring(height))
-			node:set_attribute("width", tostring(math.ceil(width/100)) .. "mm")
-			node:set_attribute("height", tostring(math.ceil(height/100)) .. "mm")
+			node:set_attribute("width", tostring(math.floor(width/100)) .. "mm")
+			node:set_attribute("height", tostring(math.floor(height/100)) .. "mm")
 		end
 	end
 	
