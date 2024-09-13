@@ -2660,7 +2660,6 @@ if #docgen.hangul.suffix_deferred > 0 then
 		end
 
 		text_node:set_string(s.s)
-		break
 	end
 end
 
