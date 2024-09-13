@@ -143,7 +143,6 @@ The '-r' option specifies arbitrary preceding Lua code. This code can contain co
 :::Note
 The default setting is 'en' (english) and will have no effect on documents that do not use this 'language' setting.
 %%%
-;;;
 
 
  
@@ -193,18 +192,38 @@ build.bat  main.md  media
 
 %%% ko
 ### 제한
-WORD의 VBA가 사용되므로 WORD가 설치된 윈도우즈 PC 환경이 필요합니다. (웹용 Office 365 인 경우엔 앱 버전으로 설치가 필요합니다.) \
-또한 @<bookmark:그림 삽입>에 Visio 파일(.vsd/.vsdx)을 바로 지정하기 위해서는 Visio 설치가 별도로 필요하며, Excel 차트를 이용하기 위해서 Excel 설치가 추가적으로 필요합니다. \
-또한 LibreOffice의 Draw 파일(.odg)을 이미지로 바로 사용하고자 할 때, 별도의 LibreOffice 설치가 필요합니다.
-리눅스 상에서도 생성은 가능하나, 문서 전체 필드 업데이트(WORD에서 직접 열어 수동으로 업데이트는 가능)/워터마킹/pdf변환 등의 기능이 수행되지 않습니다.
+WORD 기반의 템플릿문서를 사용하고 윈도우 환경에서 적절하게 동작됩니다.
+
+*> 1. WORD (필수)
+**> 윈도우 PC 환경의 Office 를 설치해야 합니다. (웹용 Office 365 인 경우엔 앱 버전으로 설치가 필요합니다.) \
+설치되지 않았을 경우 문서 생성은 가능하나, 문서 전체 필드 업데이트(WORD에서 직접 열어 수동으로 업데이트는 가능)/워터마킹/pdf변환 등의 기능이 수행되지 않습니다.
+*> 2. Excel (옵션)
+**> 엑셀 파일로 부터 @<bookmark:표 삽입> 및 차트 @<bookmark:그림 삽입>을 하기 위해서 설치가 필요합니다.
+*> 3. Visio (옵션)
+**> 벡터 그래픽의 편집 .vsd/.vsdx 파일로 부터 이미지를 별도의 추가 변환없이 바로 @<bookmark:그림 삽입>을 사용하려면 Visio 설치가 필요합니다. \
+비용을 고려하여, LibreOffice의 Draw를 사용할 수 있습니다.
+*> 4. Draw (옵션)
+**> LibreOffice 의 Draw는 Visio 대체 어플리케이션으로 벡터 그래픽을 수동 변환 없이 바로 @<bookmark:그림 삽입>을 할 수 있습니다. \
+.odg 파일의 포멧을 사용할 수 있으며, docgen이 동작 중일 때, 편집중이 아니어야 합니다. \
+LibreOffice 설치가 필요합니다.
+
+
 %%% en
 ### Limitation
-Since WORD's VBA is used, a Windows PC environment with WORD installed is required. (If it is Office 365 for the web, you need to install it as an App. version.) \
-Additionally, in order to directly specify a Visio file (.vsd/.vsdx) in @<bookmark:Picture insertion>, \
-Visio installation is required separately. \
-And to use Excel charts, additional installation of Excel is required. \
-Additionally, if you want to use LibreOffice's Draw file(.odg) directly as image, a LibreOffice installation is required.
-Creation is possible on Linux, but functions such as updating entire document fields (can be updated manually by opening directly in WORD)/watermarking/PDF conversion are not performed.
+It uses WORD-based template documents and works properly in a Windows environment.
+
+*> 1. WORD (Mendatory)
+**> You need to install Office for Windows PC environment. (If it is Office 365 for web, you need to install it as an app version.) \
+If it is not installed, you can create documents, but functions such as updating the entire document field (you can open it directly in WORD and update it manually)/watermarking/PDF conversion will not be performed.
+*> 2. Excel (Optional)
+**> Installation is required to @<bookmark:Table insertion> and @<bookmark:Picture insertion> from Excel files.
+*> 3. Visio (Optional)
+**> To use @<bookmark:Picture insertion> directly from the .vsd/.vsdx file of vector graphics without any additional conversion, Visio installation is required. \
+Considering the cost, you can use Draw app. of LibreOffice.
+*> 4. Draw (Optional)
+**> LibreOffice's Draw is a Visio replacement application that allows you to directly @<bookmark:Picture insertion> vector graphics without manual conversion. \
+It can use the .odg file format, and must not be editing while docgen is running.. \
+LibreOffice installation is required.
 %%%
 
 
