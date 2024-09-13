@@ -1566,7 +1566,21 @@ local	bInline		= false
 -- 한글 접미사 자동 수정
 docgen.hangul					= {}
 docgen.hangul.auto_suffix		= true
-docgen.hangul.suffix_list		= {"을","를","은","는","이","가","와","과"}
+docgen.hangul.suffix_list		= {}
+docgen.hangul.suffix_list[1]	= "을"
+docgen.hangul.suffix_list[2]	= "를"
+docgen.hangul.suffix_list[3]	= "은"
+docgen.hangul.suffix_list[4]	= "는"
+docgen.hangul.suffix_list[5]	= "이"
+docgen.hangul.suffix_list[6]	= "가"
+docgen.hangul.suffix_list[7]	= "과"
+docgen.hangul.suffix_list[8]	= "와"
+docgen.hangul.suffix_retrieve 	= function(s)
+	for i, v in pairs (docgen.hangul.suffix_list) do
+		if v == s then return i end
+	end
+	return -1
+end
 docgen.hangul.suffix_enable		= false
 docgen.hangul.suffix_hint		= nil
 docgen.hangul.suffix_bookmark	= nil
@@ -1602,6 +1616,7 @@ docgen.hangul.postfix_fix = function (sHint, iSuffix)
 	local do_suffix = function(sHint)
 		local s = String(sHint)
 		s:TrimRight(" .")
+
 		if #s.s > 0 then
 			if string.byte(s.s, #s.s) < 128 then	-- case : ascii
 				s:erase(0, #s.s - 1)
@@ -2135,8 +2150,7 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 					if docgen.hangul.suffix_enable then	-- 한글 접미사 체크
 						local s = String(sWord.s)
 						s:TrimLeft(" }])'\"")
-						s:CutBack(" ", true)
-						local iSuffix	= s:RetrieveTag(docgen.hangul.suffix_list)
+						local iSuffix	= docgen.hangul.suffix_retrieve(string.sub(s.s, 1, 3))
 						
 						if iSuffix > 0 then
 							if docgen.hangul.suffix_hint == nil then
