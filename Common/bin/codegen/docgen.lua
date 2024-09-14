@@ -87,7 +87,7 @@ docgen.supported_format["txt"]	= "Plain text format (unicode)"
 ---------------------------------------------------------------------------------
 -- argument handling
 ---------------------------------------------------------------------------------
-local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.9")
+local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.10")
 
 Arg:AddOptionString	("template", "", "t", nil, "template", "Document template name/file.")
 -- list-up customized document template list
@@ -347,7 +347,7 @@ local	excel_numbered_color_codes = {
 	"333333"
 }
 
-RunScript("docgen/fontawesome")	-- font awesome emoji functions
+RunScript("docgen/emoji")	-- support emoji functions
 
 local table_wrapper	= {}	-- table 이나 figure 인용시 bookmark 와 함께 wrapper 시킴
 table_wrapper.prefix	= "<w:tbl>\
@@ -1116,7 +1116,6 @@ function GenerateTable(sExcelFileName, sSheetName)
 					"</w:tcPr>"
 					.. EncodeParagraph(col_cells[i].text, {
 						pPr="<w:pStyle w:val=\"TableColumn\"/>",
-						rPr="<w:rFonts w:hint=\"eastAsia\"/>",
 						text_color=docgen.table_header.text_color,
 						bDontIgnoreEmpty=true}) ..
 				"</w:tc>"
@@ -1197,6 +1196,8 @@ function GenerateTable(sExcelFileName, sSheetName)
 							cell_alignment		= "TableTextCenter"
 						elseif col_cells[i].style:AlignmentHorizontal() == "right" then
 							cell_alignment		= "TableTextRight"
+						elseif col_cells[i].style:AlignmentHorizontal() == "left" then
+							cell_alignment		= "TableTextLeft"
 						end
 
 						-- background color
@@ -1239,7 +1240,7 @@ function GenerateTable(sExcelFileName, sSheetName)
 						.. EncodeParagraph(col_cells[i].text,
 						{
 							pPr="<w:pStyle w:val=\"" .. cell_alignment .. "\"/>",
-							rPr="<w:rFonts w:hint=\"eastAsia\"/>" .. color_field,
+							rPr=color_field,
 							bDontIgnoreEmpty=true
 						}) .. 
 					"</w:tc>")
@@ -2246,7 +2247,9 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 						elseif sTag.s == "font" then
 							bFont			= bSet
 							if bSet then
-								sFont			= sVar:Tokenize(": ").s
+								sFont			= sVar:Tokenize(":")
+								sFont:Trim(" ")
+								sFont			= sFont.s
 							end
 						elseif sTag.s == "img" then
 							local	sFileName	= sVar:Tokenize(";")
@@ -2423,6 +2426,9 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 									<w:rPr><w:rStyle w:val=\"af0\"/></w:rPr>\
 									<w:t>"  .. sComment.s ..  "</w:t>\
 								</w:r></w:hyperlink>")
+						elseif (sTag.s == "fas") or (sTag.s == "far") or (sTag.s == "fab") then	-- emoji Font Awesome
+							local	sUnicode	= docgen.emoji.get(sTag.s, sVar:Tokenize(" :").s)
+							sLine:insert(sLine.TokenizePos, sUnicode)
 						elseif sTag.s == "lua" then
 							local	sLuaCode	= sVar:Tokenize("")
 							sLuaCode:TrimLeft(" :")
@@ -2436,8 +2442,6 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 								sLine:insert(sLine.TokenizePos, tostring(ReturnCode))
 								docgen.hangul.postfix_set_hint(tostring(ReturnCode))
 							end
-						elseif sTag.s == "emoji" then
-							-- do something...
 						else
 							error("Can't recognize paragraph command : " .. sTag.s)
 						end

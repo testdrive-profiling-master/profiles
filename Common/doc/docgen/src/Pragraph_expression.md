@@ -1465,8 +1465,7 @@ Column 과 Row 를 표기시 아래와 같은 속성을 지정할 수 있으며,
 Basically, since docgen is written based on Lua scripts, you can create a table with Lua variables and utilize it.
 This is an example that utilizes the lua table already defined as shown below.
 
-예) declared lua expression
-```lua
+```lua : declared table example in lua expression
 lua_table_example = {
 	HeaderCount = 2,
 	{{"Head A", merge={1,2}}, {"Head B", merge={3,1}}, {width=300, style="TableTextCenter"}, ""},
@@ -1477,8 +1476,7 @@ lua_table_example = {
 }
 ```
  
-예) Expression within paragraph
-```html
+```html : Ex) Expression within paragraph
 @<tbl:lua;lua_table_example;Lua table example>
 ```
 
@@ -1495,4 +1493,64 @@ When expressing Column and Row, you can specify the following properties. In the
 ** width : Specifies the horizontal length of one column. The final relative length is given by dividing it from the total length of all columns. This property is valid only for the Column described in the first Row. (Default: 100)
 ** style : Specifies the text style name to apply to the column. The specified style is equally applied to the same child columns. (Default: "TableTextLeft", when specifying the style back to default, specify "" rather than nil.)
 ** merge : It functions to merge multiple cells within a certain range starting from the current cell location. Range can be specified in properties as @<b>{width,height}@</b>.
+%%%
+
+
+
+ 
+%%% ko
+## 이모지 표현
+@<size:30>@<b>표현식(Solid) : @@<fas:@<color:FF0000>토큰명@</color>>@</b>@</size>
+@<size:30>@<b>표현식(Regular) : @@<far:@<color:FF0000>토큰명@</color>>@</b>@</size>
+@<size:30>@<b>표현식(Brands) : @@<fab:@<color:FF0000>토큰명@</color>>@</b>@</size>
+
+"@<link:https://fontawesome.com/search?o=r&m=free;Font Awesome>"이 제공하는 무료 아이콘 폰트를 사용하여, 다양한 이모지 표현이 가능합니다. \
+토큰명에 아래 링크나 @<bookmark:이모지 표현 테이블>을 검색하여, 무료 폰트를 사용할 수 있습니다.
+* The Font Awesome : @<link:https://fontawesome.com/search?m=free>
+
+@<img:#media/fontawesome_search.png;0.9;Font Awesome 검색>
+
+예를 들어 위의 검색된 화면 @<bookmark:Font Awesome 검색>와 같이 폰트 단축명 "@<fixed>fab@</fixed>"과 토큰명 "@<fixed>github@</fixed>"를 찾은 후, \
+"@<fixed>@@<fab:github>@</fixed>"로 표현하면 "@<fab:github>" 아이콘을 얻을 수 있습니다.
+
+ 
+```lua : 이모지 사용 예
+Solid 예제들 : @<fas:arrow-right>, @<fas:arrow-left>, @<fas:arrow-up>, @<fas:arrow-down>, @<fas:hotdog>, @<fas:user-check>
+Regular 예제들 : @<far:thumbs-up>, @<far:folder-open>, @<far:circle-check>, <far:circle-play>
+Brands 예제들 : @<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:aws>
+```
+결과)
+Solid 예제들 : @<fas:arrow-right>, @<fas:arrow-left>, @<fas:arrow-up>, @<fas:arrow-down>, @<fas:hotdog>, @<fas:user-check>
+Regular 예제들 : @<far:thumbs-up>, @<far:folder-open>, @<far:circle-check>, @<far:circle-play>
+브랜드 예제들 : @<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:aws>
+
+%%% en
+## Emoji expressions
+@<size:30>@<b>Expression(Solid) : @@<fas:@<color:FF0000>token_name@</color>>@</b>@</size>
+@<size:30>@<b>Expression(Regular) : @@<far:@<color:FF0000>token_name@</color>>@</b>@</size>
+@<size:30>@<b>Expression(Brands) : @@<fab:@<color:FF0000>token_name@</color>>@</b>@</size>
+
+You can express various emojis using free icon fonts provided by "@<link:https://fontawesome.com/search?o=r&m=free;Font Awesome>". \
+You can use free fonts by searching the below link or @<bookmark:Emoji expressions table> for the token name.
+
+* The Font Awesome : @<link:https://fontawesome.com/search?m=free>
+
+@<img:#media/fontawesome_search.png;0.9;Font Awesome search>
+
+For example, if you search for the font short name "@<fixed>fab@</fixed>" and the token name "@<fixed>github@</fixed>" \
+like the search screen above @<bookmark:Font Awesome search>, \
+and then express it as "@<fixed>@@<fab:github>@</fixed>", you can get the "@<fab:github>" icon.
+
+ 
+```lua : Emoji usage example
+Solid exmaples : @<fas:arrow-right>, @<fas:arrow-left>, @<fas:arrow-up>, @<fas:arrow-down>, @<fas:hotdog>, @<fas:user-check>
+Regular exmaples : @<far:thumbs-up>, @<far:folder-open>, @<far:circle-check>, <far:circle-play>
+Brands exmaples : @<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:aws>
+```
+
+Result)
+Solid exmaples : @<fas:arrow-right>, @<fas:arrow-left>, @<fas:arrow-up>, @<fas:arrow-down>, @<fas:hotdog>, @<fas:user-check>
+Regular exmaples : @<far:thumbs-up>, @<far:folder-open>, @<far:circle-check>, @<far:circle-play>
+Brands exmaples : @<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:aws>
+
 %%%

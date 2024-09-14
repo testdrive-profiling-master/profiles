@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 9/3/2024 Tue (clonextop@gmail.com)
+// Rev.  : 9/14/2024 Sat (clonextop@gmail.com)
 //================================================================================
 #include "DocExcel.h"
 #include "ExcelNumFormat/ExcelNumFormat.h"
@@ -1053,7 +1053,7 @@ DocExcelStyle::~DocExcelStyle() {}
 
 string DocExcelStyle::AlignmentHorizontal(void)
 {
-	return child("alignment").attribute("horizontal").as_string("left");
+	return child("alignment").attribute("horizontal").as_string("");
 }
 
 string DocExcelStyle::BackgroundColor(void)

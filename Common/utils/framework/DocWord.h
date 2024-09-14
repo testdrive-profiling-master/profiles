@@ -61,10 +61,9 @@ public:
 	bool		 ReplaceSubDocument(const char *sPrevName, const char *sFileName);
 	bool		 SetProperty(const char *sID, const char *sValue);
 	string		 AddMedia(const char *sFileName);
-	bool		 AddFont(
-				const char *sFileName, const char *sFontName, const char *sKey, const char *sAltName = NULL, bool bFixed = false); // .odttf file only
-	string AddSubDocument(const char *sFileName);
-	string AddHyperlink(const char *sHyperlink);
+	bool		 AddFont(const char *sFileName, const char *sFontName, const char *sKey, bool bFixed = false); // .odttf file only
+	string		 AddSubDocument(const char *sFileName);
+	string		 AddHyperlink(const char *sHyperlink);
 
 protected:
 	bool		 AddFile(const char *sFileName, DOC_WORD_RELATIONSHIP RelationShip, cstring &sRelationID);

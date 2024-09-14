@@ -89,7 +89,7 @@ To run docgen, run as follows.
 ```txt
 > docgen
 
-Document Generator for TestDrive Profiling Master. v1.8
+Document Generator for TestDrive Profiling Master. v1.10
 Usage: docgen  [--help] [-t template] [-i template_desc] [-f format] [-l language] [-r|--run=lua_code] input_file [output_file]
 
       --help                display this help and exit

@@ -433,14 +433,12 @@ string DocWord::AddMedia(const char *sFileName)
 	return sID.c_string();
 }
 
-bool DocWord::AddFont(const char *sFileName, const char *sFontName, const char *sKey, const char *sAltName, bool bFixed)
+bool DocWord::AddFont(const char *sFileName, const char *sFontName, const char *sKey, bool bFixed)
 {
 	cstring sID;
 	if (AddFile(sFileName, DOC_WORD_RELATIONSHIP_FONT, sID)) {
 		auto node = m_FontTable.append_child("w:font");
 		node.append_attribute("w:name").set_value(sFontName);
-		if (sAltName)
-			node.append_child("w:altName").append_attribute("w:val").set_value(sAltName);
 		node.append_child("w:charset").append_attribute("w:val").set_value("auto");
 		node.append_child("w:family").append_attribute("w:val").set_value("auto");
 		node.append_child("w:pitch").append_attribute("w:val").set_value(bFixed ? "fixed" : "variable");

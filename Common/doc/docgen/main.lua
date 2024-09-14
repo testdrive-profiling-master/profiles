@@ -21,6 +21,7 @@ AddRevision("1.6",	2024,  5,  17,	"Markdown can be specified as the input source
 AddRevision("1.7",	2024,  5,  21,	"add Excel chart image reference and inline code expression")
 AddRevision("1.8",	2024,  5,  22,	"add export file format(html, odt, rtf, xml, txt), and new template installation function")
 AddRevision("1.9",	2024,  8,  31,	"add double underline expression")
+AddRevision("1.10",	2024,  9,  14,	"add emoji expression")
 
 
 -- Term 추가
@@ -35,6 +36,7 @@ AddTerm("Draw", "LibreOffice's vector graphics editor")
 AddTerm("PDF", "Portable Document Format (@<link:https://ko.wikipedia.org/wiki/PDF;Wiki>)")
 AddTerm("markdown", "Mark-up language (@<link:https://ko.wikipedia.org/wiki/%EB%A7%88%ED%81%AC%EB%8B%A4%EC%9A%B4;Wiki>)")
 AddTerm("VBA", "Microsoft's Visual Basic for Application")
+AddTerm("Font Awesome", "@<link:https://fontawesome.com;Font Awesome> free icon library")
 
 
 lua_table_example = {
@@ -52,3 +54,4 @@ docgen.code_type	= "lua"
 AddParagraph("[[src/Introduction.md]]")
 AddParagraph("[[src/Lua_expression.md]]")
 AddParagraph("[[src/Pragraph_expression.md]]")
+AddParagraph("[[src/Appendix.md]]")
