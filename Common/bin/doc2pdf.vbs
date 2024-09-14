@@ -39,7 +39,6 @@ If WScript.Arguments.Count > 0 Then
 		
 		objWord.Visible			= False
 		objWord.DisplayAlerts	= False
-		objWord.AlertResponse	= vbNo
 		objWord.OMathAutoCorrect.UseOutsideOMath	= True
 		
 		Set objDoc = objWord.documents.open(docPath)

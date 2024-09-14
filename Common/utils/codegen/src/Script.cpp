@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive codegen project
-// Rev.  : 9/12/2024 Thu (clonextop@gmail.com)
+// Rev.  : 9/14/2024 Sat (clonextop@gmail.com)
 //================================================================================
 #include "Script.h"
 #include "ArgTable.h"
@@ -1414,6 +1414,7 @@ Script::Script(void)
 				.addFunction("ReplaceSubDocument", &DocWord::ReplaceSubDocument)
 				.addFunction("SetProperty", &DocWord::SetProperty)
 				.addFunction("AddMedia", &DocWord::AddMedia)
+				.addFunction("AddFont", &DocWord::AddFont)
 				.addFunction("AddSubDocument", &DocWord::AddSubDocument)
 				.addFunction("AddHyperlink", &DocWord::AddHyperlink)
 				.endClass()

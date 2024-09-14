@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 5/17/2024 Fri (clonextop@gmail.com)
+// Rev.  : 9/14/2024 Sat (clonextop@gmail.com)
 //================================================================================
 #include "DocWord.h"
 
@@ -51,6 +51,8 @@ bool DocWord::OnOpen(void)
 {
 	m_Body			= GetXML("word/document.xml")->child("w:document").child("w:body");
 	m_Relationships = GetXML("word/_rels/document.xml.rels")->child("Relationships");
+	m_FontList		= GetXML("word/_rels/fontTable.xml.rels")->child("Relationships");
+	m_FontTable		= GetXML("word/fontTable.xml")->child("w:fonts");
 	m_ContentsType	= GetXML("[Content_Types].xml")->child("Types");
 	m_Properties	= GetXML("docProps/custom.xml")->child("Properties");
 	// open header and footers
@@ -299,7 +301,7 @@ bool DocWord::SetProperty(const char *sID, const char *sValue)
 
 		if (!sValue)
 			sValue = "";
-		cstring	sPropertyValue(sValue);
+		cstring sPropertyValue(sValue);
 		sPropertyValue.ChangeCharsetToUTF8();
 
 		if (!node.empty()) { // already existed.
@@ -333,74 +335,137 @@ bool DocWord::SetProperty(const char *sID, const char *sValue)
 
 bool DocWord::AddFile(const char *sFileName, DOC_WORD_RELATIONSHIP RelationShip, cstring &sRelationID)
 {
-	// get new file Id
-	for (int i = 1;; i++) {
-		sRelationID.Format("rId%d", i);
+	if (!sFileName)
+		return false;
+	switch (RelationShip) {
+	case DOC_WORD_RELATIONSHIP_FONT: {
+		// get new file Id
+		int iID = 1;
+		for (;; iID++) {
+			sRelationID.Format("rId%d", iID);
 
-		if (!m_Relationships.find_child_by_attribute("Id", sRelationID))
-			break;
-	}
-
-	// make all path/entry name
-	cstring sTarget(sFileName), sEntryPath, sRelationShipType;
-	bool	bExternal = false;
-	{
-		typedef struct {
-			const char *sType;
-			const char *sTargetPath;
-			const char *sEntryPath;
-		} __REL_PATH;
-		static const __REL_PATH __rel_path[] = {
-			{"header", "", "word/"},	  {"footer", "", "word/"},	   {"image", "media/", "word/media/"},
-			{"styles", "", "word/"},	  {"fontTable", "", "word/"},  {"customXml", "../customXml/", "customXml/"},
-			{"webSettings", "", "word/"}, {"subDocument", NULL, NULL}, {"hyperlink", NULL, NULL},
-		};
-		// make others
-		sRelationShipType.Format("http://schemas.openxmlformats.org/officeDocument/2006/relationships/%s",
-								 __rel_path[(int)RelationShip].sType);
-
-		if (__rel_path[(int)RelationShip].sTargetPath) {
-			sTarget.CutFront("\\", true);
-			sTarget.CutFront("/", true);
-			sTarget.insert(0, "_");
-			sTarget.insert(0, sRelationID);
-			sEntryPath.Format("%s%s", __rel_path[(int)RelationShip].sEntryPath, sTarget.c_str());
-			sTarget.insert(0, __rel_path[(int)RelationShip].sTargetPath);
-		} else {
-			bExternal = true;
+			if (!m_FontList.find_child_by_attribute("Id", sRelationID))
+				break;
 		}
+
+		// insert file
+		cstring sEntryName;
+		sEntryName.Format("word/fonts/font%d.odttf", iID);
+		if (!ReplaceFile(sEntryName, sFileName))
+			return false;
+
+		// set relationship
+		auto node = m_FontList.append_child("Relationship");
+		node.append_attribute("Id").set_value(sRelationID);
+		node.append_attribute("Type").set_value("http://schemas.openxmlformats.org/officeDocument/2006/relationships/font");
+		sEntryName.Format("fonts/font%d.odttf", iID);
+		node.append_attribute("Target").set_value(sEntryName);
+
+		return true;
+	} break;
+	default: {
+		// get new file Id
+		for (int i = 1;; i++) {
+			sRelationID.Format("rId%d", i);
+
+			if (!m_Relationships.find_child_by_attribute("Id", sRelationID))
+				break;
+		}
+
+		// make all path/entry name
+		cstring sTarget(sFileName), sEntryPath, sRelationShipType;
+		bool	bExternal = false;
+		{
+			typedef struct {
+				const char *sType;
+				const char *sTargetPath;
+				const char *sEntryPath;
+			} __REL_PATH;
+			// clang-format off
+			static const __REL_PATH __rel_path[] = {
+				{"header", "", "word/"},						// DOC_WORD_RELATIONSHIP_HEADER
+				{"footer", "", "word/"},						// DOC_WORD_RELATIONSHIP_FOOTER
+				{"image", "media/", "word/media/"},				// DOC_WORD_RELATIONSHIP_IMAGE
+				{"styles", "", "word/"},						// DOC_WORD_RELATIONSHIP_STYLES
+				{NULL, NULL, NULL},								// DOC_WORD_RELATIONSHIP_FONT (not use here)
+				{"fontTable", "", "word/"},						// DOC_WORD_RELATIONSHIP_FONTTABLE
+				{"customXml", "../customXml/", "customXml/"},	// DOC_WORD_RELATIONSHIP_CUSTOM_XML
+				{"webSettings", "", "word/"},					// DOC_WORD_RELATIONSHIP_WEB_SETTINGS
+				{"subDocument", NULL, NULL},					// DOC_WORD_RELATIONSHIP_SUB_DOCUMENT
+				{"hyperlink", NULL, NULL},						// DOC_WORD_RELATIONSHIP_HIPERLINK
+			};
+			// clang-format on
+			// make others
+			sRelationShipType.Format(
+				"http://schemas.openxmlformats.org/officeDocument/2006/relationships/%s", __rel_path[(int)RelationShip].sType);
+
+			if (__rel_path[(int)RelationShip].sTargetPath) {
+				sTarget.CutFront("\\", true);
+				sTarget.CutFront("/", true);
+				sTarget.insert(0, "_");
+				sTarget.insert(0, sRelationID);
+				sEntryPath.Format("%s%s", __rel_path[(int)RelationShip].sEntryPath, sTarget.c_str());
+				sTarget.insert(0, __rel_path[(int)RelationShip].sTargetPath);
+			} else {
+				bExternal = true;
+			}
+		}
+		// append new relationship
+		DocXML node = m_Relationships.append_child("Relationship");
+		node.append_attribute("Id").set_value(sRelationID);
+		node.append_attribute("Type").set_value(sRelationShipType);
+		node.append_attribute("Target").set_value(sTarget);
+
+		if (bExternal)
+			node.append_attribute("TargetMode").set_value("External");
+
+		return bExternal ? true : ReplaceFile(sEntryPath, sFileName);
+	} break;
 	}
-	// append new relationship
-	DocXML node = m_Relationships.append_child("Relationship");
-	node.append_attribute("Id").set_value(sRelationID);
-	node.append_attribute("Type").set_value(sRelationShipType);
-	node.append_attribute("Target").set_value(sTarget);
-
-	if (bExternal)
-		node.append_attribute("TargetMode").set_value("External");
-
-	return bExternal ? true : ReplaceFile(sEntryPath, sFileName);
+	return false;
 }
 
 string DocWord::AddMedia(const char *sFileName)
 {
 	cstring sID;
-	AddFile(sFileName, DOC_WORD_RELATIONSHIP_IMAGE, sID);
-	return sID.c_str();
+	if (!AddFile(sFileName, DOC_WORD_RELATIONSHIP_IMAGE, sID))
+		return "";
+	return sID.c_string();
+}
+
+bool DocWord::AddFont(const char *sFileName, const char *sFontName, const char *sKey, const char *sAltName, bool bFixed)
+{
+	cstring sID;
+	if (AddFile(sFileName, DOC_WORD_RELATIONSHIP_FONT, sID)) {
+		auto node = m_FontTable.append_child("w:font");
+		node.append_attribute("w:name").set_value(sFontName);
+		if (sAltName)
+			node.append_child("w:altName").append_attribute("w:val").set_value(sAltName);
+		node.append_child("w:charset").append_attribute("w:val").set_value("auto");
+		node.append_child("w:family").append_attribute("w:val").set_value("auto");
+		node.append_child("w:pitch").append_attribute("w:val").set_value(bFixed ? "fixed" : "variable");
+		node = node.append_child("w:embedRegular");
+		node.append_attribute("r:id").set_value(sID);
+		node.append_attribute("w:fontKey").set_value(sKey); // {**~**}
+		return true;
+	}
+	return false;
 }
 
 string DocWord::AddSubDocument(const char *sFileName)
 {
 	cstring sID;
-	AddFile(sFileName, DOC_WORD_RELATIONSHIP_SUB_DOCUMENT, sID);
-	return sID.c_str();
+	if (!AddFile(sFileName, DOC_WORD_RELATIONSHIP_SUB_DOCUMENT, sID))
+		return "";
+	return sID.c_string();
 }
 
 string DocWord::AddHyperlink(const char *sHyperlink)
 {
 	cstring sID;
-	AddFile(sHyperlink, DOC_WORD_RELATIONSHIP_HIPERLINK, sID);
-	return sID.c_str();
+	if (!AddFile(sHyperlink, DOC_WORD_RELATIONSHIP_HIPERLINK, sID))
+		return "";
+	return sID.c_string();
 }
 
 void DocWord::Modify(map<string, string> *pMod)

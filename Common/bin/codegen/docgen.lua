@@ -347,6 +347,8 @@ local	excel_numbered_color_codes = {
 	"333333"
 }
 
+RunScript("docgen/fontawesome")	-- font awesome emoji functions
+
 local table_wrapper	= {}	-- table 이나 figure 인용시 bookmark 와 함께 wrapper 시킴
 table_wrapper.prefix	= "<w:tbl>\
 <w:tblPr>\
