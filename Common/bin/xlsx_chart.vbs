@@ -78,7 +78,7 @@ If (WScript.Arguments.Count > 1) And (WScript.Arguments.Count < 3) Then
 		End if
 
 	Else
-		Wscript.Echo "*E: Not a Excel file."
+		Wscript.Echo "*E: Not a Excel file : '" + excel_path + "'"
 	End If
 
 	Set objBooks	= Nothing
