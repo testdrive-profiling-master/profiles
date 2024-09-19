@@ -1531,12 +1531,12 @@ When expressing Column and Row, you can specify the following properties. In the
 ```lua : 이모지 사용 예
 Solid 예제들 : @<size:50>@<fas:arrow-right>, @<fas:arrow-left>, @<fas:arrow-up>, @<fas:arrow-down>, @<fas:hotdog>, @<fas:user-check>
 Regular 예제들 : @<size:50>@<far:thumbs-up>, @<far:folder-open>, @<far:circle-check>, <far:circle-play>
-Brands 예제들 : @<size:50>@<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:linkedin>
+Brands 예제들 : @<size:50>@<fab:apple>, @<fab:microsoft>, @<fab:linux>, @<fab:windows>, @<fab:android>, @<fab:x-twitter>, @<fab:github>, @<fab:linkedin>
 ```
 결과)
 Solid 예제들 : @<size:50>@<fas:arrow-right>, @<fas:arrow-left>, @<fas:arrow-up>, @<fas:arrow-down>, @<fas:hotdog>, @<fas:user-check>
 Regular 예제들 : @<size:50>@<far:thumbs-up>, @<far:folder-open>, @<far:circle-check>, @<far:circle-play>
-브랜드 예제들 : @<size:50>@<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:linkedin>
+브랜드 예제들 : @<size:50>@<fab:apple>, @<fab:microsoft>, @<fab:linux>, @<fab:windows>, @<fab:android>, @<fab:x-twitter>, @<fab:github>, @<fab:linkedin>
 
 %%% en
 ## Emoji expressions
@@ -1559,12 +1559,12 @@ and then express it as "@<fixed>@@<fab:github>@</fixed>", you can get the "@<fab
 ```lua : Emoji usage example
 Solid exmaples : @<size:50>@<fas:arrow-right>, @<fas:arrow-left>, @<fas:arrow-up>, @<fas:arrow-down>, @<fas:hotdog>, @<fas:user-check>
 Regular exmaples : @<size:50>@<far:thumbs-up>, @<far:folder-open>, @<far:circle-check>, <far:circle-play>
-Brands exmaples : @<size:50>@<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:linkedin>
+Brands exmaples : @<size:50>@<fab:apple>, @<fab:microsoft>, @<fab:linux>, @<fab:windows>, @<fab:android>, @<fab:x-twitter>, @<fab:github>, @<fab:linkedin>
 ```
 
 Result)
 Solid exmaples : @<size:50>@<fas:arrow-right>, @<fas:arrow-left>, @<fas:arrow-up>, @<fas:arrow-down>, @<fas:hotdog>, @<fas:user-check>
 Regular exmaples : @<size:50>@<far:thumbs-up>, @<far:folder-open>, @<far:circle-check>, @<far:circle-play>
-Brands exmaples : @<size:50>@<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:linkedin>
+Brands exmaples : @<size:50>@<fab:apple>, @<fab:microsoft>, @<fab:linux>, @<fab:windows>, @<fab:android>, @<fab:x-twitter>, @<fab:github>, @<fab:linkedin>
 
 %%%
