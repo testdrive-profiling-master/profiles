@@ -648,8 +648,8 @@ Result : @<bookmark:LaTeX setting>
 %%% ko 
 ### 제목의 상호 참조
 
-제목의 경우 아래와 같이 Prefix 유무에 따라 상호 참조의 표현은 크게 4가지로 구현 가능합니다.
-* >1. 일반 문장 참조 (별도의 prefix 없이 표현)
+제목의 경우 아래와 같이 접두사 문자 유무에 따라 상호 참조의 표현은 크게 4가지로 구현 가능합니다.
+* >1. 일반 문장 참조 (별도의 접두사 없이 표현)
 ** >: @<b>@<color:FF0000>대상@</color>@</b>
 * >2. 페이지 번호 참조
 ** >: @<b>@<color:0000FF>&@</color>@<color:FF0000>대상@</color>@</b>
@@ -663,7 +663,7 @@ Result : @<bookmark:LaTeX setting>
 ### Cross-reference in title
 
 In the case of titles, cross-references can be expressed in four ways depending on the presence or absence of a prefix, as shown below.
-* >1. Reference to general sentences (expressed without a separate prefix)
+* >1. Reference to general sentences (expressed without a additional prefix)
 ** >: @<b>@<color:FF0000>target@</color>@</b>
 * >2. Page number reference
 ** >: @<b>@<color:0000FF>&@</color>@<color:FF0000>target@</color>@</b>
@@ -678,17 +678,19 @@ The example below shows an actual usage example, and you can see that clicking o
 
 
 %%% ko
-예) 일반 문장 참조
+예) 일반 문장 참조 (챕터와 그림 또는 표의 상호 참조가 서로 다름.)
 ```html
-@<bookmark:사용상 제한 및 라이센스 허가와 선행 과정>
+챕터의 경우 = "@<bookmark:사용상 제한 및 라이센스 허가와 선행 과정>"
+Figure/Table의 경우 = "@<bookmark:WORD 수학 수식 LaTeX 변환>"
 ```
-결과 : @<bookmark:사용상 제한 및 라이센스 허가와 선행 과정>
+결과 : 챕터의 경우 = "@<bookmark:사용상 제한 및 라이센스 허가와 선행 과정>"
+       Figure/Table의 경우 = "@<bookmark:WORD 수학 수식 LaTeX 변환>"
 
 예) 페이지 번호 참조
 ```html
-@<bookmark:&사용상 제한 및 라이센스 허가와 선행 과정>
+page #@<bookmark:&사용상 제한 및 라이센스 허가와 선행 과정>
 ```
-결과 : @<bookmark:&사용상 제한 및 라이센스 허가와 선행 과정>
+결과 : page #@<bookmark:&사용상 제한 및 라이센스 허가와 선행 과정>
 
 예) 장/절 번호 참조
 ```html
@@ -704,17 +706,19 @@ The example below shows an actual usage example, and you can see that clicking o
 
 결과 : @<bookmark:@사용상 제한 및 라이센스 허가와 선행 과정>
 %%% en
-ex) Reference to general sentences
+ex) Reference to general sentences (Cross-references between chapters and figures or tables are different.)
 ```html
-@<bookmark:Restrictions on use, licensing and prerequisites>
+Chapter case = "@<bookmark:Restrictions on use, licensing and prerequisites>"
+Figure/Table case = "@<bookmark:WORD mathematical equation LaTeX conversion>"
 ```
-Result : @<bookmark:Restrictions on use, licensing and prerequisites>
+Result : Chapter case = "@<bookmark:Restrictions on use, licensing and prerequisites>"
+        Figure/Table case = "@<bookmark:WORD mathematical equation LaTeX conversion>"
 
 ex) Page number reference
 ```html
-@<bookmark:&Restrictions on use, licensing and prerequisites>
+page #@<bookmark:&Restrictions on use, licensing and prerequisites>
 ```
-Result : @<bookmark:&Restrictions on use, licensing and prerequisites>
+Result : page #@<bookmark:&Restrictions on use, licensing and prerequisites>
 
 ex) Chapter/section number reference
 ```html

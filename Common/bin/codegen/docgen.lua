@@ -2395,7 +2395,7 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 							end
 							
 							do
-								if bBold or docgen.bookmark.always_bold then
+								if bBold or (docgen.bookmark.always_bold and (sBookmark:CompareFront("&") == false)) then
 									sBookmark_rPr	= sBookmark_rPr .. "<w:b/><w:bCs/>"
 								end
 								if bItalic then
