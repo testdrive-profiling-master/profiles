@@ -45,37 +45,28 @@ end
 run(".run \"" .. office_path .. "\" --draw --headless --convert-to xml --outdir .odg2svg \"" .. in_file_name .. "\"")
 
 local	page_list	= {}
+local	page_count	= 0
 do
-	local sXML	= String()
+	local xml = DocXML()
 	do	-- read from file
-		local	f				= TextFile()
 		local xml_file_name		= String(in_file_name)
 		xml_file_name:CutFront("/", true)
 		xml_file_name:CutFront("\\", true)
 		xml_file_name:DeleteBack("odg")
 		xml_file_name:Append("xml")
-		
-		if f:Open(".odg2svg/" .. xml_file_name.s) == false then
-			ERROR("Information check is failed.")
+		if xml:LoadFromFile(".odg2svg/" .. xml_file_name.s) == false then
+			ERROR("SVGInformation check is failed.")
 		end
-		sXML.s	= f:GetAll()
-		f:Close()
 	end
 	
-	local	iPos	= 0
-	local	iID		= 1
-	while (iPos >= 0) do
-		iPos	= sXML:find("<draw:page")
-		if iPos > 0 then
-			sXML:erase(0, iPos)
-			sXML:CutFront("draw:name")
-			local name = sXML:Tokenize("=\"").s
-			if #page_name == 0 then
-				page_name	= name
-			end
-			page_list[name]	= iID
-			iID = iID + 1
-		end
+	local node	= xml:Node("office:document"):child("office:body"):child("office:drawing")
+	local child = node:child("draw:page")
+	
+	while child:empty() == false do
+		page_count	= page_count + 1
+		page_list[child:get_attribute("draw:name")]	= page_count
+		child:Destroy(1)
+		child = node:child("draw:page")
 	end
 end
 
@@ -112,6 +103,7 @@ do
 	-- delete other pages
 	local	child		= node:first_child()
 	do
+		local	slide_count	= 0
 		local	slide_id	= 1
 		while (child:empty() == false) do
 			if slide_id ~= page_id then
@@ -120,6 +112,11 @@ do
 				child		= child:next_sibling()
 			end
 			slide_id	= slide_id + 1
+			slide_count	= slide_count + 1
+		end
+		
+		if slide_count ~= page_count then
+			ERROR("File '" .. in_file_name .. "' is currently being modified. Close the 'Draw' program and try again.")
 		end
 	end
 	

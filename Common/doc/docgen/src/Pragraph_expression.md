@@ -1273,7 +1273,14 @@ If not specified, the default 1.0 is assumed.
 결과)
 @<img:media/test.vsdx[test_sample];0.8;Visio 벡터 그림 예시>
 
-예4) 그림 없이 캡션만 삽입
+예4) LibreOffice 특정 page를 벡터 이미지로 삽입
+```html
+@<img:media/test.odg[test_sample];0.5;Draw 벡터 그림 예시>
+```
+결과)
+@<img:media/test.odg[test_sample];0.5;Draw 벡터 그림 예시>
+
+예5) 그림 없이 캡션만 삽입
 ```html
 @<img:nil;0;그림 내용 없이 캡션만 삽입>
 ```
@@ -1301,7 +1308,14 @@ ex3) Insert Visio specific page as vector image
 Result)
 @<img:media/test.vsdx[test_sample];0.8;Visio vector image example>
 
-ex4) Insert only a caption without a picture
+ex4) Insert LibreOffice specific page as vector image
+```html
+@<img:media/test.odg[test_sample];0.5;Draw vector image example>
+```
+Result)
+@<img:media/test.odg[test_sample];0.5;Draw vector image example>
+
+ex5) Insert only a caption without a picture
 ```html
 @<img:nil;0;Insert only a caption without picture content>
 ```
@@ -1515,14 +1529,14 @@ When expressing Column and Row, you can specify the following properties. In the
 
  
 ```lua : 이모지 사용 예
-Solid 예제들 : @<fas:arrow-right>, @<fas:arrow-left>, @<fas:arrow-up>, @<fas:arrow-down>, @<fas:hotdog>, @<fas:user-check>
-Regular 예제들 : @<far:thumbs-up>, @<far:folder-open>, @<far:circle-check>, <far:circle-play>
-Brands 예제들 : @<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:aws>
+Solid 예제들 : @<size:50>@<fas:arrow-right>, @<fas:arrow-left>, @<fas:arrow-up>, @<fas:arrow-down>, @<fas:hotdog>, @<fas:user-check>
+Regular 예제들 : @<size:50>@<far:thumbs-up>, @<far:folder-open>, @<far:circle-check>, <far:circle-play>
+Brands 예제들 : @<size:50>@<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:aws>
 ```
 결과)
-Solid 예제들 : @<fas:arrow-right>, @<fas:arrow-left>, @<fas:arrow-up>, @<fas:arrow-down>, @<fas:hotdog>, @<fas:user-check>
-Regular 예제들 : @<far:thumbs-up>, @<far:folder-open>, @<far:circle-check>, @<far:circle-play>
-브랜드 예제들 : @<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:aws>
+Solid 예제들 : @<size:50>@<fas:arrow-right>, @<fas:arrow-left>, @<fas:arrow-up>, @<fas:arrow-down>, @<fas:hotdog>, @<fas:user-check>
+Regular 예제들 : @<size:50>@<far:thumbs-up>, @<far:folder-open>, @<far:circle-check>, @<far:circle-play>
+브랜드 예제들 : @<size:50>@<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:aws>
 
 %%% en
 ## Emoji expressions
@@ -1543,14 +1557,14 @@ and then express it as "@<fixed>@@<fab:github>@</fixed>", you can get the "@<fab
 
  
 ```lua : Emoji usage example
-Solid exmaples : @<fas:arrow-right>, @<fas:arrow-left>, @<fas:arrow-up>, @<fas:arrow-down>, @<fas:hotdog>, @<fas:user-check>
-Regular exmaples : @<far:thumbs-up>, @<far:folder-open>, @<far:circle-check>, <far:circle-play>
-Brands exmaples : @<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:aws>
+Solid exmaples : @<size:50>@<fas:arrow-right>, @<fas:arrow-left>, @<fas:arrow-up>, @<fas:arrow-down>, @<fas:hotdog>, @<fas:user-check>
+Regular exmaples : @<size:50>@<far:thumbs-up>, @<far:folder-open>, @<far:circle-check>, <far:circle-play>
+Brands exmaples : @<size:50>@<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:aws>
 ```
 
 Result)
-Solid exmaples : @<fas:arrow-right>, @<fas:arrow-left>, @<fas:arrow-up>, @<fas:arrow-down>, @<fas:hotdog>, @<fas:user-check>
-Regular exmaples : @<far:thumbs-up>, @<far:folder-open>, @<far:circle-check>, @<far:circle-play>
-Brands exmaples : @<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:aws>
+Solid exmaples : @<size:50>@<fas:arrow-right>, @<fas:arrow-left>, @<fas:arrow-up>, @<fas:arrow-down>, @<fas:hotdog>, @<fas:user-check>
+Regular exmaples : @<size:50>@<far:thumbs-up>, @<far:folder-open>, @<far:circle-check>, @<far:circle-play>
+Brands exmaples : @<size:50>@<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:aws>
 
 %%%
