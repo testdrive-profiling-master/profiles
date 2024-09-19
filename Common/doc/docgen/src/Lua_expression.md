@@ -1,10 +1,11 @@
 %%% ko
 # Lua 표현
 
-Lua 스크립트는 매우 가볍우면서 속도가 빠르고 단순하여, 비-프로그래머를 위해 주로 사용되는 스크립트 언어입니다. \
+Lua 스크립트는 매우 가벼우면서 속도가 빠르고 단순하여, 비-프로그래머를 위해 주로 사용되는 스크립트 언어입니다. \
 '워크래프트 WoW', '앵그리버드' 등 각종 게임에서 비 프로그래머인 게임 디자이너가 사용한 예시가 있습니다.
-docgen 역시 Lua 로 작성되어 있으며, MarkDown+HTML 표현법 이외에 Lua 문법을 사용하여 문서를 보다 세밀하게 구성할 수 있습니다.
-Lua 기능엔 codegen에서 추가된 기능을 모두 사용할 수 있고, 추가적으로 아래의 문법들이 사용될 수 있습니다.
+docgen 또한 Lua로 작성되어 있으며, MarkDown+HTML 표현법 이외에 Lua 문법을 사용하여 문서를 보다 세밀하게 구성할 수 있습니다.
+Lua 기능엔 @<link:https://testdrive-profiling-master.github.io/download/codegen_userguide.pdf;codegen>에서 \
+추가된 기능을 모두 사용할 수 있고, 추가적으로 아래의 문법들이 사용될 수 있습니다.
 
 * 외부 Lua 관련 링크
 ** @<link:https://librewiki.net/wiki/%EC%8B%9C%EB%A6%AC%EC%A6%88:%EC%89%BD%EA%B2%8C_%EB%B0%B0%EC%9A%B0%EB%8A%94_%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D_%EC%9E%85%EB%AC%B8/Lua;쉽게 배우는 프로그래밍 입문/Lua>
@@ -13,14 +14,14 @@ Lua 기능엔 codegen에서 추가된 기능을 모두 사용할 수 있고, 추
 ** AddTerm() 함수
 ** AddParagraph() 함수
 
-여기서는 docgen 에 추가된 기능만을 설명하고 있으며, Lua 에 대한 학습 없이 최소 template 구현만으로 문서를 생성할 수 있습니다.
+여기서는 docgen에 추가된 기능만을 설명하고 있으며, Lua 에 대한 학습 없이 최소 template 구현만으로 문서를 생성할 수 있습니다.
 %%% en
 # Lua expression
 
 Lua scripts are very lightweight, fast, and simple, making them the preferred script language for non-programmers. \
 There are examples of non-programmer game designers using it in various games such as 'Warcraft WoW' and 'Angry Birds'.
 docgen is also written in Lua, and documents can be structured in more detail using Lua syntax in addition to the MarkDown+HTML expression.
-All functions added in codegen can be used for Lua functions, and the syntax below can be used additionally.
+All functions added in @<link:https://testdrive-profiling-master.github.io/download/codegen_userguide.pdf;codegen> can be used for Lua functions, and the syntax below can be used additionally.
 
 * External Lua-related links
 ** @<link:https://en.wikipedia.org/wiki/Lua_(programming_language)/Lua wiki>
@@ -40,7 +41,7 @@ Here, only the features added to docgen are explained, and documents can be crea
 %%% ko
 ## docgen 변수들
 
-Lua 에서 사용 가능한 변수 목록은 아래와 같습니다.
+Lua에서 사용 가능한 변수 목록은 아래와 같습니다.
 
 @<tbl:#media/docgen_variables.xlsx;ko;docgen 변수 목록>
 %%% en
@@ -67,18 +68,18 @@ docgen.property["Document_Name_Header"]		-- 해더 이름 (...)
 docgen.property["Water_Mark"]				-- 워터마킹 문구 (생략 가능)
 ```
 :::Note
-Lua에서 "--" 로 시작하는 문장은 '주석' 표기를 의미합니다. \
+Lua 문법에서 "--" 로 시작하는 문장은 '주석' 표기를 의미합니다. \
 위 속성 이름은 문서에 따라 다를 수 있으며, 위에 나열된 이름들은 기본 TestDrive 문서에 사용된 한 예시이며, \
-"Water_Mark" 를 제외하고 고정된 이름이 아닙니다.
+"Water_Mark"를 제외하고 고정된 이름이 아닙니다.
 
  
-워드에는 메뉴 "파일/정보" 에 @<bookmark:WORD 속성 탭>와 같이 '속성' 탭이 존재합니다.
+워드에는 메뉴 "파일/정보"에 @<bookmark:WORD 속성 탭>와 같이 '속성' 탭이 존재합니다.
 
 
 @<img:media/advanced_properties.jpg;0.8;WORD 속성 탭>
 
 이 메뉴에서 사용자가 원하는 Field 속성을 추가하거나, 기존 Property를 변경할 수 있으며, \
-선언된 Property 는 문서 전체의 Field 정보에 반영됩니다.
+선언된 Property는 문서 전체의 Field 정보에 반영됩니다.
 
 이걸 lua 코드 내에서는 아래와 같은 방법으로 템플릿 문서에 이미 존재하는 필드 값을 변경 가능합니다.
 또는 @<bookmark:속성(Property) 참조>에서 처럼 markdown 문장 내에서 직접적인 참조가 가능합니다.
@@ -230,7 +231,7 @@ AddParagraph("[[some.md]]")
 ```
 
  
-예 #3) 파일 읽기 함수를 할용하여 구현
+예 #3) 파일 읽기 함수를 활용하여 구현
 ```lua
 do
 	local	txt_contents	= String(nil)
@@ -241,7 +242,7 @@ end
 
  
 예 #4) 'IsInsert' 변수를 확인하여, 여러 파일 읽은 뒤,
-       "%ABC%" 표현을 "good" 으로 모두 변경 후 문장 삽입하는 Lua 응용
+       "%ABC%" 표현을 "good"으로 모두 변경 후 문장 삽입하는 Lua 응용
 ```lua
 if IsInsert == true then	-- directive 확인
 	local	txt_contents	= String(nil)

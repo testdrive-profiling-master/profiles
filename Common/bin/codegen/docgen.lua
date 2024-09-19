@@ -25,8 +25,6 @@ docgen.table_content			= {}
 docgen.table_content.height		= 0						-- default auto
 docgen.table_content.scale		= 1.0					-- table scale
 
-docgen.libreoffice				= {}
-
 -- check installed document template
 docgen.installed_template	= {}
 docgen.default_template		= ""
@@ -261,6 +259,27 @@ end
 -- Revision 추가 함수
 docgen.doc_body						= docgen.doc:GetNode("word/document.xml", false):child("w:document"):child("w:body")
 docgen.doc_styles					= docgen.doc:GetNode("word/styles.xml", false):child("w:styles")
+
+-- page 속성
+do
+	local child	= docgen.doc_body:child_in_depth("w:pgSz", nil)
+	if child:empty() == false then	-- page 크기
+		docgen.page_size			= {}
+		docgen.page_size.width		= tonumber(child:get_attribute("w:w"))
+		docgen.page_size.height		= tonumber(child:get_attribute("w:h"))
+	end
+	child	= docgen.doc_body:child_in_depth("w:pgMar", nil)
+	if child:empty() == false then	-- page 마진
+		docgen.page_margin			= {}
+		docgen.page_margin.top		= tonumber(child:get_attribute("w:top"))
+		docgen.page_margin.right	= tonumber(child:get_attribute("w:right"))
+		docgen.page_margin.bottom	= tonumber(child:get_attribute("w:bottom"))
+		docgen.page_margin.left		= tonumber(child:get_attribute("w:left"))
+		docgen.page_margin.header	= tonumber(child:get_attribute("w:header"))
+		docgen.page_margin.footer	= tonumber(child:get_attribute("w:footer"))
+		docgen.page_margin.gutter	= tonumber(child:get_attribute("w:gutter"))
+	end
+end
 
 local	month_list	= {
 	"January",

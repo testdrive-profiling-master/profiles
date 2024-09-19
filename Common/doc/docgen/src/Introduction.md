@@ -27,9 +27,10 @@ If you need new features or find improvements or bugs, please make suggestions t
 %%% ko
 ## 주요 기능
 
-docgen 은 Template 워드(.docx) 파일을 참조하여 새로운 WORD 문서(.docx)와 PDF 문서(.pdf)를 자동 생성 해주는 툴입니다.
+docgen은 Template 워드(.docx) 파일을 참조하여 새로운 WORD 문서(.docx)와 PDF 문서(.pdf)를 자동 생성해주는 툴입니다.
 
-기본적으로 CodeGen을 통해 범용적인 @<link:https://ko.wikipedia.org/wiki/%EB%A3%A8%EC%95%84_(%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D_%EC%96%B8%EC%96%B4);Lua> 프로그래밍 환경과 markdown에 호환되는 문법을 통해 text 형태로 문서를 작성할 수 있습니다. 주요 기능을 나열하면 아래와 같습니다.
+기본적으로 CodeGen을 통해 범용적인 @<link:https://ko.wikipedia.org/wiki/%EB%A3%A8%EC%95%84_(%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D_%EC%96%B8%EC%96%B4);Lua> 프로그래밍 환경과 \
+markdown에 호환되는 문법을 통해 text 형태로 문서를 작성할 수 있습니다. 주요 기능을 나열하면 아래와 같습니다.
 
 * Lua 스크립트를 통해 다양한 문자 변조 기능 지원
 * WORD 및 ODT, PDF, HTML 파일등 다양한 문서 출력 포멧 지원
@@ -43,7 +44,8 @@ docgen 은 Template 워드(.docx) 파일을 참조하여 새로운 WORD 문서(.
 
 docgen is a tool that automatically creates new WORD documents (.docx) and PDF documents (.pdf) by referring to template word (.docx) files.
 
-Basically, CodeGen allows you to write documents in text format through a grammar compatible with the universal @<link:https://en.wikipedia.org/wiki/Lua_(programming_language);Lua> programming environment and markdown. The main features are listed below.
+Basically, CodeGen allows you to write documents in text format through a grammar compatible with the universal @<link:https://en.wikipedia.org/wiki/Lua_(programming_language);Lua> programming environment \
+and markdown. The main features are listed below.
 
 * Supports various character modulation functions through Lua script
 * Supports various document output formats such as WORD, ODT, PDF, and HTML files.
@@ -122,13 +124,13 @@ Usage: docgen  [--help] [-t template] [-i template_desc] [-f format] [-l languag
 
 @<color:FF0000>INPUT_LUA_FILE@</color>에 해당하는 Lua 스크립트 또는 Markdown 문서를 입력 소스 파일로 지정하며, @<color:FF0000>OUTPUT_DOCX_FILE@</color>을 지정하지 않을 경우 주어진 property를 참조하여 자동으로 알맞게 생성합니다. \
 '-t' 옵션은 기본 바탕이 될 템플릿 문서를 지정하게 되는데, 템플릿 문서를 지정하지 않을 경우 기본 docgen_template.docx로 지정하도록 되어 있으나 이를 참조/변경하여 다양한 문서 형태를 만들 수 있습니다.
-'-i' 옵션은 새로운 템플릿 문서를 추가할 수 있습니다. 이 때, 'input_file' 이 새로운 템플릿 문서 원본이며, 'template' 가 지정할 타겟 템플릿 이름입니다.
-'-f' 옵션은 .docx 포멧 이외에 다른 파일로 저장할 수 있도록 지정합니다. '-f pdf,html' 과 같이 복합적으로 출력을 지정할 수 있습니다.
+'-i' 옵션은 새로운 템플릿 문서를 추가할 수 있습니다. 이 때, 'input_file'이 새로운 템플릿 문서 원본이며, 'template'가 지정할 타겟 템플릿 이름입니다.
+'-f' 옵션은 .docx 포멧 이외에 다른 파일로 저장할 수 있도록 지정합니다. '-f pdf,html'과 같이 복합적으로 출력을 지정할 수 있습니다.
 '-l' 옵션은 임의의 언어코드를 지정합니다. Lua 에서는 'docgen.language' 변수로 확인할 수 있고, 문장에서는 @<b>'@<bookmark:@문서 활성화>'@</b> 표현식을 사용하여, 원하는 언어 코드를 선택할 수 있습니다.
 '-r' 옵션은 임의의 선행 Lua 코드를 지정합니다. 이 코드는 문서 구조를 변경을 위한 조건을 넣을 수 있습니다.
 
 :::Note
-기본 설정은 'en'(english) 이며, 이 'language' 설정을 사용하지 않는 문서에는 영향을 주지 않습니다.
+기본 설정은 '@<fixed>en@</fixed>'(english) 이며, 이 'language' 설정을 사용하지 않는 문서에는 영향을 주지 않습니다.
 
 %%% en
 command line : @<fixed>docgen @<color:FF0000>INPUT_LUA_FILE@</color>  @<color:FF0000>OUTPUT_DOCX_FILE@</color>@</fixed>
@@ -195,13 +197,13 @@ build.bat  main.md  media
 WORD 기반의 템플릿문서를 사용하고 윈도우 환경에서 적절하게 동작됩니다.
 
 *> 1. WORD (필수)
-**> 윈도우 PC 환경의 Office 를 설치해야 합니다. (웹용 Office 365 인 경우엔 앱 버전으로 설치가 필요합니다.) \
+**> 윈도우 PC 환경의 Office를 설치해야 합니다. (웹용 Office 365 인 경우엔 앱 버전으로 설치가 필요합니다.) \
 설치되지 않았을 경우 문서 생성은 가능하나, 문서 전체 필드 업데이트(WORD에서 직접 열어 수동으로 업데이트는 가능)/워터마킹/pdf변환 등의 기능이 수행되지 않습니다.
 *> 2. Excel (옵션)
-**> 엑셀 파일로 부터 @<bookmark:표 삽입> 및 차트 @<bookmark:그림 삽입>을 하기 위해서 설치가 필요합니다.
+**> 엑셀 파일로부터 @<bookmark:표 삽입> 및 차트 @<bookmark:그림 삽입>을 하기 위해서 설치가 필요합니다.
 *> 3. Visio (옵션)
-**> 벡터 그래픽의 편집 .vsd/.vsdx 파일로 부터 이미지를 별도의 추가 변환없이 바로 @<bookmark:그림 삽입>을 사용하려면 Visio 설치가 필요합니다. \
-비용을 고려하여, LibreOffice의 Draw를 사용할 수 있습니다.
+**> 벡터 그래픽의 편집 .vsd/.vsdx 파일로부터 이미지를 별도의 추가 변환 없이 바로 @<bookmark:그림 삽입>을 사용하려면 Visio 설치가 필요합니다. \
+비용과 선호도를 고려하여, LibreOffice의 Draw를 사용할 수 있습니다.
 *> 4. Draw (옵션)
 **> LibreOffice 의 Draw는 Visio 대체 어플리케이션으로 벡터 그래픽을 수동 변환 없이 바로 @<bookmark:그림 삽입>을 할 수 있습니다. \
 .odg 파일의 포멧을 사용할 수 있으며, docgen이 동작 중일 때, 편집중이 아니어야 합니다. \
@@ -219,7 +221,7 @@ If it is not installed, you can create documents, but functions such as updating
 **> Installation is required to @<bookmark:Table insertion> and @<bookmark:Picture insertion> from Excel files.
 *> 3. Visio (Optional)
 **> To use @<bookmark:Picture insertion> directly from the .vsd/.vsdx file of vector graphics without any additional conversion, Visio installation is required. \
-Considering the cost, you can use Draw app. of LibreOffice.
+Considering cost and preference, you can use Draw from LibreOffice.
 *> 4. Draw (Optional)
 **> LibreOffice's Draw is a Visio replacement application that allows you to directly @<bookmark:Picture insertion> vector graphics without manual conversion. \
 It can use the .odg file format, and must not be editing while docgen is running.. \
@@ -231,7 +233,7 @@ LibreOffice installation is required.
 
 %%% ko
 ### 라이센스 허가
-docgen 에 구현된 소스는 BSD 라이센스를 준수하며, 문서 생성에 사용된 사용자의 개별 스크립트나 이미지등의 2차 저작물은 온전히 사용자의 소유입니다.
+docgen에 구현된 소스는 BSD 라이센스를 준수하며, 문서 생성에 사용된 사용자의 개별 스크립트나 이미지등의 2차 저작물은 온전히 사용자의 소유입니다.
 %%% en
 ### Licenses
 The source code implemented in docgen complies with the BSD license, and secondary works such as the user's individual scripts or images used to create the document are entirely owned by the user.
@@ -243,7 +245,7 @@ The source code implemented in docgen complies with the BSD license, and seconda
 
 %%% ko 
 ### 선행 과정
-Microsoft Word 의 설정 자동화 제한으로 수식 표현에 대하여, 초기에 MS 표준 수식 표현인 <b>유니코드</b>로 고정되어 있습니다. \
+Microsoft Word의 설정 자동화 제한으로 수식 표현에 대하여, 초기에 MS 표준 수식 표현인 <b>유니코드</b>로 고정되어 있습니다. \
 이를 "LaTeX"로 표현하고자 한다면, @<bookmark:LaTeX 설정>와 같이 최초 한번 리본 메뉴의 '수식/변환'(먼저 '삽입/수식'으로 수식이 생성한 후 선택되어야 아래 메뉴가 보임.) 탭에서 '@<b>@<u>/유니코드@</u>@</b>' 대신 '@<b>@<u>{} LaTeX@</u>@</b>'를 선택하는 과정이 필요합니다.
 
 @<img:#media/latex_setting.png;0.3;LaTeX 설정>
@@ -257,7 +259,7 @@ If you want to express this in "LaTeX", tab 'Equation/Conversions' on the ribbon
 
 %%% ko
 :::Note
-Microsoft 에서는 현재 이 부분에서 자동 변경 방법을 제공하지 않고 있으며, 왜 변경 기능을 막아놨는지 모르겠음.
+Microsoft 에서는 현재 이 부분에서 자동 변경 방법을 제공하지 않고 있으며, 왜 변경 기능을 막아 놨는지 모르겠음.
 %%% en
 :::Note
 Microsoft currently does not provide an automatic change method in this area, and I do not know why the change function is blocked.
@@ -272,7 +274,7 @@ Microsoft currently does not provide an automatic change method in this area, an
 
 ### Excel table의 지역화 문제
 
-엑셀의 숫자 데이터의 표현에 대해서, 원래는 기본 표현형식 날짜의 'number format'이 국가 설정에 따라 다릅니다.
+엑셀의 숫자 데이터의 기본 표현형식 중 날짜의 'number format' 표기법은 아래처럼 국가 설정에 따라 다릅니다.
 
 예) 2024년 3월 8일의 경우
 ```txt
@@ -282,15 +284,15 @@ Microsoft currently does not provide an automatic change method in this area, an
        -> 2024-3-8
 ```
  
-위와 같이 국가설정에 따라 연도/월/일 표시 순서가 다르지만, 여기서는 미국 표현형식만을 사용합니다. \
-만약 다른 형식을 사용하고자 한다면, excel에서 기본 형식이 아닌, 직접  사용자 정의 'number format'을 입력해야 합니다.
+위와 같이 국가설정에 따라 연도/월/일 표시 순서가 다르지만, 여기서는 미국식 표현 형식만을 사용합니다. \
+만약 다른 형식을 사용하고자 한다면, excel에서 기본 형식이 아닌, 직접 사용자 정의 'number format'을 입력해야 합니다.
 
 %%% en
 ## Knwon issues
 
 ### Localization issue in Excel table
 
-Regarding the expression of numeric data in Excel, the 'number format' of the default date format originally differs depending on the country setting.
+Among the basic expression formats for numeric data in Excel, the 'number format' notation for dates varies depending on country settings, as shown below.
 
 예) For March 8, 2024
 ```txt

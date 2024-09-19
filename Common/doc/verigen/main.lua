@@ -11,7 +11,7 @@ docgen.property["Security_Level"]			= "BSD License."
 --docgen.property["Water_Mark"]				= "TESTDRIVE OPENSOURCE"		-- watermark text, if you don't wan't it, comment it.
 
 -- Revision history (버전, 연도, 월, 일, 설명) : 마지막 버전/날짜가 도큐먼트의 버전/날짜가 됩니다. 날짜 순으로 나열할 것!!!
-AddRevision("1.00",	2023, 5,  8,	"Initial relase.")
+AddRevision("1.00",	2023, 5,  8,	"Initial release.")
 AddRevision("1.01",	2023, 6,  8,	"add interface:set_top_uppercase function.")
 AddRevision("1.02",	2023, 6,  12,	"add default clock, add vfunctions. ($LOG2, $RANGE, $DEMUX_BY_EN, $MULTICYCLE)")
 AddRevision("1.03",	2023, 11, 2,	"fix module definition.")

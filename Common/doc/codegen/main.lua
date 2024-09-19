@@ -11,7 +11,7 @@ docgen.property["Security_Level"]			= "BSD License."
 --docgen.property["Water_Mark"]				= "TESTDRIVE OPENSOURCE"		-- 워터마크를 쓰지 않으려면 이부분을 주석 처리 합니다.
 
 -- Revision history (버전, 연도, 월, 일, 설명) : 마지막 버전/날짜가 도큐먼트의 버전/날짜가 됩니다. 날짜 순으로 나열할 것!!!
-AddRevision("1.0",	2023, 5,  7,	"Initial relase")
+AddRevision("1.0",	2023, 5,  7,	"Initial release")
 
 -- Term 추가
 AddTerm("TestDrive", "TestDrive Profiling Master (@<link:https://testdrive-profiling-master.github.io/>)")

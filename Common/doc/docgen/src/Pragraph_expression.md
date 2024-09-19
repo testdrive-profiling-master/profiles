@@ -1,10 +1,10 @@
 %%% ko
 # Paragraph 표현
 
-Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph 의 인자 @<color:FF0000>설명@</color> 및 @<color:FF0000>문장@</color>을 기술하는 법을 의미합니다. \
+Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph의 인자 @<color:FF0000>설명@</color> 및 @<color:FF0000>문장@</color>을 기술하는 법을 의미합니다. \
 표기 방법은 markdown 과 몇몇 html 표기법을 혼합하여 취하고 있으며, 표현의 다향성을 위해 추가적으로 자체 문법도 가지고 있습니다. \
 또한 각 수식은 문단, 표등 문장이 쓰이는 어디서든 동등하게 사용할 수 있습니다. \
-긴 문장을 짧게 여러 줄로 나눌 수 있도록, 문단 내에서 " \"(space + '\') 로 끝날 경우 다음 줄과 자동으로 이어붙입니다.
+긴 문장을 짧게 여러 줄로 나눌 수 있도록, 문단 내에서 " \"(space + '\') 로 끝날 경우 다음 줄과 자동으로 이어 붙입니다.
 
 :::Note
 Paragraph 표현에 대한 건의 사항이 개선 요청은 언제든지 저에게 연락해 주세요. (@<bookmark:@소개> 참조.)
@@ -36,9 +36,9 @@ If you have any suggestions for paragraph expressions or requests for improvemen
 @<size:30>@<b>        ###### @<color:FF0000>부제목5@</color>@</b>@</size>
 
 문서 제목 표기는 @<color:FF0000>대제목@</color>과 @<color:FF0000>부제목n@</color>까지 '#' 문자를 라인 선두에 두어 제목을 표시합니다. \
-이는 markdown 과 같습니다. \
-'#' 문자가 라인 선두에 없으면 제목으로 인식하지 않으며, 워드의 템플릿 문서의 "텍스트 스타일" 에 영향을 받습니다. \
-최대 6단 까지 사용 가능.
+이는 markdown과 같습니다. \
+'#' 문자가 라인 선두에 없으면 제목으로 인식하지 않으며, 워드의 템플릿 문서의 "텍스트 스타일"에 영향을 받습니다. \
+최대 6단까지 사용 가능.
 %%% en
 ## Title expression
 
@@ -70,8 +70,8 @@ Up to 6 levels can be used.
 @<size:30>@<b>        ***** @<color:FF0000>요소5@</color>@</b>@</size>
 @<size:30>@<b>        ****** @<color:FF0000>요소6@</color>@</b>@</size>
 
-목록화는 markdown 과 비슷하지만 더 다양한 표현기능을 위해 약간의 차이가 있습니다. '*' 문자가 줄 선두에 존재할 경우 목록화로 표시되며, '*' 개수만큼 들여쓰기가 결정됩니다.
-또한 번호나 특수한 표현을 위해 나열된 '*' 문자 다음에 '>' 를 사용하여, 기존 표식을 없애고 다른 형태의 표현식을 쓸 수 있습니다. 최대 6단 까지 사용 가능.
+목록화는 markdown과 비슷하지만 더 다양한 표현기능을 위해 약간의 차이가 있습니다. '*' 문자가 줄 선두에 존재할 경우 목록화로 표시되며, '*' 개수만큼 들여쓰기가 결정됩니다.
+또한 번호나 특수한 표현을 위해 나열된 '*' 문자 다음에 '>'를 사용하여, 기존 표식을 없애고 다른 형태의 표현식을 쓸 수 있습니다. 최대 6단 까지 사용 가능.
 
 예)
 ```txt
@@ -81,7 +81,7 @@ Up to 6 levels can be used.
 **** 네번째 #1 요소
 **** 네번째 #2 요소
 **** >네번째 #2 요소 확장
-**** @<b>@<color:FF0000>목록@</color>(目錄, List)@</b>은 사람의 이름이나 물품의 이름, 책 제목, 목차, 점검 해야할 항목 따위를 일정한 기준과 순서로 적어 알아보기 쉽도록 만든 것을 이르는 말이다.
+**** @<b>@<color:FF0000>목록@</color>(目錄, List)@</b>은 사람의 이름이나 물품의 이름, 책 제목, 목차, 점검 해야 할 항목 따위를 일정한 기준과 순서로 적어 알아보기 쉽도록 만든 것을 이르는 말이다.
 *> 1) 첫번째 번호 요소
 **> 1-1) 두번째 번호 요소
 *> 2) 첫번째 번호 요소
@@ -95,7 +95,7 @@ Up to 6 levels can be used.
 **** 네번째 #1 요소
 **** 네번째 #2 요소
 **** >네번째 #2 요소 확장
-**** @<b>@<color:FF0000>목록@</color>(目錄, List)@</b>은 사람의 이름이나 물품의 이름, 책 제목, 목차, 점검 해야할 항목 따위를 일정한 기준과 순서로 적어 알아보기 쉽도록 만든 것을 이르는 말이다.
+**** @<b>@<color:FF0000>목록@</color>(目錄, List)@</b>은 사람의 이름이나 물품의 이름, 책 제목, 목차, 점검 해야 할 항목 따위를 일정한 기준과 순서로 적어 알아보기 쉽도록 만든 것을 이르는 말이다.
 *> 1) 첫번째 번호 요소
 **> 1-1) 두번째 번호 요소
 *> 2) 첫번째 번호 요소
@@ -151,7 +151,7 @@ Result)
 %%% ko 
 ## 문자 수식
 
-문자 수식은 글자의 색상, 굵기, 이텔릭, 밑줄, 크기, 위첨자/아래첨자 등을 지정할 수 있으며, 적용 범위는 한 라인 내에서만 제한되며, 여러 수식 표기법이 중복 표현 될 수 있습니다.
+문자 수식은 글자의 색상, 굵기, 이텔릭, 밑줄, 크기, 위첨자/아래첨자 등을 지정할 수 있으며, 적용 범위는 한 라인 내에서만 제한되며, 여러 수식 표기법이 중복 표현될 수 있습니다.
 %%% en
 ## Text expression
 
@@ -225,7 +225,7 @@ Result : @<i>italic@</i> Non italic
 @<size:30>@<b>표현식(이중선) : @@<U>@<color:FF0000>표현식@</color>@@</U>@</b>@</size>
 
 밑줄 글씨 표현은 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'u' 태그로 둘러쌓아 표현합니다. \
-대문자로 수식을 표현하면 이중밑줄이 됩니다.
+대문자로 수식을 표현하면 이중 밑줄이 됩니다.
 
 예)
 ```html
@@ -499,7 +499,7 @@ docgen에서는 템플릿 문서에 존재하는 스타일 서식들을 문단 �
 다음 줄의 문단 스타일을 '@<color:FF0000>스타일_이름@</color>'로 변경합니다. 한 줄에 대해서만 스타일이 변경되며, \
 다음 라인에 대해서는 표준 스타일 서식으로 다시 돌아갑니다.
 스타일 서식은 초기 템플릿 WORD 문서에 지정된 스타일이 참조되어 구현되며, WORD 상에 '텍스트 스타일'로 검색하여 변경 및 추가할 수 있습니다. \
-스타일 이름에 탭 문자나 "//", "--" 또는 ";" 문자 뒤의 내용은 무시됩니다. 스타일 이름이 아닌 스타일 ID 를 입력하여도 상관 없습니다.
+스타일 이름에 탭 문자나 "//", "--" 또는 ";" 문자 뒤의 내용은 무시됩니다. 스타일 이름이 아닌 스타일 ID를 입력하여도 상관 없습니다.
 '@<color:FF0000>정렬@</color>'은 '@<code>left@</code>', '@<code>right@</code>', '@<code>center@</code>' 중에 하나를 선택할 수 있으며, \
 생략될 경우 기본적인 양쪽 정렬로 간주되고, '@<color:FF0000>스타일_이름@</color>' 없이 '@<color:FF0000>정렬@</color>'만 지정할 수도 있습니다.
 
@@ -608,7 +608,7 @@ right alignment
 ## 상호 참조
 @<size:30>@<b>표현식 : @@<bookmark:@<color:FF0000>대상@</color>>@</b>@</size>
 
-제목, 그림, 표등의 상호 참조를 구현합니다.
+제목, 그림, 표 등의 상호 참조를 구현합니다.
 @<color:FF0000>대상@</color>에 그림, 표의 캡션 내용이나 제목의 내용을 적으면 됩니다.
 %%% en
 ## Cross-reference
@@ -795,10 +795,10 @@ Result : @<link:https://testdrive-profiling-master.github.io/;TestDrive Profilin
 @<size:30>@<b>표현식 : \$\$@<color:FF0000>수학수식@</color>\$\$@</b>@</size>
 
 수학 수식의 경우 markdown 과 같게 수학 수식에 "\$$" 로 둘러싸서 표시합니다.
-단! WORD 의 수학 수식은 기본이 "@<color:FF0000>@<b>유니코드@</b>@</color>" 표현식으로 초기 지정되어 있습니다. \
+단! WORD의 수학 수식은 기본이 "@<color:FF0000>@<b>유니코드@</b>@</color>" 표현식으로 초기 지정되어 있습니다. \
 때문에 "@<color:0000FF>@<b>LaTeX@</b>@</color>" 수식을 활용하고자 한다면, "@<u>@<b>@<bookmark:@선행 과정>@</b>@</u>"을 참고하여 설정을 변경해야 함을 유의합니다.
-수학 수식을 단일로 표현할 경우, 가운데 정렬로 표기 되지만, 문장 중간에 표현할 경우 문장과 어울리도록 표현이 자동 변경되며, \
-아래의 예제는 LaTeX 표현으로 구현된 내용이므로 만약 결과 표기가 잘못 되어 있다면, 위 "@<bookmark:선행 과정>"을 시도하지 않은 결과입니다.
+수학 수식을 단일로 표현할 경우, 가운데 정렬로 표기되지만, 문장 중간에 표현할 경우 문장과 어울리도록 표현이 자동 변경되며, \
+아래의 예제는 LaTeX 표현으로 구현된 내용이므로 만약 결과 표기가 잘못되어 있다면, 위 "@<bookmark:선행 과정>"을 시도하지 않은 결과입니다.
 %%% en
 ## Math equation expression
 @<size:30>@<b>Expression : \$\$@<color:FF0000>math_formula@</color>\$\$@</b>@</size>
@@ -896,7 +896,7 @@ Examples of output from C expressions is "@<code>printf("Hello world.");@</code>
 @<size:30>@<b>        @<color:FF0000>코드_내용@</color> ...@</b>@</size>
 @<size:30>@<b>        ```@</b>@</size>
 
-@<color:FF0000>코드_형식@</color>의 경우 아래와 같이 @<fixed>"code_highlighter -l"@</fixed> 명령어 입력을 통해 아래와 같이 지원하는 코드 형식을 확인 할 수 있습니다. \
+@<color:FF0000>코드_형식@</color>의 경우 아래와 같이 @<fixed>"code_highlighter -l"@</fixed> 명령어 입력을 통해 아래와 같이 지원하는 코드 형식을 확인할 수 있습니다. \
 @<color:FF0000>헤더@</color>는 @<color:FF0000>코드_내용@</color> 위에 문구를 삽입하기 위해 사용되며 생략 가능합니다.
 %%% en
 ## Code block
@@ -935,7 +935,7 @@ In the case of @<color:FF0000>code_format@</color>, you can check the supported 
 
 %%% ko
 아래는 'C' 코드를 인용하는 예를 나타낸다. 인용시 "```" 문자열을 사용하려면, "@```" 로 표기하여 인용할 수 있으며, \
-코드에 라인 번호를 삽입하려면 '#' 를 붙여 "@<color:0000FF>#@</color>@<color:FF0000>코드_형식@</color>"으로 표기할 수 있습니다.
+코드에 라인 번호를 삽입하려면 '#'를 붙여 "@<color:0000FF>#@</color>@<color:FF0000>코드_형식@</color>"으로 표기할 수 있습니다.
 
 예) 라인 번호가 있는 'C' 코드 블럭
 %%% en
@@ -1031,7 +1031,7 @@ If you enter at least three ';' characters at the beginning of a line, it will a
 ## 수평선
 
 @<size:30>@<b>표현식 : ---@</b>@</size>
-라인 선두에 '-' 문자를 최소 3개 이상 입력하면, markdown 과 동일하게 수평선이 입력됩니다.
+라인 선두에 '-' 문자를 최소 3개 이상 입력하면, markdown과 동일하게 수평선이 입력됩니다.
 
 예)
 ```txt
@@ -1064,20 +1064,20 @@ Result)
 @<size:30>@<b>표현식 #2 : %%% @<color:0000FF>(@<color:FF0000>Lua_코드@<color:0000FF>)@</color>@</b>@</size>
 
 문서 활성화는 다음 문장들이 실제 문서에 적용할지에 대한 여부를 결정합니다. \
-문서 활성화에 조건은 "언어_코드명" 또는 소괄호 "()" 로 감싸진 "Lua_코드" 의 반환 값으로 지정할 수 있습니다.
+문서 활성화에 조건은 "언어_코드명" 또는 소괄호 "()" 로 감싸진 "Lua_코드"의 반환 값으로 지정할 수 있습니다.
 
-"언어_코드명" 의 경우, '@<bookmark:@실행 방법>'에서 지정한 @<fixed>'-l'@</fixed> 옵션에서 지정한 '언어 코드명'과 비교합니다. \
+"언어_코드명"의 경우, '@<bookmark:@실행 방법>'에서 지정한 @<fixed>'-l'@</fixed> 옵션에서 지정한 '언어 코드명'과 비교합니다. \
 만약 같지 않으면, 다음 문서 활성화 지정까지 문서 내용을 무시합니다. \
 이로써 원하는 언어로 작성된 문장만 문서에 사용할 수 있습니다.
 
 "Lua_코드" 의 경우, 반드시 소괄호 "()" 로 감싸져야 합니다. \
 Lua 코드 실행의 반환 값이 @<fixed>'true'@</fixed>(boolean) 일 경우, 다음 문서 내용을 사용하며, \
-그외의 값일 경우, 다음 문서 내용은 무시됩니다.
+그 외의 값일 경우, 다음 문서 내용은 무시됩니다.
 
 만약 언어 코드나 Lua 코드 없이 @<fixed>'%%%'@</fixed> 로 끝났다면, 다음 줄부터 문서 내용이 활성화됩니다.
 
 :::Note
-언어코드 이름은 대소문자를 구별하며, 언어 코드 이름 뒤에 @<fixed>'-'@</fixed>, @<fixed>'='@</fixed> 또는 @<fixed>'%'@</fixed> 문자들을 나열하여 가독성을 높일 수 있습니다. 기본값은 @<fixed>'en'@</fixed> 을 가집니다. \
+언어코드 이름은 대소문자를 구별하며, 언어 코드 이름 뒤에 @<fixed>'-'@</fixed>, @<fixed>'='@</fixed> 또는 @<fixed>'%'@</fixed> 문자들을 나열하여 가독성을 높일 수 있습니다. 기본값은 @<fixed>'en'@</fixed>을 가집니다. \
 언어코드는 Lua 에서 @<fixed>'docgen.language'@</fixed> 변수로 사용할 수 있습니다.
 
 %%% en
@@ -1130,15 +1130,15 @@ test_mode = true
 [Markdown code]
 ```lua
 %%% (test_mode == true)
-test_mode 가 활성화 되었습니다.
+test_mode 가 활성화되었습니다.
 %%% (test_mode ~= false)
-test_mode 가 비활성화 되었습니다.
+test_mode 가 비활성화되었습니다.
 %%%
 ```
 
 결과)
 ```txt
-test_mode 가 활성화 되었습니다.
+test_mode 가 활성화되었습니다.
 ```
 
 
@@ -1227,7 +1227,7 @@ Excel 파일일 경우는 "@<color:FF0000>파일명@</color>[@<color:FF0000>시�
 (차트 제목을 생략할 수 있으며, 생략될 경우 해당 시트의 첫번째 차트가 사용됩니다.)
 
 또한 @<color:FF0000>스케일@</color>의 경우, 종이의 폭 기준 최대값 1.0으로 0 초과 1 이하의 값을 넣어 크기를 지정할 수 있습니다. \
-지정되지 않을 경우 기본 1.0으로 간주 합니다.
+지정되지 않을 경우 기본 1.0으로 간주합니다.
 @<color:FF0000>캡션@</color>은 말 그대로 캡션 내용을 지정하며, '@<bookmark:@상호 참조>'에서 사용될 수 있습니다. 캡션은 생략할 수 있습니다.
 
 %%% en
@@ -1364,14 +1364,14 @@ If the table is too long and you move to the next page, the header is automatica
 표 삽입의 경우 엑셀에서 작상된 내용을 옮겨 넣을 수 있으며, 엑셀상 Merge 된 셀들과 폭은 최대한 동일하게 적용됩니다. \
 표의 첫 줄은 상단 제목이며, 하위 데이터 열을 가운데 정렬을 하고자 할 때에는 제목 이름 앞에 '*'문자를 삽입합니다. \
 캡션은 생략 가능합니다.
-기본적으로 표의 너비는 가로가 항상 꽉차 보이도록 표시되지만, \
+기본적으로 표의 너비는 가로가 항상 꽉 차 보이도록 표시되지만, \
 @<bookmark:docgen 변수들>의 @<fixed>docgen.table_content.scale@</fixed> 변수를 수정하여, \
 가로 폭을 임의로 줄일 수 있습니다.
 
 
 :::Note
 그림 또는 표는 캡션과 분리되어 표시되지 않도록, 기본적으로 캡션과 하나의 객체로 묶여 있습니다. \
-때문에 남은 페이지 영역에 한번에 표시할 수 없을 때, 다음 페이지에 표시됩니다. \
+때문에 남은 페이지 영역에 한 번에 표시할 수 없을 때, 다음 페이지에 표시됩니다. \
 그러나 매우 긴 표의 경우, 앞의 여분의 빈 공간이 어색해 보일 수 있습니다. \
 이때 '@<b>파일명@</b>' 앞에 '#' 문자를 넣으면, 이를 방지할 수 있습니다.
  
@@ -1439,10 +1439,10 @@ Result)
 ### Lua 표현으로부터 표 삽입
 @<size:30>@<b>표현식 : @@<tbl:lua;@<color:FF0000>테이블_변수명@</color>;@<color:FF0000>캡션@</color>>@</b>@</size>
 
-기본적으로 docgen 이 Lua 스크립트 기반으로 작성되기 때문에, Lua 변수로 테이블을 만들어 이를 활용하는 방법을 취할 수 있습니다.
-본문에서는 이미 아래와 같이 lua 테이블이 정의되어 있는 것을 활용한 예입니다.
+기본적으로 docgen이 Lua 스크립트 기반으로 작성되기 때문에, Lua 변수로 테이블을 만들어 이를 활용하는 방법을 취할 수 있습니다.
+본문에서는 이미 아래와 같이 Lua 테이블이 정의되어 있는 것을 활용한 예입니다.
 
-예) 선언된 lua 표현
+예) 선언된 Lua 표현
 ```lua
 lua_table_example = {
 	HeaderCount = 2,
@@ -1462,24 +1462,24 @@ lua_table_example = {
 결과)
 @<tbl:lua;lua_table_example;Lua 표 예시>
  
-Lua table 은 "{ { { ... }, ... }, ... }" 와 같이 다중의 중괄호로 표기한다. 맨 외곽의 중괄호는 Table을 기술함을 말하며, 다음 중괄호는 Row, 그 다음 중괄호는 Column 을 표기한다.
-Column 과 Row 를 표기시 아래와 같은 속성을 지정할 수 있으며, Column 의 경우 문자열로만 기술할 경우 중괄호를 생략할 수 있다.
+Lua table 은 "{ { { ... }, ... }, ... }" 와 같이 다중의 중괄호로 표기한다. 맨 외곽의 중괄호는 Table을 기술함을 말하며, 다음 중괄호는 Row, 그 다음 중괄호는 Column을 표기한다.
+Column과 Row를 표기시 아래와 같은 속성을 지정할 수 있으며, Column의 경우 문자열로만 기술할 경우 중괄호를 생략할 수 있다.
 
 * Lua table Row 속성
 ** HeaderCount : 해더 줄 수를 지정한다. (기본 : 1)
 * Lua table Column 속성
-** data : 셀의 문자열 데이터를 지정한다. "data=" 를 생략하고, 문자열만으로 기술하는 것이 가능하다. 단 생략시 셀 기술의 첫 번째 속성이어야 한다. (기본 : " ")
-** width : 하나의 컬럼 가로 길이를 지정한다. 모든 컬럼의 길이 총합에서 나뉘어 최종 상대적 길이가 지정된다. 이 속성은 첫 Row 에 기술된 Column 에 대해서만 유효하다. (기본 : 100)
-** style : 컬럼에 적용할 텍스트 스타일 이름을 지정한다. 지정된 스타일은 하위 동일 컬럼에도 동일하게 적용된다. (기본 : "TableTextLeft", 스타일을 다시 기본으로 지정할 경우 nil 값이 아닌 "" 을 지정한다.)
+** data : 셀의 문자열 데이터를 지정한다. "data="를 생략하고, 문자열만으로 기술하는 것이 가능하다. 단 생략시 셀 기술의 첫 번째 속성이어야 한다. (기본 : " ")
+** width : 하나의 컬럼 가로 길이를 지정한다. 모든 컬럼의 길이 총합에서 나뉘어 최종 상대적 길이가 지정된다. 이 속성은 첫 Row에 기술된 Column에 대해서만 유효하다. (기본 : 100)
+** style : 컬럼에 적용할 텍스트 스타일 이름을 지정한다. 지정된 스타일은 하위 동일 컬럼에도 동일하게 적용된다. (기본 : "TableTextLeft", 스타일을 다시 기본으로 지정할 경우 nil 값이 아닌 ""을 지정한다.)
 ** merge : 현재 셀 위치부터 일정 범위의 다중 셀을 병합하는 기능을 한다. 속성에서 범위 지정은 @<b>{width,height}@</b>로 지정할 수 있다.
 %%% en
 ### Inserting table from Lua expressions
 @<size:30>@<b>Expression : @@<tbl:lua;@<color:FF0000>table_variable_name@</color>;@<color:FF0000>caption@</color>>@</b>@</size>
 
 Basically, since docgen is written based on Lua scripts, you can create a table with Lua variables and utilize it.
-This is an example that utilizes the lua table already defined as shown below.
+This is an example that utilizes the Lua table already defined as shown below.
 
-```lua : declared table example in lua expression
+```lua : declared table example in Lua expression
 lua_table_example = {
 	HeaderCount = 2,
 	{{"Head A", merge={1,2}}, {"Head B", merge={3,1}}, {width=300, style="TableTextCenter"}, ""},
@@ -1531,12 +1531,12 @@ When expressing Column and Row, you can specify the following properties. In the
 ```lua : 이모지 사용 예
 Solid 예제들 : @<size:50>@<fas:arrow-right>, @<fas:arrow-left>, @<fas:arrow-up>, @<fas:arrow-down>, @<fas:hotdog>, @<fas:user-check>
 Regular 예제들 : @<size:50>@<far:thumbs-up>, @<far:folder-open>, @<far:circle-check>, <far:circle-play>
-Brands 예제들 : @<size:50>@<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:aws>
+Brands 예제들 : @<size:50>@<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:linkedin>
 ```
 결과)
 Solid 예제들 : @<size:50>@<fas:arrow-right>, @<fas:arrow-left>, @<fas:arrow-up>, @<fas:arrow-down>, @<fas:hotdog>, @<fas:user-check>
 Regular 예제들 : @<size:50>@<far:thumbs-up>, @<far:folder-open>, @<far:circle-check>, @<far:circle-play>
-브랜드 예제들 : @<size:50>@<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:aws>
+브랜드 예제들 : @<size:50>@<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:linkedin>
 
 %%% en
 ## Emoji expressions
@@ -1559,12 +1559,12 @@ and then express it as "@<fixed>@@<fab:github>@</fixed>", you can get the "@<fab
 ```lua : Emoji usage example
 Solid exmaples : @<size:50>@<fas:arrow-right>, @<fas:arrow-left>, @<fas:arrow-up>, @<fas:arrow-down>, @<fas:hotdog>, @<fas:user-check>
 Regular exmaples : @<size:50>@<far:thumbs-up>, @<far:folder-open>, @<far:circle-check>, <far:circle-play>
-Brands exmaples : @<size:50>@<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:aws>
+Brands exmaples : @<size:50>@<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:linkedin>
 ```
 
 Result)
 Solid exmaples : @<size:50>@<fas:arrow-right>, @<fas:arrow-left>, @<fas:arrow-up>, @<fas:arrow-down>, @<fas:hotdog>, @<fas:user-check>
 Regular exmaples : @<size:50>@<far:thumbs-up>, @<far:folder-open>, @<far:circle-check>, @<far:circle-play>
-Brands exmaples : @<size:50>@<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:aws>
+Brands exmaples : @<size:50>@<fab:apple>, @<fab:microsoft>, @<fab:x-twitter>, @<fab:github>, @<fab:linkedin>
 
 %%%
