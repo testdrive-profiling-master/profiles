@@ -550,6 +550,7 @@ end
 docgen.bookmark.Get		= function (name)
 	return docgen.bookmark.__list[name]
 end
+docgen.bookmark.always_bold		= false		-- bookmark 표현을 항상 굵은 글씨로 표현함.
 
 function GenerateChapter(level, title)
 	-- make log title
@@ -573,6 +574,9 @@ function GenerateChapter(level, title)
 	-- chapter level ID 값 증가 갱신
 	if docgen.chapter.level ~= level then
 		if docgen.chapter.level	< level then
+			if (docgen.chapter.level + 1) ~= level then
+				LOGW("The chapter's stage has risen abnormally.")
+			end
 			for i=(docgen.chapter.level+1),level do
 				docgen.chapter[i] = 0
 			end
@@ -657,14 +661,14 @@ function GenerateCaption(sType, content)
 	
 	if sType == "Table" then
 		caption_id				= 20000000 + (docgen.chapter[1]*100000) + (docgen.table.id*10)
-		sNumPart				= tostring(docgen.chapter[0]) .. "-" .. tostring(docgen.table.id)
+		sNumPart				= tostring(docgen.chapter[1]) .. "-" .. tostring(docgen.table.id)
 		bFirst					= (docgen.table.id == 1)
 		docgen.table.id			= docgen.table.id + 1
 		docgen.table.count		= docgen.table.count + 1
 		sID						= docgen.table.id
 	else
 		caption_id				= 30000000 + (docgen.chapter[1]*100000) + (docgen.figure.id*10)
-		sNumPart				= tostring(docgen.chapter[0]) .. "-" .. tostring(docgen.figure.id)
+		sNumPart				= tostring(docgen.chapter[1]) .. "-" .. tostring(docgen.figure.id)
 		bFirst					= (docgen.figure.id == 1)
 		docgen.figure.id		= docgen.figure.id + 1
 		docgen.figure.count		= docgen.figure.count + 1
@@ -2391,7 +2395,7 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 							end
 							
 							do
-								if bBold then
+								if bBold or docgen.bookmark.always_bold then
 									sBookmark_rPr	= sBookmark_rPr .. "<w:b/><w:bCs/>"
 								end
 								if bItalic then

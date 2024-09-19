@@ -126,7 +126,7 @@ Usage: docgen  [--help] [-t template] [-i template_desc] [-f format] [-l languag
 '-t' 옵션은 기본 바탕이 될 템플릿 문서를 지정하게 되는데, 템플릿 문서를 지정하지 않을 경우 기본 docgen_template.docx로 지정하도록 되어 있으나 이를 참조/변경하여 다양한 문서 형태를 만들 수 있습니다.
 '-i' 옵션은 새로운 템플릿 문서를 추가할 수 있습니다. 이 때, 'input_file'이 새로운 템플릿 문서 원본이며, 'template'가 지정할 타겟 템플릿 이름입니다.
 '-f' 옵션은 .docx 포멧 이외에 다른 파일로 저장할 수 있도록 지정합니다. '-f pdf,html'과 같이 복합적으로 출력을 지정할 수 있습니다.
-'-l' 옵션은 임의의 언어코드를 지정합니다. Lua 에서는 'docgen.language' 변수로 확인할 수 있고, 문장에서는 @<b>'@<bookmark:@문서 활성화>'@</b> 표현식을 사용하여, 원하는 언어 코드를 선택할 수 있습니다.
+'-l' 옵션은 임의의 언어코드를 지정합니다. Lua 에서는 'docgen.language' 변수로 확인할 수 있고, 문장에서는 '@<b>@<bookmark:@문서 활성화>@</b>' 표현식을 사용하여, 원하는 언어 코드를 선택할 수 있습니다.
 '-r' 옵션은 임의의 선행 Lua 코드를 지정합니다. 이 코드는 문서 구조를 변경을 위한 조건을 넣을 수 있습니다.
 
 :::Note
@@ -139,7 +139,7 @@ In @<color:FF0000>INPUT_LUA_FILE@</color>, set a Lua script or Markdown text fil
 The '-t' option specifies the template document that will be the base. If the template document is not specified, the default docgen_template.docx is specified, but various document types can be created by referencing/changing it.
 The '-i' option allows adding a new template document. At this time, 'input_file' is the new template document source, and 'template' is the target template name to be specified.
 The '-f' option specifies saving as a file other than .docx format. You can specify output in combination, such as '-f pdf,html'.
-The '-l' option specifies an arbitrary language code. In Lua, you can check it with the 'docgen.language' variable, and in sentences, you can use the expression @<b>'@<bookmark:@Document activation>'@</b> to select the desired language code.
+The '-l' option specifies an arbitrary language code. In Lua, you can check it with the 'docgen.language' variable, and in sentences, you can use the expression '@<b>@<bookmark:@Document activation>@</b>' to select the desired language code.
 The '-r' option specifies arbitrary preceding Lua code. This code can contain conditions for changing the document structure.
 
 :::Note
@@ -200,12 +200,12 @@ WORD 기반의 템플릿문서를 사용하고 윈도우 환경에서 적절하�
 **> 윈도우 PC 환경의 Office를 설치해야 합니다. (웹용 Office 365 인 경우엔 앱 버전으로 설치가 필요합니다.) \
 설치되지 않았을 경우 문서 생성은 가능하나, 문서 전체 필드 업데이트(WORD에서 직접 열어 수동으로 업데이트는 가능)/워터마킹/pdf변환 등의 기능이 수행되지 않습니다.
 *> 2. Excel (옵션)
-**> 엑셀 파일로부터 @<bookmark:표 삽입> 및 차트 @<bookmark:그림 삽입>을 하기 위해서 설치가 필요합니다.
+**> 엑셀 파일로부터 '@<bookmark:표 삽입>' 및 차트 '@<bookmark:그림 삽입>'을 하기 위해서 설치가 필요합니다.
 *> 3. Visio (옵션)
-**> 벡터 그래픽의 편집 .vsd/.vsdx 파일로부터 이미지를 별도의 추가 변환 없이 바로 @<bookmark:그림 삽입>을 사용하려면 Visio 설치가 필요합니다. \
+**> 벡터 그래픽의 편집 .vsd/.vsdx 파일로부터 이미지를 별도의 추가 변환 없이 바로 '@<bookmark:그림 삽입>'을 사용하려면 Visio 설치가 필요합니다. \
 비용과 선호도를 고려하여, LibreOffice의 Draw를 사용할 수 있습니다.
 *> 4. Draw (옵션)
-**> LibreOffice 의 Draw는 Visio 대체 어플리케이션으로 벡터 그래픽을 수동 변환 없이 바로 @<bookmark:그림 삽입>을 할 수 있습니다. \
+**> LibreOffice 의 Draw는 Visio 대체 어플리케이션으로 벡터 그래픽을 수동 변환 없이 바로 '@<bookmark:그림 삽입>'을 할 수 있습니다. \
 .odg 파일의 포멧을 사용할 수 있으며, docgen이 동작 중일 때, 편집중이 아니어야 합니다. \
 LibreOffice 설치가 필요합니다.
 
@@ -218,12 +218,12 @@ It uses WORD-based template documents and works properly in a Windows environmen
 **> You need to install Office for Windows PC environment. (If it is Office 365 for web, you need to install it as an app version.) \
 If it is not installed, you can create documents, but functions such as updating the entire document field (you can open it directly in WORD and update it manually)/watermarking/PDF conversion will not be performed.
 *> 2. Excel (Optional)
-**> Installation is required to @<bookmark:Table insertion> and @<bookmark:Picture insertion> from Excel files.
+**> Installation is required to '@<bookmark:Table insertion>' and '@<bookmark:Picture insertion>' from Excel files.
 *> 3. Visio (Optional)
-**> To use @<bookmark:Picture insertion> directly from the .vsd/.vsdx file of vector graphics without any additional conversion, Visio installation is required. \
+**> To use '@<bookmark:Picture insertion>' directly from the .vsd/.vsdx file of vector graphics without any additional conversion, Visio installation is required. \
 Considering cost and preference, you can use Draw from LibreOffice.
 *> 4. Draw (Optional)
-**> LibreOffice's Draw is a Visio replacement application that allows you to directly @<bookmark:Picture insertion> vector graphics without manual conversion. \
+**> LibreOffice's Draw is a Visio replacement application that allows you to directly '@<bookmark:Picture insertion>' vector graphics without manual conversion. \
 It can use the .odg file format, and must not be editing while docgen is running.. \
 LibreOffice installation is required.
 %%%
@@ -246,13 +246,13 @@ The source code implemented in docgen complies with the BSD license, and seconda
 %%% ko 
 ### 선행 과정
 Microsoft Word의 설정 자동화 제한으로 수식 표현에 대하여, 초기에 MS 표준 수식 표현인 <b>유니코드</b>로 고정되어 있습니다. \
-이를 "LaTeX"로 표현하고자 한다면, @<bookmark:LaTeX 설정>와 같이 최초 한번 리본 메뉴의 '수식/변환'(먼저 '삽입/수식'으로 수식이 생성한 후 선택되어야 아래 메뉴가 보임.) 탭에서 '@<b>@<u>/유니코드@</u>@</b>' 대신 '@<b>@<u>{} LaTeX@</u>@</b>'를 선택하는 과정이 필요합니다.
+이를 "LaTeX"로 표현하고자 한다면, '@<bookmark:LaTeX 설정>'과 같이 최초 한번 리본 메뉴의 '수식/변환'(먼저 '삽입/수식'으로 수식이 생성한 후 선택되어야 아래 메뉴가 보임.) 탭에서 '@<b>@<u>/유니코드@</u>@</b>' 대신 '@<b>@<u>{} LaTeX@</u>@</b>'를 선택하는 과정이 필요합니다.
 
 @<img:#media/latex_setting.png;0.3;LaTeX 설정>
 %%% en
 ### Prerequisites
 Due to limitations in Microsoft Word's setting automation, the math equation expression is initially set to <b>Unicode</b>, the MS standard math equation expression. \
-If you want to express this in "LaTeX", tab 'Equation/Conversions' on the ribbon menu (the menu below must be selected after creating the math equation with 'Insert/Equation' first) as in @<bookmark:LaTeX setting>. Select '@<b>@<u>{} LaTeX@</u>@</b>' instead of '@<b>@<u>/Unicode@</u>@</b>' A process is required.
+If you want to express this in "LaTeX", tab 'Equation/Conversions' on the ribbon menu (the menu below must be selected after creating the math equation with 'Insert/Equation' first) as in '@<bookmark:LaTeX setting>'. Select '@<b>@<u>{} LaTeX@</u>@</b>' instead of '@<b>@<u>/Unicode@</u>@</b>' A process is required.
 
 @<img:#media/latex_setting_en.png;0.3;LaTeX setting>
 %%%

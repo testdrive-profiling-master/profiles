@@ -7,7 +7,7 @@ Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph의 인자 @<co
 긴 문장을 짧게 여러 줄로 나눌 수 있도록, 문단 내에서 " \"(space + '\') 로 끝날 경우 다음 줄과 자동으로 이어 붙입니다.
 
 :::Note
-Paragraph 표현에 대한 건의 사항이 개선 요청은 언제든지 저에게 연락해 주세요. (@<bookmark:@소개> 참조.)
+Paragraph 표현에 대한 건의 사항이 개선 요청은 언제든지 저에게 연락해 주세요. ('@<bookmark:@소개>' 참조.)
 %%% en
 # Paragraph expression
 
@@ -17,7 +17,7 @@ Additionally, each formula can be used equally wherever sentences are used, such
 To allow long sentences to be split into several shorter lines, paragraphs that end with " \ " (space + '\') are automatically connected to the next line.
 
 :::Note
-If you have any suggestions for paragraph expressions or requests for improvement, please contact me at any time. (Refer to @<bookmark:@Introduction>.)
+If you have any suggestions for paragraph expressions or requests for improvement, please contact me at any time. (Refer to '@<bookmark:@Introduction>'.)
 %%%
 
 
@@ -796,18 +796,18 @@ Result : @<link:https://testdrive-profiling-master.github.io/;TestDrive Profilin
 
 수학 수식의 경우 markdown 과 같게 수학 수식에 "\$$" 로 둘러싸서 표시합니다.
 단! WORD의 수학 수식은 기본이 "@<color:FF0000>@<b>유니코드@</b>@</color>" 표현식으로 초기 지정되어 있습니다. \
-때문에 "@<color:0000FF>@<b>LaTeX@</b>@</color>" 수식을 활용하고자 한다면, "@<u>@<b>@<bookmark:@선행 과정>@</b>@</u>"을 참고하여 설정을 변경해야 함을 유의합니다.
+때문에 "@<color:0000FF>@<b>LaTeX@</b>@</color>" 수식을 활용하고자 한다면, '@<u>@<b>@<bookmark:@선행 과정>@</b>@</u>'을 참고하여 설정을 변경해야 함을 유의합니다.
 수학 수식을 단일로 표현할 경우, 가운데 정렬로 표기되지만, 문장 중간에 표현할 경우 문장과 어울리도록 표현이 자동 변경되며, \
-아래의 예제는 LaTeX 표현으로 구현된 내용이므로 만약 결과 표기가 잘못되어 있다면, 위 "@<bookmark:선행 과정>"을 시도하지 않은 결과입니다.
+아래의 예제는 LaTeX 표현으로 구현된 내용이므로 만약 결과 표기가 잘못되어 있다면, 위 '@<bookmark:선행 과정>'을 시도하지 않은 결과입니다.
 %%% en
 ## Math equation expression
 @<size:30>@<b>Expression : \$\$@<color:FF0000>math_formula@</color>\$\$@</b>@</size>
 
 In the case of mathematical formulas, the mathematical equation is displayed by surrounding it with "\$$", as in markdown.
 But, WORD's mathematical equation is initially set to the expression "@<color:FF0000>@<b>Unicode@</b>@</color>". \
-Therefore, if you want to use the equation "@<color:0000FF>@<b>LaTeX@</b>@</color>", please note that you must change the settings by referring to "@<u>@<b>@<bookmark:@Prerequisites>@</b>@</u>".
+Therefore, if you want to use the equation "@<color:0000FF>@<b>LaTeX@</b>@</color>", please note that you must change the settings by referring to '@<u>@<b>@<bookmark:@Prerequisites>@</b>@</u>'.
 When a mathematical equation is expressed as a single expression, it is displayed centered, but when expressed in the middle of a sentence, the expression is automatically changed to match the sentence, and \
-the example below is implemented in LaTeX expression, so if the result is notated incorrectly, it is the result of not attempting the "@<bookmark:Prerequisites>" above.
+the example below is implemented in LaTeX expression, so if the result is notated incorrectly, it is the result of not attempting the '@<bookmark:Prerequisites>' above.
 %%%
 
 
@@ -822,7 +822,7 @@ $$f\left(x\right)=a_0+\sum_{n=1}^{\infty}\left(a_n\cos{\frac{n\pi x}{L}}+b_n\sin
 $$f\left(x\right)=a_0+\sum_{n=1}^{\infty}\left(a_n\cos{\frac{n\pi x}{L}}+b_n\sin{\frac{n\pi x}{L}}\right)$$
 문장 안의 표현 식은 이렇게 $$f\left(x\right)=a_0+\sum_{n=1}^{\infty}\left(a_n\cos{\frac{n\pi x}{L}}+b_n\sin{\frac{n\pi x}{L}}\right)$$ 변합니다.
 
-WORD의 수학 수식은 @<bookmark:WORD 수학 수식 LaTeX 변환>처럼 같이 수식을 먼저 만든 후, 메뉴에서 '1차원 형식' 버튼을 눌러 변경 가능합니다. 이 문자열을 양끝단에 "\$$" 문자를 덧붙여 수학 수식으로 작성할 수 있습니다.
+WORD의 수학 수식은 '@<bookmark:WORD 수학 수식 LaTeX 변환>'처럼 같이 수식을 먼저 만든 후, 메뉴에서 '1차원 형식' 버튼을 눌러 변경 가능합니다. 이 문자열을 양끝단에 "\$$" 문자를 덧붙여 수학 수식으로 작성할 수 있습니다.
 @<img:#media/math_latex.png;0.9;WORD 수학 수식 LaTeX 변환>
 %%% en
 ex) 2 types of mathematical equation expressions
@@ -835,7 +835,7 @@ Result :
 $$f\left(x\right)=a_0+\sum_{n=1}^{\infty}\left(a_n\cos{\frac{n\pi x}{L}}+b_n\sin{\frac{n\pi x}{L}}\right)$$
 The expression in the sentence changes to $$f\left(x\right)=a_0+\sum_{n=1}^{\infty}\left(a_n\cos{\frac{n\pi x}{L}}+b_n\sin{\frac{n\pi x}{L}}\right)$$.
 
-WORD's mathematical equation can be changed by first creating the equation as shown in @<bookmark:WORD mathematical equation LaTeX conversion> and then pressing the 'Linear format' button in the menu. \
+WORD's mathematical equation can be changed by first creating the equation as shown in '@<bookmark:WORD mathematical equation LaTeX conversion>' and then pressing the 'Linear format' button in the menu. \
 You can write this string as a mathematical equation by adding the characters "\$$" to both ends.
 @<img:#media/math_latex_en.png;0.9;WORD mathematical equation LaTeX conversion>
 %%%
@@ -1365,7 +1365,7 @@ If the table is too long and you move to the next page, the header is automatica
 표의 첫 줄은 상단 제목이며, 하위 데이터 열을 가운데 정렬을 하고자 할 때에는 제목 이름 앞에 '*'문자를 삽입합니다. \
 캡션은 생략 가능합니다.
 기본적으로 표의 너비는 가로가 항상 꽉 차 보이도록 표시되지만, \
-@<bookmark:docgen 변수들>의 @<fixed>docgen.table_content.scale@</fixed> 변수를 수정하여, \
+'@<bookmark:docgen 변수들>'의 @<fixed>docgen.table_content.scale@</fixed> 변수를 수정하여, \
 가로 폭을 임의로 줄일 수 있습니다.
 
 
@@ -1402,7 +1402,7 @@ The first line of the table is the top title, and when you want to align lower d
 Captions may be omitted.
 
 By default, the width of the table is displayed so that it always appears full horizontally, \
-but by modifying the @<fixed>docgen.table_content.scale@</fixed> variable of @<bookmark:docgen variables>, \
+but by modifying the @<fixed>docgen.table_content.scale@</fixed> variable of '@<bookmark:docgen variables>', \
 you can arbitrarily reduce the horizontal width.
 
 
@@ -1519,7 +1519,7 @@ When expressing Column and Row, you can specify the following properties. In the
 @<size:30>@<b>표현식(Brands) : @@<fab:@<color:FF0000>토큰명@</color>>@</b>@</size>
 
 "@<link:https://fontawesome.com/search?o=r&m=free;Font Awesome>"이 제공하는 무료 아이콘 폰트를 사용하여, 다양한 이모지 표현이 가능합니다. \
-토큰명에 아래 링크나 @<bookmark:이모지 표현 테이블>을 검색하여, 무료 폰트를 사용할 수 있습니다.
+토큰명에 아래 링크나 '@<b>@<bookmark:이모지 표현 테이블>@</b>'을 검색하여, 무료 폰트를 사용할 수 있습니다.
 * The Font Awesome : @<link:https://fontawesome.com/search?m=free>
 
 @<img:#media/fontawesome_search.png;0.9;Font Awesome 검색>
@@ -1545,7 +1545,7 @@ Regular 예제들 : @<size:50>@<far:thumbs-up>, @<far:folder-open>, @<far:circle
 @<size:30>@<b>Expression(Brands) : @@<fab:@<color:FF0000>token_name@</color>>@</b>@</size>
 
 You can express various emojis using free icon fonts provided by "@<link:https://fontawesome.com/search?o=r&m=free;Font Awesome>". \
-You can use free fonts by searching the below link or @<bookmark:Emoji expressions table> for the token name.
+You can use free fonts by searching the below link or '@<b>@<bookmark:Emoji expressions table>@</b>' for the token name.
 
 * The Font Awesome : @<link:https://fontawesome.com/search?m=free>
 

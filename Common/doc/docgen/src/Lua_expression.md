@@ -82,7 +82,7 @@ Lua 문법에서 "--" 로 시작하는 문장은 '주석' 표기를 의미합니
 선언된 Property는 문서 전체의 Field 정보에 반영됩니다.
 
 이걸 lua 코드 내에서는 아래와 같은 방법으로 템플릿 문서에 이미 존재하는 필드 값을 변경 가능합니다.
-또는 @<bookmark:속성(Property) 참조>에서 처럼 markdown 문장 내에서 직접적인 참조가 가능합니다.
+또는 '@<bookmark:속성(Property) 참조>'에서 처럼 markdown 문장 내에서 직접적인 참조가 가능합니다.
 
 예) 이 문서의 Field 지정 예시
 %%% en
@@ -112,7 +112,7 @@ In this menu, you can add the <b>Field</b> property you want or change the exist
 the declared <b>property</b> is reflected in the <b>Field</b> information throughout the document.
 
 Within the lua code, you can change the field value that already exists in the template document in the following way.
-Alternatively, direct reference is possible within markdown sentences, such as @<bookmark:Property reference>.
+Alternatively, direct reference is possible within markdown sentences, such as '@<bookmark:Property reference>'.
 
 ex) Example of field designation in this document
 %%%
@@ -137,7 +137,7 @@ docgen.property["Water_Mark"]				= "TESTDRIVE CONFIDENTIAL"
 @<size:30>@<b>함수 원형 : AddRevisoion(@<color:FF0000>버전@</color>, @<color:FF0000>연도@</color>, @<color:FF0000>월@</color>, @<color:FF0000>일@</color>, @<color:FF0000>설명@</color>)@</b>@</size>
 
 문서의 버전 정보를 관리하는 함수입니다. 아래 예시와 같이 버전 순서로 나열할 수 있으며, \
-@<color:FF0000>설명@</color>은 "@<b>@<bookmark:@Paragraph 표현>@</b>"을 사용할 수 있습니다.
+@<color:FF0000>설명@</color>은 '@<b>@<bookmark:@Paragraph 표현>@</b>'을 사용할 수 있습니다.
 AddRevision() 함수를 한번도 사용하지 않을 경우는 "Document Revision History" 절은 자동으로 제거됩니다.
 
 예)
@@ -154,7 +154,7 @@ AddRevision("1.2",	2022, 3,  16,	"Third release")
 @<size:30>@<b>Function prototype : AddRevisoion(@<color:FF0000>version@</color>, @<color:FF0000>year@</color>, @<color:FF0000>month@</color>, @<color:FF0000>day@</color>, @<color:FF0000>description@</color>)@</b>@</size>
 
 This is a function that manages the version information of a document. They can be listed in version order as shown in the example below, \
-and @<color:FF0000>description@</color> can use "@<b>@<bookmark:@Paragraph expression>@</b>".
+and @<color:FF0000>description@</color> can use '@<b>@<bookmark:@Paragraph expression>@</b>'.
 If you never use the AddRevision() function, the "Document Revision History" section is automatically removed.
 
 ex)
@@ -177,7 +177,7 @@ Result)
 ## AddTerm() 함수
 @<size:30>@<b>함수 원형 : AddTerm(@<color:FF0000>단어@</color>, @<color:FF0000>설명@</color>)@</b>@</size>
 
-단어에 대한 설명을 삽입하는 함수입니다. 아래 예시와 같이 사용될 수 있으며, @<color:FF0000>설명@</color>은 "@<b>@<bookmark:@Paragraph 표현>@</b>"을 사용할 수 있습니다.
+단어에 대한 설명을 삽입하는 함수입니다. 아래 예시와 같이 사용될 수 있으며, @<color:FF0000>설명@</color>은 '@<b>@<bookmark:@Paragraph 표현>@</b>'을 사용할 수 있습니다.
 AddTerm() 함수를 한번도 사용하지 않을 경우는 "List of Terms" 절은 자동으로 제거됩니다.
 
 ```lua
@@ -190,7 +190,7 @@ AddTerm("Lua", "Lua script language (@<link:https://ko.wikipedia.org/wiki/루아
 ## AddTerm() function
 @<size:30>@<b>Function prototype : AddTerm(@<color:FF0000>word@</color>, @<color:FF0000>description@</color>)@</b>@</size>
 
-This function inserts a description of a word. It can be used as in the example below, and @<color:FF0000>Description@</color> can use "@<b>@<bookmark:@Paragraph expression>@</b>".
+This function inserts a description of a word. It can be used as in the example below, and @<color:FF0000>Description@</color> can use '@<b>@<bookmark:@Paragraph expression>@</b>'.
 If you never use the AddTerm() function, the "List of Terms" clause is automatically removed.
 
 ```lua
@@ -210,7 +210,7 @@ Result)
 ## AddParagraph() 함수
 @<size:30>@<b>함수 원형 : AddParagraph(@<color:FF0000>문장@</color>, [@<color:FF0000>소스명@</color>])@</b>@</size>
 
-실제 문서 내용을 채울 수 있으며, @<color:FF0000>문장@</color>은 "@<b>@<bookmark:@Paragraph 표현>@</b>"을 사용할 수 있습니다.
+실제 문서 내용을 채울 수 있으며, @<color:FF0000>문장@</color>은 '@<b>@<bookmark:@Paragraph 표현>@</b>'을 사용할 수 있습니다.
 @<color:FF0000>문장@</color>의 내용을 직접 문자열로 기술할 수 있지만, \
 @<color:FF0000>문장@</color>을 "@<b>[[@<color:FF0000>파일명@</color>]]@</b>"으로 기술하면 외부 text 파일로 참조하게 되며, \
 직접 문장 표기는 POSIX 이스케이프 문자 표기법에 영향을 받으므로 소프트 프로그래밍에 익숙하지 않은 사용자는 "예 #2)"와 같이 외부 text 파일로 기술하는 것을 권장합니다.
@@ -259,7 +259,7 @@ end
 ## AddParagraph() function
 @<size:30>@<b>Function prototype : AddParagraph(@<color:FF0000>sentence@</color>, [@<color:FF0000>source_name@</color>])@</b>@</size>
 
-You can fill in the actual document content, and @<color:FF0000>sentence@</color> can use "@<b>@<bookmark:@Paragraph expression>@</b>".
+You can fill in the actual document content, and @<color:FF0000>sentence@</color> can use '@<b>@<bookmark:@Paragraph expression>@</b>'.
 
 The contents of @<color:FF0000>sentence@</color> can be directly described as a string, \
 but the @<color:FF0000>sentence@</color> can be converted to "@<b>[[@<color:FF0000>file_name@</color>]]@</b>" refers to an external text file, \
