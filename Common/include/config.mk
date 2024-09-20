@@ -5,6 +5,7 @@ ifeq ($(OS),Windows_NT)
 	ifndef CROSS
 	CROSS		:= x86_64-w64-mingw32-
 	endif
+	CDEFS		:= $(CDEFS) -DWIN32 -D_WIN32 -DWIN64 -D_WIN64
 endif
 
 ifeq ($(MAIN_COMPILER), clang)
@@ -115,7 +116,7 @@ OPTFLAGS		:= -w -Wall -Wextra -m64 -mfpmath=sse -mieee-fp -mmmx -msse -msse2 -ma
 CFLAGS			:= $(CFLAGS) $(OPTFLAGS) $(INCDIR) $(EXTRA_CFLAGS)
 CPPFLAGS		:= $(CFLAGS) -std=$(CPP_STANDARD)
 ARFLAGS			:= crv
-CDEFS			:= $(CDEFS) -D__int64="long long" -DWIN32 -D_WIN32 -DWIN64 -D_WIN64 -D_FILE_OFFSET_BITS=64
+CDEFS			:= $(CDEFS) -D__int64="long long" -D_FILE_OFFSET_BITS=64
 
 #-------------------------------------------------
 # Build commands

@@ -24,14 +24,14 @@ if sToolPath:GetEnvironment("TESTDRIVE_DIR") == false then
 end
 
 -- set libraries path
-local	sLibPath	= String(sToolPath.s .. "/bin/msys64/ucrt64/bin/")
+local	sLibPath	= String(sToolPath.s .. "/bin/msys64")
 sLibPath:Replace("//", "/", true)
 
 -- make library list
 local	lib_list	= {}
 
-function IsMinGWLibrary(sFileName)
-	return lfs.IsExist(sLibPath.s .. sFileName)
+function IsMinGWLibrary(sPath)
+	return lfs.IsExist(sLibPath.s .. sPath)
 end
 
 local	lib_count	= 0
@@ -40,20 +40,23 @@ function Collect_Lib(sBinPath)
 	local	sTxt		= String(exec("ldd " .. sBinPath))
 
 	-- get reference libraries
-	local	sName		= sTxt:Tokenize("\r\n")
+	local	sName		= sTxt:Tokenize("\n")
 	while #sName.s ~= 0 do
+		local sPath		= String(sName.s)
 		sName:CutBack("=>", true)
 		sName:Trim(" \t")
-		
+		sPath:CutFront("=>", true)
+		sPath:CutBack("(", true)
+		sPath:Trim(" \t")
+
 		if sName.s ~= 0 then
 			if lib_list[sName.s] ~= true then
-				if IsMinGWLibrary(sName.s) then
+				if IsMinGWLibrary(sPath.s) then
 					lib_list[sName.s]	= true
-					
 					print(" - Copy library from : " .. sName.s)
-					run("cp -f \"" .. sLibPath.s .. sName.s .. "\" " .. sTargetPath)
+					run("cp -f \"" .. sLibPath.s .. sPath.s .. "\" " .. sTargetPath)
 					lib_count	= lib_count + 1
-					Collect_Lib(sLibPath.s .. sName.s)
+					Collect_Lib(sLibPath.s .. sPath.s)
 				end
 			end
 		end
@@ -66,7 +69,7 @@ LOGI("Check library dependencies...")
 Collect_Lib(sBinFilename)
 
 if lib_count == 0 then
-	LOGI("No MinGW library is required for this.")
+	LOGI("No more MinGW library is required for this.")
 end
 
 LOGI("Done!")
