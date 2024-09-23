@@ -121,8 +121,10 @@ ex)
 *** third element
 **** fourth #1 element
 **** fourth #2 element
-**** >fourth #2 element extension
-**** @<b>@<color:FF0000>Cataloging@</color>(目錄, List)@</b> refers to writing down names of people, names of products, book titles, tables of contents, and items to be checked in a certain standard and order to make them easier to read.
+****> fourth #2 element extension
+**** @<b>@<color:FF0000>Cataloging@</color>(目錄, List)@</b> refers to writing \ 
+down names of people, names of products, book titles, tables of contents, \ 
+and items to be checked in a certain standard and order to make them easier to read.
 *> 1) first number element
 **> 1-1) second number element
 *> 2) first number element
@@ -135,8 +137,10 @@ Result)
 *** third element
 **** fourth #1 element
 **** fourth #2 element
-**** >fourth #2 element extension
-**** @<b>@<color:FF0000>Cataloging@</color>(目錄, List)@</b> refers to writing down names of people, names of products, book titles, tables of contents, and items to be checked in a certain standard and order to make them easier to read.
+****> fourth #2 element extension
+**** @<b>@<color:FF0000>Cataloging@</color>(目錄, List)@</b> refers to writing \
+down names of people, names of products, book titles, tables of contents, \
+and items to be checked in a certain standard and order to make them easier to read.
 *> 1) first number element
 **> 1-1) second number element
 *> 2) first number element
@@ -1135,7 +1139,7 @@ test_mode = true
 ```lua
 %%% (test_mode == true)
 test_mode 가 활성화되었습니다.
-%%% (test_mode ~= false)
+%%% (test_mode ~= true)
 test_mode 가 비활성화되었습니다.
 %%%
 ```
@@ -1172,7 +1176,7 @@ test_mode = true
 ```lua
 %%% (test_mode == true)
 test_mode is activated.
-%%% (test_mode ~= false)
+%%% (test_mode ~= true)
 test_mode is inactivated.
 %%%
 ```
@@ -1330,17 +1334,17 @@ Result)
 %%% ko
 예5) Excel로 부터 차트 이미지 삽입
 ```html
-@<img:media/chart_sample.xlsx[chart_population:Population in the world];1.0;Excel 차트 예시>
+@<img:media/chart_sample.xlsx[chart_test:sample excel chart];1.0;Excel 차트 예시>
 ```
 결과)
-@<img:media/chart_sample.xlsx[chart_population:Population in the world];1.0;Excel 차트 예시>
+@<img:media/chart_sample.xlsx[chart_test:sample excel chart];1.0;Excel 차트 예시>
 %%% en
 ex5) Insert chart image from Excel
 ```html
-@<img:media/chart_sample.xlsx[chart_population:Population in the world];0.7;Excel chart example>
+@<img:media/chart_sample.xlsx[chart_test:sample excel chart];0.7;Excel chart example>
 ```
 Result)
-@<img:media/chart_sample.xlsx[chart_population:Population in the world];0.7;Excel chart example>
+@<img:media/chart_sample.xlsx[chart_test:sample excel chart];0.7;Excel chart example>
 %%%
 
 

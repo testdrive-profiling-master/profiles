@@ -156,7 +156,7 @@ The default setting is 'en' (english) and will have no effect on documents that 
 %%% en
 ### Project creation example
 
-아래와 같이 명령어를 입력하여, 간소화된 프로젝트를 생성하고 빌드 할 수 있습니다.
+You can create and build a simplified project by entering the command as follows.
 %%%
 
 ```txt
