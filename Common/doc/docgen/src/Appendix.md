@@ -34,11 +34,11 @@ Current version : The Font Awesome v6.6.0
 
 
 %%% ko
-## 색상 테이블
+## 색상 코드
 
-@<tbl:#media/color_table.xlsx;color_table;색상 이름표>
+@<tbl:#media/color_table.xlsx;color_table;색상 코드표>
 %%% en
-## Color table
+## Color code
 
-@<tbl:#media/color_table.xlsx;color_table;Color name table>
+@<tbl:#media/color_table.xlsx;color_table;Color code table>
 %%%

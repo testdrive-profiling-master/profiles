@@ -344,7 +344,7 @@ Result : Text@<sub>Subscript@</sub>
 @<size:30>@<b>표현식 : @@<bgcolor:@<color:red>색상값@</color>>@<color:red>표현식@</color>@@</bgcolor>@</b>@</size>
 
 배경 색상 변경을 위해서는 표현은 @<color:red>표현식@</color>을 HTML 방식과 유사하게 'bgcolor' 태그로 둘러쌓아 표현하며, \
-색상 지정은 @<color:red>색상값@</color>에 부록 @<bookmark:색상 테이블>의 색상 이름이나 24bit RGB 16진수로 표현합니다.
+색상 지정은 @<color:red>색상값@</color>에 부록의 @<b>@<bookmark:색상 코드>@</b> 또는 24bit RGB 16진수로 표현합니다.
 
 예)
 ```html
@@ -356,7 +356,7 @@ Result : Text@<sub>Subscript@</sub>
 @<size:30>@<b>Expression : @@<bgcolor:@<color:red>color_value@</color>>@<color:red>expression@</color>@@</bgcolor>@</b>@</size>
 
 To change the background color, the expression is @<color:red>expression@</color> surrounded by 'bgcolor' tags similar to HTML, \
-and color specification is expressed in the appendix @<bookmark:Color table>'s @<color:red>color value@</color> as a color name or 24bit RGB hexadecimal number.
+and color specifications are expressed in @<color:red>color value@</color> as @<b>@<bookmark:Color code>@</b> in the appendix or as 24bit RGB hexadecimal.
 
 ex)
 ```html
@@ -374,7 +374,7 @@ Result : @<bgcolor:red>Red background@<bgcolor:0000FF> expression@</bgcolor>
 @<size:30>@<b>표현식 : @@<color:@<color:red>색상값@</color>>@<color:red>표현식@</color>@@</color>@</b>@</size>
 
 글자 색상 변경을 위해서는 표현은 @<color:red>표현식@</color>을 HTML 방식과 유사하게 'color' 태그로 둘러쌓아 표현하며, \
-색상 지정은 @<color:red>색상값@</color>에 부록 @<bookmark:색상 테이블>의 색상 이름이나 24bit RGB 16진수로 표현합니다.
+색상 지정은 @<color:red>색상값@</color>에 부록의 @<b>@<bookmark:색상 코드>@</b> 또는 24bit RGB 16진수로 표현합니다.
 
 예)
 ```html
@@ -386,7 +386,7 @@ Result : @<bgcolor:red>Red background@<bgcolor:0000FF> expression@</bgcolor>
 @<size:30>@<b>Expression : @@<color:@<color:red>color_value@</color>>@<color:red>expression@</color>@@</color>@</b>@</size>
 
 To change the font color, the expression is @<color:red>expression@</color> surrounded by 'color' tags similar to HTML, \
-and color specification is expressed in the appendix @<bookmark:Color table>'s @<color:red>color value@</color> as a color name or 24bit RGB hexadecimal number.
+and color specifications are expressed in @<color:red>color value@</color> as @<b>@<bookmark:Color code>@</b> in the appendix or as 24bit RGB hexadecimal.
 
 ex)
 ```html
