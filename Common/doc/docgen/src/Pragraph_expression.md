@@ -1,7 +1,7 @@
 %%% ko
 # Paragraph 표현
 
-Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph의 인자 @<color:FF0000>설명@</color> 및 @<color:FF0000>문장@</color>을 기술하는 법을 의미합니다. \
+Paragraph 표현은 Lua 함수 AddRevision, AddTerm, AddParagraph의 인자 @<color:red>설명@</color> 및 @<color:red>문장@</color>을 기술하는 법을 의미합니다. \
 표기 방법은 markdown 과 몇몇 html 표기법을 혼합하여 취하고 있으며, 표현의 다향성을 위해 추가적으로 자체 문법도 가지고 있습니다. \
 또한 각 수식은 문단, 표등 문장이 쓰이는 어디서든 동등하게 사용할 수 있습니다. \
 긴 문장을 짧게 여러 줄로 나눌 수 있도록, 문단 내에서 " \"(space + '\') 로 끝날 경우 다음 줄과 자동으로 이어 붙입니다.
@@ -11,7 +11,7 @@ Paragraph 표현에 대한 건의 사항이 개선 요청은 언제든지 저에
 %%% en
 # Paragraph expression
 
-Paragraph expression refers to how to describe the arguments @<color:FF0000>description@</color> and @<color:FF0000>sentence@</color> of the Lua functions of AddRevision, AddTerm, and AddParagraph. \
+Paragraph expression refers to how to describe the arguments @<color:red>description@</color> and @<color:red>sentence@</color> of the Lua functions of AddRevision, AddTerm, and AddParagraph. \
 The notation method is a mixture of markdown and some html notation, and it additionally has its own grammar for versatility in expression. \
 Additionally, each formula can be used equally wherever sentences are used, such as paragraphs and tables. \
 To allow long sentences to be split into several shorter lines, paragraphs that end with " \ " (space + '\') are automatically connected to the next line.
@@ -28,28 +28,28 @@ If you have any suggestions for paragraph expressions or requests for improvemen
 %%% ko
 ## 제목 표현
 
-@<size:30>@<b>표현식 : # @<color:FF0000>대제목@</color>@</b>@</size>
-@<size:30>@<b>        ## @<color:FF0000>부제목1@</color>@</b>@</size>
-@<size:30>@<b>        ### @<color:FF0000>부제목2@</color>@</b>@</size>
-@<size:30>@<b>        #### @<color:FF0000>부제목3@</color>@</b>@</size>
-@<size:30>@<b>        ##### @<color:FF0000>부제목4@</color>@</b>@</size>
-@<size:30>@<b>        ###### @<color:FF0000>부제목5@</color>@</b>@</size>
+@<size:30>@<b>표현식 : # @<color:red>대제목@</color>@</b>@</size>
+@<size:30>@<b>        ## @<color:red>부제목1@</color>@</b>@</size>
+@<size:30>@<b>        ### @<color:red>부제목2@</color>@</b>@</size>
+@<size:30>@<b>        #### @<color:red>부제목3@</color>@</b>@</size>
+@<size:30>@<b>        ##### @<color:red>부제목4@</color>@</b>@</size>
+@<size:30>@<b>        ###### @<color:red>부제목5@</color>@</b>@</size>
 
-문서 제목 표기는 @<color:FF0000>대제목@</color>과 @<color:FF0000>부제목n@</color>까지 '#' 문자를 라인 선두에 두어 제목을 표시합니다. \
+문서 제목 표기는 @<color:red>대제목@</color>과 @<color:red>부제목n@</color>까지 '#' 문자를 라인 선두에 두어 제목을 표시합니다. \
 이는 markdown과 같습니다. \
 '#' 문자가 라인 선두에 없으면 제목으로 인식하지 않으며, 워드의 템플릿 문서의 "텍스트 스타일"에 영향을 받습니다. \
 최대 6단까지 사용 가능.
 %%% en
 ## Title expression
 
-@<size:30>@<b>Expression : # @<color:FF0000>Main title@</color>@</b>@</size>
-@<size:30>@<b>            ## @<color:FF0000>Sub title1@</color>@</b>@</size>
-@<size:30>@<b>            ### @<color:FF0000>Sub title2@</color>@</b>@</size>
-@<size:30>@<b>            #### @<color:FF0000>Sub title3@</color>@</b>@</size>
-@<size:30>@<b>            ##### @<color:FF0000>Sub title4@</color>@</b>@</size>
-@<size:30>@<b>            ###### @<color:FF0000>Sub title5@</color>@</b>@</size>
+@<size:30>@<b>Expression : # @<color:red>Main title@</color>@</b>@</size>
+@<size:30>@<b>            ## @<color:red>Sub title1@</color>@</b>@</size>
+@<size:30>@<b>            ### @<color:red>Sub title2@</color>@</b>@</size>
+@<size:30>@<b>            #### @<color:red>Sub title3@</color>@</b>@</size>
+@<size:30>@<b>            ##### @<color:red>Sub title4@</color>@</b>@</size>
+@<size:30>@<b>            ###### @<color:red>Sub title5@</color>@</b>@</size>
 
-The document title is displayed by placing the '#' character at the beginning of the line, from @<color:FF0000>Main title@</color> to @<color:FF0000>Sub title@</color>. \
+The document title is displayed by placing the '#' character at the beginning of the line, from @<color:red>Main title@</color> to @<color:red>Sub title@</color>. \
 This is the same as markdown. \
 If the '#' character is not at the beginning of the line, it is not recognized as a title and is affected by the "text style" of the WORD's template document. \
 Up to 6 levels can be used.
@@ -63,12 +63,12 @@ Up to 6 levels can be used.
 %%% ko
 ## 목록화
 
-@<size:30>@<b>표현식 : * @<color:FF0000>요소1@</color>@</b>@</size>
-@<size:30>@<b>        ** @<color:FF0000>요소2@</color>@</b>@</size>
-@<size:30>@<b>        *** @<color:FF0000>요소3@</color>@</b>@</size>
-@<size:30>@<b>        **** @<color:FF0000>요소4@</color>@</b>@</size>
-@<size:30>@<b>        ***** @<color:FF0000>요소5@</color>@</b>@</size>
-@<size:30>@<b>        ****** @<color:FF0000>요소6@</color>@</b>@</size>
+@<size:30>@<b>표현식 : * @<color:red>요소1@</color>@</b>@</size>
+@<size:30>@<b>        ** @<color:red>요소2@</color>@</b>@</size>
+@<size:30>@<b>        *** @<color:red>요소3@</color>@</b>@</size>
+@<size:30>@<b>        **** @<color:red>요소4@</color>@</b>@</size>
+@<size:30>@<b>        ***** @<color:red>요소5@</color>@</b>@</size>
+@<size:30>@<b>        ****** @<color:red>요소6@</color>@</b>@</size>
 
 목록화는 markdown과 비슷하지만 더 다양한 표현기능을 위해 약간의 차이가 있습니다. '*' 문자가 줄 선두에 존재할 경우 목록화로 표시되며, '*' 개수만큼 들여쓰기가 결정됩니다.
 또한 번호나 특수한 표현을 위해 나열된 '*' 문자 다음에 '>'를 사용하여, 기존 표식을 없애고 다른 형태의 표현식을 쓸 수 있습니다. 최대 6단 까지 사용 가능.
@@ -81,7 +81,7 @@ Up to 6 levels can be used.
 **** 네번째 #1 요소
 **** 네번째 #2 요소
 **** >네번째 #2 요소 확장
-**** @<b>@<color:FF0000>목록@</color>(目錄, List)@</b>은 사람의 이름이나 물품의 이름, 책 제목, 목차, 점검 해야 할 항목 따위를 일정한 기준과 순서로 적어 알아보기 쉽도록 만든 것을 이르는 말이다.
+**** @<b>@<color:red>목록@</color>(目錄, List)@</b>은 사람의 이름이나 물품의 이름, 책 제목, 목차, 점검 해야 할 항목 따위를 일정한 기준과 순서로 적어 알아보기 쉽도록 만든 것을 이르는 말이다.
 *> 1) 첫번째 번호 요소
 **> 1-1) 두번째 번호 요소
 *> 2) 첫번째 번호 요소
@@ -95,7 +95,7 @@ Up to 6 levels can be used.
 **** 네번째 #1 요소
 **** 네번째 #2 요소
 **** >네번째 #2 요소 확장
-**** @<b>@<color:FF0000>목록@</color>(目錄, List)@</b>은 사람의 이름이나 물품의 이름, 책 제목, 목차, 점검 해야 할 항목 따위를 일정한 기준과 순서로 적어 알아보기 쉽도록 만든 것을 이르는 말이다.
+**** @<b>@<color:red>목록@</color>(目錄, List)@</b>은 사람의 이름이나 물품의 이름, 책 제목, 목차, 점검 해야 할 항목 따위를 일정한 기준과 순서로 적어 알아보기 쉽도록 만든 것을 이르는 말이다.
 *> 1) 첫번째 번호 요소
 **> 1-1) 두번째 번호 요소
 *> 2) 첫번째 번호 요소
@@ -104,12 +104,12 @@ Up to 6 levels can be used.
 %%% en
 ## Cataloging
 
-@<size:30>@<b>Expression : * @<color:FF0000>Element1@</color>@</b>@</size>
-@<size:30>@<b>             ** @<color:FF0000>Element2@</color>@</b>@</size>
-@<size:30>@<b>             *** @<color:FF0000>Element3@</color>@</b>@</size>
-@<size:30>@<b>             **** @<color:FF0000>Element4@</color>@</b>@</size>
-@<size:30>@<b>             ***** @<color:FF0000>Element5@</color>@</b>@</size>
-@<size:30>@<b>             ****** @<color:FF0000>Element6@</color>@</b>@</size>
+@<size:30>@<b>Expression : * @<color:red>Element1@</color>@</b>@</size>
+@<size:30>@<b>             ** @<color:red>Element2@</color>@</b>@</size>
+@<size:30>@<b>             *** @<color:red>Element3@</color>@</b>@</size>
+@<size:30>@<b>             **** @<color:red>Element4@</color>@</b>@</size>
+@<size:30>@<b>             ***** @<color:red>Element5@</color>@</b>@</size>
+@<size:30>@<b>             ****** @<color:red>Element6@</color>@</b>@</size>
 
 Cataloging is similar to markdown, but there are some differences for more expressive functions. If the '*' character exists at the beginning of a line, it is displayed as a list, and the indentation is determined by the number of '*'s.
 You can also use '>' after the '*' character listed for a number or special expression to remove the existing marker and use a different form of expression. Up to 6 levels can be used.
@@ -122,7 +122,7 @@ ex)
 **** fourth #1 element
 **** fourth #2 element
 ****> fourth #2 element extension
-**** @<b>@<color:FF0000>Cataloging@</color>(目錄, List)@</b> refers to writing \ 
+**** @<b>@<color:red>Cataloging@</color>(目錄, List)@</b> refers to writing \ 
 down names of people, names of products, book titles, tables of contents, \ 
 and items to be checked in a certain standard and order to make them easier to read.
 *> 1) first number element
@@ -138,7 +138,7 @@ Result)
 **** fourth #1 element
 **** fourth #2 element
 ****> fourth #2 element extension
-**** @<b>@<color:FF0000>Cataloging@</color>(目錄, List)@</b> refers to writing \
+**** @<b>@<color:red>Cataloging@</color>(目錄, List)@</b> refers to writing \
 down names of people, names of products, book titles, tables of contents, \
 and items to be checked in a certain standard and order to make them easier to read.
 *> 1) first number element
@@ -169,9 +169,9 @@ Text expressions can specify the color, thickness, italics, underline, size, sup
  
 %%% ko
 ### 굵은 글자
-@<size:30>@<b>표현식 : @@<b>@<color:FF0000>표현식@</color>@@</b>@</b>@</size>
+@<size:30>@<b>표현식 : @@<b>@<color:red>표현식@</color>@@</b>@</b>@</size>
 
-굵은 글씨는 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'b' 태그로 둘러쌓아 표현합니다.
+굵은 글씨는 @<color:red>표현식@</color>을 HTML 방식과 유사하게 'b' 태그로 둘러쌓아 표현합니다.
 
 예)
 ```html
@@ -180,9 +180,9 @@ Text expressions can specify the color, thickness, italics, underline, size, sup
 결과 : @<b>굵은 글씨입니다.@</b> 굵은 글씨가 아닙니다.
 %%% en
 ### Bold text
-@<size:30>@<b>Expression : @@<b>@<color:FF0000>expression@</color>@@</b>@</b>@</size>
+@<size:30>@<b>Expression : @@<b>@<color:red>expression@</color>@@</b>@</b>@</size>
 
-Bold text is expressed by surrounding @<color:FF0000>Expression@</color> with a 'b' tag, similar to HTML.
+Bold text is expressed by surrounding @<color:red>Expression@</color> with a 'b' tag, similar to HTML.
 
 ex)
 ```html
@@ -197,9 +197,9 @@ Result : @<b>It's in bold.@</b> It's not in bold.
  
 %%% ko
 ### 이텔릭체
-@<size:30>@<b>표현식 : @@<i>@<color:FF0000>표현식@</color>@@</i>@</b>@</size>
+@<size:30>@<b>표현식 : @@<i>@<color:red>표현식@</color>@@</i>@</b>@</size>
 
-이텔릭체 문장은 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'i' 태그로 둘러쌓아 표현합니다.
+이텔릭체 문장은 @<color:red>표현식@</color>을 HTML 방식과 유사하게 'i' 태그로 둘러쌓아 표현합니다.
 
 예)
 ```html
@@ -208,9 +208,9 @@ Result : @<b>It's in bold.@</b> It's not in bold.
 결과 : @<i>이텔릭체@</i> Non 이텔릭체
 %%% en
 ### Italic text
-@<size:30>@<b>Expression : @@<i>@<color:FF0000>expression@</color>@@</i>@</b>@</size>
+@<size:30>@<b>Expression : @@<i>@<color:red>expression@</color>@@</i>@</b>@</size>
 
-Italic text is expressed by surrounding the @<color:FF0000>expression@</color> with an 'i' tag, similar to HTML.
+Italic text is expressed by surrounding the @<color:red>expression@</color> with an 'i' tag, similar to HTML.
 
 ex)
 ```html
@@ -225,10 +225,10 @@ Result : @<i>italic@</i> Non italic
  
 %%% ko
 ### 밑줄
-@<size:30>@<b>표현식(단일선) : @@<u>@<color:FF0000>표현식@</color>@@</u>@</b>@</size>
-@<size:30>@<b>표현식(이중선) : @@<U>@<color:FF0000>표현식@</color>@@</U>@</b>@</size>
+@<size:30>@<b>표현식(단일선) : @@<u>@<color:red>표현식@</color>@@</u>@</b>@</size>
+@<size:30>@<b>표현식(이중선) : @@<U>@<color:red>표현식@</color>@@</U>@</b>@</size>
 
-밑줄 글씨 표현은 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'u' 태그로 둘러쌓아 표현합니다. \
+밑줄 글씨 표현은 @<color:red>표현식@</color>을 HTML 방식과 유사하게 'u' 태그로 둘러쌓아 표현합니다. \
 대문자로 수식을 표현하면 이중 밑줄이 됩니다.
 
 예)
@@ -238,10 +238,10 @@ Result : @<i>italic@</i> Non italic
 결과 : @<u>밑줄 글자@</u>, @<U>이중 밑줄 글자@</U>
 %%% en
 ### Underline
-@<size:30>@<b>Expression(single) : @@<u>@<color:FF0000>expression@</color>@@</u>@</b>@</size>
-@<size:30>@<b>Expression(double) : @@<U>@<color:FF0000>expression@</color>@@</U>@</b>@</size>
+@<size:30>@<b>Expression(single) : @@<u>@<color:red>expression@</color>@@</u>@</b>@</size>
+@<size:30>@<b>Expression(double) : @@<U>@<color:red>expression@</color>@@</U>@</b>@</size>
 
-The underlined text is expressed by surrounding @<color:FF0000>expression@</color> with a 'u' tag, similar to HTML. \
+The underlined text is expressed by surrounding @<color:red>expression@</color> with a 'u' tag, similar to HTML. \
 When you write a formula in capital letters, it is double underlined.
 
 ex)
@@ -257,9 +257,9 @@ Result : @<u>underlined text@</u>, @<U>double underlined text@</U>
  
 %%% ko
 ### 취소선
-@<size:30>@<b>표현식 : @@<s>@<color:FF0000>표현식@</color>@@</s>@</b>@</size>
+@<size:30>@<b>표현식 : @@<s>@<color:red>표현식@</color>@@</s>@</b>@</size>
 
-취소선 표현은 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 's' 태그로 둘러쌓아 표현합니다.
+취소선 표현은 @<color:red>표현식@</color>을 HTML 방식과 유사하게 's' 태그로 둘러쌓아 표현합니다.
 
 예)
 ```html
@@ -268,9 +268,9 @@ Result : @<u>underlined text@</u>, @<U>double underlined text@</U>
 결과 : @<s>취소선 글자@</s>
 %%% en
 ### Strikethrough
-@<size:30>@<b>Expression : @@<s>@<color:FF0000>expression@</color>@@</s>@</b>@</size>
+@<size:30>@<b>Expression : @@<s>@<color:red>expression@</color>@@</s>@</b>@</size>
 
-The strikethrough text is expressed by surrounding @<color:FF0000>expression@</color> with 's' tags, similar to HTML.
+The strikethrough text is expressed by surrounding @<color:red>expression@</color> with 's' tags, similar to HTML.
 
 ex)
 ```html
@@ -285,9 +285,9 @@ Result : @<s>Strikethrough text@</s>
  
 %%% ko
 ### 위첨자
-@<size:30>@<b>표현식 : @@<sup>@<color:FF0000>표현식@</color>@@</sup>@</b>@</size>
+@<size:30>@<b>표현식 : @@<sup>@<color:red>표현식@</color>@@</sup>@</b>@</size>
 
-위첨자 표현은 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'sup' 태그로 둘러쌓아 표현합니다.
+위첨자 표현은 @<color:red>표현식@</color>을 HTML 방식과 유사하게 'sup' 태그로 둘러쌓아 표현합니다.
 
 예)
 ```html
@@ -296,9 +296,9 @@ Result : @<s>Strikethrough text@</s>
 결과 : 글씨의@<sup>위첨자@</sup>
 %%% en
 ### Superscript
-@<size:30>@<b>Expression : @@<sup>@<color:FF0000>expression@</color>@@</sup>@</b>@</size>
+@<size:30>@<b>Expression : @@<sup>@<color:red>expression@</color>@@</sup>@</b>@</size>
 
-Superscript text is expressed by surrounding @<color:FF0000>expression@</color> with 'sup' tags, similar to HTML.
+Superscript text is expressed by surrounding @<color:red>expression@</color> with 'sup' tags, similar to HTML.
 
 ex)
 ```html
@@ -313,9 +313,9 @@ Result : Text@<sup>Superscript@</sup>
  
 %%% ko
 ### 아래첨자
-@<size:30>@<b>표현식 : @@<sub>@<color:FF0000>표현식@</color>@@</sub>@</b>@</size>
+@<size:30>@<b>표현식 : @@<sub>@<color:red>표현식@</color>@@</sub>@</b>@</size>
 
-아래첨자 표현은 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'sub' 태그로 둘러쌓아 표현합니다.
+아래첨자 표현은 @<color:red>표현식@</color>을 HTML 방식과 유사하게 'sub' 태그로 둘러쌓아 표현합니다.
 
 예)
 ```html
@@ -324,9 +324,9 @@ Result : Text@<sup>Superscript@</sup>
 결과 : 글씨의@<sub>아래첨자@</sub>
 %%% en
 ### Subscript
-@<size:30>@<b>Expression : @@<sub>@<color:FF0000>expression@</color>@@</sub>@</b>@</size>
+@<size:30>@<b>Expression : @@<sub>@<color:red>expression@</color>@@</sub>@</b>@</size>
 
-Subscript text is expressed by surrounding @<color:FF0000>expression@</color> with 'sub' tags, similar to HTML.
+Subscript text is expressed by surrounding @<color:red>expression@</color> with 'sub' tags, similar to HTML.
 
 ex)
 ```html
@@ -341,26 +341,28 @@ Result : Text@<sub>Subscript@</sub>
  
 %%% ko
 ### 배경 색상
-@<size:30>@<b>표현식 : @@<bgcolor:@<color:FF0000>색상값@</color>>@<color:FF0000>표현식@</color>@@</bgcolor>@</b>@</size>
+@<size:30>@<b>표현식 : @@<bgcolor:@<color:red>색상값@</color>>@<color:red>표현식@</color>@@</bgcolor>@</b>@</size>
 
-배경 색상 변경을 위해서는 표현은 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'bgcolor' 태그로 둘러쌓아 표현하며, 색상 지정은 @<color:FF0000>색상값@</color>에 24bit RGB 16진수로 표현합니다.
+배경 색상 변경을 위해서는 표현은 @<color:red>표현식@</color>을 HTML 방식과 유사하게 'bgcolor' 태그로 둘러쌓아 표현하며, \
+색상 지정은 @<color:red>색상값@</color>에 부록 @<bookmark:색상 테이블>의 색상 이름이나 24bit RGB 16진수로 표현합니다.
 
 예)
 ```html
-@<bgcolor:FF0000>붉은 배경@</bgcolor> 표현
+@<bgcolor:red>붉은 배경@<bgcolor:0000FF> 표현@</bgcolor>
 ```
-결과 : @<bgcolor:FF0000>붉은 배경@</bgcolor> 표현
+결과 : @<bgcolor:red>붉은 배경@<bgcolor:0000FF> 표현@</bgcolor>
 %%% en
 ### Background color
-@<size:30>@<b>Expression : @@<bgcolor:@<color:FF0000>color_value@</color>>@<color:FF0000>expression@</color>@@</bgcolor>@</b>@</size>
+@<size:30>@<b>Expression : @@<bgcolor:@<color:red>color_value@</color>>@<color:red>expression@</color>@@</bgcolor>@</b>@</size>
 
-To change the background color, the expression is @<color:FF0000>expression@</color> surrounded by 'bgcolor' tags similar to HTML, and the color is specified by @<color:FF0000>color_value@</color> Expressed in 24bit RGB hexadecimal.
+To change the background color, the expression is @<color:red>expression@</color> surrounded by 'bgcolor' tags similar to HTML, \
+and color specification is expressed in the appendix @<bookmark:Color table>'s @<color:red>color value@</color> as a color name or 24bit RGB hexadecimal number.
 
 ex)
 ```html
-@<bgcolor:FF0000>Red background@</bgcolor> expression
+@<bgcolor:red>Red background@<bgcolor:0000FF> expression@</bgcolor>
 ```
-Result : @<bgcolor:FF0000>Red background@</bgcolor> expression
+Result : @<bgcolor:red>Red background@<bgcolor:0000FF> expression@</bgcolor>
 %%%
 
 
@@ -369,26 +371,28 @@ Result : @<bgcolor:FF0000>Red background@</bgcolor> expression
  
 %%% ko
 ### 글자 색상
-@<size:30>@<b>표현식 : @@<color:@<color:FF0000>색상값@</color>>@<color:FF0000>표현식@</color>@@</color>@</b>@</size>
+@<size:30>@<b>표현식 : @@<color:@<color:red>색상값@</color>>@<color:red>표현식@</color>@@</color>@</b>@</size>
 
-글자 색상 변경을 위해서는 표현은 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'color' 태그로 둘러쌓아 표현하며, 색상 지정은 @<color:FF0000>색상값@</color>에 24bit RGB 16진수로 표현합니다.
+글자 색상 변경을 위해서는 표현은 @<color:red>표현식@</color>을 HTML 방식과 유사하게 'color' 태그로 둘러쌓아 표현하며, \
+색상 지정은 @<color:red>색상값@</color>에 부록 @<bookmark:색상 테이블>의 색상 이름이나 24bit RGB 16진수로 표현합니다.
 
 예)
 ```html
-@<color:FF0000>붉은 글씨@</color> 표현
+@<color:red>붉은 글씨@</color> 표현
 ```
-결과 : @<color:FF0000>붉은 글씨@</color> 표현
+결과 : @<color:red>붉은 글씨@</color> 표현
 %%% en
 ### Text color
-@<size:30>@<b>Expression : @@<color:@<color:FF0000>color_value@</color>>@<color:FF0000>expression@</color>@@</color>@</b>@</size>
+@<size:30>@<b>Expression : @@<color:@<color:red>color_value@</color>>@<color:red>expression@</color>@@</color>@</b>@</size>
 
-To change the font color, the expression is @<color:FF0000>expression@</color> surrounded by 'color' tags similar to HTML, and the color is specified by @<color:FF0000>color_value@</color> Expressed in 24bit RGB hexadecimal.
+To change the font color, the expression is @<color:red>expression@</color> surrounded by 'color' tags similar to HTML, \
+and color specification is expressed in the appendix @<bookmark:Color table>'s @<color:red>color value@</color> as a color name or 24bit RGB hexadecimal number.
 
 ex)
 ```html
-@<color:FF0000>Red text@</color> expression
+@<color:red>Red text@</color> expression
 ```
-Result : @<color:FF0000>Red text@</color> expression
+Result : @<color:red>Red text@</color> expression
 %%%
 
 
@@ -397,9 +401,9 @@ Result : @<color:FF0000>Red text@</color> expression
  
 %%% ko
 ### 글자 크기
-@<size:30>@<b>표현식 : @@<size:@<color:FF0000>크기값@</color>>@<color:FF0000>표현식@</color>@@</size>@</b>@</size>
+@<size:30>@<b>표현식 : @@<size:@<color:red>크기값@</color>>@<color:red>표현식@</color>@@</size>@</b>@</size>
 
-글자 크기 변경을 위해서는 표현은 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'size' 태그로 둘러쌓아 표현하며, 색상 지정은 @<color:FF0000>크기값@</color>에 point 단위로 지정합니다.
+글자 크기 변경을 위해서는 표현은 @<color:red>표현식@</color>을 HTML 방식과 유사하게 'size' 태그로 둘러쌓아 표현하며, 색상 지정은 @<color:red>크기값@</color>에 point 단위로 지정합니다.
 
 예)
 ```html
@@ -408,9 +412,9 @@ Result : @<color:FF0000>Red text@</color> expression
 결과 : @<size:30>큰 글씨@</size> @<size:10>작은 글씨@</size>
 %%% en
 ### Text size
-@<size:30>@<b>Expression : @@<size:@<color:FF0000>font_size@</color>>@<color:FF0000>expression@</color>@@</size>@</b>@</size>
+@<size:30>@<b>Expression : @@<size:@<color:red>font_size@</color>>@<color:red>expression@</color>@@</size>@</b>@</size>
 
-To change the font size, the expression is @<color:FF0000>expression@</color> surrounded by 'size' tags similar to HTML, and the color is specified by @<color:FF0000>font_size@</color> Specify it in point units.
+To change the font size, the expression is @<color:red>expression@</color> surrounded by 'size' tags similar to HTML, and the color is specified by @<color:red>font_size@</color> Specify it in point units.
 
 ex)
 ```html
@@ -425,9 +429,9 @@ Result : @<size:30>Big text@</size> @<size:10>small text@</size>
  
 %%% ko
 ### 고정폭 글꼴
-@<size:30>@<b>표현식 : @@<fixed>@<color:FF0000>표현식@</color>@@</fixed>@</b>@</size>
+@<size:30>@<b>표현식 : @@<fixed>@<color:red>표현식@</color>@@</fixed>@</b>@</size>
 
-고정폭 글꼴을 사용하기 위해 @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'fixed' 태그로 둘러쌓아 표현합니다.
+고정폭 글꼴을 사용하기 위해 @<color:red>표현식@</color>을 HTML 방식과 유사하게 'fixed' 태그로 둘러쌓아 표현합니다.
 
  
 :::Note
@@ -440,9 +444,9 @@ Result : @<size:30>Big text@</size> @<size:10>small text@</size>
 결과 : @<fixed>Fixed font@</fixed> 표현식입니다.
 %%% en
 ### Fixed font
-@<size:30>@<b>Expression : @@<fixed>@<color:FF0000>expression@</color>@@</fixed>@</b>@</size>
+@<size:30>@<b>Expression : @@<fixed>@<color:red>expression@</color>@@</fixed>@</b>@</size>
 
-To use fixed font, the @<color:FF0000>expression@</color> is surrounded by 'fixed' tags similar to HTML.
+To use fixed font, the @<color:red>expression@</color> is surrounded by 'fixed' tags similar to HTML.
 
  
 :::Note
@@ -461,9 +465,9 @@ Result : @<fixed>Fixed font@</fixed> expression.
  
 %%% ko
 ### 글꼴 지정
-@<size:30>@<b>표현식 : @@<font:@<color:FF0000>폰트명@</color>>@<color:FF0000>표현식@</color>@@</font>@</b>@</size>
+@<size:30>@<b>표현식 : @@<font:@<color:red>폰트명@</color>>@<color:red>표현식@</color>@@</font>@</b>@</size>
 
-"폰트명"의 글꼴을 지정하여 특수 문자를 표현할 수 있다. @<color:FF0000>표현식@</color>을 HTML 방식과 유사하게 'font' 태그로 둘러쌓아 표현합니다.
+"폰트명"의 글꼴을 지정하여 특수 문자를 표현할 수 있다. @<color:red>표현식@</color>을 HTML 방식과 유사하게 'font' 태그로 둘러쌓아 표현합니다.
 
  
 예)
@@ -473,9 +477,9 @@ A @<font:Wingdings>à@</font> B
 결과 : A @<font:Wingdings>à@</font> B
 %%% en
 ### Apply font
-@<size:30>@<b>Expression : @@<font:@<color:FF0000>font_name@</color>>@<color:FF0000>expression@</color>@@</font>@</b>@</size>
+@<size:30>@<b>Expression : @@<font:@<color:red>font_name@</color>>@<color:red>expression@</color>@@</font>@</b>@</size>
 
-You can express special characters by specifying the font of "font_name".To apply specific font, the @<color:FF0000>expression@</color> is surrounded by 'font' tags similar to HTML.
+You can express special characters by specifying the font of "font_name".To apply specific font, the @<color:red>expression@</color> is surrounded by 'font' tags similar to HTML.
 
  
 ex)
@@ -492,7 +496,7 @@ A @<font:Wingdings>à@</font> B
  
 %%% ko
 ### 문단 스타일
-@<size:30>@<b>표현식 : :::@<color:FF0000>스타일_이름@</color>,@<color:FF0000>정렬@</color>@</b>@</size>
+@<size:30>@<b>표현식 : :::@<color:red>스타일_이름@</color>,@<color:red>정렬@</color>@</b>@</size>
 
 Microsoft 워드에는 아래와 같이 자신이 원하는 스타일 서식을 추가/수정할 수 있습니다. \
 docgen에서는 템플릿 문서에 존재하는 스타일 서식들을 문단 단위로 적용할 수 있습니다. \
@@ -500,12 +504,12 @@ docgen에서는 템플릿 문서에 존재하는 스타일 서식들을 문단 �
 
 @<img:media/text_style.png;0.6;워드의 텍스트 스타일 수정>
 
-다음 줄의 문단 스타일을 '@<color:FF0000>스타일_이름@</color>'로 변경합니다. 한 줄에 대해서만 스타일이 변경되며, \
+다음 줄의 문단 스타일을 '@<color:red>스타일_이름@</color>'로 변경합니다. 한 줄에 대해서만 스타일이 변경되며, \
 다음 라인에 대해서는 표준 스타일 서식으로 다시 돌아갑니다.
 스타일 서식은 초기 템플릿 WORD 문서에 지정된 스타일이 참조되어 구현되며, WORD 상에 '텍스트 스타일'로 검색하여 변경 및 추가할 수 있습니다. \
 스타일 이름에 탭 문자나 "//", "--" 또는 ";" 문자 뒤의 내용은 무시됩니다. 스타일 이름이 아닌 스타일 ID를 입력하여도 상관 없습니다.
-'@<color:FF0000>정렬@</color>'은 '@<code>left@</code>', '@<code>right@</code>', '@<code>center@</code>' 중에 하나를 선택할 수 있으며, \
-생략될 경우 기본적인 양쪽 정렬로 간주되고, '@<color:FF0000>스타일_이름@</color>' 없이 '@<color:FF0000>정렬@</color>'만 지정할 수도 있습니다.
+'@<color:red>정렬@</color>'은 '@<code>left@</code>', '@<code>right@</code>', '@<code>center@</code>' 중에 하나를 선택할 수 있으며, \
+생략될 경우 기본적인 양쪽 정렬로 간주되고, '@<color:red>스타일_이름@</color>' 없이 '@<color:red>정렬@</color>'만 지정할 수도 있습니다.
 
 예) 노트 서식을 적용
 ```html
@@ -547,7 +551,7 @@ docgen에서는 템플릿 문서에 존재하는 스타일 서식들을 문단 �
 오른쪽 정렬
 %%% en
 ### Paragraph style
-@<size:30>@<b>Expression : :::@<color:FF0000>style_name@</color>,@<color:FF0000>alignment@</color>@</b>@</size>
+@<size:30>@<b>Expression : :::@<color:red>style_name@</color>,@<color:red>alignment@</color>@</b>@</size>
 
 In Microsoft Word, you can add/edit your own style formats as shown below. \
 In docgen, you can apply the style formats that exist in the template document to paragraph units. \
@@ -555,12 +559,12 @@ In other words, it means that users can create/apply various style formats they 
 
 @<img:media/text_style_en.png;0.6;Word's text style modification>
 
-Change the paragraph style of the next line to '@<color:FF0000>style_name@</color>'. \
+Change the paragraph style of the next line to '@<color:red>style_name@</color>'. \
 The style changes for only one line, and reverts to the default style formatting for the next line. \
 Style formatting is implemented by referencing the style specified in the initial template WORD document, and can be changed or added by searching for 'text style' in WORD. \
 Style names include tab characters, "//", "--", or ";" Anything after the character is ignored. It doesn't matter if you enter the style ID rather than the style name.
-'@<color:FF0000>alignment@</color>' can be one of '@<code>left@</code>', '@<code>right@</code>', '@<code>center@</code>', and \
-If omitted, basically it is considered as two-sided alignment. And you can also specify only '@<color:FF0000>alignment@</color>' without 'style_name@</color>'.
+'@<color:red>alignment@</color>' can be one of '@<code>left@</code>', '@<code>right@</code>', '@<code>center@</code>', and \
+If omitted, basically it is considered as two-sided alignment. And you can also specify only '@<color:red>alignment@</color>' without 'style_name@</color>'.
 
 ex) Apply note style
 ```html
@@ -610,16 +614,16 @@ right alignment
  
 %%% ko
 ## 상호 참조
-@<size:30>@<b>표현식 : @@<bookmark:@<color:FF0000>대상@</color>>@</b>@</size>
+@<size:30>@<b>표현식 : @@<bookmark:@<color:red>대상@</color>>@</b>@</size>
 
 제목, 그림, 표 등의 상호 참조를 구현합니다.
-@<color:FF0000>대상@</color>에 그림, 표의 캡션 내용이나 제목의 내용을 적으면 됩니다.
+@<color:red>대상@</color>에 그림, 표의 캡션 내용이나 제목의 내용을 적으면 됩니다.
 %%% en
 ## Cross-reference
-@<size:30>@<b>Expression : @@<bookmark:@<color:FF0000>target@</color>>@</b>@</size>
+@<size:30>@<b>Expression : @@<bookmark:@<color:red>target@</color>>@</b>@</size>
 
 Implement cross-referencing of titles, pictures, tables, etc.
-Just write the caption or title of the figure or table in @<color:FF0000>target@</color>.
+Just write the caption or title of the figure or table in @<color:red>target@</color>.
 %%%
 
 
@@ -654,13 +658,13 @@ Result : @<bookmark:LaTeX setting>
 
 제목의 경우 아래와 같이 접두사 문자 유무에 따라 상호 참조의 표현은 크게 4가지로 구현 가능합니다.
 * >1. 일반 문장 참조 (별도의 접두사 없이 표현)
-** >: @<b>@<color:FF0000>대상@</color>@</b>
+** >: @<b>@<color:red>대상@</color>@</b>
 * >2. 페이지 번호 참조
-** >: @<b>@<color:0000FF>&@</color>@<color:FF0000>대상@</color>@</b>
+** >: @<b>@<color:blue>&@</color>@<color:red>대상@</color>@</b>
 * >3. 장/절 번호 참조
-** >: @<b>@<color:0000FF>#@</color>@<color:FF0000>대상@</color>@</b>
+** >: @<b>@<color:blue>#@</color>@<color:red>대상@</color>@</b>
 * >4. 장/절 번호 및 문장 전체 참조
-** >: @<b>@<color:0000FF>@@@</color>@<color:FF0000>대상@</color>@</b>
+** >: @<b>@<color:blue>@@@</color>@<color:red>대상@</color>@</b>
 
 아래 예제는 실제 사용 예시를 보이며, 문장 클릭시 현 문서의 링크로 이동 됨을 확인 할 수 있습니다.
 %%% en
@@ -668,13 +672,13 @@ Result : @<bookmark:LaTeX setting>
 
 In the case of titles, cross-references can be expressed in four ways depending on the presence or absence of a prefix, as shown below.
 * >1. Reference to general sentences (expressed without a additional prefix)
-** >: @<b>@<color:FF0000>target@</color>@</b>
+** >: @<b>@<color:red>target@</color>@</b>
 * >2. Page number reference
-** >: @<b>@<color:0000FF>&@</color>@<color:FF0000>target@</color>@</b>
+** >: @<b>@<color:blue>&@</color>@<color:red>target@</color>@</b>
 * >3. Chapter/section number reference
-** >: @<b>@<color:0000FF>#@</color>@<color:FF0000>target@</color>@</b>
+** >: @<b>@<color:blue>#@</color>@<color:red>target@</color>@</b>
 * >4. Chapter/section number and full sentence reference
-** >: @<b>@<color:0000FF>@@@</color>@<color:FF0000>target@</color>@</b>
+** >: @<b>@<color:blue>@@@</color>@<color:red>target@</color>@</b>
 
 The example below shows an actual usage example, and you can see that clicking on the sentence moves to the link to the current document.
 %%%
@@ -745,7 +749,7 @@ Result : @<bookmark:@Restrictions on use, licensing and prerequisites>
  
 %%% ko
 ## 속성(Property) 참조
-@<size:30>@<b>표현식 : @@<property:@<color:FF0000>속성이름@</color>>@</b>@</size>
+@<size:30>@<b>표현식 : @@<property:@<color:red>속성이름@</color>>@</b>@</size>
 '@<bookmark:Lua 표현>' 중 '@<b>@<bookmark:Property 객체>@</b>'로 다양한 이름의 속성을 만들 수 있으며, \
 이를 본문에서 인용할 수 있는 방법을 제공한다.
 예)
@@ -755,7 +759,7 @@ Result : @<bookmark:@Restrictions on use, licensing and prerequisites>
 결과 : @<property:Main_Title>, @<property:Ownership>
 %%% en
 ## Property reference
-@<size:30>@<b>Expression : @@<property:@<color:FF0000>property_name@</color>>@</b>@</size>
+@<size:30>@<b>Expression : @@<property:@<color:red>property_name@</color>>@</b>@</size>
 You can create properties with various names using '@<b>@<bookmark:Property object>@</b>' among '@<bookmark:Lua expression>', \
 and it provides a way to quote these in the text.
 예)
@@ -771,9 +775,9 @@ Result : @<property:Main_Title>, @<property:Ownership>
  
 %%% ko
 ## 하이퍼 링크(Hyperlink) 표현
-@<size:30>@<b>표현식 : @@<link:@<color:FF0000>URL_대상@</color>;@<color:FF0000>표시_문구@</color>>@</b>@</size>
+@<size:30>@<b>표현식 : @@<link:@<color:red>URL_대상@</color>;@<color:red>표시_문구@</color>>@</b>@</size>
 
-하이퍼 링크는 위와 같이 표시하며, @<color:FF0000>표시_문구@</color>는 생략 가능합니다.
+하이퍼 링크는 위와 같이 표시하며, @<color:red>표시_문구@</color>는 생략 가능합니다.
 
 예) "https://testdrive-profiling-master.github.io/" 링크 표현
 ```html
@@ -782,9 +786,9 @@ Result : @<property:Main_Title>, @<property:Ownership>
 결과 : @<link:https://testdrive-profiling-master.github.io/;TestDrive Profiling Master>
 %%% en
 ## Hyperlink
-@<size:30>@<b>Expression : @@<link:@<color:FF0000>URL_target@</color>;@<color:FF0000>display_text@</color>>@</b>@</size>
+@<size:30>@<b>Expression : @@<link:@<color:red>URL_target@</color>;@<color:red>display_text@</color>>@</b>@</size>
 
-Hyperlinks are displayed as above, and @<color:FF0000>display_text@</color> can be skipped.
+Hyperlinks are displayed as above, and @<color:red>display_text@</color> can be skipped.
 
 ex) "https://testdrive-profiling-master.github.io/" hyperlink expression
 ```html
@@ -800,20 +804,20 @@ Result : @<link:https://testdrive-profiling-master.github.io/;TestDrive Profilin
  
 %%% ko
 ## 수학 수식 표현
-@<size:30>@<b>표현식 : \$\$@<color:FF0000>수학수식@</color>\$\$@</b>@</size>
+@<size:30>@<b>표현식 : \$\$@<color:red>수학수식@</color>\$\$@</b>@</size>
 
 수학 수식의 경우 markdown 과 같게 수학 수식에 "\$$" 로 둘러싸서 표시합니다.
-단! WORD의 수학 수식은 기본이 "@<color:FF0000>@<b>유니코드@</b>@</color>" 표현식으로 초기 지정되어 있습니다. \
-때문에 "@<color:0000FF>@<b>LaTeX@</b>@</color>" 수식을 활용하고자 한다면, '@<u>@<b>@<bookmark:@선행 과정>@</b>@</u>'을 참고하여 설정을 변경해야 함을 유의합니다.
+단! WORD의 수학 수식은 기본이 "@<color:red>@<b>유니코드@</b>@</color>" 표현식으로 초기 지정되어 있습니다. \
+때문에 "@<color:blue>@<b>LaTeX@</b>@</color>" 수식을 활용하고자 한다면, '@<u>@<b>@<bookmark:@선행 과정>@</b>@</u>'을 참고하여 설정을 변경해야 함을 유의합니다.
 수학 수식을 단일로 표현할 경우, 가운데 정렬로 표기되지만, 문장 중간에 표현할 경우 문장과 어울리도록 표현이 자동 변경되며, \
 아래의 예제는 LaTeX 표현으로 구현된 내용이므로 만약 결과 표기가 잘못되어 있다면, 위 '@<bookmark:선행 과정>'을 시도하지 않은 결과입니다.
 %%% en
 ## Math equation expression
-@<size:30>@<b>Expression : \$\$@<color:FF0000>math_formula@</color>\$\$@</b>@</size>
+@<size:30>@<b>Expression : \$\$@<color:red>math_formula@</color>\$\$@</b>@</size>
 
 In the case of mathematical formulas, the mathematical equation is displayed by surrounding it with "\$$", as in markdown.
-But, WORD's mathematical equation is initially set to the expression "@<color:FF0000>@<b>Unicode@</b>@</color>". \
-Therefore, if you want to use the equation "@<color:0000FF>@<b>LaTeX@</b>@</color>", please note that you must change the settings by referring to '@<u>@<b>@<bookmark:@Prerequisites>@</b>@</u>'.
+But, WORD's mathematical equation is initially set to the expression "@<color:red>@<b>Unicode@</b>@</color>". \
+Therefore, if you want to use the equation "@<color:blue>@<b>LaTeX@</b>@</color>", please note that you must change the settings by referring to '@<u>@<b>@<bookmark:@Prerequisites>@</b>@</u>'.
 When a mathematical equation is expressed as a single expression, it is displayed centered, but when expressed in the middle of a sentence, the expression is automatically changed to match the sentence, and \
 the example below is implemented in LaTeX expression, so if the result is notated incorrectly, it is the result of not attempting the '@<bookmark:Prerequisites>' above.
 %%%
@@ -855,7 +859,7 @@ You can write this string as a mathematical equation by adding the characters "\
 %%% ko
 ## 인라인 코드 블럭
 
-@<size:30>@<b>표현식 : @@<code:@<color:FF0000>코드_형식@</color>>@<color:FF0000>인라인_코드@</color>@@</code>@</b>@</size>
+@<size:30>@<b>표현식 : @@<code:@<color:red>코드_형식@</color>>@<color:red>인라인_코드@</color>@@</code>@</b>@</size>
 
 문장 안에서 인라인 코드를 표현합니다. '@<b>코드_형식@</b>'은 생략 가능하며, \
 '@<bookmark:코드 블럭>'에서 지원되는 코드 형식을 동일하게 사용할 수 있습니다.
@@ -875,7 +879,7 @@ C 표현의 출력 예는 "@<code>printf("Hello world.");@</code>" 등이 있다
 %%% en
 ## Inline code block
 
-@<size:30>@<b>Expression : @@<code:@<color:FF0000>code_format@</color>>@<color:FF0000>inline_code@</color>@@</code>@</b>@</size>
+@<size:30>@<b>Expression : @@<code:@<color:red>code_format@</color>>@<color:red>inline_code@</color>@@</code>@</b>@</size>
 
 Statement Represents inline code. '@<b>code_format@</b>' can be omitted and, the default code format is '@<fixed>cpp@</fixed>', \
 and you can use the same code formats supported by '@<bookmark:Code block>'.
@@ -900,21 +904,21 @@ Examples of output from C expressions is "@<code>printf("Hello world.");@</code>
 %%% ko
 ## 코드 블럭
 
-@<size:30>@<b>표현식 : ```@<color:FF0000>코드_형식@</color>:@<color:FF0000>헤더@</color>@</b>@</size>
-@<size:30>@<b>        @<color:FF0000>코드_내용@</color> ...@</b>@</size>
+@<size:30>@<b>표현식 : ```@<color:red>코드_형식@</color>:@<color:red>헤더@</color>@</b>@</size>
+@<size:30>@<b>        @<color:red>코드_내용@</color> ...@</b>@</size>
 @<size:30>@<b>        ```@</b>@</size>
 
-@<color:FF0000>코드_형식@</color>의 경우 아래와 같이 @<fixed>"code_highlighter -l"@</fixed> 명령어 입력을 통해 아래와 같이 지원하는 코드 형식을 확인할 수 있습니다. \
-@<color:FF0000>헤더@</color>는 @<color:FF0000>코드_내용@</color> 위에 문구를 삽입하기 위해 사용되며 생략 가능합니다.
+@<color:red>코드_형식@</color>의 경우 아래와 같이 @<fixed>"code_highlighter -l"@</fixed> 명령어 입력을 통해 아래와 같이 지원하는 코드 형식을 확인할 수 있습니다. \
+@<color:red>헤더@</color>는 @<color:red>코드_내용@</color> 위에 문구를 삽입하기 위해 사용되며 생략 가능합니다.
 %%% en
 ## Code block
 
-@<size:30>@<b>Expression : ```@<color:FF0000>code_format@</color>:@<color:FF0000>header@</color>@</b>@</size>
-@<size:30>@<b>             @<color:FF0000>code_contents@</color> ...@</b>@</size>
+@<size:30>@<b>Expression : ```@<color:red>code_format@</color>:@<color:red>header@</color>@</b>@</size>
+@<size:30>@<b>             @<color:red>code_contents@</color> ...@</b>@</size>
 @<size:30>@<b>             ```@</b>@</size>
 
-In the case of @<color:FF0000>code_format@</color>, you can check the supported code formats by entering the @<fixed>"code_highlighter -l"@</fixed> command as shown below. \
-@<color:FF0000>header@</color> is used to insert text above the @<color:FF0000>code_contents@</color> and can be omitted.
+In the case of @<color:red>code_format@</color>, you can check the supported code formats by entering the @<fixed>"code_highlighter -l"@</fixed> command as shown below. \
+@<color:red>header@</color> is used to insert text above the @<color:red>code_contents@</color> and can be omitted.
 %%%
 
 ```bash
@@ -943,18 +947,18 @@ In the case of @<color:FF0000>code_format@</color>, you can check the supported 
 
 %%% ko
 아래는 'C' 코드를 인용하는 예를 나타낸다. 인용시 "```" 문자열을 사용하려면, "@```" 로 표기하여 인용할 수 있으며, \
-코드에 라인 번호를 삽입하려면 '#'를 붙여 "@<color:0000FF>#@</color>@<color:FF0000>코드_형식@</color>"으로 표기할 수 있습니다.
+코드에 라인 번호를 삽입하려면 '#'를 붙여 "@<color:blue>#@</color>@<color:red>코드_형식@</color>"으로 표기할 수 있습니다.
 
 예) 라인 번호가 있는 'C' 코드 블럭
 %%% en
 Below is an example of quoting 'C' code. To use the string "```" when quoting, you can quote it by writing "@```". \
-To insert a line number in the code, you can add '#' and quote it like this: "@<color:0000FF>#@</color>@<color:FF0000>code_format@</color>".
+To insert a line number in the code, you can add '#' and quote it like this: "@<color:blue>#@</color>@<color:red>code_format@</color>".
 
 ex) 'C' Code block with line numbers
 %%%
 
 ```txt
-@```#C : @<color:FF0000>[@</color>main.cpp@<color:FF0000>]@</color>
+@```#C : @<color:red>[@</color>main.cpp@<color:red>]@</color>
 #include <stdio.h>
 
 int main(int argc, const char* argv[]) {
@@ -970,7 +974,7 @@ int main(int argc, const char* argv[]) {
 Result)
 %%%
 
-```#C : @<color:FF0000>[@</color>main.cpp@<color:FF0000>]@</color>
+```#C : @<color:red>[@</color>main.cpp@<color:red>]@</color>
 #include <stdio.h>
 
 int main(int argc, const char* argv[]) {
@@ -985,8 +989,8 @@ int main(int argc, const char* argv[]) {
 %%% ko
 ## 코드 실행
 
-@<size:30>@<b>표현식 : ```@<color:0000FF>[@<color:FF0000>코드_형식@<color:0000FF>]@<color>@</b>@</size>
-@<size:30>@<b>        @<color:FF0000>코드_내용@</color>@</b>@</size>
+@<size:30>@<b>표현식 : ```@<color:blue>[@<color:red>코드_형식@<color:blue>]@</color>@</b>@</size>
+@<size:30>@<b>        @<color:red>코드_내용@</color>@</b>@</size>
 @<size:30>@<b>        ```@</b>@</size>
 
 '@<bookmark:코드 블럭>'과 비슷한 형식이지만, "코드 형식"이 "[ ]" 로 둘러 싸여 있을 경우, 코드 내용을 실행한다.
@@ -994,8 +998,8 @@ int main(int argc, const char* argv[]) {
 %%% en
 ## Code execution
 
-@<size:30>@<b>Expression : ```@<color:0000FF>[@<color:FF0000>code_format@<color:0000FF>]@<color>@</b>@</size>
-@<size:30>@<b>             @<color:FF0000>code_contents@</color>@</b>@</size>
+@<size:30>@<b>Expression : ```@<color:blue>[@<color:red>code_format@<color:blue>]@</color>@</b>@</size>
+@<size:30>@<b>             @<color:red>code_contents@</color>@</b>@</size>
 @<size:30>@<b>             ```@</b>@</size>
 
 It has a similar format to '@<bookmark:Code block>', but if the "code format" is surrounded by "[ ]", the code content is executed.
@@ -1068,8 +1072,8 @@ Result)
 %%% ko
 ## 문서 활성화
 
-@<size:30>@<b>표현식 #1 : %%% @<color:FF0000>언어_코드명@</color>@</b>@</size>
-@<size:30>@<b>표현식 #2 : %%% @<color:0000FF>(@<color:FF0000>Lua_코드@<color:0000FF>)@</color>@</b>@</size>
+@<size:30>@<b>표현식 #1 : %%% @<color:red>언어_코드명@</color>@</b>@</size>
+@<size:30>@<b>표현식 #2 : %%% @<color:blue>(@<color:red>Lua_코드@<color:blue>)@</color>@</b>@</size>
 
 문서 활성화는 다음 문장들이 실제 문서에 적용할지에 대한 여부를 결정합니다. \
 문서 활성화에 조건은 "언어_코드명" 또는 소괄호 "()" 로 감싸진 "Lua_코드"의 반환 값으로 지정할 수 있습니다.
@@ -1091,8 +1095,8 @@ Lua 코드 실행의 반환 값이 @<fixed>'true'@</fixed>(boolean) 일 경우, 
 %%% en
 ## Document activation
 
-@<size:30>@<b>Expression #1 : %%% @<color:FF0000>language_code@</color>@</b>@</size>
-@<size:30>@<b>Expression #2 : %%% @<color:0000FF>(@<color:FF0000>Lua_code@<color:0000FF>)@</color>@</b>@</size>
+@<size:30>@<b>Expression #1 : %%% @<color:red>language_code@</color>@</b>@</size>
+@<size:30>@<b>Expression #2 : %%% @<color:blue>(@<color:red>Lua_code@<color:blue>)@</color>@</b>@</size>
 
 Document activation determines whether the following statements will be applied to the actual document. \
 The condition for document activation can be specified as a return value of "language_code name" or "Lua_code" enclosed in parentheses "()".
@@ -1195,7 +1199,7 @@ test_mode is activated.
 
 %%% ko
 ## Lua 함수 호출
-@<size:30>@<b>표현식 : @@<lua:@<color:FF0000>lua_함수@</color>>@</b>@</size>
+@<size:30>@<b>표현식 : @@<lua:@<color:red>lua_함수@</color>>@</b>@</size>
 Lua 함수를 호출합니다. 반환된 값이 문자열 형식일 경우 다음 문서 내용에 적용합니다.
 
 예)
@@ -1206,7 +1210,7 @@ Lua 변수 'docgen.language'는 @<lua:docgen.language> 입니다.
 Lua 변수 'docgen.language'는 @<lua:docgen.language> 입니다.
 %%% en
 ## Lua function call
-@<size:30>@<b>Expression : @@<lua:@<color:FF0000>lua_function@</color>>@</b>@</size>
+@<size:30>@<b>Expression : @@<lua:@<color:red>lua_function@</color>>@</b>@</size>
 Call a Lua function. If the returned value is in string type, it is applied to the next document content.
 ex)
 ```lua
@@ -1224,36 +1228,36 @@ Lua variable 'docgen.language' is @<lua:docgen.language>
 %%% ko
 ## 그림 삽입
 
-@<size:30>@<b>표현식 : @@<img:@<color:FF0000>파일명@</color>;@<color:FF0000>스케일@</color>;@<color:FF0000>캡션@</color>>@</b>@</size>
+@<size:30>@<b>표현식 : @@<img:@<color:red>파일명@</color>;@<color:red>스케일@</color>;@<color:red>캡션@</color>>@</b>@</size>
 
 그림은 jpg, png, bmp, gif, tif, svg, wmf, vsd/vsdx(Visio 설치 필요), xls/xlsx(Excel 설치 필요), odg(LibreOffice 설치 필요) 포멧을 지원하고 있습니다. \
-@<color:FF0000>파일명@</color>은 표시할 파일명을 지정하게 되며, \
-그림에 외각선 경계가 필요할 경우 "@<color:0000FF>#@</color>@<color:FF0000>파일명@</color>"으로 표시합니다. \
-Visio 또는 LibreOffice Draw 파일일 경우는 "@<color:FF0000>파일명@</color>[@<color:FF0000>페이지명@</color>]"으로 별도의 페이지 이름을 지정해야 합니다.
-Excel 파일일 경우는 "@<color:FF0000>파일명@</color>[@<color:FF0000>시트명@</color>[:@<color:FF0000>차트_제목@</color>]]" 으로 지정하여, \
+@<color:red>파일명@</color>은 표시할 파일명을 지정하게 되며, \
+그림에 외각선 경계가 필요할 경우 "@<color:blue>#@</color>@<color:red>파일명@</color>"으로 표시합니다. \
+Visio 또는 LibreOffice Draw 파일일 경우는 "@<color:red>파일명@</color>[@<color:red>페이지명@</color>]"으로 별도의 페이지 이름을 지정해야 합니다.
+Excel 파일일 경우는 "@<color:red>파일명@</color>[@<color:red>시트명@</color>[:@<color:red>차트_제목@</color>]]" 으로 지정하여, \
 특정 시트의 차트를 이미지로 지정할 수 있습니다. \
 (차트 제목을 생략할 수 있으며, 생략될 경우 해당 시트의 첫번째 차트가 사용됩니다.)
 
-또한 @<color:FF0000>스케일@</color>의 경우, 종이의 폭 기준 최대값 1.0으로 0 초과 1 이하의 값을 넣어 크기를 지정할 수 있습니다. \
+또한 @<color:red>스케일@</color>의 경우, 종이의 폭 기준 최대값 1.0으로 0 초과 1 이하의 값을 넣어 크기를 지정할 수 있습니다. \
 지정되지 않을 경우 기본 1.0으로 간주합니다.
-@<color:FF0000>캡션@</color>은 말 그대로 캡션 내용을 지정하며, '@<bookmark:@상호 참조>'에서 사용될 수 있습니다. 캡션은 생략할 수 있습니다.
+@<color:red>캡션@</color>은 말 그대로 캡션 내용을 지정하며, '@<bookmark:@상호 참조>'에서 사용될 수 있습니다. 캡션은 생략할 수 있습니다.
 
 %%% en
 ## Picture insertion
 
-@<size:30>@<b>Expression : @@<img:@<color:FF0000>filename@</color>;@<color:FF0000>scale@</color>;@<color:FF0000>caption@</color>>@</b>@</size>
+@<size:30>@<b>Expression : @@<img:@<color:red>filename@</color>;@<color:red>scale@</color>;@<color:red>caption@</color>>@</b>@</size>
 
 Pictures support jpg, png, bmp, gif, tif, svg, wmf, and vsd/vsdx (Visio installation required), xls/xlsx(Excel installation required), odg(LibreOffice installation required) formats. \
-@<color:FF0000>file name@</color> specifies the file name to display, \
-if the picture requires an outline border, indicate it as "@<color:0000FF>#@</color>@<color:FF0000>filename@</color>". \
-In the case of a Visio or LibreOffice Draw file, a separate page name must be specified as "@<color:FF0000>filename@</color>[@<color:FF0000>page name@</color>]".
-In the case of an Excel file, By specifying "@<color:FF0000>file_name@</color>[@<color:FF0000>sheet_name@</color>[:@<color:FF0000>chart_title@</color>]]", \
+@<color:red>file name@</color> specifies the file name to display, \
+if the picture requires an outline border, indicate it as "@<color:blue>#@</color>@<color:red>filename@</color>". \
+In the case of a Visio or LibreOffice Draw file, a separate page name must be specified as "@<color:red>filename@</color>[@<color:red>page name@</color>]".
+In the case of an Excel file, By specifying "@<color:red>file_name@</color>[@<color:red>sheet_name@</color>[:@<color:red>chart_title@</color>]]", \
 you can designate the chart of a specific sheet as an image. \
 (The chart title can be omitted. If omitted, the first chart on the sheet is used.)
 
-Additionally, in the case of @<color:FF0000>scale@</color>, the maximum value based on the width of the paper is 1.0, and you can specify the size by entering a value between 0 and 1. \
+Additionally, in the case of @<color:red>scale@</color>, the maximum value based on the width of the paper is 1.0, and you can specify the size by entering a value between 0 and 1. \
 If not specified, the default 1.0 is assumed.
-@<color:FF0000>caption@</color> literally specifies the caption content and can be used in '@<bookmark:@Cross-reference>'. Captions may be omitted.
+@<color:red>caption@</color> literally specifies the caption content and can be used in '@<bookmark:@Cross-reference>'. Captions may be omitted.
 %%%
 
 
@@ -1367,7 +1371,7 @@ If the table is too long and you move to the next page, the header is automatica
 %%% ko
 ### 엑셀 파일로부터 표 삽입
 
-@<size:30>@<b>표현식 : @@<tbl:@<color:FF0000>파일명@</color>;@<color:FF0000>시트명@</color>;@<color:FF0000>캡션@</color>>@</b>@</size>
+@<size:30>@<b>표현식 : @@<tbl:@<color:red>파일명@</color>;@<color:red>시트명@</color>;@<color:red>캡션@</color>>@</b>@</size>
 
 표 삽입의 경우 엑셀에서 작상된 내용을 옮겨 넣을 수 있으며, 엑셀상 Merge 된 셀들과 폭은 최대한 동일하게 적용됩니다. \
 표의 첫 줄은 상단 제목이며, 하위 데이터 열을 가운데 정렬을 하고자 할 때에는 제목 이름 앞에 '*'문자를 삽입합니다. \
@@ -1403,7 +1407,7 @@ If the table is too long and you move to the next page, the header is automatica
 %%% en
 ### Table insertion from excel file
 
-@<size:30>@<b>Expression : @@<tbl:@<color:FF0000>file_name@</color>;@<color:FF0000>sheet_name@</color>;@<color:FF0000>caption@</color>>@</b>@</size>
+@<size:30>@<b>Expression : @@<tbl:@<color:red>file_name@</color>;@<color:red>sheet_name@</color>;@<color:red>caption@</color>>@</b>@</size>
 
 In the case of inserting a table, you can move the content created in Excel, and the width will be the same as possible for the cells merged in Excel. \
 The first line of the table is the top title, and when you want to align lower data columns in the center, insert the character '*' front of the title name. \
@@ -1445,7 +1449,7 @@ Result)
  
 %%% ko
 ### Lua 표현으로부터 표 삽입
-@<size:30>@<b>표현식 : @@<tbl:lua;@<color:FF0000>테이블_변수명@</color>;@<color:FF0000>캡션@</color>>@</b>@</size>
+@<size:30>@<b>표현식 : @@<tbl:lua;@<color:red>테이블_변수명@</color>;@<color:red>캡션@</color>>@</b>@</size>
 
 기본적으로 docgen이 Lua 스크립트 기반으로 작성되기 때문에, Lua 변수로 테이블을 만들어 이를 활용하는 방법을 취할 수 있습니다.
 본문에서는 이미 아래와 같이 Lua 테이블이 정의되어 있는 것을 활용한 예입니다.
@@ -1458,7 +1462,7 @@ lua_table_example = {
 	{"", "Sub A", "Sub B", "Sub C"},
 	{"index1", "a", "1", "aa"},
 	{"index2", "b", "2", "bb"},
-	{"index3", {"c", merge={2,1}}, "", "@<color:ff0000>cc@</color>"}
+	{"index3", {"c", merge={2,1}}, "", "@<color:red>cc@</color>"}
 }
 ```
  
@@ -1482,7 +1486,7 @@ Column과 Row를 표기시 아래와 같은 속성을 지정할 수 있으며, C
 ** merge : 현재 셀 위치부터 일정 범위의 다중 셀을 병합하는 기능을 한다. 속성에서 범위 지정은 @<b>{width,height}@</b>로 지정할 수 있다.
 %%% en
 ### Inserting table from Lua expressions
-@<size:30>@<b>Expression : @@<tbl:lua;@<color:FF0000>table_variable_name@</color>;@<color:FF0000>caption@</color>>@</b>@</size>
+@<size:30>@<b>Expression : @@<tbl:lua;@<color:red>table_variable_name@</color>;@<color:red>caption@</color>>@</b>@</size>
 
 Basically, since docgen is written based on Lua scripts, you can create a table with Lua variables and utilize it.
 This is an example that utilizes the Lua table already defined as shown below.
@@ -1494,7 +1498,7 @@ lua_table_example = {
 	{"", "Sub A", "Sub B", "Sub C"},
 	{"index1", "a", "1", "aa"},
 	{"index2", "b", "2", "bb"},
-	{"index3", {"c", merge={2,1}}, "", "@<color:ff0000>cc@</color>"}
+	{"index3", {"c", merge={2,1}}, "", "@<color:red>cc@</color>"}
 }
 ```
  
@@ -1522,9 +1526,9 @@ When expressing Column and Row, you can specify the following properties. In the
  
 %%% ko
 ## 이모지 표현
-@<size:30>@<b>표현식(Solid) : @@<fas:@<color:FF0000>토큰명@</color>>@</b>@</size>
-@<size:30>@<b>표현식(Regular) : @@<far:@<color:FF0000>토큰명@</color>>@</b>@</size>
-@<size:30>@<b>표현식(Brands) : @@<fab:@<color:FF0000>토큰명@</color>>@</b>@</size>
+@<size:30>@<b>표현식(Solid) : @@<fas:@<color:red>토큰명@</color>>@</b>@</size>
+@<size:30>@<b>표현식(Regular) : @@<far:@<color:red>토큰명@</color>>@</b>@</size>
+@<size:30>@<b>표현식(Brands) : @@<fab:@<color:red>토큰명@</color>>@</b>@</size>
 
 "@<link:https://fontawesome.com/search?o=r&m=free;Font Awesome>"이 제공하는 무료 아이콘 폰트를 사용하여, 다양한 이모지 표현이 가능합니다. \
 토큰명에 아래 링크나 '@<b>@<bookmark:이모지 표현 테이블>@</b>'을 검색하여, 무료 폰트를 사용할 수 있습니다.
@@ -1548,9 +1552,9 @@ Regular 예제들 : @<size:50>@<far:thumbs-up>, @<far:folder-open>, @<far:circle
 
 %%% en
 ## Emoji expressions
-@<size:30>@<b>Expression(Solid) : @@<fas:@<color:FF0000>token_name@</color>>@</b>@</size>
-@<size:30>@<b>Expression(Regular) : @@<far:@<color:FF0000>token_name@</color>>@</b>@</size>
-@<size:30>@<b>Expression(Brands) : @@<fab:@<color:FF0000>token_name@</color>>@</b>@</size>
+@<size:30>@<b>Expression(Solid) : @@<fas:@<color:red>token_name@</color>>@</b>@</size>
+@<size:30>@<b>Expression(Regular) : @@<far:@<color:red>token_name@</color>>@</b>@</size>
+@<size:30>@<b>Expression(Brands) : @@<fab:@<color:red>token_name@</color>>@</b>@</size>
 
 You can express various emojis using free icon fonts provided by "@<link:https://fontawesome.com/search?o=r&m=free;Font Awesome>". \
 You can use free fonts by searching the below link or '@<b>@<bookmark:Emoji expressions table>@</b>' for the token name.

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 9/2/2024 Mon (clonextop@gmail.com)
+// Rev.  : 9/24/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __DOC_EXCEL_H__
 #define __DOC_EXCEL_H__
@@ -223,6 +223,7 @@ public:
 
 	string	   AlignmentHorizontal(void);
 	string	   BackgroundColor(void);
+	string	   ThemeColor(void);
 	int		   TextRotation(void);
 
 	inline int ID(void)
@@ -250,7 +251,7 @@ public:
 	DocExcelSheet *GetSheetByIndex(int iIndex);
 	DocExcelSheet *CreateSheet(const char *sName);
 	DocExcelStyle *GetStyleByIndex(int iIndex);
-	DocXML		   GetThemeColorByIndex(int iIndex);
+	string		   GetThemeColorByIndex(int iIndex);
 	void		   DeleteSheet(DocExcelSheet *pSheet);
 	int			   StyleFont(const char *sFontName, int iFontSize, bool bBold = false, bool bItalic = false, unsigned int dwARGB = 0);
 	int			   StyleFill(unsigned int dwColorARGB);

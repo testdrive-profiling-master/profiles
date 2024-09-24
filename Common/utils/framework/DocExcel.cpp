@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 9/14/2024 Sat (clonextop@gmail.com)
+// Rev.  : 9/24/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #include "DocExcel.h"
 #include "ExcelNumFormat/ExcelNumFormat.h"
@@ -140,6 +140,7 @@ static const char*	__excel_numbered_color_codes[] = {
 	"333399",
 	"333333"
 };
+
 /* clang-format on */
 
 void Excel_DateToYMD(int iDate, int &iYear, int &iMonth, int &iDay)
@@ -527,14 +528,22 @@ string DocExcelSheet::GetValue(bool bUseMergedData, bool bIgnoreFormat)
 
 	if (m_pExcel->IsDocGenStyle()) {
 		DocExcelStyle *pStyle = m_pExcel->GetStyleByIndex(m_Column.attribute("s").as_int());
+
 		if (pStyle && pStyle->attribute("applyFont").as_int()) {
 			DocXML fonts = pStyle->parent().parent().child("fonts");
 			DocXML font	 = fonts.child_by_index("font", pStyle->attribute("fontId").as_int());
 			// color
 			cstring sTok = font.child("color").attribute("rgb").as_string();
+
+			if (!sTok.IsEmpty()) {
+				sTok.erase(0, 2); // "FF******" exclusive alpha
+			} else {
+				sTok = pStyle->ThemeColor();
+				if (!sTok.Length() || sTok == "000000")
+					sTok.clear();
+			}
 			if (!sTok.IsEmpty()) {
 				cstring sColor;
-				sTok.erase(0, 2);
 				sColor.Format("@<color:%s>", sTok.c_str());
 				sValue.insert(0, sColor);
 				sValue.Append("@</color>");
@@ -1083,9 +1092,8 @@ string DocExcelStyle::BackgroundColor(void)
 				}
 				int iTheme = fgColor.attribute("theme").as_int();
 				if (iTheme) {
-					double fTint	   = fgColor.attribute("tint").as_double();
-					DocXML theme_color = m_pExcel->GetThemeColorByIndex(iTheme);
-					sColor			   = theme_color.child("a:srgbClr").attribute("val").as_string();
+					double fTint = fgColor.attribute("tint").as_double();
+					sColor		 = m_pExcel->GetThemeColorByIndex(iTheme);
 
 					if (!sColor.IsEmpty()) {
 						uint8_t r, g, b;
@@ -1107,6 +1115,23 @@ string DocExcelStyle::BackgroundColor(void)
 					}
 				}
 			}
+		}
+	}
+	return "";
+}
+
+string DocExcelStyle::ThemeColor(void)
+{
+	if (attribute("applyFont").as_int()) {
+		int	   id	 = attribute("fontId").as_int();
+		DocXML fonts = parent().parent().child("fonts");
+		DocXML font	 = fonts.child_by_index("font", id);
+
+		if (!font.empty()) {
+			DocXML color  = font.child("color");
+			int	   iTheme = color.attribute("theme").as_int();
+
+			return m_pExcel->GetThemeColorByIndex(iTheme);
 		}
 	}
 	return "";
@@ -2138,10 +2163,37 @@ DocExcelStyle *DocExcel::GetStyleByIndex(int iIndex)
 	return NULL;
 }
 
-DocXML DocExcel::GetThemeColorByIndex(int iIndex)
+string DocExcel::GetThemeColorByIndex(int iIndex)
 {
-	DocXML clrScheme = m_Theme.child("a:clrScheme");
-	return clrScheme.child_by_index(NULL, iIndex);
+	static const char *__execl_theme_index_list[] = {
+		"a:lt1",	 // 0
+		"a:dk1",	 // 1
+		"a:lt2",	 // 2
+		"a:dk2",	 // 3
+		"a:accent1", // 4
+		"a:accent2", // 5
+		"a:accent3", // 6
+		"a:accent4", // 7
+		"a:accent5", // 8
+		"a:accent6", // 9
+	};
+
+	string sColor;
+
+	if (iIndex >= 10 || iIndex < 0)
+		return sColor;
+
+	DocXML node = m_Theme.child("a:clrScheme").child(__execl_theme_index_list[iIndex]);
+	if (!node.empty()) {
+		DocXML color = node.child("a:srgbClr");
+		if (!color.empty()) {
+			sColor = color.attribute("val").as_string();
+		} else {
+			color  = node.child("a:sysClr");
+			sColor = color.attribute("lastClr").as_string();
+		}
+	}
+	return sColor;
 }
 
 void DocExcel::DeleteSheet(DocExcelSheet *pSheet) //@FIXME : not working

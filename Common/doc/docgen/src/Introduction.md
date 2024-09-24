@@ -120,9 +120,9 @@ Usage: docgen  [--help] [-t template] [-i template_desc] [-f format] [-l languag
 ```
  
 %%% ko
-실행 명령 : @<fixed>docgen @<color:FF0000>INPUT_LUA_FILE@</color>  @<color:FF0000>OUTPUT_DOCX_FILE@</color>@</fixed>
+실행 명령 : @<fixed>docgen @<color:red>INPUT_LUA_FILE@</color>  @<color:red>OUTPUT_DOCX_FILE@</color>@</fixed>
 
-@<color:FF0000>INPUT_LUA_FILE@</color>에 해당하는 Lua 스크립트 또는 Markdown 문서를 입력 소스 파일로 지정하며, @<color:FF0000>OUTPUT_DOCX_FILE@</color>을 지정하지 않을 경우 주어진 property를 참조하여 자동으로 알맞게 생성합니다. \
+@<color:red>INPUT_LUA_FILE@</color>에 해당하는 Lua 스크립트 또는 Markdown 문서를 입력 소스 파일로 지정하며, @<color:red>OUTPUT_DOCX_FILE@</color>을 지정하지 않을 경우 주어진 property를 참조하여 자동으로 알맞게 생성합니다. \
 '-t' 옵션은 기본 바탕이 될 템플릿 문서를 지정하게 되는데, 템플릿 문서를 지정하지 않을 경우 기본 docgen_template.docx로 지정하도록 되어 있으나 이를 참조/변경하여 다양한 문서 형태를 만들 수 있습니다.
 '-i' 옵션은 새로운 템플릿 문서를 추가할 수 있습니다. 이 때, 'input_file'이 새로운 템플릿 문서 원본이며, 'template'가 지정할 타겟 템플릿 이름입니다.
 '-f' 옵션은 .docx 포멧 이외에 다른 파일로 저장할 수 있도록 지정합니다. '-f pdf,html'과 같이 복합적으로 출력을 지정할 수 있습니다.
@@ -133,9 +133,9 @@ Usage: docgen  [--help] [-t template] [-i template_desc] [-f format] [-l languag
 기본 설정은 '@<fixed>en@</fixed>'(english) 이며, 이 'language' 설정을 사용하지 않는 문서에는 영향을 주지 않습니다.
 
 %%% en
-command line : @<fixed>docgen @<color:FF0000>INPUT_LUA_FILE@</color>  @<color:FF0000>OUTPUT_DOCX_FILE@</color>@</fixed>
+command line : @<fixed>docgen @<color:red>INPUT_LUA_FILE@</color>  @<color:red>OUTPUT_DOCX_FILE@</color>@</fixed>
 
-In @<color:FF0000>INPUT_LUA_FILE@</color>, set a Lua script or Markdown text file as the input source file. If @<color:FF0000>OUTPUT_DOCX_FILE@</color> is not specified, it is automatically created appropriately by referring to the given property. \
+In @<color:red>INPUT_LUA_FILE@</color>, set a Lua script or Markdown text file as the input source file. If @<color:red>OUTPUT_DOCX_FILE@</color> is not specified, it is automatically created appropriately by referring to the given property. \
 The '-t' option specifies the template document that will be the base. If the template document is not specified, the default docgen_template.docx is specified, but various document types can be created by referencing/changing it.
 The '-i' option allows adding a new template document. At this time, 'input_file' is the new template document source, and 'template' is the target template name to be specified.
 The '-f' option specifies saving as a file other than .docx format. You can specify output in combination, such as '-f pdf,html'.
