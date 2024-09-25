@@ -1,1 +1,0 @@
-converted from C# source 'https://github.com/andersnm/ExcelNumberFormat'

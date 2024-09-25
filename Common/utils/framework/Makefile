@@ -11,14 +11,11 @@ PRESERVE_RESULT	:= 1
 
 SRCS			:= \
 	$(wildcard $(SRC_PATH)/argtable3/src/*.c) \
-	$(wildcard $(SRC_PATH)/minizip/*.c) \
-	$(wildcard $(SRC_PATH)/pugixml/*.cpp) \
-	$(wildcard $(SRC_PATH)/ExcelNumFormat/ExcelNumFormat*.cpp) \
 	$(wildcard $(SRC_PATH)/*.cpp)
 
 
 INC				:= -I.
-LIBDIR			:= -liconv -lz -lminizip
+LIBDIR			:= -liconv
 CDEFS			:=
 
 #-------------------------------------------------
