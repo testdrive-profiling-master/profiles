@@ -136,8 +136,8 @@ If WScript.Arguments.Count > 0 Then
 						.Line.Visible = False
 						.Fill.Visible = True
 						.Fill.Solid
-						.Fill.ForeColor.RGB = RGB(205, 205, 205)
-						.Fill.Transparency = 0.7
+						.Fill.ForeColor.RGB = RGB(203, 203, 203)
+						.Fill.Transparency = 0.6
 						.Rotation = 315
 						.LockAspectRatio = True
 						.Height = objWord.InchesToPoints(0.80)
