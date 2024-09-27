@@ -263,6 +263,9 @@ $(TARGET_EXE):$(VERSION_HEADER) $(OBJS) $(OBJS_RES) $(TARGET_DEP)
 	@echo
 	@echo '*** Build execution file ***'
 	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(OBJS_RES) $(LIBDIR)
+ifndef USE_DEBUG
+	@strip --strip-all $(TARGET_EXE)
+endif
 ifdef INSTALL_PATH
 ifneq ($(INSTALL_PATH), $(TARGETPATH))
 	@echo Install to : $(INSTALL_PATH)
@@ -292,6 +295,9 @@ endif
 else
 	@echo '*** Build Shared Library ***'
 	$(CXX) $(LDFLAGS) -shared -o $@ $(OBJS_LIB) $(OBJS_RES) $(LIBDIR)
+endif
+ifndef USE_DEBUG
+	@strip --strip-all $(TARGET_SO)
 endif
 ifdef INSTALL_PATH
 ifneq ($(INSTALL_PATH), $(TARGETPATH))
