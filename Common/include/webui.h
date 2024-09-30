@@ -177,11 +177,6 @@ typedef enum {
     // This is helpful for web apps (non-desktop software),
     // Please see the documentation for more details.
     //
-	// Default: True
-	system_titlebar,
-	// Use system default title bar, (currently windows only.)
-	// This is helpful for custom title bar (desktop software).
-	//
     // Default: False
     use_cookies,
 } webui_config;
@@ -556,6 +551,17 @@ WEBUI_EXPORT void webui_set_hide(size_t window, bool status);
  * @example webui_set_size(myWindow, 800, 600);
  */
 WEBUI_EXPORT void webui_set_size(size_t window, unsigned int width, unsigned int height);
+
+/**
+ * @brief Set the window minimum size.
+ *
+ * @param window The window number
+ * @param width The window width
+ * @param height The window height
+ *
+ * @example webui_set_minimum_size(myWindow, 800, 600);
+ */
+WEBUI_EXPORT void webui_set_minimum_size(size_t window, unsigned int width, unsigned int height);
 
 /**
  * @brief Set the window position.
