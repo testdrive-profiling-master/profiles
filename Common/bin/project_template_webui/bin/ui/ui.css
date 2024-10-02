@@ -1,0 +1,55 @@
+* {
+	-webkit-user-select: none;
+	-moz-user-select: -moz-none;
+	-o-user-select: none;
+	user-select: none;
+	font-size: 13px;
+}
+
+p, input {
+	-webkit-user-select: text;
+	-moz-user-select: text;
+	-o-user-select: text;
+	user-select: text;
+}
+
+.navbar {
+	padding: 0 15px;
+	min-height: 15px;
+}
+.navbar-brand {
+	padding: 0 2px;
+	height: 15px;
+	line-height: 15px;
+}
+
+.navbar-toggle {
+  margin-top: 0px;
+  padding: 9px 0px !important;
+}
+
+.navbar-nav > li > a {
+	padding-top: 2px;
+	padding-bottom: 2px;
+	line-height: 15px;
+}
+
+.tab-pane.fade {
+  transition: all 0.2s;
+  transform: translateY(0.5rem);
+}
+
+.tab-pane.fade.show {
+  transform: translateY(0rem);
+}
+
+.bg-primary {
+    background-color: rgba(0, 0, 0, 0.2)!important;
+}
+
+hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+}

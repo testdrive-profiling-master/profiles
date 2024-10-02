@@ -1,0 +1,5 @@
+#include <windows.h>
+#include "Resource.h"
+
+ID_MANIFEST		24				"application.manifest"
+IDI_MAIN_ICON	ICON			"main.ico"
