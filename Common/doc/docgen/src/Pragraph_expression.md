@@ -1292,7 +1292,14 @@ If not specified, the default 1.0 is assumed.
 결과)
 @<img:media/test.odg[test_sample];0.5;Draw 벡터 그림 예시>
 
-예5) 그림 없이 캡션만 삽입
+예5) draw.io 특정 page를 벡터 이미지로 삽입
+```html
+@<img:media/test.drawio[test];0.8;draw.io 벡터 그림 예시>
+```
+결과)
+@<img:media/test.drawio[test];0.8;draw.io 벡터 그림 예시>
+
+예6) 그림 없이 캡션만 삽입
 ```html
 @<img:nil;0;그림 내용 없이 캡션만 삽입>
 ```
@@ -1327,7 +1334,14 @@ ex4) Insert LibreOffice specific page as vector image
 Result)
 @<img:media/test.odg[test_sample];0.5;Draw vector image example>
 
-ex5) Insert only a caption without a picture
+ex5) Insert draw.io specific page as vector image
+```html
+@<img:media/test.drawio[test];0.8;draw.io vector image example>
+```
+Result)
+@<img:media/test.drawio[test];0.8;draw.io vector image example>
+
+ex6) Insert only a caption without a picture
 ```html
 @<img:nil;0;Insert only a caption without picture content>
 ```

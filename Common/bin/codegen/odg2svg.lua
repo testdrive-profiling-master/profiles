@@ -65,6 +65,9 @@ do
 	while child:empty() == false do
 		page_count	= page_count + 1
 		page_list[child:get_attribute("draw:name")]	= page_count
+		if #page_name == 0 then	-- default page name (first page)
+			page_name = child:get_attribute("draw:name")
+		end
 		child:Destroy(1)
 		child = node:child("draw:page")
 	end

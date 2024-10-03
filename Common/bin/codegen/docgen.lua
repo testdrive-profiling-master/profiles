@@ -85,7 +85,7 @@ docgen.supported_format["txt"]	= "Plain text format (unicode)"
 ---------------------------------------------------------------------------------
 -- argument handling
 ---------------------------------------------------------------------------------
-local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.10")
+local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.11")
 
 Arg:AddOptionString	("template", "", "t", nil, "template", "Document template name/file.")
 -- list-up customized document template list
@@ -927,10 +927,6 @@ function GenerateFigure(sFileName, fRatio)
 			
 			temporary_file_list[#temporary_file_list + 1]		= sFileName.s	-- clean up list.
 		elseif sFileName:CompareBack(".odg") then	-- libreoffice draw
-			if #sPageName == 0 then
-				error("The page names in the OpenDocument Grapgic file(" .. sFileName.s .. ") must be specified.")
-			end
-			
 			if lfs.IsExist(sFileName.s) == false then
 				error("File is not found : " .. sFileName.s)
 			end
@@ -946,10 +942,42 @@ function GenerateFigure(sFileName, fRatio)
 				sOutFileName:Replace(" ", "_", true)
 			end
 			-- convert odg to svg
-			os.execute("odg2svg \"" .. sFileName.s .. "\" -p \"" .. sPageName .. "\" -o \"" .. sOutFileName.s .. "\"")
+			if #sPageName == 0 then
+				os.execute("odg2svg \"" .. sFileName.s .. "\" -o \"" .. sOutFileName.s .. "\"")
+			else
+				os.execute("odg2svg \"" .. sFileName.s .. "\" -p \"" .. sPageName .. "\" -o \"" .. sOutFileName.s .. "\"")
+			end
 			
 			if lfs.IsExist(sOutFileName.s) == false then	-- no visio
 				error("Can't create .svg file from OpenDocument file(" .. sFileName.s .. "[".. sPageName .. "]).\nMake sure LibreOffice is installed properly.")
+			end
+			
+			sFileName.s = sOutFileName.s
+			temporary_file_list[#temporary_file_list + 1]		= sFileName.s
+		elseif sFileName:CompareBack(".drawio") then	-- drawio
+			if lfs.IsExist(sFileName.s) == false then
+				error("File is not found : " .. sFileName.s)
+			end
+			
+			local sOutFileName = String(sFileName.s)
+			
+			do	-- whitespace bug fix. convert " " to "_"
+				local sFixedFileName = String(sFileName.s)
+				sFixedFileName:CutFront("\\", true)
+				sFixedFileName:CutFront("/", true)
+				sOutFileName:erase(#sFileName.s - #sFixedFileName.s, -1);
+				sOutFileName:Append(sFixedFileName.s .. "." .. sPageName .. ".svg")
+				sOutFileName:Replace(" ", "_", true)
+			end
+			-- convert drawio to svg
+			if #sPageName == 0 then
+				os.execute("drawio2svg \"" .. sFileName.s .. "\" -o \"" .. sOutFileName.s .. "\"")
+			else
+				os.execute("drawio2svg \"" .. sFileName.s .. "\" -p \"" .. sPageName .. "\" -o \"" .. sOutFileName.s .. "\"")
+			end
+			
+			if lfs.IsExist(sOutFileName.s) == false then	-- no visio
+				error("Can't create .svg file from draw.io file(" .. sFileName.s .. "[".. sPageName .. "]).\nMake sure draw.io is installed properly.")
 			end
 			
 			sFileName.s = sOutFileName.s

@@ -91,7 +91,7 @@ To run docgen, run as follows.
 ```txt
 > docgen
 
-Document Generator for TestDrive Profiling Master. v1.10
+Document Generator for TestDrive Profiling Master. v1.11
 Usage: docgen  [--help] [-t template] [-i template_desc] [-f format] [-l language] [-r|--run=lua_code] input_file [output_file]
 
       --help                display this help and exit
@@ -208,6 +208,9 @@ WORD 기반의 템플릿문서를 사용하고 윈도우 환경에서 적절하�
 **> LibreOffice 의 Draw는 Visio 대체 어플리케이션으로 벡터 그래픽을 수동 변환 없이 바로 '@<bookmark:그림 삽입>'을 할 수 있습니다. \
 .odg 파일의 포멧을 사용할 수 있으며, docgen이 동작 중일 때, 편집중이 아니어야 합니다. \
 LibreOffice 설치가 필요합니다.
+*> 5. draw.io (자동설치)
+**> draw.io 오픈소스로 Visio 대체 어플리케이션으로 백터 그래픽을 수동 변환 없이 바로 '@<bookmark:그림 삽입>'을 할 수 있습니다. \
+.drawio 파일의 포멧을 사용할 수 있으며, draw.io 설치는 필요시 자동으로 설치됩니다.
 
 
 %%% en
@@ -226,6 +229,9 @@ Considering cost and preference, you can use Draw from LibreOffice.
 **> LibreOffice's Draw is a Visio replacement application that allows you to directly '@<bookmark:Picture insertion>' vector graphics without manual conversion. \
 It can use the .odg file format, and must not be editing while docgen is running.. \
 LibreOffice installation is required.
+*> 5. draw.io (Automatic install)
+**> draw.io is a Visio replacement application that allows you to directly '@<bookmark:Picture insertion>' vector graphics without manual conversion. \
+It can use the .drawio file format, draw.io will be installed automatically if needed.
 %%%
 
 

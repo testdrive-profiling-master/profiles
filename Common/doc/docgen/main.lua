@@ -22,6 +22,7 @@ AddRevision("1.7",	2024,  5,  21,	"add Excel chart image reference and inline co
 AddRevision("1.8",	2024,  5,  22,	"add export file format(html, odt, rtf, xml, txt), and new template installation function")
 AddRevision("1.9",	2024,  8,  31,	"add double underline expression")
 AddRevision("1.10",	2024,  9,  14,	"add emoji expression")
+AddRevision("1.11",	2024,  10, 4,	"support draw.io for vector image")
 
 
 -- Term 추가
@@ -37,6 +38,7 @@ AddTerm("PDF", "Portable Document Format (@<link:https://ko.wikipedia.org/wiki/P
 AddTerm("markdown", "Mark-up language (@<link:https://ko.wikipedia.org/wiki/%EB%A7%88%ED%81%AC%EB%8B%A4%EC%9A%B4;Wiki>)")
 AddTerm("VBA", "Microsoft's Visual Basic for Application")
 AddTerm("Font Awesome", "@<link:https://fontawesome.com;Font Awesome> free icon library")
+AddTerm("draw.io", "draw.io project (@<link:https://www.drawio.com/>) opensource diagram editor")
 
 
 lua_table_example = {
