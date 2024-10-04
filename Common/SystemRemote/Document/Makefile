@@ -9,7 +9,7 @@ SRCS			:= \
 	$(wildcard $(SRC_PATH)/*.cpp)
 
 INC				:=
-LIBDIR			:= -lboost_system-mt -lwsock32 -lws2_32
+LIBDIR			:= -lwsock32 -lws2_32
 
 #-------------------------------------------------
 # common document config
