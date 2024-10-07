@@ -19,7 +19,7 @@ SRCS_RES		:= \
 
 INC				:= -I. -Ires
 LIBDIR			:= 
-CDEFS			:= -D_WIN32_IE=0x0500 -DWINVER=0x500
+CDEFS			:= -D_WIN32_IE=0x0605 -DWINVER=0x0605
 ifndef USE_DEBUG
 LDFLAGS			:= -mwindows
 endif
