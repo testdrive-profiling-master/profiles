@@ -309,9 +309,26 @@ namespace webui {
         }
 
         // Set a custom handler to serve files. This custom handler should return full HTTP header and body.
+        // Resets previous handler set with `set_file_handler_window`.
         void set_file_handler(const void* (*handler)(const char* filename, int* length)) const {
             webui_set_file_handler(webui_window, handler);
         }
+
+        // Set a custom handler to serve files. This custom handler should return full HTTP header and body.
+        // Resets previous handler set with `set_file_handler`
+        void set_file_handler_window(const void* (*handler)(size_t window, const char* filename, int* length)) const {
+            webui_set_file_handler_window(webui_window, handler);
+        }
+		
+		// Set window style. Need to be called before `webui_show()`.
+		void set_window_style(webui_window_style id, uint32_t focused_bgcolor = 0xFFFFFF, uint32_t unfocused_bgcolor = 0xFFFFFF) {
+			webui_set_window_style(webui_window, id, focused_bgcolor, unfocused_bgcolor);
+		}
+		
+		// Start dragging window. (currently windows only)
+		void start_drag_window() {
+			webui_start_drag_window(webui_window);
+		}
 
         // Set the web browser profile to use. An empty `name` and `path` means the default user profile. Need
         // to be called before `webui_show()`.

@@ -25,9 +25,9 @@ LDFLAGS			:= -mwindows
 endif
 
 ifdef WEBUI_SECURED
-LIBDIR			:= $(LIBDIR) -lwebui-2-secure-static -lws2_32 -lwinmm -lole32 -ldwmapi -lcrypto -lssl
+LIBDIR			:= $(LIBDIR) -lwebui-2-secure-static -lws2_32 -lwinmm -lole32 -ldwmapi -lgdi32 -lcrypto -lssl
 else
-LIBDIR			:= $(LIBDIR) -lwebui-2-static -lws2_32 -lwinmm -lole32 -ldwmapi
+LIBDIR			:= $(LIBDIR) -lwebui-2-static -lws2_32 -lwinmm -lole32 -ldwmapi -lgdi32
 endif
 
 BUILD_TARGET	= $(TARGET_EXE)
