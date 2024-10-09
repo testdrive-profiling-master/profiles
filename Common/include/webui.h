@@ -160,6 +160,18 @@ typedef enum {
 } webui_window_style;
 
 typedef enum {
+	WEBUI_WINDOW_COMMAND_HIDE = 0,		// 0. hide window (currently windows only)
+	WEBUI_WINDOW_COMMAND_SHOW,			// 1. show window (currently windows only)
+	WEBUI_WINDOW_COMMAND_START_DRAG,	// 2. start drag window (currently windows only)
+	WEBUI_WINDOW_COMMAND_NORMAL,		// 3. normal window (currently windows only)
+	WEBUI_WINDOW_COMMAND_MAXIMIZE,		// 4. maximize window (currently windows only)
+	WEBUI_WINDOW_COMMAND_MINIMIZE,		// 5. minimize window (currently windows only)
+	WEBUI_WINDOW_COMMAND_IS_NORMAL,		// 6. is normal window (currently windows only)
+	WEBUI_WINDOW_COMMAND_IS_MAXIMIZED,	// 7. is maximized window (currently windows only)
+	WEBUI_WINDOW_COMMAND_IS_MINIZED,	// 8. is minimized window (currently windows only)
+} webui_window_command;
+
+typedef enum {
     // Control if `webui_show()`, `webui_show_browser()` and
     // `webui_show_wv()` should wait for the window to connect
     // before returns or not.
@@ -476,9 +488,11 @@ WEBUI_EXPORT void webui_set_window_style(size_t window, webui_window_style id, u
  *
  * @param window The window number
  *
+ * @return Returns command is successful
+ *
  * @example webui_start_drag_window(myWindow);
  */
-WEBUI_EXPORT void webui_start_drag_window(size_t window);
+WEBUI_EXPORT bool webui_command_window(size_t window, webui_window_command command);
 
 /**
  * @brief Check if the specified window is still running.

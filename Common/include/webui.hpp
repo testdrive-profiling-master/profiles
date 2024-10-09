@@ -325,9 +325,9 @@ namespace webui {
 			webui_set_window_style(webui_window, id, focused_bgcolor, unfocused_bgcolor);
 		}
 		
-		// Start dragging window. (currently windows only)
-		void start_drag_window() {
-			webui_start_drag_window(webui_window);
+		// Command window.
+		bool command_window(webui_window_command command) {
+			return webui_command_window(webui_window, command);
 		}
 
         // Set the web browser profile to use. An empty `name` and `path` means the default user profile. Need
