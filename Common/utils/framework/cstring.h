@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 7/22/2024 Mon (clonextop@gmail.com)
+// Rev.  : 10/15/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __CSTRING_H__
 #define __CSTRING_H__
@@ -46,6 +46,10 @@ public:
 	cstring(const string &s);
 	cstring(const char *s);
 	cstring(const char *s, size_t size);
+#ifndef UNUSE_CSTRING_ICONV
+	cstring(const wchar_t *s);				// to UTF-8
+	cstring(const wchar_t *s, size_t size); // to UTF-8
+#endif
 	virtual ~cstring(void);
 
 	bool	 operator>=(const cstring &s);
@@ -73,22 +77,29 @@ public:
 	{
 		return m_sStr.c_str();
 	}
-	void		MakeUpper(void);
-	void		MakeLower(void);
-	bool		Replace(const char *sSearch, const char *sReplace, bool bRecursive = false);
-	bool		ReplaceVariable(const char *sSearch, const char *sReplace);
-	void		TrimLeft(const char *sDelim);
-	void		TrimRight(const char *sDelim);
-	void		Trim(const char *sDelim);
-	int			Length(void) const;
-	cstring		Tokenize(int &iPos, const char *sDelim = NULL);
-	int			SearchBraket(int iPos = 0);
-	int			RetrieveTag(const char **sTagList, int iTagSize = 0);
-	void		Format(const char *sFormat, ...);
-	void		AppendFormat(const char *sFormat, ...);
-	void		Set(const char *sStr);
-	void		Append(const char *sStr);
-	void		Append(char ch);
+#ifndef UNUSE_CSTRING_ICONV
+	operator wstring(void) const;
+#endif
+	void	MakeUpper(void);
+	void	MakeLower(void);
+	bool	Replace(const char *sSearch, const char *sReplace, bool bRecursive = false);
+	bool	ReplaceVariable(const char *sSearch, const char *sReplace);
+	void	TrimLeft(const char *sDelim);
+	void	TrimRight(const char *sDelim);
+	void	Trim(const char *sDelim);
+	int		Length(void) const;
+	cstring Tokenize(int &iPos, const char *sDelim = NULL);
+	int		SearchBraket(int iPos = 0);
+	int		RetrieveTag(const char **sTagList, int iTagSize = 0);
+	void	Format(const char *sFormat, ...);
+	void	AppendFormat(const char *sFormat, ...);
+	void	Set(const char *sStr);
+	void	Append(const char *sStr);
+	void	Append(char ch);
+#ifndef UNUSE_CSTRING_ICONV
+	void Append(const wchar_t *sStr);
+	void Append(const wchar_t *sStr, size_t size);
+#endif
 	int			CheckFileExtension(const char **sExtList);
 	bool		GetEnvironment(const char *sKey);
 	void		SetEnvironment(const char *sKey);

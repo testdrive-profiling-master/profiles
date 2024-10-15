@@ -31,13 +31,16 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 7/22/2024 Mon (clonextop@gmail.com)
+// Rev.  : 10/15/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #include "STDInterface.h"
 // cstrings
 #include "cstring.h"
 #include <stdarg.h>
 #include <vector>
+#ifndef UNUSE_CSTRING_ICONV
+#	include <iconv.h>
+#endif
 
 cstring::cstring(void) {}
 
@@ -56,6 +59,15 @@ cstring::cstring(const char *s)
 cstring::cstring(const char *s, size_t size) : m_sStr(s, size) // specific size setup
 {
 }
+
+#ifndef UNUSE_CSTRING_ICONV
+cstring::cstring(const wchar_t *s) : cstring(s, wcslen(s)) {}
+
+cstring::cstring(const wchar_t *s, size_t size)
+{
+	Append(s, size);
+}
+#endif
 
 cstring::~cstring(void) {}
 
@@ -133,6 +145,28 @@ char &cstring::operator[](int iIndex)
 {
 	return m_sStr[iIndex];
 }
+
+#ifndef UNUSE_CSTRING_ICONV
+cstring::operator wstring(void) const
+{
+	iconv_t	 it		  = iconv_open("WCHAR_T", "UTF-8");
+	size_t	 in_size  = Length();
+	size_t	 out_size = in_size * 2;
+	wchar_t *ws		  = new wchar_t[in_size];
+	char	*in_s	  = (char *)m_sStr.c_str();
+
+	wstring	 wStr;
+	while (in_size) {
+		char  *out_s	 = (char *)ws;
+		size_t left_size = out_size;
+		iconv(it, &in_s, &in_size, &out_s, &left_size);
+		wStr.append(ws, out_size - left_size);
+	}
+	delete[] ws;
+	iconv_close(it);
+	return wStr;
+}
+#endif
 
 int cstring::Compare(const char *s)
 {
@@ -769,6 +803,32 @@ void cstring::Append(char ch)
 		m_sStr += ch;
 }
 
+#ifndef UNUSE_CSTRING_ICONV
+void cstring::Append(const wchar_t *sStr)
+{
+	Append(sStr, wcslen(sStr));
+}
+
+void cstring::Append(const wchar_t *sStr, size_t size)
+{
+	if (sStr && size) {
+		iconv_t it	 = iconv_open("UTF-8", "WCHAR_T");
+		char   *in_s = (char *)sStr;
+		char	dst_s[MAX_PATH];
+		size *= 2;
+
+		while (size) {
+			char  *out_s	= dst_s;
+			size_t out_size = MAX_PATH;
+			iconv(it, &in_s, &size, &out_s, &out_size);
+			m_sStr.append(dst_s, MAX_PATH - out_size);
+		}
+
+		iconv_close(it);
+	}
+}
+#endif
+
 int cstring::CheckFileExtension(const char **sExtList)
 {
 	if (sExtList) {
@@ -927,36 +987,32 @@ static bool is_utf8(const char *string)
 	return true;
 }
 
-#ifndef UNUSE_CSTRING_ICONV
-#	include <iconv.h>
-#endif
 bool cstring::ChangeCharset(const char *szSrcCharset, const char *szDstCharset)
 {
-	bool bRet = false;
 #ifndef UNUSE_CSTRING_ICONV
 	iconv_t it = iconv_open(szDstCharset, szSrcCharset);
 
 	if (it != (iconv_t)(-1)) {
 		size_t nSrcStrLen = Length();
-		size_t nDstStrLen = nSrcStrLen * 2 + 12 + 1;
-		char  *sIn		  = new char[nSrcStrLen + 1];
-		char  *sInput	  = sIn;
+		size_t nDstStrLen = nSrcStrLen * 2 + 16;
+		char  *sInput	  = (char *)m_sStr.c_str();
 		char  *sOut		  = new char[nDstStrLen];
-		char  *sOutput	  = sOut;
-		strcpy(sIn, m_sStr.c_str());
-		memset(sOut, 0, nDstStrLen);
+		string sResult;
 
-		if (iconv(it, &sInput, &nSrcStrLen, &sOutput, &nDstStrLen) != (size_t)(-1)) {
-			m_sStr = sOut;
-			bRet   = true;
+		while (nSrcStrLen) {
+			char  *sOutput	 = sOut;
+			size_t sOut_size = nDstStrLen;
+			iconv(it, &sInput, &nSrcStrLen, &sOutput, &sOut_size);
+			sResult.append(sOut, nDstStrLen - sOut_size);
 		}
+		m_sStr = sResult;
 
 		iconv_close(it);
-		delete[] sIn;
 		delete[] sOut;
+		return true;
 	}
 #endif
-	return bRet;
+	return false;
 }
 
 bool cstring::ChangeCharsetToUTF8(void)

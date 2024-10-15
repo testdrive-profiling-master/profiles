@@ -1875,6 +1875,7 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 	local	sResult			= String()
 	local	bBypass			= false				-- 내용 무시, docgen.language 일치하지 않음
 	local	bBypassCodeRef	= false				-- code reference in bypass mode
+	local	iIngoreLines	= 0
 	
 	-- initialize configuration
 	if config == nil then config = {} end
@@ -1887,7 +1888,10 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 	line.source			= "str"
 	line.get = function()
 		local	sTokStart	= sPara.TokenizePos
-		local	sLine		= sPara:Tokenize("\n")
+		local	bExtra		= false
+		local	sLine		= nil
+		
+		sLine = sPara:Tokenize("\n")
 		
 		if bBypassCodeRef == false then
 			while sLine:CompareBack(" \\") do
@@ -1898,36 +1902,46 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 			end
 		end
 		
-		-- ignore front enter code
-		while sPara:at(sTokStart) == '\n' do
-			line.count	= line.count + 1
-			sTokStart = sTokStart + 1
-		end
-		
-		local	sTokEnd		= sPara.TokenizePos	-- end of token
-
-		-- show current line shortly
-		if sLine:IsEmpty() == false then
-			local	sStatus	= String(line.current() .. sLine.s)
-			sStatus:Replace("\t", "    ", true)
-			if sStatus:Length() > (docgen.max_console_chars - 5) then
-				sStatus:erase((docgen.max_console_chars - 5), -1)
-				sStatus:Append("...")
+		if bExtra == false then
+			-- ignore front enter code
+			while sPara:at(sTokStart) == '\n' do
+				if iIngoreLines > 0 then
+					iIngoreLines	= iIngoreLines - 1
+				else
+					line.count	= line.count + 1
+				end
+				sTokStart = sTokStart + 1
 			end
 			
-			io.write(sStatus.s .. (' '):rep(docgen.max_console_chars - sStatus:Length()) .. "\r")
-		end
-		
-		-- enter code counting...
-		while sTokStart >= 0 do
-			sTokStart	= sPara:find("\n", sTokStart)
+			local	sTokEnd		= sPara.TokenizePos	-- end of token
 
-			if (sTokStart < 0) or (sTokStart >= sTokEnd) then
-				break
+			-- show current line shortly
+			if sLine:IsEmpty() == false then
+				local	sStatus	= String(line.current() .. sLine.s)
+				sStatus:Replace("\t", "    ", true)
+				if sStatus:Length() > (docgen.max_console_chars - 5) then
+					sStatus:erase((docgen.max_console_chars - 5), -1)
+					sStatus:Append("...")
+				end
+				
+				io.write(sStatus.s .. (' '):rep(docgen.max_console_chars - sStatus:Length()) .. "\r")
 			end
 			
-			line.count		= line.count + 1
-			sTokStart		= sTokStart + 1
+			-- enter code counting...
+			while sTokStart >= 0 do
+				sTokStart	= sPara:find("\n", sTokStart)
+
+				if (sTokStart < 0) or (sTokStart >= sTokEnd) then
+					break
+				end
+				
+				if iIngoreLines > 0 then
+					iIngoreLines	= iIngoreLines - 1
+				else
+					line.count	= line.count + 1
+				end
+				sTokStart		= sTokStart + 1
+			end
 		end
 
 		return sLine
@@ -2658,8 +2672,45 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 							local	ReturnCode	= load("return (" .. sLuaCode.s .. ")")()
 							
 							if type(ReturnCode) == "string" then
-								sLine:insert(sLine.TokenizePos, ReturnCode)
-								docgen.hangul.postfix_set_hint(ReturnCode)
+								local sExtra = String(ReturnCode)
+								sExtra:ChangeCharsetToUTF8()
+								sExtra:Replace("@@", "&#64;", true)		-- '@' 문자 대체 표현
+								sExtra:Replace("@#", "&#35;", true)		-- '#' 문자 대체 표현
+								sExtra:Replace("@-", "&#45;", true)		-- '-' 문자 대체 표현
+								sExtra:Replace("@;", "&#59;", true)		-- ';' 문자 대체 표현
+								sExtra:Replace("\\$", "&#36;", true)	-- '$' 문자 대체 표현
+								sExtra:Replace("\r", "", true);			-- line feed 모두 제거
+								
+								if sExtra:find("\n") >= 0 then
+									sLine:erase(0, sLine.TokenizePos)
+									sLine.TokenizePos = 0
+									sLine:insert(0, sLine.s)
+									
+									if sExtra:CompareFront("\n") then
+										sLine:clear()
+										
+									else
+										sLine:insert(0, sExtra:Tokenize("\n").s)
+									end
+									sExtra = sExtra:Tokenize("")
+									local iPos = 0	-- 무시할 enter code 계산
+									while iPos >= 0 do
+										iPos	= sPara:find("\n", iPos)
+
+										if (iPos < 0) then break end
+										
+										iIngoreLines = iIngoreLines + 1
+										iPos = iPos + 1
+									end
+
+									sPara:insert(sPara.TokenizePos, sExtra.s)
+									
+									sResult:CutBack("<w:p>", false)
+									goto continue
+								else
+									sLine:insert(sLine.TokenizePos, ReturnCode)
+									docgen.hangul.postfix_set_hint(ReturnCode)
+								end
 							else
 								sLine:insert(sLine.TokenizePos, tostring(ReturnCode))
 								docgen.hangul.postfix_set_hint(tostring(ReturnCode))
