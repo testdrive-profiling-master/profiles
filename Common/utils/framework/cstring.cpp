@@ -149,21 +149,23 @@ char &cstring::operator[](int iIndex)
 #ifndef UNUSE_CSTRING_ICONV
 cstring::operator wstring(void) const
 {
-	iconv_t	 it		  = iconv_open("WCHAR_T", "UTF-8");
-	size_t	 in_size  = Length();
-	size_t	 out_size = in_size * 2;
-	wchar_t *ws		  = new wchar_t[in_size];
-	char	*in_s	  = (char *)m_sStr.c_str();
+	wstring wStr;
+	size_t	in_size = Length();
+	if (in_size) {
+		iconv_t	 it		  = iconv_open("WCHAR_T", "UTF-8");
+		size_t	 out_size = in_size * 2;
+		wchar_t *ws		  = new wchar_t[in_size];
+		char	*in_s	  = (char *)m_sStr.c_str();
 
-	wstring	 wStr;
-	while (in_size) {
-		char  *out_s	 = (char *)ws;
-		size_t left_size = out_size;
-		iconv(it, &in_s, &in_size, &out_s, &left_size);
-		wStr.append(ws, out_size - left_size);
+		while (in_size) {
+			char  *out_s	 = (char *)ws;
+			size_t left_size = out_size;
+			iconv(it, &in_s, &in_size, &out_s, &left_size);
+			wStr.append(ws, (out_size - left_size) >> 1);
+		}
+		delete[] ws;
+		iconv_close(it);
 	}
-	delete[] ws;
-	iconv_close(it);
 	return wStr;
 }
 #endif
@@ -814,14 +816,14 @@ void cstring::Append(const wchar_t *sStr, size_t size)
 	if (sStr && size) {
 		iconv_t it	 = iconv_open("UTF-8", "WCHAR_T");
 		char   *in_s = (char *)sStr;
-		char	dst_s[MAX_PATH];
+		char	dst_s[4096];
 		size *= 2;
 
 		while (size) {
 			char  *out_s	= dst_s;
-			size_t out_size = MAX_PATH;
+			size_t out_size = 4096;
 			iconv(it, &in_s, &size, &out_s, &out_size);
-			m_sStr.append(dst_s, MAX_PATH - out_size);
+			m_sStr.append(dst_s, 4096 - out_size);
 		}
 
 		iconv_close(it);
