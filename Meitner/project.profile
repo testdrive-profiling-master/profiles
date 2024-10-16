@@ -27,6 +27,7 @@ RunProfile("%TESTDRIVE_PROFILE%\\common\\ScenarioTest\\initialize.sp")		-- scena
 RunProfile("%TESTDRIVE_PROFILE%\\common\\VirtualDisplay\\initialize.sp")		-- virtual display
 --RunProfile("%TESTDRIVE_PROFILE%\\common\\SerialConsole\\initialize.sp")	-- serial console
 RunProfile("%TESTDRIVE_PROFILE%\\common\\DesignMap\\initialize.sp")			-- design map
+RunProfile("%TESTDRIVE_PROFILE%\\common\\SerialConsole\\initialize.sp")		-- serial console
 
 -- Project Profiles
 RunProfile("Profiles\\ALUTest\\initialize.sp")								-- ALU test
