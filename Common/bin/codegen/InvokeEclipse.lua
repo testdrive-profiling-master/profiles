@@ -99,6 +99,18 @@ terminal.views.view.font.definition=1|Cascadia Mono|9.75|0|WINDOWS|1|-13|0|0|0|4
 		);
 		f:Close()
 	end
+	-- apply default clang-format configuration
+	do
+		local f = TextFile()
+		f:Create(sWorkPath.s .. "/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.wangzw.cppstyle.prefs")
+		local sClangFormatPath = String(sTestDrivePath.s .. "bin/msys64/ucrt64/bin/clang-format.exe")
+		sClangFormatPath:Replace("\\", "/", true)
+		sClangFormatPath:Replace("//", "/", true)
+		sClangFormatPath:Replace("/", "\\\\", true)
+		sClangFormatPath:Replace(":\\", "\\:\\", false)
+		f:Put("cppstyle.clangformat.path=" .. sClangFormatPath.s .. "\neclipse.preferences.version=1\n")
+		f:Close()
+	end
 end
 
 -- run eclipse
