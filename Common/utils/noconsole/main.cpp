@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : noconsole project
-// Rev.  : 10/22/2024 Tue (clonextop@gmail.com)
+// Rev.  : 10/23/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include <UtilFrameWork.h>
 #include <shellapi.h>
@@ -44,6 +44,7 @@ int main(int argc, const char *argv[])
 	STARTUPINFO			stInfo;
 	PROCESS_INFORMATION prInfo;
 
+	// make command from all arguments
 	for (int i = 1; i < argc; i++) {
 		cstring sArg(argv[i]);
 		if (sArg.find(" ") > 0) {
@@ -58,7 +59,8 @@ int main(int argc, const char *argv[])
 	ZeroMemory(&stInfo, sizeof(stInfo));
 	stInfo.cb		   = sizeof(stInfo);
 	stInfo.dwFlags	   = STARTF_USESHOWWINDOW;
-	stInfo.wShowWindow = SW_HIDE;
-	BOOL bResult	   = CreateProcess(NULL, (char *)sCmd.c_str(), NULL, NULL, TRUE, NORMAL_PRIORITY_CLASS, NULL, NULL, &stInfo, &prInfo);
+	stInfo.wShowWindow = SW_SHOW;
+	BOOL bResult =
+		CreateProcess(NULL, (char *)sCmd.c_str(), NULL, NULL, TRUE, NORMAL_PRIORITY_CLASS | CREATE_NO_WINDOW, NULL, NULL, &stInfo, &prInfo);
 	return bResult ? 0 : 1;
 }
