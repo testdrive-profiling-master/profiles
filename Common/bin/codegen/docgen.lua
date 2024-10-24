@@ -966,18 +966,18 @@ function GenerateFigure(sFileName, fRatio)
 				sFixedFileName:CutFront("\\", true)
 				sFixedFileName:CutFront("/", true)
 				sOutFileName:erase(#sFileName.s - #sFixedFileName.s, -1);
-				sOutFileName:Append(sFixedFileName.s .. "." .. sPageName .. ".svg")
+				sOutFileName:Append(sFixedFileName.s .. "." .. sPageName .. ".png")
 				sOutFileName:Replace(" ", "_", true)
 			end
-			-- convert drawio to svg
+			-- convert drawio to png
 			if #sPageName == 0 then
-				os.execute("drawio2svg \"" .. sFileName.s .. "\" -o \"" .. sOutFileName.s .. "\"")
+				os.execute("drawio2png \"" .. sFileName.s .. "\" -o \"" .. sOutFileName.s .. "\"")
 			else
-				os.execute("drawio2svg \"" .. sFileName.s .. "\" -p \"" .. sPageName .. "\" -o \"" .. sOutFileName.s .. "\"")
+				os.execute("drawio2png \"" .. sFileName.s .. "\" -p \"" .. sPageName .. "\" -o \"" .. sOutFileName.s .. "\"")
 			end
 			
 			if lfs.IsExist(sOutFileName.s) == false then	-- no visio
-				error("Can't create .svg file from draw.io file(" .. sFileName.s .. "[".. sPageName .. "]).\nMake sure draw.io is installed properly.")
+				error("Can't create .png file from draw.io file(" .. sFileName.s .. "[".. sPageName .. "]).\nMake sure draw.io is installed properly.")
 			end
 			
 			sFileName.s = sOutFileName.s
