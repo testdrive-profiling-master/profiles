@@ -423,7 +423,7 @@ function module:make_code(is_top)
 			
 			if graphiviz_show then
 				if sGraphviz_Module:Length() == 0 then
-					__graphviz:Replace("__MODULE__", sGraphviz_Module.s)
+					__graphviz:Replace("__MODULE__", " ")
 				else
 					__graphviz:Replace("__MODULE__", "<font point-size=\"6\" color=\"gray\">" .. sGraphviz_Module.s .. "</font>")
 				end
