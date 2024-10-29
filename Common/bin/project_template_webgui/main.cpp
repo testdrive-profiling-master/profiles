@@ -49,6 +49,24 @@ public:
 			return "";
 		});
 
+		bind("RadioBtn", [&](const string &sArg) -> string {
+			JsonArg val(sArg);
+
+			cstring sJavascript;
+			sJavascript.Format("$('#cpp_output').text(\"RadioBtn(%s)\");\n", val[0].asCString());
+			eval(sJavascript.c_string());
+			return "";
+		});
+
+		bind("CheckBtn", [&](const string &sArg) -> string {
+			JsonArg val(sArg);
+
+			cstring sJavascript;
+			sJavascript.Format("$('#cpp_output').text(\"CheckBtn(%s)\");\n", val[0].asBool() ? "true" : "false");
+			eval(sJavascript.c_string());
+			return "";
+		});
+
 		bind("SetText", [&](const string &sArg) -> string {
 			JsonArg val(sArg);
 

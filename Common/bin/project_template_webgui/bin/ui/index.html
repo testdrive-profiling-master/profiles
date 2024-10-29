@@ -114,10 +114,10 @@
 						
 						<SCRIPT LANGUAGE="JScript">
 							$("input[name='radio_group_1']").change(function(){
-								RadioBtn($("input[name='radio_group_1']:checked").val());
+								window.RadioBtn($("input[name='radio_group_1']:checked").val());
 							});
 							$("#check_1").change(function(){
-								CheckBtn($("#check_1").is(':checked'));
+								window.CheckBtn($("#check_1").is(':checked'));
 							});
 						</SCRIPT>
 					</div>
