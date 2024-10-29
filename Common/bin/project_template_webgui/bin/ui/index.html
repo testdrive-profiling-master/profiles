@@ -3,8 +3,7 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
 	<title>PROJECT</title>
-	<script src="webui.js"></script>
-	<link rel="stylesheet" type="text/css" href="ui.css">
+	<link rel="stylesheet" type="text/css" href="index.css">
 	<!-- jQuery -->
 	<script src="dist/jquery/jquery-3.6.0.min.js"></script>
 	<!-- Bootstrap  -->
@@ -32,17 +31,40 @@
 				setTimeout(() => {
 					handlingScroll = false
 				}, 10)
-				event.preventDefault();
+				event.preventDefault()
 			} else {
 				handlingScroll = false
 			}
 		}, {passive: false});
+
+		var titlebar_mousedown = false
+		$("#titlebar").mousedown(function(e){
+			titlebar_mousedown = ($(e.target).attr('id') == "titlebar")
+			/*if ($(e.target).attr('id') == "titlebar") {
+				command_window(0);
+			}*/
+		})
+		$("#titlebar").mousemove(function(e){
+			if (titlebar_mousedown) {
+				command_window(0);
+				titlebar_mousedown	= false;
+			}
+			/*if ($(e.target).attr('id') == "titlebar") {
+				command_window(0);
+			}*/
+		});
+		$("#titlebar").on( "dblclick", function(e) {
+			console.log("A")
+			if ($(e.target).attr('id') == "titlebar") {
+				command_window(1);
+			}
+		});
 	});
 </SCRIPT>
-<body id="page-top" class="d-flex flex-column min-vh-100" ondragstart="return false;" ondrop="return false;">
-	<div class="card m-0 small border-0" id="top_nav">
-		<div class="card-header bg-white">
-			<div class="nav nav-tabs card-header-tabs bg-white">
+<body id="page-top" class="d-flex flex-column" ondragstart="return false;" ondrop="return false;">
+	<div class="card mt-2 small border-0" id="top_nav">
+		<div class="card-header bg-white pt-0 mt-0">
+			<div id="titlebar" class="nav nav-tabs card-header-tabs bg-white">
 				<li class="nav-item">
 					<button class="nav-link active" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-home" aria-selected="true" href="#nav_tap_menu_1">Menu #1</button>
 				</li>
@@ -62,9 +84,9 @@
 						<div class="card text-center">
 							<div class="card-header">Button test</div>
 							<div class="card-body">
-								<button type="button" class="btn btn-primary" onclick="PressBtn(1, 'Button A');">Button A</button>
-								<button type="button" class="btn btn-secondary" onclick="PressBtn(2, 'Button B');">Button B</button>
-								<button type="button" class="btn btn-dark" onclick="PressBtn(3, 'Button C');">Button C</button>
+								<button type="button" class="btn btn-primary" id="btn_1" onclick="window.PressBtn(1, 'Button A');">Button A</button>
+								<button type="button" class="btn btn-secondary" id="btn_1" onclick="window.PressBtn(2, 'Button B');">Button B</button>
+								<button type="button" class="btn btn-dark" id="btn_1" onclick="window.PressBtn(3, 'Button C');">Button C</button>
 							</div>
 						</div>
 					</div>
@@ -112,7 +134,7 @@
 						</div>
 						<SCRIPT LANGUAGE="JScript">
 							$("#text_input").change(function(){
-								InputBox($("#text_input").val());
+								window.SetText($("#text_input").val());
 							});
 						</SCRIPT>
 					</div>

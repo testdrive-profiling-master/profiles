@@ -12,7 +12,7 @@ Arg:AddRemark			(nil, "'testdrive'              : TestDrive project")
 Arg:AddRemark			(nil, "'c', 'c++', 'cpp'        : C++(Pure) project")
 Arg:AddRemark			(nil, "'util'                   : C++(Util) project")
 Arg:AddRemark			(nil, "'lua'                    : C++(Util + Lua) project")
-Arg:AddRemark			(nil, "'webui'                  : C++(Util + WebUI) project")
+Arg:AddRemark			(nil, "'webgui'                 : C++(Util + WebGUI) project")
 Arg:AddRemark			(nil, "'v', 'verilog'           : verilog project")
 Arg:AddRemark			(nil, "'v_bare', 'verilog_bare' : bared verilog project")
 Arg:AddRemark			(nil, "'verigen'                : verigen project")
@@ -194,15 +194,15 @@ elseif (sType == "lua") then
 	os.execute("mv \"" .. sProjectPath .. "/.PROJECT_version.inl\" \"" .. sProjectPath .. "/." .. sProjectNameLower .. "_version.inl\"")
 	
 	os.execute("explorer " .. sProjectName)
-elseif (sType == "webui") then
+elseif (sType == "webgui") then
 	sProjectPath	= MakeDir(sProjectName)
-	LOGI("Create C++(WebUI + Lua) project : '" .. sProjectName .. "'")
+	LOGI("Create C++(Util + WebGUI) project : '" .. sProjectName .. "'")
 	
-	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_webui/.\" " .. sProjectName .. "/")
+	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_webgui/.\" " .. sProjectName .. "/")
 	os.execute("sed \"s/Test/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/.project")
 	os.execute("sed \"s/Test/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/Makefile")
 	os.execute("sed \"s/Test/" .. sProjectName .. " project/\" -i ./" .. sProjectName .. "/.inception")
-	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/bin/ui/ui.html")
+	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/bin/ui/index.html")
 
 	os.execute("explorer " .. sProjectName)
 elseif (sType == "v" or sType == "verilog") then
