@@ -47,13 +47,6 @@ using namespace webview;
 #define WEBGUI_MIN_PORT 40000
 #define WEBGUI_MAX_PORT 50000
 
-JsonArg::JsonArg(const string &arg)
-{
-	Json::Reader reader;
-	reader.parse(arg, *this);
-}
-JsonArg::~JsonArg(void) {}
-
 WebGUI::WebGUI(void) : browser_engine(WEBVIEW_DEBUG_ENABLE, nullptr), m_FullScreen({0})
 {
 	srand((unsigned int)time(NULL)); // initialize for use rand()
@@ -92,7 +85,7 @@ bool WebGUI::Initialize(WEBGUI_MODE mode, uint16_t iPort, const char *sHttpsKey,
 		}
 	}
 
-	m_hHwnd = (HWND)window_impl().value();
+	m_hHwnd = WindowHandle();
 	return m_hHwnd ? OnInitialize() : false;
 }
 
@@ -249,6 +242,19 @@ bool WebGUI::Navigate(const char *sURL)
 	return false;
 }
 
+bool WebGUI::SetHtml(const char *sHtml)
+{
+	if (!sHtml)
+		return false;
+	try {
+		set_html(sHtml);
+	} catch (const webview::exception &e) {
+		LOGE("%s\n", (const char *)e.what());
+		return false;
+	}
+	return true;
+}
+
 bool WebGUI::Run(const char *sURL)
 {
 	cstring sUrl(sURL);
@@ -300,20 +306,28 @@ bool WebGUI::CallJScript(const char *sFormat, ...)
 	return bRet;
 }
 
-bool WebGUI::Bind(const std::string &name, WebGUI_binding_t fn)
+bool WebGUI::Bind(const char *name, WebGUI_binding_t fn)
 {
-	auto wrapper = [this, fn](const std::string &id, const std::string &req, void * /*arg*/) {
-		JsonArg args(req);
-		cstring result;
-		fn(args, result);
-		resolve(id, 0, result.c_string());
-	};
-	try {
-		bind(name, wrapper, nullptr);
-	} catch (const webview::exception &e) {
-		LOGE("%s\n", (const char *)e.what());
+	if (name && *name) {
+		auto wrapper = [this, fn](const std::string &id, const std::string &req, void * /*arg*/) {
+			ARGS args;
+			{
+				Json::Reader reader;
+				reader.parse(req, args);
+			}
+
+			cstring result;
+			fn(args, result);
+			resolve(id, 0, result.c_string());
+		};
+		try {
+			bind(name, wrapper, nullptr);
+		} catch (const webview::exception &e) {
+			LOGE("%s\n", (const char *)e.what());
+			return false;
+		}
+	} else
 		return false;
-	}
 	return true;
 }
 
@@ -334,4 +348,14 @@ bool WebGUI::Unbind(const char *sName)
 void WebGUI::Teminate(void)
 {
 	terminate();
+}
+
+WebGUI::WIN_HANDLE WebGUI::WindowHandle(void)
+{
+	try {
+		return (WIN_HANDLE)window().value();
+	} catch (const webview::exception &e) {
+		LOGE("%s\n", (const char *)e.what());
+	}
+	return NULL;
 }

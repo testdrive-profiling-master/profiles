@@ -40,19 +40,19 @@ class WebGUI_imp : public WebGUI
 public:
 	WebGUI_imp(void)
 	{
-		Bind("PressBtn", [&](const JsonArg &args, cstring &result) {
+		Bind("PressBtn", [&](const ARGS &args, cstring &result) {
 			CallJScript("$('#cpp_output').text(\"PressBtn(%d, '%s')\");", args[0].asInt(), args[1].asCString());
 		});
 
-		Bind("RadioBtn", [&](const JsonArg &args, cstring &result) {
+		Bind("RadioBtn", [&](const ARGS &args, cstring &result) {
 			CallJScript("$('#cpp_output').text(\"RadioBtn(%s)\");", args[0].asCString());
 		});
 
-		Bind("CheckBtn", [&](const JsonArg &args, cstring &result) {
+		Bind("CheckBtn", [&](const ARGS &args, cstring &result) {
 			CallJScript("$('#cpp_output').text(\"CheckBtn(%s)\");", args[0].asBool() ? "true" : "false");
 		});
 
-		Bind("SetText", [&](const JsonArg &args, cstring &result) {
+		Bind("SetText", [&](const ARGS &args, cstring &result) {
 			CallJScript("$('#cpp_output').text(\"%s\");", args[0].asCString());
 		});
 	}

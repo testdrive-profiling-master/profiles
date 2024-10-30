@@ -58,16 +58,20 @@ typedef enum {
 	WEBGUI_MODE_CLIENT
 } WEBGUI_MODE;
 
-class JsonArg : public Json::Value
-{
-public:
-	JsonArg(const string &arg);
-	virtual ~JsonArg(void);
-};
-
 class WebGUI : private webview::webview, private httpServer
 {
-	HWND		m_hHwnd;
+public:
+#ifdef _WIN32
+	typedef HWND WIN_HANDLE;
+#elif defined(__unix__)
+	typedef GtkWidget *WIN_HANDLE;
+#elif defined(__APPLE__)
+	typedef id WIN_HANDLE;
+#endif
+	typedef Json::Value ARGS;
+
+private:
+	WIN_HANDLE	m_hHwnd;
 	cstring		m_sRootPath;
 	uint16_t	m_iPort;
 	bool		m_bEnableClose;
@@ -84,7 +88,7 @@ public:
 	WebGUI(void);
 	virtual ~WebGUI(void);
 
-	using WebGUI_binding_t = std::function<void(const JsonArg &, cstring &)>;
+	using WebGUI_binding_t = std::function<void(const ARGS &, cstring &)>;
 
 	// common
 	bool Initialize(
@@ -93,22 +97,26 @@ public:
 	// server side function
 	void SetRootPath(const char *sRootPath);
 	// client side function
-	void SetTitle(const char *sTitle);
-	void SetSize(int iWidth, int iHeight, WEBGUI_SIZE hint = WEBGUI_SIZE_NORMAL);
-	void EnableWinButton(WEBGUI_BTN btn, bool bEnable = true);
-	void SetFullScreen(bool bEnable = true);
-	bool Navigate(const char *sURL);
-	bool Run(const char *sURL = NULL);
-	bool CallJScript(const char *sFormat, ...);
-	bool Bind(const std::string &name, WebGUI_binding_t fn);
-	bool Unbind(const char *sName);
-	void Teminate(void);
+	void	   SetTitle(const char *sTitle);
+	void	   SetSize(int iWidth, int iHeight, WEBGUI_SIZE hint = WEBGUI_SIZE_NORMAL);
+	void	   EnableWinButton(WEBGUI_BTN btn, bool bEnable = true);
+	void	   SetFullScreen(bool bEnable = true);
+	bool	   Navigate(const char *sURL);
+	bool	   SetHtml(const char *sHtml);
+	bool	   Run(const char *sURL = NULL);
+	bool	   CallJScript(const char *sFormat, ...);
+	bool	   Bind(const char *name, WebGUI_binding_t fn);
+	bool	   Unbind(const char *sName);
+	void	   Teminate(void);
+	WIN_HANDLE WindowHandle(void);
 
 protected:
-	virtual bool	  OnInitialize(void);
-	virtual bool	  OnClose(void);
-	virtual bool	  OnGet(const char *sURL, httpConnection *pCon);
-	virtual bool	  OnPost(const char *sURL, httpConnection *pCon);
+	virtual bool OnInitialize(void);
+	virtual bool OnClose(void);
+	virtual bool OnGet(const char *sURL, httpConnection *pCon);
+	virtual bool OnPost(const char *sURL, httpConnection *pCon);
+
+private:
 	webview::noresult run_impl() override;
 };
 
