@@ -31,10 +31,11 @@
 // OF SUCH DAMAGE.
 //
 // Title : WebGUI project
-// Rev.  : 10/29/2024 Tue (clonextop@gmail.com)
+// Rev.  : 10/30/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include "WebGUI.h"
 #include <time.h>
+#include <stdarg.h>
 
 using namespace webview;
 #ifdef USE_DEBUG
@@ -59,7 +60,7 @@ WebGUI::WebGUI(void) : browser_engine(WEBVIEW_DEBUG_ENABLE, nullptr), m_FullScre
 	m_hHwnd		   = NULL;
 	m_sRootPath	   = "./";
 	m_iPort		   = 0;
-	m_Mode		   = WEBGUI_MODE_WEBVIEW;
+	m_Mode		   = WEBGUI_MODE_STANALONE;
 	m_bEnableClose = true;
 }
 WebGUI::~WebGUI(void) {}
@@ -70,23 +71,25 @@ bool WebGUI::Initialize(WEBGUI_MODE mode, uint16_t iPort, const char *sHttpsKey,
 		return false;
 	m_iPort			   = 0;
 	m_Mode			   = mode;
-	bool bInternalOnly = (mode == WEBGUI_MODE_WEBVIEW);
-	if (iPort) {
-		if (!httpServer::Initialize(iPort, bInternalOnly, sHttpsKey, sHttpsCert, sRootCa)) {
-			return false;
-		}
-	} else {
-		// find port.
-		for (int i = WEBGUI_MIN_PORT; i <= WEBGUI_MAX_PORT; i++) {
-			iPort = WEBGUI_MIN_PORT + (((uint32_t)rand()) % (WEBGUI_MAX_PORT - WEBGUI_MIN_PORT + 1));
-			if (httpServer::Initialize(iPort, bInternalOnly, sHttpsKey, sHttpsCert, sRootCa)) {
-				if (bInternalOnly)
-					m_iPort = iPort;
-				break;
+	bool bInternalOnly = (mode == WEBGUI_MODE_STANALONE);
+	if (mode != WEBGUI_MODE_CLIENT) {
+		if (iPort) {
+			if (!httpServer::Initialize(iPort, bInternalOnly, sHttpsKey, sHttpsCert, sRootCa)) {
+				return false;
 			}
+		} else {
+			// find port.
+			for (int i = WEBGUI_MIN_PORT; i <= WEBGUI_MAX_PORT; i++) {
+				iPort = WEBGUI_MIN_PORT + (((uint32_t)rand()) % (WEBGUI_MAX_PORT - WEBGUI_MIN_PORT + 1));
+				if (httpServer::Initialize(iPort, bInternalOnly, sHttpsKey, sHttpsCert, sRootCa)) {
+					if (bInternalOnly)
+						m_iPort = iPort;
+					break;
+				}
+			}
+			if (!m_iPort)
+				return false;
 		}
-		if (!m_iPort)
-			return false;
 	}
 
 	m_hHwnd = (HWND)window_impl().value();
@@ -232,13 +235,26 @@ noresult WebGUI::run_impl()
 #endif
 }
 
+bool WebGUI::Navigate(const char *sURL)
+{
+	if (sURL) {
+		try {
+			navigate(sURL);
+		} catch (const webview::exception &e) {
+			LOGE("%s\n", (const char *)e.what());
+			return false;
+		}
+		return true;
+	}
+	return false;
+}
+
 bool WebGUI::Run(const char *sURL)
 {
 	cstring sUrl(sURL);
 	sUrl = sURL ? sURL : "http://127.0.0.1";
 	if (m_iPort)
 		sUrl.AppendFormat(":%d", m_iPort);
-
 	try {
 		navigate(sUrl.c_str());
 		run();
@@ -248,4 +264,74 @@ bool WebGUI::Run(const char *sURL)
 	}
 
 	return true;
+}
+
+bool WebGUI::CallJScript(const char *sFormat, ...)
+{
+	bool bRet = true;
+	if (sFormat) {
+		int		iLen = 0;
+		va_list vaArgs;
+		va_start(vaArgs, sFormat);
+		{
+			// get size only
+			va_list vaCopy;
+			va_copy(vaCopy, vaArgs);
+			iLen = std::vsnprintf(NULL, 0, sFormat, vaCopy);
+			va_end(vaCopy);
+		}
+		{
+			char			 *pBuff = new char[iLen + 1];
+			std::vector<char> zc(iLen + 1);
+			std::vsnprintf(pBuff, iLen + 1, sFormat, vaArgs);
+			va_end(vaArgs);
+
+			try {
+				eval(pBuff);
+			} catch (const webview::exception &e) {
+				LOGE("%s\n", (const char *)e.what());
+				bRet = false;
+			}
+
+			delete[] pBuff;
+		}
+	}
+
+	return bRet;
+}
+
+bool WebGUI::Bind(const std::string &name, WebGUI_binding_t fn)
+{
+	auto wrapper = [this, fn](const std::string &id, const std::string &req, void * /*arg*/) {
+		JsonArg args(req);
+		cstring result;
+		fn(args, result);
+		resolve(id, 0, result.c_string());
+	};
+	try {
+		bind(name, wrapper, nullptr);
+	} catch (const webview::exception &e) {
+		LOGE("%s\n", (const char *)e.what());
+		return false;
+	}
+	return true;
+}
+
+bool WebGUI::Unbind(const char *sName)
+{
+	if (sName) {
+		string s(sName);
+		try {
+			unbind(s);
+		} catch (const webview::exception &e) {
+			LOGE("%s\n", (const char *)e.what());
+			return false;
+		}
+	}
+	return true;
+}
+
+void WebGUI::Teminate(void)
+{
+	terminate();
 }

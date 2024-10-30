@@ -31,13 +31,13 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 10/29/2024 Tue (clonextop@gmail.com)
+// Rev.  : 10/30/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __WEB_GUI_H__
 #define __WEB_GUI_H__
 #include "webview.h"
 #include "httpServer.h"
-#include "json/json.h"
+#include <json/json.h>
 
 typedef enum {
 	WEBGUI_SIZE_NORMAL,
@@ -65,7 +65,7 @@ public:
 	virtual ~JsonArg(void);
 };
 
-class WebGUI : public webview::webview, private httpServer
+class WebGUI : private webview::webview, private httpServer
 {
 	HWND		m_hHwnd;
 	cstring		m_sRootPath;
@@ -84,15 +84,25 @@ public:
 	WebGUI(void);
 	virtual ~WebGUI(void);
 
+	using WebGUI_binding_t = std::function<void(const JsonArg &, cstring &)>;
+
+	// common
 	bool Initialize(
 		WEBGUI_MODE mode = WEBGUI_MODE_STANALONE, uint16_t iPort = 0, const char *sHttpsKey = NULL, const char *sHttpsCert = NULL,
 		const char *sRootCa = NULL);
+	// server side function
 	void SetRootPath(const char *sRootPath);
+	// client side function
 	void SetTitle(const char *sTitle);
 	void SetSize(int iWidth, int iHeight, WEBGUI_SIZE hint = WEBGUI_SIZE_NORMAL);
 	void EnableWinButton(WEBGUI_BTN btn, bool bEnable = true);
 	void SetFullScreen(bool bEnable = true);
+	bool Navigate(const char *sURL);
 	bool Run(const char *sURL = NULL);
+	bool CallJScript(const char *sFormat, ...);
+	bool Bind(const std::string &name, WebGUI_binding_t fn);
+	bool Unbind(const char *sName);
+	void Teminate(void);
 
 protected:
 	virtual bool	  OnInitialize(void);

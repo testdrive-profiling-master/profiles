@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Test
-// Rev.  : 10/29/2024 Tue (clonextop@gmail.com)
+// Rev.  : 10/30/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include "WebGUI.h"
 
@@ -40,40 +40,20 @@ class WebGUI_imp : public WebGUI
 public:
 	WebGUI_imp(void)
 	{
-		bind("PressBtn", [&](const string &sArg) -> string {
-			JsonArg val(sArg);
-
-			cstring sJavascript;
-			sJavascript.Format("$('#cpp_output').text(\"PressBtn(%d, '%s')\");\n", val[0].asInt(), val[1].asCString());
-			eval(sJavascript.c_string());
-			return "";
+		Bind("PressBtn", [&](const JsonArg &args, cstring &result) {
+			CallJScript("$('#cpp_output').text(\"PressBtn(%d, '%s')\");", args[0].asInt(), args[1].asCString());
 		});
 
-		bind("RadioBtn", [&](const string &sArg) -> string {
-			JsonArg val(sArg);
-
-			cstring sJavascript;
-			sJavascript.Format("$('#cpp_output').text(\"RadioBtn(%s)\");\n", val[0].asCString());
-			eval(sJavascript.c_string());
-			return "";
+		Bind("RadioBtn", [&](const JsonArg &args, cstring &result) {
+			CallJScript("$('#cpp_output').text(\"RadioBtn(%s)\");", args[0].asCString());
 		});
 
-		bind("CheckBtn", [&](const string &sArg) -> string {
-			JsonArg val(sArg);
-
-			cstring sJavascript;
-			sJavascript.Format("$('#cpp_output').text(\"CheckBtn(%s)\");\n", val[0].asBool() ? "true" : "false");
-			eval(sJavascript.c_string());
-			return "";
+		Bind("CheckBtn", [&](const JsonArg &args, cstring &result) {
+			CallJScript("$('#cpp_output').text(\"CheckBtn(%s)\");", args[0].asBool() ? "true" : "false");
 		});
 
-		bind("SetText", [&](const string &sArg) -> string {
-			JsonArg val(sArg);
-
-			cstring sJavascript;
-			sJavascript.Format("$('#cpp_output').text(\"%s\");\n", val[0].asCString());
-			eval(sJavascript.c_string());
-			return "";
+		Bind("SetText", [&](const JsonArg &args, cstring &result) {
+			CallJScript("$('#cpp_output').text(\"%s\");", args[0].asCString());
 		});
 	}
 	virtual ~WebGUI_imp(void) {}
