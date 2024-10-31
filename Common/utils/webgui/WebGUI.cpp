@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : WebGUI project
-// Rev.  : 10/30/2024 Wed (clonextop@gmail.com)
+// Rev.  : 10/31/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "WebGUI.h"
 #include <time.h>
@@ -99,7 +99,9 @@ void WebGUI::SetRootPath(const char *sRootPath)
 
 void WebGUI::SetTitle(const char *sTitle)
 {
-	set_title(sTitle);
+	if (sTitle) {
+		set_title(sTitle);
+	}
 }
 
 void WebGUI::SetSize(int iWidth, int iHeight, WEBGUI_SIZE hint)
@@ -345,7 +347,7 @@ bool WebGUI::Unbind(const char *sName)
 	return true;
 }
 
-void WebGUI::Teminate(void)
+void WebGUI::Terminate(void)
 {
 	terminate();
 }

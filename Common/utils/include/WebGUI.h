@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 10/30/2024 Wed (clonextop@gmail.com)
+// Rev.  : 10/31/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __WEB_GUI_H__
 #define __WEB_GUI_H__
@@ -58,7 +58,7 @@ typedef enum {
 	WEBGUI_MODE_CLIENT
 } WEBGUI_MODE;
 
-class WebGUI : private webview::webview, private httpServer
+class WebGUI : protected webview::webview, protected httpServer
 {
 public:
 #ifdef _WIN32
@@ -107,7 +107,7 @@ public:
 	bool	   CallJScript(const char *sFormat, ...);
 	bool	   Bind(const char *name, WebGUI_binding_t fn);
 	bool	   Unbind(const char *sName);
-	void	   Teminate(void);
+	void	   Terminate(void);
 	WIN_HANDLE WindowHandle(void);
 
 protected:
