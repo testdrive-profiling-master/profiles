@@ -41,13 +41,9 @@ public:
 	WebGUI_imp(void)
 	{
 		JScript(PressBtn, { CallJScript("$('#cpp_output').text(\"PressBtn(%d, '%s')\");", args[0].asInt(), args[1].asCString()); });
-
 		JScript(RadioBtn, { CallJScript("$('#cpp_output').text(\"RadioBtn(%s)\");", args[0].asCString()); });
-
 		JScript(CheckBtn, { CallJScript("$('#cpp_output').text(\"CheckBtn(%s)\");", args[0].asBool() ? "true" : "false"); });
-
 		JScript(SetText, { CallJScript("$('#cpp_output').text(\"%s\");", args[0].asCString()); });
-
 		JScript(OnLoad, {
 #ifndef USE_DEBUG // prevent context menu
 			CallJScript("document.body.setAttribute('oncontextmenu', 'return false;');");
