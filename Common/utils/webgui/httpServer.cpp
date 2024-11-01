@@ -234,7 +234,9 @@ bool httpServer::Send(struct MHD_Connection *connection, httpConnection *pCon)
 
 		if (response) {
 			if (m_sAllowedDomain.size())
-				MHD_add_response_header(response, "Access-Control-Allow-Origin", m_sAllowedDomain.c_str());
+				MHD_add_response_header(response, MHD_HTTP_HEADER_ACCESS_CONTROL_ALLOW_ORIGIN, m_sAllowedDomain.c_str());
+				//MHD_add_response_header(response, MHD_HTTP_HEADER_PERMISSIONS_POLICY, "camera=*");
+
 			// MHD_add_response_header(response, "Access-Control-Allow-Methods", "POST,GET,OPTIONS,DELETE");
 
 			if (pCon->DataType()) {

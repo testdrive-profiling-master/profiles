@@ -103,6 +103,16 @@ void WebGUI::SetSize(int iWidth, int iHeight, WEBGUI_SIZE hint)
 {
 	if (iWidth > 0 && iHeight > 0)
 		set_size(iWidth, iHeight, (webview_hint_t)hint);
+
+	if(hint == WEBGUI_SIZE_MIN || hint == WEBGUI_SIZE_FIXED) {
+		RECT rc;
+		GetWindowRect(m_hHwnd, &rc);
+		int cur_width = rc.right - rc.left;
+		int cur_height = rc.bottom - rc.top;
+		if(cur_width < iWidth || cur_height < iHeight) {
+			set_size(iWidth, iHeight, WEBVIEW_HINT_NONE);
+		}
+	}
 }
 
 bool WebGUI::OnInitialize(void)
