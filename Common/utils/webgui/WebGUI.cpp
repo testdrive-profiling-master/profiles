@@ -31,23 +31,18 @@
 // OF SUCH DAMAGE.
 //
 // Title : WebGUI project
-// Rev.  : 10/31/2024 Thu (clonextop@gmail.com)
+// Rev.  : 11/1/2024 Fri (clonextop@gmail.com)
 //================================================================================
 #include "WebGUI.h"
 #include <time.h>
 #include <stdarg.h>
 
 using namespace webview;
-#ifdef USE_DEBUG
-#	define WEBVIEW_DEBUG_ENABLE true
-#else
-#	define WEBVIEW_DEBUG_ENABLE false
-#endif
 
 #define WEBGUI_MIN_PORT 40000
 #define WEBGUI_MAX_PORT 50000
 
-WebGUI::WebGUI(void) : browser_engine(WEBVIEW_DEBUG_ENABLE, nullptr), m_FullScreen({0})
+WebGUI::WebGUI(bool bDebug) : httpServer(bDebug), browser_engine(bDebug, nullptr), m_FullScreen({0})
 {
 	srand((unsigned int)time(NULL)); // initialize for use rand()
 	m_hHwnd		   = NULL;
@@ -71,7 +66,7 @@ bool WebGUI::Initialize(WEBGUI_MODE mode, uint16_t iPort, const char *sHttpsKey,
 				return false;
 			}
 		} else {
-			// find port.
+			// find free port.
 			for (int i = WEBGUI_MIN_PORT; i <= WEBGUI_MAX_PORT; i++) {
 				iPort = WEBGUI_MIN_PORT + (((uint32_t)rand()) % (WEBGUI_MAX_PORT - WEBGUI_MIN_PORT + 1));
 				if (httpServer::Initialize(iPort, bInternalOnly, sHttpsKey, sHttpsCert, sRootCa)) {

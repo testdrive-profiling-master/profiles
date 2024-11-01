@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 10/31/2024 Thu (clonextop@gmail.com)
+// Rev.  : 11/1/2024 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __WEB_GUI_H__
 #define __WEB_GUI_H__
@@ -85,7 +85,7 @@ private:
 	} m_FullScreen;
 
 public:
-	WebGUI(void);
+	WebGUI(bool bDebug = DEBUG_ENABLE);
 	virtual ~WebGUI(void);
 
 	using WebGUI_binding_t = std::function<void(const ARGS &, cstring &)>;

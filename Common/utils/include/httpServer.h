@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 10/29/2024 Tue (clonextop@gmail.com)
+// Rev.  : 11/1/2024 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __HTTP_SERVER_H__
 #define __HTTP_SERVER_H__
@@ -111,45 +111,34 @@ private:
 	map<string, httpData>	  m_PostData;
 };
 
-struct httpServerCallback { // internal use only
-	virtual bool Callback_Accept(const struct sockaddr *addr, socklen_t addrlen) = 0;
-	virtual bool Callback_Access(
-		struct MHD_Connection *connection, const char *url, const char *method, const char *version, const char *upload_data,
-		size_t *upload_data_size, void **con_cls)											  = 0;
-	virtual void Callback_Complete(httpConnection *pCon, enum MHD_RequestTerminationCode toe) = 0;
-};
-
-class httpServer : private httpServerCallback
+class httpServer
 {
 public:
-	httpServer(const char *sAllowedDomain = "*");
+	httpServer(bool bDebug = false, const char *sAllowedDomain = "*");
 	virtual ~httpServer(void);
 
 	bool Initialize(
-		uint16_t iPort = 8080, bool bInternalOnly = false, const char *sHttpsKey = NULL, const char *sHttpsCert = NULL,
-		const char *sRootCa = NULL);
-	inline bool IsInitialized(void)
-	{
-		return m_pDaemon != NULL;
-	}
+		uint16_t	iPort		  = 8080,  // socket port number
+		bool		bInternalOnly = false, // internal use only, prevent connection from outside
+		const char *sHttpsKey = NULL, const char *sHttpsCert = NULL, const char *sRootCa = NULL // for secured http
+	);
 	void Release(void);
+	bool IsInitialized(void);
 	bool Send(struct MHD_Connection *connection, httpConnection *pCon);
 	bool SendFail(struct MHD_Connection *connection);
 
 protected:
-	virtual bool OnInitialize(void);
 	virtual bool OnGet(const char *sURL, httpConnection *pCon);
 	virtual bool OnPost(const char *sURL, httpConnection *pCon);
 
 private:
-	virtual bool Callback_Accept(const struct sockaddr *addr, socklen_t addrlen);
-	virtual bool Callback_Access(
+	bool Callback_Accept(const struct sockaddr *addr, socklen_t addrlen);
+	bool Callback_Access(
 		struct MHD_Connection *connection, const char *url, const char *method, const char *version, const char *upload_data,
 		size_t *upload_data_size, void **con_cls);
-	virtual void Callback_Complete(httpConnection *pCon, enum MHD_RequestTerminationCode toe);
+	void Callback_Complete(httpConnection *pCon, enum MHD_RequestTerminationCode toe);
 
 private:
-	bool			   m_bInternalOnly;
 	cstring			   m_sAllowedDomain;
 	struct MHD_Daemon *m_pDaemon;
 };

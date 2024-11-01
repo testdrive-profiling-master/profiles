@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 7/24/2024 Wed (clonextop@gmail.com)
+// Rev.  : 11/1/2024 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __STD_INTERFACE_H__
 #define __STD_INTERFACE_H__
@@ -106,5 +106,13 @@ typedef DWORD KPTR;
 		(x)->Release();                                                                                                                         \
 		(x) = NULL;                                                                                                                             \
 	}
+
+#ifndef DEBUG_ENABLE
+#	ifdef USE_DEBUG
+#		define DEBUG_ENABLE true
+#	else
+#		define DEBUG_ENABLE false
+#	endif
+#endif
 
 #endif //__STD_INTERFACE_H__

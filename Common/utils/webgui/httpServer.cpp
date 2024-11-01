@@ -39,46 +39,11 @@
 #include <stdlib.h>
 #include "httpServer.h"
 
-// call back functions
-extern "C" {
-static enum MHD_Result __AcceptPolicyCallback(void *cls, const struct sockaddr *addr, socklen_t addrlen)
-{
-	return (enum MHD_Result)((httpServerCallback *)cls)->Callback_Accept(addr, addrlen);
-}
-
-static int __AccessHandlerCallback(
-	void *cls, struct MHD_Connection *connection, const char *url, const char *method, const char *version, const char *upload_data,
-	size_t *upload_data_size, void **con_cls)
-{
-	return (enum MHD_Result)((httpServerCallback *)cls)
-		->Callback_Access(connection, url, method, version, upload_data, upload_data_size, con_cls);
-}
-
-static void __NotifyCompeletedCallback(void *cls, struct MHD_Connection *connection, void **con_cls, enum MHD_RequestTerminationCode toe)
-{
-	httpConnection *pConnection = (httpConnection *)*con_cls;
-	if (cls)
-		((httpServerCallback *)cls)->Callback_Complete(pConnection, toe);
-
-	if (pConnection) {
-		delete pConnection;
-		*con_cls = NULL;
-	}
-}
-
-static int __PostDataProcessorCallback(
-	void *coninfo_cls, enum MHD_ValueKind kind, const char *key, const char *filename, const char *content_type, const char *transfer_encoding,
-	const char *data, uint64_t off, size_t size)
-{
-	LOGI("Iterate_post : kind(%d) key(%s) filename(%s) content_type(%s) size(%d)", (int)kind, key, filename, content_type, size);
-
-	if (kind == MHD_POSTDATA_KIND && key) {
-		((httpConnection *)coninfo_cls)->PostData()[key].Set(data, off, size);
-	}
-
-	return MHD_YES;
-}
-};
+static bool __bDebug = false;
+// clang-format off
+#define DLOGI(...) 		{if(__bDebug) LOGI(__VA_ARGS__);}
+#define DLOGE(...) 		{if(__bDebug) LOGE(__VA_ARGS__);}
+// clang-format on
 
 httpData::httpData(void)
 {
@@ -132,7 +97,20 @@ httpConnection::httpConnection(HTTP_METHOD method, struct MHD_Connection *pConne
 	m_iDataByteSize	 = 0;
 
 	if (method == HTTP_METHOD_POST) {
-		m_pPostProcessor = MHD_create_post_processor(pConnection, 65536, (MHD_PostDataIterator)__PostDataProcessorCallback, (void *)this);
+		m_pPostProcessor = MHD_create_post_processor(
+			pConnection, 65536,
+			(MHD_PostDataIterator)([](void *coninfo_cls, enum MHD_ValueKind kind, const char *key, const char *filename,
+									  const char *content_type, const char *transfer_encoding, const char *data, uint64_t off,
+									  size_t size) -> MHD_Result {
+				DLOGI("Iterate_post : kind(%d) key(%s) filename(%s) content_type(%s) size(%d)", (int)kind, key, filename, content_type, size);
+
+				if (kind == MHD_POSTDATA_KIND && key) {
+					((httpConnection *)coninfo_cls)->PostData()[key].Set(data, off, size);
+				}
+
+				return MHD_YES;
+			}),
+			(void *)this);
 	}
 }
 
@@ -146,13 +124,13 @@ httpConnection::~httpConnection(void)
 	SetData(NULL);
 }
 
-httpServer::httpServer(const char *sAllowedDomain)
+httpServer::httpServer(bool bDebug, const char *sAllowedDomain)
 {
+	__bDebug = bDebug;
 	if (sAllowedDomain && *sAllowedDomain)
 		m_sAllowedDomain = sAllowedDomain;
 
-	m_pDaemon		= NULL;
-	m_bInternalOnly = false;
+	m_pDaemon = NULL;
 }
 
 httpServer::~httpServer(void)
@@ -163,6 +141,7 @@ httpServer::~httpServer(void)
 bool httpServer::Initialize(uint16_t iPort, bool bInternalOnly, const char *sHttpsKey, const char *sHttpsCert, const char *sRootCa)
 {
 	Release();
+	unsigned int MHD_flags = MHD_USE_AUTO_INTERNAL_THREAD;
 	typedef struct {
 		enum MHD_OPTION id;
 		const void	   *pdata;
@@ -185,10 +164,10 @@ bool httpServer::Initialize(uint16_t iPort, bool bInternalOnly, const char *sHtt
 			set_option(MHD_OPTION_HTTPS_MEM_CERT, sHttpsCert);
 		if (sRootCa)
 			set_option(MHD_OPTION_HTTPS_MEM_TRUST, sRootCa);
+		MHD_flags |= MHD_USE_SSL;
 	}
 	struct sockaddr_in loopback_addr;
 	if (bInternalOnly) {
-		m_bInternalOnly = bInternalOnly;
 		// internal loopback connection only
 		memset(&loopback_addr, 0, sizeof(loopback_addr));
 		loopback_addr.sin_family	  = AF_INET;
@@ -200,21 +179,37 @@ bool httpServer::Initialize(uint16_t iPort, bool bInternalOnly, const char *sHtt
 
 #define OPTION_LIST(n) opt[n].id, opt[n].pdata
 	m_pDaemon = MHD_start_daemon(
-		MHD_USE_AUTO_INTERNAL_THREAD | (bSecure ? MHD_USE_SSL : 0), iPort,			  // type & port
-		(MHD_AcceptPolicyCallback)__AcceptPolicyCallback, (httpServerCallback *)this, // accept all
-		(MHD_AccessHandlerCallback)__AccessHandlerCallback, this,					  // answer
-		MHD_OPTION_NOTIFY_COMPLETED, __NotifyCompeletedCallback, this,				  // completion
-		OPTION_LIST(0),																  // #0
-		OPTION_LIST(1),																  // #1
-		OPTION_LIST(2),																  // #2
-		OPTION_LIST(3),																  // #3
-		OPTION_LIST(4),																  // #4
+		MHD_flags, iPort, // type & port
+		(MHD_AcceptPolicyCallback)([](void *cls, const struct sockaddr *addr, socklen_t addrlen) -> MHD_Result {
+			return (enum MHD_Result)((httpServer *)cls)->Callback_Accept(addr, addrlen);
+		}),
+		this, // accept callback
+		(MHD_AccessHandlerCallback)([](void *cls, struct MHD_Connection *connection, const char *url, const char *method, const char *version,
+									   const char *upload_data, size_t *upload_data_size, void **req_cls) -> MHD_Result {
+			return (enum MHD_Result)((httpServer *)cls)
+				->Callback_Access(connection, url, method, version, upload_data, upload_data_size, req_cls);
+		}),
+		this, // answer callback
+		MHD_OPTION_NOTIFY_COMPLETED,
+		(MHD_RequestCompletedCallback)([](void *cls, struct MHD_Connection *connection, void **con_cls, enum MHD_RequestTerminationCode toe) {
+			httpConnection *pConnection = (httpConnection *)*con_cls;
+			if (cls)
+				((httpServer *)cls)->Callback_Complete(pConnection, toe);
+
+			if (pConnection) {
+				delete pConnection;
+				*con_cls = NULL;
+			}
+		}),
+		this,			// completion
+		OPTION_LIST(0), // #0
+		OPTION_LIST(1), // #1
+		OPTION_LIST(2), // #2
+		OPTION_LIST(3), // #3
+		OPTION_LIST(4), // #4
 		MHD_OPTION_END);
 
-	if (m_pDaemon)
-		return OnInitialize();
-
-	return false;
+	return IsInitialized();
 }
 
 void httpServer::Release(void)
@@ -223,6 +218,11 @@ void httpServer::Release(void)
 		MHD_stop_daemon(m_pDaemon);
 		m_pDaemon = NULL;
 	}
+}
+
+bool httpServer::IsInitialized(void)
+{
+	return (m_pDaemon != NULL);
 }
 
 bool httpServer::Send(struct MHD_Connection *connection, httpConnection *pCon)
@@ -272,24 +272,14 @@ bool httpServer::SendFail(struct MHD_Connection *connection)
 	return ret;
 }
 
-bool httpServer::OnInitialize(void)
-{
-	return true;
-}
-
 bool httpServer::Callback_Accept(const struct sockaddr *addr, socklen_t addrlen)
 {
-	if (m_bInternalOnly) {
-		sockaddr_in *s = (sockaddr_in *)addr;
-		if (s->sin_addr.S_un.S_addr != 0x0100007F)
-			return false;
-	}
 	return true;
 }
 
 bool httpServer::Callback_Access(
 	struct MHD_Connection *connection, const char *url, const char *method, const char *version, const char *upload_data,
-	size_t *upload_data_size, void **con_cls)
+	size_t *upload_data_size, void **req_cls)
 {
 	HTTP_METHOD method_id;
 	if (!strcmp(method, "GET"))
@@ -304,18 +294,18 @@ bool httpServer::Callback_Access(
 		return false;
 
 	// grant a request.
-	if (!*con_cls) {
+	if (!*req_cls) {
 		httpConnection *pConnection = new httpConnection(method_id, connection);
 
 		if (!pConnection)
 			return false;
 
-		*con_cls = (void *)pConnection;
+		*req_cls = (void *)pConnection;
 		return true;
 	}
 
-	httpConnection *pConnection = (httpConnection *)*con_cls;
-	LOGI("Connection(0x%p:0x%p)[%s] : %s", connection, pConnection, method, url);
+	httpConnection *pConnection = (httpConnection *)*req_cls;
+	DLOGI("Connection(0x%p:0x%p)[%s] : %s", connection, pConnection, method, url);
 
 	switch (method_id) {
 	case HTTP_METHOD_GET: {
