@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Test
-// Rev.  : 10/30/2024 Wed (clonextop@gmail.com)
+// Rev.  : 11/1/2024 Fri (clonextop@gmail.com)
 //================================================================================
 #include "WebGUI.h"
 
@@ -40,20 +40,18 @@ class WebGUI_imp : public WebGUI
 public:
 	WebGUI_imp(void)
 	{
-		Bind("PressBtn", [&](const ARGS &args, cstring &result) {
-			CallJScript("$('#cpp_output').text(\"PressBtn(%d, '%s')\");", args[0].asInt(), args[1].asCString());
-		});
+		JScript(PressBtn, { CallJScript("$('#cpp_output').text(\"PressBtn(%d, '%s')\");", args[0].asInt(), args[1].asCString()); });
 
-		Bind("RadioBtn", [&](const ARGS &args, cstring &result) {
-			CallJScript("$('#cpp_output').text(\"RadioBtn(%s)\");", args[0].asCString());
-		});
+		JScript(RadioBtn, { CallJScript("$('#cpp_output').text(\"RadioBtn(%s)\");", args[0].asCString()); });
 
-		Bind("CheckBtn", [&](const ARGS &args, cstring &result) {
-			CallJScript("$('#cpp_output').text(\"CheckBtn(%s)\");", args[0].asBool() ? "true" : "false");
-		});
+		JScript(CheckBtn, { CallJScript("$('#cpp_output').text(\"CheckBtn(%s)\");", args[0].asBool() ? "true" : "false"); });
 
-		Bind("SetText", [&](const ARGS &args, cstring &result) {
-			CallJScript("$('#cpp_output').text(\"%s\");", args[0].asCString());
+		JScript(SetText, { CallJScript("$('#cpp_output').text(\"%s\");", args[0].asCString()); });
+
+		JScript(OnLoad, {
+#ifndef USE_DEBUG // prevent context menu
+			CallJScript("document.body.setAttribute('oncontextmenu', 'return false;');");
+#endif
 		});
 	}
 	virtual ~WebGUI_imp(void) {}

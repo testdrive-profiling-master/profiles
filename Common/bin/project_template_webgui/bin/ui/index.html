@@ -19,7 +19,7 @@
 		// prevent user-zoom control
 		let handlingScroll = false;
 		window.addEventListener('keydown', function (event) {
-			if (event.ctrlKey === true && handlingScroll === true) {
+			if ((event.ctrlKey === true && handlingScroll === true) || (event.keyCode == 114/*F3:search*/) || (event.keyCode == 118/*F7:keyboard context*/)) {
 				event.preventDefault();
 			}
 		}, {passive: false});
@@ -61,7 +61,7 @@
 		});
 	});
 </SCRIPT>
-<body id="page-top" class="d-flex flex-column" ondragstart="return false;" ondrop="return false;">
+<body id="page-top" class="d-flex flex-column" ondragstart="return false;" ondrop="return false;" onload="window.OnLoad();">
 	<div class="card mt-2 small border-0" id="top_nav">
 		<div class="card-header bg-white pt-0 mt-0">
 			<div id="titlebar" class="nav nav-tabs card-header-tabs bg-white">

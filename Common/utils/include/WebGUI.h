@@ -110,6 +110,8 @@ public:
 	void	   Terminate(void);
 	WIN_HANDLE WindowHandle(void);
 
+#define JScript(name, ...) Bind(#name, [&](const ARGS &args, cstring &result) __VA_ARGS__)
+
 protected:
 	virtual bool OnInitialize(void);
 	virtual bool OnClose(void);

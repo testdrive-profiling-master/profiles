@@ -261,7 +261,7 @@ bool httpServer::SendFail(struct MHD_Connection *connection)
 
 	if (response) {
 		if (m_sAllowedDomain.size())
-			MHD_add_response_header(response, "Access-Control-Allow-Origin", "*");
+			MHD_add_response_header(response, MHD_HTTP_HEADER_ACCESS_CONTROL_ALLOW_ORIGIN, "*");
 
 		ret = (bool)MHD_queue_response(connection, MHD_HTTP_NOT_FOUND, response);
 		MHD_destroy_response(response);
