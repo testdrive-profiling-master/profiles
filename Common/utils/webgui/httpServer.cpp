@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : WebGUI project
-// Rev.  : 10/29/2024 Tue (clonextop@gmail.com)
+// Rev.  : 11/1/2024 Fri (clonextop@gmail.com)
 //================================================================================
 #include <sys/types.h>
 #include <stdio.h>
@@ -163,19 +163,19 @@ httpServer::~httpServer(void)
 bool httpServer::Initialize(uint16_t iPort, bool bInternalOnly, const char *sHttpsKey, const char *sHttpsCert, const char *sRootCa)
 {
 	Release();
-	int i = 0;
 	typedef struct {
 		enum MHD_OPTION id;
 		const void	   *pdata;
 	} MHD_OPT;
 	MHD_OPT opt[5];
+	int		opt_index  = 0;
 	auto	set_option = [&](enum MHD_OPTION id, const void *pdata) {
-		   opt[i].id	= id;
-		   opt[i].pdata = pdata;
-		   i++;
+		   opt[opt_index].id	= id;
+		   opt[opt_index].pdata = pdata;
+		   opt_index++;
 	};
-#define OPTION_LIST(n) opt[n].id, opt[n].id
 	memset(opt, 0, sizeof(opt));
+
 	// #1,2 secured connection
 	bool bSecure = (sHttpsKey != NULL || sHttpsCert != NULL || sRootCa != NULL);
 	if (bSecure) {
@@ -189,16 +189,16 @@ bool httpServer::Initialize(uint16_t iPort, bool bInternalOnly, const char *sHtt
 	struct sockaddr_in loopback_addr;
 	if (bInternalOnly) {
 		m_bInternalOnly = bInternalOnly;
-		// #3 loopback only
-		// not working : I don't know why?
-		/*memset(&loopback_addr, 0, sizeof(loopback_addr));
+		// internal loopback connection only
+		memset(&loopback_addr, 0, sizeof(loopback_addr));
 		loopback_addr.sin_family	  = AF_INET;
 		loopback_addr.sin_port		  = htons(iPort);
 		loopback_addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 
-		set_option(MHD_OPTION_SOCK_ADDR, (struct sockaddr *)&loopback_addr);*/
+		set_option(MHD_OPTION_SOCK_ADDR, (struct sockaddr *)&loopback_addr);
 	}
 
+#define OPTION_LIST(n) opt[n].id, opt[n].pdata
 	m_pDaemon = MHD_start_daemon(
 		MHD_USE_AUTO_INTERNAL_THREAD | (bSecure ? MHD_USE_SSL : 0), iPort,			  // type & port
 		(MHD_AcceptPolicyCallback)__AcceptPolicyCallback, (httpServerCallback *)this, // accept all
