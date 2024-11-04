@@ -40,11 +40,11 @@ class WebGUI_imp : public WebGUI
 public:
 	WebGUI_imp(void)
 	{
-		JScript(PressBtn, { CallJScript("$('#cpp_output').text(\"PressBtn(%d, '%s')\");", args[0].asInt(), args[1].asCString()); });
-		JScript(RadioBtn, { CallJScript("$('#cpp_output').text(\"RadioBtn(%s)\");", args[0].asCString()); });
-		JScript(CheckBtn, { CallJScript("$('#cpp_output').text(\"CheckBtn(%s)\");", args[0].asBool() ? "true" : "false"); });
-		JScript(SetText, { CallJScript("$('#cpp_output').text(\"%s\");", args[0].asCString()); });
-		JScript(OnLoad, {
+		Bind("PressBtn", [&](const ARGS &args, cstring &result) { CallJScript("$('#cpp_output').text(\"PressBtn(%d, '%s')\");", args[0].asInt(), args[1].asCString()); });
+		Bind("RadioBtn", [&](const ARGS &args, cstring &result) { CallJScript("$('#cpp_output').text(\"RadioBtn(%s)\");", args[0].asCString()); });
+		Bind("CheckBtn", [&](const ARGS &args, cstring &result) { CallJScript("$('#cpp_output').text(\"CheckBtn(%s)\");", args[0].asBool() ? "true" : "false"); });
+		Bind("SetText", [&](const ARGS &args, cstring &result) { CallJScript("$('#cpp_output').text(\"%s\");", args[0].asCString()); });
+		Bind("OnLoad", [&](const ARGS &args, cstring &result) {
 #ifndef USE_DEBUG // prevent context menu
 			CallJScript("document.body.setAttribute('oncontextmenu', 'return false;');");
 #endif
