@@ -44,6 +44,7 @@ typedef enum {
 	HTTP_METHOD_POST,
 	HTTP_METHOD_PUT,
 	HTTP_METHOD_DELETE,
+	HTTP_METHOD_HEAD,
 } HTTP_METHOD;
 
 class httpData
@@ -132,7 +133,7 @@ protected:
 	virtual bool OnPost(const char *sURL, httpConnection *pCon);
 
 private:
-	bool Callback_Accept(const struct sockaddr *addr, socklen_t addrlen);
+	bool Callback_Accept(const struct sockaddr_in *addr);
 	bool Callback_Access(
 		struct MHD_Connection *connection, const char *url, const char *method, const char *version, const char *upload_data,
 		size_t *upload_data_size, void **con_cls);

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : WebGUI project
-// Rev.  : 11/1/2024 Fri (clonextop@gmail.com)
+// Rev.  : 11/4/2024 Mon (clonextop@gmail.com)
 //================================================================================
 #include <sys/types.h>
 #include <stdio.h>
@@ -41,8 +41,8 @@
 
 static bool __bDebug = false;
 // clang-format off
-#define DLOGI(...) 		{if(__bDebug) LOGI(__VA_ARGS__);}
-#define DLOGE(...) 		{if(__bDebug) LOGE(__VA_ARGS__);}
+#define DLOGI(...) 		do {if(__bDebug) LOGI(__VA_ARGS__);} while(0)
+#define DLOGE(...) 		do {if(__bDebug) LOGE(__VA_ARGS__);} while(0)
 // clang-format on
 
 httpData::httpData(void)
@@ -181,7 +181,7 @@ bool httpServer::Initialize(uint16_t iPort, bool bInternalOnly, const char *sHtt
 	m_pDaemon = MHD_start_daemon(
 		MHD_flags, iPort, // type & port
 		(MHD_AcceptPolicyCallback)([](void *cls, const struct sockaddr *addr, socklen_t addrlen) -> MHD_Result {
-			return (enum MHD_Result)((httpServer *)cls)->Callback_Accept(addr, addrlen);
+			return (enum MHD_Result)((httpServer *)cls)->Callback_Accept((struct sockaddr_in *)addr);
 		}),
 		this, // accept callback
 		(MHD_AccessHandlerCallback)([](void *cls, struct MHD_Connection *connection, const char *url, const char *method, const char *version,
@@ -234,15 +234,14 @@ bool httpServer::Send(struct MHD_Connection *connection, httpConnection *pCon)
 
 		if (response) {
 			if (m_sAllowedDomain.size())
-				MHD_add_response_header(response, MHD_HTTP_HEADER_ACCESS_CONTROL_ALLOW_ORIGIN, m_sAllowedDomain.c_str());
-				//MHD_add_response_header(response, MHD_HTTP_HEADER_PERMISSIONS_POLICY, "camera=*");
+				// MHD_add_response_header(response, MHD_HTTP_HEADER_ACCESS_CONTROL_ALLOW_ORIGIN, m_sAllowedDomain.c_str());
+				// MHD_add_response_header(response, MHD_HTTP_HEADER_PERMISSIONS_POLICY, "camera=*");
+				// MHD_add_response_header(response, "Access-Control-Allow-Methods", "POST,GET,OPTIONS,DELETE");
 
-			// MHD_add_response_header(response, "Access-Control-Allow-Methods", "POST,GET,OPTIONS,DELETE");
-
-			if (pCon->DataType()) {
-				// 	qMHD_add_response_header(response, MHD_HTTP_HEADER_ACCEPT_RANGES, "bytes");
-				MHD_add_response_header(response, MHD_HTTP_HEADER_CONTENT_TYPE, pCon->DataType());
-			}
+				if (pCon->DataType()) {
+					// 	qMHD_add_response_header(response, MHD_HTTP_HEADER_ACCEPT_RANGES, "bytes");
+					MHD_add_response_header(response, MHD_HTTP_HEADER_CONTENT_TYPE, pCon->DataType());
+				}
 
 			ret = (bool)MHD_queue_response(connection, MHD_HTTP_OK, response);
 			MHD_destroy_response(response);
@@ -262,9 +261,6 @@ bool httpServer::SendFail(struct MHD_Connection *connection)
 	struct MHD_Response *response = MHD_create_response_from_buffer(0, NULL, MHD_RESPMEM_MUST_FREE);
 
 	if (response) {
-		if (m_sAllowedDomain.size())
-			MHD_add_response_header(response, MHD_HTTP_HEADER_ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-
 		ret = (bool)MHD_queue_response(connection, MHD_HTTP_NOT_FOUND, response);
 		MHD_destroy_response(response);
 	} else {
@@ -274,9 +270,17 @@ bool httpServer::SendFail(struct MHD_Connection *connection)
 	return ret;
 }
 
-bool httpServer::Callback_Accept(const struct sockaddr *addr, socklen_t addrlen)
+bool httpServer::Callback_Accept(const struct sockaddr_in *addr)
 {
+	DLOGI("Accept : %s", inet_ntoa(addr->sin_addr));
 	return true;
+}
+
+void httpServer::Callback_Complete(httpConnection *pCon, enum MHD_RequestTerminationCode toe)
+{
+	static const char *__complete_list[] = {"Ok", "Error", "Timeout", "Daemon shutdown", "Read error", "Client abort"};
+	if (toe != MHD_REQUEST_TERMINATED_COMPLETED_OK)
+		DLOGE("Complete(0x%p) : %s.", pCon, __complete_list[(int)toe]);
 }
 
 bool httpServer::Callback_Access(
@@ -284,14 +288,16 @@ bool httpServer::Callback_Access(
 	size_t *upload_data_size, void **req_cls)
 {
 	HTTP_METHOD method_id;
-	if (!strcmp(method, "GET"))
+	if (!strcmp(method, MHD_HTTP_METHOD_GET))
 		method_id = HTTP_METHOD_GET;
-	else if (!strcmp(method, "POST"))
+	else if (!strcmp(method, MHD_HTTP_METHOD_POST))
 		method_id = HTTP_METHOD_POST;
-	else if (!strcmp(method, "PUT"))
+	else if (!strcmp(method, MHD_HTTP_METHOD_PUT))
 		method_id = HTTP_METHOD_PUT;
-	else if (!strcmp(method, "DELETE"))
+	else if (!strcmp(method, MHD_HTTP_METHOD_DELETE))
 		method_id = HTTP_METHOD_DELETE;
+	else if (!strcmp(method, MHD_HTTP_METHOD_HEAD))
+		method_id = HTTP_METHOD_HEAD;
 	else
 		return false;
 
@@ -346,8 +352,6 @@ bool httpServer::OnPost(const char *sURL, httpConnection *pCon)
 {
 	return false;
 }
-
-void httpServer::Callback_Complete(httpConnection *pCon, enum MHD_RequestTerminationCode toe) {}
 
 bool httpConnection::ConfirmPostData(const char *sData, size_t *pSize)
 {
