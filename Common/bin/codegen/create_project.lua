@@ -3,7 +3,8 @@ if sProfilePath:GetEnvironment("TESTDRIVE_PROFILE") == false then
 	LOGE("You must run the TestDrive once.")
 	os.exit(1)
 end
-sProfilePath	= sProfilePath.s
+local bEclipseEnv	= true
+sProfilePath		= sProfilePath.s
 
 local Arg = ArgTable("Template project generator with TestDrive Profiling Master.")
 
@@ -18,6 +19,7 @@ Arg:AddRemark			(nil, "'v_bare', 'verilog_bare' : bared verilog project")
 Arg:AddRemark			(nil, "'verigen'                : verigen project")
 Arg:AddRemark			(nil, "'docgen'                 : docgen project")
 Arg:AddRemark			(nil, "'docgen_simplified'      : docgen simplified project")
+Arg:AddRemark			(nil, "'vue'                    : Vue.js project")
 Arg:AddOptionString		("project_name", nil, nil, nil, "project_name", "Project name")
 
 	
@@ -300,30 +302,49 @@ elseif (sType == "docgen_simplified") then
 	os.execute("explorer " .. sProjectName)
 	print("Run 'build.bat' to build document.")
 	os.exit(1)
+elseif (sType == "vue") then
+	LOGI("Create Vue project : '" .. sProjectName .. "'")
+	
+	local sProjectName = String(sProjectName)
+	sProjectName:MakeLower()
+
+	os.execute("vue create -d " .. sProjectName.s)
+	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_vue/.\" " .. sProjectName.s .. "/")
+
+	lfs.chdir(sProjectName.s)
+	os.execute("npm install webpack-dev-server --save-dev")
+	os.execute("git add *.bat")
+	os.execute("git add -u")
+	os.execute("git commit -m \"Fixed for automatic devmode by TestDrive Profiling Master.\"")
+	os.execute("explorer .")--]]
+
+	bEclipseEnv = false
 else
 	LOGE("Invalid project type : '" .. sType .. "'. Please refer 'help' with \"create_project --help\" command.")
 	os.exit(1)
 end
 
-do	-- delete previous eclipse workspace to avoid conflict
-	lfs.chdir(sProjectPath)
-	sProjectPath	= lfs.currentdir()
-	local sWorkspacePath = String(sProjectPath)
-	
-	while(sWorkspacePath:find("\\", 0) > 0) do
-		sWorkspacePath:CutBack("\\")
+if bEclipseEnv then
+	do	-- delete previous eclipse workspace to avoid conflict
+		lfs.chdir(sProjectPath)
+		sProjectPath	= lfs.currentdir()
+		local sWorkspacePath = String(sProjectPath)
 		
-		if lfs.attributes(sWorkspacePath.s .. "/.workspace/") ~= nil then
-			local sFindPath = String(sProjectPath)
-			sFindPath:erase(0, sWorkspacePath:Length())
-			sWorkspacePath	= sWorkspacePath.s .. "/.workspace" .. sFindPath.s
+		while(sWorkspacePath:find("\\", 0) > 0) do
+			sWorkspacePath:CutBack("\\")
+			
+			if lfs.attributes(sWorkspacePath.s .. "/.workspace/") ~= nil then
+				local sFindPath = String(sProjectPath)
+				sFindPath:erase(0, sWorkspacePath:Length())
+				sWorkspacePath	= sWorkspacePath.s .. "/.workspace" .. sFindPath.s
 
-			if lfs.attributes(sWorkspacePath) ~= nil then
-				os.execute("rm -rf \"" .. sWorkspacePath .. "\"")
+				if lfs.attributes(sWorkspacePath) ~= nil then
+					os.execute("rm -rf \"" .. sWorkspacePath .. "\"")
+				end
+				break
 			end
-			break
 		end
 	end
-end
 
-print("\nRun '.eclipse' to open your project's IDE environment.")
+	print("\nRun '.eclipse' to open your project's IDE environment.")
+end
