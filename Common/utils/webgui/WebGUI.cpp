@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : WebGUI project
-// Rev.  : 11/1/2024 Fri (clonextop@gmail.com)
+// Rev.  : 11/5/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #include "WebGUI.h"
 #include <time.h>
@@ -104,12 +104,12 @@ void WebGUI::SetSize(int iWidth, int iHeight, WEBGUI_SIZE hint)
 	if (iWidth > 0 && iHeight > 0)
 		set_size(iWidth, iHeight, (webview_hint_t)hint);
 
-	if(hint == WEBGUI_SIZE_MIN || hint == WEBGUI_SIZE_FIXED) {
+	if (hint == WEBGUI_SIZE_MIN || hint == WEBGUI_SIZE_FIXED) {
 		RECT rc;
 		GetWindowRect(m_hHwnd, &rc);
-		int cur_width = rc.right - rc.left;
+		int cur_width  = rc.right - rc.left;
 		int cur_height = rc.bottom - rc.top;
-		if(cur_width < iWidth || cur_height < iHeight) {
+		if (cur_width < iWidth || cur_height < iHeight) {
 			set_size(iWidth, iHeight, WEBVIEW_HINT_NONE);
 		}
 	}

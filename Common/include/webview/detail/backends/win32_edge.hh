@@ -183,7 +183,7 @@ public:
          ICoreWebView2PermissionRequestedEventArgs *args) {
     COREWEBVIEW2_PERMISSION_KIND kind;
     args->get_PermissionKind(&kind);
-    if (kind != COREWEBVIEW2_PERMISSION_KIND_UNKNOWN_PERMISSION && kind != COREWEBVIEW2_PERMISSION_KIND_WINDOW_MANAGEMENT) {
+    if (kind != COREWEBVIEW2_PERMISSION_KIND_UNKNOWN_PERMISSION) {
       args->put_State(COREWEBVIEW2_PERMISSION_STATE_ALLOW);
     }
     return S_OK;

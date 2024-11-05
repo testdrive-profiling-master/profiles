@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 11/1/2024 Fri (clonextop@gmail.com)
+// Rev.  : 11/5/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __HTTP_SERVER_H__
 #define __HTTP_SERVER_H__
@@ -131,13 +131,8 @@ public:
 protected:
 	virtual bool OnGet(const char *sURL, httpConnection *pCon);
 	virtual bool OnPost(const char *sURL, httpConnection *pCon);
-
-private:
-	bool Callback_Accept(const struct sockaddr_in *addr);
-	bool Callback_Access(
-		struct MHD_Connection *connection, const char *url, const char *method, const char *version, const char *upload_data,
-		size_t *upload_data_size, void **con_cls);
-	void Callback_Complete(httpConnection *pCon, enum MHD_RequestTerminationCode toe);
+	virtual bool OnAccept(const struct sockaddr_in *addr);
+	virtual void OnComplete(httpConnection *pCon, enum MHD_RequestTerminationCode toe);
 
 private:
 	cstring			   m_sAllowedDomain;
