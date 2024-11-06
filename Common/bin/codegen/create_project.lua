@@ -20,6 +20,7 @@ Arg:AddRemark			(nil, "'verigen'                : verigen project")
 Arg:AddRemark			(nil, "'docgen'                 : docgen project")
 Arg:AddRemark			(nil, "'docgen_simplified'      : docgen simplified project")
 Arg:AddRemark			(nil, "'vue'                    : Vue.js project")
+Arg:AddRemark			(nil, "'svelte'                 : Svelte.js project")
 Arg:AddOptionString		("project_name", nil, nil, nil, "project_name", "Project name")
 
 	
@@ -279,7 +280,7 @@ elseif (sType == "docgen") then
 	os.execute("sed \"s/INITIAL_DAY/" .. sDay.s .. "/\" -i ./" .. sProjectPath .. "/main.lua")
 	
 	os.execute("explorer " .. sProjectName)
-	print("Run 'make' to build document.")
+	print("Execute 'make' to build document.")
 	os.exit(1)
 elseif (sType == "docgen_simplified") then
 	sProjectPath	= MakeDir(sProjectName)
@@ -300,10 +301,10 @@ elseif (sType == "docgen_simplified") then
 	os.execute("sed \"s/INITIAL_DAY/" .. sDay.s .. "/\" -i ./" .. sProjectPath .. "/main.md")
 	
 	os.execute("explorer " .. sProjectName)
-	print("Run 'build.bat' to build document.")
+	print("Execute 'build.bat' to build document.")
 	os.exit(1)
 elseif (sType == "vue") then
-	LOGI("Create Vue project : '" .. sProjectName .. "'")
+	LOGI("Create Vue.js project : '" .. sProjectName .. "'")
 	
 	local sProjectName = String(sProjectName)
 	sProjectName:MakeLower()
@@ -316,8 +317,20 @@ elseif (sType == "vue") then
 	os.execute("git add *.bat")
 	os.execute("git add -u")
 	os.execute("git commit -m \"Fixed for automatic devmode by TestDrive Profiling Master.\"")
-	os.execute("explorer .")--]]
 
+	os.execute("explorer .")--]]
+	print("Execute 'run.bat' to run.")
+	bEclipseEnv = false
+elseif (sType == "svelte") then
+	sProjectPath	= MakeDir(sProjectName)
+	LOGI("Create Svelte.js project : '" .. sProjectName .. "'")
+	
+	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_svelte/.\" " .. sProjectPath .. "/")
+	
+	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/\" -i ./" .. sProjectPath .. "/public/index.html")
+	
+	os.execute("explorer " .. sProjectName)
+	print("Execute 'run.bat' to run.")
 	bEclipseEnv = false
 else
 	LOGE("Invalid project type : '" .. sType .. "'. Please refer 'help' with \"create_project --help\" command.")
