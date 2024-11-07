@@ -20,3 +20,10 @@ AddTerm("Lua", "Lua script language (@<link:https://ko.wikipedia.org/wiki/%EB%A3
 -- 챕터 추가
 AddParagraph("[[src/introduction.md]]")
 AddParagraph("[[src/function_global.md]]")
+AddParagraph("[[src/function_String.md]]")
+AddParagraph("[[src/function_TextFile.md]]")
+AddParagraph("[[src/function_ArgTable.md]]")
+AddParagraph("[[src/function_Clipper.md]]")
+AddParagraph("[[src/function_Document.md]]")
+AddParagraph("[[src/function_Git.md]]")
+AddParagraph("[[src/function_Html.md]]")

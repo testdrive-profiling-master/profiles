@@ -1,3 +1,3 @@
 # ArgTable class
 
-[추가 예정]
+[TBD]
