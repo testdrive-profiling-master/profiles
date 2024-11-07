@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : System map
-// Rev.  : 6/25/2024 Tue (clonextop@gmail.com)
+// Rev.  : 11/7/2024 Thu (clonextop@gmail.com)
 //================================================================================
 #include "DesignMap.h"
 #include "testdrive_document.inl"
@@ -107,6 +107,7 @@ static bool __ReadSVG(CString &sContents, LPCTSTR sFilename)
 		sContents.Replace(_T("<svg"), _T("<svg id='svg_object'"));
 		sContents.Replace(_T("<a xlink:href='"), _T("<a xlink:href='cmd://URL/"));
 		sContents.Replace(_T("cmd://URL/cmd://"), _T("cmd://")); // cut off duplication of 'cmd://'
+		sContents.Replace(_T("/../"), _T("/@@/"));				 // "/../" will be ignored, I don't know why.. So Temporarily fixed.
 		fclose(fp);
 		return true;
 	}
@@ -330,8 +331,9 @@ LPCTSTR DesignMap::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 
 	{
 		CString cmd(lpszURL), tag;
-		int		iStart = 0;
-		tag			   = cmd.Tokenize(__sCommandDeli, iStart);
+		cmd.Replace(_T("@@/"), _T("../"));
+		int iStart = 0;
+		tag		   = cmd.Tokenize(__sCommandDeli, iStart);
 
 		if (tag == _T("cmd:")) {
 			// get command
@@ -443,7 +445,7 @@ LPCTSTR DesignMap::OnHtmlBeforeNavigate(DWORD dwID, LPCTSTR lpszURL)
 				if (_tcsstr(lpszURL, _T("http")) == lpszURL)
 					return lpszURL;
 
-				g_pSystem->LogInfo(_T("Invalid command : %s"), lpszURL);
+				LOGI(_T("Invalid command : %s"), lpszURL);
 			}
 
 			return NULL;
