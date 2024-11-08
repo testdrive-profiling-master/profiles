@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : WebGUI project
-// Rev.  : 11/5/2024 Tue (clonextop@gmail.com)
+// Rev.  : 11/8/2024 Fri (clonextop@gmail.com)
 //================================================================================
 #include "WebGUI.h"
 #include <time.h>
@@ -78,6 +78,8 @@ bool WebGUI::Initialize(WEBGUI_MODE mode, uint16_t iPort, const char *sHttpsKey,
 			if (!m_iPort)
 				return false;
 		}
+	} else {
+		m_iPort = iPort ? iPort : 80;
 	}
 
 	m_hHwnd = WindowHandle();
@@ -266,7 +268,7 @@ bool WebGUI::Run(const char *sURL)
 {
 	cstring sUrl(sURL);
 	sUrl = sURL ? sURL : "http://127.0.0.1";
-	if (m_iPort)
+	if (m_iPort && (m_iPort != 80))
 		sUrl.AppendFormat(":%d", m_iPort);
 	try {
 		navigate(sUrl.c_str());
@@ -313,10 +315,10 @@ bool WebGUI::CallJScript(const char *sFormat, ...)
 	return bRet;
 }
 
-bool WebGUI::Bind(const char *name, WebGUI_binding_t fn)
+bool WebGUI::Bind(const char *name, WebGUI_binding_t fn, void *pPrivate)
 {
 	if (name && *name) {
-		auto wrapper = [this, fn](const std::string &id, const std::string &req, void * /*arg*/) {
+		auto wrapper = [this, fn](const std::string &id, const std::string &req, void *pPrivate) {
 			ARGS args;
 			{
 				Json::Reader reader;
@@ -324,11 +326,11 @@ bool WebGUI::Bind(const char *name, WebGUI_binding_t fn)
 			}
 
 			cstring result;
-			fn(args, result);
+			fn(args, result, pPrivate);
 			resolve(id, 0, result.c_string());
 		};
 		try {
-			bind(name, wrapper, nullptr);
+			bind(name, wrapper, pPrivate);
 		} catch (const webview::exception &e) {
 			LOGE("%s\n", (const char *)e.what());
 			return false;

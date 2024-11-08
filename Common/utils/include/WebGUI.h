@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 11/1/2024 Fri (clonextop@gmail.com)
+// Rev.  : 11/8/2024 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __WEB_GUI_H__
 #define __WEB_GUI_H__
@@ -88,7 +88,7 @@ public:
 	WebGUI(bool bDebug = DEBUG_ENABLE);
 	virtual ~WebGUI(void);
 
-	using WebGUI_binding_t = std::function<void(const ARGS &, cstring &)>;
+	using WebGUI_binding_t = std::function<void(const ARGS &Args, cstring &sResult, void *pPrivate)>;
 
 	// common
 	bool Initialize(
@@ -105,12 +105,12 @@ public:
 	bool	   SetHtml(const char *sHtml);
 	bool	   Run(const char *sURL = NULL);
 	bool	   CallJScript(const char *sFormat, ...);
-	bool	   Bind(const char *name, WebGUI_binding_t fn);
+	bool	   Bind(const char *name, WebGUI_binding_t fn, void *pPrivate = NULL);
 	bool	   Unbind(const char *sName);
 	void	   Terminate(void);
 	WIN_HANDLE WindowHandle(void);
 
-#define JScript(name, ...) Bind(#name, [&](const ARGS &args, cstring &result) __VA_ARGS__)
+#define JScript(name, ...) Bind(#name, [&](const ARGS &args, cstring &result, void *pPrivate) __VA_ARGS__)
 
 protected:
 	virtual bool OnInitialize(void);
