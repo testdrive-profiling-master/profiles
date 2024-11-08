@@ -72,6 +72,7 @@ public:
 
 private:
 	WIN_HANDLE	m_hHwnd;
+	void	   *m_pIcon;
 	cstring		m_sRootPath;
 	uint16_t	m_iPort;
 	bool		m_bEnableClose;
@@ -97,6 +98,7 @@ public:
 	// server side function
 	void SetRootPath(const char *sRootPath);
 	// client side function
+	void	   SetIcon(const char *sFileName);
 	void	   SetTitle(const char *sTitle);
 	void	   SetSize(int iWidth, int iHeight, WEBGUI_SIZE hint = WEBGUI_SIZE_NORMAL);
 	void	   EnableWinButton(WEBGUI_BTN btn, bool bEnable = true);

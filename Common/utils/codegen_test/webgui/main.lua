@@ -4,6 +4,8 @@ local i = 0
 local web = WebGUI()
 web:Initialize()
 web:SetRootPath("ui/")
+web:SetIcon("main.ico")
+web:SetTitle("Lua GUI Test")
 
 function main_loop()
     i = i + 1

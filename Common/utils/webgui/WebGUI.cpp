@@ -50,8 +50,15 @@ WebGUI::WebGUI(bool bDebug) : httpServer(bDebug), browser_engine(bDebug, nullptr
 	m_iPort		   = 0;
 	m_Mode		   = WEBGUI_MODE_STANALONE;
 	m_bEnableClose = true;
+	m_pIcon		   = NULL;
 }
-WebGUI::~WebGUI(void) {}
+WebGUI::~WebGUI(void)
+{
+	if (m_pIcon) {
+		DeleteObject((HICON)m_pIcon);
+		m_pIcon = NULL;
+	}
+}
 
 bool WebGUI::Initialize(WEBGUI_MODE mode, uint16_t iPort, const char *sHttpsKey, const char *sHttpsCert, const char *sRootCa)
 {
@@ -92,6 +99,20 @@ void WebGUI::SetRootPath(const char *sRootPath)
 	m_sRootPath.Replace("\\", "/", true);
 	if (!m_sRootPath.CompareBack("/"))
 		m_sRootPath += "/";
+}
+
+void WebGUI::SetIcon(const char *sFileName)
+{
+#ifdef _WIN32
+	if (m_hHwnd) {
+		if (m_pIcon) {
+			DeleteObject((HICON)m_pIcon);
+		}
+		m_pIcon = (void *)(HICON)LoadImage(NULL, sFileName, IMAGE_ICON, 0, 0, LR_LOADFROMFILE | LR_DEFAULTSIZE | LR_SHARED);
+		SendMessage(m_hHwnd, WM_SETICON, ICON_BIG, (LPARAM)m_pIcon);
+		SendMessage(m_hHwnd, WM_SETICON, ICON_SMALL, (LPARAM)m_pIcon);
+	}
+#endif
 }
 
 void WebGUI::SetTitle(const char *sTitle)
