@@ -1,0 +1,173 @@
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+	<title>Test Window</title>
+	<link rel="stylesheet" type="text/css" href="index.css">
+	<!-- jQuery -->
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+	<!-- Bootstrap  -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<!-- Fontawesome -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet"/>
+</head>
+
+<SCRIPT LANGUAGE="JScript">
+	$(document).ready(function() {
+		// prevent user-zoom control
+		let handlingScroll = false;
+		window.addEventListener('keydown', function (event) {
+			if ((event.ctrlKey === true && handlingScroll === true) || (event.keyCode == 114/*F3:search*/) || (event.keyCode == 118/*F7:keyboard context*/)) {
+				event.preventDefault();
+			}
+		}, {passive: false});
+
+		window.addEventListener('wheel', function (event) {
+			if (event.ctrlKey === true) {
+				handlingScroll = true
+				//set timeout to reset the handlingScroll variable after the scroll event is finished
+				setTimeout(() => {
+					handlingScroll = false
+				}, 10)
+				event.preventDefault()
+			} else {
+				handlingScroll = false
+			}
+		}, {passive: false});
+
+		var titlebar_mousedown = false
+		$("#titlebar").mousedown(function(e){
+			titlebar_mousedown = ($(e.target).attr('id') == "titlebar")
+			/*if ($(e.target).attr('id') == "titlebar") {
+				command_window(0);
+			}*/
+		})
+		$("#titlebar").mousemove(function(e){
+			if (titlebar_mousedown) {
+				command_window(0);
+				titlebar_mousedown	= false;
+			}
+			/*if ($(e.target).attr('id') == "titlebar") {
+				command_window(0);
+			}*/
+		});
+		$("#titlebar").on( "dblclick", function(e) {
+			console.log("A")
+			if ($(e.target).attr('id') == "titlebar") {
+				command_window(1);
+			}
+		});
+	});
+</SCRIPT>
+<body id="page-top" class="d-flex flex-column" ondragstart="return false;" ondrop="return false;" onload="window.OnLoad();">
+	<div class="card mt-2 small border-0" id="top_nav">
+		<div class="card-header bg-white pt-0 mt-0">
+			<div id="titlebar" class="nav nav-tabs card-header-tabs bg-white">
+				<li class="nav-item">
+					<button class="nav-link active" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-home" aria-selected="true" href="#nav_tap_menu_1">Menu #1</button>
+				</li>
+				<li class="nav-item">
+					<button class="nav-link" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-home" aria-selected="true" href="#nav_tap_menu_2">Menu #2</button>
+				</li>
+				<li class="nav-item">
+					<button class="nav-link" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-home" aria-selected="true" href="#nav_tap_menu_3">Menu #3</button>
+				</li>
+			</div>
+		</div>
+		<div class="card-body tab-content">
+			<!-- Menu #1 -->
+			<div class="tab-pane fade show active" id="nav_tap_menu_1">
+				<div class="row">
+					<div class="col-sm-6 mr-1">
+						<div class="card text-center">
+							<div class="card-header">Button test</div>
+							<div class="card-body">
+								<button type="button" class="btn btn-primary" id="btn_1" onclick="window.PressBtn(1, 'Button A');">Button A</button>
+								<button type="button" class="btn btn-secondary" id="btn_1" onclick="window.PressBtn(2, 'Button B');">Button B</button>
+								<button type="button" class="btn btn-dark" id="btn_1" onclick="window.PressBtn(3, 'Button C');">Button C</button>
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-sm-6 mr-1">
+						<div class="card text-center">
+							<div class="card-header">Check & Radio button test</div>
+							<div class="card-body">
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="radio_group_1" id="radio_btn_1" value="radio_1" checked>
+									<label class="form-check-label text-start" for="radio_btn_1">radio #1 button</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="radio_group_1" id="radio_btn_2" value="radio_2">
+									<label class="form-check-label text-start" for="radio_btn_2">radio #2 button</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="checkbox" value="" id="check_1" checked>
+									<label class="form-check-label text-start" for="check_1">
+										<i class="fa-solid fa-check"></i> Checked checkbox
+									</label>
+								</div>
+							</div>
+						</div>
+						
+						<SCRIPT LANGUAGE="JScript">
+							$("input[name='radio_group_1']").change(function(){
+								window.RadioBtn($("input[name='radio_group_1']:checked").val());
+							});
+							$("#check_1").change(function(){
+								window.CheckBtn($("#check_1").is(':checked'));
+							});
+						</SCRIPT>
+					</div>
+					
+					<div class="col-sm-6 mr-1">
+						<div class="card text-center">
+							<div class="card-header">Edit box</div>
+							<div class="card-body">
+								<div class="input-group">
+									<span class="input-group-text">Your input text</span>
+									<input type="text" id="text_input" class="form-control" placeholder="Some text here..." aria-label="Your input" aria-describedby="basic-addon1">
+								</div>
+							</div>
+						</div>
+						<SCRIPT LANGUAGE="JScript">
+							$("#text_input").change(function(){
+								window.SetText($("#text_input").val());
+							});
+						</SCRIPT>
+					</div>
+				</div>
+			</div>
+			
+			<!-- Menu #2 -->
+			<div class="tab-pane fade" id="nav_tap_menu_2">
+				<div class="row">
+					<div class="col text-center table-responsive-sm">
+						Menu #2 contents!!!
+					</div>
+				</div>
+			</div>
+			
+			<!-- Menu #3 -->
+			<div class="tab-pane fade" id="nav_tap_menu_3">
+				<div class="row">
+					<div class="col text-center table-responsive-sm">
+						Menu #3 contents!!!
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- seperated line -->
+	<hr/>
+	
+	<div class="card text-center m-3">
+		<div class="card-header"><i class="fa-solid fa-shuffle"></i> Output from Codegen(Lua)</div>
+		<div class="card-body">
+			<p class="card-text" id="cpp_output">...</p>
+		</div>
+	</div>
+</body>
+</html>
