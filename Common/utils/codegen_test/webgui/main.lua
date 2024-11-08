@@ -27,7 +27,7 @@ function CheckBtn(bVal)
 end
 
 function SetText(sVal)
-    print("SetText (" .. sVal .. ")")
+    print("SetText (\"" .. sVal .. "\")")
     web:CallJScript("$('#cpp_output').text(\"" .. sVal .. "\")")
 end
 
