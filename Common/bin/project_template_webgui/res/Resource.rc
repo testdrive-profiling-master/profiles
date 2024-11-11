@@ -1,4 +1,4 @@
 #include <windows.h>
 #include "Resource.h"
 
-IDI_MAIN_ICON	ICON			"main.ico"
+IDI_APPLICATION	ICON			"main.ico"
