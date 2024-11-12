@@ -239,23 +239,23 @@ endif
 #-------------------------------------------------
 # generic rules
 #-------------------------------------------------
-%.o: %.c
+%.o: %.c $(TARGET_DEP)
 	@echo '- Compiling... : $<'
 	@ccache $(CC) $(CDEFS) $(CFLAGS) $(INC) -MD -c $< -o $@
 # ccache bug fix "D\:/" -> "D:/"
 	@sed -i 's/\\\:/\:/g' $*.d
 
-%.o: %.cpp
+%.o: %.cpp $(TARGET_DEP)
 	@echo '- Compiling... : $<'
 	@ccache $(CXX) $(CDEFS) $(CPPFLAGS) -Weffc++ $(INC) -MD -c $< -o $@
 	@sed -i 's/\\\:/\:/g' $*.d
 	
-%.o: %.cc
+%.o: %.cc $(TARGET_DEP)
 	@echo '- Compiling... : $<'
 	@ccache $(CXX) $(CDEFS) $(CPPFLAGS) -Weffc++ $(INC) -MD -c $< -o $@
 	@sed -i 's/\\\:/\:/g' $*.d
 
-%.o: %.rc
+%.o: %.rc $(TARGET_DEP)
 	@echo '- Compiling... : $<'
 	@windres $(INC) $< -o $@
 

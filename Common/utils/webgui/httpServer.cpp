@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : WebGUI project
-// Rev.  : 11/5/2024 Tue (clonextop@gmail.com)
+// Rev.  : 11/12/2024 Tue (clonextop@gmail.com)
 //================================================================================
 #include <sys/types.h>
 #include <stdio.h>
@@ -213,7 +213,7 @@ bool httpServer::Initialize(uint16_t iPort, bool bInternalOnly, const char *sHtt
 			}
 
 			httpConnection *pConnection = (httpConnection *)*req_cls;
-			DLOGI("Connection(0x%p:0x%p)[%s] : %s", connection, pConnection, method, url);
+			DLOGI("%s - %s", method, url);
 
 			switch (method_id) {
 			case HTTP_METHOD_GET: {
@@ -340,7 +340,7 @@ void httpServer::OnComplete(httpConnection *pCon, enum MHD_RequestTerminationCod
 {
 	static const char *__complete_list[] = {"Ok", "Error", "Timeout", "Daemon shutdown", "Read error", "Client abort"};
 	if (toe != MHD_REQUEST_TERMINATED_COMPLETED_OK)
-		DLOGE("Complete(0x%p) : %s.", pCon, __complete_list[(int)toe]);
+		DLOGE("OnComplete(%s)", __complete_list[(int)toe]);
 }
 
 bool httpConnection::ConfirmPostData(const char *sData, size_t *pSize)
