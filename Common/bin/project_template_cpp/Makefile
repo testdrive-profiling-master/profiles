@@ -5,7 +5,7 @@ SRC_PATH		:= .
 TARGETPATH		:= .
 INSTALL_PATH	:= .
 TARGETNAME		:= Test
-USE_DEBUG		:= 1
+#USE_DEBUG		:= 1
 #CPP_STANDARD	:= c++20
 #MAIN_COMPILER	:= clang
 
