@@ -28,7 +28,7 @@ SRCS := $(SRCS) \
 	$(wildcard ../verilator/*.cpp)
 
 LIBDIR			:= $(LIBDIR) -lshell32 -lz -lm
-INC				:= $(INC) -I. -I../../../../Application/include -I../../../HDL -I../../../HDL/dpi -I$(TESTDRIVE_PROFILE)Common/System/SystemSim/HDL/dpi -I$(SIMPATH)/dpi_private -I../verilator -I$(TESTDRIVE_DIR)include/verilator -I$(TESTDRIVE_DIR)bin/msys64/ucrt64/share/verilator/include -I$(TESTDRIVE_DIR)bin/msys64/ucrt64/share/verilator/include/vltstd -I$(TESTDRIVE_DIR)bin/msys64/ucrt64/share/verilator/include/gtkwave
+INC				:= $(INC) -I. -I../../../../Application/include -I../../../HDL -I../../../HDL/dpi -I$(TESTDRIVE_PROFILE)Common/System/SystemSim/HDL/dpi -I$(SIMPATH)/dpi_private -I../verilator -I$(TESTDRIVE_DIR)include/verilator `pkg-config --cflags verilator`
 
 CDEFS			:= $(CDEFS) $(SIM_CDEFS) -D__STDC_FORMAT_MACROS -DSIM_HDL_EXPORTS -DUSE_VERILATOR -DUSE_TESTDRIVE -DVL_USER_FINISH -DVL_USER_STOP -DVL_USER_FATAL -DVL_THREADED -D_FILE_OFFSET_BITS=64
 
