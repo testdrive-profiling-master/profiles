@@ -15,5 +15,5 @@ Do something valuable...
 **> Do Do Do.
 
 
-:::NoteHeading
+:::Note
 note me!
