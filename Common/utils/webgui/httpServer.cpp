@@ -31,13 +31,22 @@
 // OF SUCH DAMAGE.
 //
 // Title : WebGUI project
-// Rev.  : 11/12/2024 Tue (clonextop@gmail.com)
+// Rev.  : 11/20/2024 Wed (clonextop@gmail.com)
 //================================================================================
 #include <sys/types.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "httpServer.h"
+#ifndef _WIN32
+#	include <sys/types.h>
+#	include <sys/socket.h>
+#	include <netinet/in.h>
+#endif
+
+#if MHD_VERSION < 0x00097002
+#	define MHD_Result int
+#endif
 
 static bool __bDebug = false;
 // clang-format off
@@ -181,7 +190,7 @@ bool httpServer::Initialize(uint16_t iPort, bool bInternalOnly, const char *sHtt
 	m_pDaemon = MHD_start_daemon(
 		MHD_flags, iPort, // type & port
 		(MHD_AcceptPolicyCallback)([](void *cls, const struct sockaddr *addr, socklen_t addrlen) -> MHD_Result {
-			return (enum MHD_Result)((httpServer *)cls)->OnAccept((struct sockaddr_in *)addr);
+			return (MHD_Result)((httpServer *)cls)->OnAccept((struct sockaddr_in *)addr);
 		}),
 		this, // accept callback
 		(MHD_AccessHandlerCallback)([](void *cls, struct MHD_Connection *connection, const char *url, const char *method, const char *version,
