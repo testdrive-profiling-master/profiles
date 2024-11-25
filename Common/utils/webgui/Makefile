@@ -12,7 +12,7 @@ SRCS			:= \
 	$(wildcard $(SRC_PATH)/*.cpp)
 
 INC				:= -I.
-LIBDIR			:= -lshlwapi -lole32 -lversion -lmicrohttpd -lWs2_32 -lgdi32 -ljsoncpp_static
+LIBDIR			:= -lshlwapi -lole32 -lversion -lmicrohttpd -lWs2_32 -lgdi32 -ljsoncpp
 CDEFS			:= -D_WIN32_IE=0x605 -DWINVER=0x605
 
 BUILD_TARGET	= $(TARGET_A)
