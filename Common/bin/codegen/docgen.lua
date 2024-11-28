@@ -1007,12 +1007,12 @@ function GenerateFigure(sFileName, fRatio)
 			end
 		end
 	else	-- advanced image file conversion
-		if sFileName:CompareBack(".jxl") then	-- JXL format conversion
+		if sFileName:CompareBack(".jxl") or sFileName:CompareBack(".bmp") or sFileName:CompareBack(".psd") or sFileName:CompareBack(".tiff") or sFileName:CompareBack(".pcx") or sFileName:CompareBack(".tga") or sFileName:CompareBack(".webp") then
 			if lfs.IsExist(sFileName.s) == false then
 				error("File is not found : " .. sFileName.s)
 			end
 			-- convert JXL image to PNG
-			os.execute("djxl \"" .. sFileName.s .. "\" \"" .. sFileName.s .. ".docgen.png\"")
+			os.execute("magick \"" .. sFileName.s .. "\" \"" .. sFileName.s .. ".docgen.png\"")
 			sFileName:Append(".docgen.png")
 			temporary_file_list[#temporary_file_list + 1]		= sFileName.s	-- clean up list.
 		end
