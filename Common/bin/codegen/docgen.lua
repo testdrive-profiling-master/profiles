@@ -889,6 +889,7 @@ function GenerateFigure(sFileName, fRatio)
 	if bSolidBox then
 		sFileName:erase(0,1)
 	end
+	
 	if sFileName:CompareBack("]") then
 		sPageName	= String(sFileName.s)
 		sFileName:CutBack("[", true)
@@ -1004,6 +1005,16 @@ function GenerateFigure(sFileName, fRatio)
 			if lfs.IsExist(sFileName.s) then	-- existed
 				temporary_file_list[#temporary_file_list + 1]		= sFileName.s	-- clean up list.
 			end
+		end
+	else	-- advanced image file conversion
+		if sFileName:CompareBack(".jxl") then	-- JXL format conversion
+			if lfs.IsExist(sFileName.s) == false then
+				error("File is not found : " .. sFileName.s)
+			end
+			-- convert JXL image to PNG
+			os.execute("djxl \"" .. sFileName.s .. "\" \"" .. sFileName.s .. ".docgen.png\"")
+			sFileName:Append(".docgen.png")
+			temporary_file_list[#temporary_file_list + 1]		= sFileName.s	-- clean up list.
 		end
 	end
 	
