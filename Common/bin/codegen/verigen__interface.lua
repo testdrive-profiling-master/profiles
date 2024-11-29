@@ -170,7 +170,7 @@ function interface:signal_count()
 	return iCount
 end
 
-local __forbidden_word_list = {
+local __reserved_word_list = {
 	["end"]			= 1,
 	["else"]		= 1,
 	["module"]		= 1,
@@ -199,10 +199,6 @@ local __forbidden_word_list = {
 	["reg"]			= 1
 }
 
-local function __check_forbidden_word(s)
-	return __forbidden_word_list[s] ~= nil
-end
-
 function interface:set_signal(name, bit_width)
 	if bit_width == nil then
 		bit_width	= 1
@@ -212,8 +208,8 @@ function interface:set_signal(name, bit_width)
 		error("invalid set_signal use of interface '" .. self.name .. "'")
 	end
 	
-	if __check_forbidden_word(name) then
-		error("[interface:set_signal] forbidden signal name : '" .. name .. "'")
+	if __reserved_word_list[name] ~= nil then
+		error("[interface:set_signal] A reserved word was used as a signal name : '" .. name .. "'")
 	end
 	
 	if load("return interface.__list." .. self.name .. ".signal." .. name .. " ~= nil")() then
