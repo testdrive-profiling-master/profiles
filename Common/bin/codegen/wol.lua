@@ -1,7 +1,7 @@
-local	Arg		= ArgTable("WOL(Wake On Lan) sender, (currently local network only.)")
+local	Arg		= ArgTable("WOL(Wake On Lan) sender.")
 
 Arg:AddOptionInt	("port", 9, "p", nil, "port", "port number (default : 9)")
-Arg:AddOptionString	("ip", "255.255.255.255", "i", nil, "ip", "IP address (ex : 192.168.10.2)")
+Arg:AddOptionString	("ip", nil, nil, nil, "ip", "Broadcasting IP address (ex : 192.168.10.255)")
 Arg:AddOptionString	("mac", nil, nil, nil, "mac_address", "MAC address (ex : 1A:2B:3C:4D:5E:6F)")
 
 if (Arg:DoParse() == false) then
