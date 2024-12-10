@@ -5,6 +5,8 @@ sProfilePath:Append("common/bin/")
 
 if lfs.IsExist(sProfilePath.s .. "drawio/draw.io.exe") == false then
 	LOGI("Can't found draw.io, now installing draw.io...")
+	local sCurDir = lfs.currentdir()
+	lfs.chdir(sProfilePath.s)
 	exec("wget https://github.com/jgraph/drawio-desktop/releases -O github.download.drawio.html")
 
 	local f = TextFile()
@@ -40,5 +42,6 @@ if lfs.IsExist(sProfilePath.s .. "drawio/draw.io.exe") == false then
 		LOGE("Can't access to github!")
 		os.exit(1)
 	end
+	lfs.chdir(sCurDir)
 	LOGI("Done!")
 end
