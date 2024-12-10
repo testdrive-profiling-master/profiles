@@ -3,8 +3,34 @@ local	sProfilePath		= String()
 sProfilePath:GetEnvironment("TESTDRIVE_PROFILE")
 sProfilePath:Append("common/bin/")
 
+-- version update check
+local bUpdateInstall = false
+do
+	local sVersion = String(exec("wget --max-redirect=0 https://github.com/jgraph/drawio-desktop/releases/latest 2>&1 | grep Location:"))
+	if sVersion:CompareFront("Location:") then
+		sVersion:CutBack("[", true)
+		sVersion:CutFront("/", true)
+		sVersion:Trim(" \t\r\n")
+		
+		local sPrevVersion = String()
+		sPrevVersion:GetEnvironment("VERSION@DRAWIO")
+		
+		if sPrevVersion.s ~= sVersion.s then
+			LOGI("Update new version of Draw.io(" .. sVersion.s .. ")...")
+			sVersion:SetEnvironment("VERSION@DRAWIO")
+			--lfs.rmdir(sProfilePath.s .. "drawio/")
+			os.execute("rm -rf \"" .. sProfilePath.s .. "drawio/\"")
+			bUpdateInstall = true
+		end
+	end
+end
+
+-- program existance check
 if lfs.IsExist(sProfilePath.s .. "drawio/draw.io.exe") == false then
-	LOGI("Can't found draw.io, now installing draw.io...")
+	if bUpdateInstall == false then
+		LOGI("Can't found draw.io, now installing draw.io...")
+	end
+
 	local sCurDir = lfs.currentdir()
 	lfs.chdir(sProfilePath.s)
 	exec("wget https://github.com/jgraph/drawio-desktop/releases -O github.download.drawio.html")
@@ -19,7 +45,7 @@ if lfs.IsExist(sProfilePath.s .. "drawio/draw.io.exe") == false then
 		s:CutFront("href=\"", true)
 		s:Append("-windows-no-installer.exe")
 		
-		LOGI("Downloading draw.io...")
+		LOGI("Downloading draw.io... Please wait...")
 		if s:CompareFront("https://") then
 			exec("wget " .. s.s .. " -O \"" .. sProfilePath.s .. "drawio.zip\"")
 		else
