@@ -884,7 +884,7 @@ static bool		   __GetEnvString(cstring sKey, cstring &sAppName, cstring &sKeyNam
 bool cstring::GetEnvironment(const char *sKey)
 {
 	if (sKey) {
-		if (strstr(sKey, __sEnvDelim)) {
+		if (strstr(sKey, __sEnvDelim)) {	// ex) "KEY@APP"
 #ifdef WIN32
 			bool bRet = true;
 			// in testdrive.ini
@@ -936,7 +936,7 @@ static void setenv(const char *sKey, const char *sData, int replace)
 void cstring::SetEnvironment(const char *sKey)
 {
 	if (sKey) {
-		if (strstr(sKey, __sEnvDelim)) {
+		if (strstr(sKey, __sEnvDelim)) {	// ex) "KEY@APP"
 #ifdef WIN32
 			// in testdrive.ini
 			cstring sAppName, sKeyName, sEnvPath;
