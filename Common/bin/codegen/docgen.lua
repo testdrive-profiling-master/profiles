@@ -233,7 +233,9 @@ end
 -- 문서 템플릿 열기
 docgen.doc	 	= DocWord()
 
-if docgen.doc:Open(docgen.template_path.s) == false then
+if docgen.doc:Open(docgen.template_path.s) then
+	LOGI("Current template document(" .. docgen.sDocTemplate.s .. ") path.\n    - " .. docgen.template_path.s)
+else
 	LOGE("Invalid template document : " .. docgen.sDocTemplate.s)
 	os.exit(1)		-- template document is not existed
 end
