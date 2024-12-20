@@ -5,7 +5,7 @@ int main(int argc, const char *argv[])
 {
 	// setup argument table
 	cstring sTitle;
-	sTitle.Format("PROJECT Program. v%d.%d (build #%d date : " __DATE__ ")",
+	sTitle.Format("PROJECT Program. v%d.%d (build #%d date : " PROJECT_UPPER_VERSION_DATE ")",
 		PROJECT_UPPER_VERSION_MAJOR,
 		PROJECT_UPPER_VERSION_MINOR,
 		PROJECT_UPPER_VERSION_BUILD
