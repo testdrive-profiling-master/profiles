@@ -18,7 +18,7 @@ CreateMemory((1024*1024) * 16,	"Meitner_Display")							-- Display configuration
 
 -- Common Profiles
 RunProfile("%TESTDRIVE_PROFILE%\\common\\SystemManager\\initialize.sp")		-- System management
-RunProfile("%TESTDRIVE_PROFILE%\\common\\SystemRemote\\initialize.sp")		-- system remote
+--RunProfile("%TESTDRIVE_PROFILE%\\common\\SystemRemote\\initialize.sp")		-- system remote
 RunProfile("%TESTDRIVE_PROFILE%\\common\\CodeAnalysis\\initialize.sp")		-- code analysis
 RunProfile("%TESTDRIVE_PROFILE%\\common\\XilinxSynthesis\\initialize.sp")	-- xilinx synthesis
 RunProfile("%TESTDRIVE_PROFILE%\\common\\SystemMap\\initialize.sp")			-- system map
