@@ -9,7 +9,7 @@ SRCS			:= \
 	$(wildcard $(SRC_PATH)/*.cpp)
 
 INC				:=
-LIBDIR			:= -lwsock32 -lws2_32
+LIBDIR			:= -lenet -lzstd
 
 #-------------------------------------------------
 # common document config
