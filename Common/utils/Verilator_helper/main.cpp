@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Verilator helper
-// Rev.  : 4/29/2024 Mon (clonextop@gmail.com)
+// Rev.  : 1/6/2025 Mon (clonextop@gmail.com)
 //================================================================================
 #include "UtilFramework.h"
 #include <filesystem>
@@ -86,8 +86,7 @@ bool MakeTargetName(cstring &sTargetName)
 		return false;
 
 	cstring sTotal;
-	sTotal.Format("TopFile : %s, WaveModel : %s, Definition : %s", sTopFile.c_str(), sWaveMode.c_str(),
-				  sDefinition.c_str());
+	sTotal.Format("TopFile : %s, WaveModel : %s, Definition : %s", sTopFile.c_str(), sWaveMode.c_str(), sDefinition.c_str());
 	uint64_t ulHashCode = MakeHash(sTotal);
 	sTopFile.CutFront("\\", true);
 	sTopFile.CutFront("/", true);
@@ -155,8 +154,7 @@ int BakeModel(const char *sName)
 		sLatestMdir.Replace("\\", "/", true);
 		sCmd.Format("rm -f %s%s.tar.gz >nul 2>&1", sTargetPath.c_str(), sTargetName.c_str());
 		system(sCmd);
-		sCmd.Format("tar cvfz %s%s.tar.gz -C %s *.cpp *.h *.mk *.dat >nul 2>&1", sTargetPath.c_str(),
-					sTargetName.c_str(), sLatestMdir.c_str());
+		sCmd.Format("tar cvfz %s%s.tar.gz -C %s *.cpp *.h *.mk *.dat >nul 2>&1", sTargetPath.c_str(), sTargetName.c_str(), sLatestMdir.c_str());
 		system(sCmd);
 		LOGI("Done!");
 	}
@@ -337,8 +335,9 @@ int main(int argc, const char *argv[])
 									}
 								}
 
-								if (bRun)
+								if (bRun) {
 									system(sLine);
+								}
 
 								fs::current_path(sCurPath);
 							} else { // add to argument
@@ -352,13 +351,16 @@ int main(int argc, const char *argv[])
 		}
 		// default arguments for Testdrive
 		sArg += " -I$(TESTDRIVE_PROFILE)Common/System/SystemSim/HDL";
+		// default system root path
+		sArg += " -I$(TESTDRIVE_DIR)bin/msys64";
 	}
 
 	{
 		// get verilator path
 		sExe.Format("%sbin/msys64/ucrt64/share/verilator", g_sTestDrivePath.c_str());
 		sExe.SetEnvironment("VERILATOR_ROOT");
-		sExe.Format("%sbin/msys64/ucrt64/share/verilator/bin", g_sTestDrivePath.c_str());
+		// sExe.Format("%sbin/msys64/ucrt64/share/verilator/bin", g_sTestDrivePath.c_str());	// link is not working now...
+		sExe.Format("%sbin/msys64/ucrt64/bin", g_sTestDrivePath.c_str());
 
 		if (bHelp)
 			sExe += "/verilator";
