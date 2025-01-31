@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,13 +31,15 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 1/31/2025 Fri (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "BusSlave.h"
 
 BusSlave *BusSlave::m_pHead = NULL;
 Semaphore BusSlave::m_LockSW(1);
+
+#define SLAVE_DELAYED_LOCK_UP_TIME		20000
 
 //----------------------------------------------------------------------------------------------------
 // Slave bus method
@@ -93,7 +95,7 @@ void BusSlave::Write(uint64_t lAddrBase, uint32_t dwData)
 		m_Write.bWait		  = false;
 		m_LockBus.Up();
 		TRACE_UNLOCK
-		m_pSim->Unlock();
+		m_pSim->Unlock(SLAVE_DELAYED_LOCK_UP_TIME);
 		m_LockBusAck.Down();
 	}
 	m_LockSW.Up();
@@ -117,7 +119,7 @@ uint32_t BusSlave::Read(uint64_t lAddrBase)
 		m_Read.bWait		= false;
 		m_LockBus.Up();
 		TRACE_UNLOCK
-		m_pSim->Unlock();
+		m_pSim->Unlock(SLAVE_DELAYED_LOCK_UP_TIME);
 		m_LockBusAck.Down();
 		dwData = m_Read.packet.dwData;
 	}
@@ -136,7 +138,7 @@ bool BusSlave::RequestWrite(uint64_t lAddr, uint32_t dwData)
 		m_Write.bWait		  = true;
 		m_Write.packet.lAddr  = lAddr;
 		m_Write.packet.dwData = dwData;
-		m_pSim->Unlock();
+		m_pSim->Unlock(SLAVE_DELAYED_LOCK_UP_TIME);
 	}
 
 	m_LockBus.Up();
@@ -167,7 +169,7 @@ bool BusSlave::RequestRead(uint64_t lAddr)
 		m_Read.bEnable		= true;
 		m_Read.bWait		= true;
 		m_Read.packet.lAddr = lAddr;
-		m_pSim->Unlock();
+		m_pSim->Unlock(SLAVE_DELAYED_LOCK_UP_TIME);
 	}
 
 	m_LockBus.Up();
