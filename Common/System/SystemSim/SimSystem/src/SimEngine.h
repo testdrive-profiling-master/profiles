@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 1/31/2025 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_ENGINE_H__
 #define __SIM_ENGINE_H__
@@ -126,9 +126,9 @@ public:
 		m_Lock.Lock(iDelayTime);
 	}
 
-	inline void Unlock(int iDelayTime = 0)
+	inline void Unlock(void)
 	{
-		m_Lock.UnLock(iDelayTime);
+		m_Lock.UnLock();
 	}
 
 	bool					 Start(void);

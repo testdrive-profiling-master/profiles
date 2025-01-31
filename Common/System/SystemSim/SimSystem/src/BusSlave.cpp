@@ -39,8 +39,6 @@
 BusSlave *BusSlave::m_pHead = NULL;
 Semaphore BusSlave::m_LockSW(1);
 
-#define SLAVE_DELAYED_LOCK_UP_TIME		20000
-
 //----------------------------------------------------------------------------------------------------
 // Slave bus method
 //----------------------------------------------------------------------------------------------------
@@ -95,7 +93,7 @@ void BusSlave::Write(uint64_t lAddrBase, uint32_t dwData)
 		m_Write.bWait		  = false;
 		m_LockBus.Up();
 		TRACE_UNLOCK
-		m_pSim->Unlock(SLAVE_DELAYED_LOCK_UP_TIME);
+		m_pSim->Unlock();
 		m_LockBusAck.Down();
 	}
 	m_LockSW.Up();
@@ -119,7 +117,7 @@ uint32_t BusSlave::Read(uint64_t lAddrBase)
 		m_Read.bWait		= false;
 		m_LockBus.Up();
 		TRACE_UNLOCK
-		m_pSim->Unlock(SLAVE_DELAYED_LOCK_UP_TIME);
+		m_pSim->Unlock();
 		m_LockBusAck.Down();
 		dwData = m_Read.packet.dwData;
 	}
@@ -138,7 +136,7 @@ bool BusSlave::RequestWrite(uint64_t lAddr, uint32_t dwData)
 		m_Write.bWait		  = true;
 		m_Write.packet.lAddr  = lAddr;
 		m_Write.packet.dwData = dwData;
-		m_pSim->Unlock(SLAVE_DELAYED_LOCK_UP_TIME);
+		m_pSim->Unlock();
 	}
 
 	m_LockBus.Up();
@@ -169,7 +167,7 @@ bool BusSlave::RequestRead(uint64_t lAddr)
 		m_Read.bEnable		= true;
 		m_Read.bWait		= true;
 		m_Read.packet.lAddr = lAddr;
-		m_pSim->Unlock(SLAVE_DELAYED_LOCK_UP_TIME);
+		m_pSim->Unlock();
 	}
 
 	m_LockBus.Up();
@@ -206,7 +204,7 @@ void BusSlave::WriteAck(void)
 
 	m_LockBus.Up();
 	TRACE_LOCK
-	m_pSim->Lock(32);
+	m_pSim->Lock(500);
 }
 BUS_SALVE_PACKET *BusSlave::GetRead(void)
 {
@@ -223,7 +221,7 @@ void BusSlave::ReadAck(void)
 
 	m_LockBus.Up();
 	TRACE_LOCK
-	m_pSim->Lock(32);
+	m_pSim->Lock(500);
 }
 
 bool BusSlave::IsValidAddress(uint64_t lAddress)

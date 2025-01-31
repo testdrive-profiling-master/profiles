@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 1/31/2025 Fri (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "SimBusy.h"
@@ -53,7 +53,7 @@ bool SimBusy::OnRun(void)
 			m_pSim->Unlock();
 		} else {
 			TRACE_LOCK
-			m_pSim->Lock(32);
+			m_pSim->Lock(200);
 		}
 	}
 

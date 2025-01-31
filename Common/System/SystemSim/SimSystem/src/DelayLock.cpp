@@ -39,74 +39,64 @@
 
 DelayLock::DelayLock(void) : m_Lock(0), m_DelaySemaphore(1)
 {
-	m_bRun		 = true;
-	m_iLock		 = 0;
-	m_iDelayTime = 0;
-	m_iDelayLock = 0;
+	m_bRun			= true;
+	m_iSema			= 0;
+	m_iDelayTime	= 0;
+	m_iDeferredLock = 0;
 }
 
 DelayLock::~DelayLock(void) {}
 
 void DelayLock::Lock(int iDelayTime)
 {
+	VerilatorFlush();
 	if (iDelayTime) {
-		bool bLock;
 		m_DelaySemaphore.Down();
 		SetDelay(iDelayTime);
-		bLock = (m_iLock > 1);
-
-		if (bLock)
-			m_iLock--;
-		else
-			m_iDelayLock++;
-
+		m_iDeferredLock++;
 		m_DelaySemaphore.Up();
-
-		if (bLock) {
-			VerilatorFlush();
-			m_Lock.Down();
-		}
 	} else {
-		VerilatorFlush();
 		m_Lock.Down();
-		m_DelaySemaphore.Down();
-		m_iLock--;
-		m_DelaySemaphore.Up();
+		{
+			m_DelaySemaphore.Down();
+			m_iSema--;
+			m_DelaySemaphore.Up();
+		}
 	}
 }
 
-void DelayLock::UnLock(int iDelayTime)
+void DelayLock::UnLock(void)
 {
-	m_DelaySemaphore.Down();
-	m_iLock++;
-	m_DelaySemaphore.Up();
+	{
+		m_DelaySemaphore.Down();
+		m_iSema++;
+		m_DelaySemaphore.Up();
+	}
 	m_Lock.Up();
-
-	if (iDelayTime)
-		Lock(iDelayTime);
 }
 
 bool DelayLock::Check(void)
 {
 	if (m_iDelayTime) {
-		m_DelaySemaphore.Down();
 		m_iDelayTime--;
-		m_DelaySemaphore.Up();
 
 		if (!m_iDelayTime) {
 			int iLocked;
-			m_DelaySemaphore.Down();
-			iLocked = m_iDelayLock;
-			m_iLock -= iLocked;
-			m_iDelayLock = 0;
-			m_DelaySemaphore.Up();
+			{
+				m_DelaySemaphore.Down();
+				iLocked = m_iDeferredLock;
+				m_iSema -= iLocked;
+				m_iDeferredLock = 0;
+				m_DelaySemaphore.Up();
+			}
 			SimulationFlush();
 
+			// do deferred lock
 			for (; iLocked != 0; iLocked--) m_Lock.Down();
 		}
 	}
 
-	return (m_iLock != 0) | m_bRun;
+	return (m_iSema > 0) | m_bRun;
 }
 
 void DelayLock::SetDelay(int iDelayTime)
