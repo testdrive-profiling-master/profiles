@@ -23,9 +23,12 @@
  * SOFTWARE.
  */
 
-#if !defined(WEBVIEW_BACKENDS_GTK_WEBKITGTK_HH) &&                             \
-    defined(WEBVIEW_PLATFORM_LINUX) && defined(WEBVIEW_GTK)
+#ifndef WEBVIEW_BACKENDS_GTK_WEBKITGTK_HH
 #define WEBVIEW_BACKENDS_GTK_WEBKITGTK_HH
+
+#include "../../macros.h"
+
+#if defined(WEBVIEW_PLATFORM_LINUX) && defined(WEBVIEW_GTK)
 
 //
 // ====================================================================
@@ -228,8 +231,10 @@ protected:
       gtk_widget_set_size_request(m_window, width, height);
     } else if (hints == WEBVIEW_HINT_MAX) {
       gtk_compat::window_set_max_size(GTK_WINDOW(m_window), width, height);
+    } else {
+      return error_info{WEBVIEW_ERROR_INVALID_ARGUMENT, "Invalid hint"};
     }
-    return error_info{WEBVIEW_ERROR_INVALID_ARGUMENT, "Invalid hint"};
+    return {};
   }
 
   noresult navigate_impl(const std::string &url) override {
@@ -331,4 +336,5 @@ using browser_engine = detail::gtk_webkit_engine;
 
 } // namespace webview
 
+#endif
 #endif // WEBVIEW_BACKENDS_GTK_WEBKITGTK_H
