@@ -1,23 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
-// 
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -29,19 +29,19 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : utility framework
-// Rev.  : 7/30/2021 Fri (clonextop@gmail.com)
+// Rev.  : 2/14/2025 Fri (clonextop@gmail.com)
 //================================================================================
 #include "TextFile.h"
 #include <stdarg.h>
 
 TextFile::TextFile(void)
 {
-	m_fp				= NULL;
-	m_iLineNumber		= 0;
-	m_bWrite			= false;
-	m_bComment			= false;
+	m_fp		  = NULL;
+	m_iLineNumber = 0;
+	m_bWrite	  = false;
+	m_bComment	  = false;
 }
 
 TextFile::~TextFile(void)
@@ -49,33 +49,33 @@ TextFile::~TextFile(void)
 	Close();
 }
 
-bool TextFile::Open(const char* sFileName)
+bool TextFile::Open(const char *sFileName)
 {
 	Close();
-	m_sFileName		= sFileName;
-	m_fp			= fopen(sFileName, "rt");
-	m_iLineNumber	= 0;
-	m_bWrite		= false;
+	m_sFileName	  = sFileName;
+	m_fp		  = fopen(sFileName, "rt");
+	m_iLineNumber = 0;
+	m_bWrite	  = false;
 	return (m_fp != NULL);
 }
 
-bool TextFile::Create(const char* sFileName)
+bool TextFile::Create(const char *sFileName)
 {
 	Close();
-	m_sFileName		= sFileName;
-	m_fp			= fopen(sFileName, "wt");
-	m_iLineNumber	= 0;
-	m_bWrite		= true;
+	m_sFileName	  = sFileName;
+	m_fp		  = fopen(sFileName, "wt");
+	m_iLineNumber = 0;
+	m_bWrite	  = true;
 	return (m_fp != NULL);
 }
 
 void TextFile::Close(void)
 {
-	if(m_fp) {
+	if (m_fp) {
 		fclose(m_fp);
-		m_fp			= NULL;
-		m_iLineNumber	= 0;
-		m_bWrite		= false;
+		m_fp		  = NULL;
+		m_iLineNumber = 0;
+		m_bWrite	  = false;
 	}
 }
 
@@ -86,35 +86,65 @@ off64_t TextFile::Offset(void)
 
 void TextFile::SetOffset(off64_t offset, int base)
 {
-	if(m_fp)
+	if (m_fp)
 		fseeko64(m_fp, offset, base);
 }
 
-void TextFile::Puts(const char* sStr)
+size_t TextFile::FileSize(void)
 {
-	if(!m_fp || !m_bWrite || !sStr) return;
+	if (m_fp) {
+		off64_t offset = Offset();
+		SetOffset(0, SEEK_END);
+		size_t lSize = Offset();
+		SetOffset(offset, SEEK_SET);
+		return lSize;
+	}
+	return 0;
+}
+
+void TextFile::Puts(const char *sStr)
+{
+	if (!m_fp || !m_bWrite || !sStr)
+		return;
 
 	fputs(sStr, m_fp);
 }
 
-const char* TextFile::Gets(bool bUseComment)
+const char *TextFile::Gets(bool bUseComment)
 {
 	static cstring sLine;
-	bool bRet	= GetLine(sLine, bUseComment);
+	bool		   bRet = GetLine(sLine, bUseComment);
 
-	if(bRet && bUseComment) {
+	if (bRet && bUseComment) {
 		sLine.Trim("\r\n");
 	}
 
 	return bRet ? sLine.c_str() : NULL;
 }
 
-void TextFile::Write(const char* sFormat, ...)
+size_t TextFile::Read(void *pBuff, size_t byte_size)
 {
-	if(!m_fp || !m_bWrite || !sFormat) return;
+	if (m_fp && !m_bWrite && pBuff) {
+		return fread(pBuff, byte_size, 1, m_fp);
+	}
+	return 0;
+}
+
+size_t TextFile::Write(const void *pBuff, size_t byte_size)
+{
+	if (m_fp && m_bWrite && pBuff) {
+		return fwrite(pBuff, byte_size, 1, m_fp);
+	}
+	return 0;
+}
+
+void TextFile::Write(const char *sFormat, ...)
+{
+	if (!m_fp || !m_bWrite || !sFormat)
+		return;
 
 	{
-		int iLen		= 0;
+		int		iLen = 0;
 		va_list vaArgs;
 		va_start(vaArgs, sFormat);
 		{
@@ -125,7 +155,7 @@ void TextFile::Write(const char* sFormat, ...)
 			va_end(vaCopy);
 		}
 		{
-			char* pBuff = new char[iLen + 1];
+			char			 *pBuff = new char[iLen + 1];
 			std::vector<char> zc(iLen + 1);
 			std::vsnprintf(pBuff, iLen + 1, sFormat, vaArgs);
 			va_end(vaArgs);
@@ -133,70 +163,74 @@ void TextFile::Write(const char* sFormat, ...)
 				// write to string
 				fputs(pBuff, m_fp);
 			}
-			delete [] pBuff;
+			delete[] pBuff;
 		}
 	}
 }
 
-bool TextFile::GetLine(cstring& sLine, bool bUseComment)
+bool TextFile::GetLine(cstring &sLine, bool bUseComment)
 {
-	static char		sTemp[1024];
-	char*	sTok		= NULL;
+	static char sTemp[1024];
+	char	   *sTok = NULL;
 	sLine.clear();
 
-	if(!m_fp || m_bWrite) return false;
+	if (!m_fp || m_bWrite)
+		return false;
 
 RE_GET:
 
-	if(!fgets(sTemp, 1024, m_fp)) return (sLine.size() != 0);
+	if (!fgets(sTemp, 1024, m_fp))
+		return (sLine.size() != 0);
 
 	// get full line
-	sLine	+= sTemp;
+	sLine += sTemp;
 	{
 		int iLen = strlen(sTemp);
 
-		if(iLen > 0 && sTemp[iLen - 1] != '\n' && !feof(m_fp)) goto RE_GET;
+		if (iLen > 0 && sTemp[iLen - 1] != '\n' && !feof(m_fp))
+			goto RE_GET;
 	}
 	m_iLineNumber++;
 RE_CHECK_COMMENT:
 
-	if(bUseComment) {
-		if(m_bComment) {
+	if (bUseComment) {
+		if (m_bComment) {
 			int iPos = sLine.find("*/");
 
-			if(iPos >= 0) {
-				m_bComment	= false;
+			if (iPos >= 0) {
+				m_bComment = false;
 				sLine.erase(0, iPos + 2);
 				goto RE_CHECK_COMMENT;
-			} else sLine.clear();
+			} else
+				sLine.clear();
 		} else {
 			sLine.CutBack("//", true);
 			int iPos = sLine.find("/*");
 
-			if(iPos >= 0) {
+			if (iPos >= 0) {
 				int iEnd = sLine.find("*/", iPos + 2);
 
-				if(iEnd >= 0) {
+				if (iEnd >= 0) {
 					sLine.erase(iPos, iEnd - iPos + 2);
 					goto RE_CHECK_COMMENT;
 				} else {
 					sLine.erase(iPos, -1);
-					m_bComment	= true;
+					m_bComment = true;
 				}
 			}
 		}
 	}
 
-	if(!sLine.size()) goto RE_GET;
+	if (!sLine.size())
+		goto RE_GET;
 
 	return true;
 }
 
-void TextFile::GetAll(cstring& sContents, bool bUseComment)
+void TextFile::GetAll(cstring &sContents, bool bUseComment)
 {
 	cstring sLine;
 	sContents.clear();
 
-	while(GetLine(sLine))
-		sContents	+= sLine;
+	while (GetLine(sLine)) sContents += sLine;
 }

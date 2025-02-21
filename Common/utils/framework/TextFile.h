@@ -1,23 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
-// 
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -29,49 +29,57 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : utility framework
-// Rev.  : 11/15/2021 Mon (clonextop@gmail.com)
+// Rev.  : 2/14/2025 Fri (clonextop@gmail.com)
 //================================================================================
 #ifndef __TEXT_FILE_H__
 #define __TEXT_FILE_H__
 #include "UtilFramework.h"
 
-class TextFile {
+class TextFile
+{
 public:
 	TextFile(void);
 	virtual ~TextFile(void);
 
-	bool Open(const char* sFileName);
-	bool Create(const char* sFileName);
-	void Close(void);
+	bool		   Open(const char *sFileName);
+	bool		   Create(const char *sFileName);
+	void		   Close(void);
 
-	off64_t Offset(void);
-	void SetOffset(off64_t offset, int base = SEEK_SET);
-	void Puts(const char* sStr);
-	const char* Gets(bool bUseComment = false);
-	void Write(const char* sFormat, ...);
-	bool GetLine(cstring& sLine, bool bUseComment = false);
-	void GetAll(cstring& sContents, bool bUseComment = false);
-	inline string& FileName(void)	{
+	off64_t		   Offset(void);
+	void		   SetOffset(off64_t offset, int base = SEEK_SET);
+	size_t		   FileSize(void);
+	void		   Puts(const char *sStr);
+	const char	  *Gets(bool bUseComment = false);
+	size_t		   Read(void *pBuff, size_t byte_size);
+	size_t		   Write(const void *pBuff, size_t byte_size);
+	void		   Write(const char *sFormat, ...);
+	bool		   GetLine(cstring &sLine, bool bUseComment = false);
+	void		   GetAll(cstring &sContents, bool bUseComment = false);
+	inline string &FileName(void)
+	{
 		return m_sFileName;
 	}
-	inline int LineNumber(void) 	{
+	inline int LineNumber(void)
+	{
 		return m_iLineNumber;
 	}
-	inline bool IsOpen(void)		{
+	inline bool IsOpen(void)
+	{
 		return m_fp != NULL;
 	}
-	inline bool IsEOF(void)			{
+	inline bool IsEOF(void)
+	{
 		return !IsOpen() || (feof(m_fp) != 0);
 	}
 
 protected:
-	FILE*					m_fp;
-	string					m_sFileName;
-	bool					m_bWrite;
-	bool					m_bComment;
-	int						m_iLineNumber;
+	FILE  *m_fp;
+	string m_sFileName;
+	bool   m_bWrite;
+	bool   m_bComment;
+	int	   m_iLineNumber;
 };
 
-#endif// __TEXT_FILE_H__
+#endif // __TEXT_FILE_H__
