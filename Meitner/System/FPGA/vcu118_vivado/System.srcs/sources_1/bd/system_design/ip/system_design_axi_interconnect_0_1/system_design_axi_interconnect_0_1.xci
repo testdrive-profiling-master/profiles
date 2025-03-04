@@ -4,7 +4,7 @@
     "xci_name": "system_design_axi_interconnect_0_1",
     "cell_name": "axi_interconnect_apb",
     "component_reference": "xilinx.com:ip:axi_interconnect:2.1",
-    "ip_revision": "30",
+    "ip_revision": "34",
     "gen_directory": "../../../../../../System.gen/sources_1/bd/system_design/ip/system_design_axi_interconnect_0_1",
     "parameters": {
       "component_parameters": {
@@ -339,12 +339,12 @@
       },
       "runtime_parameters": {
         "IPCONTEXT": [ { "value": "IP_Integrator_AppCore" } ],
-        "IPREVISION": [ { "value": "30" } ],
+        "IPREVISION": [ { "value": "34" } ],
         "MANAGED": [ { "value": "TRUE" } ],
         "OUTPUTDIR": [ { "value": "../../../../../../System.gen/sources_1/bd/system_design/ip/system_design_axi_interconnect_0_1" } ],
         "SELECTEDSIMMODEL": [ { "value": "" } ],
         "SHAREDDIR": [ { "value": "../../ipshared" } ],
-        "SWVERSION": [ { "value": "2023.2" } ],
+        "SWVERSION": [ { "value": "2024.2" } ],
         "SYNTHESISFLOW": [ { "value": "GLOBAL" } ]
       }
     }
