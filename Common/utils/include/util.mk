@@ -18,4 +18,7 @@ TARGET_DEP		:= $(TARGET_DEP) $(TESTDRIVE_PROFILE)Common/utils/lib/libUtilFramewo
 INC				:= $(INC) -I$(TESTDRIVE_PROFILE)Common/utils/framework -I$(TESTDRIVE_PROFILE)Common/utils/include -I$(TESTDRIVE_PROFILE)Common/utils/lib_src
 LIBDIR			:= -L$(TESTDRIVE_PROFILE)Common/utils/lib -lUtilFramework -liconv $(LIBDIR)
 
+#-------------------------------------------------
+# common build config
+#-------------------------------------------------
 include $(TESTDRIVE_PROFILE)Common/include/config.mk

@@ -26,13 +26,16 @@ PWD			:= $(shell pwd)
 #-------------------------------------------------
 #	Library & Include
 #-------------------------------------------------
-LIBDIR		:= $(LIBDIR) -L$(TESTDRIVE_PROFILE)Common/lib -L$(TESTDRIVE_DIR)bin/msys64/usr/lib -lpthread -lm
+LIBDIR		:= $(LIBDIR) -lpthread -lm
 OBJS_RES	:= $(SRCS_RES:.rc=.o)
 OBJS		:= $(SRCS:.c=.o)
 OBJS		:= $(OBJS:.cc=.o)
 OBJS		:= $(OBJS:.cpp=.o)
 DEPS		:= $(OBJS:.o=.d)
-INC			:= $(INC) -I$(TESTDRIVE_DIR)include -I$(TESTDRIVE_PROFILE)Common/include -I$(TESTDRIVE_DIR)bin/msys64/usr/include
+ifeq ($(OS),Windows_NT)
+	LIBDIR		:= -L$(TESTDRIVE_PROFILE)Common/lib -L$(TESTDRIVE_DIR)bin/msys64/usr/lib $(LIBDIR)
+	INC			:= $(INC) -I$(TESTDRIVE_DIR)include -I$(TESTDRIVE_PROFILE)Common/include -I$(TESTDRIVE_DIR)bin/msys64/usr/include
+endif
 
 ifndef CPPCHECK_SRCS
 CPPCHECK_SRCS	:= $(SRCS)
@@ -57,10 +60,16 @@ endif
 #-------------------------------------------------
 # Build sequence
 #-------------------------------------------------
-TARGET_EXE		:= $(TARGETPATH)/$(TARGETNAME).exe
 TARGET_A		:= $(LIBPATH)/lib$(TARGETNAME).a
-TARGET_SO		:= $(TARGETPATH)/$(TARGETNAME).dll
-TARGET_SO_A		:= $(TARGETPATH)/lib$(TARGETNAME).dll
+ifeq ($(OS),Windows_NT)
+	TARGET_EXE		:= $(TARGETPATH)/$(TARGETNAME).exe
+	TARGET_SO		:= $(TARGETPATH)/$(TARGETNAME).dll
+	TARGET_SO_A		:= $(TARGETPATH)/lib$(TARGETNAME).dll
+else
+	TARGET_EXE		:= $(TARGETPATH)/$(TARGETNAME)
+	TARGET_SO		:= $(TARGETPATH)/$(TARGETNAME).so
+	TARGET_SO_A		:= $(TARGETPATH)/lib$(TARGETNAME).so
+endif
 
 COMPILE_TARGET	:= $(BUILD_TARGET)
 
@@ -131,9 +140,11 @@ encrypt: $(ENCRYPT_EXTRA:=.encrypted) $(SRCS:=.encrypted) $(SRCS_RES:=.encrypted
 decrypt: $(ENCRYPT_EXTRA:=.decrypted) $(SRCS_ENCRYPTED:.encrypted=.decrypted)
 	@echo Decryption is done!
 
+ifeq ($(OS),Windows_NT)
 deploy: all
 	@echo $(BUILD_TARGET)
 	@codegen collect_lib $(BUILD_TARGET)
+endif
 
 clean:
 	@$(RM) -f $(OBJS) $(OBJS_RES) $(DEPS)
@@ -156,10 +167,15 @@ static:
 ifeq ($(strip $(CPPCHECK_SRCS)),)
 	@echo *I: No sources to check static analysis.
 else
+ifeq ($(OS),Windows_NT)
 	@cppcheck -j $(NUMBER_OF_PROCESSORS) --suppress=*:*/msys64/* --suppress=*:*/lib_src/* $(INC) $(CDEFS) $(CPPCHECK_ARG) -D__MINGW32__ -D__MINGW64__ -D__GNUC__ --platform=win64 --inline-suppr $(CPPCHECK_SRCS)
+else
+	@cppcheck -j $(NUMBER_OF_PROCESSORS) --suppress=*:*/lib_src/* $(INC) $(CDEFS) $(CPPCHECK_ARG) -D__GNUC__ --inline-suppr $(CPPCHECK_SRCS)
+endif
 endif
 
 # version management
+ifeq ($(OS),Windows_NT)
 ifeq ($(BUILD_VERSION), 1)
 $(VERSION_HEADER): $(SRCS)
 	@codegen gen_version -p $(TARGETNAME) .$(TARGETNAME)_version.inl
@@ -176,6 +192,7 @@ version_minor:
 version_major:
 	@echo *E: Version control is not enabled for this project.
 endif
+endif
 
 # for simulation build sequence
 ifdef SIMPATH
@@ -184,10 +201,22 @@ SIM_OBJS	:= $(filter-out ../verilator/%,$(OBJS_LIB))
 endif
 
 dep:
+ifeq ($(OS),Windows_NT)
 ifdef SIMPATH
 	@DependencyPrepare -s $(SIM_DEPS)
 else
 	@DependencyPrepare -s $(DEPS)
+endif
+endif
+
+
+ifneq ($(OS),Windows_NT)
+PACKAGES	:= $(PACKAGES) ccache cppcheck
+prepare: $(PACKAGES)
+TARGET_DEP	:= $(TARGET_DEP) prepare
+
+$(PACKAGES):
+	@if ! dpkg -l | grep $@ -c >>/dev/null; then sudo apt-get install $@; fi
 endif
 
 define MAKEFILE_USAGE
@@ -242,22 +271,30 @@ endif
 %.o: %.c $(TARGET_DEP)
 	@echo '- Compiling... : $<'
 	@ccache $(CC) $(CDEFS) $(CFLAGS) $(INC) -MD -c $< -o $@
-# ccache bug fix "D\:/" -> "D:/"
+ifeq ($(OS),Windows_NT)
+#	ccache bug fix "D\:/" -> "D:/"
 	@sed -i 's/\\\:/\:/g' $*.d
+endif
 
 %.o: %.cpp $(TARGET_DEP)
 	@echo '- Compiling... : $<'
 	@ccache $(CXX) $(CDEFS) $(CPPFLAGS) -Weffc++ $(INC) -MD -c $< -o $@
+ifeq ($(OS),Windows_NT)
 	@sed -i 's/\\\:/\:/g' $*.d
+endif
 	
 %.o: %.cc $(TARGET_DEP)
 	@echo '- Compiling... : $<'
 	@ccache $(CXX) $(CDEFS) $(CPPFLAGS) -Weffc++ $(INC) -MD -c $< -o $@
+ifeq ($(OS),Windows_NT)
 	@sed -i 's/\\\:/\:/g' $*.d
+endif
 
+ifeq ($(OS),Windows_NT)
 %.o: %.rc $(TARGET_DEP)
 	@echo '- Compiling... : $<'
 	@windres $(INC) $< -o $@
+endif
 
 $(TARGET_EXE):$(VERSION_HEADER) $(OBJS) $(OBJS_RES) $(TARGET_DEP)
 	@echo
