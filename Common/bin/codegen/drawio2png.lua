@@ -72,6 +72,7 @@ local page_number = page_list[page_name]
 
 page_name	= String(page_name)
 page_name:Replace(" ", "_", true)
+page_name:ChangeCharsetToANSI()	-- fix for command line
 	
 if #out_file_name == 0 then
 	out_file_name	= in_file_name .. "." .. page_name.s .. ".png"
