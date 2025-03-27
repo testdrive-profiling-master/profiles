@@ -10,6 +10,8 @@ if (Arg:DoParse() == false) then
 end
 
 page_name		= Arg:GetOptionString("page_name")
+page_name:ChangeCharsetToUTF8()	-- fix ANSI to UTF-8 format
+page_name = page_name.s
 in_file_name	= Arg:GetOptionFile("input_file", 0)
 out_file_name	= Arg:GetOptionFile("out_file", 0)
 
@@ -201,6 +203,7 @@ do
 	-- save to file
 	page_name	= String(page_name)
 	page_name:Replace(" ", "_", true)
+	page_name:ChangeCharsetToANSI()	-- fix for command line
 	
 	if #out_file_name == 0 then
 		out_file_name	= in_file_name .. "." .. page_name.s .. ".svg"
