@@ -4,11 +4,11 @@ Set fso = CreateObject("Scripting.FileSystemObject")
 If WScript.Arguments.Count = 2 Then
 	docPath			= fso.GetAbsolutePathName(WScript.Arguments(0))
 	output_format	= WScript.Arguments(1)
-	output_id		= 8
+	output_id		= 10
 	save_Path		= fso.GetParentFolderName(docPath) & "\" & fso.GetBaseName(docpath) & "." & output_format
 	
 	If output_format = "html" Then
-		output_id	= 8
+		output_id	= 10
 	ElseIf output_format = "xml" Then
 		output_id	= 12
 	ElseIf output_format = "rtf" Then
