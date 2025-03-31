@@ -9,7 +9,7 @@ if (Arg:DoParse() == false) then
 	return
 end
 
-page_name		= Arg:GetOptionString("page_name")
+page_name		= String(Arg:GetOptionString("page_name"))
 page_name:ChangeCharsetToUTF8()	-- fix ANSI to UTF-8 format
 page_name = page_name.s
 in_file_name	= Arg:GetOptionFile("input_file", 0)
