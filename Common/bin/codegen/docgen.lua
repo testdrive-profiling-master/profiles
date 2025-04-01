@@ -825,6 +825,7 @@ function GenerateCaption(sType, content)
 	end
 	
 	local	sNumPart		= ""
+	local	spPr			= ""	-- 앞부분 tab 문제를 제거
 	
 	if sType == "Table" then
 		caption_id				= 20000000 + (docgen.chapter[1]*100000) + (docgen.table.id*10)
@@ -840,6 +841,7 @@ function GenerateCaption(sType, content)
 		docgen.figure.id		= docgen.figure.id + 1
 		docgen.figure.count		= docgen.figure.count + 1
 		sID						= docgen.figure.id
+		spPr					= "<w:numPr><w:ilvl w:val=\"0\"/><w:numId w:val=\"0\"/></w:numPr>"
 	end
 	
 	reference_id		= caption_id + 30000000
@@ -847,8 +849,8 @@ function GenerateCaption(sType, content)
 
 	local sXML = "<w:p>\
 		<w:pPr>\
-			<w:pStyle w:val=\"" .. sType .. "Caption\"/>\
-		</w:pPr>\
+			<w:pStyle w:val=\"" .. sType .. "Caption\"/>" .. spPr ..
+		"</w:pPr>\
 		<w:bookmarkStart w:id=\"" .. tostring(docgen.bookmark.id) .. "\" w:name=\"_Toc" .. tostring(caption_id) .. "\"/>\
 		<w:bookmarkStart w:id=\"" .. tostring(docgen.bookmark.id + 1) .. "\" w:name=\"_Toc" .. tostring(caption_id + 1) .. "\"/>\
 		<w:bookmarkStart w:id=\"" .. tostring(docgen.bookmark.id + 2) .. "\" w:name=\"_Ref" .. tostring(reference_id) .. "\"/>\
