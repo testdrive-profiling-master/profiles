@@ -16,7 +16,7 @@ if xlsx:Open("input.xlsx") then
 				end
 				
 				if (sheet1:GetValue() == "23") then
-					sheet1:SetInt("500")
+					sheet1:SetInt(500)
 				end
 			end
 			
