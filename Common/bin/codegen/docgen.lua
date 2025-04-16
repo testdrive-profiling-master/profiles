@@ -2809,22 +2809,24 @@ local function DeleteDocSection(sPara)
 	local node = docgen.doc_body:child_by_text("w:p", "w:t", sPara)
 
 	if node:empty() then	-- not found
+		LOGW("Doc section '" .. sPara .. "' is not found.");
 		return
 	else
-		-- search to top paragraph
-		while node:child_in_depth("w:lastRenderedPageBreak", nil):empty() do
+		-- search to top paragraph (반드시 'w:lastRenderedPageBreak' 이 존재하는 것은 아니다.)
+		--[[while node:child_in_depth("w:lastRenderedPageBreak", nil):empty() do
 			node	= node:previous_sibling(nil)
 			if node:empty() then
 				error("It's first page paragraph. : " .. sPara)
 				break;
 			end
 		end
+		--]]
 
 		-- delete first paragraph (because it includes a page break code)
 		node:Destroy(1)
 		
 		-- delete paragraph until page break
-		while node:child_in_depth("w:lastRenderedPageBreak", nil):empty() do
+		while node:child_in_depth("w:lastRenderedPageBreak", nil):empty() and node:child_in_depth_by_attribute("w:pStyle", "w:val", "TOCHeading"):empty() do
 		
 			-- 새로운 색션(페이지 나눔 포함) 시작일 경우 이전 세션 정보를 위로 올려줘야 한다.
 			if node:child_in_depth("w:br", nil):empty() == false then	-- page break
