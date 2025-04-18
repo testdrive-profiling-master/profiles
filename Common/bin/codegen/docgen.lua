@@ -677,11 +677,15 @@ end
 AddTerm	= docgen.terms.insert
 
 -- 문서 끝
-docgen.doc_last			= docgen.doc_body:last_child()
-
-do	-- delete latest "paragraph" : 빈 paragraph 를 제거한다.
-	local	last_pr	= docgen.doc_last:previous_sibling("w:p")
-	last_pr:Destroy(1)
+docgen.doc_last			= docgen.doc_body:child_by_text("w:p", "w:t", "Contents on Here")
+if docgen.doc_last:empty() then
+	docgen.doc_last			= docgen.doc_body:last_child()	-- 문서 끝에 추가될 수 있도록
+		do	-- delete latest "paragraph" : 빈 paragraph 를 제거한다.
+		local	last_pr	= docgen.doc_last:previous_sibling("w:p")
+		last_pr:Destroy(1)
+	end
+else
+	docgen.doc_last:Destroy(1)	-- 가이드 포인트 'Contents on Here' 를 지운다.
 end
 
 docgen.doc_previous		= docgen.doc_last:previous_sibling()	-- contents 바로 앞 마지막 수식
