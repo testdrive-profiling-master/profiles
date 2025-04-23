@@ -226,6 +226,17 @@ do	-- install new template
 	end
 end
 
+-- Run Document dependent lua code
+do
+	local sExtraLuaFile = String(docgen.template_path.s)
+	sExtraLuaFile:DeleteBack(".docx")
+	sExtraLuaFile:Append(".lua")
+
+	if lfs.IsExist(sExtraLuaFile.s) then	-- existed
+		RunScript(sExtraLuaFile.s)
+		LOGI("sExtraLuaFile : " .. sExtraLuaFile.s)
+	end
+end
 
 ---------------------------------------------------------------------------------
 -- new document
@@ -2779,6 +2790,14 @@ AddSubDocument = function(sDocFileName)
 	)
 end
 
+-- Run user defined initialization
+if docgen.OnInitialize ~= nil then
+	if docgen.OnInitialize() == false then
+		LOGE("Error on document initialization...")
+		os.exit(1)
+	end
+end
+
 -- 사용자 소스 실행
 do
 	local __sExt	= String(docgen.sInFilename)
@@ -2798,6 +2817,14 @@ do
 
 	-- 현재 라인 상태 모두 지우기
 	print((' '):rep(docgen.max_console_chars) .. "\r")	-- end of document
+end
+
+-- Run user defined finalization
+if docgen.OnFinalize ~= nil then
+	if docgen.OnFinalize() == false then
+		LOGE("Error on document finalization...")
+		os.exit(1)
+	end
 end
 
 -- 속성 갱신
