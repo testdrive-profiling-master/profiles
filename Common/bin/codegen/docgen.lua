@@ -3041,6 +3041,9 @@ do
 		docgen.sOutFilename:Append(".docx")
 	end
 
+	-- should be change to ANSI formatted file name (must not UTF-8)
+	docgen.sOutFilename:ChangeCharsetToANSI()
+
 	local sOutFilename_PDF	= String(docgen.sOutFilename.s)
 	sOutFilename_PDF:CutBack(".docx", false)
 	sOutFilename_PDF:Append(".pdf")
