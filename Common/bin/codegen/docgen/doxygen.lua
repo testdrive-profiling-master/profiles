@@ -16,17 +16,17 @@ do
 	config.OUTPUT_LANGUAGE			= "Korean-en"
 	config.BRIEF_MEMBER_DESC		= true
 	config.REPEAT_BRIEF				= true
-	config.ABBREVIATE_BRIEF			= "The $name class" \
-						 "The $name widget" \
-						 "The $name file" \
-						 is \
-						 provides \
-						 specifies \
-						 contains \
-						 represents \
-						 a \
-						 an \
-						 the
+	config.ABBREVIATE_BRIEF			= {"The $name class",
+						 "The $name widget",
+						 "The $name file",
+						 "is",
+						 "provides",
+						 "specifies",
+						 "contains",
+						 "represents",
+						 "a",
+						 "an",
+						 "the"}
 	config.ALWAYS_DETAILED_SEC		= true
 	config.INLINE_INHERITED_MEMB	= false
 	config.FULL_PATH_NAMES			= true
@@ -117,63 +117,64 @@ do
 	config.WARN_FORMAT				= "$file:$line: $text"
 	config.WARN_LINE_FORMAT			= "at line $line of file $file"
 	config.WARN_LOGFILE				= ""
-	config.INPUT					= pages \
-						 ../ExamMspaint/ExamPaint/include
+	config.INPUT					= {"pages",
+						 "../ExamMspaint/ExamPaint/include"}
 	config.INPUT_ENCODING			= "UTF-8"
 	config.INPUT_FILE_ENCODING		= ""
-	config.FILE_PATTERNS			= *.c \
-						 *.cc \
-						 *.cxx \
-						 *.c++ \
-						 *.java \
-						 *.ii \
-						 *.ixx \
-						 *.ipp \
-						 *.i++ \
-						 *.inl \
-						 *.idl \
-						 *.ddl \
-						 *.odl \
-						 *.h \
-						 *.hh \
-						 *.hxx \
-						 *.hpp \
-						 *.h++ \
-						 *.l \
-						 *.cs \
-						 *.d \
-						 *.php \
-						 *.php4 \
-						 *.php5 \
-						 *.phtml \
-						 *.inc \
-						 *.m \
-						 *.markdown \
-						 *.md \
-						 *.mm \
-						 *.dox \
-						 *.py \
-						 *.pyw \
-						 *.f90 \
-						 *.f95 \
-						 *.f03 \
-						 *.f08 \
-						 *.f18 \
-						 *.f \
-						 *.for \
-						 *.vhd \
-						 *.vhdl \
-						 *.ucf \
-						 *.qsf \
-						 *.ice \
-						 *.txt
+	config.FILE_PATTERNS			= {"*.c",
+						 "*.cc",
+						 "*.cxx",
+						 "*.cpp",
+						 "*.c++",
+						 "*.java",
+						 "*.ii",
+						 "*.ixx",
+						 "*.ipp",
+						 "*.i++",
+						 "*.inl",
+						 "*.idl",
+						 "*.ddl",
+						 "*.odl",
+						 "*.h",
+						 "*.hh",
+						 "*.hxx",
+						 "*.hpp",
+						 "*.h++",
+						 "*.l",
+						 "*.cs",
+						 "*.d",
+						 "*.php",
+						 "*.php4",
+						 "*.php5",
+						 "*.phtml",
+						 "*.inc",
+						 "*.m",
+						 "*.markdown",
+						 "*.md",
+						 "*.mm",
+						 "*.dox",
+						 "*.py",
+						 "*.pyw",
+						 "*.f90",
+						 "*.f95",
+						 "*.f03",
+						 "*.f08",
+						 "*.f18",
+						 "*.f",
+						 "*.for",
+						 "*.vhd",
+						 "*.vhdl",
+						 "*.ucf",
+						 "*.qsf",
+						 "*.ice",
+						 "*.txt"}
 	config.RECURSIVE				= true
 	config.EXCLUDE					= ""
 	config.EXCLUDE_SYMLINKS			= false
 	config.EXCLUDE_PATTERNS			= ""
 	config.EXCLUDE_SYMBOLS			= ""
 	config.EXAMPLE_PATH				= "examples"
-	config.EXAMPLE_PATTERNS			= *
+	config.EXAMPLE_PATTERNS			= "*"
 	config.EXAMPLE_RECURSIVE		= false
 	config.IMAGE_PATH				= "resources"
 	config.INPUT_FILTER				= ""
@@ -242,121 +243,121 @@ do
 	config.DISABLE_INDEX			= false
 	config.GENERATE_TREEVIEW		= true
 	config.FULL_SIDEBAR				= false
-	config.ENUM_VALUES_PER_LINE= 4
-	config.SHOW_ENUM_VALUES	= false
-	config.TREEVIEW_WIDTH		= 250
-	config.EXT_LINKS_IN_WINDOW	= false
-	config.OBFUSCATE_EMAILS	= true
-	config.HTML_FORMULA_FORMAT	= "svg"
-	config.FORMULA_FONTSIZE	= 10
-	config.FORMULA_MACROFILE	= ""
-	config.USE_MATHJAX			= false
-	config.MATHJAX_VERSION		= "MathJax_2"
-	config.MATHJAX_FORMAT		= "HTML-CSS"
-	config.MATHJAX_RELPATH		= ""
-	config.MATHJAX_EXTENSIONS	= ""
-	config.MATHJAX_CODEFILE	= ""
-	config.SEARCHENGINE		= true
-	config.SERVER_BASED_SEARCH	= false
-	config.EXTERNAL_SEARCH		= false
-	config.SEARCHENGINE_URL	= ""
-	config.SEARCHDATA_FILE		= "searchdata.xml"
-	config.EXTERNAL_SEARCH_ID	= ""
-	config.EXTRA_SEARCH_MAPPINGS= ""
-	config.GENERATE_LATEX		= false
-	config.LATEX_OUTPUT		= "latex"
-	config.LATEX_CMD_NAME		= ""
-	config.MAKEINDEX_CMD_NAME	= "makeindex"
-	config.LATEX_MAKEINDEX_CMD	= "makeindex"
-	config.COMPACT_LATEX		= false
-	config.PAPER_TYPE			= "a4"
-	config.EXTRA_PACKAGES		= ""
-	config.LATEX_HEADER		= ""
-	config.LATEX_FOOTER		= ""
-	config.LATEX_EXTRA_STYLESHEET= ""
-	config.LATEX_EXTRA_FILES	= ""
-	config.PDF_HYPERLINKS		= true
-	config.USE_PDFLATEX		= true
-	config.LATEX_BATCHMODE		= false
-	config.LATEX_HIDE_INDICES	= false
-	config.LATEX_BIB_STYLE		= "plain"
-	config.LATEX_EMOJI_DIRECTORY= ""
-	config.GENERATE_RTF		= false
-	config.RTF_OUTPUT			= "rtf"
-	config.COMPACT_RTF			= false
-	config.RTF_HYPERLINKS		= false
-	config.RTF_STYLESHEET_FILE	= ""
-	config.RTF_EXTENSIONS_FILE	= ""
-	config.RTF_EXTRA_FILES		= ""
-	config.GENERATE_MAN		= false
-	config.MAN_OUTPUT			= "man"
-	config.MAN_EXTENSION		= .3
-	config.MAN_SUBDIR			= ""
-	config.MAN_LINKS			= false
-	config.GENERATE_XML		= true
-	config.XML_OUTPUT			= "xml"
-	config.XML_PROGRAMLISTING	= true
-	config.XML_NS_MEMB_FILE_SCOPE= false
-	config.GENERATE_DOCBOOK	= false
-	config.DOCBOOK_OUTPUT		= "docbook"
-	config.GENERATE_AUTOGEN_DEF= false
-	config.GENERATE_SQLITE3	= false
-	config.SQLITE3_OUTPUT		= "sqlite3"
-	config.SQLITE3_RECREATE_DB	= true
-	config.GENERATE_PERLMOD	= false
-	config.PERLMOD_LATEX		= false
-	config.PERLMOD_PRETTY		= true
-	config.PERLMOD_MAKEVAR_PREFIX= ""
-	config.ENABLE_PREPROCESSING= true
-	config.MACRO_EXPANSION		= false
-	config.EXPAND_ONLY_PREDEF	= false
-	config.SEARCH_INCLUDES		= true
-	config.INCLUDE_PATH		= ""
-	config.INCLUDE_FILE_PATTERNS= ""
-	config.PREDEFINED			= ""
-	config.EXPAND_AS_DEFINED	= ""
-	config.SKIP_FUNCTION_MACROS= true
-	config.TAGFILES			= ""
-	config.GENERATE_TAGFILE	= ""
-	config.ALLEXTERNALS		= false
-	config.EXTERNAL_GROUPS		= true
-	config.EXTERNAL_PAGES		= true
-	config.HIDE_UNDOC_RELATIONS= true
-	config.HAVE_DOT			= true
-	config.DOT_NUM_THREADS		= 0
-	config.DOT_COMMON_ATTR		= "fontname=Helvetica,fontsize=10"
-	config.DOT_EDGE_ATTR		= "labelfontname=Helvetica,labelfontsize=10"
-	config.DOT_NODE_ATTR		= "shape=box,height=0.2,width=0.4"
-	config.DOT_FONTPATH		= ""
-	config.CLASS_GRAPH			= true
-	config.COLLABORATION_GRAPH	= true
-	config.GROUP_GRAPHS		= true
-	config.UML_LOOK			= false
-	config.UML_LIMIT_NUM_FIELDS= 10
-	config.DOT_UML_DETAILS		= false
-	config.DOT_WRAP_THRESHOLD	= 17
-	config.TEMPLATE_RELATIONS	= false
-	config.INCLUDE_GRAPH		= true
-	config.INCLUDED_BY_GRAPH	= true
-	config.CALL_GRAPH			= true
-	config.CALLER_GRAPH		= true
-	config.GRAPHICAL_HIERARCHY	= true
-	config.DIRECTORY_GRAPH		= false
-	config.DIR_GRAPH_MAX_DEPTH	= 1
-	config.DOT_IMAGE_FORMAT	= "svg"
-	config.INTERACTIVE_SVG		= false
-	config.DOT_PATH			= "D:/Project/TestDrive/bin/msys64/ucrt64/bin"
-	config.DOTFILE_DIRS		= ""
-	config.DIA_PATH			= ""
-	config.DIAFILE_DIRS		= ""
-	config.PLANTUML_JAR_PATH	= ""
-	config.PLANTUML_CFG_FILE	= ""
-	config.PLANTUML_INCLUDE_PATH= ""
-	config.DOT_GRAPH_MAX_NODES	= 50
-	config.MAX_DOT_GRAPH_DEPTH	= 0
-	config.DOT_MULTI_TARGETS	= false
-	config.GENERATE_LEGEND		= true
-	config.DOT_CLEANUP			= true
-	config.MSCGEN_TOOL			= ""
-	config.MSCFILE_DIRS		= ""
+	config.ENUM_VALUES_PER_LINE		= 4
+	config.SHOW_ENUM_VALUES			= false
+	config.TREEVIEW_WIDTH			= 250
+	config.EXT_LINKS_IN_WINDOW		= false
+	config.OBFUSCATE_EMAILS			= true
+	config.HTML_FORMULA_FORMAT		= "svg"
+	config.FORMULA_FONTSIZE			= 10
+	config.FORMULA_MACROFILE		= ""
+	config.USE_MATHJAX				= false
+	config.MATHJAX_VERSION			= "MathJax_2"
+	config.MATHJAX_FORMAT			= "HTML-CSS"
+	config.MATHJAX_RELPATH			= ""
+	config.MATHJAX_EXTENSIONS		= ""
+	config.MATHJAX_CODEFILE			= ""
+	config.SEARCHENGINE				= true
+	config.SERVER_BASED_SEARCH		= false
+	config.EXTERNAL_SEARCH			= false
+	config.SEARCHENGINE_URL			= ""
+	config.SEARCHDATA_FILE			= "searchdata.xml"
+	config.EXTERNAL_SEARCH_ID		= ""
+	config.EXTRA_SEARCH_MAPPINGS	= ""
+	config.GENERATE_LATEX			= false
+	config.LATEX_OUTPUT				= "latex"
+	config.LATEX_CMD_NAME			= ""
+	config.MAKEINDEX_CMD_NAME		= "makeindex"
+	config.LATEX_MAKEINDEX_CMD		= "makeindex"
+	config.COMPACT_LATEX			= false
+	config.PAPER_TYPE				= "a4"
+	config.EXTRA_PACKAGES			= ""
+	config.LATEX_HEADER				= ""
+	config.LATEX_FOOTER				= ""
+	config.LATEX_EXTRA_STYLESHEET	= ""
+	config.LATEX_EXTRA_FILES		= ""
+	config.PDF_HYPERLINKS			= true
+	config.USE_PDFLATEX				= true
+	config.LATEX_BATCHMODE			= false
+	config.LATEX_HIDE_INDICES		= false
+	config.LATEX_BIB_STYLE			= "plain"
+	config.LATEX_EMOJI_DIRECTORY	= ""
+	config.GENERATE_RTF				= false
+	config.RTF_OUTPUT				= "rtf"
+	config.COMPACT_RTF				= false
+	config.RTF_HYPERLINKS			= false
+	config.RTF_STYLESHEET_FILE		= ""
+	config.RTF_EXTENSIONS_FILE		= ""
+	config.RTF_EXTRA_FILES			= ""
+	config.GENERATE_MAN				= false
+	config.MAN_OUTPUT				= "man"
+	config.MAN_EXTENSION			= .3
+	config.MAN_SUBDIR				= ""
+	config.MAN_LINKS				= false
+	config.GENERATE_XML				= true
+	config.XML_OUTPUT				= "xml"
+	config.XML_PROGRAMLISTING		= true
+	config.XML_NS_MEMB_FILE_SCOPE	= false
+	config.GENERATE_DOCBOOK			= false
+	config.DOCBOOK_OUTPUT			= "docbook"
+	config.GENERATE_AUTOGEN_DEF		= false
+	config.GENERATE_SQLITE3			= false
+	config.SQLITE3_OUTPUT			= "sqlite3"
+	config.SQLITE3_RECREATE_DB		= true
+	config.GENERATE_PERLMOD			= false
+	config.PERLMOD_LATEX			= false
+	config.PERLMOD_PRETTY			= true
+	config.PERLMOD_MAKEVAR_PREFIX	= ""
+	config.ENABLE_PREPROCESSING		= true
+	config.MACRO_EXPANSION			= false
+	config.EXPAND_ONLY_PREDEF		= false
+	config.SEARCH_INCLUDES			= true
+	config.INCLUDE_PATH				= ""
+	config.INCLUDE_FILE_PATTERN		= ""
+	config.PREDEFINED				= ""
+	config.EXPAND_AS_DEFINED		= ""
+	config.SKIP_FUNCTION_MACROS		= true
+	config.TAGFILES					= ""
+	config.GENERATE_TAGFILE			= ""
+	config.ALLEXTERNALS				= false
+	config.EXTERNAL_GROUPS			= true
+	config.EXTERNAL_PAGES			= true
+	config.HIDE_UNDOC_RELATIONS		= true
+	config.HAVE_DOT					= true
+	config.DOT_NUM_THREADS			= 0
+	config.DOT_COMMON_ATTR			= "fontname=Helvetica,fontsize=10"
+	config.DOT_EDGE_ATTR			= "labelfontname=Helvetica,labelfontsize=10"
+	config.DOT_NODE_ATTR			= "shape=box,height=0.2,width=0.4"
+	config.DOT_FONTPATH				= ""
+	config.CLASS_GRAPH				= true
+	config.COLLABORATION_GRAPH		= true
+	config.GROUP_GRAPHS				= true
+	config.UML_LOOK					= false
+	config.UML_LIMIT_NUM_FIELDS		= 10
+	config.DOT_UML_DETAILS			= false
+	config.DOT_WRAP_THRESHOLD		= 17
+	config.TEMPLATE_RELATIONS		= false
+	config.INCLUDE_GRAPH			= true
+	config.INCLUDED_BY_GRAPH		= true
+	config.CALL_GRAPH				= true
+	config.CALLER_GRAPH				= true
+	config.GRAPHICAL_HIERARCHY		= true
+	config.DIRECTORY_GRAPH			= false
+	config.DIR_GRAPH_MAX_DEPTH		= 1
+	config.DOT_IMAGE_FORMAT			= "svg"
+	config.INTERACTIVE_SVG			= false
+	config.DOT_PATH					= "D:/Project/TestDrive/bin/msys64/ucrt64/bin"
+	config.DOTFILE_DIRS				= ""
+	config.DIA_PATH					= ""
+	config.DIAFILE_DIRS				= ""
+	config.PLANTUML_JAR_PATH		= ""
+	config.PLANTUML_CFG_FILE		= ""
+	config.PLANTUML_INCLUDE_PATH	= ""
+	config.DOT_GRAPH_MAX_NODES		= 50
+	config.MAX_DOT_GRAPH_DEPTH		= 0
+	config.DOT_MULTI_TARGETS		= false
+	config.GENERATE_LEGEND			= true
+	config.DOT_CLEANUP				= true
+	config.MSCGEN_TOOL				= ""
+	config.MSCFILE_DIRS				= ""
 end
