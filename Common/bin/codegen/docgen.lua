@@ -630,10 +630,6 @@ docgen.revision.count	= 0
 docgen.revision.tbl_top = docgen.doc_body:child_by_text("w:p", "w:t", docgen.revision.title):next_sibling("w:tbl"):child("w:tr")
 docgen.revision.tbl		= docgen.revision.tbl_top:parent("w:tbl")
 
-if docgen.revision.tbl_top:empty() then
-	LOGW("Can't find table of Document revision : " .. docgen.revision.title)
-end
-
 docgen.revision.insert	= function(sVer, iYear, iMonth, iDay, sDescription)
 	docgen.property["Doc_Version"]		= sVer
 	docgen.property["Revision_Date"]	= month_list[iMonth] .. " " .. tostring(iDay) .. ", " .. tostring(iYear)
@@ -661,27 +657,29 @@ docgen.terms.count		= 0
 docgen.terms.tbl		= docgen.doc_body:child_by_text("w:p", "w:t", docgen.terms.title):next_sibling("w:tbl")
 
 if docgen.terms.tbl:empty() then
-	LOGW("Can't find table of terms")
+	docgen.terms.tbl	= nil
 end
 
 docgen.terms.insert		= function(sTag, sDescription)
-	docgen.terms.tbl:AddChildFromBuffer("\
-	<w:tr>\
-		<w:tc>\
-			<w:tcPr>\
-				<w:tcW w:w=\"1798\" w:type=\"dxa\"/>\
-				<w:hideMark/>\
-			</w:tcPr>"
-			.. EncodeParagraph(sTag, {pPr="<w:pStyle w:val=\"TableTextCenter\"/><w:spacing w:after=\"0\"/>"}) ..
-		"</w:tc>\
-		<w:tc>\
-			<w:tcPr>\
-				<w:tcW w:w=\"8304\" w:type=\"dxa\"/>\
-				<w:hideMark/>\
-			</w:tcPr>"
-			.. EncodeParagraph(sDescription, {pPr="<w:spacing w:after=\"0\"/>"}) ..
-		"</w:tc>\
-	</w:tr>")
+	if docgen.terms.tbl ~= nil then
+		docgen.terms.tbl:AddChildFromBuffer("\
+		<w:tr>\
+			<w:tc>\
+				<w:tcPr>\
+					<w:tcW w:w=\"1798\" w:type=\"dxa\"/>\
+					<w:hideMark/>\
+				</w:tcPr>"
+				.. EncodeParagraph(sTag, {pPr="<w:pStyle w:val=\"TableTextCenter\"/><w:spacing w:after=\"0\"/>"}) ..
+			"</w:tc>\
+			<w:tc>\
+				<w:tcPr>\
+					<w:tcW w:w=\"8304\" w:type=\"dxa\"/>\
+					<w:hideMark/>\
+				</w:tcPr>"
+				.. EncodeParagraph(sDescription, {pPr="<w:spacing w:after=\"0\"/>"}) ..
+			"</w:tc>\
+		</w:tr>")
+	end
 
 	docgen.terms.count	= docgen.terms.count + 1
 end
@@ -709,10 +707,12 @@ docgen.chapter.level	= 0
 docgen.chapter.sid		= 0		-- bookmark reference id
 -- tables
 docgen.table			= {}
+docgen.table.title		= "List of Tables"
 docgen.table.count		= 0
 docgen.table.id			= 0
 -- figures
 docgen.figure			= {}
+docgen.figure.title		= "List of Figures"
 docgen.figure.count		= 0
 docgen.figure.id		= 0
 -- bookmark
@@ -2837,6 +2837,9 @@ end
 
 -- 테이블/그림/Terms 목차 없을시 제거
 local function DeleteDocSection(sPara)
+	if sPara == nil then
+		return
+	end
 	local node = docgen.doc_body:child_by_text("w:p", "w:t", sPara)
 
 	if node:empty() then	-- not found
@@ -2909,11 +2912,11 @@ else
 	end
 
 	if docgen.table.count == 0 then
-		DeleteDocSection("List of Tables")
+		DeleteDocSection(docgen.table.title)
 	end
 
 	if docgen.figure.count == 0 then
-		DeleteDocSection("List of Figures")
+		DeleteDocSection(docgen.figure.title)
 	end
 
 	if docgen.terms.count == 0 then
