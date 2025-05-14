@@ -54,10 +54,12 @@ WebGUI::WebGUI(bool bDebug) : httpServer(bDebug), browser_engine(bDebug, nullptr
 }
 WebGUI::~WebGUI(void)
 {
+#ifdef WIN32
 	if (m_pIcon) {
 		DeleteObject((HICON)m_pIcon);
 		m_pIcon = NULL;
 	}
+#endif
 }
 
 bool WebGUI::Initialize(WEBGUI_MODE mode, uint16_t iPort, const char *sHttpsKey, const char *sHttpsCert, const char *sRootCa)

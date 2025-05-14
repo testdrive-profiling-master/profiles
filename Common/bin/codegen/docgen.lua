@@ -1993,7 +1993,7 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 		sPara:ChangeCharsetToANSI()
 		local	txt	= TextFile()
 		if txt:Open(sPara.s) == false then
-			error("Text file '" .. sPara.s .. ". is not existed.")
+			error("Text file '" .. sPara.s .. "' is not existed.")
 		end
 		-- 파일 이름만 따옴
 		sPara:CutFront("\\", true)
