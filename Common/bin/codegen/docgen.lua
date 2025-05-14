@@ -1796,9 +1796,14 @@ local function GenerateHighlightedCodes(sCodeFormat, sContent, bLine)
 	end
 	txt:Put(sContent)
 	txt:Close()
-	local sResult	= exec("code_highlighter --ilang=" .. sCodeFormat .. " --olang=docgen " .. (bLine and "-n " or "") .. ".docgen_code_highlight.tmp")
-	exec("rm -f .docgen_code_highlight.tmp")
+	local sResult	= String(exec("code_highlighter --ilang=" .. sCodeFormat .. " --olang=docgen " .. (bLine and "-n " or "") .. ".docgen_code_highlight.tmp"))
+
+	-- 줄 이어붙이기 막기 ('\' 로 끝나는 줄 없애기)
+	sResult:Replace("\r", "", true)
+	sResult:Replace("\\\n", "\\  \n", true)
 	
+	exec("rm -f .docgen_code_highlight.tmp")
+
 	return sResult
 end
 
