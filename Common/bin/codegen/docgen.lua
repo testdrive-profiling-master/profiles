@@ -1801,6 +1801,7 @@ local function GenerateHighlightedCodes(sCodeFormat, sContent, bLine)
 	-- 줄 이어붙이기 막기 ('\' 로 끝나는 줄 없애기)
 	sResult:Replace("\r", "", true)
 	sResult:Replace("\\\n", "\\  \n", true)
+	sResult = sResult.s
 	
 	exec("rm -f .docgen_code_highlight.tmp")
 
