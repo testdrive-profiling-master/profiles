@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : WebGUI project
-// Rev.  : 11/20/2024 Wed (clonextop@gmail.com)
+// Rev.  : 5/16/2025 Fri (clonextop@gmail.com)
 //================================================================================
 #include "WebGUI.h"
 #include <time.h>
@@ -155,23 +155,23 @@ bool WebGUI::OnClose(void)
 bool WebGUI::OnGet(const char *sURL, httpConnection *pCon)
 {
 	// default web pages.
-	FILE *fp = fopen(m_sRootPath + sURL, "rb");
+	FILE *fp = fopen(m_sRootPath + sURL, "rb+"); // must be a file (for linux)
 	if (!fp) {
 		static const char *__search_link[] = {"/index.html", ".html", ".js", NULL};
 		for (int i = 0; __search_link[i]; i++) {
-			if ((fp = fopen(m_sRootPath + sURL + __search_link[i], "rb")) != NULL)
+			if ((fp = fopen(m_sRootPath + sURL + __search_link[i], "rb+")) != NULL)
 				break;
 		}
 		// error case
 		if (!fp)
-			fp = fopen(m_sRootPath + "404_error.html", "rb");
+			fp = fopen(m_sRootPath + "404_error.html", "rb+");
 	}
 
 	if (fp) {
 		fseek(fp, 0, SEEK_END);
 		size_t iByteSize = ftell(fp);
 
-		if (iByteSize) {
+		if (iByteSize > 0) {
 			BYTE *pData = new BYTE[iByteSize];
 			fseek(fp, 0, SEEK_SET);
 			fread(pData, iByteSize, 1, fp);
