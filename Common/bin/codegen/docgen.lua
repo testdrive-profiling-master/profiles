@@ -2616,6 +2616,7 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 									sContents:Replace("@</", "@\b", true)	-- '@</' 예외
 									sContents:Replace("/", "/&#8203;", true)
 									sContents:Replace(".", ".&#8203;", true)
+									sContents:Replace(",", ",&#8203;", true)
 									sContents:Replace("\\.", "\\.&#8203;", true)
 									sContents:Replace("@\b", "@</", true)	-- '@</' 원복
 									sContents:Replace(":\b", "://", true)	-- '://' 원복
