@@ -2605,12 +2605,21 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 								
 								local	sContents	= String(sLine.s)
 								sContents:CutBack("@</code>", true)
-								
 								sLine:CutFront("@</code>", false)
-								
 								sContents:Trim(" \r\n\t")
 								
 								sContents.s = GenerateHighlightedCodes(sCodeFormat, sContents.s, false)
+
+								-- ZERO WIDTH SPACE(UTF-8 &#8203;) insertion
+								do
+									sContents:Replace("://", ":\b", true)	-- '://' 예외
+									sContents:Replace("@</", "@\b", true)	-- '@</' 예외
+									sContents:Replace("/", "/&#8203;", true)
+									sContents:Replace(".", ".&#8203;", true)
+									sContents:Replace("\\.", "\\.&#8203;", true)
+									sContents:Replace("@\b", "@</", true)	-- '@</' 원복
+									sContents:Replace(":\b", "://", true)	-- '://' 원복
+								end
 								
 								sLine:insert(sLine.TokenizePos, "@<fixed>@<bgcolor:" .. docgen.code_bgcolor .. ">" .. sContents.s .. "@</bgcolor>@</fixed>")
 							else
