@@ -1922,15 +1922,19 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 	local	line		= {}
 	line.count			= 0
 	line.source			= "str"
-	line.get = function()
+	line.get = function(opt)
 		local	sTokStart	= sPara.TokenizePos
 		local	bExtra		= false
 		local	sLine		= nil
 		
 		sLine = sPara:Tokenize("\n")
+		if opt == nil then
+			opt = {}
+		end
 		
-		if bBypassCodeRef == false then
-			while sLine:CompareBack(" \\") do
+		
+		if (bBypassCodeRef == false) and (opt.code_block ~= true) then
+			while sLine:CompareBack(" \\") do -- 다음라인 이어 붙이기
 				sLine:DeleteBack(" \\")
 				sLine:TrimRight(" \t")
 				sLine:Append(" ")
@@ -2134,7 +2138,7 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 				-- get code length
 				local	iCodeLen	= 0
 				while sPara.TokenizePos >= 0 do
-					sLine	= line.get()
+					sLine	= line.get({code_block = true})
 					if sLine:CompareFront("```") then
 						local s = String(sLine.s)
 						s:CutFront("`", true)
@@ -2160,6 +2164,9 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 						sContent:Replace("\n\n", "\n \n", true)	-- for EncodeParagraph's to keep a enter code
 						sContent:TrimLeft("\n")
 						sContent:TrimRight(" \n")
+						if sContent:CompareBack("\\") then	-- 마지막 끝이 '\' 로 끝나면 라인이 삭제된다. 이를 방지
+							sContent:Append(" ")
+						end
 						sContent:Replace("@```", "```", true)
 					end
 				end
