@@ -234,7 +234,6 @@ do
 
 	if lfs.IsExist(sExtraLuaFile.s) then	-- existed
 		RunScript(sExtraLuaFile.s)
-		LOGI("sExtraLuaFile : " .. sExtraLuaFile.s)
 	end
 end
 
