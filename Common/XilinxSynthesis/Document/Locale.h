@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,10 +31,10 @@
 // OF SUCH DAMAGE.
 //
 // Title : Xilinx synthesis
-// Rev.  : 11/16/2023 Thu (clonextop@gmail.com)
+// Rev.  : 6/23/2025 Mon (clonextop@gmail.com)
 //================================================================================
 #include "LocaleString.h"
-
+/* clang-format off */
 #define	PROFILE_NAME	"Xilinx Synthesis"
 
 LOCALE_DEFINE(4, LANG_KOREAN, LANG_JAPANESE, LANG_SPANISH, LANG_ENGLISH)
@@ -50,10 +50,10 @@ LOCALE_TEXT(XILINX_INSTALL_PATH,
 			_T("ruta instalado Xilinx"),
 			_T("Xilinx installed path"))
 LOCALE_TEXT(DESC_XILINX_INSTALL_PATH,
-			_T("자일링스(Vivado) 설치 경로를 지정합니다.\n\n예) C:\\Xilinx\\Vivado\\20XX.X\\"),
-			_T("ザイリンクス(Vivado)インストールパスを指定します。\n\n例) C:\\Xilinx\\Vivado\\20XX.X\\"),
-			_T("Especifica la ruta instalada Xilinx(Vivado).\n\nEj.) C:\\Xilinx\\Vivado\\20XX.X\\"),
-			_T("Specifies the Xilinx(Vivado) installed path.\n\nEx.) C:\\Xilinx\\Vivado\\20XX.X\\"))
+			_T("자일링스(Vivado) 설치 경로를 지정합니다.\n\n예) C:\\Xilinx\\Vivado\\20XX.X\\ or C:\\Xilinx\\20XX.X\\Vivado\\"),
+			_T("ザイリンクス(Vivado)インストールパスを指定します。\n\n例) C:\\Xilinx\\Vivado\\20XX.X\\ or C:\\Xilinx\\20XX.X\\Vivado\\"),
+			_T("Especifica la ruta instalada Xilinx(Vivado).\n\nEj.) C:\\Xilinx\\Vivado\\20XX.X\\ or C:\\Xilinx\\20XX.X\\Vivado\\"),
+			_T("Specifies the Xilinx(Vivado) installed path.\n\nEx.) C:\\Xilinx\\Vivado\\20XX.X\\ or C:\\Xilinx\\20XX.X\\Vivado\\"))
 LOCALE_TEXT(XILINX_FAMILY,
 			_T("페밀리"),
 			_T("ファミリー"),
@@ -369,4 +369,5 @@ LOCALE_TEXT(DESC_PATH_FILTER,
 			_T("パスフィルターを指定します。"),
 			_T("Especifique un filtro de ruta."),
 			_T("Specify a path filter."))
+/* clang-format on */
 LOCALE_END
