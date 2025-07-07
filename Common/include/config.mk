@@ -219,7 +219,7 @@ prepare: $(PACKAGES)
 TARGET_DEP	:= $(TARGET_DEP) prepare
 
 $(PACKAGES):
-	@if ! dpkg -l | grep $@ -c >>/dev/null; then sudo apt-get install $@; fi
+	@if ! dpkg -l | grep $@ -c >>/dev/null; then sudo apt-get --yes install $@; fi
 endif
 
 define MAKEFILE_USAGE
