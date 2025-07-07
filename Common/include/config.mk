@@ -121,7 +121,10 @@ ifneq ($(BUILD_TARGET), $(TARGET_EXE))
 	endif
 endif
 
-OPTFLAGS		:= -w -Wall -Wextra -m64 -mfpmath=sse -mieee-fp -mmmx -msse -msse2 -mavx -mavx2 -march=native
+OPTFLAGS		:= -w -Wall -Wextra -march=native
+ifeq ($(PLATFORM), x86_64)
+	OPTFLAGS		:= $(OPTFLAGS) -m64 -mfpmath=sse -mieee-fp -mmmx -msse -msse2 -mavx -mavx2
+endif
 CFLAGS			:= $(CFLAGS) $(OPTFLAGS) $(INCDIR) $(EXTRA_CFLAGS)
 CPPFLAGS		:= $(CFLAGS) -std=$(CPP_STANDARD)
 ARFLAGS			:= crv
