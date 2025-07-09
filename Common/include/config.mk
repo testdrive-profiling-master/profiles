@@ -23,6 +23,8 @@ RANLIB 		:= ranlib
 OBJCOPY		:= $(CROSS)objcopy
 STRIP		:= $(CROSS)strip
 PWD			:= $(shell pwd)
+
+PLATFORM	:= $(shell uname -m)
 #-------------------------------------------------
 #	Library & Include
 #-------------------------------------------------
