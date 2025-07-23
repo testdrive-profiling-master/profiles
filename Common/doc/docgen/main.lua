@@ -23,6 +23,7 @@ AddRevision("1.8",	2024,  5,  22,	"add export file format(html, odt, rtf, xml, t
 AddRevision("1.9",	2024,  8,  31,	"add double underline expression")
 AddRevision("1.10",	2024,  9,  14,	"add emoji expression")
 AddRevision("1.11",	2024,  10, 4,	"support draw.io for vector image")
+AddRevision("1.12", 2025,  7, 23,   "support comment on markdown, add variable for default style")
 
 
 -- Term 추가

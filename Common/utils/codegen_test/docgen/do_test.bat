@@ -1,2 +1,2 @@
 @echo off
-codegen docgen test.lua
+codegen docgen -f pdf test.lua

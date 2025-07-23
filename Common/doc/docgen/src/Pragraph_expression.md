@@ -253,6 +253,31 @@ Result : @<u>underlined text@</u>, @<U>double underlined text@</U>
 
 
 
+ 
+%%% ko
+### 주석
+@<size:30>@<b>표현식 : ===@<color:red>주석@</color>@</b>@</size>
+
+라인을 @<color:red>===@</color>로 시작하는 문장은 주석으로 인식되며, 주석 내용은 무시됩니다.
+
+예)
+```html
+=== 주석 표현입니다.
+```
+%%% en
+### Comment
+@<size:30>@<b>Expression : @@<s>@<color:red>expression@</color>@@</s>@</b>@</size>
+
+A line that begins with a @<code>===@</code> is recognized as a comment, and the comment content will be ignored.
+
+ex)
+```html
+=== This is a comment expression.
+```
+%%%
+
+
+
 
  
 %%% ko

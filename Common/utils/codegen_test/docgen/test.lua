@@ -71,4 +71,4 @@ AddParagraph("## 하위(서브, 외부 docx 참조) 문서")
 AddSubDocument("sub_doc_sample.docx")			-- 하위 문서 셈플
 
 AddParagraph("## 외부 markdown(modified) 하위 문서")
-AddParagraph("[[markdown_sample.txt]]")	-- 외부 파일
+AddParagraph("[[markdown_sample.md]]")	-- 외부 파일

@@ -15,6 +15,7 @@ docgen.template_path			= String()
 docgen.profile_path:GetEnvironment("TESTDRIVE_PROFILE")
 docgen.template_path.s			= docgen.profile_path.s
 docgen.max_console_chars		= 110
+docgen.style_default			= "BodyText10"
 
 docgen.table_header				= {}
 docgen.table_header.text_color	= "FFFFFF"				-- table's header text color
@@ -2294,6 +2295,9 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 					bBypass	= false
 				end
 				goto continue
+			elseif sLine:CompareFront("===") then	-- comment out
+				sResult:CutBack("<w:p>", false)
+				goto continue
 			else	-- intended list
 				local	ilevel			= 0
 				
@@ -2315,7 +2319,7 @@ function EncodeParagraph(sText, config, sSourceTarget, sSourceLine)
 
 					-- set intend style
 					s_pPr	= s_pPr .. "\
-					<w:pStyle w:val=\"BodyText10\"/>"
+					<w:pStyle w:val=\"" .. docgen.style_default .. "\"/>"
 
 					local	sLeftIntend	= ""
 					if sLine:CompareFront(">") then
@@ -2792,7 +2796,7 @@ AddPageBreak = function()
 end
 
 AddParagraph = function(content, sSourceTarget)
-	docgen.doc_body:AddChildBeforeFromBuffer(docgen.doc_last, EncodeParagraph(content, {pPr="<w:pStyle w:val=\"BodyText10\"/>"}), sSourceTarget)
+	docgen.doc_body:AddChildBeforeFromBuffer(docgen.doc_last, EncodeParagraph(content, {pPr="<w:pStyle w:val=\"" .. docgen.style_default .. "\"/>"}), sSourceTarget)
 end
 
 AddTable = function(sCaption, sExcelFileName, sSheetName)
