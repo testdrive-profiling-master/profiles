@@ -86,7 +86,7 @@ docgen.supported_format["txt"]	= "Plain text format (unicode)"
 ---------------------------------------------------------------------------------
 -- argument handling
 ---------------------------------------------------------------------------------
-local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.11")
+local	Arg				= ArgTable("Document Generator for TestDrive Profiling Master. v1.12")
 
 Arg:AddOptionString	("template", "", "t", nil, "template", "Document template name/file.")
 -- list-up customized document template list
