@@ -403,9 +403,9 @@ Result : @<bgcolor:red>Red background@<bgcolor:0000FF> expression@</bgcolor>
 
 예)
 ```html
-@<color:red>붉은 글씨@</color> 표현
+@<color:red>붉은 글씨@</color> 표현, @<color:0000FF>파랑 글씨@</color> 표현
 ```
-결과 : @<color:red>붉은 글씨@</color> 표현
+결과 : @<color:red>붉은 글씨@</color> 표현, @<color:0000FF>파랑 글씨@</color> 표현
 %%% en
 ### Text color
 @<size:30>@<b>Expression : @@<color:@<color:red>color_value@</color>>@<color:red>expression@</color>@@</color>@</b>@</size>
@@ -415,9 +415,9 @@ and color specifications are expressed in @<color:red>color value@</color> as @<
 
 ex)
 ```html
-@<color:red>Red text@</color> expression
+@<color:red>Red text@</color> expression, @<color:0000FF>Blue text@</color> expression
 ```
-Result : @<color:red>Red text@</color> expression
+Result : @<color:red>Red text@</color> expression, @<color:0000FF>Blue text@</color> expression
 %%%
 
 
