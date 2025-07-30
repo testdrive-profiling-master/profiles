@@ -1,9 +1,18 @@
 local Arg = ArgTable("LLaMA C++")
 
-Arg:AddOptionString		("model", "", nil, nil, "model_path", "requested model path")
+Arg:AddOptionString		("model", "", nil, nil, "model_path", "Requested model path")
 Arg:AddRemark(nil, "Refer : https://huggingface.co/models?apps=llama.cpp")
+Arg:AddOption			("clear", "C", nil, "Clear local models")
+Arg:AddOption           ("reset", "R", nil, "Reset default model(google Gemma-3-1B)")
+
 if (Arg:DoParse() == false) then
 	return
+end
+
+if Arg:GetOption("clear") then
+	exec("del /Q %LOCALAPPDATA%\\llama.cpp\\*")
+	LOGI("All models are deleted.")
+	os.exit(0)
 end
 
 -- get model name from system configuration
@@ -15,6 +24,10 @@ end
 
 do	-- update from argument, if existed
 	local sModel = Arg:GetOptionString("model")
+	
+	if Arg:GetOption("reset") then
+		sModel = "ggml-org/gemma-3-1b-it-GGUF" -- default model
+	end
 
 	if string.len(sModel) > 0 then
 		model_name.s = sModel
