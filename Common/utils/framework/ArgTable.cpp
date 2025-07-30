@@ -103,7 +103,7 @@ bool ArgTable::DoParse(int argc, const char **argv)
 			return false;
 		}
 
-		if (argc == 1 || GetOption("help")) { // --help option
+		if (GetOption("help")) { // --help option
 		SHOW_HELP:
 			ShowHelp();
 			return false;
