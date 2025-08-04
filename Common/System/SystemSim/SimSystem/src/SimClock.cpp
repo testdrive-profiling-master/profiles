@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,14 +31,13 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 8/4/2025 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "SimClock.h"
 #include <assert.h>
 
 uint32_t SimClock::m_dwElapsedTime = 0;
-bool	 SimClock::m_bReset		   = true;
 
 SimClock::SimClock(uint8_t *pCLK, uint8_t *pRST)
 {
@@ -78,11 +77,10 @@ uint32_t SimClock::Tok(void)
 	SimClock *pNode			  = Head();
 	uint32_t  dwMinTIme		  = 0xFFFFFFFF;
 	uint32_t  dwCurElpaseTime = m_dwElapsedTime;
-	bool	  bReset		  = false;
 
 	if (pNode) {
 		while (pNode) {
-			bReset |= pNode->ProcessTok(dwCurElpaseTime, dwMinTIme);
+			pNode->ProcessTok(dwCurElpaseTime, dwMinTIme);
 			pNode = pNode->Next();
 		}
 
@@ -91,7 +89,6 @@ uint32_t SimClock::Tok(void)
 		m_dwElapsedTime = 5000; // default half clock is 5000ps(5ns)
 	}
 
-	m_bReset = bReset;
 	return dwCurElpaseTime;
 }
 
@@ -100,9 +97,8 @@ void SimClock::ProcessTik(void)
 	*m_pCLK = m_NextClock;
 }
 
-bool SimClock::ProcessTok(uint32_t dwElapsedTime, uint32_t &dwMinTime)
+void SimClock::ProcessTok(uint32_t dwElapsedTime, uint32_t &dwMinTime)
 {
-	bool bReset = (m_pReset != NULL);
 	m_dwLeftTime -= dwElapsedTime;
 
 	if (!m_dwLeftTime) {
@@ -118,8 +114,6 @@ bool SimClock::ProcessTok(uint32_t dwElapsedTime, uint32_t &dwMinTime)
 
 	if (m_dwLeftTime < dwMinTime)
 		dwMinTime = m_dwLeftTime;
-
-	return bReset;
 }
 
 void SimClock::SetParameters(
@@ -142,7 +136,6 @@ void SimClock::DoReset(uint32_t dwCycles)
 		m_pReset = new SimReset(m_pRST);
 
 	m_pReset->Set(dwCycles, m_reset_polarity);
-	m_bReset = true;
 }
 
 void SimClock::Release(void)

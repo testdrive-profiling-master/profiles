@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 8/4/2025 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_RESET_H__
 #define __SIM_RESET_H__
@@ -48,6 +48,7 @@ public:
 	~SimReset(void);
 
 	virtual bool OnRun(void);
+	static bool	 IsResetCycle(void);
 
 	void		 Set(uint32_t dwCycles = 8, uint8_t Polarity = 0);
 	bool		 DoCycle(void);

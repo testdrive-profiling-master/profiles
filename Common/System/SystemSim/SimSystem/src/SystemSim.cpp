@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 8/4/2025 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "STDInterface.h"
@@ -78,7 +78,7 @@ bool SystemSim::Initialize(IMemoryImp *pMem)
 
 	// wait until for start-up and release the reset.
 	if (bRet)
-		while (!SimulationTime() || SimClock::IsReset()) Sleep(0);
+		while (!SimulationTime() || SimReset::IsResetCycle()) Sleep(0);
 
 	// flush initial start-up H/W log.
 	fflush(stdout);

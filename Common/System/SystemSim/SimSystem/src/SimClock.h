@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 8/4/2025 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_CLOCK_H__
 #define __SIM_CLOCK_H__
@@ -44,11 +44,6 @@ class SimClock : public CLOCK_INTERFACE, public AutoList<SimClock>
 public:
 	SimClock(uint8_t *pCLK, uint8_t *pRST);
 	virtual ~SimClock(void);
-
-	static bool IsReset(void)
-	{
-		return m_bReset;
-	}
 
 	static void		Tik(void); // Tiking clock (before the evaluation)
 	static uint32_t Tok(void); // Toking clock (after the evaluation)
@@ -70,7 +65,7 @@ public:
 protected:
 	static void Refresh(void); // refresh clock list
 	void		ProcessTik(void);
-	bool		ProcessTok(uint32_t dwElapsedTime, uint32_t &dwMinTime);
+	void		ProcessTok(uint32_t dwElapsedTime, uint32_t &dwMinTime);
 
 private:
 	uint32_t		m_dwID;			  // clock ID#
@@ -84,7 +79,6 @@ private:
 	uint32_t		m_dwPeriod;		  // clock period (ps)
 	uint32_t		m_dwLeftTime;	  // next toggle left time
 	static uint32_t m_dwElapsedTime;
-	static bool		m_bReset;
 	SimReset	   *m_pReset;
 };
 #endif //__SIM_CLOCK_H__

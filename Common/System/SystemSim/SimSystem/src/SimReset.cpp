@@ -31,15 +31,23 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 1/31/2025 Fri (clonextop@gmail.com)
+// Rev.  : 8/4/2025 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "SimReset.h"
 #include "SimClock.h"
 
+static atomic<int> __iResetInstCount = 0;
+
+bool			   SimReset::IsResetCycle(void)
+{
+	return (__iResetInstCount != 0);
+}
+
 SimReset::SimReset(uint8_t *pRST)
 {
 	m_pRST = pRST;
+	__iResetInstCount++;
 	Set(8, 0);
 	TRACE_UNLOCK
 	m_pSim->Unlock();
@@ -49,6 +57,7 @@ SimReset::~SimReset(void)
 {
 	TRACE_LOCK
 	m_pSim->Lock(10);
+	__iResetInstCount--;
 }
 
 bool SimReset::OnRun(void)

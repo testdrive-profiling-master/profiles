@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 1/31/2025 Fri (clonextop@gmail.com)
+// Rev.  : 8/4/2025 Mon (clonextop@gmail.com)
 //================================================================================
 #include "AXI_common.h"
 #include "AXI_Master.h"
@@ -55,6 +55,7 @@ MAXI::MAXI(const char *sTitle, int iDataWidth, bool bUseAXI4, bool bLite, int iD
 	if (bLite) {
 		if (iDataWidth != 32)
 			LOGE("Requested bit width is not allowed : %d (must be 32 only)", iDataWidth);
+		m_dwDataBytes = 4;
 	} else {
 		switch (iDataWidth) {
 		case 32:
