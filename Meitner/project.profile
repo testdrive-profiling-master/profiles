@@ -33,9 +33,8 @@ RunProfile("%TESTDRIVE_PROFILE%\\common\\SerialConsole\\initialize.sp")		-- seri
 RunProfile("Profiles\\ALUTest\\initialize.sp")								-- ALU test
 RunProfile("Profiles\\RegisterMap\\initialize.sp")							-- register map
 RunProfile("Profiles\\FPGA_StarterKit\\initialize.sp")						-- FPGA Starter kit
-RunProfile("Profiles\\common\\initialize.sp")								-- build archive
 RunProfile("Application\\Example\\initialize.sp")							-- Examples
 RunProfile("Documents\\initialize.sp")										-- documents
 RunProfile("Driver\\initialize.sp")											-- driver
 
-RunProfile("%TESTDRIVE_PROFILE%\\common\\Community\\initialize.sp")			-- community
+RunProfile("%TESTDRIVE_PROFILE%\\common\\initialize.sp")					-- community

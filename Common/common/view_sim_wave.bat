@@ -7,6 +7,6 @@ goto END
 
 :RUN_GTKWAVE
 @echo Opening Waveform file(%SIM_OUTPUT_FILE%)...
-start "View Waveform" "%TESTDRIVE_DIR%bin\msys64\ucrt64\bin\gtkwave.exe" -r %TESTDRIVE_DIR%bin\gtkwave.ini -g %SIM_OUTPUT_FILE% %SIM_DO_FILE%
+start "View Waveform" "%TESTDRIVE_PROFILE%Common\bin\gtkwave.exe" -r %TESTDRIVE_PROFILE%Common\bin\gtkwave.ini -g %SIM_OUTPUT_FILE% %SIM_DO_FILE%
 
 :END
