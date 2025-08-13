@@ -109,19 +109,29 @@ do
 	local	child		= node:first_child()
 	do
 		local	slide_count	= 0
-		local	slide_id	= 1
+		
 		while (child:empty() == false) do
-			if slide_id ~= page_id then
-				child:Destroy()
-			else
-				child		= child:next_sibling()
-			end
-			slide_id	= slide_id + 1
+			child		= child:next_sibling()
 			slide_count	= slide_count + 1
 		end
 		
-		if slide_count ~= page_count then
-			ERROR("File '" .. in_file_name .. "' is currently being modified. Close the 'Draw' program and try again.")
+		if slide_count ~= 1 then
+			-- old version of LibreOffice, must delete all other Slides
+			child		= node:first_child()
+			
+			local	slide_id	= 1
+			while (child:empty() == false) do
+				if slide_id ~= page_id then
+					child:Destroy()
+				else
+					child		= child:next_sibling()
+				end
+				slide_id	= slide_id + 1
+			end
+			
+			if slide_count ~= page_count then
+				ERROR("File '" .. in_file_name .. "' is currently being modified. Close the 'Draw' program and try again.")
+			end
 		end
 	end
 	
