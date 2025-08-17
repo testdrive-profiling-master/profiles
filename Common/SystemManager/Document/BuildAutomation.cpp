@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : System manager
-// Rev.  : 2/26/2024 Mon (clonextop@gmail.com)
+// Rev.  : 8/17/2025 Sun (CloneX)
 //================================================================================
 #include "BuildAutomation.h"
 
@@ -164,15 +164,13 @@ void BuildAutomation::DoCheck(DWORD command, LPCTSTR sFileName)
 			{
 				CString sName(sFileName);
 
-				if (m_sCodingStyle.GetAt(0) && (sName.Find(_T(".h"), sName.GetLength() - 2) > 0 ||
-												sName.Find(_T(".c"), sName.GetLength() - 2) > 0 ||
-												sName.Find(_T(".cpp"), sName.GetLength() - 4) > 0 ||
-												sName.Find(_T(".java"), sName.GetLength() - 5) > 0 ||
-												sName.Find(_T(".inl"), sName.GetLength() - 4) > 0)) {
+				if (m_sCodingStyle.GetAt(0) &&
+					(sName.Find(_T(".h"), sName.GetLength() - 2) > 0 || sName.Find(_T(".c"), sName.GetLength() - 2) > 0 ||
+					 sName.Find(_T(".cpp"), sName.GetLength() - 4) > 0 || sName.Find(_T(".java"), sName.GetLength() - 5) > 0 ||
+					 sName.Find(_T(".inl"), sName.GetLength() - 4) > 0)) {
 				USE_CLANG_FORMAT:
 					CString sArg;
-					CString sClangFormatPath =
-						g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_DIR%bin\\msys64\\ucrt64\\bin\\clang-format.exe"));
+					CString sClangFormatPath = g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_DIR%bin\\msys64\\ucrt64\\bin\\clang-format.exe"));
 					CString sStyleFormat(sDir);
 
 					if (IsFileExistedNested(_T(".clang-format"), sStyleFormat)) { // search ".clang-format" file.
@@ -185,16 +183,14 @@ void BuildAutomation::DoCheck(DWORD command, LPCTSTR sFileName)
 					sArg.Format(_T("-i --style=%s \"%s\""), (LPCTSTR)sStyleFormat, sFileName);
 
 					g_pSystem->ExecuteFile(sClangFormatPath, sArg, TRUE, NULL, NULL, NULL);
-				} else if (sName.Find(_T(".v"), sName.GetAllocLength() - 2) > 0 ||
-						   sName.Find(_T(".sv"), sName.GetAllocLength() - 3) > 0 ||
-						   sName.Find(_T(".vh"), sName.GetAllocLength() - 3) > 0 ||
-						   sName.Find(_T(".svh"), sName.GetAllocLength() - 4) > 0) {
+				} else if (
+					sName.Find(_T(".v"), sName.GetAllocLength() - 2) > 0 || sName.Find(_T(".sv"), sName.GetAllocLength() - 3) > 0 ||
+					sName.Find(_T(".vh"), sName.GetAllocLength() - 3) > 0 || sName.Find(_T(".svh"), sName.GetAllocLength() - 4) > 0) {
 					SetDirtySystem();
 
 					if (m_siStyle.GetAt(0)) {
 						CString sArg;
-						CString sIstylePath =
-							g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_PROFILE%Common\\bin\\iStyle.exe"));
+						CString sIstylePath = g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_PROFILE%Common\\bin\\iStyle.exe"));
 						sArg.Format(_T("%s \"%s\""), m_siStyle, sFileName);
 						g_pSystem->ExecuteFile(sIstylePath, sArg, TRUE, NULL, NULL, NULL);
 					} else {
@@ -267,8 +263,9 @@ int DoMake(BOOL bClean, LPCTSTR sArg, LPCTSTR sWorkPath)
 		g_pSystem->ExecuteFile(_T("mingw32-make"), _T("dep"), TRUE, NULL, sWorkPath, NULL);
 
 	// build
-	return g_pSystem->ExecuteFile(_T("mingw32-make"), sArg, TRUE, NULL, sWorkPath, _T("error:"), -1, _T("] Error"), -1,
-								  _T("*E: "), -1, _T("*W: "), INT_MAX, _T("undefined reference to "), -1, NULL);
+	return g_pSystem->ExecuteFile(
+		_T("mingw32-make"), sArg, TRUE, NULL, sWorkPath, _T("error:"), -1, _T("] Error"), -1, _T("*E: "), -1, _T("*W: "), INT_MAX,
+		_T("undefined reference to "), -1, NULL);
 }
 
 typedef struct {
@@ -317,17 +314,19 @@ RETRY_BUILD:
 		LPCTSTR				 sArgument	  = pItem->sArgument;
 		int					 iRet		  = 0;
 		sProjectPath += pItem->sWorkPath;
-		sRunPath = sProjectPath;
-		sRunPath += sExecuteFile;
+		if (*sExecuteFile == _T('%%')) {
+			sRunPath = g_pSystem->RetrieveFullPath(sExecuteFile);
+		} else {
+			sRunPath = sProjectPath;
+			sRunPath += sExecuteFile;
+		}
 		g_pSystem->LogInfo(_L(START_BUILD), sTitle);
 
-		if (sRunPath.Find(_T(".profile"), sRunPath.GetLength() - 8) > 0 ||
-			sRunPath.Find(_T(".sp"), sRunPath.GetLength() - 3) > 0) {
+		if (sRunPath.Find(_T(".profile"), sRunPath.GetLength() - 8) > 0 || sRunPath.Find(_T(".sp"), sRunPath.GetLength() - 3) > 0) {
 			// run profile
 			if (g_pSystem->RunProfile(sRunPath, TRUE))
 				iRet = 1;
-		} else if (sRunPath.Find(_T(".sv"), sRunPath.GetLength() - 3) > 0 ||
-				   sRunPath.Find(_T(".v"), sRunPath.GetLength() - 2) > 0) {
+		} else if (sRunPath.Find(_T(".sv"), sRunPath.GetLength() - 3) > 0 || sRunPath.Find(_T(".v"), sRunPath.GetLength() - 2) > 0) {
 			if (!m_bDirtySystem) {
 				if ((pItem->iLinkItem != id) && (pItem->iLinkItem >= 0)) {
 					id = pItem->iLinkItem;
@@ -342,15 +341,16 @@ RETRY_BUILD:
 				WIN32_FIND_DATA FindFileData;
 
 				// delete previous builded c++ source & object files
-				if ((hFind = FindFirstFile(g_pSystem->RetrieveFullPath(_T("%PROJECT%/System/SubSystems/")
-																	   _T("Simulation/verilator/*.*")),
-										   &FindFileData)) != INVALID_HANDLE_VALUE) {
+				if ((hFind = FindFirstFile(
+						 g_pSystem->RetrieveFullPath(
+							 _T("%PROJECT%/System/SubSystems/")
+							 _T("Simulation/verilator/*.*")),
+						 &FindFileData)) != INVALID_HANDLE_VALUE) {
 					do {
 						if (!(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
 							CString FileName;
 							FileName.Format(
-								_T("%s%s"),
-								g_pSystem->RetrieveFullPath(_T("%PROJECT%/System/SubSystems/Simulation/verilator/")),
+								_T("%s%s"), g_pSystem->RetrieveFullPath(_T("%PROJECT%/System/SubSystems/Simulation/verilator/")),
 								FindFileData.cFileName);
 							_tremove((LPCTSTR)FileName);
 						}
@@ -386,11 +386,10 @@ RETRY_BUILD:
 			// build project
 			CString vs_build, sArg;
 			vs_build = g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_PROFILE%Common\\common\\vsenv.bat"));
-			sArg.Format(_T("\"%s\" /Build \"%s\""), sRunPath,
-						sArgument ? sArgument : (m_bDebug ? _T("Debug|Win32") : _T("Release|Win32")));
-			iRet = g_pSystem->ExecuteFile(vs_build, sArg, TRUE, NULL, sProjectPath, _T(": warning LNK"), 0,
-										  _T(": warning "), m_bStrictBuild ? -1 : 0, _T("): error "), -1,
-										  _T(": fatal error "), -1, NULL);
+			sArg.Format(_T("\"%s\" /Build \"%s\""), sRunPath, sArgument ? sArgument : (m_bDebug ? _T("Debug|Win32") : _T("Release|Win32")));
+			iRet = g_pSystem->ExecuteFile(
+				vs_build, sArg, TRUE, NULL, sProjectPath, _T(": warning LNK"), 0, _T(": warning "), m_bStrictBuild ? -1 : 0, _T("): error "), -1,
+				_T(": fatal error "), -1, NULL);
 		} else if (sRunPath.Find(_T("make"), sRunPath.GetLength() - 4) > 0) {
 			CString sArg;
 
@@ -424,7 +423,7 @@ RETRY_BUILD:
 			CString sArg;
 			sArg.Format(sArgument, (LPCTSTR)sFilePath);
 			LPCTSTR sErrorString = pItem->sErrorString;
-			iRet = g_pSystem->ExecuteFile(sRunPath, (LPCTSTR)sArg, TRUE, NULL, sProjectPath, sErrorString, -1, NULL);
+			iRet				 = g_pSystem->ExecuteFile(sRunPath, (LPCTSTR)sArg, TRUE, NULL, sProjectPath, sErrorString, -1, NULL);
 		}
 
 	BUILD_IS_DONE:
@@ -505,8 +504,9 @@ BOOL BuildAutomation::CppCheck(LPCTSTR lpszPath)
 		_T("-DWIN32 --suppress=preprocessorErrorDirective --suppress=unknownMacro --inline-suppr --force %s"),
 		(LPCTSTR)sIncCommonPath, (LPCTSTR)sIncTestDrivePath, lpszPath);
 
-	if (g_pSystem->ExecuteFile(_T("%TESTDRIVE_DIR%bin\\msys64\\ucrt64\\bin\\CppCheck.exe"), sArg.c_str(), TRUE, NULL,
-							   g_pSystem->GetProjectPath(), _T(": error:"), -1, _T(": information:"), 2, NULL) < 0) {
+	if (g_pSystem->ExecuteFile(
+			_T("%TESTDRIVE_DIR%bin\\msys64\\ucrt64\\bin\\CppCheck.exe"), sArg.c_str(), TRUE, NULL, g_pSystem->GetProjectPath(), _T(": error:"),
+			-1, _T(": information:"), 2, NULL) < 0) {
 		return FALSE;
 	}
 
