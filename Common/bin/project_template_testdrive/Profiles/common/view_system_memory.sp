@@ -1,1 +1,0 @@
-system.call	"view_system_memory.bat"

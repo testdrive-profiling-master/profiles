@@ -1,1 +1,2 @@
-system.call	"view_system_memory.bat"
+#lua
+System.Execute("view_system_memory.bat")

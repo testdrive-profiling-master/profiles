@@ -1,12 +1,22 @@
-system.clear
+#lua
+LOG_CLEAR()
+do
+	local sProssorCount = String()
+	sProssorCount:GetEnvironment("NUMBER_OF_PROCESSORS")
+	sProssorCount = sProssorCount.s
+	
+	if lfs.attributes(System.ProjectPath .. "System\\SubSystems\\Simulation\\SimSystem\\", "mode") == "directory" then
+		LOGI("¢Â Simulation Sub-system build")
+		System.Execute("mingw32-make", "-j " .. sProssorCount, "%PROJECT%System\\SubSystems\\Simulation\\SimSystem\\", {"error:", "] Error", "undefined reference to "})
+	end
 
-system.msg "¢Â Simulation Sub-system build\n"
-system.call	"mingw32-make", "-j 12", "%PROJECT%System\\SubSystems\\Simulation\\SimSystem\\", "error:", "] Error", "undefined reference to " "Build succeeded.":0
+	if lfs.attributes(System.ProjectPath .. "System\\SubSystems\\PCIeDriver\\", "mode") == "directory" then
+		LOGI("¢Â Driver(PCIe) Sub-system build")
+		System.Execute("mingw32-make", "-j " .. sProssorCount, "%PROJECT%System\\SubSystems\\PCIeDriver\\", {"error:", "] Error", "undefined reference to ", {"Build succeeded.", 0}})
+	end
 
-system.msg "¢Â Driver(PCIe) Sub-system build\n"
-system.call	"mingw32-make", "-j 12", "%PROJECT%System\\SubSystems\\PCIeDriver\\", "error:", "] Error", "undefined reference to " "Build succeeded.":0
+	LOGI("¢Â Testbench build")
+	System.Execute("HierarchicalMake", ". -arg \"-j " .. sProssorCount .. "\"", "%PROJECT%Application\\Example\\Testbench\\", {"*E: ", "error:", "] Error", "undefined reference to ", {"Build succeeded.", 0}})
+end
 
-system.msg "¢Â Testbench build\n"
-system.call	"HierarchicalMake", ". -arg \"-j 12\"", "%PROJECT%Application\\Example\\Testbench\\", "*E: ", "error:", "] Error", "undefined reference to " "Build succeeded.":0
-
-system.msg "\n¢Â S/W build sequence is completed!\n"
+LOGI("\n¢Â S/W build sequence is completed!")

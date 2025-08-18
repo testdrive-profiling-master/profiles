@@ -1,13 +1,10 @@
-profile.tree "Community" {
-	network ("TestDrive Wiki",		"testdrive_wiki.sp");
-}
+#lua
 
-profile.tree "System" {
-	profile ("MinGW Shell",			"%TESTDRIVE_DIR%bin\\msys64\\ucrt64.exe");
-}
+ProfileTree("Community"):AddItem("network", "TestDrive Wiki", "testdrive_wiki.sp")
+ProfileTree("System"):AddItem("profile", "MinGW Shell", "%TESTDRIVE_DIR%bin\\msys64\\ucrt64.exe")
 
-profile.call		"testdrive_wiki.sp"
+System.CallProfile("testdrive_wiki.sp")
 
-if.file "..\\private\\initialize.sp"
-profile.call		"..\\private\\initialize.sp"
-if.end
+if lfs.attributes("..\\private\\initialize.sp", "mode") == "file" then
+	System.CallProfile("..\\private\\initialize.sp")
+end

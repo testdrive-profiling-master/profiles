@@ -1,1 +1,2 @@
-system.call	"view_dpi_functions.bat"
+#lua
+System.Execute("view_dpi_functions.bat")

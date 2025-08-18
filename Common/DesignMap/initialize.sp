@@ -1,6 +1,6 @@
-profile.tree "System" {
-	chart ("Design map",		"main.sp");
-}
+#lua
 
-// initial run...
-profile.call	"main.sp"
+ProfileTree("System"):AddItem("chart", "Design map", "main.sp")
+
+-- initial run...
+System.CallProfile("main.sp")

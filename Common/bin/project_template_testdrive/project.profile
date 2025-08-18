@@ -1,32 +1,33 @@
-// TestDrive verification environment
-profile.path			"..\\"							// set common profile path
-profile.set.initialize	""								// remove initialization profile
-profile.set.cleanup		"Profiles\\Common\\cleanup.sp"	// set cleanup profile
+#lua	-- lua script declaration
 
-system.clear
+-- Processing Unit TestDrive verification environment
+System.SetProfilePath("root", "..\\")										-- set root profile path
+System.SetProfilePath("initialize", "")										-- remove initialization profile
+System.SetProfilePath("cleanup", "Profiles\\Common\\cleanup.sp")			-- set cleanup profile
 
-// PROJECT processor environment
-system.title		"PROJECT Verification System"
-system.splash		"Profiles\\media\\splash.png"
+LOG_CLEAR()
 
-// Create memory
-memory.create		0x8000000,	"PROJECT"				// System memory : 128MB
-memory.create		0x1000000,	"PROJECT_Display"		// Display configuration memory & etc..(register map) : 16MB
+-- PROJECT processor environment
+System.SetTitle("PROJECT Verification System")
+--System.ShowSplash("Profiles\\media\\splash.png")
 
-// Common Profiles
-profile.call		"%TESTDRIVE_PROFILE%\\common\\SystemManager\\initialize.sp"		// System management
-profile.call		"%TESTDRIVE_PROFILE%\\common\\SystemRemote\\initialize.sp"		// system remote
-profile.call		"%TESTDRIVE_PROFILE%\\common\\CodeAnalysis\\initialize.sp"		// code analysis
-profile.call		"%TESTDRIVE_PROFILE%\\common\\XilinxSynthesis\\initialize.sp"	// xilinx synthesis
-profile.call		"%TESTDRIVE_PROFILE%\\common\\SystemMap\\initialize.sp"			// system map
-profile.call		"%TESTDRIVE_PROFILE%\\common\\SystemChart\\initialize.sp"		// system chart
-profile.call		"%TESTDRIVE_PROFILE%\\common\\ScenarioTest\\initialize.sp"		// scenario test
-profile.call		"%TESTDRIVE_PROFILE%\\common\\VirtualDisplay\\initialize.sp"	// virtual display
-profile.call		"%TESTDRIVE_PROFILE%\\common\\DesignMap\\initialize.sp"			// design map
+-- Create memory
+CreateMemory((1024*1024) * 128,	"PROJECT")				-- System memory : 128MB
+CreateMemory((1024*1024) * 16,	"PROJECT_Display")		-- Display configuration memory & etc..(register map) : 16MB
 
-// Project Profiles
-profile.call		"Profiles\\common\\initialize.sp"						// build archive
-profile.call		"Application\\Example\\initialize.sp"					// Examples
-profile.call		"Documents\\initialize.sp"								// documents
+-- Common Profiles
+RunProfile("%TESTDRIVE_PROFILE%\\common\\SystemManager\\initialize.sp")		-- System management
+RunProfile("%TESTDRIVE_PROFILE%\\common\\SystemRemote\\initialize.sp")		-- system remote
+RunProfile("%TESTDRIVE_PROFILE%\\common\\CodeAnalysis\\initialize.sp")		-- code analysis
+RunProfile("%TESTDRIVE_PROFILE%\\common\\XilinxSynthesis\\initialize.sp")	-- xilinx synthesis
+RunProfile("%TESTDRIVE_PROFILE%\\common\\SystemMap\\initialize.sp")			-- system map
+RunProfile("%TESTDRIVE_PROFILE%\\common\\SystemChart\\initialize.sp")		-- system chart
+RunProfile("%TESTDRIVE_PROFILE%\\common\\ScenarioTest\\initialize.sp")		-- scenario test
+RunProfile("%TESTDRIVE_PROFILE%\\common\\VirtualDisplay\\initialize.sp")	-- virtual display
+RunProfile("%TESTDRIVE_PROFILE%\\common\\DesignMap\\initialize.sp")			-- design map
 
-profile.call		"%TESTDRIVE_PROFILE%\\common\\Community\\initialize.sp"			// community
+-- Project Profiles
+RunProfile("Application\\Example\\initialize.sp")							-- Examples
+RunProfile("Documents\\initialize.sp")										-- documents
+
+RunProfile("%TESTDRIVE_PROFILE%\\common\\initialize.sp")					-- common profiles

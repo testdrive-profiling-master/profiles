@@ -1,6 +1,7 @@
-//system.clear
-//system.call	"cleanup_all.bat"
-system.call	"HierarchicalMake", ". -arg \"clean\"", "%TESTDRIVE_PROFILE%Common\\"
+#lua
+LOG_CLEAR()
+--system.call	"cleanup_all.bat"
+System.Execute("HierarchicalMake", ". -arg \"clean\"", "%TESTDRIVE_PROFILE%Common\\")
 
-//system.clear
-system.msg "System clean-up is done!\n"
+--LOG_CLEAR()
+LOGI("◈ System clean-up is done!")

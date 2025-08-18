@@ -1,7 +1,7 @@
-system.clear
+#lua
+LOG_CLEAR()
 
-system.msg "Bake current H/W model.\n"
-system.call	".\\bake_hw.bat", "", "%PROJECT%System\\HDL\\", "Error:", "*E: ", "*I: ":0, "*W: ":W
+LOGI("Bake current H/W model.")
+System.Execute(".\\bake_hw.bat", "", "%PROJECT%System\\HDL\\", {"Error:", "*E: ", {"*I: ",0}, {"*W: ", "warning"}})
 
-
-system.msg "\n¢Â H/W bake sequence is completed!\n"
+LOGI("¢Â H/W bake sequence is completed!")

@@ -1,1 +1,3 @@
-profile.call		"TestDrive\\initialize.sp"					// TestDrive
+#lua
+
+System.CallProfile("TestDrive\\initialize.sp")	-- TestDrive
