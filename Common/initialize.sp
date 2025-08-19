@@ -21,7 +21,7 @@ do
 end
 
 do
-	local community_tree = ProfileTree("Community")
+	local community_tree = ProfileTree("Document|Community")
 	community_tree:AddItem("network", "TestDrive Wiki", "Community\\testdrive_wiki.sp")
 	System.CallProfile("Community\\testdrive_wiki.sp")
 end
@@ -30,3 +30,6 @@ end
 if lfs.attributes(System.ProjectPath .. "Profiles\\common\\initialize.sp", "mode") == "file" then
 	System.CallProfile("%PROJECT%Profiles\\common\\initialize.sp")
 end
+
+System.SetProfilePath("initialize", "")										-- remove initialization profile
+System.SetProfilePath("cleanup", "common\\cleanup.sp")						-- set cleanup profile

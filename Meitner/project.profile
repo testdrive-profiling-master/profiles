@@ -1,11 +1,8 @@
 #lua	-- lua script declaration
-
--- Processing Unit TestDrive verification environment
+-- Processing Unit TestDrive default verification environment
 System.SetProfilePath("root", "..\\")										-- set root profile path
-System.SetProfilePath("initialize", "")										-- remove initialization profile
-System.SetProfilePath("cleanup", "Profiles\\Common\\cleanup.sp")			-- set cleanup profile
+RunProfile("%TESTDRIVE_PROFILE%\\common\\initialize.sp")					-- common initialization
 
-LOG_CLEAR()
 
 -- Meitner processor environment
 System.SetTitle("Meitner Processor Verification System")
@@ -36,5 +33,3 @@ RunProfile("Profiles\\FPGA_StarterKit\\initialize.sp")						-- FPGA Starter kit
 RunProfile("Application\\Example\\initialize.sp")							-- Examples
 RunProfile("Documents\\initialize.sp")										-- documents
 RunProfile("Driver\\initialize.sp")											-- driver
-
-RunProfile("%TESTDRIVE_PROFILE%\\common\\initialize.sp")					-- community

@@ -1,3 +1,2 @@
-profile.tree "System" {
-	report ("Virtual FPGA Starter Kit",			"main.sp");
-}
+#lua
+ProfileTree("System"):AddItem("report", "Virtual FPGA Starter Kit", "main.sp")

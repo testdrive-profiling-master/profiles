@@ -1,11 +1,8 @@
 #lua	-- lua script declaration
-
--- Processing Unit TestDrive verification environment
+-- Processing Unit TestDrive default verification environment
 System.SetProfilePath("root", "..\\")										-- set root profile path
-System.SetProfilePath("initialize", "")										-- remove initialization profile
-System.SetProfilePath("cleanup", "Profiles\\Common\\cleanup.sp")			-- set cleanup profile
+RunProfile("%TESTDRIVE_PROFILE%\\common\\initialize.sp")					-- common initialization
 
-LOG_CLEAR()
 
 -- PROJECT processor environment
 System.SetTitle("PROJECT Verification System")
@@ -29,5 +26,3 @@ RunProfile("%TESTDRIVE_PROFILE%\\common\\DesignMap\\initialize.sp")			-- design 
 -- Project Profiles
 RunProfile("Application\\Example\\initialize.sp")							-- Examples
 RunProfile("Documents\\initialize.sp")										-- documents
-
-RunProfile("%TESTDRIVE_PROFILE%\\common\\initialize.sp")					-- common profiles

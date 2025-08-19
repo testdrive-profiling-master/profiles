@@ -1,5 +1,2 @@
-profile.tree "System" {
-	branch("Analysis"){
-		chart ("ALU test",		"main.sp");
-	}
-}
+#lua
+ProfileTree("System|Analysis"):AddItem("chart", "ALU test", "main.sp")

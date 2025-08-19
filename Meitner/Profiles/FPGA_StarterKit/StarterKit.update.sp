@@ -1,2 +1,3 @@
-system.call	"make", "clean", ".\\Document\\"
-system.call	"make", "-j", ".\\Document\\", "error:", "] Error", "undefined reference to " "Build succeeded.":0
+#lua
+System.Execute("make", "clean", ".\\Document\\")
+System.Execute("make", "-j", ".\\Document\\", {"error:", "] Error", "undefined reference to ", {"Build succeeded.",0}})
