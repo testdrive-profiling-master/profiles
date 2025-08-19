@@ -1,6 +1,5 @@
-profile.tree "System" {
-	report ("System map",				"main.sp");
-}
+#lua
+ProfileTree("System"):AddItem("report", "System map", "main.sp")
 
-// initial run...
-profile.call	"main.sp"
+-- initial run...
+System.CallProfile("main.sp")

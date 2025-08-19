@@ -1,2 +1,2 @@
-// initial run...
-profile.call	"main.sp"
+#lua
+System.CallProfile("main.sp")

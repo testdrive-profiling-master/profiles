@@ -1,5 +1,4 @@
-profile.tree "System\\Analysis" {
-	report ("Scenario Test",				"main.sp");
-}
+#lua
+ProfileTree("System|Analysis"):AddItem("report", "Scenario Test", "main.sp")
 
-profile.call "main.sp"
+System.CallProfile("main.sp")

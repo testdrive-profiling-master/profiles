@@ -1,7 +1,6 @@
-// this profile will be not shown.
-profile.tree "System" {
-	//report ("Processor",					"%CURRENT%\\main.sp");
-}
+#lua
+-- this profile will be not shown.
+--ProfileTree("System"):AddItem("report", "Processor", "main.sp")
 
-// run profile
-profile.call	"main.sp"
+-- run profile
+System.CallProfile("main.sp")

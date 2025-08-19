@@ -1,5 +1,2 @@
-profile.tree "System" {
-	branch("Analysis"){
-		report ("Xilinx Synthesis",		"main.sp");
-	}
-}
+#lua
+ProfileTree("System|Analysis"):AddItem("report", "Xilinx Synthesis", "main.sp")

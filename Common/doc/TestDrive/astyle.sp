@@ -1,1 +1,2 @@
-system.shell	"explorer", "http://astyle.sourceforge.net/"
+#lua
+System.Shell("explorer", "http://astyle.sourceforge.net/")

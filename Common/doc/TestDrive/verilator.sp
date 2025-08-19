@@ -1,1 +1,2 @@
-system.shell	"explorer", "https://verilator.org/guide"
+#lua
+System.Shell("explorer", "https://verilator.org/guide")

@@ -1,16 +1,8 @@
-// add to profile view
-/*
-if.locale "Korean"
-	profile.tree "시스템" {
-		screen("디스플레이",		"%CURRENT%\\main.sp");
-		expand();
-	}
-if.else
-*/
-profile.tree "System" {
-	screen("Display",		"%CURRENT%\\main.sp");
-	expand();
-}
-//if.end
+#lua
+do
+	local system_tree = ProfileTree("System")
+	system_tree:AddItem("screen", "Display", "main.sp")
+	system_tree:Expand()
+end
 
-profile.call	"main.sp"		// run default
+System.CallProfile("main.sp")	-- run default

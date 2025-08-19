@@ -1,3 +1,2 @@
-profile.tree "System" {
-	chart ("System chart",		"main.sp");
-}
+#lua
+ProfileTree("System"):AddItem("chart", "System chart", "main.sp")

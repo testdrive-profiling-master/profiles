@@ -1,1 +1,2 @@
-system.shell	"%TESTDRIVE_DIR%\\Documents\\TestDrive Script Language.pdf"
+#lua
+System.Shell("%TESTDRIVE_DIR%\\Documents\\TestDrive Script Language.pdf")

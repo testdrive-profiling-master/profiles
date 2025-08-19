@@ -1,1 +1,2 @@
-system.shell	"explorer", "https://github.com/thomasrussellmurphy/istyle-verilog-formatter"
+#lua
+System.Shell("explorer", "https://github.com/thomasrussellmurphy/istyle-verilog-formatter")
