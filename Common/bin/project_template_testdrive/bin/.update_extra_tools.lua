@@ -1,1 +1,1 @@
--- RequireMingwPackage("mingw-w64-ucrt-x86_64-graphviz")	-- required library example
+-- os.require_library("graphviz")	-- required library example
