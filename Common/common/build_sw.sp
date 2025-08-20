@@ -15,8 +15,8 @@ do
 		System.Execute("mingw32-make", "-j " .. sProssorCount, "%PROJECT%System\\SubSystems\\PCIeDriver\\", {"error:", "] Error", "undefined reference to ", {"Build succeeded.", 0}})
 	end
 
-	LOGI("¢Â Testbench build")
-	System.Execute("HierarchicalMake", ". -arg \"-j " .. sProssorCount .. "\"", "%PROJECT%Application\\Example\\Testbench\\", {"*E: ", "error:", "] Error", "undefined reference to ", {"Build succeeded.", 0}})
+	LOGI("¢Â Application build")
+	System.Execute("HierarchicalMake", ". -arg \"-j " .. sProssorCount .. "\"", "%PROJECT%Application\\", {"*E: ", "error:", "] Error", "undefined reference to ", {"Build succeeded.", 0}})
 end
 
 LOGI("\n¢Â S/W build sequence is completed!")
