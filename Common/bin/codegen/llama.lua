@@ -2,8 +2,9 @@ local Arg = ArgTable("LLaMA C++")
 
 Arg:AddOptionString		("model", "", nil, nil, "model_path", "Requested model path")
 Arg:AddRemark(nil, "Refer : https://huggingface.co/models?apps=llama.cpp")
+Arg:AddOptionInt		("layers", 50, "l", nil, "layer_count", "layers count for acceleration")
 Arg:AddOption			("clear", "C", nil, "Clear local models")
-Arg:AddOption           ("reset", "R", nil, "Reset default model(google Gemma-3-1B)")
+Arg:AddOption           ("reset", "R", nil, "Reset default model(google Gemma-3-4B)")
 
 if (Arg:DoParse() == false) then
 	return
@@ -15,11 +16,13 @@ if Arg:GetOption("clear") then
 	os.exit(0)
 end
 
+local iLayerCount = Arg:GetOptionInt("layers")
+
 -- get model name from system configuration
 local model_name = String()
 model_name:GetEnvironment("MODEL@LLAMA")
 if model_name:Length() == 0 then
-	model_name.s = "ggml-org/gemma-3-1b-it-GGUF" -- default model
+	model_name.s = "unsloth/gemma-3-4b-it-GGUF" -- default model
 end
 
 do	-- update from argument, if existed
@@ -54,6 +57,7 @@ end
 local llama_url = String()
 local llama_ready = false
 function check_url(s)
+	io.write(s)
 	if llama_ready == false then
 		llama_url:Append(s)
 		if llama_url:CutFront("server is listening on") then
@@ -69,4 +73,4 @@ function check_url(s)
 end
 
 LOGI("LLAMA(" .. model_name.s .. ") Initializing... please wait...")
-exec("llama-server -ngl 50 -hf " .. model_name.s, check_url)
+exec("llama-server -ngl " .. iLayerCount .. " -hf " .. model_name.s, check_url)
