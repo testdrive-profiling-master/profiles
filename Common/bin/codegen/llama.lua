@@ -69,4 +69,4 @@ function check_url(s)
 end
 
 LOGI("LLAMA(" .. model_name.s .. ") Initializing... please wait...")
-exec("llama-server -hf " .. model_name.s, check_url)
+exec("llama-server -ngl 50 -hf " .. model_name.s, check_url)
