@@ -29,7 +29,7 @@ do	-- update from argument, if existed
 	local sModel = Arg:GetOptionString("model")
 	
 	if Arg:GetOption("reset") then
-		sModel = "ggml-org/gemma-3-1b-it-GGUF" -- default model
+		sModel = "unsloth/gemma-3-4b-it-GGUF" -- default model
 	end
 
 	if string.len(sModel) > 0 then
