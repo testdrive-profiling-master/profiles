@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : System manager
-// Rev.  : 8/17/2025 Sun (CloneX)
+// Rev.  : 8/25/2025 Mon (clonextop@gmail.com)
 //================================================================================
 #include "BuildAutomation.h"
 
@@ -209,10 +209,9 @@ void BuildAutomation::DoCheck(DWORD command, LPCTSTR sFileName)
 				g_pSystem->InsertCodeInception((LPCTSTR)sFileName, pItem->sInceptionFile, pItem->sTitle, m_sAuthorName);
 		}
 
-		if (m_bAutoBuild && !pItem->sExecuteFile.IsEmpty()) {
+		if (!IsFileExistedNested(_T(".TestDrive.nobuild"), sNotouchPath) && m_bAutoBuild && !pItem->sExecuteFile.IsEmpty()) {
 			m_sTempFilePath = sFileName;
-			m_pDoc->SetTimer(id + m_dwBuildCommandStart,
-							 700); // delayed build for chained source change
+			m_pDoc->SetTimer(id + m_dwBuildCommandStart, 700); // delayed build for chained source change
 		}
 	}
 }

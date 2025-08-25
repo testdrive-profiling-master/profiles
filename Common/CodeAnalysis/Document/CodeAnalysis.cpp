@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Code Analysis
-// Rev.  : 8/19/2024 Mon (clonextop@gmail.com)
+// Rev.  : 8/25/2025 Mon (clonextop@gmail.com)
 //================================================================================
 #include "CodeAnalysis.h"
 #include "testdrive_document.inl"
@@ -347,9 +347,11 @@ const char *Log_StaticAnalysis(LPCTSTR lpszLog, int iID)
 
 static BOOL IsNoSearch(LPCTSTR sPath)
 {
-	CString sFilePath;
-	sFilePath.Format(_T("%s/.TestDrive.nosearch"), sPath);
-	return (_taccess(g_pSystem->RetrieveFullPath(sFilePath), 0) != -1);
+	CString sFilePathNoSearch, sFilePathNoBuild;
+	sFilePathNoSearch.Format(_T("%s/.TestDrive.nosearch"), sPath);
+	sFilePathNoBuild.Format(_T("%s/.TestDrive.nobuild"), sPath);
+	return (_taccess(g_pSystem->RetrieveFullPath(sFilePathNoSearch), 0) != -1) ||
+		   (_taccess(g_pSystem->RetrieveFullPath(sFilePathNoBuild), 0) != -1);
 }
 
 static BOOL IsMakefileExist(LPCTSTR sPath)
