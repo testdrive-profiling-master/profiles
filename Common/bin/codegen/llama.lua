@@ -2,7 +2,7 @@ local Arg = ArgTable("LLaMA C++")
 
 Arg:AddOptionString		("model", "", nil, nil, "model_path", "Requested model path")
 Arg:AddRemark(nil, "Refer : https://huggingface.co/models?apps=llama.cpp")
-Arg:AddOptionInt		("layers", 50, "l", nil, "layer_count", "layers count for acceleration")
+Arg:AddOptionString		("arg", nil, "a", "arg", "arguments", "additional arguments for llama.cpp")
 Arg:AddOption			("clear", "C", nil, "Clear local models")
 Arg:AddOption           ("reset", "R", nil, "Reset default model(google Gemma-3-4B)")
 
@@ -10,27 +10,41 @@ if (Arg:DoParse() == false) then
 	return
 end
 
-local iLayerCount = Arg:GetOptionInt("layers")
 local sDefaultModel = "unsloth/gemma-3-4b-it-GGUF"
+local sDefaultArg	= "-ngl 50"
 
 -- get model name from system configuration
 local model_name = String()
+local model_args = String(Arg:GetOptionString("arg"))
 model_name:GetEnvironment("MODEL@LLAMA")
+model_args:GetEnvironment("ARGS@LLAMA")
+
 if model_name:Length() == 0 then
 	model_name.s = sDefaultModel -- default model
 end
 
+if model_args:Length() == 0 then
+	model_args.s = sDefaultArg -- default model
+end
+
 do	-- update from argument, if existed
-	local sModel = Arg:GetOptionString("model")
+	local sModel	= Arg:GetOptionString("model")
+	local sArg		= Arg:GetOptionString("arg")
+	
+	if sArg ~= nil then
+		model_args.s = sArg
+	end
 	
 	if Arg:GetOption("reset") then
 		LOGI("Reset to default LLVM model. : " .. sDefaultModel)
-		sModel = sDefaultModel -- default model
+		sModel			= sDefaultModel -- default model
+		model_args.s	= sDefaultArg	-- default arguments
 	end
 
 	if string.len(sModel) > 0 then
 		model_name.s = sModel
 		model_name:SetEnvironment("MODEL@LLAMA")
+		model_args:SetEnvironment("ARGS@LLAMA")
 	end
 end
 
@@ -75,4 +89,4 @@ function check_url(s)
 end
 
 LOGI("LLAMA(" .. model_name.s .. ") Initializing... please wait...")
-exec("llama-server -ngl " .. iLayerCount .. " -hf " .. model_name.s, check_url)
+exec("llama-server " .. model_args.s .. " -hf " .. model_name.s, check_url)
