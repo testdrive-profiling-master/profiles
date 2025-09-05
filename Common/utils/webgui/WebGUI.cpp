@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : WebGUI project
-// Rev.  : 5/16/2025 Fri (clonextop@gmail.com)
+// Rev.  : 9/5/2025 Fri (clonextop@gmail.com)
 //================================================================================
 #include "WebGUI.h"
 #include <time.h>
@@ -259,6 +259,8 @@ noresult WebGUI::run_impl()
 	SetWindowLongPtr(m_hHwnd, GWLP_WNDPROC, (LONG_PTR)new_proc);
 
 	return win32_edge_engine::run_impl();
+#else
+	return webview::webview::run_impl();
 #endif
 }
 

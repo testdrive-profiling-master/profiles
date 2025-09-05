@@ -216,7 +216,7 @@ endif
 
 
 ifneq ($(OS),Windows_NT)
-PACKAGES	:= $(PACKAGES) ccache cppcheck
+PACKAGES	:= $(PACKAGES) ccache cppcheck pkg-config
 prepare: $(PACKAGES)
 TARGET_DEP	:= $(TARGET_DEP) prepare
 
