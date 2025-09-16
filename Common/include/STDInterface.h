@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 11/1/2024 Fri (clonextop@gmail.com)
+// Rev.  : 9/16/2025 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __STD_INTERFACE_H__
 #define __STD_INTERFACE_H__
@@ -90,22 +90,16 @@ typedef DWORD KPTR;
 #	endif
 #endif
 
+#ifndef ARRAY_SIZE
+#	define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
+#endif
+
 // Safe memory deletion
-#define SAFE_DELETE(x)                                                                                                                          \
-	if (x) {                                                                                                                                    \
-		delete x;                                                                                                                               \
-		(x) = NULL;                                                                                                                             \
-	}
-#define SAFE_DELETE_ARRAY(x)                                                                                                                    \
-	if (x) {                                                                                                                                    \
-		delete[] x;                                                                                                                             \
-		(x) = NULL;                                                                                                                             \
-	}
-#define SAFE_RELEASE(x)                                                                                                                         \
-	if (x) {                                                                                                                                    \
-		(x)->Release();                                                                                                                         \
-		(x) = NULL;                                                                                                                             \
-	}
+/* clang-format off */
+#define SAFE_DELETE(x)			if (x) {delete x;(x) = NULL;}
+#define SAFE_DELETE_ARRAY(x)	if (x) {delete[] x;(x) = NULL;}
+#define SAFE_RELEASE(x)			if (x) {(x)->Release();(x) = NULL;}
+/* clang-format on */
 
 #ifndef DEBUG_ENABLE
 #	ifdef USE_DEBUG
