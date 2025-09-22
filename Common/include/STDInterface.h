@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 9/16/2025 Tue (clonextop@gmail.com)
+// Rev.  : 9/22/2025 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __STD_INTERFACE_H__
 #define __STD_INTERFACE_H__
@@ -96,9 +96,14 @@ typedef DWORD KPTR;
 
 // Safe memory deletion
 /* clang-format off */
-#define SAFE_DELETE(x)			if (x) {delete x;(x) = NULL;}
-#define SAFE_DELETE_ARRAY(x)	if (x) {delete[] x;(x) = NULL;}
-#define SAFE_RELEASE(x)			if (x) {(x)->Release();(x) = NULL;}
+#ifndef SAFE_DELETE
+#	define SAFE_DELETE(x)			if (x) {delete x;(x) = NULL;}
+#	define SAFE_DELETE_ARRAY(x)		if (x) {delete[] x;(x) = NULL;}
+#	define SAFE_RELEASE(x)			if (x) {(x)->Release();(x) = NULL;}
+#endif
+#ifndef UNUSED
+#	define UNUSED(x)				(void)(x)
+#endif
 /* clang-format on */
 
 #ifndef DEBUG_ENABLE

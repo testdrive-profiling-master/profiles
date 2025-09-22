@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 9/22/2025 Mon (clonextop@gmail.com)
 //================================================================================
 #include "DDK_Context.h"
 
@@ -58,6 +58,7 @@ DDK_API DDKMemory *CreateDDKMemoryEx(uint64_t ulByteSize, uint64_t ulByteAlignme
 
 static void _ISR_(void *pPrivate)
 {
+	UNUSED(pPrivate);
 	printf("*I: [DDK] Interrupt occurred.\n");
 }
 
