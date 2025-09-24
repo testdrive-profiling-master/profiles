@@ -792,10 +792,8 @@ void arg_print_syntaxv_ds(arg_dstr_t ds, void** argtable, const char* suffix) {
 
         /* print mandatory options */
         for (i = 0; i < table[tabindex]->mincount; i++) {
-        	if(*syntax) {
-            	arg_dstr_cat(ds, " ");
-            	arg_dstr_cat(ds, syntax);
-        	}
+            arg_dstr_cat(ds, " ");
+            arg_dstr_cat(ds, syntax);
         }
 
         /* print optional args enclosed in "[..]" */

@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,8 +31,9 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 5/27/2024 Mon (clonextop@gmail.com)
+// Rev.  : 9/24/2025 Wed (clonextop@gmail.com)
 //================================================================================
+#include "STDInterface.h"
 #include "ArgTable.h"
 #include "argtable3/src/argtable3.h"
 #include <assert.h>
@@ -51,7 +52,8 @@ ArgTable::~ArgTable(void)
 void ArgTable::Release(void)
 {
 	if (m_ArgList.size()) {
-		arg_freetable(&m_ArgList.front(), m_ArgList.size());
+		if (m_ArgList.size())
+			arg_freetable(&m_ArgList[0], m_ArgList.size());
 		m_ArgList.clear();
 		m_MapList.clear();
 	}
@@ -93,7 +95,7 @@ bool ArgTable::DoParse(int argc, const char **argv)
 	if (m_ArgList.size() > 0) {
 		m_ArgList.push_back(arg_end(20));
 
-		if (arg_parse(argc, (char **)argv, &m_ArgList.front()) > 0) {
+		if (arg_parse(argc, (char **)argv, &m_ArgList[0]) > 0) {
 			if (argc == 1 || GetOption("help")) {
 				goto SHOW_HELP;
 			}
@@ -116,7 +118,7 @@ bool ArgTable::DoParse(int argc, const char **argv)
 }
 
 static int			__default_argc = 0;
-static const char **__default_argv;
+static const char **__default_argv = NULL;
 
 bool				ArgTable::DoParseDefault(void)
 {
@@ -136,7 +138,7 @@ int ArgTable::ArgumentSize(void)
 
 const char *ArgTable::GetArgument(int iIndex)
 {
-	if (iIndex >= 0 && iIndex < (__default_argc - 1))
+	if (__default_argv && iIndex >= 0 && iIndex < (__default_argc - 1))
 		return __default_argv[iIndex + 1];
 
 	return NULL;
@@ -154,8 +156,8 @@ void ArgTable::AddOption(const char *sName, const char *sOptShort, const char *s
 	m_ArgList.push_back(pArg);
 }
 
-void ArgTable::AddOptionInt(const char *sName, int iDefaultValue, const char *sOptShort, const char *sOptLong,
-							const char *sDataType, const char *sGlossary)
+void ArgTable::AddOptionInt(
+	const char *sName, int iDefaultValue, const char *sOptShort, const char *sOptLong, const char *sDataType, const char *sGlossary)
 {
 	struct arg_int *pArg = arg_int0(sOptShort, sOptLong, sDataType, sGlossary);
 	pArg->ival[0]		 = iDefaultValue;
@@ -163,8 +165,8 @@ void ArgTable::AddOptionInt(const char *sName, int iDefaultValue, const char *sO
 	m_ArgList.push_back(pArg);
 }
 
-void ArgTable::AddOptionDouble(const char *sName, int fDefaultValue, const char *sOptShort, const char *sOptLong,
-							   const char *sDataType, const char *sGlossary)
+void ArgTable::AddOptionDouble(
+	const char *sName, int fDefaultValue, const char *sOptShort, const char *sOptLong, const char *sDataType, const char *sGlossary)
 {
 	struct arg_dbl *pArg = arg_dbl0(sOptShort, sOptLong, sDataType, sGlossary);
 	pArg->dval[0]		 = fDefaultValue;
@@ -172,12 +174,11 @@ void ArgTable::AddOptionDouble(const char *sName, int fDefaultValue, const char 
 	m_ArgList.push_back(pArg);
 }
 
-void ArgTable::AddOptionString(const char *sName, const char *sDefaultValue, const char *sOptShort,
-							   const char *sOptLong, const char *sDataType, const char *sGlossary)
+void ArgTable::AddOptionString(
+	const char *sName, const char *sDefaultValue, const char *sOptShort, const char *sOptLong, const char *sDataType, const char *sGlossary)
 {
 	bool			bOption = (sOptShort != NULL) || (sOptLong != NULL) || (sDefaultValue != NULL);
-	struct arg_str *pArg	= bOption ? arg_str0(sOptShort, sOptLong, sDataType, sGlossary)
-									  : arg_str1(sOptShort, sOptLong, sDataType, sGlossary);
+	struct arg_str *pArg = bOption ? arg_str0(sOptShort, sOptLong, sDataType, sGlossary) : arg_str1(sOptShort, sOptLong, sDataType, sGlossary);
 
 	if (sDefaultValue) {
 		m_DefaultList.opt_string[sName] = sDefaultValue;
@@ -187,12 +188,12 @@ void ArgTable::AddOptionString(const char *sName, const char *sDefaultValue, con
 	m_ArgList.push_back(pArg);
 }
 
-void ArgTable::AddOptionFile(const char *sName, const char *sDefaultValue, const char *sOptShort, const char *sOptLong,
-							 const char *sDataType, const char *sGlossary)
+void ArgTable::AddOptionFile(
+	const char *sName, const char *sDefaultValue, const char *sOptShort, const char *sOptLong, const char *sDataType, const char *sGlossary)
 {
 	bool			 bOption = (sOptShort != NULL) || (sOptLong != NULL) || (sDefaultValue != NULL);
-	struct arg_file *pArg	 = bOption ? arg_file0(sOptShort, sOptLong, sDataType, sGlossary)
-									   : arg_file1(sOptShort, sOptLong, sDataType, sGlossary);
+	struct arg_file *pArg =
+		bOption ? arg_file0(sOptShort, sOptLong, sDataType, sGlossary) : arg_file1(sOptShort, sOptLong, sDataType, sGlossary);
 
 	if (sDefaultValue) {
 		m_DefaultList.opt_file[sName] = sDefaultValue;
@@ -202,8 +203,7 @@ void ArgTable::AddOptionFile(const char *sName, const char *sDefaultValue, const
 	m_ArgList.push_back(pArg);
 }
 
-void ArgTable::AddOptionFiles(const char *sName, const char *sOptShort, const char *sOptLong, const char *sDataType,
-							  const char *sGlossary)
+void ArgTable::AddOptionFiles(const char *sName, const char *sOptShort, const char *sOptLong, const char *sDataType, const char *sGlossary)
 {
 	bool			 bOption = (sOptShort != NULL) || (sOptLong != NULL);
 	struct arg_file *pArg	 = arg_filen(sOptShort, sOptLong, sDataType, bOption ? 0 : 1, ArgumentSize(), sGlossary);
@@ -219,9 +219,9 @@ void ArgTable::ShowHelp(void)
 	}
 
 	printf("Usage: %s ", m_sExecuteFile.c_str());
-	arg_print_syntaxv(stdout, &m_ArgList.front(), NULL);
+	arg_print_syntaxv(stdout, &m_ArgList[0], NULL);
 	printf(" %s\n\n", m_sExtraArgs.c_str());
-	arg_print_glossary_gnu(stdout, &m_ArgList.front());
+	arg_print_glossary_gnu(stdout, &m_ArgList[0]);
 }
 
 bool ArgTable::GetOption(const char *sName)

@@ -36,6 +36,7 @@
 #include "argtable3_private.h"
 #endif
 
+#include <assert.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -46,6 +47,75 @@
 #endif
 
 #define START_VSNBUFF 16
+
+#if defined(_MSC_VER)
+    #define arg_vsnprintf _vsnprintf
+#elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
+    #define arg_vsnprintf vsnprintf
+#else
+/**
+ * A C89-compatible replacement for vsnprintf().
+ *
+ * Writes at most (size - 1) characters to str and always null-terminates,
+ * unless size is 0. The output is truncated if necessary.
+ *
+ * @param str  Output buffer.
+ * @param size Size of output buffer.
+ * @param format printf-style format string.
+ * @param ap    va_list of arguments.
+ * @return The number of characters that would have been written, excluding the null byte.
+ */
+int arg_vsnprintf(char *str, size_t size, const char *format, va_list ap) {
+    char *temp_buffer;
+    int result;
+    size_t temp_size;
+
+    if (str == NULL || size == 0) {
+        /* Just calculate required size using a temporary large buffer */
+        temp_size = 65536; /* Large temporary buffer */
+        temp_buffer = malloc(temp_size);
+        if (temp_buffer == NULL) {
+            return -1;
+        }
+
+        result = vsprintf(temp_buffer, format, ap);
+        free(temp_buffer);
+        return result;
+    }
+
+    if (size == 1) {
+        str[0] = '\0';
+        return 0;
+    }
+
+    /* Use a large temporary buffer to safely format */
+    temp_size = size * 4; /* Start with 4x the target size */
+    if (temp_size < 1024) {
+        temp_size = 1024;
+    }
+
+    temp_buffer = malloc(temp_size);
+    if (temp_buffer == NULL) {
+        return -1;
+    }
+
+    result = vsprintf(temp_buffer, format, ap);
+    if (result < 0) {
+        free(temp_buffer);
+        return -1;
+    }
+
+    /* Copy to destination buffer, truncating if necessary */
+    strncpy(str, temp_buffer, size - 1);
+    if ((size_t)result >= size) {
+        /* Truncate */
+        str[size - 1] = '\0';
+    }
+
+    free(temp_buffer);
+    return result; /* Return the number of chars that would be written */
+}
+#endif
 
 /*
  * This dynamic string module is adapted from TclResult.c in the Tcl library.
@@ -134,13 +204,17 @@ void arg_dstr_set(arg_dstr_t ds, char* str, arg_dstr_freefn* free_proc) {
     } else if (free_proc == ARG_DSTR_VOLATILE) {
         length = (int)strlen(str);
         if (length > ARG_DSTR_SIZE) {
-            ds->data = (char*)xmalloc((unsigned)length + 1);
+            ds->data = (char*)xmalloc((size_t)length + 1);
             ds->free_proc = ARG_DSTR_DYNAMIC;
+            strncpy(ds->data, str, (size_t)length + 1); /* NOSONAR */
+            assert(ds->data[length] == '\0');
         } else {
             ds->data = ds->sbuf;
             ds->free_proc = ARG_DSTR_STATIC;
+            strncpy(ds->data, str, sizeof(ds->sbuf) - 1); /* NOSONAR */
+            ds->data[sizeof(ds->sbuf) - 1] = '\0';
+            assert(ds->data[ARG_DSTR_SIZE] == '\0');
         }
-        strcpy(ds->data, str);
     } else {
         ds->data = str;
         ds->free_proc = free_proc;
@@ -236,7 +310,7 @@ void arg_dstr_catf(arg_dstr_t ds, const char* fmt, ...) {
 
     for (;;) {
         va_start(arglist, fmt);
-        r = vsnprintf(buff, (size_t)(n + 1), fmt, arglist);
+        r = arg_vsnprintf(buff, (size_t)(n + 1), fmt, arglist);
         va_end(arglist);
 
         slen = strlen(buff);
@@ -288,7 +362,7 @@ static void setup_append_buf(arg_dstr_t ds, int new_space) {
 
     total_space = new_space + ds->append_used;
     if (total_space >= ds->append_data_size) {
-        char* newbuf;
+        char* newbuf = NULL;
 
         if (total_space < 100) {
             total_space = 200;
@@ -297,16 +371,20 @@ static void setup_append_buf(arg_dstr_t ds, int new_space) {
         }
         newbuf = (char*)xmalloc((unsigned)total_space);
         memset(newbuf, 0, (size_t)total_space);
-        strcpy(newbuf, ds->data);
+        strncpy(newbuf, ds->data, (size_t)total_space); /* NOSONAR */
+        assert(newbuf[total_space - 1] == '\0');
         if (ds->append_data != NULL) {
             xfree(ds->append_data);
         }
+
         ds->append_data = newbuf;
         ds->append_data_size = total_space;
-    } else if (ds->data != ds->append_data) {
-        strcpy(ds->append_data, ds->data);
+    } else if (ds->data != ds->append_data && ds->append_data != NULL) {
+        strncpy(ds->append_data, ds->data, (size_t)ds->append_data_size); /* NOSONAR */
+        assert(ds->append_data[ds->append_data_size - 1] == '\0');
     }
 
+    assert(ds->append_data != NULL);
     arg_dstr_free(ds);
     ds->data = ds->append_data;
 }
