@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive System Driver wrapper
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 10/2/2025 Thu (clonextop@gmail.com)
 //================================================================================
 #include "SystemDriverInterface.h"
 
@@ -138,11 +138,14 @@ uint32_t SystemDriverInterface::Command(void *pCommand)
 void SystemDriverInterface::MemoryCreate(NativeMemory *pNative, UINT64 dwByteSize, UINT64 dwAlignment)
 {
 	// default implementation
-	pNative->pMem = new BYTE[dwByteSize];
+	pNative->pMem = (BYTE *)_aligned_malloc(dwByteSize, dwAlignment);
 }
 
 void SystemDriverInterface::MemoryFree(NativeMemory *pNative)
 {
 	// default implementation
-	SAFE_DELETE_ARRAY(pNative->pMem);
+	if (pNative->pMem) {
+		_aligned_free(pNative->pMem);
+		pNative->pMem = NULL;
+	}
 }
