@@ -51,7 +51,11 @@ do
 	
 	while child:empty() == false do
 		if page_list[child:get_attribute("name")] ~= nil then
-			ERROR("Duplicated page name on " .. in_file_name .." : '" .. child:get_attribute("name") .. "'")
+			if #page_name == 0 then	-- default page name (first page)
+				if page_name == child:get_attribute("name") then
+					ERROR("Duplicated page name on " .. in_file_name .." : '" .. child:get_attribute("name") .. "'")
+				end
+			end
 		end
 		page_list[child:get_attribute("name")]	= page_count
 		page_count	= page_count + 1	-- start at '0'

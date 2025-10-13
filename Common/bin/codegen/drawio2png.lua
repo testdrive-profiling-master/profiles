@@ -35,15 +35,10 @@ sProfilePath:Append("common/bin/")
 exec(".run \"" .. sProfilePath.s .. "drawio/draw.io.exe\" -x -f xml -u -o \"" .. in_file_name .. ".drawio2png.xml\" \"" .. in_file_name .. "\"")
 
 local	page_list	= {}
-local	page_count	= 0
+local	page_count	= 1
 do
 	local xml = DocXML()
 	do	-- read from file
-		local xml_file_name		= String(in_file_name)
-		xml_file_name:CutFront("/", true)
-		xml_file_name:CutFront("\\", true)
-		xml_file_name:DeleteBack("odg")
-		xml_file_name:Append("xml")
 		if xml:LoadFromFile(in_file_name .. ".drawio2png.xml") == false then
 			exec("rm -f \"" .. in_file_name .. ".drawio2png.xml\"")
 			ERROR("Information check is failed.")
@@ -55,6 +50,13 @@ do
 	local child = node:child("diagram")
 	
 	while child:empty() == false do
+		if page_list[child:get_attribute("name")] ~= nil then
+			if #page_name == 0 then	-- default page name (first page)
+				if page_name == child:get_attribute("name") then
+					ERROR("Duplicated page name on " .. in_file_name .." : '" .. child:get_attribute("name") .. "'")
+				end
+			end
+		end
 		page_list[child:get_attribute("name")]	= page_count
 		page_count	= page_count + 1	-- start at '0'
 		if #page_name == 0 then	-- default page name (first page)
