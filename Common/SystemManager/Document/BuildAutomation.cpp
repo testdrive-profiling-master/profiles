@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : System manager
-// Rev.  : 9/30/2025 Tue (clonextop@gmail.com)
+// Rev.  : 10/14/2025 Tue (clonextop@gmail.com)
 //================================================================================
 #include "BuildAutomation.h"
 
@@ -165,9 +165,10 @@ void BuildAutomation::DoCheck(DWORD command, LPCTSTR sFileName)
 				CString sName(sFileName);
 
 				if (m_sCodingStyle.GetAt(0) &&
-					(sName.Find(_T(".h"), sName.GetLength() - 2) > 0 || sName.Find(_T(".c"), sName.GetLength() - 2) > 0 ||
-					 sName.Find(_T(".cpp"), sName.GetLength() - 4) > 0 || sName.Find(_T(".cc"), sName.GetLength() - 3) > 0 ||
-					 sName.Find(_T(".java"), sName.GetLength() - 5) > 0 || sName.Find(_T(".inl"), sName.GetLength() - 4) > 0)) {
+					(sName.Find(_T(".h"), sName.GetLength() - 2) > 0 || sName.Find(_T(".hpp"), sName.GetLength() - 4) > 0 ||
+					 sName.Find(_T(".c"), sName.GetLength() - 2) > 0 || sName.Find(_T(".cpp"), sName.GetLength() - 4) > 0 ||
+					 sName.Find(_T(".cc"), sName.GetLength() - 3) > 0 || sName.Find(_T(".java"), sName.GetLength() - 5) > 0 ||
+					 sName.Find(_T(".inl"), sName.GetLength() - 4) > 0)) {
 				USE_CLANG_FORMAT:
 					CString sArg;
 					CString sClangFormatPath = g_pSystem->RetrieveFullPath(_T("%TESTDRIVE_DIR%bin\\msys64\\ucrt64\\bin\\clang-format.exe"));
