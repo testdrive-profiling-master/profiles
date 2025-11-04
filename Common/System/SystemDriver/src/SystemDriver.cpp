@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive System Driver wrapper
-// Rev.  : 7/17/2024 Wed (clonextop@gmail.com)
+// Rev.  : 11/4/2025 Tue (clonextop@gmail.com)
 //================================================================================
 #include "SystemDriver.h"
 #include "NativeMemory.h"
@@ -45,7 +45,9 @@ SystemDriver::SystemDriver(void)
 
 SystemDriver::~SystemDriver(void)
 {
-	m_ISR.KillThread();
+	if (m_pNativeDriver->IsActivateInterrupt()) {
+		m_ISR.KillThread();
+	}
 	// release memory implementation
 	SAFE_RELEASE(m_pMemImp);
 	SAFE_DELETE(m_pNativeDriver);
@@ -82,8 +84,10 @@ bool SystemDriver::Initialize(IMemoryImp *pMem)
 	}
 
 	// run simulation thread
-	m_ISR.RunThread();
-	EnableInterrupt(false);
+	if (m_pNativeDriver->IsActivateInterrupt()) {
+		m_ISR.RunThread();
+		EnableInterrupt(false);
+	}
 	return true;
 }
 
@@ -105,17 +109,23 @@ void SystemDriver::RegWrite(uint64_t ulAddress, uint32_t dwData)
 
 void SystemDriver::RegisterInterruptService(INTRRUPT_SERVICE routine, void *pPrivate)
 {
-	m_ISR.RegisterService(routine, pPrivate);
+	if (m_pNativeDriver->IsActivateInterrupt()) {
+		m_ISR.RegisterService(routine, pPrivate);
+	}
 }
 
 void SystemDriver::EnableInterrupt(bool bEnable)
 {
-	m_ISR.Enable(bEnable);
+	if (m_pNativeDriver->IsActivateInterrupt()) {
+		m_ISR.Enable(bEnable);
+	}
 }
 
 void SystemDriver::ClearInterruptPending(void)
 {
-	m_ISR.ClearPending();
+	if (m_pNativeDriver->IsActivateInterrupt()) {
+		m_ISR.ClearPending();
+	}
 }
 
 uint32_t SystemDriver::DriverCommand(void *pCommand)
@@ -142,7 +152,9 @@ uint64_t SystemDriver::GetMemorySize(void)
 
 void SystemDriver::InvokeISR(void)
 {
-	m_ISR.Awake();
+	if (m_pNativeDriver->IsActivateInterrupt()) {
+		m_ISR.Awake();
+	}
 }
 
 IMemoryNative *SystemDriver::CreateMemory(uint64_t ulByteSize, uint64_t ulByteAlignment)

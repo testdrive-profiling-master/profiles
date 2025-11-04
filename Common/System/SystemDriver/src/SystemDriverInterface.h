@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive System Driver wrapper
-// Rev.  : 7/17/2024 Wed (clonextop@gmail.com)
+// Rev.  : 11/4/2025 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_DRIVER_INTERFACE_H__
 #define __SYSTEM_DRIVER_INTERFACE_H__
@@ -105,8 +105,9 @@ public:
 	virtual uint32_t RegRead(uint64_t ulAddress)																	= 0;
 	virtual void	 MemoryWrite(NativeMemory *pNative, uint64_t ulAddress, uint64_t ulOffset, uint32_t dwByteSize) = 0;
 	virtual void	 MemoryRead(NativeMemory *pNative, uint64_t ulAddress, uint64_t ulOffset, uint32_t dwByteSize)	= 0;
-	virtual void	 InterruptLock(void)																			= 0;
-	virtual void	 InterruptFree(void)																			= 0;
+	virtual bool	 IsActivateInterrupt(void);
+	virtual void	 InterruptLock(void);
+	virtual void	 InterruptFree(void);
 	virtual uint32_t Command(void *pCommand);
 	virtual void	 MemoryCreate(NativeMemory *pNative, uint64_t ulByteSize, uint64_t ulAlignment);
 	virtual void	 MemoryFree(NativeMemory *pNative);

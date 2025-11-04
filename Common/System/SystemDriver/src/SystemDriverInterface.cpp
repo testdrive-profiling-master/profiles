@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive System Driver wrapper
-// Rev.  : 10/2/2025 Thu (clonextop@gmail.com)
+// Rev.  : 11/4/2025 Tue (clonextop@gmail.com)
 //================================================================================
 #include "SystemDriverInterface.h"
 
@@ -148,4 +148,12 @@ void SystemDriverInterface::MemoryFree(NativeMemory *pNative)
 		_aligned_free(pNative->pMem);
 		pNative->pMem = NULL;
 	}
+}
+
+void SystemDriverInterface::InterruptLock(void) {}
+void SystemDriverInterface::InterruptFree(void) {}
+
+bool SystemDriverInterface::IsActivateInterrupt(void)
+{
+	return true;
 }
