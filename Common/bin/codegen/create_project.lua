@@ -193,7 +193,6 @@ elseif (sType == "lua") then
 	os.execute("sed \"s/PROJECT_LOWER/" .. sProjectNameLower .. "/\" -i ./" .. sProjectName .. "/main.cpp")
 	os.execute("sed \"s/PROJECT_UPPER/" .. sProjectNameUpper .. "/\" -i ./" .. sProjectName .. "/main.cpp")
 	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/main.cpp")
-	os.execute("mv \"" .. sProjectPath .. "/.PROJECT_version.inl\" \"" .. sProjectPath .. "/." .. sProjectNameLower .. "_version.inl\"")
 	
 	os.execute("explorer " .. sProjectName)
 elseif (sType == "webgui") then
