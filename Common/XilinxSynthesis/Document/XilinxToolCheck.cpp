@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Xilinx synthesis
-// Rev.  : 6/23/2025 Mon (clonextop@gmail.com)
+// Rev.  : 12/3/2025 Wed (clonextop@gmail.com)
 //================================================================================
 // Rev.  : 12/22/2020 Tue (clonextop@gmail.com)
 //================================================================================
@@ -45,69 +45,46 @@ BOOL IsFileExist(LPCTSTR sFilePath)
 
 static BOOL __FindXilinxTool_Vivado(TCHAR cDrive, LPTSTR sXilinxPath, LPTSTR sToolName)
 {
-	// Vivado existence checking
+	// Vivado tool path checking
 	WIN32_FIND_DATA FindFileData;
 	HANDLE			hFind;
 	CString			sPath;
-	BOOL			bResult = TRUE;
-	BOOL			bFound	= FALSE;
-	{ // searching "drive:\Xilinx\Vivado\..
-		sPath.Format(_T("%c:\\Xilinx\\Vivado\\*.*"), cDrive);
+	BOOL			bFound = FALSE;
 
-		if ((hFind = FindFirstFile(sPath, &FindFileData)) != INVALID_HANDLE_VALUE) {
-			while (bResult) {
-				if ((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && FindFileData.cFileName[0] != _T('.')) {
-					sPath.Format(_T("%c:\\Xilinx\\Vivado\\%s\\"), cDrive, FindFileData.cFileName);
-					{
-						// search environment batch file.
-						CString sFile;
-						sFile.Format(_T("%ssettings64.bat"), sPath);
+	auto			CheckToolPath = [&](TCHAR *sBasePathName) {
+		   if (!bFound) {
+			   sPath.Format(_T("%c:\\%s\\*.*"), cDrive, sBasePathName);
+			   if ((hFind = FindFirstFile(sPath, &FindFileData)) != INVALID_HANDLE_VALUE) {
+				   BOOL bResult = TRUE;
+				   while (bResult) {
+					   if ((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && FindFileData.cFileName[0] != _T('.')) {
+						   sPath.Format(_T("%c:\\%s\\%s\\Vivado\\"), cDrive, sBasePathName, FindFileData.cFileName);
+						   {
+							   // search environment batch file.
+							   CString sFile;
+							   sFile.Format(_T("%ssettings64.bat"), sPath);
 
-						if (IsFileExist(sFile)) {
-							_tcscpy(sXilinxPath, sPath);
-							sFile.Format(_T("Vivado %s"), FindFileData.cFileName);
-							_tcscpy(sToolName, sFile);
-							bFound = TRUE;
-							break;
-						}
-					}
-				}
+							   if (IsFileExist(sFile)) {
+								   _tcscpy(sXilinxPath, sPath);
+								   sFile.Format(_T("Vivado %s"), FindFileData.cFileName);
+								   _tcscpy(sToolName, sFile);
+								   bFound = TRUE;
+								   break;
+							   }
+						   }
+					   }
 
-				bResult = FindNextFile(hFind, &FindFileData);
-			}
+					   bResult = FindNextFile(hFind, &FindFileData);
+				   }
 
-			FindClose(hFind);
-		}
-	}
-	if (!bFound) { // searching "drive:\Xilinx\20XX.X\Vivado\..
-		sPath.Format(_T("%c:\\Xilinx\\*.*"), cDrive);
+				   FindClose(hFind);
+			   }
+		   }
+	};
 
-		if ((hFind = FindFirstFile(sPath, &FindFileData)) != INVALID_HANDLE_VALUE) {
-			while (bResult) {
-				if ((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && FindFileData.cFileName[0] != _T('.')) {
-					sPath.Format(_T("%c:\\Xilinx\\%s\\Vivado\\"), cDrive, FindFileData.cFileName);
-					LOGI(_T("sPath = %s\n"), (LPCTSTR)sPath);
-					{
-						// search environment batch file.
-						CString sFile;
-						sFile.Format(_T("%ssettings64.bat"), sPath);
+	CheckToolPath(_T("Xilinx")); // before 2025.2
+	CheckToolPath(_T("AMDDesignTools"));
 
-						if (IsFileExist(sFile)) {
-							_tcscpy(sXilinxPath, sPath);
-							sFile.Format(_T("Vivado %s"), FindFileData.cFileName);
-							_tcscpy(sToolName, sFile);
-							bFound = TRUE;
-							break;
-						}
-					}
-				}
-
-				bResult = FindNextFile(hFind, &FindFileData);
-			}
-
-			FindClose(hFind);
-		}
-	}
 	return bFound;
 }
 
