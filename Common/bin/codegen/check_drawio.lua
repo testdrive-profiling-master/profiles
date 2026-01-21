@@ -33,7 +33,7 @@ if lfs.IsExist(sProfilePath.s .. "drawio/draw.io.exe") == false then
 
 	local sCurDir = lfs.currentdir()
 	lfs.chdir(sProfilePath.s)
-	exec("wget https://github.com/jgraph/drawio-desktop/releases -O github.download.drawio.html")
+	exec("wget https://github.com/jgraph/drawio-desktop/releases/latest -O github.download.drawio.html")
 
 	local f = TextFile()
 	if f:Open("github.download.drawio.html") then
@@ -41,9 +41,9 @@ if lfs.IsExist(sProfilePath.s .. "drawio/draw.io.exe") == false then
 		f:Close()
 		exec("rm -f github.download.drawio.html")
 		-- get download link
-		s:CutBack("-windows-no-installer.exe\"", true)
+		s:CutBack("-windows.zip\"", true)
 		s:CutFront("href=\"", true)
-		s:Append("-windows-no-installer.exe")
+		s:Append("-windows.zip")
 		
 		LOGI("Downloading draw.io... Please wait...")
 		if s:CompareFront("https://") then
@@ -54,18 +54,10 @@ if lfs.IsExist(sProfilePath.s .. "drawio/draw.io.exe") == false then
 		end
 		
 		LOGI("Extracting draw.io binaries...")
-		exec("7z x \"" .. sProfilePath.s .. "drawio.zip\" -o\"" .. sProfilePath.s .. "drawio_package\"")
+		exec("unzip \"" .. sProfilePath.s .. "drawio.zip\" -d \"" .. sProfilePath.s .. "drawio\"")
 		exec("rm -f \"" .. sProfilePath.s .. "drawio.zip\"")
-		
-		if lfs.IsExist(sProfilePath.s .. "drawio_package/$PLUGINSDIR/app-64.7z") == false then
-			LOGE("Can't extract package!")
-			os.exit(1)
-		end
-		
-		exec("7z x \"" .. sProfilePath.s .. "drawio_package/$PLUGINSDIR/app-64.7z\" -o\"" .. sProfilePath.s .. "drawio\"")
-		exec("rm -rf \"" .. sProfilePath.s .. "drawio_package\"")
 	else
-		LOGE("Can't access to github!")
+		LOGE("Can't access to github repo!")
 		os.exit(1)
 	end
 	lfs.chdir(sCurDir)
