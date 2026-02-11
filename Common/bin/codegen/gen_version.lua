@@ -31,6 +31,8 @@ iVersionMajor	= 0
 iVersionMinor	= 1
 iBuildCount		= 0
 
+local sVersionBuild = "VERSION_BUILD"
+
 -- get version number
 if f:Open(sFileName) then
 	while f:IsEOF() == false do
@@ -46,6 +48,10 @@ if f:Open(sFileName) then
 				iVersionMinor	= iNumber
 			elseif def_name == (sPREFIX .. "VERSION_BUILD") then
 				iBuildCount		= iNumber
+				sVersionBuild	= "VERSION_BUILD"
+			elseif def_name == (sPREFIX .. "VERSION_PATCH") then
+				iBuildCount		= iNumber
+				sVersionBuild	= "VERSION_PATCH"
 			end
 		end
 	end
@@ -69,6 +75,6 @@ LOGI("Version generated : " .. tostring(iVersionMajor) .. "." .. tostring(iVersi
 f:Create(sFileName)
 f:Put("#define		" .. sPREFIX .. "VERSION_MAJOR		" .. tostring(iVersionMajor) .. "\n")
 f:Put("#define		" .. sPREFIX .. "VERSION_MINOR		" .. tostring(iVersionMinor) .. "\n")
-f:Put("#define		" .. sPREFIX .. "VERSION_BUILD		" .. tostring(iBuildCount) .. "\n")
+f:Put("#define		" .. sPREFIX .. sVersionBuild .. "		" .. tostring(iBuildCount) .. "\n")
 f:Put("#define		" .. sPREFIX .. "VERSION_DATE		\"" .. os.date("%d %B %Y") .. "\"\n")
 f:Close()
