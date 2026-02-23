@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : WebGUI project
-// Rev.  : 9/5/2025 Fri (clonextop@gmail.com)
+// Rev.  : 2/23/2026 Mon (clonextop@gmail.com)
 //================================================================================
 #include "WebGUI.h"
 #include <time.h>
@@ -323,19 +323,22 @@ bool WebGUI::CallJScript(const char *sFormat, ...)
 			va_end(vaCopy);
 		}
 		{
-			char			 *pBuff = new char[iLen + 1];
-			std::vector<char> zc(iLen + 1);
-			std::vsnprintf(pBuff, iLen + 1, sFormat, vaArgs);
-			va_end(vaArgs);
+			char *pBuff = new char[iLen + 1];
+			if (pBuff) {
+				std::vsnprintf(pBuff, iLen + 1, sFormat, vaArgs);
+				va_end(vaArgs);
 
-			try {
-				eval(pBuff);
-			} catch (const webview::exception &e) {
-				LOGE("%s\n", (const char *)e.what());
+				try {
+					eval(pBuff);
+				} catch (const webview::exception &e) {
+					LOGE("%s\n", (const char *)e.what());
+					bRet = false;
+				}
+
+				delete[] pBuff;
+			} else {
 				bRet = false;
 			}
-
-			delete[] pBuff;
 		}
 	}
 
