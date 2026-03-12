@@ -1,4 +1,4 @@
 :[verigen_src] codegen .TestDrive.verilator
-:[verigen_src] make
+:[verigen_src] mingw32-make
 -IDUTs/__PROJECT__
 -IDUTs/__PROJECT__/rtl
