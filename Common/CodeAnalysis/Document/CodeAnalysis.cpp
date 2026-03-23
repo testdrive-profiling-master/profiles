@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Code Analysis
-// Rev.  : 8/25/2025 Mon (clonextop@gmail.com)
+// Rev.  : 3/23/2026 Mon (clonextop@gmail.com)
 //================================================================================
 #include "CodeAnalysis.h"
 #include "testdrive_document.inl"
@@ -390,7 +390,7 @@ BOOL CodeAnalysis::StaticCodeAnalysisPrivate(LPCTSTR lpszTitle, LPCTSTR lpszPath
 			g_sCurrentDir = sPath;
 
 			if (g_pSystem->ExecuteFile(
-					_T("make"), _T("static"), TRUE, Log_StaticAnalysis, (LPCTSTR)sPath, __sCppcheckTokenList[CPPCHECK_TOKEN_ERROR], -1,
+					_T("mingw32-make"), _T("static"), TRUE, Log_StaticAnalysis, (LPCTSTR)sPath, __sCppcheckTokenList[CPPCHECK_TOKEN_ERROR], -1,
 					__sCppcheckTokenList[CPPCHECK_TOKEN_WARNING], -2, __sCppcheckTokenList[CPPCHECK_TOKEN_INFORMATION], 2, NULL) >= 0) {
 				m_pReport->SetColor(RGB(0, 0, 255));
 				m_pReport->AppendText(_L(NO_ERROR_FOUND));

@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : System manager
-// Rev.  : 10/14/2025 Tue (clonextop@gmail.com)
+// Rev.  : 3/23/2026 Mon (clonextop@gmail.com)
 //================================================================================
 #include "BuildAutomation.h"
 
@@ -390,7 +390,7 @@ RETRY_BUILD:
 			iRet = g_pSystem->ExecuteFile(
 				vs_build, sArg, TRUE, NULL, sProjectPath, _T(": warning LNK"), 0, _T(": warning "), m_bStrictBuild ? -1 : 0, _T("): error "), -1,
 				_T(": fatal error "), -1, NULL);
-		} else if (sRunPath.Find(_T("make"), sRunPath.GetLength() - 4) > 0) {
+		} else if (sRunPath.Find(_T("make"), sRunPath.GetLength() - 4) > 0 || sRunPath.Find(_T("mingw32-make"), sRunPath.GetLength() - 12) > 0) {
 			CString sArg;
 
 			if (m_bDebug)
