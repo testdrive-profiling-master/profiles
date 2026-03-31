@@ -1,1 +1,0 @@
-@%TESTDRIVE_DIR%bin/msys64/ucrt64/share/xmake/xmake.exe %*
