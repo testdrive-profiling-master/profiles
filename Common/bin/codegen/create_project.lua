@@ -20,6 +20,7 @@ Arg:AddRemark			(nil, "'verigen'                : verigen project")
 Arg:AddRemark			(nil, "'docgen'                 : docgen project")
 Arg:AddRemark			(nil, "'docgen_simplified'      : docgen simplified project")
 Arg:AddRemark			(nil, "'svelte'                 : Svelte.js project")
+Arg:AddRemark			(nil, "'uefi'                   : UEFI firmware project")
 Arg:AddOptionString		("project_name", nil, nil, nil, "project_name", "Project name")
 
 	
@@ -312,6 +313,27 @@ elseif (sType == "svelte") then
 	os.execute("explorer " .. sProjectName)
 	print("Execute 'run.bat' to run.")
 	bEclipseEnv = false
+elseif (sType == "uefi") then
+	sProjectPath	= MakeDir(sProjectName)
+	LOGI("Create UEFI firmware project : '" .. sProjectName .. "'")
+
+	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_uefi/.\" " .. sProjectPath .. "/")
+	
+	os.execute("sed \"s/Test/" .. sProjectName .. " UEFI/\" -i ./" .. sProjectName .. "/.project")
+	os.execute("sed \"s/Test/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/Makefile")
+	os.execute("sed \"s/Test/" .. sProjectName .. " UEFI project/\" -i ./" .. sProjectName .. "/.inception")
+	
+	local sGUID = String()
+	sGUID.s = exec("uuidgen")
+	sGUID:Trim(" \r\n")
+	sGUID:MakeUpper()
+	os.execute("sed \"s/__GUID__/" .. sGUID.s .. "/\" -i ./" .. sProjectName .. "/.PROJECT.dsc")
+	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/.PROJECT.dsc")
+
+	os.execute("mv \"" .. sProjectPath .. "/.PROJECT.inf\" \"" .. sProjectPath .. "/" .. sProjectName .. ".inf\"")
+	os.execute("mv \"" .. sProjectPath .. "/.PROJECT.dsc\" \"" .. sProjectPath .. "/" .. sProjectName .. ".dsc\"")
+	
+	os.execute("explorer " .. sProjectName)
 else
 	LOGE("Invalid project type : '" .. sType .. "'. Please refer 'help' with \"create_project --help\" command.")
 	os.exit(1)

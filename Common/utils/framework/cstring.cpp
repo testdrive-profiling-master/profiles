@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,16 +31,18 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 10/15/2024 Tue (clonextop@gmail.com)
+// Rev.  : 4/3/2026 Fri (clonextop@gmail.com)
 //================================================================================
 #include "STDInterface.h"
 // cstrings
 #include "cstring.h"
 #include <stdarg.h>
 #include <vector>
+#include <filesystem>
 #ifndef UNUSE_CSTRING_ICONV
 #	include <iconv.h>
 #endif
+namespace fs = std::filesystem;
 
 cstring::cstring(void) {}
 
@@ -866,13 +868,25 @@ static const char *__sEnvFileName = "testdrive.ini";
 
 static bool		   __GetEnvString(cstring sKey, cstring &sAppName, cstring &sKeyName, cstring &sEnvPath)
 {
-	if (!sEnvPath.GetEnvironment(_T("TESTDRIVE_DIR")))
-		return false;
-
-	sEnvPath.Append(__sEnvFileName);
 	int iPos = 0;
 	sKeyName = sKey.Tokenize(iPos, __sEnvDelim);
-	sAppName = sKey.Tokenize(iPos, __sEnvDelim);
+	if (iPos > 0) {
+		sAppName = sKey.Tokenize(iPos, __sEnvDelim);
+		if (iPos > 0) {
+			sEnvPath = sKey.Tokenize(iPos, __sEnvDelim);
+		}
+	}
+
+	if (sEnvPath.IsEmpty()) {
+		if (!sEnvPath.GetEnvironment(_T("TESTDRIVE_DIR")))
+			return false;
+		sEnvPath.Append(__sEnvFileName);
+	} else {
+		// change to absolute path
+		fs::path rel_path = sEnvPath.c_string();
+		fs::path abs_path = fs::absolute(rel_path);
+		sEnvPath		  = abs_path.c_str();
+	}
 
 	if (sKeyName.IsEmpty() || sAppName.IsEmpty())
 		return false;
@@ -884,7 +898,7 @@ static bool		   __GetEnvString(cstring sKey, cstring &sAppName, cstring &sKeyNam
 bool cstring::GetEnvironment(const char *sKey)
 {
 	if (sKey) {
-		if (strstr(sKey, __sEnvDelim)) {	// ex) "KEY@APP"
+		if (strstr(sKey, __sEnvDelim)) { // ex) "KEY@APP[@file]"
 #ifdef WIN32
 			bool bRet = true;
 			// in testdrive.ini
@@ -936,7 +950,7 @@ static void setenv(const char *sKey, const char *sData, int replace)
 void cstring::SetEnvironment(const char *sKey)
 {
 	if (sKey) {
-		if (strstr(sKey, __sEnvDelim)) {	// ex) "KEY@APP"
+		if (strstr(sKey, __sEnvDelim)) { // ex) "KEY@APP[@file]"
 #ifdef WIN32
 			// in testdrive.ini
 			cstring sAppName, sKeyName, sEnvPath;
