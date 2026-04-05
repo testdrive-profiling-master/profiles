@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 4/3/2026 Fri (clonextop@gmail.com)
+// Rev.  : 4/5/2026 Sun (CloneX)
 //================================================================================
 #include "STDInterface.h"
 // cstrings
@@ -461,6 +461,13 @@ void cstring::MakeLower(void)
 	}
 }
 
+void cstring::MakeFullPath(void)
+{
+	fs::path rel_path = m_sStr;
+	fs::path abs_path = fs::absolute(rel_path);
+	m_sStr			  = abs_path.string();
+}
+
 bool cstring::Replace(const char *sSearch, const char *sReplace, bool bRecursive)
 {
 	bool bRet		= false;
@@ -883,9 +890,7 @@ static bool		   __GetEnvString(cstring sKey, cstring &sAppName, cstring &sKeyNam
 		sEnvPath.Append(__sEnvFileName);
 	} else {
 		// change to absolute path
-		fs::path rel_path = sEnvPath.c_string();
-		fs::path abs_path = fs::absolute(rel_path);
-		sEnvPath		  = abs_path.c_str();
+		sEnvPath.MakeFullPath();
 	}
 
 	if (sKeyName.IsEmpty() || sAppName.IsEmpty())

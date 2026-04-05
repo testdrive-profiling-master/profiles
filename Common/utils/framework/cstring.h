@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 10/15/2024 Tue (clonextop@gmail.com)
+// Rev.  : 4/5/2026 Sun (CloneX)
 //================================================================================
 #ifndef __CSTRING_H__
 #define __CSTRING_H__
@@ -73,7 +73,7 @@ public:
 	bool	 DeleteBlock(const char *sExpression, int iPos = 0);								// ex) sExpression = "[*]"
 	int		 FindVariableString(cstring &sVar, const char *sExpression = "$(*)", int iPos = 0); // ex : "$(" variable ")"
 	int		 FindNameString(const char *sName, int iPos = 0);									// ex) sName = 'box', 'abox'(X), 'a box'(O)
-	operator const char *(void) const
+			 operator const char *(void) const
 	{
 		return m_sStr.c_str();
 	}
@@ -82,6 +82,7 @@ public:
 #endif
 	void	MakeUpper(void);
 	void	MakeLower(void);
+	void	MakeFullPath(void);
 	bool	Replace(const char *sSearch, const char *sReplace, bool bRecursive = false);
 	bool	ReplaceVariable(const char *sSearch, const char *sReplace);
 	void	TrimLeft(const char *sDelim);
