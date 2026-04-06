@@ -64,13 +64,13 @@ HRESULT IsElevated(BOOL *pElevated)
 	return hResult;
 }
 
-bool ShellExecWithElevation(const char* lpPath, const char* lpParameters, const char* lpDirectory)
+bool ShellExecWithElevation(const char* lpPath, const char* lpParameters, const char* lpDirectory, bool bWait)
 {
 	SHELLEXECUTEINFO executeInfo;
 	memset(&executeInfo, 0, sizeof(executeInfo));
 
 	executeInfo.cbSize		 = sizeof(SHELLEXECUTEINFO);
-	executeInfo.fMask		 = 0;
+	executeInfo.fMask		 = bWait ? SEE_MASK_NOCLOSEPROCESS : 0;
 	executeInfo.hwnd		 = NULL;
 	executeInfo.lpVerb		 = "runas";
 	executeInfo.lpFile		 = lpPath;
@@ -78,5 +78,12 @@ bool ShellExecWithElevation(const char* lpPath, const char* lpParameters, const 
 	executeInfo.lpDirectory	 = lpDirectory;
 	executeInfo.nShow		 = SW_NORMAL;
 
-	return ShellExecuteEx(&executeInfo);
+	bool bRet = ShellExecuteEx(&executeInfo);
+	if((executeInfo.hProcess != 0) && bWait) {
+		WaitForSingleObject(executeInfo.hProcess, INFINITE);
+		CloseHandle(executeInfo.hProcess);
+		return true;
+	}
+
+	return bRet;
 }

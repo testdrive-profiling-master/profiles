@@ -67,6 +67,13 @@ int main(int argc, const char *argv[])
 		cmd += s;
 	}
 
+	// check for no-wait
+	cstring no_wait;
+	no_wait.GetEnvironment("RUN_AS_ADMIN_NOWAIT");
+	bool bWait = (no_wait != "TRUE");
+	no_wait.clear();
+	no_wait.SetEnvironment("RUN_AS_ADMIN_NOWAIT");
+
 	// run with admin. privileges
-	return ShellExecWithElevation("cmd.exe", cmd, ".") ? 0 : 1;
+	return ShellExecWithElevation("cmd.exe", cmd, ".", bWait) ? 0 : 1;
 }

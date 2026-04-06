@@ -41,6 +41,6 @@
 #include "UtilFramework.h"
 
 HRESULT IsElevated(BOOL *pElevated);
-bool ShellExecWithElevation(const char* lpPath, const char* lpParameters, const char* lpDirectory);
+bool ShellExecWithElevation(const char* lpPath, const char* lpParameters, const char* lpDirectory, bool bWait);
 
 #endif //__UAC_ELEVATE_H__
