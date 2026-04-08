@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 4/5/2026 Sun (CloneX)
+// Rev.  : 4/8/2026 Wed (clonextop@gmail.com)
 //================================================================================
 #include "STDInterface.h"
 // cstrings
@@ -218,12 +218,12 @@ bool cstring::CompareBack(const char *s) const
 	if (!s)
 		return false;
 
-	int iPos = m_sStr.rfind(s);
+	int64_t iPos = m_sStr.rfind(s);
 
 	if (iPos < 0)
 		return false;
 
-	return (iPos == Length() - strlen(s));
+	return (iPos == (int64_t)(Length() - strlen(s)));
 }
 
 bool cstring::CutFront(const char *s, bool bRecursive)
@@ -345,7 +345,7 @@ static bool __RetrieveBracketString(const char *sSearch, int &iPos, const char *
 			iPos++;
 
 			if (bString) {
-				if (!sSearch[iPos] == '\"') { // string in string
+				if (sSearch[iPos] == '\"') { // string in string
 					iPos++;
 					break;
 				}
@@ -517,7 +517,7 @@ bool cstring::ReplaceVariable(const char *sSearch, const char *sReplace)
 			}
 
 			// post-fix error check
-			if (iPos + iSearchLen < m_sStr.length()) {
+			if ((size_t)(iPos + iSearchLen) < m_sStr.length()) {
 				char ch = m_sStr[iPos + iSearchLen];
 
 				if (isalpha(ch) || isdigit(ch) || ch == '_') {
@@ -540,8 +540,7 @@ bool cstring::ReplaceVariable(const char *sSearch, const char *sReplace)
 
 void cstring::TrimLeft(const char *sDelim)
 {
-	const char *s = c_str();
-	char		ch;
+	char ch;
 
 	if (!sDelim)
 		return;
@@ -587,7 +586,7 @@ cstring cstring::Tokenize(int &iPos, const char *sDelim)
 {
 	cstring str;
 
-	if (iPos >= 0 && iPos < Length()) {
+	if (iPos >= 0 && iPos < (int)Length()) {
 		const char *s = c_str() + iPos;
 
 		if (sDelim) { // tokenize by deliminator
@@ -716,7 +715,7 @@ static bool __SearchBracket(const char *sSearch, int &iPos, const char *sEnd = N
 
 int cstring::SearchBraket(int iPos)
 {
-	if (iPos >= 0 && iPos < Length()) {
+	if (iPos >= 0 && iPos < (int)Length()) {
 		if (__SearchBracket(c_str(), iPos)) {
 			return iPos;
 		}
@@ -725,7 +724,7 @@ int cstring::SearchBraket(int iPos)
 	return -1;
 }
 
-int cstring::Length(void) const
+size_t cstring::Length(void) const
 {
 	return strlen(c_str());
 }
@@ -740,6 +739,8 @@ int cstring::RetrieveTag(const char **sTagList, int iTagSize)
 	return -1;
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-format-attribute"
 void cstring::Format(const char *sFormat, ...)
 {
 	if (sFormat) {
@@ -793,6 +794,7 @@ void cstring::AppendFormat(const char *sFormat, ...)
 		}
 	}
 }
+#pragma GCC diagnostic pop
 
 void cstring::Set(const char *sStr)
 {
