@@ -59,12 +59,14 @@ if cmd == "create" then
 	LOGI("Prepare default QEMU project for TestDrive.")
 	exec("qemu-img create -f qcow2 qemu_testdrive.qcow2 20G")
 	exec("cp \"" .. profile_path .. "codegen/qemu/qemu_testdrive_default.ini\" qemu_testdrive.ini")
+	exec("echo @qemu boot > qemu_testdrive.bat")
+	
 	print("*** qemu_testdrive.ini ***\n" ..
 		"    - IMAGE : 20GB\n")
 	LOGI("For the initial installation,\n" ..
 	"    you must download preferred OS installation CD image\n" ..
 	"    and specify the 'CDROM_IMAGE' variable from 'qemu_testdrive.ini'.\n")
-	LOGI("Now Type 'qemu boot' to start.")
+	LOGI("Now Type 'qemu_testdrive' to start.")
 	os.exit(0)
 end
 
@@ -89,6 +91,7 @@ if cmd == "boot" then
 	
 	local cmd = String()
 	local sEnv = String()
+	local bDisplay = false
 	
 	if sEnv:GetEnvironment("TITLE" .. sEnvQEMU) then
 		sEnv:Replace("\"", "\\\"", true)
@@ -116,15 +119,36 @@ if cmd == "boot" then
 		cmd:Append(" -m " .. sEnv.s)
 	end
 	
-	if sEnv:GetEnvironment("USE_TESTDRIVE_DEVICE" .. sEnvQEMU) then
-		sEnv:MakeLower()
-		if sEnv.s == "true" then
-			cmd:Append(" -device testdrive")
-		end
+	if sEnv:GetEnvironment("KERNEL_IMAGE" .. sEnvQEMU) then
+		cmd:Append(" -kernel " .. sEnv.s)
+	end
+	
+	if sEnv:GetEnvironment("RAM_DISK_IMAGE" .. sEnvQEMU) then
+		cmd:Append(" -initrd " .. sEnv.s)
 	end
 	
 	if sEnv:GetEnvironment("HARD_DISK_IMAGE" .. sEnvQEMU) then
 		cmd:Append(" -hda " .. sEnv.s)
+	end
+	
+	if sEnv:GetEnvironment("CHAR_DEV" .. sEnvQEMU) then
+		cmd:Append(" -chardev " .. sEnv.s)
+	end
+	
+	if sEnv:GetEnvironment("SERIAL_DEV" .. sEnvQEMU) then
+		cmd:Append(" -serial " .. sEnv.s)
+	end
+	
+	if sEnv:GetEnvironment("BOOT_COMMAND" .. sEnvQEMU) then
+		sEnv:Replace("\"", "\\\"", true)
+		cmd:Append(" -append \"" .. sEnv.s .. "\"")
+	end
+	
+	if sEnv:GetEnvironment("NO_DEFAULTS" .. sEnvQEMU) then
+		sEnv:MakeLower()
+		if sEnv.s == "true" then
+			cmd:Append(" -nodefaults")
+		end
 	end
 	
 	if sEnv:GetEnvironment("BOOT_FROM_CDROM" .. sEnvQEMU) then
@@ -145,10 +169,22 @@ if cmd == "boot" then
 		sEnv:MakeLower()
 		if sEnv.s == "true" then
 			cmd:Append(" -vga virtio -display sdl,gl=on")
+			bDisplay = true
 		else
 			cmd:Append(" -display none")
 		end
 	end
 	
-	run("qemu-system-x86_64 " .. cmd.s)
+	if sEnv:GetEnvironment("TESTDRIVE_DEVICE" .. sEnvQEMU) then
+		sEnv:MakeLower()
+		if sEnv.s == "true" then
+			cmd:Append(" -device testdrive")
+		end
+	end
+	
+	if sEnv:GetEnvironment("EXTRA_OPTIONS" .. sEnvQEMU) then
+		cmd:Append(" " .. sEnvQEMU.s)
+	end
+	
+	run((bDisplay and "noconsole " or "") .. "qemu-system-x86_64 " .. cmd.s)
 end
