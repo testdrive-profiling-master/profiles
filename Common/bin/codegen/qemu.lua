@@ -2,14 +2,15 @@ local Arg = ArgTable("QEMU manager")
 
 Arg:AddOptionString		("cmd", nil, nil, nil, "command", "QEMU command")
 Arg:AddRemark			(nil, "install  : install QEMU binaries")
-Arg:AddRemark			(nil, "devel    : Prepare QEMU devel. project")
-Arg:AddRemark			(nil, "run      : run QEMU")
-
+Arg:AddRemark			(nil, "create   : Create new QEMU project")
+Arg:AddRemark			(nil, "boot     : run QEMU for testdrive")
+Arg:AddRemark			(nil, "resize   : Resize QEMU project's hard-disk image")
 
 if (Arg:DoParse() == false) then
 	return
 end
 
+local sEnvQEMU		= "@QEMU@qemu_testdrive.ini"
 local cmd			= Arg:GetOptionString("cmd")
 local opt			= {}
 
@@ -49,3 +50,105 @@ if (lfs.IsExist(profile_path .. "qemu-system-x86_64.exe") == false) or (cmd == "
 	LOGI("Done!")
 end
 
+if cmd == "create" then
+	if lfs.IsExist("qemu_testdrive.ini") or lfs.IsExist("qemu_testdrive.qcow2") then
+		LOGE("Already another QEMU project existed here...")
+		os.exit(1)
+	end
+	
+	LOGI("Prepare default QEMU project for TestDrive.")
+	exec("qemu-img create -f qcow2 qemu_testdrive.qcow2 20G")
+	exec("cp \"" .. profile_path .. "codegen/qemu/qemu_testdrive_default.ini\" qemu_testdrive.ini")
+	print("*** qemu_testdrive.ini ***\n" ..
+		"    - IMAGE : 20GB\n")
+	LOGI("For the initial installation,\n" ..
+	"    you must download preferred OS installation CD image\n" ..
+	"    and specify the 'CDROM_IMAGE' variable from 'qemu_testdrive.ini'.\n")
+	LOGI("Now Type 'qemu boot' to start.")
+	os.exit(0)
+end
+
+if cmd == "resize" then
+	local sImagePath = String()
+	local sImageSize = String()
+	if sImagePath:GetEnvironment("HARD_DISK_IMAGE" .. sEnvQEMU) and sImageSize:GetEnvironment("HARD_DISK_SIZE" .. sEnvQEMU) then
+		run("qemu-img resize " .. sImagePath.s .. " " .. sImageSize.s)
+		run("qemu-img info " .. sImagePath.s)
+	else
+		LOGE("No project information.")
+		os.exit(1)
+	end
+	os.exit(0)
+end
+
+if cmd == "boot" then
+	if lfs.IsExist("qemu_testdrive.ini") == false then
+		LOGI("No QEMU project.")
+		os.exit(1)
+	end
+	
+	local cmd = String()
+	local sEnv = String()
+	
+	if sEnv:GetEnvironment("TITLE" .. sEnvQEMU) then
+		sEnv:Replace("\"", "\\\"", true)
+		cmd:Append(" -name \"" .. sEnv.s .. "\"")
+		LOGI("Boot QEMU(" .. sEnv.s .. ")");
+	else
+		LOGI("Boot QEMU");
+	end
+	
+	if sEnv:GetEnvironment("HYPERVISOR_ACCEL" .. sEnvQEMU) then
+		sEnv:MakeLower()
+		if sEnv.s == "true" then
+			cmd:Append(" -accel whpx")
+		end
+	end
+	
+	if sEnv:GetEnvironment("SMP_SIZE" .. sEnvQEMU) then
+		local iSMP = tonumber(sEnv.s)
+		if iSMP > 0 then
+			cmd:Append(" -smp " .. iSMP)
+		end
+	end
+	
+	if sEnv:GetEnvironment("MEMORY_SIZE" .. sEnvQEMU) then
+		cmd:Append(" -m " .. sEnv.s)
+	end
+	
+	if sEnv:GetEnvironment("USE_TESTDRIVE_DEVICE" .. sEnvQEMU) then
+		sEnv:MakeLower()
+		if sEnv.s == "true" then
+			cmd:Append(" -device testdrive")
+		end
+	end
+	
+	if sEnv:GetEnvironment("HARD_DISK_IMAGE" .. sEnvQEMU) then
+		cmd:Append(" -hda " .. sEnv.s)
+	end
+	
+	if sEnv:GetEnvironment("BOOT_FROM_CDROM" .. sEnvQEMU) then
+		sEnv:MakeLower()
+		if sEnv.s == "true" then
+			if sEnv:GetEnvironment("CDROM_IMAGE" .. sEnvQEMU) then
+				cmd:Append(" -cdrom " .. sEnv.s)
+			else
+				LOGE("You must set the 'CDROM_IMAGE' of qemu_testdrive.ini file.")
+				os.exit(1)
+			end
+			cmd:Append(" -boot d")
+		end
+		sEnv:SetEnvironment("BOOT_FROM_CDROM" .. sEnvQEMU, "false")
+	end
+	
+	if sEnv:GetEnvironment("DEFAULT_DISPLAY" .. sEnvQEMU) then
+		sEnv:MakeLower()
+		if sEnv.s == "true" then
+			cmd:Append(" -vga virtio -display sdl,gl=on")
+		else
+			cmd:Append(" -display none")
+		end
+	end
+	
+	run("qemu-system-x86_64 " .. cmd.s)
+end
