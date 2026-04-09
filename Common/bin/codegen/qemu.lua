@@ -32,19 +32,27 @@ end
 
 -- check QEMU for TestDrive tool
 if (lfs.IsExist(profile_path .. "qemu-system-x86_64.exe") == false) or (cmd == "install") then
+	if lfs.IsExist(profile_path .. "qemu-system-x86_64.exe") ~= false then
+		LOGI("There is already an installed QEMU.")
+		LOGI("@1    Do you want to continue? (y/n) : ")
+		local answer = io.read():lower()
+		if (answer ~= "y") and (answer ~= "yes") then
+			os.exit(1)
+		end
+	end
 	LOGI("Installing QEMU for TestDrive...\n")
 	if lfs.IsExist("qemu_testdrive") == false then
 		run("git clone https://github.com/testdrive-profiling-master/qemu_testdrive.git qemu_testdrive")
 	end
 	-- configure
 	if lfs.IsExist("qemu_testdrive/.qemu/build/Makefile") == false then
-		run("cd qemu_testdrive&&run_as_admin .build_qemu.bat")
+		run("cd qemu_testdrive&&run_as_admin scripts\\build_qemu.bat")
 	end
 	-- build & install
 	local num_processor = String()
 	num_processor:GetEnvironment("NUMBER_OF_PROCESSORS")
 
-	run("cd qemu_testdrive&&run_as_admin .build_qemu.bat -j " .. num_processor.s .. " install")
+	run("cd qemu_testdrive&&run_as_admin scripts\\build_qemu.bat -j " .. num_processor.s .. " install")
 	LOGI("Clean up devel. misc...")
 	exec("rm -rf qemu_testdrive")
 	LOGI("Done!")
@@ -92,6 +100,7 @@ if cmd == "boot" then
 	local cmd = String()
 	local sEnv = String()
 	local bDisplay = false
+	local sSystem = "x86_64"
 	
 	if sEnv:GetEnvironment("TITLE" .. sEnvQEMU) then
 		sEnv:Replace("\"", "\\\"", true)
@@ -99,6 +108,10 @@ if cmd == "boot" then
 		LOGI("Boot QEMU(" .. sEnv.s .. ")");
 	else
 		LOGI("Boot QEMU");
+	end
+	
+	if sEnv:GetEnvironment("SYSTEM" .. sEnvQEMU) then
+		sSystem = sEnv.s
 	end
 	
 	if sEnv:GetEnvironment("HYPERVISOR_ACCEL" .. sEnvQEMU) then
@@ -131,24 +144,9 @@ if cmd == "boot" then
 		cmd:Append(" -hda " .. sEnv.s)
 	end
 	
-	if sEnv:GetEnvironment("CHAR_DEV" .. sEnvQEMU) then
-		cmd:Append(" -chardev " .. sEnv.s)
-	end
-	
-	if sEnv:GetEnvironment("SERIAL_DEV" .. sEnvQEMU) then
-		cmd:Append(" -serial " .. sEnv.s)
-	end
-	
 	if sEnv:GetEnvironment("BOOT_COMMAND" .. sEnvQEMU) then
 		sEnv:Replace("\"", "\\\"", true)
 		cmd:Append(" -append \"" .. sEnv.s .. "\"")
-	end
-	
-	if sEnv:GetEnvironment("NO_DEFAULTS" .. sEnvQEMU) then
-		sEnv:MakeLower()
-		if sEnv.s == "true" then
-			cmd:Append(" -nodefaults")
-		end
 	end
 	
 	if sEnv:GetEnvironment("BOOT_FROM_CDROM" .. sEnvQEMU) then
@@ -165,14 +163,13 @@ if cmd == "boot" then
 		sEnv:SetEnvironment("BOOT_FROM_CDROM" .. sEnvQEMU, "false")
 	end
 	
-	if sEnv:GetEnvironment("DEFAULT_DISPLAY" .. sEnvQEMU) then
-		sEnv:MakeLower()
-		if sEnv.s == "true" then
-			cmd:Append(" -vga virtio -display sdl,gl=on")
-			bDisplay = true
-		else
-			cmd:Append(" -display none")
-		end
+	if sEnv:GetEnvironment("VGA" .. sEnvQEMU) then
+		cmd:Append(" -vga " .. sEnv.s)
+	end
+	
+	if sEnv:GetEnvironment("DISPLAY" .. sEnvQEMU) then
+		cmd:Append(" -display " .. sEnv.s)
+		bDisplay = (sEnv.s ~= "none")
 	end
 	
 	if sEnv:GetEnvironment("TESTDRIVE_DEVICE" .. sEnvQEMU) then
@@ -183,8 +180,8 @@ if cmd == "boot" then
 	end
 	
 	if sEnv:GetEnvironment("EXTRA_OPTIONS" .. sEnvQEMU) then
-		cmd:Append(" " .. sEnvQEMU.s)
+		cmd:Append(" " .. sEnv.s)
 	end
 	
-	run((bDisplay and "noconsole " or "") .. "qemu-system-x86_64 " .. cmd.s)
+	run((bDisplay and "noconsole " or "") .. "qemu-system-" .. sSystem .. " " .. cmd.s)
 end
