@@ -78,7 +78,7 @@ if cmd == "create" then
 	os.exit(0)
 end
 
-if cmd == "refresh" then
+function DoRefresh()
 	local sImagePath = String()
 	local sImageSize = String()
 	if sImagePath:GetEnvironment("HARD_DISK_IMAGE" .. sEnvQEMU) and sImageSize:GetEnvironment("HARD_DISK_SIZE" .. sEnvQEMU) then
@@ -88,11 +88,17 @@ if cmd == "refresh" then
 		run("qemu-img convert -O qcow2 -p " .. sImagePath.s .. " " .. sImagePath.s .. ".reduced")
 		exec("mv -f " .. sImagePath.s .. ".reduced " .. sImagePath.s)
 		run("qemu-img info " .. sImagePath.s)
+		local latest_refresh_date = String(os.time())
+		latest_refresh_date:SetEnvironment("LATEST_REFRESH_TIME" .. sEnvQEMU)
 	else
 		LOGE("No project information.")
-		os.exit(1)
+		return false
 	end
-	os.exit(0)
+	return true
+end
+
+if cmd == "refresh" then
+	os.exit(DoRefresh() and 0 or 1)
 end
 
 if cmd == "boot" then
@@ -146,6 +152,22 @@ if cmd == "boot" then
 	
 	if sEnv:GetEnvironment("HARD_DISK_IMAGE" .. sEnvQEMU) then
 		cmd:Append(" -hda " .. sEnv.s)
+		
+		if sEnv:GetEnvironment("AUTO_REFRESH_DAYS" .. sEnvQEMU) then
+			local refresh_days = tonumber(sEnv.s)
+			
+			if sEnv:GetEnvironment("LATEST_REFRESH_TIME" .. sEnvQEMU) then
+				elapsed_days = (os.time() - tonumber(sEnv.s)) / (24 * 60 * 60)
+				
+				if elapsed_days > refresh_days then
+					DoRefresh()
+				end
+			else
+				-- never booted yet...
+				sEnv.s = tostring(os.time())
+				sEnv:SetEnvironment("LATEST_REFRESH_TIME" .. sEnvQEMU)
+			end
+		end
 	end
 	
 	if sEnv:GetEnvironment("BOOT_COMMAND" .. sEnvQEMU) then
