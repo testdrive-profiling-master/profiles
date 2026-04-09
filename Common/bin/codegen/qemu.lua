@@ -4,7 +4,7 @@ Arg:AddOptionString		("cmd", nil, nil, nil, "command", "QEMU command")
 Arg:AddRemark			(nil, "install  : install QEMU binaries")
 Arg:AddRemark			(nil, "create   : Create new QEMU project")
 Arg:AddRemark			(nil, "boot     : run QEMU for testdrive")
-Arg:AddRemark			(nil, "resize   : Resize QEMU project's hard-disk image")
+Arg:AddRemark			(nil, "refresh  : Refresh QEMU project's hard-disk image")
 
 if (Arg:DoParse() == false) then
 	return
@@ -78,11 +78,15 @@ if cmd == "create" then
 	os.exit(0)
 end
 
-if cmd == "resize" then
+if cmd == "refresh" then
 	local sImagePath = String()
 	local sImageSize = String()
 	if sImagePath:GetEnvironment("HARD_DISK_IMAGE" .. sEnvQEMU) and sImageSize:GetEnvironment("HARD_DISK_SIZE" .. sEnvQEMU) then
+		-- change to requested size
 		run("qemu-img resize " .. sImagePath.s .. " " .. sImageSize.s)
+		-- refresh image
+		run("qemu-img convert -O qcow2 -p " .. sImagePath.s .. " " .. sImagePath.s .. ".reduced")
+		exec("mv -f " .. sImagePath.s .. ".reduced " .. sImagePath.s)
 		run("qemu-img info " .. sImagePath.s)
 	else
 		LOGE("No project information.")
