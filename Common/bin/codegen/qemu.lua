@@ -39,6 +39,10 @@ if (lfs.IsExist(profile_path .. "qemu-system-x86_64.exe") == false) or (cmd == "
 		if (answer ~= "y") and (answer ~= "yes") then
 			os.exit(1)
 		end
+	else
+		-- install required libraries, but not original qemu
+		os.require("mingw-w64-ucrt-x86_64-qemu")
+		exec("pacman -R --noconfirm mingw-w64-ucrt-x86_64-qemu")
 	end
 	LOGI("Installing QEMU for TestDrive...\n")
 	if lfs.IsExist("qemu_testdrive") == false then
