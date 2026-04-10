@@ -82,14 +82,25 @@ function DoRefresh()
 	local sImagePath = String()
 	local sImageSize = String()
 	if sImagePath:GetEnvironment("HARD_DISK_IMAGE" .. sEnvQEMU) and sImageSize:GetEnvironment("HARD_DISK_SIZE" .. sEnvQEMU) then
-		-- change to requested size
-		run("qemu-img resize " .. sImagePath.s .. " " .. sImageSize.s)
-		-- refresh image
-		run("qemu-img convert -O qcow2 -p " .. sImagePath.s .. " " .. sImagePath.s .. ".reduced")
-		exec("mv -f " .. sImagePath.s .. ".reduced " .. sImagePath.s)
-		run("qemu-img info " .. sImagePath.s)
-		local latest_refresh_date = String(os.time())
-		latest_refresh_date:SetEnvironment("LATEST_REFRESH_TIME" .. sEnvQEMU)
+		if lfs.IsExist(sImagePath.s) then
+			-- change to requested size
+			run("qemu-img resize " .. sImagePath.s .. " " .. sImageSize.s)
+			-- refresh image
+			run("qemu-img convert -O qcow2 -p " .. sImagePath.s .. " " .. sImagePath.s .. ".reduced")
+			exec("mv -f " .. sImagePath.s .. ".reduced " .. sImagePath.s)
+			run("qemu-img info " .. sImagePath.s)
+		else
+			exec("qemu-img create -f qcow2 " .. sImagePath.s .. " " .. sImageSize.s)
+			LOGI("New disk(" .. sImageSize.s .. ") is created.")
+		end
+		
+		local sCountDays = String()
+		if sCountDays:GetEnvironment("AUTO_REFRESH_DAYS" .. sEnvQEMU) then
+			if tonumber(sCountDays.s) > 0 then
+				local latest_refresh_date = String(os.time())
+				latest_refresh_date:SetEnvironment("LATEST_REFRESH_TIME" .. sEnvQEMU)
+			end
+		end
 	else
 		LOGE("No project information.")
 		return false
@@ -110,6 +121,7 @@ if cmd == "boot" then
 	local cmd = String()
 	local sEnv = String()
 	local bDisplay = false
+	local bBootForInstall = false
 	local sSystem = "x86_64"
 	
 	if sEnv:GetEnvironment("TITLE" .. sEnvQEMU) then
@@ -124,11 +136,8 @@ if cmd == "boot" then
 		sSystem = sEnv.s
 	end
 	
-	if sEnv:GetEnvironment("HYPERVISOR_ACCEL" .. sEnvQEMU) then
-		sEnv:MakeLower()
-		if sEnv.s == "true" then
-			cmd:Append(" -accel whpx")
-		end
+	if sEnv:GetEnvironment("ACCELERATION" .. sEnvQEMU) then
+		cmd:Append(" -accel " .. sEnv.s)
 	end
 	
 	if sEnv:GetEnvironment("SMP_SIZE" .. sEnvQEMU) then
@@ -152,6 +161,10 @@ if cmd == "boot" then
 	
 	if sEnv:GetEnvironment("HARD_DISK_IMAGE" .. sEnvQEMU) then
 		cmd:Append(" -hda " .. sEnv.s)
+		
+		if lfs.IsExist(sEnv.s) == false then
+			DoRefresh()
+		end
 		
 		if sEnv:GetEnvironment("AUTO_REFRESH_DAYS" .. sEnvQEMU) then
 			local refresh_days = tonumber(sEnv.s)
@@ -178,7 +191,12 @@ if cmd == "boot" then
 	if sEnv:GetEnvironment("BOOT_FROM_CDROM" .. sEnvQEMU) then
 		sEnv:MakeLower()
 		if sEnv.s == "true" then
+			bBootForInstall = true
 			if sEnv:GetEnvironment("CDROM_IMAGE" .. sEnvQEMU) then
+				if lfs.IsExist(sEnv.s) == false then
+					LOGE("Can't find CDROM image : " .. sEnv.s)
+					os.exit(1)
+				end
 				cmd:Append(" -cdrom " .. sEnv.s)
 			else
 				LOGE("You must set the 'CDROM_IMAGE' of qemu_testdrive.ini file.")
@@ -186,23 +204,26 @@ if cmd == "boot" then
 			end
 			cmd:Append(" -boot d")
 		end
-		sEnv:SetEnvironment("BOOT_FROM_CDROM" .. sEnvQEMU, "false")
+		sEnv.s = "false"
+		sEnv:SetEnvironment("BOOT_FROM_CDROM" .. sEnvQEMU)
 	end
 	
-	if sEnv:GetEnvironment("VGA" .. sEnvQEMU) then
-		cmd:Append(" -vga " .. sEnv.s)
+	if bBootForInstall == false then
+		if sEnv:GetEnvironment("VGA" .. sEnvQEMU) then
+			cmd:Append(" -vga " .. sEnv.s)
+		end
+		
+		if sEnv:GetEnvironment("TESTDRIVE_DEVICE" .. sEnvQEMU) then
+			sEnv:MakeLower()
+			if sEnv.s == "true" then
+				cmd:Append(" -device testdrive")
+			end
+		end
 	end
 	
 	if sEnv:GetEnvironment("DISPLAY" .. sEnvQEMU) then
 		cmd:Append(" -display " .. sEnv.s)
 		bDisplay = (sEnv.s ~= "none")
-	end
-	
-	if sEnv:GetEnvironment("TESTDRIVE_DEVICE" .. sEnvQEMU) then
-		sEnv:MakeLower()
-		if sEnv.s == "true" then
-			cmd:Append(" -device testdrive")
-		end
 	end
 	
 	if sEnv:GetEnvironment("EXTRA_OPTIONS" .. sEnvQEMU) then
