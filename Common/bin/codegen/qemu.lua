@@ -41,7 +41,7 @@ if (lfs.IsExist(profile_path .. "qemu-system-x86_64.exe") == false) or (cmd == "
 		end
 	else
 		-- install required libraries, but not original qemu
-		os.require("mingw-w64-ucrt-x86_64-qemu")
+		os.require("mingw-w64-ucrt-x86_64-qemu mingw-w64-ucrt-x86_64-gtk-vnc mingw-w64-ucrt-x86_64-spice-gtk mingw-w64-ucrt-x86_64-virt-viewer")
 		exec("pacman -R --noconfirm mingw-w64-ucrt-x86_64-qemu")
 	end
 	LOGI("Installing QEMU for TestDrive...\n")
@@ -69,12 +69,9 @@ if cmd == "create" then
 	end
 	
 	LOGI("Prepare default QEMU project for TestDrive.")
-	exec("qemu-img create -f qcow2 qemu_testdrive.qcow2 20G")
 	exec("cp \"" .. profile_path .. "codegen/qemu/qemu_testdrive_default.ini\" qemu_testdrive.ini")
 	exec("echo @qemu boot > qemu_testdrive.bat")
 	
-	print("*** qemu_testdrive.ini ***\n" ..
-		"    - IMAGE : 20GB\n")
 	LOGI("For the initial installation,\n" ..
 	"    you must download preferred OS installation CD image\n" ..
 	"    and specify the 'CDROM_IMAGE' variable from 'qemu_testdrive.ini'.\n")
