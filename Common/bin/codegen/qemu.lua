@@ -213,13 +213,10 @@ if cmd == "boot" then
 		if sEnv:GetEnvironment("VGA" .. sEnvQEMU) then
 			cmd:Append(" -vga " .. sEnv.s)
 		end
-		
-		if sEnv:GetEnvironment("TESTDRIVE_DEVICE" .. sEnvQEMU) then
-			sEnv:MakeLower()
-			if sEnv.s == "true" then
-				cmd:Append(" -device testdrive")
-			end
-		end
+	end
+	
+	if sEnv:GetEnvironment("PROJECT") and sEnv:GetEnvironment("SUB_SYSTEM_PATH") then
+		cmd:Append(" -device testdrive")
 	end
 	
 	if sEnv:GetEnvironment("DISPLAY" .. sEnvQEMU) then
