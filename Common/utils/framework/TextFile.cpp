@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 2/14/2025 Fri (clonextop@gmail.com)
+// Rev.  : 4/15/2026 Wed (clonextop@gmail.com)
 //================================================================================
 #include "TextFile.h"
 #include <stdarg.h>
@@ -138,6 +138,8 @@ size_t TextFile::Write(const void *pBuff, size_t byte_size)
 	return 0;
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-format-attribute"
 void TextFile::Write(const char *sFormat, ...)
 {
 	if (!m_fp || !m_bWrite || !sFormat)
@@ -167,11 +169,11 @@ void TextFile::Write(const char *sFormat, ...)
 		}
 	}
 }
+#pragma GCC diagnostic pop
 
 bool TextFile::GetLine(cstring &sLine, bool bUseComment)
 {
 	static char sTemp[1024];
-	char	   *sTok = NULL;
 	sLine.clear();
 
 	if (!m_fp || m_bWrite)

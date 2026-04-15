@@ -950,7 +950,11 @@ static void setenv(const char *sKey, const char *sData, int replace)
 {
 	cstring sEnv;
 	sEnv.Format("%s=%s", sKey, sData);
+#ifdef _MSC_VER
+	_putenv(sEnv);
+#else
 	putenv(sEnv);
+#endif
 }
 #endif
 

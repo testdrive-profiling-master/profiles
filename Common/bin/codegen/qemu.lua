@@ -91,6 +91,15 @@ function DoRefresh()
 			exec("mv -f " .. sImagePath.s .. ".reduced " .. sImagePath.s)
 			run("qemu-img info " .. sImagePath.s)
 		else
+			local sBootFromCDROM = String()
+			sBootFromCDROM:GetEnvironment("BOOT_FROM_CDROM" .. sEnvQEMU)
+			sBootFromCDROM:MakeLower()
+			if (sBootFromCDROM.s ~= "true") and lfs.IsExist("README.md") then
+				run("explorer .")
+				LOGI("Please read the instruction('README.md') first...")
+				os.exit(1)
+			end
+			
 			exec("qemu-img create -f qcow2 " .. sImagePath.s .. " " .. sImageSize.s)
 			LOGI("New disk(" .. sImageSize.s .. ") is created.")
 		end
@@ -121,7 +130,6 @@ if cmd == "boot" then
 	
 	local cmd = String()
 	local sEnv = String()
-	local bDisplay = false
 	local bBootForInstall = false
 	local sSystem = "x86_64"
 	
@@ -221,12 +229,11 @@ if cmd == "boot" then
 	
 	if sEnv:GetEnvironment("DISPLAY" .. sEnvQEMU) then
 		cmd:Append(" -display " .. sEnv.s)
-		bDisplay = (sEnv.s ~= "none")
 	end
 	
 	if sEnv:GetEnvironment("EXTRA_OPTIONS" .. sEnvQEMU) then
 		cmd:Append(" " .. sEnv.s)
 	end
 	
-	run((bDisplay and "noconsole " or "") .. "qemu-system-" .. sSystem .. " " .. cmd.s)
+	run("qemu-system-" .. sSystem .. " " .. cmd.s)
 end

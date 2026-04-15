@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 8/4/2025 Mon (clonextop@gmail.com)
+// Rev.  : 4/15/2026 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "STDInterface.h"
@@ -71,8 +71,10 @@ bool SystemSim::Initialize(IMemoryImp *pMem)
 		return false;
 
 	// memory heap initialization
-	m_pMemImp = pMem;
-	pMem->Initialize(g_SystemMemory.BaseAddress(), g_SystemMemory.ByteSize(), this);
+	if (pMem) {
+		m_pMemImp = pMem;
+		pMem->Initialize(g_SystemMemory.BaseAddress(), g_SystemMemory.ByteSize(), this);
+	}
 	// run simulation thread
 	bool bRet = m_pSim->Start();
 
@@ -124,6 +126,53 @@ void SystemSim::RegWrite(uint64_t ulAddress, uint32_t dwData)
 	} else {
 		LOGE("Invalid 'RegWrite' address : 0x%08X (data : 0x%llX)\n", ulAddress, dwData);
 	}
+}
+
+bool SystemSim::io_slave(bool bWrite, uint64_t ulAddress, unsigned byte_size, uint32_t *pVal) // max 64bit
+{
+	BusSlave *pSlave = BusSlave::FindSlave(ulAddress);
+
+	if (pSlave) {
+		if (ulAddress & 0x3) {
+			LOGE("The slave I/O access must do with 4 byte aligned address. : addr(0x%llX)", ulAddress);
+			return false;
+		}
+		if (byte_size < 4) {
+			LOGE("The slave I/O access size is allowed at least 4 or 8 bytes. : addr(0x%llX), size(%d bytes)", ulAddress, byte_size);
+			return false;
+		}
+		if (bWrite) {
+			pSlave->Write(ulAddress, pVal[0]);
+		} else {
+			pVal[0] = pSlave->Read(ulAddress);
+		}
+		if (byte_size > 4) {
+			ulAddress += 4;
+			BusSlave *pSlave = BusSlave::FindSlave(ulAddress);
+			if (pSlave) {
+				if (bWrite) {
+					pSlave->Write(ulAddress, pVal[1]);
+				} else {
+					pVal[1] = pSlave->Read(ulAddress);
+				}
+			} else
+				goto INVALID_IO_ACCESS;
+		}
+		return true;
+	} else {
+		void *pMem = GetMemoryPointer(ulAddress, byte_size);
+		if (pMem) {
+			if (bWrite) {
+				memcpy(pMem, pVal, byte_size);
+			} else {
+				memcpy(pVal, pMem, byte_size);
+			}
+			return true;
+		}
+	}
+INVALID_IO_ACCESS:
+	LOGE("Invalid slave I/O access : addr(0x%llX), size(%d bytes)", ulAddress, byte_size);
+	return false;
 }
 
 void SystemSim::RegisterInterruptService(INTRRUPT_SERVICE routine, void *pPrivate)

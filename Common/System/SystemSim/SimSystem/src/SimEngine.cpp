@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 4/14/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "SimEngine.h"
@@ -166,7 +166,12 @@ void SimEngine::MonitorThread(void)
 {
 	TRACE_LOCK
 	m_Lock.Lock(16); // start lock
-	LOGI("Simulation H/W daemon is up.\n");
+	LOGI("Simulation H/W daemon is up.");
+	if (g_SystemMemory.ByteSize()) {
+		LOGI(
+			"On-device memory : BASE(0x%llX), SIZE(%lld[0x%llX] bytes)", g_SystemMemory.BaseAddress(), g_SystemMemory.ByteSize(),
+			g_SystemMemory.ByteSize());
+	}
 
 	while (Clocking()); // Execute engine
 

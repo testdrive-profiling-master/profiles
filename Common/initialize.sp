@@ -20,6 +20,8 @@ do
 	system_tree:AddItem("profile",	"View system memory",			"common\\view_system_memory.sp")
 end
 
+System.CallProfile("common\\qemu_initialize.sp")
+
 do
 	local community_tree = ProfileTree("Document|Community")
 	community_tree:AddItem("network", "TestDrive Wiki", "Community\\testdrive_wiki.sp")

@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 4/14/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_HAL_H__
 #define __SYSTEM_HAL_H__
@@ -84,12 +84,17 @@ struct IMemoryImp {
 struct ISystemImp : public ISystem {
 	virtual bool Initialize(IMemoryImp *pMem) = 0; // create memory implementation
 };
+
+struct ISystemSim : public ISystemImp {
+	virtual bool io_slave(bool bWrite, uint64_t ulAddress, unsigned byte_size, uint32_t *pVal) = 0;
+};
 #endif
 
 #ifndef SYSTEM_IMPLEMENTATION
 #	define SYSTEM_API extern "C"
 #	ifdef SYSTEM_EXPORTS
-typedef ISystemImp *(*CreateSystemImplementationFunction)(void);
+typedef ISystemImp *(*CREATE_SYSTEM)(void);
+typedef ISystemSim *(*CREATE_SIMULATION)(void);
 #	endif
 
 SYSTEM_API ISystem *CreateSystem(void); // System creation
