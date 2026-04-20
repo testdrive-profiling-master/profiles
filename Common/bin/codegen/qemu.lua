@@ -21,6 +21,7 @@ testdrive_path = testdrive_path.s
 local profile_path = String()
 profile_path:GetEnvironment("TESTDRIVE_PROFILE")
 profile_path = profile_path.s .. "Common/bin/"
+local sEnvQEMU_Config = "@QEMU@" .. profile_path .. "qemu.ini"	-- QEMU configuration file
 
 -- Prepare QEMU development project
 if cmd == "devel" then
@@ -30,8 +31,42 @@ if cmd == "devel" then
 	os.exit(0)
 end
 
+function IsNeedToUpdate()
+	local bRet	= false
+	local sEnv				= String()
+	sEnv:GetEnvironment("DATE" .. sEnvQEMU_Config)
+	
+	local iPrevTimeStamp	= sEnv:IsEmpty() and 0 or tonumber(sEnv.s)
+	local iCurTimeStamp		= math.floor(os.time() / (60*60*24))
+	
+	if (iCurTimeStamp - iPrevTimeStamp) >= 30 then	-- check every 1 month
+		-- Get 'QEMU for TestDrive' latest commit number
+		local sCurCommit	= String()
+		sCurCommit.s = exec("git ls-remote https://github.com/testdrive-profiling-master/qemu_testdrive.git HEAD")
+		sCurCommit:Trim("\r\n\t ")
+		if sCurCommit:CompareBack("HEAD") then
+			sCurCommit:CutBack("HEAD")
+			sCurCommit:Trim("\t ")
+		
+			-- commit check
+			local sPrevCommit = String()
+			sPrevCommit:GetEnvironment("COMMIT" .. sEnvQEMU_Config)
+			
+			if sPrevCommit.s ~= sCurCommit.s then
+				LOGI("New QEMU for TestDrive is released!")
+				sCurCommit:SetEnvironment("COMMIT" .. sEnvQEMU_Config)
+				bRet = true
+			end
+			sEnv.s = tostring(iCurTimeStamp)
+			sEnv:SetEnvironment("DATE" .. sEnvQEMU_Config)
+		end
+	end
+	
+	return bRet
+end
+
 -- check QEMU for TestDrive tool
-if (lfs.IsExist(profile_path .. "qemu-system-x86_64.exe") == false) or (cmd == "install") then
+if (lfs.IsExist(profile_path .. "qemu-system-x86_64.exe") == false) or IsNeedToUpdate() or (cmd == "install") then
 	if lfs.IsExist(profile_path .. "qemu-system-x86_64.exe") ~= false then
 		LOGI("There is already an installed QEMU.")
 		LOGI("@1    Do you want to continue? (y/n) : ")
@@ -39,7 +74,7 @@ if (lfs.IsExist(profile_path .. "qemu-system-x86_64.exe") == false) or (cmd == "
 		if (answer ~= "y") and (answer ~= "yes") then
 			os.exit(1)
 		end
-	else
+	else -- 'install' command
 		-- install required libraries, but not original qemu
 		os.require("mingw-w64-ucrt-x86_64-qemu mingw-w64-ucrt-x86_64-gtk-vnc mingw-w64-ucrt-x86_64-spice-gtk mingw-w64-ucrt-x86_64-virt-viewer")
 		exec("pacman -R --noconfirm mingw-w64-ucrt-x86_64-qemu")
