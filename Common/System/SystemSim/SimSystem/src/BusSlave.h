@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 4/20/2026 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __BUS_SLAVE_H__
 #define __BUS_SLAVE_H__
@@ -50,7 +50,7 @@ public:
 	uint32_t	 Read(uint64_t lAddrBase);
 
 	//// H/W master interface
-	virtual bool RequestWrite(uint64_t lAddr, uint32_t dwData);
+	virtual bool RequestWrite(uint64_t lAddr, uint32_t dwData, uint32_t wmask);
 	virtual bool WaitWrite(void);
 	virtual bool RequestRead(uint64_t lAddr);
 	virtual bool WaitRead(uint32_t &dwData);

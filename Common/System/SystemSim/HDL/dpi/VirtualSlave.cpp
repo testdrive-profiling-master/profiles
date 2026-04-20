@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 4/20/2026 Mon (clonextop@gmail.com)
 //================================================================================
 #include "VirtualSlave.h"
 
@@ -49,7 +49,7 @@ VirtualSlave::~VirtualSlave(void) {}
 //----------------------------------------------------------------------------------------------------
 // Write bus
 //----------------------------------------------------------------------------------------------------
-void VirtualSlave::BusWrite(uint8_t nRST, uint8_t &EN, uint64_t &ADDR, uint32_t &DATA)
+void VirtualSlave::BusWrite(uint8_t nRST, uint8_t &EN, uint64_t &ADDR, uint32_t &DATA, uint32_t &STRB)
 {
 	if (!nRST) {
 		EN	 = 0;
@@ -62,6 +62,7 @@ void VirtualSlave::BusWrite(uint8_t nRST, uint8_t &EN, uint64_t &ADDR, uint32_t 
 			EN	 = 1;
 			ADDR = packet->lAddr;
 			DATA = packet->dwData;
+			STRB = packet->opt.byte_strobe;
 			m_pSlave->WriteAck();
 		} else {
 			EN	 = 0;
@@ -71,10 +72,11 @@ void VirtualSlave::BusWrite(uint8_t nRST, uint8_t &EN, uint64_t &ADDR, uint32_t 
 	}
 }
 
-DPI_FUNCTION void VirtualSlave_Write(void *hSVirtual, unsigned char nRST, unsigned char *EN, unsigned long long *ADDR, svBitVecVal *DATA)
+DPI_FUNCTION void
+VirtualSlave_Write(void *hSVirtual, unsigned char nRST, unsigned char *EN, unsigned long long *ADDR, svBitVecVal *DATA, svBitVecVal *STRB)
 {
 	VirtualSlave *pSAXI = reinterpret_cast<VirtualSlave *>(hSVirtual);
-	pSAXI->BusWrite(nRST, *(uint8_t *)EN, *(uint64_t *)ADDR, *(uint32_t *)DATA);
+	pSAXI->BusWrite(nRST, *(uint8_t *)EN, *(uint64_t *)ADDR, *(uint32_t *)DATA, *(uint32_t *)STRB);
 }
 
 //----------------------------------------------------------------------------------------------------

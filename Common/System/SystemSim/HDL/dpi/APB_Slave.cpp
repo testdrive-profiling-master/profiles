@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 4/20/2026 Mon (clonextop@gmail.com)
 //================================================================================
 #include "APB_Slave.h"
 
@@ -81,7 +81,7 @@ void APB_Slave::BusSignal(
 				PWRITE	= m_bWrite;
 				PADDR	= m_pPacket->lAddr;
 				PWDATA	= m_pPacket->dwData;
-				PSTRB	= 0xF;
+				PSTRB	= m_pPacket->opt.byte_strobe;
 			} else
 				goto ON_RESET;
 
@@ -96,7 +96,7 @@ void APB_Slave::BusSignal(
 			PWRITE	= m_bWrite;
 			PADDR	= m_pPacket->lAddr;
 			PWDATA	= m_pPacket->dwData;
-			PSTRB	= 0xF;
+			PSTRB	= m_pPacket->opt.byte_strobe;
 			break;
 
 		case BUS_STATE_DATA:

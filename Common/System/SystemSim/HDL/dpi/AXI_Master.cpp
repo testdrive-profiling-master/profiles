@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 8/4/2025 Mon (clonextop@gmail.com)
+// Rev.  : 4/20/2026 Mon (clonextop@gmail.com)
 //================================================================================
 #include "AXI_common.h"
 #include "AXI_Master.h"
@@ -666,7 +666,7 @@ void MAXI::BusWriteData(
 						break;
 					}
 
-					if (m_pWriteSlave->RequestWrite(pDesc->ADDR, *(uint32_t *)WDATA)) {
+					if (m_pWriteSlave->RequestWrite(pDesc->ADDR, *(uint32_t *)WDATA, 0xF)) {
 						m_Write.WREADY = 1;
 
 						if (!WLAST)

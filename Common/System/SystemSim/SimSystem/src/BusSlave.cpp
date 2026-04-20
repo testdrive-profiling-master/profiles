@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 1/31/2025 Fri (clonextop@gmail.com)
+// Rev.  : 4/20/2026 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "BusSlave.h"
@@ -125,17 +125,18 @@ uint32_t BusSlave::Read(uint64_t lAddrBase)
 	return dwData;
 }
 
-bool BusSlave::RequestWrite(uint64_t lAddr, uint32_t dwData)
+bool BusSlave::RequestWrite(uint64_t lAddr, uint32_t dwData, uint32_t wmask)
 {
 	bool bRet = false;
 	m_LockBus.Down();
 
 	if (!m_Write.bEnable && !m_Write.bWait) {
-		bRet				  = true;
-		m_Write.bEnable		  = true;
-		m_Write.bWait		  = true;
-		m_Write.packet.lAddr  = lAddr;
-		m_Write.packet.dwData = dwData;
+		bRet						   = true;
+		m_Write.bEnable				   = true;
+		m_Write.bWait				   = true;
+		m_Write.packet.lAddr		   = lAddr;
+		m_Write.packet.dwData		   = dwData;
+		m_Write.packet.opt.byte_strobe = wmask;
 		m_pSim->Unlock();
 	}
 
@@ -163,10 +164,11 @@ bool BusSlave::RequestRead(uint64_t lAddr)
 	m_LockBus.Down();
 
 	if (!m_Read.bEnable && !m_Read.bWait) {
-		bRet				= true;
-		m_Read.bEnable		= true;
-		m_Read.bWait		= true;
-		m_Read.packet.lAddr = lAddr;
+		bRet						  = true;
+		m_Read.bEnable				  = true;
+		m_Read.bWait				  = true;
+		m_Read.packet.lAddr			  = lAddr;
+		m_Read.packet.opt.byte_strobe = 0xF;
 		m_pSim->Unlock();
 	}
 

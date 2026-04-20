@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 4/20/2026 Mon (clonextop@gmail.com)
 //================================================================================
 #include "AXI_Slave_Lite.h"
 
@@ -78,9 +78,9 @@ void SAXI_Lite::BusWrite(
 				// address transaction
 				AWVALID			= 1;
 				WVALID			= 1;
-				WSTRB			= 0xF;
 				AWADDR			= m_Write.packet->lAddr;
 				WDATA			= m_Write.packet->dwData;
+				WSTRB			= m_Write.packet->opt.byte_strobe;
 				m_Write.dwTime	= 0;
 				m_WFlag.control = 1;
 				m_WFlag.data	= 1;
@@ -112,9 +112,9 @@ void SAXI_Lite::BusWrite(
 			}
 
 			if (m_WFlag.all) {
-				WSTRB  = 0xF;
 				AWADDR = m_Write.packet->lAddr;
 				WDATA  = m_Write.packet->dwData;
+				WSTRB  = m_Write.packet->opt.byte_strobe;
 			} else {
 				m_pSlave->WriteAck();
 				BREADY		   = 1;

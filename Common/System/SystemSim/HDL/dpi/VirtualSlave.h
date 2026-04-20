@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 4/20/2026 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __VIRTUAL_SLAVE_H__
 #define __VIRTUAL_SLAVE_H__
@@ -43,7 +43,7 @@ public:
 	VirtualSlave(const char *sTitle, uint64_t lAddrBase, uint64_t lAddrHigh);
 	virtual ~VirtualSlave(void);
 
-	void BusWrite(uint8_t nRST, uint8_t &EN, uint64_t &ADDR, uint32_t &DATA);
+	void BusWrite(uint8_t nRST, uint8_t &EN, uint64_t &ADDR, uint32_t &DATA, uint32_t &STRB);
 	void BusRead(uint8_t nRST, uint8_t &EN, uint64_t &ADDR, uint32_t DATA);
 
 private:

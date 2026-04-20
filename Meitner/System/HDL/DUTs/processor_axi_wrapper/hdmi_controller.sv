@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : processor AXI wrapper
-// Rev.  : 2/2/2024 Fri (clonextop@gmail.com)
+// Rev.  : 4/20/2026 Mon (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
 `include "testdrive_system.vh"
@@ -40,76 +40,78 @@
 /* HIDDEN */
 // virtual hdmi controller
 module hdmi_controller #(
-		parameter		C_S_AXI_ADDR			= 64'h00010000,
-		parameter		C_DEFAULT_VIDEO_BASE	= 64'h00000000_80000000,
-		parameter		M_AXI_ADDR_WIDTH		= 32
-	) (
-		//// system
-		input							CLK, nRST	// clock & reset (active low)
-	);
+	parameter		C_S_AXI_ADDR			= 64'h00010000,
+	parameter		C_DEFAULT_VIDEO_BASE	= 64'h00000000_80000000,
+	parameter		M_AXI_ADDR_WIDTH		= 32
+) (
+	//// system
+	input							CLK, nRST	// clock & reset (active low)
+);
 
-	// definition & assignment ---------------------------------------------------
-	`DPI_FUNCTION void VirtualDisplayInitialize(input int bReverse);
-	`DPI_FUNCTION void VirtualDisplayBaseAddress(input longint unsigned dwBaseAddress, input int bFront);
-	`DPI_FUNCTION void VirtualDisplayFormat(input int iWidth, input int iHeight, input int unsigned dwByteStride, input int unsigned Format);
+// definition & assignment ---------------------------------------------------
+`DPI_FUNCTION void VirtualDisplayInitialize(input int bReverse);
+`DPI_FUNCTION void VirtualDisplayBaseAddress(input longint unsigned dwBaseAddress, input int bFront);
+`DPI_FUNCTION void VirtualDisplayFormat(input int iWidth, input int iHeight, input int unsigned dwByteStride, input int unsigned Format);
 
-	initial begin
-		SetSystemDescription("HDMI controller");
-		VirtualDisplayInitialize(0);
-		VirtualDisplayBaseAddress(C_DEFAULT_VIDEO_BASE, 0);
-		VirtualDisplayBaseAddress(C_DEFAULT_VIDEO_BASE, 1);
-		VirtualDisplayFormat(1920, 1080, 0, 7);
+initial begin
+	SetSystemDescription("HDMI controller");
+	VirtualDisplayInitialize(0);
+	VirtualDisplayBaseAddress(C_DEFAULT_VIDEO_BASE, 0);
+	VirtualDisplayBaseAddress(C_DEFAULT_VIDEO_BASE, 1);
+	VirtualDisplayFormat(1920, 1080, 0, 7);
+end
+
+wire					we;
+wire	[9:0]			waddr;
+wire	[`RANGE_DWORD]	wdata;
+wire	[3:0]			wstrb;
+
+// implementation ------------------------------------------------------------
+testdrive_virtual_slave_bfm #(
+	.C_BUS_TITLE	("hdmi_slave"),
+	.C_BASE_ADDR	(C_S_AXI_ADDR),
+	.C_ADDR_BITS	(10)
+) slave (
+	.CLK			(CLK),
+	.nRST			(nRST),
+	.WE				(we),
+	.WADDR			(waddr),
+	.WDATA			(wdata),
+	.WSTRB			(wstrb),
+	.RE				(),
+	.RADDR			(),
+	.RDATA			({16'd0, 1'b0, 1'b1, 1'b1, 10'd0, 3'd0})	// clkgen_RDATA(0), HDMI_nEN(0), clkgen_READY(1), clkgen_LOCKED(1), dummy(0), i2c(0)
+);
+
+int unsigned hdmi_reg[8];
+reg	[31:0]	video_base_hi;
+
+`ALWAYS_CLOCK_RESET begin
+	`ON_RESET begin
+		video_base_hi	<= 'd0;
 	end
-
-	wire					we;
-	wire	[9:0]			waddr;
-	wire	[`RANGE_DWORD]	wdata;
-
-	// implementation ------------------------------------------------------------
-	testdrive_virtual_slave_bfm #(
-		.C_BUS_TITLE	("hdmi_slave"),
-		.C_BASE_ADDR	(C_S_AXI_ADDR),
-		.C_ADDR_BITS	(10)
-	) slave (
-		.CLK			(CLK),
-		.nRST			(nRST),
-		.WE				(we),
-		.WADDR			(waddr),
-		.WDATA			(wdata),
-		.RE				(),
-		.RADDR			(),
-		.RDATA			({16'd0, 1'b0, 1'b1, 1'b1, 10'd0, 3'd0})	// clkgen_RDATA(0), HDMI_nEN(0), clkgen_READY(1), clkgen_LOCKED(1), dummy(0), i2c(0)
-	);
-
-	int unsigned hdmi_reg[8];
-	reg	[31:0]	video_base_hi;
-
-	`ALWAYS_CLOCK_RESET begin
-		`ON_RESET begin
-			video_base_hi	<= 'd0;
-		end
-		else begin
-			if(we) begin
-				if(waddr[9:2] == 'd1) begin
-					for(int i=0;i<7;i++) begin
-						hdmi_reg[i] = hdmi_reg[i+1];
-					end
-					hdmi_reg[7]	= wdata;
-					VirtualDisplayFormat(hdmi_reg[1] - hdmi_reg[3], hdmi_reg[0] - hdmi_reg[2], 0, 7/*DISPLAY_FORMAT_ABGR_8888*/);
+	else begin
+		if(we && (wstrb == 'h4)) begin
+			if(waddr[9:2] == 'd1) begin
+				for(int i=0;i<7;i++) begin
+					hdmi_reg[i] = hdmi_reg[i+1];
 				end
-				else
-					if(waddr[9:2] == 'd3) begin
-						if(wdata[31]) begin
-							VirtualDisplayBaseAddress({video_base_hi, wdata}, 1/*Front*/);
-						end
+				hdmi_reg[7]	= wdata;
+				VirtualDisplayFormat(hdmi_reg[1] - hdmi_reg[3], hdmi_reg[0] - hdmi_reg[2], 0, 7/*DISPLAY_FORMAT_ABGR_8888*/);
+			end
+			else
+				if(waddr[9:2] == 'd3) begin
+					if(wdata[31]) begin
+						VirtualDisplayBaseAddress({video_base_hi, wdata}, 1/*Front*/);
 					end
-
-				if(waddr[9:2] == 'd4) begin
-					video_base_hi	<= wdata;
 				end
+
+			if(waddr[9:2] == 'd4) begin
+				video_base_hi	<= wdata;
 			end
 		end
 	end
+end
 
 endmodule
 /*verilator tracing_on*/
