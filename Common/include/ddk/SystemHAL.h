@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 4/14/2026 Tue (clonextop@gmail.com)
+// Rev.  : 4/23/2026 Thu (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_HAL_H__
 #define __SYSTEM_HAL_H__
@@ -85,8 +85,14 @@ struct ISystemImp : public ISystem {
 	virtual bool Initialize(IMemoryImp *pMem) = 0; // create memory implementation
 };
 
+struct IVMHost {
+	virtual bool dma_master(uint64_t addr, void *pBuff, uint64_t byte_size, bool bWrite) = 0;
+};
+
 struct ISystemSim : public ISystemImp {
-	virtual bool io_slave(bool bWrite, uint64_t ulAddress, unsigned byte_size, uint32_t *pVal) = 0;
+	virtual bool  InitializeSimulation(IVMHost *pHost)						   = 0;
+	virtual void *GetMemoryPointer(uint64_t lAddress, uint64_t ulByteSize = 0) = 0;
+	virtual bool  io_slave(bool bWrite, uint64_t ulAddress, uint32_t &val)	   = 0;
 };
 #endif
 

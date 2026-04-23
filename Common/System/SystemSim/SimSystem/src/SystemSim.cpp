@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 4/15/2026 Wed (clonextop@gmail.com)
+// Rev.  : 4/21/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "STDInterface.h"
@@ -87,6 +87,15 @@ bool SystemSim::Initialize(IMemoryImp *pMem)
 	return bRet;
 }
 
+bool SystemSim::InitializeSimulation(IVMHost *pHost)
+{
+	if (pHost) {
+		m_pHost = pHost;
+		return Initialize(NULL);
+	}
+	return false;
+}
+
 void SystemSim::Release(void)
 {
 	// simulation end.
@@ -128,7 +137,7 @@ void SystemSim::RegWrite(uint64_t ulAddress, uint32_t dwData)
 	}
 }
 
-bool SystemSim::io_slave(bool bWrite, uint64_t ulAddress, unsigned byte_size, uint32_t *pVal) // max 64bit
+bool SystemSim::io_slave(bool bWrite, uint64_t ulAddress, uint32_t &val) // max 64bit
 {
 	BusSlave *pSlave = BusSlave::FindSlave(ulAddress);
 
@@ -137,41 +146,25 @@ bool SystemSim::io_slave(bool bWrite, uint64_t ulAddress, unsigned byte_size, ui
 			LOGE("The slave I/O access must do with 4 byte aligned address. : addr(0x%llX)", ulAddress);
 			return false;
 		}
-		if (byte_size < 4) {
-			LOGE("The slave I/O access size is allowed at least 4 or 8 bytes. : addr(0x%llX), size(%d bytes)", ulAddress, byte_size);
-			return false;
-		}
 		if (bWrite) {
-			pSlave->Write(ulAddress, pVal[0]);
+			pSlave->Write(ulAddress, val);
 		} else {
-			pVal[0] = pSlave->Read(ulAddress);
-		}
-		if (byte_size > 4) {
-			ulAddress += 4;
-			BusSlave *pSlave = BusSlave::FindSlave(ulAddress);
-			if (pSlave) {
-				if (bWrite) {
-					pSlave->Write(ulAddress, pVal[1]);
-				} else {
-					pVal[1] = pSlave->Read(ulAddress);
-				}
-			} else
-				goto INVALID_IO_ACCESS;
+			val = pSlave->Read(ulAddress);
 		}
 		return true;
 	} else {
-		void *pMem = GetMemoryPointer(ulAddress, byte_size);
+		void *pMem = GetMemoryPointer(ulAddress, 4);
 		if (pMem) {
 			if (bWrite) {
-				memcpy(pMem, pVal, byte_size);
+				memcpy(pMem, &val, 4);
 			} else {
-				memcpy(pVal, pMem, byte_size);
+				memcpy(&val, pMem, 4);
 			}
 			return true;
 		}
 	}
 INVALID_IO_ACCESS:
-	LOGE("Invalid slave I/O access : addr(0x%llX), size(%d bytes)", ulAddress, byte_size);
+	LOGE("Invalid slave I/O access : addr(0x%llX)", ulAddress);
 	return false;
 }
 

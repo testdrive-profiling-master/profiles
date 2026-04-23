@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 4/14/2026 Tue (clonextop@gmail.com)
+// Rev.  : 4/21/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_SIM_H__
 #define __SYSTEM_SIM_H__
@@ -51,8 +51,9 @@ public:
 	virtual const char *GetDescription(void); // get system description
 
 	// life cycle
-	virtual bool Initialize(IMemoryImp *pMem); // system initialize
-	virtual void Release(void);				   // release all system resources
+	virtual bool Initialize(IMemoryImp *pMem);		   // system initialize
+	virtual bool InitializeSimulation(IVMHost *pHost); // system for Simulation
+	virtual void Release(void);						   // release all system resources
 
 	// memory
 	virtual uint64_t GetMemoryBase(void);										   // get memory start address
@@ -76,10 +77,11 @@ public:
 	// for Simulation
 	//-------------------------------------
 	// slave I/O interface
-	virtual bool io_slave(bool bWrite, uint64_t ulAddress, unsigned byte_size, uint32_t *pVal);
+	virtual bool io_slave(bool bWrite, uint64_t ulAddress, uint32_t &val);
 
 private:
 	SimEngine  *m_pSim;
 	IMemoryImp *m_pMemImp;
+	IVMHost	   *m_pHost;
 };
 #endif //__SYSTEM_SIM_H__

@@ -25,8 +25,11 @@ dev:CreateBAR("memory", 1024*64, true, false, 0x20000)				-- BAR #0/1
 dev:CreateBAR("memory", 1024*1024*32, true, false, 0x10000000)		-- BAR #2/3
 dev:CreateBAR("memory", 1024*1024*256, true, false, 0x80000000)		-- BAR #4/5
 
+-- setup module implementation
+if dev:LoadSystemModule(sSubSystemPath.s) == false then
+	os.exit(1)
+end
+
 -- setup MSI
 dev:EnableMSI(1, false)	-- iVectorCount, bMaskPerVector
-
--- setup module implementation
-dev:SetSystemModule(sSubSystemPath.s)
+--dev:EnableDisplay(640, 480)

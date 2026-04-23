@@ -80,7 +80,10 @@ if (lfs.IsExist(profile_path .. "qemu-system-x86_64.exe") == false) or IsNeedToU
 		exec("pacman -R --noconfirm mingw-w64-ucrt-x86_64-qemu")
 	end
 	LOGI("Installing QEMU for TestDrive...\n")
-	if lfs.IsExist("qemu_testdrive") == false then
+	if lfs.IsExist("qemu_testdrive") then
+		LOGE("Already 'qemu_testdrive' project folder is existed.")
+		os.exit(1)
+	else
 		run("git clone https://github.com/testdrive-profiling-master/qemu_testdrive.git qemu_testdrive")
 	end
 	-- configure
