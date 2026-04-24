@@ -27,14 +27,14 @@
 [sst_vpaned_height] 566
 @28
 TOP.top.MCLK
-@c02024
-^1 ..\Program\translate_filter\SYSTEM.txt
+@c04025
+^>3 ..\Program\process_filter\meitner_system.exe
 #{system} TOP.top.nRST TOP.top.BUSY TOP.INTR
 @28
 TOP.top.nRST
 TOP.top.BUSY
 TOP.INTR
-@1401200
+@1401201
 -group_end
 @c04022
 ^>1 ..\Program\process_filter\apb_slave.exe
