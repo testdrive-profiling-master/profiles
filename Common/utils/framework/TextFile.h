@@ -31,11 +31,13 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 4/15/2026 Wed (clonextop@gmail.com)
+// Rev.  : 4/29/2026 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __TEXT_FILE_H__
 #define __TEXT_FILE_H__
 #include "STDInterface.h"
+#include <vector>
+#include "cstring.h"
 
 class TextFile
 {

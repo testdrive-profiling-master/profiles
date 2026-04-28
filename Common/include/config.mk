@@ -148,7 +148,7 @@ decrypt: $(ENCRYPT_EXTRA:=.decrypted) $(SRCS_ENCRYPTED:.encrypted=.decrypted)
 ifeq ($(OS),Windows_NT)
 deploy: all
 	@echo $(BUILD_TARGET)
-	@codegen collect_lib $(BUILD_TARGET)
+	@codegen.exe collect_lib $(BUILD_TARGET)
 endif
 
 clean:
@@ -183,13 +183,13 @@ endif
 ifeq ($(OS),Windows_NT)
 ifeq ($(BUILD_VERSION), 1)
 $(VERSION_HEADER): $(SRCS)
-	@codegen gen_version -p $(TARGETNAME) .$(TARGETNAME)_version.inl
+	@codegen.exe gen_version -p $(TARGETNAME) .$(TARGETNAME)_version.inl
 
 version_minor:
-	@codegen gen_version -n -p $(TARGETNAME) .$(TARGETNAME)_version.inl
+	@codegen.exe gen_version -n -p $(TARGETNAME) .$(TARGETNAME)_version.inl
 
 version_major:
-	@codegen gen_version -m -p $(TARGETNAME) .$(TARGETNAME)_version.inl
+	@codegen.exe gen_version -m -p $(TARGETNAME) .$(TARGETNAME)_version.inl
 else
 version_minor:
 	@echo *E: Version control is not enabled for this project.

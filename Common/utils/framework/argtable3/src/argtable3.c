@@ -791,9 +791,11 @@ void arg_print_syntaxv_ds(arg_dstr_t ds, void** argtable, const char* suffix) {
         arg_cat_optionv(syntax, sizeof(syntax) - 1, shortopts, longopts, datatype, table[tabindex]->flag & ARG_HASOPTVALUE, "|");
 
         /* print mandatory options */
-        for (i = 0; i < table[tabindex]->mincount; i++) {
-            arg_dstr_cat(ds, " ");
-            arg_dstr_cat(ds, syntax);
+        if(table[tabindex]->scanfn) {
+			for (i = 0; i < table[tabindex]->mincount; i++) {
+				arg_dstr_cat(ds, " ");
+				arg_dstr_cat(ds, syntax);
+			}
         }
 
         /* print optional args enclosed in "[..]" */
