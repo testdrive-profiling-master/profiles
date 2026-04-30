@@ -1,4 +1,4 @@
-local Arg = ArgTable("QEMU manager")
+local Arg = ArgTable("QEMU(https://www.qemu.org) for TestDrive Profiling Master.")
 
 Arg:AddOptionString		("cmd", nil, nil, nil, "command", "QEMU command")
 Arg:AddRemark			(nil, "install  : install QEMU binaries")
