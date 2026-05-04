@@ -32,7 +32,7 @@ function module:new(name)
 	
 	-- module duplication check
 	if module.find(name) ~= nil then
-		error("already existed module : '" .. name .. "'", 2)
+		return module.find(name)
 	end
 	
 	-- create instance
@@ -207,6 +207,10 @@ function module:add_module(m, name)
 
 	if m == self then
 		error("Can't include self module instance : '" .. self.name .. "'", 2)
+	end
+	
+	if type(m) == "string" then
+		m = module:new(m)
 	end
 
 	-- no name, so find new name

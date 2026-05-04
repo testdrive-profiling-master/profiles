@@ -13,10 +13,16 @@ do
 	end
 	
 	LOGI("¢Â HDL to C++ conversion (Verilator : https://www.veripool.org/wiki/verilator)")
-	System.Execute(".\\build_hw.bat", "", "%PROJECT%System\\HDL\\", {"Error:", {"fatal:","warning"}, "*E: ", {"*I: ", 0}, {"*W: ","warning"}})
+	if System.Execute(".\\build_hw.bat", "", "%PROJECT%System\\HDL\\", {"Error:", {"fatal:","warning"}, "*E: ", {"*I: ", 0}, {"*W: ","warning"}}) ~= 0 then
+		LOGE("H/W build sequence is failed!")
+		return
+	end
 
 	LOGI("¢Â Simulation HDL module build")
-	System.Execute("mingw32-make", "-j " .. iHDLBuildCount, "%PROJECT%System\\SubSystems\\Simulation\\SimHDL\\", {"error:", "] Error", "undefined reference to ", {"Build succeeded.",0}})
+	if System.Execute("mingw32-make", "-j " .. iHDLBuildCount, "%PROJECT%System\\SubSystems\\Simulation\\SimHDL\\", {"error:", "] Error", "undefined reference to ", {"Build succeeded.",0}}) ~= 0 then
+		LOGE("H/W build sequence is failed!")
+		return
+	end
 end
 
 LOGI("\n¢Â H/W build sequence is completed!")
