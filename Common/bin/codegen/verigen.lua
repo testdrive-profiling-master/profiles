@@ -172,6 +172,21 @@ function __build_code(s)
 	local	sSrc		= String(s.s)
 	local	sOut		= String()
 
+	-- inline lua code
+	do
+		sOut:Append(sSrc:TokenizeVariable("${*}").s)
+		local	sVal	= sSrc:GetVariable()
+		
+		while sVal:Length() ~= 0 do
+			load("do\n" .. sVal.s .. "\nend")()
+			sOut:Append(sSrc:TokenizeVariable("${*}").s)
+			sVal	= sSrc:GetVariable()
+		end
+		
+		sSrc.s = sOut.s
+		sOut:clear()
+	end
+	
 	-- lua vfunction call
 	for name, func in pairs(__vfunctions) do
 		local	sExp	= "$" .. name .. "(*)"
@@ -201,7 +216,7 @@ function __build_code(s)
 		sSrc.s = sOut.s
 		sOut:clear()
 	end
-
+	
 	-- global lua function call
 	do
 		sOut:Append(sSrc:TokenizeVariable("$(*)").s)
@@ -215,31 +230,20 @@ function __build_code(s)
 			sOut:Append(sSrc:TokenizeVariable("$(*)").s)
 			sVal	= sSrc:GetVariable()
 		end
-	end
-	
-	-- inline lua code
-	sSrc.s = sOut.s
-	sOut:clear()
-	do
-		sOut:Append(sSrc:TokenizeVariable("${*}").s)
-		local	sVal	= sSrc:GetVariable()
 		
-		while sVal:Length() ~= 0 do
-			load(sVal.s)()
-			sOut:Append(sSrc:TokenizeVariable("${*}").s)
-			sVal	= sSrc:GetVariable()
-		end
+		sSrc.s = sOut.s
+		sOut:clear()
 	end
 
-	sOut:TrimLeft(" \t\r\n")
-	sOut:Replace("\r", "", true)	-- linux style only
+	sSrc:TrimLeft(" \t\r\n")
+	sSrc:Replace("\r", "", true)	-- linux style only
 
 	if #sSrc.s ~= org_size then		-- seperate from additional codes
-		sOut:Append("\n")
+		sSrc:Append("\n")
 	end
 
 	s:erase(0, org_size)
-	s:insert(0, sOut.s)
+	s:insert(0, sSrc.s)
 end
 
 -- default script libraries
