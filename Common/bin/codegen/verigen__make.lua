@@ -137,8 +137,14 @@ function module:make_code(is_top)
 	end
 	
 	-- make leaf module first
-	for name, m in key_pairs(self.sub_module) do
-		m.module:make_code(false)
+	do
+		local m_list = {}	-- list backup
+		for name, m in key_pairs(self.sub_module) do
+			m_list[name] = m.module
+		end
+		for name, m in key_pairs(m_list) do
+			m:make_code(false)	-- sub_module list may change on here.
+		end
 	end
 	
 	__FileList:Append(self.name .. ".sv\n")
@@ -160,7 +166,7 @@ function module:make_code(is_top)
 	end
 	
 	-- create top design file
-	self:set_current_design()
+	self:set_current_design(true)
 	local	f	= TextFile()
 	if f:Create(sOutPath .. "/" .. self.name .. ".sv") == false then
 		error("Can't create top design file.", 2)
@@ -635,7 +641,7 @@ function module:make_code(is_top)
 	f:Put("endmodule\n")
 	
 	f:Close()
-	this	= nil
+	self:set_current_design(false)
 	
 	-- apply istyle
 	exec("istyle --style=kr -T4 -n \"" .. sOutPath .. "/" .. self.name .. ".sv\"")

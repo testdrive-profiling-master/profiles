@@ -11,7 +11,6 @@ module.__inception	= ""
 module.document		= {}
 
 this				= nil	-- current module instance
-sub_module			= nil	-- current sub module instance
 
 -- find module
 function module.find(name)
@@ -58,6 +57,7 @@ function module:new(name)
 	t.interfaces	= {}
 	t.constraint	= {}
 	t.document		= {}
+	t.prev_this		= self
 	t.fill_color	= "00000010"
 	t.code			= String()
 	t.enable		= true
@@ -65,9 +65,14 @@ function module:new(name)
 	return t
 end
 
-function module:set_current_design()	-- internal use only
-	this			= self
-	sub_module		= self.sub_module
+function module:set_current_design(enable)	-- internal use only
+	if enable then
+		self.prev_this		= this
+		this				= self
+	else
+		this				= self.prev_this
+		self.prev_this		= self
+	end
 end
 
 function module:set_title(title)
@@ -205,12 +210,16 @@ function module:add_module(m, name)
 		error("Nulled module added to module[" .. self.name .. "]", 2)
 	end
 
+	if type(m) == "string" then
+		m = module:new(m)
+	end
+	
 	if m == self then
 		error("Can't include self module instance : '" .. self.name .. "'", 2)
 	end
-	
-	if type(m) == "string" then
-		m = module:new(m)
+
+	if self.__active then	-- on 'make_code'
+		m:make_code(false)
 	end
 
 	-- no name, so find new name
