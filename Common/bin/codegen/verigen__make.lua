@@ -635,7 +635,7 @@ function module:make_code(is_top)
 	f:Put("endmodule\n")
 	
 	f:Close()
-	__m	= nil
+	this	= nil
 	
 	-- apply istyle
 	exec("istyle --style=kr -T4 -n \"" .. sOutPath .. "/" .. self.name .. ".sv\"")
@@ -989,14 +989,14 @@ vfunction("DEMUX_BY_EN", function(width, channel_count, en, data_in, data_out)
 end)
 
 vfunction("MULTICYCLE", function(module_inst_name, if_name, cycle_count, instance_count, clk)
-	if __m == nil then
+	if this == nil then
 		error("Multicycle instance can specified only in module code.", 2)
 	end
 	
-	local	m	= __m:get_module(module_inst_name)
+	local	m	= this:get_module(module_inst_name)
 	
 	if m == nil then
-		error("Can't find module instance[" .. tostring(module_inst_name) .. "] in module[" .. __m.name .. "]", 2)
+		error("Can't find module instance[" .. tostring(module_inst_name) .. "] in module[" .. this.name .. "]", 2)
 	end
 	
 	if cycle_count < 2 or cycle_count > 12 then
@@ -1028,9 +1028,9 @@ vfunction("MULTICYCLE", function(module_inst_name, if_name, cycle_count, instanc
 	end
 	
 	-- add "genvar i"
-	if __m.__genvar_i == nil then
+	if this.__genvar_i == nil then
 		m.code.prefix	= "genvar i;\n"
-		__m.__genvar_i	= true
+		this.__genvar_i	= true
 	end
 	
 	-- find interface

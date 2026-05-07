@@ -10,7 +10,7 @@ module.__top		= nil
 module.__inception	= ""
 module.document		= {}
 
-__m					= nil	-- current module instance
+this				= nil	-- current module instance
 sub_module			= nil	-- current sub module instance
 
 -- find module
@@ -66,7 +66,7 @@ function module:new(name)
 end
 
 function module:set_current_design()	-- internal use only
-	__m				= self
+	this			= self
 	sub_module		= self.sub_module
 end
 
@@ -479,14 +479,14 @@ function module_i:new(name, m, parent)
 end
 
 -- verilog inline function
-vfunction("set_title", "__m:set_title")
-vfunction("set_author", "__m:set_author")
-vfunction("set_inception", "__m:set_inception")
-vfunction("set_param", "__m:set_param")
-vfunction("add_clock", "__m:add_clock")
-vfunction("add_interface", "__m:add_interface")
-vfunction("add_code", "__m:add_code")
-vfunction("add_document", "__m:add_document")
+vfunction("set_title", "this:set_title")
+vfunction("set_author", "this:set_author")
+vfunction("set_inception", "this:set_inception")
+vfunction("set_param", "this:set_param")
+vfunction("add_clock", "this:add_clock")
+vfunction("add_interface", "this:add_interface")
+vfunction("add_code", "this:add_code")
+vfunction("add_document", "this:add_document")
 
 -- module instance
 function module_i:get_param(name)
