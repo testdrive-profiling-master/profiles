@@ -18,6 +18,7 @@ AddRevision("1.03",	2023, 11, 2,	"fix module definition.")
 AddRevision("1.04",	2024, 3, 18,	"Combines set_modport/add_modport functions into one and extends functionality.")
 AddRevision("1.05",	2024, 3, 19,	"add verigen_set_max_showlink() function.")
 AddRevision("1.06",	2024, 5, 10,	"Simplified the 'module:add_interface' function.")
+AddRevision("1.07",	2026, 5, 7,		"add 'inline block' expression.")
 
 -- Term 추가
 AddTerm("TestDrive", "TestDrive Profiling Master (@<link:https://testdrive-profiling-master.github.io/>)")
@@ -27,5 +28,6 @@ AddTerm("Lua", "Lua script language (@<link:https://ko.wikipedia.org/wiki/%EB%A3
 AddParagraph("[[src/introduction.md]]")
 AddParagraph("[[src/fast_follow.md]]")
 AddParagraph("[[src/macros.md]]")
+AddParagraph("[[src/inlines.md]]")
 AddParagraph("[[src/instructions.md]]")
 AddParagraph("[[src/appendix.md]]")
