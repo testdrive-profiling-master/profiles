@@ -105,10 +105,6 @@ CGe::~CGe(void)
 	ReleaseAll();
 }
 
-//------------------------------------- �������̽� -------------------------------------
-//--------------------------------------------
-//	Create : ����.
-//--------------------------------------------
 HRESULT CGe::Create(void)
 {
 	m_pDDK = CreateDDK();
@@ -127,19 +123,14 @@ HRESULT CGe::Create(void)
 	}
 
 	//--------------------------------------------------------------------
-	// 3D ������Ʈ �ʱ�ȭ
-	//
 	m_bActive = FALSE;
 	SAFE_RELEASE(m_pd3dDevice);
 	SAFE_RELEASE(m_pD3D);
-	// ������ ������ ũ�⸦ �����Ѵ�.
 	GetWindowRect(m_hWndWindow, &m_rcWindowBounds);
 
-	// D3D ��ü ����
 	if (NULL == (m_pD3D = Direct3DCreate9(D3D_SDK_VERSION)))
 		return E_FAIL;
 
-	// D3D ����̽� �Ķ���͸� �����մϴ�.
 	m_d3dpp.Windowed		 = m_bWindow;
 	m_d3dpp.BackBufferWidth	 = m_iScreenWidth;
 	m_d3dpp.BackBufferHeight = m_iScreenHeight;
@@ -174,9 +165,7 @@ HRESULT CGe::Create(void)
 	m_bActive = TRUE;
 	return S_OK;
 }
-//--------------------------------------------
-//	ReleaseAll : ����.
-//--------------------------------------------
+
 void CGe::ReleaseAll()
 {
 	m_bActive = FALSE;
@@ -193,9 +182,6 @@ void CGe::ReleaseAll()
 	SAFE_RELEASE(m_pDDK);
 }
 
-//--------------------------------------------
-//	3DEnvironment : ȭ�� ���.
-//--------------------------------------------
 HRESULT CGe::Render3DEnvironment(void)
 {
 	HRESULT hr;
@@ -206,12 +192,11 @@ HRESULT CGe::Render3DEnvironment(void)
 	if (!m_bActive)
 		return S_OK;
 
-	if (m_bDeviceLost) { // ������ ����̽��� �Ҿ������ ������ �ʿ��� �� ����.
+	if (m_bDeviceLost) {
 		if (FAILED(hr = m_pd3dDevice->TestCooperativeLevel())) {
-			if (D3DERR_DEVICELOST == hr) // ����̽��� �� �Ҿ���ȴ�. �����ϴµ� �ణ�� �ð��� �ʿ��� �� �ֽ��ϴ�.
+			if (D3DERR_DEVICELOST == hr)
 				return S_OK;
 
-			// ����̽� ����
 			if (D3DERR_DEVICENOTRESET == hr) {
 				if (FAILED(hr = Reset3DEnvironment()))
 					return hr;
@@ -229,9 +214,9 @@ HRESULT CGe::Render3DEnvironment(void)
 			return hr;
 		}
 
-		hr = m_pd3dDevice->Present(NULL, NULL, NULL, NULL); // ȭ�鿡 ���
+		hr = m_pd3dDevice->Present(NULL, NULL, NULL, NULL);
 
-		if (D3DERR_DEVICELOST == hr) // ����̽��� �Ҿ����.
+		if (D3DERR_DEVICELOST == hr)
 			m_bDeviceLost = TRUE;
 
 		m_imCamera.Unlock();
@@ -240,14 +225,10 @@ HRESULT CGe::Render3DEnvironment(void)
 	return S_OK;
 }
 
-//--------------------------------------- ������ ---------------------------------------
-//--------------------------------------------
-//	MsgProc : �޽��� ���ν���.
-//--------------------------------------------
 LRESULT CGe::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg) {
-	case WM_ACTIVATE: // ALT + TAB ���� �������ų� ���콺�� Ȱ��&��Ȱ��ȭ ��ų���
+	case WM_ACTIVATE: // ALT + TAB 로 활성화시
 		if (m_bFullScreenOnly)
 			m_bActive = (wParam & (WA_ACTIVE | WA_CLICKACTIVE)) != 0;
 
@@ -256,9 +237,6 @@ LRESULT CGe::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_SETCURSOR:
-
-		// Ǯ��ũ���� ���Ƿ� �����찡 �𷡽ð� Ŀ���� ���̰� �ϴ� ����
-		// �����ݴϴ�.
 		if (m_bActive && !m_bWindow) {
 			SetCursor(NULL);
 
@@ -266,12 +244,9 @@ LRESULT CGe::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 				m_pd3dDevice->ShowCursor(FALSE);
 		}
 
-		return true; // �⺻ ���ν����� Ŀ�������� ���´�.
+		return true;
 
 	case WM_NCHITTEST:
-
-		// �޴��� ����� ��� ��üȭ�鿡�� �޴��� ������ �� �ִ� ����
-		// ����.
 		if (!m_bWindow)
 			return HTCLIENT;
 
@@ -284,24 +259,19 @@ LRESULT CGe::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 #endif
 
 		case PBT_APMQUERYSUSPEND:
-			// �ý����� ������� ��忡 ���� �����Ѵ�.
-			// ��Ʈ�� �����̴ٸ��� ���� �����̶���� ������� ��带 �غ��ؾ� �Ѵ�.
+			// 최대 절전모드 금지
 			return true;
 #ifndef PBT_APMRESUMESUSPEND
 #	define PBT_APMRESUMESUSPEND 0x0007
 #endif
 
 		case PBT_APMRESUMESUSPEND:
-			// ������� ��忡�� ���� �Ǿ���.
-			// ���� �غ� �ϵ��� ���Ḧ �ϵ���... ���� �ؾ��Ѵ�.--;;; �� ���� �̷� ��� ������.
 			return true;
 		}
 
 		break;
 
 	case WM_SYSCOMMAND:
-
-		// Ǯ��ũ���� ��� ������ ������ ����, �̵�, ���� ��� ������ ���� �ʴ´�.
 		switch (wParam) {
 		case SC_MOVE:
 		case SC_SIZE:
@@ -318,7 +288,7 @@ LRESULT CGe::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	case WM_COMMAND:
 		switch (LOWORD(wParam)) {
-		case IDC_TOGGLE_FULLSCREEN: // "ALT + ENTER" �� �����Ѵ�. ������ ���� Ǯ��Ű�� ��带 ����.
+		case IDC_TOGGLE_FULLSCREEN: // "ALT + ENTER" toggle full screen
 			if (!m_bFullScreenOnly)
 				ToggleFullScreen();
 			else {
@@ -328,11 +298,11 @@ LRESULT CGe::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 			return 0;
 
-		case IDC_CAPTURE_SCREEN: // "F12" ��ũ���� Ű
+		case IDC_CAPTURE_SCREEN: // "F12" capture screen
 			CaptureScreenShot();
 			return 0;
 
-		case IDC_EXIT: // "ESC" ���α׷� ����.
+		case IDC_EXIT: // "ESC" key to exit
 			PostMessage(m_hWndWindow, WM_DESTROY, 0, 0);
 			return 0;
 		}
@@ -347,21 +317,14 @@ LRESULT CGe::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
-//--------------------------------------------
-//	Reset3DEnvironment : ����̽��� ���� ���,
-//  �Ǵ� 3Dȯ���� �ٲ� ��� ȣ��ǰ� �˴ϴ�.
-//--------------------------------------------
 HRESULT CGe::Reset3DEnvironment()
 {
 	HRESULT hr;
-	// ���� �޸��� ��� ��ġ�� �����մϴ�.
 	InvalidateDeviceObjects();
 
-	// ��ġ�� �����մϴ�.
 	if (FAILED(hr = m_pd3dDevice->Reset(&m_d3dpp)))
 		return hr;
 
-	// ��ġ�� �����մϴ�.
 	hr = RestoreDeviceObjects();
 
 	if (FAILED(hr)) {
@@ -372,10 +335,6 @@ HRESULT CGe::Reset3DEnvironment()
 	return S_OK;
 }
 
-//--------------------------------------------
-//	ToggleFullScreen : â���� Ǯ��ũ�� ��带
-//  ��� ��ȯ�ϰ� �˴ϴ�.
-//--------------------------------------------
 HRESULT CGe::ToggleFullScreen(BOOL bToggle)
 {
 	HRESULT hr = S_OK;
@@ -418,10 +377,6 @@ HRESULT CGe::ToggleFullScreen(BOOL bToggle)
 	return hr;
 }
 
-//--------------------------------------------
-//	CaptureScreenShot : ȭ���� ĸ���Ͽ� ���Ϸ� �����մϴ�.
-//  ��ũ���� ��� SHOT(XXXX).png
-//--------------------------------------------
 const char *SCREENSHOT_DIR	= "ScreenShot";
 const char *SCREENSHOT_NAME = "ScreenShot\\SHOT%04d.png";
 HRESULT		CGe::CaptureScreenShot(void)
@@ -433,7 +388,6 @@ HRESULT		CGe::CaptureScreenShot(void)
 
 	char filename[32];
 
-	// "ScreenShot" ���丮 ���� ���� Ȯ��
 	switch (GetFileAttributes(SCREENSHOT_DIR)) {
 	case FILE_ATTRIBUTE_DIRECTORY:
 		break;
@@ -450,27 +404,23 @@ HRESULT		CGe::CaptureScreenShot(void)
 		return E_FAIL;
 	}
 
-	// ���� �̸� �ߺ� ����
+	// 이름 "_?" 번호 찾기
 	do {
 		dwShotCount++;
 		wsprintf(filename, SCREENSHOT_NAME, dwShotCount);
 	} while (GetFileAttributes(filename) != INVALID_FILE_ATTRIBUTES);
 
-	// PNG ���Ϸ� ��ũ���� ����
+	// PNG 저장
 	IDirect3DSurface9 *pSurface = NULL;
 	m_imCamera.Lock();
-	m_pd3dDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pSurface); // Back Surface�� ���ͼ�...
-	D3DXSaveSurfaceToFile(filename, D3DXIFF_PNG, pSurface, NULL, NULL);	   // ������
-	SAFE_RELEASE(pSurface);												   // �޸� ���� ����
+	m_pd3dDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &pSurface); // Get back Surface buffer
+	D3DXSaveSurfaceToFile(filename, D3DXIFF_PNG, pSurface, NULL, NULL);
+	SAFE_RELEASE(pSurface);
 	SysLog(0xFFFFFF, "Capture Image to '%s'...", filename);
 	m_imCamera.Unlock();
 	return S_OK;
 }
 
-//--------------------------------------------
-//	InitDeviceObjects : ���� �׷��� ��ġ��
-//  �ʱ�ȭ�մϴ�.
-//--------------------------------------------
 HRESULT CGe::InitDeviceObjects(void)
 {
 	if (m_bDeviceObjectsInited)
@@ -518,13 +468,6 @@ HRESULT CGe::InitDeviceObjects(void)
 	return S_OK;
 }
 
-//--------------------------------------------
-//	RestoreDeviceObjects : ���� �޸� ������
-//  �ٽ� ������ �ݴϴ�.
-//  ���� ���� �޸𸮴� ���� ���ư��� �ʽ��ϴ�.
-//  ���� �ַ� RenderState������ ������ ���¸�
-//  �ٽ� ������ �ֽø� �˴ϴ�.
-//--------------------------------------------
 HRESULT CGe::RestoreDeviceObjects(void)
 {
 	if (m_bDeviceObjectsRestored)
@@ -596,16 +539,6 @@ HRESULT CGe::RestoreDeviceObjects(void)
 	return S_OK;
 }
 
-//--------------------------------------------
-//	InvalidateDeviceObjects : ����̽� ��ġ��
-//  �Ҿ������ ��, ���� �޸𸮸� ����ϴ�
-//  ��ġ�� �����մϴ�.
-//	���� : Managed pool�� �����ϸ� �ؽ��ĳ�
-//  ���ؽ� ������ �Ҿ������ �ʽ��ϴ�.
-//  ���� ���� ������ �ʿ�� �����ϴ�.
-//  �ػ󵵸� �ٲٰų� ����̽� ��ü�� �ٲܶ���
-//  ���� �ٽ� �޸𸮸� �ø��� �۾��� �ʿ��մϴ�.
-//--------------------------------------------
 HRESULT CGe::InvalidateDeviceObjects(void)
 {
 	if (!m_bDeviceObjectsRestored)
@@ -625,10 +558,6 @@ HRESULT CGe::InvalidateDeviceObjects(void)
 	return S_OK;
 }
 
-//--------------------------------------------
-//	DeleteDeviceObjects : �׷��� ��ġ�� ���
-//  �޸𸮿��� �����մϴ�.
-//--------------------------------------------
 HRESULT CGe::DeleteDeviceObjects(void)
 {
 	if (!m_bDeviceObjectsInited)
@@ -713,7 +642,6 @@ HRESULT CGe::Render(void)
 			m_bFound = TRUE; // for test
 		}
 
-		// �ý��� �޽��� ���
 		{
 			int i	  = m_iScreenHeight - 132 - 8;
 			int Index = m_cSystemMsg.GetSize();

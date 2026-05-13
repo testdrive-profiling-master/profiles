@@ -274,7 +274,7 @@ BOOL VideoSource::Create(int iWidth, int iHeight, SOURCE_TYPE type)
 	_F_(streamConfig->GetNumberOfCapabilities(&count, &size), "Error getting number of capabilities");
 
 	{
-		// ÀûÀıÇÑ Æ÷¸ä Ã£±â
+		// ì ì ˆí•œ í¬ë©§ ì°¾ê¸°
 		BOOL bFound = FALSE;
 
 		for(int i = 0; i < count; i++) {
@@ -287,7 +287,7 @@ BOOL VideoSource::Create(int iWidth, int iHeight, SOURCE_TYPE type)
 				VIDEOINFOHEADER* infoHeader = (VIDEOINFOHEADER*)mediaType->pbFormat;
 
 				if(infoHeader->bmiHeader.biWidth && infoHeader->bmiHeader.biHeight) {
-					// ¿©±â¼­ Æ÷¸äÀ» ¼±ÅÃ!!!
+					// ì—¬ê¸°ì„œ í¬ë©§ì„ ì„ íƒ!!!
 					if(iWidth) if(infoHeader->bmiHeader.biWidth != iWidth) goto BYPASS_CHECK;
 
 					if(iHeight) if(infoHeader->bmiHeader.biHeight != iHeight) goto BYPASS_CHECK;

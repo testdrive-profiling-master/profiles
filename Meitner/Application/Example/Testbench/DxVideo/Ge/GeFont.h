@@ -36,7 +36,7 @@
 //================================================================================
 #ifndef __GE_FONT_H__
 #define __GE_FONT_H__
-// CGeFont ÆùÆ® °ü¸®
+// CGeFont í°íŠ¸ ê´€ë¦¬
 #include "GePrimitive.h"
 
 // Font creation flags
@@ -51,7 +51,7 @@
 #define D3DFONT_FILTERED    0x0008
 
 
-class CGeFont : CGePrimitive	// ÆùÆ® °ü¸®
+class CGeFont : CGePrimitive	// í°íŠ¸ ê´€ë¦¬
 {
 	TCHAR   m_strFontName[80];            // Font properties
     DWORD   m_dwFontHeight;
