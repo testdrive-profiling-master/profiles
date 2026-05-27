@@ -8,7 +8,7 @@ LuaBridge 3.0 Reference Manual
 LuaBridge3 repository is located at [https://github.com/kunitoki/LuaBridge3](https://github.com/kunitoki/LuaBridge3).
 Official LuaBridge (up to version 2) repository is located at [https://github.com/vinniefalco/LuaBridge](https://github.com/vinniefalco/LuaBridge).
 
-*   Copyright © 2020 Asnaghi Lucio.
+*   Copyright © 2020 kunitoki.
 *   Copyright © 2019 Dmitry Tarakanov.
 *   Copyright © 2012 Vinnie Falco.
 *   Copyright © 2007 Nathan Reed.
@@ -29,18 +29,31 @@ Contents
     *   [2.1 - Namespaces](#21---namespaces)
     *   [2.2 - Properties and Functions](#22---properties-and-functions)
     *   [2.3 - Class Objects](#23---class-objects)
+        *   [2.3.1 - Multiple Inheritance](#231---multiple-inheritance)
     *   [2.4 - Property Member Proxies](#24---property-member-proxies)
     *   [2.5 - Function Member Proxies](#25---function-member-proxies)
-    *   [2.5.1 - Function Overloading](#251---function-overloading)
+    *   [2.5.1 - Partial Application with luabridge::bind_front](#251---partial-application-with-luabridgebind_front)
+    *   [2.5.2 - Partial Application with luabridge::bind_back](#252---partial-application-with-luabridgebind_back)
+    *   [2.5.3 - Function Overloading](#253---function-overloading)
     *   [2.6 - Constructors](#26---constructors)
     *   [2.6.1 - Constructor Proxies](#261---constructor-proxies)
     *   [2.6.2 - Constructor Factories](#262---constructor-factories)
+    *   [2.6.3 - Destructors](#263---destructors)
     *   [2.7 - Extending Classes](#27---extending-classes)
         *   [2.7.1 - Extensible Classes](#271---extensible-classes)
         *   [2.7.2 - Index and New Index Metamethods Fallback](#272---index-and-new-index-metamethods-fallback)
+        *   [2.7.3 - Static Index and New Index Metamethods Fallback](#273---static-index-and-new-index-metamethods-fallback)
     *   [2.8 - Lua Stack](#28---lua-stack)
-        *   [2.8.1 - Enums](#281---enums)
-        *   [2.8.2 - lua_State](#282---lua_state)
+        *   [2.8.1 - Custom Type Converters](#281---custom-type-converters)
+        *   [2.8.2 - Enums](#282---enums)
+        *   [2.8.3 - lua_State](#283---lua_state)
+        *   [2.8.4 - Standard Library Type Conversions](#284---standard-library-type-conversions)
+    *   [2.9 - C++20 Coroutine Integration](#29---c20-coroutine-integration)
+        *   [2.9.1 - CppCoroutine\<R\> - Generators callable from Lua](#291---cppcoroutiner----generators-callable-from-lua)
+        *   [2.9.2 - Accepting Arguments](#292---accepting-arguments)
+        *   [2.9.3 - Class Coroutines - Static and Member](#293---class-coroutines----static-and-member)
+        *   [2.9.4 - LuaCoroutine - Awaiting a Lua Thread from C++](#294---luacoroutine----awaiting-a-lua-thread-from-c)
+        *   [2.9.5 - Limitations](#295---limitations)
 
 *   [3 - Passing Objects](#3---passing-objects)
 
@@ -63,15 +76,32 @@ Contents
     *   [4.3 - Calling Lua](#43---calling-lua)
         *   [4.3.1 - Exceptions](#431---exceptions)
         *   [4.3.2 - Class LuaException](#432---class-luaexception)
+        *   [4.3.3 - Calling with Error Handlers](#433---calling-with-error-handlers)
+    *   [4.4 - Wrapping C++ Callables](#44---wrapping-c-callables)
 
 *   [5 - Security](#5---security)
+
+*   [6 - Configuration](#6---configuration)
+
+    * [6.1 - LUABRIDGE_SAFE_STACK_CHECKS](#61---luabridge-safe-stack-checks)
+    * [6.2 - LUABRIDGE_STRICT_STACK_CONVERSIONS](#62---luabridge-strict-stack-conversions)
+    * [6.3 - LUABRIDGE_SAFE_LUA_C_EXCEPTION_HANDLING](#63---luabridge-safe-c-exception-handling)
+    * [6.4 - LUABRIDGE_RAISE_UNREGISTERED_CLASS_USAGE](#64---luabridge-raise-unregistered-class-usage)
+    * [6.5 - LUABRIDGE_HAS_CXX20_COROUTINES / LUABRIDGE_DISABLE_CXX20_COROUTINES](#65---luabridge-has-cxx20-coroutines--luabridge-disable-cxx20-coroutines)
+    * [6.6 - LUABRIDGE_HAS_CXX17_FILESYSTEM / LUABRIDGE_DISABLE_CXX17_FILESYSTEM](#66---luabridge-has-cxx17-filesystem--luabridge-disable-cxx17-filesystem)
+    * [6.7 - LUABRIDGE_HAS_CXX17_ANY / LUABRIDGE_DISABLE_CXX17_ANY](#67---luabridge-has-cxx17-any--luabridge-disable-cxx17-any)
+    * [6.8 - LUABRIDGE_HAS_CXX20_SPAN / LUABRIDGE_DISABLE_CXX20_SPAN](#68---luabridge-has-cxx20-span--luabridge-disable-cxx20-span)
+    * [6.9 - LUABRIDGE_HAS_CXX20_RANGES / LUABRIDGE_DISABLE_CXX20_RANGES](#69---luabridge-has-cxx20-ranges--luabridge-disable-cxx20-ranges)
+    * [6.10 - LUABRIDGE_HAS_CXX23_EXPECTED / LUABRIDGE_DISABLE_CXX23_EXPECTED](#610---luabridge-has-cxx23-expected--luabridge-disable-cxx23-expected)
+    * [6.11 - LUABRIDGE_HAS_CXX23_FLAT_CONTAINERS / LUABRIDGE_DISABLE_CXX23_FLAT_CONTAINERS](#611---luabridge-has-cxx23-flat-containers--luabridge-disable-cxx23-flat-containers)
+    * [6.12 - LUABRIDGE_HAS_CXX23_MOVE_ONLY_FUNCTION / LUABRIDGE_DISABLE_CXX23_MOVE_ONLY_FUNCTION](#612---luabridge-has-cxx23-move-only-function--luabridge-disable-cxx23-move-only-function)
 
 *   [Appendix - API Reference](#appendix---api-reference)
 
 1 - Introduction
 ================
 
-[LuaBridge](https://github.com/kunitoki/LuaBridge3) is a lightweight and dependency-free library for mapping data, functions, and classes back and forth between C++ and [Lua](http://wwww.lua.org), a powerful, fast, lightweight, embeddable scripting language. LuaBridge has been tested and works with Lua 5.1.5, 5.2.4, 5.3.6 and 5.4.6. It also works transparently with [LuaJIT](http://luajit.org/) 2.x onwards and for the first time also with [Luau](https://luau-lang.org/) 0.556 onwards and [Ravi](https://github.com/dibyendumajumdar/ravi) 1.0-beta11.
+[LuaBridge](https://github.com/kunitoki/LuaBridge3) is a lightweight and dependency-free library for mapping data, functions, and classes back and forth between C++ and [Lua](http://wwww.lua.org), a powerful, fast, lightweight, embeddable scripting language. LuaBridge has been tested and works with Lua 5.1.5, 5.2.4, 5.3.6, 5.4.8 and 5.5.0. It also works transparently with [LuaJIT](http://luajit.org/) 2.1 onwards and for the first time also with [Luau](https://luau-lang.org/) 0.713 onwards and [Ravi](https://github.com/dibyendumajumdar/ravi) 1.0-beta11.
 
 LuaBridge is usable from a compliant C++17 and offers the following features:
 
@@ -101,9 +131,12 @@ It also offers a set of improvements compared to vanilla LuaBridge:
 * Added `std::shared_ptr` to support shared C++/Lua lifetime for types deriving from `std::enable_shared_from_this`.
 * Supports conversion to and from `std::nullptr_t`, `std::byte`, `std::pair`, `std::tuple` and `std::reference_wrapper`.
 * Supports conversion to and from C style arrays of any supported type.
+* Supports `std::unique_ptr<T>` as an ownership container, giving Lua a non-owning view of the C++ object.
+* Supports `std::move_only_function` (C++23) as a registered callable type alongside `std::function`.
 * Transparent support of all signed and unsigned integer types up to `int64_t`.
 * Consistent numeric handling and conversions (signed, unsigned and floats) across all lua versions.
 * Simplified registration of enum types via the `luabridge::Enum` stack wrapper.
+* Opt-in custom converters between registered C++ userdata types.
 * Opt-out handling of safe stack space checks (automatically avoids exhausting lua stack space when pushing values!).
 
 LuaBridge is distributed as a a collection of header files. You simply add one line, `#include <LuaBridge/LuaBridge.h>` where you want to pass functions, classes, and variables back and forth between C++ and Lua. There are no additional source files, no compilation settings, and no Makefiles or IDE-specific project files. LuaBridge is easy to integrate.
@@ -117,12 +150,12 @@ To expose Lua objects to C++, a class called `luabridge::LuaRef` is provided. Th
 
 LuaBridge tries to be efficient as possible when creating the "glue" that exposes C++ data and functions to Lua. At the same time, the code was written with the intention that it is all as simple and clear as possible, without resorting to obscure C++ idioms, ugly preprocessor macros, or configuration settings. Furthermore, it is designed to be "header-only", making it very easy to integrate into your projects.
 
-Because LuaBridge was written with simplicity in mind there are some features that are not available. Although it comes close to the highest possible performance, LuaBridge is not quite the fastest, [OOLua](http://code.google.com/p/oolua/) and [sol2](https://github.com/ThePhD/sol2) outperforms LuaBridge in some tests, but they are also bigger and slower to compile. While being powerful, LuaBridge is pretty compact and simpler to understand and debug, and also does not try to implement every possible feature: [LuaBind](http://www.rasterbar.com/products/luabind.html) (requires Boost) and [sol2](https://github.com/ThePhD/sol2) explores every corner of the C++ language.
+Because LuaBridge was written with simplicity in mind there are some features that are not available. LuaBridge3 has been extensively optimized and now competes directly with [sol2](https://github.com/ThePhD/sol2) - one of the fastest C++/Lua binding libraries - across most workloads. In fact, LuaBridge3 outperforms sol2 in certain scenarios such as member function calls from Lua and global table writes, while remaining more compact and faster to compile. While sol2 has an edge in chained table access, the overall performance gap is negligible for most use cases. LuaBridge3 also does not try to implement every possible feature: [LuaBind](http://www.rasterbar.com/products/luabind.html) (requires Boost) and [sol2](https://github.com/ThePhD/sol2) explore every corner of the C++ language.
 
 LuaBridge does not support:
 
 *   Global types (types must be registered in a named scope).
-*   Automatic conversion between STL container types and Lua tables (but conversion can be enabled for `std::array`, `std::vector`, `std::map`, `std::unordered_map`, `std::set` `std::list`, `std::optional`, by including `LuaBridge/Array.h`, `LuaBridge/Vector.h`, `LuaBridge/Map`, `LuaBridge/UnorderedMap.h`, `LuaBridge/Set.h`, `LuaBridge/List.h`, `LuaBridge/Optional.h` respectively)
+*   Automatic conversion between STL container types and Lua tables (but conversion can be opted in for many standard containers by including the corresponding optional header — see [2.8.4](#284---standard-library-type-conversions))
 *   Inheriting Lua classes from C++ classes.
 *   Passing nil to a C++ function that expects a pointer or reference.
 
@@ -158,9 +191,9 @@ SOFTWARE.
 
 The original version of LuaBridge was written by Nathan Reed. The project has been taken over by Vinnie Falco, who added new functionality and wrote the new documentation. Vinnie also incorporated `LuaRef` and other Lua to C++ binding contributions from Nigel Atkinson.
 
-For questions, comments, or bug reports feel free to open a Github issue or contact Lucio Asnaghi directly at the email address indicated below.
+For questions, comments, or bug reports feel free to open a Github issue or contact kunitoki directly at the email address indicated below.
 
-*   Copyright 2020, Lucio Asnaghi [<kunitoki@gmail.com>](mailto:kunitoki@gmail.com)
+*   Copyright 2020, kunitoki [<kunitoki@gmail.com>](mailto:kunitoki@gmail.com)
 *   Copyright 2019, Dmitry Tarakanov
 *   Copyright 2012, Vinnie Falco [<vinnie.falco@gmail.com>](mailto:vinnie.falco@gmail.com)
 *   Copyright 2008, Nigel Atkinson [<suprapilot+LuaCode@gmail.com>](mailto:suprapilot+LuaCode@gmail.com)
@@ -333,8 +366,6 @@ test.bar ("Employee")  -- calls bar with a string
 test.bar (test)        -- error: bar expects a string not a table
 ```
 
-LuaBridge does not support overloaded functions nor is it likely to in the future. Since Lua is dynamically typed, any system that tries to resolve a set of parameters passed from a script will face considerable ambiguity when trying to choose an appropriately matching C++ function signature.
-
 2.3 - Class Objects
 -------------------
 
@@ -405,7 +436,21 @@ luabridge::getGlobalNamespace (L)
 
 Method registration works just like function registration. Virtual methods work normally; no special syntax is needed. const methods are detected and const-correctness is enforced, so if a function returns a const object (or a container holding to a const object) to Lua, that reference to the object will be considered const and only const methods can be called on it. It is possible to register Lua metamethods (except `__gc`). Destructors are registered automatically for each class.
 
-As with regular variables and properties, class properties can be marked read-only by passing false in the second parameter, or omitting the set function. The `deriveClass` takes two template arguments: the class to be registered, and its base class. Inherited methods do not have to be re-declared and will function normally in Lua. If a class has a base class that is **not** registered with Lua, there is no need to declare it as a subclass.
+As with regular variables and properties, class properties can be marked read-only by passing false in the second parameter, or omitting the set function. The `deriveClass` takes a derived class and one or more registered base classes as template arguments. Inherited methods do not have to be re-declared and will function normally in Lua. If a class has a base class that is **not** registered with Lua, there is no need to declare it as a subclass.
+
+When registering a data member pointer as both readable and writable, the common pattern of passing the same pointer twice to `addProperty` or `addStaticProperty` can be replaced with the convenience methods `addPropertyReadWrite` and `addStaticPropertyReadWrite`:
+
+```cpp
+luabridge::getGlobalNamespace (L)
+  .beginNamespace ("test")
+    .beginClass<A> ("A")
+      .addStaticPropertyReadWrite ("staticData", &A::staticData)  // equivalent to addStaticProperty ("staticData", &A::staticData, &A::staticData)
+      .addPropertyReadWrite ("data", &A::dataMember)              // equivalent to addProperty ("data", &A::dataMember, &A::dataMember)
+    .endClass ()
+  .endNamespace ();
+```
+
+These accept only a pointer-to-data-member (for `addPropertyReadWrite`) or a pointer to a static data member (for `addStaticPropertyReadWrite`). They do not accept getter/setter function pairs; use `addProperty` or `addStaticProperty` directly for those cases.
 
 Remember that in Lua, the colon operator '`:`' is used for method call syntax:
 
@@ -416,6 +461,51 @@ a.func1 ()  -- error: func1 expects an object of a registered class
 a.func1 (a) -- okay, verbose, this how OOP works in Lua
 a:func1 ()  -- okay, less verbose, equivalent to the previous
 ```
+
+### 2.3.1 - Multiple Inheritance
+
+`deriveClass` supports multiple registered base classes by specifying them as additional template parameters. LuaBridge will traverse all base class hierarchies when resolving member lookups from Lua:
+
+```cpp
+struct A
+{
+  void funcA () { }
+};
+
+struct B
+{
+  void funcB () { }
+};
+
+struct C : public A, public B
+{
+  void funcC () { }
+};
+
+luabridge::getGlobalNamespace (L)
+  .beginNamespace ("test")
+    .beginClass<A> ("A")
+      .addFunction ("funcA", &A::funcA)
+    .endClass ()
+    .beginClass<B> ("B")
+      .addFunction ("funcB", &B::funcB)
+    .endClass ()
+    .deriveClass<C, A, B> ("C")
+      .addFunction ("funcC", &C::funcC)
+    .endClass ()
+  .endNamespace ();
+```
+
+From Lua, all inherited methods are accessible on instances of `C`:
+
+```lua
+local c = test.C ()
+c:funcA ()  -- calls A::funcA via multiple-inheritance lookup
+c:funcB ()  -- calls B::funcB via multiple-inheritance lookup
+c:funcC ()  -- calls C::funcC
+```
+
+Only base classes that are themselves registered with LuaBridge need to be listed as template parameters. If a base class is not registered, it can be omitted from `deriveClass`.
 
 2.4 - Property Member Proxies
 -----------------------------
@@ -540,7 +630,77 @@ luabridge::getGlobalNamespace (L)
 
 Of course when not capturing, it is better to prefix the lambda with `+` so it is converted and stored internally to a function pointer instead of an `std::function`, so it is actually lighter to store and faster to call.
 
-### 2.5.1 - Function Overloading
+### 2.5.1 - Partial Application with luabridge::bind_front
+
+`std::bind_front` (C++20) returns a callable whose `operator()` is a template, so LuaBridge cannot statically resolve its argument types. Passing such a result directly to `addFunction` therefore fails to compile. The workaround without `luabridge::bind_front` is an explicit cast to `std::function`:
+
+```cpp
+int add (int a, int b) { return a + b; }
+
+// Verbose: explicit signature required
+ns.addFunction ("add10", std::function<int(int)> (std::bind_front (&add, 10)));
+```
+
+`luabridge::bind_front` is a drop-in replacement that deduces the remaining argument types from the underlying callable's signature, so no explicit cast is needed:
+
+```cpp
+// Concise: types are deduced automatically
+ns.addFunction ("add10", luabridge::bind_front (&add, 10));
+```
+
+It also works with member function pointers. The bound object is not counted as a Lua-visible parameter, so `bind_front` turns a member function into a plain callable that Lua sees as a regular function:
+
+```cpp
+struct Vec { float coord [3]; float getCoord (int i) const { return coord [i]; } };
+
+Vec v;
+// Bind v as the object; Lua supplies the index
+ns.addFunction ("getCoord", luabridge::bind_front (&Vec::getCoord, &v));
+// Lua: getCoord(0) == v.coord[0]
+```
+
+It also accepts lambdas:
+
+```cpp
+int base = 10;
+ns.addFunction ("addBase", luabridge::bind_front ([base](int offset, int v) { return base + offset + v; }, 2));
+// Lua: addBase(30) == 42
+```
+
+### 2.5.2 - Partial Application with luabridge::bind_back
+
+`luabridge::bind_back` is the trailing-argument counterpart to `bind_front`: it pre-binds the **last** arguments of a callable, leaving the **leading** arguments for Lua to supply.
+
+```cpp
+int add (int a, int b) { return a + b; }
+
+// bind_back fixes the trailing argument; Lua supplies the leading one
+ns.addFunction ("add10", luabridge::bind_back (&add, 10));
+// Lua: add10(32) == 42
+```
+
+For member function pointers, `bind_back` automatically prepends the class pointer to the remaining (Lua-visible) parameter list so that LuaBridge can dispatch it as a proxy function. This lets you pre-bind a method's trailing arguments while the object still comes from Lua:
+
+```cpp
+struct Vec { float coord [3]; float getCoord (int i) const { return coord [i]; } };
+
+ns.beginClass<Vec> ("Vec")
+  .addFunction ("x", luabridge::bind_back (&Vec::getCoord, 0))
+  .addFunction ("y", luabridge::bind_back (&Vec::getCoord, 1))
+  .addFunction ("z", luabridge::bind_back (&Vec::getCoord, 2))
+.endClass ();
+// Lua: v:x() returns v.coord[0], v:y() returns v.coord[1], etc.
+```
+
+`bind_back` also accepts lambdas:
+
+```cpp
+int base = 10;
+ns.addFunction ("addBase", luabridge::bind_back ([base](int v, int offset) { return base + offset + v; }, 2));
+// Lua: addBase(30) == 42
+```
+
+### 2.5.3 - Function Overloading
 
 When specifying more than one method to the `addFunction` or `addStaticFunction` of both `Namespace` and `Class`, those overloads will be invoked in case of a call. Only overloads that have matched arguments arity will be considered, and they will be tried from first to last until the call succeeds.
 
@@ -725,6 +885,31 @@ a = nil                      -- Remove any reference count
 collectgarbage ("collect")   -- The object is garbage collected using objectFactoryDeallocator
 ```
 
+### 2.6.3 - Destructors
+
+In addition to the automatic `__gc` metamethod that LuaBridge registers for every class (which calls the C++ destructor when Lua garbage-collects the userdata), you can register an extra hook that is called **just before** the destructor runs. This is useful for performing clean-up work in a context where the object is still fully valid.
+
+Use `addDestructor` to register the hook. The callable must accept a `T*` (and optionally a trailing `lua_State*`):
+
+```cpp
+struct Resource
+{
+  ~Resource () { /* cleanup */ }
+};
+
+luabridge::getGlobalNamespace (L)
+  .beginNamespace ("test")
+    .beginClass<Resource> ("Resource")
+      .addDestructor ([] (Resource* r) {
+        // called before ~Resource()
+        std::cout << "Resource about to be destroyed\n";
+      })
+    .endClass ()
+  .endNamespace ();
+```
+
+The `__destruct` metamethod is invoked by Lua's garbage collector before `__gc` calls the C++ destructor. This metamethod is only available on non-Luau builds; Luau already calls `__gc` directly.
+
 2.7 - Extending Classes
 -----------------------
 
@@ -881,6 +1066,73 @@ propertyOne = flexi.propertyOne
 assert (propertyOne == 1337, "Value is now present !")
 ```
 
+### 2.7.3 - Static Index and New Index Metamethods Fallback
+
+The same fallback mechanism is available for the *static class table* - i.e. for key lookups performed on the class name itself (e.g. `MyClass.someKey`) rather than on an instance.  Use `addStaticIndexMetaMethod` and `addStaticNewIndexMetaMethod` to register the callbacks.  Unlike their instance counterparts, the static callbacks receive only the key (and optionally `lua_State*`) - there is no `self` parameter.
+
+```cpp
+struct MyClass {};
+
+std::unordered_map<std::string, int> store;
+
+luabridge::getGlobalNamespace (L)
+  .beginClass<MyClass> ("MyClass")
+    .addStaticIndexMetaMethod ([] (const luabridge::LuaRef& key, lua_State* L) -> luabridge::LuaRef
+    {
+      auto it = store.find (key.tostring ());
+      if (it != store.end ())
+        return luabridge::LuaRef (L, it->second);
+
+      return luabridge::LuaRef (L, luabridge::LuaNil ());
+    })
+    .addStaticNewIndexMetaMethod ([] (const luabridge::LuaRef& key, const luabridge::LuaRef& value, lua_State* L) -> luabridge::LuaRef
+    {
+      if (value.isNumber ())
+        store[key.tostring ()] = value.unsafe_cast<int> ();
+      return value;
+    })
+  .endClass ();
+```
+
+Then in lua:
+
+```lua
+MyClass.dynamicProp = 42
+
+value = MyClass.dynamicProp
+assert (value == 42, "Value stored via static __newindex fallback and retrieved via static __index fallback")
+
+missing = MyClass.nonExistingKey
+assert (missing == nil, "Unknown key returns nil through the static __index fallback")
+```
+
+Existing static properties and functions registered with `addStaticProperty` / `addStaticFunction` are found *after* the fallback is consulted.  If the fallback callback returns `nil` (or a nil `LuaRef`) for a given key, normal lookup continues and the real property or function is returned.  Conversely, if the callback returns a non-nil value the fallback result takes priority over any registered static property with the same name.
+
+```cpp
+struct MyClass
+{
+  static int answer () { return 42; }
+};
+
+luabridge::getGlobalNamespace (L)
+  .beginClass<MyClass> ("MyClass")
+    .addStaticFunction ("answer", &MyClass::answer)
+    .addStaticIndexMetaMethod ([] (const luabridge::LuaRef& /*key*/, lua_State* L) -> luabridge::LuaRef
+    {
+      // Returning nil lets the registered static function be found normally
+      return luabridge::LuaRef (L, luabridge::LuaNil ());
+    })
+  .endClass ();
+```
+
+Then in lua:
+
+```lua
+-- The registered static function is still callable because the fallback returned nil
+result = MyClass.answer ()
+assert (result == 42)
+```
+
 2.8 - Lua Stack
 ---------------
 
@@ -909,7 +1161,8 @@ The Stack template class specializations are used automatically for variables, p
 * `bool`
 * `char`, converted to a string of length one.
 * `const char*`, `std::string_view` and `std::string` all converted to strings.
-* `std::byte`, integers, `float`, `double`, `long double` all converted to `Lua_number`.
+* `std::byte`, integers, `float`, `double`, `long double` all converted to `lua_Number`. Floating-point values including NaN and Inf pass through without error.
+* `void*` and `const void*` mapped to Lua lightuserdata.
 
 User-defined types which are convertible to one of the basic types are possible, simply provide a `luabridge::Stack <>` specialization in the `luabridge` namespace for your user-defined type, modeled after the existing types. For example, here is a specialization for a `juce::String`:
 
@@ -1012,7 +1265,96 @@ struct Stack<Array<T>>
 } // namespace luabridge
 ```
 
-### 2.8.1 - Enums
+### 2.8.1 - Custom Type Converters
+
+For registered class types, LuaBridge can also convert one C++ userdata type into another C++ value type while reading function arguments from Lua. This is useful when Lua should pass a lightweight or external representation to a function that expects your domain type.
+
+Custom converters are opt-in per target type. To enable them:
+
+* Specialize `luabridge::StackConversion<To>` with `enabled = true`.
+* Specialize `luabridge::StackConverter<To, From>` and provide `static To convert (const From&)`.
+* Register the source class with `.addConverter<To>()`.
+
+```cpp
+struct Vec3Source
+{
+  float x = 0.f;
+  float y = 0.f;
+  float z = 0.f;
+
+  Vec3Source () = default;
+  Vec3Source (float x, float y, float z) : x (x), y (y), z (z) {}
+};
+
+struct Vec3
+{
+  float x = 0.f;
+  float y = 0.f;
+  float z = 0.f;
+
+  Vec3 () = default;
+  Vec3 (float x, float y, float z) : x (x), y (y), z (z) {}
+};
+
+float length (Vec3 v);
+float lengthRef (const Vec3& v);
+```
+
+Define the conversion in the `luabridge` namespace:
+
+```cpp
+namespace luabridge {
+
+template <>
+struct StackConversion<Vec3>
+{
+  static constexpr bool enabled = true;
+};
+
+template <>
+struct StackConverter<Vec3, Vec3Source>
+{
+  static Vec3 convert (const Vec3Source& v)
+  {
+    return { v.x, v.y, v.z };
+  }
+};
+
+} // namespace luabridge
+```
+
+Then register the source type and the converter:
+
+```cpp
+luabridge::getGlobalNamespace (L)
+  .beginClass<Vec3Source> ("Vec3Source")
+    .addConstructor<void (float, float, float)> ()
+    .addConverter<Vec3> ()
+  .endClass ()
+  .addFunction ("length", &length)
+  .addFunction ("lengthRef", &lengthRef);
+```
+
+Lua can now pass a `Vec3Source` where C++ expects `Vec3` by value or by `const Vec3&`:
+
+```lua
+v = Vec3Source (1, 2, 3)
+
+length (v)
+lengthRef (v)
+```
+
+The converter is consulted only after normal userdata extraction fails. If the Lua value already holds the requested target type, LuaBridge uses that object directly. If the value is derived from the requested target type, normal inheritance lookup is used first. The registered converter is the fallback path.
+
+Multiple source classes can register converters to the same target type by specializing `StackConverter<To, From>` for each source type and calling `.addConverter<To>()` on each source class. Registering the same converter more than once is harmless; the later registration replaces the earlier entry.
+
+Converters return an owned target value. That means converted temporaries can be passed to functions taking `To` or `const To&`. They are not a substitute for mutable references or pointers: a function that expects `To&`, `To*`, or `const To*` still requires a Lua value that actually stores the target object.
+
+`Stack<To>::isInstance` remains an exact/inheritance userdata test. It does not report source userdata as instances of the target type just because a converter is registered. This matters mainly for overload selection: converters are most predictable when the overload set does not rely on `isInstance` to distinguish converted arguments.
+
+The target class only needs to be registered with `beginClass<To>` if Lua must construct, store, or receive target objects directly. A converter used only to feed a C++ function argument does not require the target type to be exposed to Lua.
+
+### 2.8.2 - Enums
 
 In order to expose C++ enums to lua and be able to work bidirectionally with them, it's necesary to create a Stack specialization for each exposed enum. As the process might become tedious, a library wrapper class is provided to simplify the steps.
 
@@ -1075,7 +1417,7 @@ luabridge::getGlobalNamespace (L)
   .endNamespace();
 ```
 
-### 2.8.2 - lua_State
+### 2.8.3 - lua_State
 
 Sometimes it is convenient from within a bound function or member function to gain access to the `lua_State*` normally available to a lua_CFunction. With LuaBridge, all you need to do is add a `lua_State*` as the last parameter of your bound function:
 
@@ -1096,6 +1438,277 @@ luabridge::getGlobalNamespace (L).addFunction ("useStateAndArgs", &useStateAndAr
 When the script calls `useStateAndArgs`, it passes only the integer and string parameters. LuaBridge takes care of inserting the `lua_State*` into the argument list for the corresponding C++ function. This will work correctly even for the state created by coroutines. Undefined behavior results if the `lua_State*` is not the last parameter.
 
 The same is applicable for properties.
+
+### 2.8.4 - Standard Library Type Conversions
+
+LuaBridge does not enable STL container-to-Lua-table conversions by default. Each supported container type has its own optional header that must be included explicitly. All conversions map the container to a Lua table and back.
+
+The table below lists every optional header and its requirements:
+
+| Header | Type | C++ Standard | Notes |
+|--------|------|-------------|-------|
+| `LuaBridge/Array.h` | `std::array<T,N>` | C++17 | Fixed-size sequence |
+| `LuaBridge/Vector.h` | `std::vector<T>` | C++17 | Sequence |
+| `LuaBridge/Deque.h` | `std::deque<T>` | C++17 | Double-ended sequence |
+| `LuaBridge/ForwardList.h` | `std::forward_list<T>` | C++17 | Singly-linked sequence |
+| `LuaBridge/List.h` | `std::list<T>` | C++17 | Doubly-linked sequence |
+| `LuaBridge/Map.h` | `std::map<K,V>` | C++17 | Ordered key-value table |
+| `LuaBridge/MultiMap.h` | `std::multimap<K,V>` | C++17 | Ordered multi-value table; each key maps to an array of values in Lua |
+| `LuaBridge/Set.h` | `std::set<K>` | C++17 | Ordered set |
+| `LuaBridge/UnorderedMap.h` | `std::unordered_map<K,V>` | C++17 | Hash key-value table |
+| `LuaBridge/UnorderedMultiMap.h` | `std::unordered_multimap<K,V>` | C++17 | Hash multi-value table; each key maps to an array of values in Lua |
+| `LuaBridge/UnorderedSet.h` | `std::unordered_set<K>` | C++17 | Hash set |
+| `LuaBridge/Optional.h` | `std::optional<T>` | C++17 | Nullable value |
+| `LuaBridge/Variant.h` | `std::variant<Ts...>` | C++17 | Tagged union |
+| `LuaBridge/Any.h` | `std::any` | C++17 (`LUABRIDGE_HAS_CXX17_ANY`) | Push-only; types must be pre-registered with `luabridge::registerAnyPush<T>(L)` |
+| `LuaBridge/Span.h` | `std::span<T>` | C++20 (`LUABRIDGE_HAS_CXX20_SPAN`) | Push-only; use `std::vector<T>` to retrieve sequences from Lua |
+| `LuaBridge/StdExpected.h` | `std::expected<T,E>` | C++23 (`LUABRIDGE_HAS_CXX23_EXPECTED`) | Pushes the value on success, nil on error |
+| `LuaBridge/FlatMap.h` | `std::flat_map<K,V>` | C++23 (`LUABRIDGE_HAS_CXX23_FLAT_CONTAINERS`) | Ordered key-value table backed by contiguous storage |
+| `LuaBridge/FlatSet.h` | `std::flat_set<K>` | C++23 (`LUABRIDGE_HAS_CXX23_FLAT_CONTAINERS`) | Ordered set backed by contiguous storage |
+
+`std::filesystem::path` is also supported as a built-in type when C++17 filesystem is available (`LUABRIDGE_HAS_CXX17_FILESYSTEM`). It is converted to and from a Lua string automatically; no additional header is required beyond `LuaBridge/LuaBridge.h`.
+
+**Example — using `std::deque` and `std::multimap`:**
+
+{% raw %}
+```cpp
+#include <LuaBridge/LuaBridge.h>
+#include <LuaBridge/Deque.h>
+#include <LuaBridge/MultiMap.h>
+
+// std::deque<int> pushes as a 1-based Lua table: {10, 20, 30}
+std::deque<int> dq = {10, 20, 30};
+luabridge::push(L, dq);
+
+// std::multimap pushes as a table where each key maps to an array of values:
+// { a = {1, 2}, b = {3} }
+std::multimap<std::string, int> mm = {{"a", 1}, {"a", 2}, {"b", 3}};
+luabridge::push(L, mm);
+```
+{% endraw %}
+
+**Example — push-only `std::any`:**
+
+Types stored inside a `std::any` must be registered before they can be pushed:
+
+```cpp
+#include <LuaBridge/LuaBridge.h>
+#include <LuaBridge/Any.h>
+
+luabridge::registerAnyPush<int>(L);
+luabridge::registerAnyPush<std::string>(L);
+
+std::any value = 42;
+luabridge::push(L, value); // pushes integer 42
+```
+
+**Example — `std::expected` (C++23):**
+
+```cpp
+#include <LuaBridge/LuaBridge.h>
+#include <LuaBridge/StdExpected.h>
+
+std::expected<int, std::string> ok = 42;
+luabridge::push(L, ok); // pushes integer 42
+
+std::expected<int, std::string> err = std::unexpected("oops");
+luabridge::push(L, err); // pushes nil
+```
+
+**`std::unique_ptr` as an ownership container:**
+
+`std::unique_ptr<T>` is supported as a container type without any additional header. Lua receives a non-owning view of the object. The C++ side retains ownership and must outlive any Lua reference to the object:
+
+```cpp
+auto obj = std::make_unique<MyClass>();
+luabridge::push(L, obj); // Lua gets a non-owning reference; obj must outlive the Lua reference
+```
+
+**`std::move_only_function` (C++23):**
+
+When `LUABRIDGE_HAS_CXX23_MOVE_ONLY_FUNCTION` is active, `std::move_only_function<R(Args...)>` can be registered in a namespace or class just like `std::function`. This allows registering callables that are move-only (e.g. lambdas capturing unique ownership):
+
+```cpp
+luabridge::getGlobalNamespace(L)
+    .addFunction("compute", std::move_only_function<int(int)>([resource = std::make_unique<MyResource>()](int x) {
+        return resource->process(x);
+    }));
+```
+
+2.9 - C++20 Coroutine Integration
+----------------------------------
+
+LuaBridge3 provides first-class interoperability between C++20 coroutines and Lua coroutines, available when compiling with C++20 or later and Lua 5.2+ (requires `lua_yieldk`). The feature is guarded by `LUABRIDGE_HAS_CXX20_COROUTINES`, which is detected automatically and can be suppressed with `LUABRIDGE_DISABLE_CXX20_COROUTINES`.
+
+> **Note:** C++20 coroutine integration is not supported on Lua 5.1, LuaJIT, or Luau (those targets lack a public `lua_yieldk` equivalent).
+
+### 2.9.1 - CppCoroutine\<R\> - Generators callable from Lua
+
+`luabridge::CppCoroutine<R>` is a coroutine return type that bridges C++20 coroutines with Lua's `coroutine.wrap` / `coroutine.resume` API. A function returning `CppCoroutine<R>` can use `co_yield` to suspend and pass a value back to Lua, and `co_return` to finish and return a final value.
+
+Register via `Namespace::addCoroutine`:
+
+```cpp
+luabridge::getGlobalNamespace(L)
+    .addCoroutine("range", [](int from, int to) -> luabridge::CppCoroutine<int>
+    {
+        for (int i = from; i <= to; ++i)
+            co_yield i;
+        co_return -1;  // sentinel value when the range is exhausted
+    });
+```
+
+From Lua, use `coroutine.wrap` to create a callable iterator:
+
+```lua
+local gen = coroutine.wrap(range)
+local v = gen(1, 5)   -- first call passes arguments; yields 1
+while v ~= -1 do
+    print(v)          -- 1, 2, 3, 4, 5
+    v = gen()         -- subsequent calls resume without arguments
+end
+```
+
+`CppCoroutine<void>` is also supported for coroutines that produce no values:
+
+```cpp
+.addCoroutine("doWork", []() -> luabridge::CppCoroutine<void>
+{
+    performStep1();
+    co_return;
+});
+```
+
+An abandoned coroutine (one that goes out of scope in Lua without being fully consumed) is automatically cleaned up by the Lua garbage collector - no manual resource management is needed.
+
+### 2.9.2 - Accepting Arguments
+
+The factory lambda receives the Lua call arguments on first invocation. A `lua_State*` parameter, if present, must be the **first** parameter and receives the running Lua thread:
+
+```cpp
+.addCoroutine("adder", [](int a, int b) -> luabridge::CppCoroutine<int>
+{
+    co_yield a + b;   // first resume yields the sum
+    co_return a * b;  // second resume returns the product
+});
+```
+
+```lua
+local f = coroutine.wrap(adder)
+print(f(3, 4))   -- 7   (yield: 3+4)
+print(f())       -- 12  (return: 3*4)
+```
+
+Multiple independent instances of the same coroutine factory can run concurrently - each call to `coroutine.wrap(name)` creates a separate C++ coroutine frame:
+
+```lua
+local a = coroutine.wrap(adder)
+local b = coroutine.wrap(adder)
+a(1, 2)   -- independent from b
+b(10, 20)
+```
+
+### 2.9.3 - Class Coroutines - Static and Member
+
+Coroutines can be attached directly to a registered class using `addStaticCoroutine` and `addCoroutine`.
+
+**Static coroutines** behave identically to namespace-level coroutines but live in the class's static table. The factory requires no object argument:
+
+```cpp
+luabridge::getGlobalNamespace(L)
+    .beginClass<Counter>("Counter")
+        .addStaticCoroutine("range", [](int from, int count) -> luabridge::CppCoroutine<int>
+        {
+            for (int i = 0; i < count; ++i)
+                co_yield from + i;
+            co_return -1;
+        })
+    .endClass();
+```
+
+```lua
+local f = coroutine.wrap(Counter.range)
+print(f(5, 3))   -- 5  (first yield)
+print(f())       -- 6
+print(f())       -- 7
+print(f())       -- -1 (done)
+```
+
+**Member coroutines** bind a coroutine factory to individual class instances. The factory's **first argument must be `T*` or `const T*`** - LuaBridge passes the Lua object as that argument automatically:
+
+```cpp
+.beginClass<Counter>("Counter")
+    .addCoroutine("generate", [](Counter* obj, int n) -> luabridge::CppCoroutine<int>
+    {
+        for (int i = 0; i < n; ++i)
+        {
+            co_yield obj->value;
+            obj->increment();
+        }
+        co_return -1;
+    })
+.endClass();
+```
+
+```lua
+local obj = Counter()
+local f = coroutine.wrap(Counter.generate)
+print(f(obj, 3))   -- 0  (obj.value before first increment)
+print(f())         -- 1
+print(f())         -- 2
+print(f())         -- -1 (done)
+```
+
+**Const vs non-const:** a factory that takes `const T*` as its first argument is registered as a const method - accessible on both const and non-const objects (it appears in both the const and non-const class tables). A factory taking `T*` is registered as a non-const method and is accessible on non-const objects only.
+
+```cpp
+// Accessible on const and non-const objects:
+.addCoroutine("peek", [](const Counter* obj) -> luabridge::CppCoroutine<int>
+{
+    co_yield obj->value;
+    co_return obj->value * 2;
+})
+
+// Accessible on non-const objects only:
+.addCoroutine("pop", [](Counter* obj) -> luabridge::CppCoroutine<int>
+{
+    co_yield obj->value--;
+    co_return obj->value;
+})
+```
+
+### 2.9.4 - LuaCoroutine - Awaiting a Lua Thread from C++
+
+`luabridge::LuaCoroutine` is an awaitable that can be used inside a `CppCoroutine` body to resume a child Lua thread synchronously. It runs the child thread to its first yield or return and gives back the status and the number of values the child left on its stack:
+
+```cpp
+.addCoroutine("driver", [](lua_State* L) -> luabridge::CppCoroutine<int>
+{
+    // Spawn a child Lua thread and anchor it in the registry so the GC
+    // doesn't collect it while we hold a pointer to it.
+    lua_State* child = lua_newthread(L);
+    int ref = luaL_ref(L, LUA_REGISTRYINDEX);  // pops thread from L's stack
+
+    lua_getglobal(child, "luaGenerator");
+
+    // Resume the child synchronously; suspends this C++ coroutine until done.
+    auto [status, nresults] = co_await luabridge::LuaCoroutine{ child, L };
+
+    int value = (nresults > 0) ? static_cast<int>(lua_tointeger(child, -nresults)) : 0;
+
+    luaL_unref(L, LUA_REGISTRYINDEX, ref);
+    co_return value;
+});
+```
+
+`LuaCoroutine` always completes synchronously (no external event loop is required). The `status` field contains `LUA_YIELD` if the child yielded or `LUA_OK` if it returned normally.
+
+### 2.9.5 - Limitations
+
+* **Lua version:** Requires Lua 5.2+ (`lua_yieldk`). Not supported on Lua 5.1, LuaJIT, or Luau.
+* **C++ version:** Requires C++20 (`<coroutine>`). Non-coroutine features continue to work under C++17.
+* **Multi-value yield:** `co_yield` sends exactly one value per suspension. Use `std::tuple` or a struct if multiple values are needed.
+* **Thread safety:** Coroutine frames must be driven from a single OS thread.
 
 3 - Passing Objects
 ===================
@@ -1488,6 +2101,18 @@ v [3] = v [2];                       // v[2] and v[3] reference the same table
 v [2] = luabridge::LuaNil ();        // Removes the value with key = 2. The table is still referenced by v[3].
 ```
 
+To append one or more values to a sequence table, use `append`. It is equivalent to assigning to `#t + 1`, `#t + 2`, etc., and uses `lua_rawseti` internally:
+
+```cpp
+luabridge::LuaRef t = luabridge::newTable (L);
+
+t.append (1);              // t = {1}
+t.append (2, 3);           // t = {1, 2, 3}
+t.append ("hello", true);  // t = {1, 2, 3, "hello", true}
+```
+
+`append` returns `true` if all values were successfully pushed and stored, and stops early (returning `false`) if any value fails to push onto the Lua stack.
+
 4.3 - Calling Lua
 -----------------
 
@@ -1535,7 +2160,7 @@ luabridge::LuaRef v = luabridge::getGlobal (L, "t");
 
 By default `LuaBridge3` is able to work without exceptions, and it's perfectly compatible with the `-fno-exceptions` or `/EHsc-` flags, which is typically used in games. Even if compiling with exceptions enabled, they are not used internally when calling into lua to convert lua errors, but exceptions are only used in registration code to signal potential issues when registering namespaces, classes and methods. You can use the free function `luabridge::enableExceptions` to enable exceptions once before starting to use any luabridge call, and of course that will work only if the application is compiled with exceptions enabled.
 
-When using the `luabridge::call` or `LuaRef::operator()` no exception should be raised, only if exceptions are disabled in the application or enabled in the application but disabled in luabridge. To control if the lua function invoked has raised a lua error, it is possible to do so by checking the `LuaResult` object that is returned from those functions.
+When using `luabridge::call` or `LuaRef::operator()`, no exception is raised regardless of whether exceptions are enabled in the application. To detect whether the invoked Lua function raised an error, check the `TypeResult<void>` returned by those calls:
 
 ```lua
 function fail ()
@@ -1544,14 +2169,30 @@ end
 ```
 
 ```cpp
-luabridge::LuaRef f (L) = luabridge::getGlobal (L, "fail");
+luabridge::LuaRef f = luabridge::getGlobal (L, "fail");
 
-luabridge::LuaResult result = f ();
+auto result = f ();
 if (! result)
-  std::cerr << result.errorMessage ();
+  std::cerr << result.message ();
 ```
 
-It is also possible that pushing an unregistered class instance into those function will generate an error, that can be trapped using the same mechanism in a `luabridge::LuaResult`:
+To call a Lua function and decode its first return value to a specific C++ type, use the typed `call<R>()` overload:
+
+```lua
+function add (a, b)
+  return a + b
+end
+```
+
+```cpp
+luabridge::LuaRef f = luabridge::getGlobal (L, "add");
+
+auto result = f.call<int> (1, 2);
+if (result)
+  std::cout << *result;  // prints 3
+```
+
+It is also possible that pushing an unregistered class instance into those function will generate an error, that can be trapped using the same mechanism:
 
 ```lua
 function fail (unregistred)
@@ -1562,16 +2203,16 @@ end
 ```cpp
 struct UnregisteredClass {};
 
-luabridge::LuaRef f (L) = luabridge::getGlobal (L, "fail");
+luabridge::LuaRef f = luabridge::getGlobal (L, "fail");
 
 auto argument = UnregisteredClass();
 
-luabridge::LuaResult result = f (argument);
+auto result = f (argument);
 if (! result)
-  std::cerr << result.errorMessage ();
+  std::cerr << result.message ();
 ```
 
-Calling `luabridge::pcall` will not return a `luabridge::LuaResult` but only the status code. It will anyway throw an exception if the return code of `lua_pcall`is not equal `LUA_OK`, and return the error code in case exceptions are disabled.
+Calling `luabridge::pcall` will not return a `TypeResult` but only the raw status code. It will throw an exception if the return code is not `LUA_OK` (when exceptions are enabled), or return the error code otherwise.
 
 When compiling `LuaBridge3` with exceptions disabled, all references to try catch blocks and throws will be removed.
 
@@ -1586,7 +2227,7 @@ end
 ```
 
 ```cpp
-luabridge::LuaRef f (L) = luabridge::getGlobal (L, "fail");
+luabridge::LuaRef f = luabridge::getGlobal (L, "fail");
 
 try
 {
@@ -1597,6 +2238,71 @@ catch (const luabridge::LuaException& e)
   std::cerr << e.what ();
 }
 ```
+
+### 4.3.3 - Calling with Error Handlers
+
+By default, when a Lua error occurs the raw Lua error message is stored in the `TypeResult`. For more detailed diagnostics you can supply a custom message handler (equivalent to the `msgh` parameter of `lua_pcall`). The handler is a C++ callable that receives a `lua_State*`, may inspect the stack, and must return an `int`:
+
+```lua
+function riskyOp ()
+  error ("something went wrong")
+end
+```
+
+```cpp
+luabridge::LuaRef f = luabridge::getGlobal (L, "riskyOp");
+
+auto handler = [] (lua_State* L) -> int {
+  // Augment the error message with a traceback
+  luaL_traceback (L, L, lua_tostring (L, 1), 1);
+  return 1;
+};
+
+auto result = f.callWithHandler (handler);
+if (! result)
+  std::cerr << result.message ();  // includes traceback
+```
+
+The same function is available as a free function:
+
+```cpp
+auto result = luabridge::callWithHandler (f, handler, /* args... */);
+```
+
+4.4 - Wrapping C++ Callables
+-----------------------------
+
+`luabridge::newFunction` (and its equivalent `LuaRef::newFunction`) wraps any C++ callable - a lambda, a function pointer, or a `std::function` - into a Lua function and returns it as a `LuaRef`. This is useful when you need to pass a C++ callback to Lua without going through the namespace/class registration API:
+
+```cpp
+// Create a Lua function that squares its argument
+luabridge::LuaRef square = luabridge::newFunction (L, [] (int x) { return x * x; });
+
+// Store it in a Lua global
+luabridge::setGlobal (L, square, "square");
+```
+
+From Lua:
+```lua
+print (square (5))  -- 25
+```
+
+You can also store such a function in a table or pass it as a callback argument.
+
+### 4.4.1 - LuaFunction\<Signature\>
+
+When you have a `LuaRef` that you know will always be called with fixed argument and return types, `LuaFunction<Signature>` provides a strongly-typed wrapper that avoids repeating the template arguments at every call site:
+
+```cpp
+// Retrieve a Lua function and wrap it with a known signature
+auto add = luabridge::getGlobal (L, "add").callable<int(int, int)>();
+
+auto result = add (3, 4);  // TypeResult<int>
+if (result)
+  std::cout << *result;    // 7
+```
+
+`LuaFunction<Signature>` supports the same `call`, `callWithHandler`, and `isValid` interface as a `LuaRef`. The wrapped `LuaRef` is accessible via `ref()`.
 
 5 - Security
 ============
@@ -1635,6 +2341,221 @@ luabridge::getGlobalNamespace (L)
       .addConstructor<void ()> ()
     .endClass ()
   .endNamespace ()
+```
+
+6 - Configuration
+=================
+
+LuaBridge3 exposes several compile-time configuration macros. Each macro can be overridden by defining it **before** including any LuaBridge header, or by passing it as a compiler flag (e.g. `-DLUABRIDGE_SAFE_STACK_CHECKS=0`).
+
+6.1 - LUABRIDGE_SAFE_STACK_CHECKS
+----------------------------------
+
+**Default: `1` (enabled)**
+
+When enabled, every `Stack<T>::push` operation calls `lua_checkstack` before pushing a value. This prevents silent stack overflows when the Lua stack is exhausted.
+
+Disable this flag only when you are certain that the Lua stack will never overflow and you need to squeeze out the last bit of performance:
+
+```cpp
+#define LUABRIDGE_SAFE_STACK_CHECKS 0
+#include <LuaBridge/LuaBridge.h>
+```
+
+6.2 - LUABRIDGE_STRICT_STACK_CONVERSIONS
+-----------------------------------------
+
+**Default: `0` (disabled)**
+
+Controls how permissive the `Stack<T>::get` operations are when reading values off the Lua stack.
+
+| Type | Non-strict (default) | Strict |
+|------|---------------------|--------|
+| `bool` | Any Lua value is accepted via `lua_toboolean` (legacy behavior) | Only `LUA_TBOOLEAN` is accepted |
+| Integers | Any `LUA_TNUMBER` that fits the target integer type is accepted | Any `LUA_TNUMBER` that fits the target integer type is accepted (same behavior) |
+| `std::string` | `LUA_TSTRING` and `LUA_TNUMBER` accepted (numbers coerced to strings) | Only `LUA_TSTRING` is accepted |
+
+In non-strict mode (the default), `lua_toboolean` semantics apply to `bool`: every Lua value except `false` and `nil` is truthy. This preserves backward-compatible behavior for existing code bases.
+
+Enable strict mode when you want explicit, type-safe conversions:
+
+```cpp
+#define LUABRIDGE_STRICT_STACK_CONVERSIONS 1
+#include <LuaBridge/LuaBridge.h>
+```
+
+With strict mode enabled:
+
+```cpp
+lua_pushinteger (L, 42);
+auto r = luabridge::Stack<bool>::get (L, -1); // error: not a boolean
+
+lua_pushnil (L);
+auto r = luabridge::Stack<bool>::get (L, -1); // error: not a boolean
+
+lua_pushstring (L, "hello");
+auto r = luabridge::Stack<bool>::get (L, -1); // error: not a boolean
+
+lua_pushboolean (L, 1);
+auto r = luabridge::Stack<bool>::get (L, -1); // ok: true
+```
+
+6.3 - LUABRIDGE_SAFE_LUA_C_EXCEPTION_HANDLING
+-----------------------------------------------
+
+**Default: `0` (disabled). Only meaningful when `LUABRIDGE_HAS_EXCEPTIONS` is `1`.**
+
+When Lua is compiled as C and a C++ exception escapes a registered `lua_CFunction`, the Lua runtime will call `longjmp` instead of propagating the exception, which leads to undefined behavior. Enabling this flag adds a safe indirection that catches C++ exceptions at the CFunction boundary and re-raises them as Lua errors.
+
+Enable this flag only if you are compiling Lua as C (not as C++), have exceptions enabled in your application, and you observe crashes when registered CFunctions throw:
+
+```cpp
+#define LUABRIDGE_SAFE_LUA_C_EXCEPTION_HANDLING 1
+#include <LuaBridge/LuaBridge.h>
+```
+
+> **Warning:** Enabling this flag introduces a small performance overhead on every registered CFunction call through the library.
+
+6.4 - LUABRIDGE_RAISE_UNREGISTERED_CLASS_USAGE
+------------------------------------------------
+
+**Default: `1` when exceptions are enabled, `0` otherwise.**
+
+When enabled, using an unregistered class with LuaBridge (for example, passing an instance of a type that has not been registered via `beginClass`) will raise an error rather than silently failing. With exceptions enabled this translates to a `luabridge::LuaException`; with exceptions disabled it translates to a Lua error via `lua_error`.
+
+Override the default when you need fine-grained control:
+
+```cpp
+#define LUABRIDGE_RAISE_UNREGISTERED_CLASS_USAGE 0
+#include <LuaBridge/LuaBridge.h>
+```
+
+6.5 - LUABRIDGE_HAS_CXX20_COROUTINES / LUABRIDGE_DISABLE_CXX20_COROUTINES
+--------------------------------------------------------------------------
+
+**`LUABRIDGE_HAS_CXX20_COROUTINES` - auto-detected, override allowed**
+
+LuaBridge3 automatically enables C++20 coroutine support when it detects a C++20 compiler (`__cplusplus >= 202002L` or MSVC `_HAS_CXX20`). The macro is set to `1` when the feature is active and `0` otherwise.
+
+You can force the feature **off** by defining `LUABRIDGE_DISABLE_CXX20_COROUTINES` before including any LuaBridge header:
+
+```cpp
+#define LUABRIDGE_DISABLE_CXX20_COROUTINES
+#include <LuaBridge/LuaBridge.h>
+```
+
+You can also override the detection result explicitly:
+
+```cpp
+#define LUABRIDGE_HAS_CXX20_COROUTINES 0   // force off
+#define LUABRIDGE_HAS_CXX20_COROUTINES 1   // force on (must actually have C++20)
+#include <LuaBridge/LuaBridge.h>
+```
+
+Attempting to use coroutine integration on Lua 5.1, LuaJIT, or Luau will emit a compile-time `#error` unless `LUABRIDGE_DISABLE_COROUTINE_INTEGRATION` is also defined.
+
+6.6 - LUABRIDGE_HAS_CXX17_FILESYSTEM / LUABRIDGE_DISABLE_CXX17_FILESYSTEM
+--------------------------------------------------------------------------
+
+**`LUABRIDGE_HAS_CXX17_FILESYSTEM` - auto-detected, override allowed**
+
+When a C++17 compiler and `<filesystem>` are available, LuaBridge automatically enables `std::filesystem::path` ↔ Lua string conversion. No additional header is needed; the specialization lives inside `LuaBridge/LuaBridge.h`.
+
+To force the feature off:
+
+```cpp
+#define LUABRIDGE_DISABLE_CXX17_FILESYSTEM
+#include <LuaBridge/LuaBridge.h>
+```
+
+6.7 - LUABRIDGE_HAS_CXX17_ANY / LUABRIDGE_DISABLE_CXX17_ANY
+------------------------------------------------------------
+
+**`LUABRIDGE_HAS_CXX17_ANY` - auto-detected, override allowed**
+
+When a C++17 compiler and `<any>` are available, LuaBridge enables push support for `std::any` via `LuaBridge/Any.h`. Because `std::any` erases the type at runtime, push is performed through a runtime registry. Types must be pre-registered with `luabridge::registerAnyPush<T>(L)` before a value of that type can be pushed.
+
+To force the feature off:
+
+```cpp
+#define LUABRIDGE_DISABLE_CXX17_ANY
+#include <LuaBridge/LuaBridge.h>
+```
+
+6.8 - LUABRIDGE_HAS_CXX20_SPAN / LUABRIDGE_DISABLE_CXX20_SPAN
+--------------------------------------------------------------
+
+**`LUABRIDGE_HAS_CXX20_SPAN` - auto-detected when C++20 is enabled, override allowed**
+
+When a C++20 compiler and `<span>` are available, LuaBridge enables push support for `std::span<T, Extent>` via `LuaBridge/Span.h`. `std::span` is push-only — it cannot be retrieved from Lua (use `std::vector<T>` to read sequences back).
+
+To force the feature off:
+
+```cpp
+#define LUABRIDGE_DISABLE_CXX20_SPAN
+#include <LuaBridge/LuaBridge.h>
+```
+
+6.9 - LUABRIDGE_HAS_CXX20_RANGES / LUABRIDGE_DISABLE_CXX20_RANGES
+-------------------------------------------------------------------
+
+**`LUABRIDGE_HAS_CXX20_RANGES` - auto-detected when C++20 is enabled, override allowed**
+
+When a C++20 compiler with ranges support is detected, LuaBridge's `luabridge::Iterator` gains the additional members required to satisfy the `std::input_iterator` concept (`value_type`, `difference_type`, `iterator_concept`) and a matching `operator==`. This allows `luabridge::Range` — the object returned by `luabridge::pairs()` — to be used directly in C++20 range-based algorithms and `std::views` pipelines.
+
+```cpp
+// Requires LUABRIDGE_HAS_CXX20_RANGES
+for (auto [key, val] : luabridge::pairs(tableRef))
+    std::cout << key.tostring() << " = " << val.tostring() << "\n";
+```
+
+To force the feature off:
+
+```cpp
+#define LUABRIDGE_DISABLE_CXX20_RANGES
+#include <LuaBridge/LuaBridge.h>
+```
+
+6.10 - LUABRIDGE_HAS_CXX23_EXPECTED / LUABRIDGE_DISABLE_CXX23_EXPECTED
+-----------------------------------------------------------------------
+
+**`LUABRIDGE_HAS_CXX23_EXPECTED` - auto-detected when C++23 is enabled, override allowed**
+
+When a C++23 compiler and `<expected>` are available, LuaBridge enables `std::expected<T,E>` ↔ Lua conversion via `LuaBridge/StdExpected.h`. A successful value is pushed as the contained `T`; a failure pushes `nil`.
+
+To force the feature off:
+
+```cpp
+#define LUABRIDGE_DISABLE_CXX23_EXPECTED
+#include <LuaBridge/LuaBridge.h>
+```
+
+6.11 - LUABRIDGE_HAS_CXX23_FLAT_CONTAINERS / LUABRIDGE_DISABLE_CXX23_FLAT_CONTAINERS
+-------------------------------------------------------------------------------------
+
+**`LUABRIDGE_HAS_CXX23_FLAT_CONTAINERS` - auto-detected when C++23 is enabled, override allowed**
+
+When a C++23 compiler and `<flat_map>` are available, LuaBridge enables conversion support for `std::flat_map` and `std::flat_set` via `LuaBridge/FlatMap.h` and `LuaBridge/FlatSet.h` respectively. These are contiguous-storage analogues of `std::map` and `std::set` with identical Lua table semantics.
+
+To force the feature off:
+
+```cpp
+#define LUABRIDGE_DISABLE_CXX23_FLAT_CONTAINERS
+#include <LuaBridge/LuaBridge.h>
+```
+
+6.12 - LUABRIDGE_HAS_CXX23_MOVE_ONLY_FUNCTION / LUABRIDGE_DISABLE_CXX23_MOVE_ONLY_FUNCTION
+-------------------------------------------------------------------------------------------
+
+**`LUABRIDGE_HAS_CXX23_MOVE_ONLY_FUNCTION` - auto-detected when C++23 is enabled, override allowed**
+
+When a C++23 compiler with `std::move_only_function` support is detected, LuaBridge's function-traits machinery recognises `std::move_only_function<R(Args...)>` and its `noexcept` / `const` variants as valid callable types. This allows registering move-only callables (e.g. lambdas that capture `std::unique_ptr`) directly with `addFunction` / `addStaticFunction` / `addCoroutine`.
+
+To force the feature off:
+
+```cpp
+#define LUABRIDGE_DISABLE_CXX23_MOVE_ONLY_FUNCTION
+#include <LuaBridge/LuaBridge.h>
 ```
 
 Appendix - API Reference
@@ -1685,11 +2606,19 @@ Namespace getGlobalNamespace (lua_State* L);
 Namespace getNamespaceFromStack (lua_State* L);
 
 /// Invokes a LuaRef if it references a lua callable.
-template <class... Args>
-LuaResult call (const LuaRef& object, Args&&... args)
+template <class R = void, class... Args>
+TypeResult<R> call (const LuaRef& object, Args&&... args);
+
+/// Invokes a LuaRef with a custom Lua error message handler.
+template <class R = void, class F, class... Args>
+TypeResult<R> callWithHandler (const LuaRef& object, F&& errorHandler, Args&&... args);
+
+/// Wraps a C++ callable into a LuaRef representing a Lua function.
+template <class F>
+LuaRef newFunction (lua_State* L, F&& func);
 
 /// Wrapper for lua_pcall, converting lua errors into C++ exceptions if they are enabled.
-int pcall (lua_State* L, int nargs = 0, int nresults = 0, int msgh = 0)
+int pcall (lua_State* L, int nargs = 0, int nresults = 0, int msgh = 0);
 
 /// Return a range iterable view over a lua table.
 Range pairs (const LuaRef& table);
@@ -1728,8 +2657,8 @@ Class Registration - Class<T>
 template <class T>
 Class<T> beginClass (const char* name);
 
-/// Begins derived class registration, returns this class object.
-template <class T, class Base>
+/// Begins derived class registration with one or more base classes, returns this class object.
+template <class T, class Base1, class... Bases>
 Class<T> deriveClass (const char* name);
 
 /// Ends class registration, returns the parent namespace object.
@@ -1759,6 +2688,10 @@ Class<T> addConstructorFrom (Functions... functions);
 /// Registers allocator and deallocators for type T.
 template <class Alloc, class Dealloc>
 Class<T> addFactory (Alloc alloc, Dealloc dealloc);
+
+/// Registers a destructor hook called just before the C++ destructor (__destruct metamethod).
+template <class Function>
+Class<T> addDestructor (Function function);
 ```
 
 ### Member Function Registration
@@ -1799,6 +2732,35 @@ Class<T> addStaticProperty (const char* name, Getter getter);
 /// Registers a static readwrite property with a getter and a setter.
 template <class Getter>
 Class<T> addStaticProperty (const char* name, Getter getter, Setter setter);
+```
+
+### Metamethod Registration
+
+```cpp
+/// Registers a fallback __index handler for instances (called when a key is not found).
+template <class Function>
+Class<T> addIndexMetaMethod (Function function);
+
+/// Registers a fallback __newindex handler for instances (called when a key is not found).
+template <class Function>
+Class<T> addNewIndexMetaMethod (Function function);
+
+/// Registers a fallback __index handler for the static class table.
+template <class Function>
+Class<T> addStaticIndexMetaMethod (Function function);
+
+/// Registers a fallback __newindex handler for the static class table.
+template <class Function>
+Class<T> addStaticNewIndexMetaMethod (Function function);
+```
+
+### Converter Registration
+
+```cpp
+/// Registers a converter from this class type T to target type To.
+/// Requires StackConversion<To>::enabled and StackConverter<To, T>.
+template <class To>
+Class<T> addConverter ();
 ```
 
 Lua Variable Reference - LuaRef
@@ -1903,16 +2865,33 @@ bool operator>= (T rhs) const;
 template <class T>
 bool rawequal (T v) const;
 
-/// Append a value to a referred table. If the table is a sequence this will add another element to it.
-template <class T>
-void append (T v) const;
+/// Append one or more values to a referred table. If the table is a sequence this will add more elements to it.
+/// Uses lua_rawseti internally. Returns true if all values were successfully appended.
+template <class... Ts>
+bool append (const Ts&... vs) const;
 
 /// Return the length of a referred array. This is identical to applying the Lua # operator.
 int length () const;
 
-/// Invoke the lua ref if it references a lua function.
+/// Invoke the lua ref with no expected return value.
 template <class... Args>
-LuaResult call (Args&&... args) const;
+TypeResult<void> operator() (Args&&... args) const;
+
+/// Invoke the lua ref and decode the return value to R.
+template <class R = void, class... Args>
+TypeResult<R> call (Args&&... args) const;
+
+/// Invoke the lua ref with an error handler and decode the return value to R.
+template <class R = void, class F, class... Args>
+TypeResult<R> callWithHandler (F&& errorHandler, Args&&... args) const;
+
+/// Build a strongly-typed callable wrapper from this Lua object.
+template <class Signature>
+LuaFunction<Signature> callable () const;
+
+/// Wrap a C++ callable into a new Lua function returned as a LuaRef.
+template <class F>
+static LuaRef newFunction (lua_State* L, F&& func);
 ```
 
 Lua Nil Special Value - LuaNil
@@ -1922,36 +2901,71 @@ Lua Nil Special Value - LuaNil
 /// LuaNil can be used to construct LuaRef.
 ```
 
-Lua Result Of Function Invocation - LuaResult
----------------------------------------------
+TypeResult<T> - Result of a Call or Cast
+-----------------------------------------
 
 ```cpp
 explicit operator bool() const;
 
-/// Return if the invocation was ok and didn't raise a lua error.
-bool wasOk() const;
+/// Return the contained value (undefined behavior if result holds an error).
+const T& value() const;
 
-/// Return if the invocation did raise a lua error.
-bool hasFailed() const;
+/// Dereference operator - equivalent to value().
+T& operator*();
+
+/// Return the contained value or a default when the result holds an error.
+template <class U>
+T valueOr(U&& defaultValue) const;
 
 /// Return the error code, if any.
-std::error_code errorCode() const;
+std::error_code error() const;
 
-/// Return the error message, if any.
-std::string errorMessage() const;
+/// Return the error message string, if any.
+std::string message() const;
+```
 
-/// Return the number of return values.
-std::size_t size() const;
+Typed Lua Function Wrapper - LuaFunction\<R(Args...)\>
+-------------------------------------------------------
 
-/// Get a return value at a specific index.
-LuaRef operator[](std::size_t index) const;
+```cpp
+/// Construct from a LuaRef.
+explicit LuaFunction (const LuaRef& function);
 
+/// Call the function with the given arguments.
+TypeResult<R> operator() (Args... args) const;
+
+/// Call the function - equivalent to operator().
+TypeResult<R> call (Args... args) const;
+
+/// Call the function with a custom error handler.
+template <class F>
+TypeResult<R> callWithHandler (F&& errorHandler, Args... args) const;
+
+/// Return true if the underlying LuaRef is callable.
+bool isValid () const;
+
+/// Return the underlying LuaRef.
+const LuaRef& ref () const;
 ```
 
 Stack Traits - Stack<T>
 -----------------------
 
 ```cpp
+/// Opt-in trait for enabling registered converter lookup for target type T.
+template <class T>
+struct StackConversion
+{
+  static constexpr bool enabled = false;
+};
+
+/// User-specialized conversion hook from source type From to target type To.
+template <class To, class From>
+struct StackConverter
+{
+  static To convert (const From& from);
+};
+
 /// Converts the C++ value into the Lua value at the top of the Lua stack. Returns true if the push could be performed.
 /// When false is returned, `ec` contains the error code corresponding to the failure.
 Result push (lua_State* L, const T& value);
@@ -1961,4 +2975,48 @@ TypeResult<T> get (lua_State* L, int index);
 
 /// Checks if the Lua value at the index is convertible into the C++ value of the type T.
 bool isInstance (lua_State* L, int index);
+```
+
+C++20 Coroutine Types (requires `LUABRIDGE_HAS_CXX20_COROUTINES`)
+-----------------------------------------------------------------
+
+```cpp
+/// Coroutine return type for C++ generators callable from Lua.
+/// R may be any LuaBridge-registered type, or void.
+template <class R>
+struct CppCoroutine;
+
+/// Awaitable wrapper for a Lua thread. Use inside a CppCoroutine body with co_await.
+/// Resumes the child thread synchronously and returns {status, nresults}.
+class LuaCoroutine
+{
+public:
+    /// thread  - the Lua thread to resume.
+    /// from    - the calling Lua state (typically L inside the coroutine body).
+    LuaCoroutine(lua_State* thread, lua_State* from = nullptr) noexcept;
+
+    std::pair<int, int> await_resume() noexcept; // returns {status, nresults}
+};
+
+/// Register a CppCoroutine factory in a namespace (available on Namespace).
+/// F must be a callable whose return type is CppCoroutine<R>.
+template <class F>
+Namespace& addCoroutine(const char* name, F factory);
+
+/// Register a CppCoroutine factory as a static class function (available on Class<T>).
+/// F must be a callable whose return type is CppCoroutine<R>.
+template <class F>
+Class<T>& addStaticCoroutine(const char* name, F factory);
+
+/// Register a CppCoroutine factory as a member method (available on Class<T>).
+/// F must be a callable whose first argument is T* or const T*, and whose return type is
+/// CppCoroutine<R>. A const T* first argument registers the method as const-accessible.
+template <class F>
+Class<T>& addCoroutine(const char* name, F factory);
+
+/// Portable lua_resume wrapper - fills *nresults on all Lua versions (5.1–5.5).
+int lua_resume_x(lua_State* L, lua_State* from, int nargs, int* nresults = nullptr);
+
+/// Returns true if the current C function can yield via lua_yieldk.
+bool lua_isyieldable_x(lua_State* L);
 ```
