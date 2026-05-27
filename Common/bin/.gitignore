@@ -1,0 +1,8 @@
+drawio
+edk2
+iasl
+share
+lib
+include
+codegen/*
+qemu*

@@ -9,7 +9,7 @@
  
 ## Libraries in use
 
-* Lua 5.4.6 (@<link:https://lua.org>)
+* Lua (@<link:https://lua.org>)
 ** Lua basic libraries (@<link:https://www.tutorialspoint.com/lua/lua_standard_libraries.htm>)
 ** LuaFileSystem (@<link:https://lunarmodules.github.io/luafilesystem>)
 ** hook.lua (@<link:https://github.com/vallentin/hook.lua>)
@@ -24,6 +24,7 @@
 * ncurses (@<link:https://invisible-island.net/ncurses>)
 * qrencode (@<link:https://github.com/fukuchi/libqrencode>)
 * Clipper2 (@<link:https://github.com/AngusJohnson/Clipper2>)
+* webview (@<link:https://github.com/webview/webview>)
 
  
 ## Command line
@@ -31,7 +32,7 @@
 ```txt
 > codegen
 
-Code generator for TestDrive Profiling Master. v1.0 (build #190 date : Jul 29 2024)
+Code generator for TestDrive Profiling Master. v1.0 (build #346 date : May 27 2026)
 Usage: codegen  [--help] [-e|--encrypt] [-d|--decrypt] [--trace] [-k|--key=key_code] lua_file ...
 
       --help                display this help and exit
