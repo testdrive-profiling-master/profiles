@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : WebGUI project
-// Rev.  : 2/23/2026 Mon (clonextop@gmail.com)
+// Rev.  : 6/8/2026 Mon (clonextop@gmail.com)
 //================================================================================
 #include "WebGUI.h"
 #include <time.h>
@@ -101,6 +101,7 @@ void WebGUI::SetRootPath(const char *sRootPath)
 	m_sRootPath.Replace("\\", "/", true);
 	if (!m_sRootPath.CompareBack("/"))
 		m_sRootPath += "/";
+	m_sRootPath.MakeFullPath();
 }
 
 void WebGUI::SetIcon(const char *sFileName)
@@ -245,15 +246,15 @@ noresult WebGUI::run_impl()
 #ifdef _WIN32
 	static WNDPROC proc_fn;
 	WNDPROC		   new_proc = +[](HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) -> LRESULT {
-		   WebGUI *pImp = (WebGUI *)((win32_edge_engine *)GetWindowLongPtrW(hwnd, GWLP_USERDATA));
-		   switch (msg) {
-		   case WM_CLOSE: {
-			   if (!pImp->OnClose()) {
-				   return 0;
-			   }
-		   } break;
-		   }
-		   return proc_fn(hwnd, msg, wp, lp);
+		WebGUI *pImp = (WebGUI *)((win32_edge_engine *)GetWindowLongPtrW(hwnd, GWLP_USERDATA));
+		switch (msg) {
+		case WM_CLOSE: {
+			if (!pImp->OnClose()) {
+				return 0;
+			}
+		} break;
+		}
+		return proc_fn(hwnd, msg, wp, lp);
 	};
 	proc_fn = (WNDPROC)GetWindowLongPtrW(m_hHwnd, GWLP_WNDPROC);
 	SetWindowLongPtr(m_hHwnd, GWLP_WNDPROC, (LONG_PTR)new_proc);
