@@ -1,0 +1,7 @@
+testdrive_system.cache/*
+testdrive_system.gen/*
+testdrive_system.hw/*
+testdrive_system.ip_user_files/*
+testdrive_system.runs/*
+testdrive_system.sim/*
+PROM_script/*
