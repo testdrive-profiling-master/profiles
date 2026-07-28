@@ -33,8 +33,8 @@
 // Title : Common verilog library
 // Rev.  : 4/26/2023 Wed (clonextop@gmail.com)
 //================================================================================
-`ifndef __TESTDRIVE_SRAM_SINGLE_MULTICYCLE_V__
-`define __TESTDRIVE_SRAM_SINGLE_MULTICYCLE_V__
+`ifndef __TESTDRIVE_SRAM_SINGLE_MULTICYCLE_SV__
+`define __TESTDRIVE_SRAM_SINGLE_MULTICYCLE_SV__
 `include "testdrive_system.svh"
 
 `define __GEN_MULTIPATH_SRAM \
@@ -158,4 +158,4 @@ endmodule
 
 `undef __GEN_MULTIPATH_PIPE
 
-`endif//__TESTDRIVE_SRAM_SINGLE_MULTICYCLE_V__
+`endif//__TESTDRIVE_SRAM_SINGLE_MULTICYCLE_SV__

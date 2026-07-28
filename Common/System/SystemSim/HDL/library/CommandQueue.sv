@@ -33,10 +33,8 @@
 // Title : Common verilog library
 // Rev.  : 5/25/2023 Thu (clonextop@gmail.com)
 //================================================================================
-// Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
-//================================================================================
-`ifndef __TESTDRIVE_COMMAND_QUEUE_V__
-`define __TESTDRIVE_COMMAND_QUEUE_V__
+`ifndef __TESTDRIVE_COMMAND_QUEUE_SV__
+`define __TESTDRIVE_COMMAND_QUEUE_SV__
 `timescale 1ns/1ns
 
 module CommandQueue #(
@@ -116,4 +114,4 @@ mux_by_index #(
 
 endmodule
 
-`endif//__TESTDRIVE_COMMAND_QUEUE_V__
+`endif//__TESTDRIVE_COMMAND_QUEUE_SV__

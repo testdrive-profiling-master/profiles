@@ -34,8 +34,8 @@
 // Title : Common verilog library
 // Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
 //================================================================================
-`ifndef __TESTDRIVE_SRAM_DUAL_ASYNC_V__
-`define __TESTDRIVE_SRAM_DUAL_ASYNC_V__
+`ifndef __TESTDRIVE_SRAM_DUAL_ASYNC_SV__
+`define __TESTDRIVE_SRAM_DUAL_ASYNC_SV__
 `timescale 1ns/1ns
 
 module SRAM_Dual_async #(
@@ -72,4 +72,4 @@ end
 
 endmodule
 
-`endif//__TESTDRIVE_SRAM_DUAL_ASYNC_V__
+`endif//__TESTDRIVE_SRAM_DUAL_ASYNC_SV__

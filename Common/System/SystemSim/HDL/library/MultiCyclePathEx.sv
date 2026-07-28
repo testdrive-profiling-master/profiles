@@ -33,8 +33,8 @@
 // Title : Common verilog library
 // Rev.  : 11/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
-`ifndef __TESTDRIVE_MULTICYCLE_PATH_EX_V__
-`define __TESTDRIVE_MULTICYCLE_PATH_EX_V__
+`ifndef __TESTDRIVE_MULTICYCLE_PATH_EX_SV__
+`define __TESTDRIVE_MULTICYCLE_PATH_EX_SV__
 `include "testdrive_system.svh"
 
 `define __GEN_MULTIPATH_PIPE \
@@ -280,4 +280,4 @@ endmodule
 
 `undef __GEN_MULTIPATH_PIPE
 
-`endif//__TESTDRIVE_MULTICYCLE_PATH_EX_V__
+`endif//__TESTDRIVE_MULTICYCLE_PATH_EX_SV__

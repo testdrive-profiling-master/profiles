@@ -34,8 +34,8 @@
 // Title : Common verilog library
 // Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
 //================================================================================
-`ifndef __TESTDRIVE_REGISTER_ELEMENT_V__
-`define __TESTDRIVE_REGISTER_ELEMENT_V__
+`ifndef __TESTDRIVE_REGISTER_ELEMENT_SV__
+`define __TESTDRIVE_REGISTER_ELEMENT_SV__
 `include "testdrive_system.svh"
 
 // register element
@@ -105,4 +105,4 @@ end
 
 endmodule
 
-`endif//__TESTDRIVE_REGISTER_ELEMENT_V__
+`endif//__TESTDRIVE_REGISTER_ELEMENT_SV__

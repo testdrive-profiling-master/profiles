@@ -34,8 +34,8 @@
 // Title : Common verilog library
 // Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
 //================================================================================
-`ifndef __TESTDRIVE_BINARY_2_GRAY_V__
-`define __TESTDRIVE_BINARY_2_GRAY_V__
+`ifndef __TESTDRIVE_BINARY_2_GRAY_SV__
+`define __TESTDRIVE_BINARY_2_GRAY_SV__
 `timescale 1ns/1ns
 
 module Binary2Gray #(
@@ -54,4 +54,4 @@ assign	GRAY	= BINARY ^ {1'b0, BINARY[(WIDTH-1):1]};
 
 endmodule
 
-`endif//__TESTDRIVE_BINARY_2_GRAY_V__
+`endif//__TESTDRIVE_BINARY_2_GRAY_SV__

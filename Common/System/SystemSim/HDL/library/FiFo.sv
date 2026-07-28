@@ -34,8 +34,8 @@
 // Title : Common verilog library
 // Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
 //================================================================================
-`ifndef __TESTDRIVE_FIFO_V__
-`define __TESTDRIVE_FIFO_V__
+`ifndef __TESTDRIVE_FIFO_SV__
+`define __TESTDRIVE_FIFO_SV__
 `timescale 1ns/1ns
 
 module FiFo #(
@@ -110,4 +110,4 @@ SRAM_Dual_Distributed #(
 
 endmodule
 
-`endif//__TESTDRIVE_FIFO_V__
+`endif//__TESTDRIVE_FIFO_SV__

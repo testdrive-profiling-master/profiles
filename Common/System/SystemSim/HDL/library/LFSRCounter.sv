@@ -34,8 +34,8 @@
 // Title : Common verilog library
 // Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
 //================================================================================
-`ifndef __TESTDRIVE_LFSR_COUNTER_V__
-`define __TESTDRIVE_LFSR_COUNTER_V__
+`ifndef __TESTDRIVE_LFSR_COUNTER_SV__
+`define __TESTDRIVE_LFSR_COUNTER_SV__
 `timescale 1ns/1ns
 
 module LFSRCounter #(	// LFSR(Linear feedback shift register) counter
@@ -86,4 +86,4 @@ endgenerate
 
 endmodule
 
-`endif//__TESTDRIVE_LFSR_COUNTER_V__
+`endif//__TESTDRIVE_LFSR_COUNTER_SV__

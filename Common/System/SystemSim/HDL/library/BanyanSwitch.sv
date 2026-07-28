@@ -34,8 +34,8 @@
 // Title : Common verilog library
 // Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
 //================================================================================
-`ifndef __TESTDRIVE_BANYAN_SWITCH_V__
-`define __TESTDRIVE_BANYAN_SWITCH_V__
+`ifndef __TESTDRIVE_BANYAN_SWITCH_SV__
+`define __TESTDRIVE_BANYAN_SWITCH_SV__
 `timescale 1ns/1ns
 /* TOP_MODULE = BanyanSwitch */
 
@@ -164,4 +164,4 @@ BanyanSwitch_element #(
 
 endmodule
 
-`endif//__TESTDRIVE_BANYAN_SWITCH_V__
+`endif//__TESTDRIVE_BANYAN_SWITCH_SV__

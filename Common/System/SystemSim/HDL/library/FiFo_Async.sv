@@ -33,8 +33,8 @@
 // Title : Common verilog library
 // Rev.  : 5/25/2023 Thu (clonextop@gmail.com)
 //================================================================================
-`ifndef __TESTDRIVE_FIFO_ASYNC_V__
-`define __TESTDRIVE_FIFO_ASYNC_V__
+`ifndef __TESTDRIVE_FIFO_ASYNC_SV__
+`define __TESTDRIVE_FIFO_ASYNC_SV__
 `timescale 1ns/1ns
 /* TOP_MODULE = FiFo_Async */
 
@@ -166,4 +166,4 @@ FiFo_Async_Status #(
 
 endmodule
 
-`endif//__TESTDRIVE_FIFO_ASYNC_V__
+`endif//__TESTDRIVE_FIFO_ASYNC_SV__

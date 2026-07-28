@@ -34,8 +34,8 @@
 // Title : Common verilog library
 // Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
 //================================================================================
-`ifndef __TESTDRIVE_GRAY_2_BINARY_V__
-`define __TESTDRIVE_GRAY_2_BINARY_V__
+`ifndef __TESTDRIVE_GRAY_2_BINARY_SV__
+`define __TESTDRIVE_GRAY_2_BINARY_SV__
 `timescale 1ns/1ns
 
 module Gray2Binary #(
@@ -62,4 +62,4 @@ endgenerate
 
 endmodule
 
-`endif//__TESTDRIVE_GRAY_2_BINARY_V__
+`endif//__TESTDRIVE_GRAY_2_BINARY_SV__

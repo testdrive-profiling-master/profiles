@@ -33,8 +33,8 @@
 // Title : Common verilog library
 // Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
-`ifndef __TESTDRIVE_DEMUX_BY_ENABLE_V__
-`define __TESTDRIVE_DEMUX_BY_ENABLE_V__
+`ifndef __TESTDRIVE_DEMUX_BY_ENABLE_SV__
+`define __TESTDRIVE_DEMUX_BY_ENABLE_SV__
 `include "testdrive_system.svh"
 
 module demux_by_enable  #(
@@ -76,4 +76,4 @@ endgenerate
 
 endmodule
 
-`endif//__TESTDRIVE_DEMUX_BY_ENABLE_V__
+`endif//__TESTDRIVE_DEMUX_BY_ENABLE_SV__

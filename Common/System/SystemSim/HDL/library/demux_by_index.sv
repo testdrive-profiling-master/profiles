@@ -34,8 +34,8 @@
 // Title : Common verilog library
 // Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
 //================================================================================
-`ifndef __TESTDRIVE_DEMUX_BY_INDEX_V__
-`define __TESTDRIVE_DEMUX_BY_INDEX_V__
+`ifndef __TESTDRIVE_DEMUX_BY_INDEX_SV__
+`define __TESTDRIVE_DEMUX_BY_INDEX_SV__
 `timescale 1ns/1ns
 
 module demux_by_index  #(
@@ -67,4 +67,4 @@ endgenerate
 
 endmodule
 
-`endif//__TESTDRIVE_DEMUX_BY_INDEX_V__
+`endif//__TESTDRIVE_DEMUX_BY_INDEX_SV__

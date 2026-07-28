@@ -33,8 +33,8 @@
 // Title : Common verilog library
 // Rev.  : 4/26/2023 Wed (clonextop@gmail.com)
 //================================================================================
-`ifndef __TESTDRIVE_SRAM_SINGLE_V__
-`define __TESTDRIVE_SRAM_SINGLE_V__
+`ifndef __TESTDRIVE_SRAM_SINGLE_SV__
+`define __TESTDRIVE_SRAM_SINGLE_SV__
 `timescale 1ns/1ns
 
 module SRAM_Single #(
@@ -66,4 +66,4 @@ end
 
 endmodule
 
-`endif//__TESTDRIVE_SRAM_SINGLE_V__
+`endif//__TESTDRIVE_SRAM_SINGLE_SV__

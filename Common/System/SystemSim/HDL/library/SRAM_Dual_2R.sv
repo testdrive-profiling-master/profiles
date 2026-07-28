@@ -34,11 +34,11 @@
 // Title : Common verilog library
 // Rev.  : 10/31/2019 Thu (clonextop@gmail.com)
 //================================================================================
-`ifndef __TESTDRIVE_SRAM_DUAL_2R_V__
-`define __TESTDRIVE_SRAM_DUAL_2R_V__
+`ifndef __TESTDRIVE_SRAM_DUAL_2R_SV__
+`define __TESTDRIVE_SRAM_DUAL_2R_SV__
 `timescale 1ns/1ns
 
-module SRAM_Dual_2R #(				// fpga only
+module SRAM_Dual_2R #(
 	parameter	ADDR_WIDTH			= 4,
 	parameter	DATA_WIDTH			= 4
 ) (
@@ -73,4 +73,4 @@ end
 
 endmodule
 
-`endif//__TESTDRIVE_SRAM_DUAL_2R_V__
+`endif//__TESTDRIVE_SRAM_DUAL_2R_SV__

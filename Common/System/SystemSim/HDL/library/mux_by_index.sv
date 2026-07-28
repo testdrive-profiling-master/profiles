@@ -33,8 +33,8 @@
 // Title : Common verilog library
 // Rev.  : 5/25/2023 Thu (clonextop@gmail.com)
 //================================================================================
-`ifndef __TESTDRIVE_MUX_BY_INDEX_V__
-`define __TESTDRIVE_MUX_BY_INDEX_V__
+`ifndef __TESTDRIVE_MUX_BY_INDEX_SV__
+`define __TESTDRIVE_MUX_BY_INDEX_SV__
 `timescale 1ns/1ns
 
 module mux_by_index  #(
@@ -61,4 +61,4 @@ endgenerate
 
 endmodule
 
-`endif//__TESTDRIVE_MUX_BY_INDEX_V__
+`endif//__TESTDRIVE_MUX_BY_INDEX_SV__
