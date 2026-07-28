@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : System manager
-// Rev.  : 3/23/2026 Mon (clonextop@gmail.com)
+// Rev.  : 7/28/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #include "BuildAutomation.h"
 
@@ -77,7 +77,7 @@ BuildAutomation::BuildAutomation(ITDDocument *pDoc, DWORD dwCheckCommandStart, D
 	if (!(m_bDirtySystem = m_pDoc->GetConfigInt(__sDIRTY_SYSTEM, TRUE))) {
 		FILETIME swTIme	   = {0, 0};
 		FILETIME hwTIme	   = {0, 0};
-		LPCTSTR	 sExtsHW[] = {_T("v"), _T("sv"), _T("vh"), NULL};
+		LPCTSTR	 sExtsHW[] = {_T("v"), _T("sv"), _T("vh"), _T("svh"), NULL};
 		LPCTSTR	 sExtsSW[] = {_T("c"), _T("cpp"), _T("h"), _T("inl"), NULL};
 		SearchLastWriteFileTime(swTIme, _T("%PROJECT%System/SubSystems/Simulation/verilator/"), sExtsSW);
 
