@@ -1,12 +1,12 @@
 //----------------------------------------------------------------------
 // Sources
-../library/FiFo.v
-../library/SRAM_Dual_Distributed.v
-../library/SRAM_Single.v
-../library/demux_by_enable.v
-../library/MultiCyclePath.v
+../library/FiFo.sv
+../library/SRAM_Dual_Distributed.sv
+../library/SRAM_Single.sv
+../library/demux_by_enable.sv
+../library/MultiCyclePath.sv
 
-meitner/*.v
+meitner/*.sv
 
 //----------------------------------------------------------------------
 // XDCs

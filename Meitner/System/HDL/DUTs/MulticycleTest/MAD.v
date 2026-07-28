@@ -33,7 +33,7 @@
 // Title : Processor
 // Rev.  : 4/25/2023 Tue (clonextop@gmail.com)
 //================================================================================
-`include "testdrive_system.vh"
+`include "testdrive_system.svh"
 
 module MAD (
 	input	[63:0]			A,		// A

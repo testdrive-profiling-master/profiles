@@ -1,4 +1,4 @@
-`include "DUTs/hdmi_controller/includes.vh"
+`include "DUTs/hdmi_controller/includes.svh"
 
 module hdmi_controller_v1_0 #(
 	// S_AXI

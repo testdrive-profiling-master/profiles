@@ -1,2 +1,2 @@
-TOP_DESIGN	= top.v
+TOP_DESIGN	= top.sv
 	OPTION	= SAND_BOX

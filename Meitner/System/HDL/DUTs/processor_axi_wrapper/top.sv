@@ -38,7 +38,7 @@
 `include "template/testdrive_apb_slave_bfm.sv"
 `include "template/testdrive_axi4_lite_master_bfm.sv"
 `include "template/testdrive_axi4_master_bfm.sv"
-`include "DUTs/processor_axi_wrapper/includes.vh"
+`include "DUTs/processor_axi_wrapper/includes.svh"
 `include "DUTs/processor_axi_wrapper/hdmi_controller.sv"
 
 // AXI slave definitions

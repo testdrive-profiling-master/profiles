@@ -1,11 +1,11 @@
 //----------------------------------------------------------------------
 // Sources
-library/demux_by_enable.v
-library/MultiCyclePath.v
-library/MultiCyclePathEx.v
-library/MultiCycleSlice.v
+library/demux_by_enable.sv
+library/MultiCyclePath.sv
+library/MultiCyclePathEx.sv
+library/MultiCycleSlice.sv
 
-FPU/F32/*.v
-FPU/fully_stage/*.v
+FPU/F32/*.sv
+FPU/fully_stage/*.sv
 
 FPU/synthesis.xdc

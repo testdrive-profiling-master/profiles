@@ -33,7 +33,7 @@
 // Title : Processor
 // Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
-`include "testdrive_system.vh"
+`include "testdrive_system.svh"
 `include "template/testdrive_clock_bfm.sv"
 `include "template/testdrive_interrupt_bfm.sv"
 

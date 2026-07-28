@@ -4,5 +4,5 @@
 +incdir+./
 +incdir+./rtl/
 
-includes.vh
+includes.svh
 top.sv

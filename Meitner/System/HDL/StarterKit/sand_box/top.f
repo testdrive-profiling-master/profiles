@@ -1,3 +1,3 @@
 +incdir+${TESTDRIVE_PROFILE}common/System/SystemSim/HDL/
 
-top.v
+top.sv

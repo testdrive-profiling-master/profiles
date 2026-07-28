@@ -1,5 +1,5 @@
-`include "DUTs/processor_axi_wrapper/includes.vh"
-`include "DUTs/processor_axi_wrapper/processor_top.v"
+`include "DUTs/processor_axi_wrapper/includes.svh"
+`include "DUTs/processor_axi_wrapper/processor_top.sv"
 
 module dut_wrapper_v1_0 #(
 	parameter			C_CLKIN_PERIOD			= 4,

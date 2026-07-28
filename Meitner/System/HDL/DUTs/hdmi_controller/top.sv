@@ -36,10 +36,10 @@
 `timescale 1ns/1ns
 `define	M_AXI_USE_AXI4			1
 
-`include "testdrive_system.vh"
+`include "testdrive_system.svh"
 `include "template/testdrive_apb_slave_bfm.sv"
 `include "template/testdrive_axi4_master_bfm.sv"
-`include "DUTs/hdmi_controller/includes.vh"
+`include "DUTs/hdmi_controller/includes.svh"
 
 /* HIDDEN */
 module top (

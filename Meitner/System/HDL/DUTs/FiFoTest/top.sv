@@ -33,9 +33,9 @@
 // Title : Processor
 // Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
-`include "testdrive_system.vh"
-`include "library/SRAM_Dual_Distributed.v"
-`include "library/FiFo.v"
+`include "testdrive_system.svh"
+`include "library/SRAM_Dual_Distributed.sv"
+`include "library/FiFo.sv"
 
 /* HIDDEN */
 module top (

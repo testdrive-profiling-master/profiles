@@ -33,9 +33,9 @@
 // Title : FPU 32bit(IEEE-754) unit
 // Rev.  : 4/7/2023 Fri (clonextop@gmail.com)
 //================================================================================
-`include "FPU.vh"
-`include "F32/FPU_F32_PriorityEncoder.v"
-`include "F32/FPU_F32_AddSub.v"
+`include "FPU.svh"
+`include "F32/FPU_F32_PriorityEncoder.sv"
+`include "F32/FPU_F32_AddSub.sv"
 
 /* HIDDEN */
 module FPU_F32_ADD (

@@ -1,12 +1,12 @@
 //----------------------------------------------------------------------
 // Sources
-library/SRAM_Dual_Distributed.v
-library/FiFo.v
-library/FiFo_Async.v
-library/ControlSlice.v
-library/mux_by_index.v
-library/CommandQueue.v
-library/SRAM_Dual_2R.v
+library/SRAM_Dual_Distributed.sv
+library/FiFo.sv
+library/FiFo_Async.sv
+library/ControlSlice.sv
+library/mux_by_index.sv
+library/CommandQueue.sv
+library/SRAM_Dual_2R.sv
 
 MTSP/rtl/*.sv
 

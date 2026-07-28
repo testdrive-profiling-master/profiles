@@ -33,7 +33,7 @@
 // Title : FPU 32bit(IEEE-754) unit
 // Rev.  : 11/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
-`include "FPU.vh"
+`include "FPU.svh"
 
 /* HIDDEN */
 module FPU_F32_MUL (

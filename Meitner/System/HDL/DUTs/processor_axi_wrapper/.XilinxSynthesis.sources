@@ -4,15 +4,15 @@
 
 //----------------------------------------------------------------------
 // Sources
-library/FiFo_Async.v
-library/FiFo.v
-library/SyncPipe.v
-library/SRAM_Dual_Distributed.v
+library/FiFo_Async.sv
+library/FiFo.sv
+library/SyncPipe.sv
+library/SRAM_Dual_Distributed.sv
 
-template/axi_slave_wrapper.v
-template/axi_master_wrapper.v
+template/axi_slave_wrapper.sv
+template/axi_master_wrapper.sv
 
-processor_axi_wrapper/*.v
+processor_axi_wrapper/*.sv
 
 //----------------------------------------------------------------------
 // XDCs

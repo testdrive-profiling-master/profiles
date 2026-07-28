@@ -33,16 +33,16 @@
 // Title : Processor
 // Rev.  : 5/30/2023 Tue (clonextop@gmail.com)
 //================================================================================
-`include "testdrive_system.vh"
-`include "library/demux_by_enable.v"
-`include "library/MultiCyclePath.v"
-`include "library/MultiCyclePathEx.v"
-`include "library/SRAM_Single.v"
-`include "library/SRAM_Single_Multicycle.v"
-`include "MAD.v"
-`include "MAD_multicycled.v"
-`include "MAD_multicycled_Ex.v"
-`include "SRAM_Single_multicycled.v"
+`include "testdrive_system.svh"
+`include "library/demux_by_enable.sv"
+`include "library/MultiCyclePath.sv"
+`include "library/MultiCyclePathEx.sv"
+`include "library/SRAM_Single.sv"
+`include "library/SRAM_Single_Multicycle.sv"
+`include "MAD.sv"
+`include "MAD_multicycled.sv"
+`include "MAD_multicycled_Ex.sv"
+`include "SRAM_Single_multicycled.sv"
 
 /* HIDDEN */
 module top (

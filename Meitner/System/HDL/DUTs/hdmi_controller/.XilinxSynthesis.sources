@@ -1,11 +1,11 @@
 //----------------------------------------------------------------------
 // Sources
-library/FiFo_Async.v
-library/SyncPipe.v
-library/SRAM_Dual_Distributed.v
-library/SRAM_Single.v
+library/FiFo_Async.sv
+library/SyncPipe.sv
+library/SRAM_Dual_Distributed.sv
+library/SRAM_Single.sv
 
-template/axi_slave_wrapper.v
-template/axi_master_wrapper.v
+template/axi_slave_wrapper.sv
+template/axi_master_wrapper.sv
 
-hdmi_controller/*.v
+hdmi_controller/*.sv
