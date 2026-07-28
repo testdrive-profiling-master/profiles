@@ -34,7 +34,7 @@
 // Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
-`include "testdrive_system.vh"
+`include "testdrive_system.svh"
 `include "template/testdrive_axi4_lite_bfm.sv"
 `include "template/testdrive_axi4_master_bfm.sv"
 

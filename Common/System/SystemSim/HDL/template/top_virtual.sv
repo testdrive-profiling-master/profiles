@@ -34,7 +34,7 @@
 // Rev.  : 4/20/2026 Mon (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
-`include "testdrive_system.vh"
+`include "testdrive_system.svh"
 `include "template/testdrive_virtual_slave_bfm.sv"
 
 `ifndef VIRTUAL_SLAVE_BASE_ADDR

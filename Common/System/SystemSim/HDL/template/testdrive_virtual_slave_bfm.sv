@@ -33,7 +33,7 @@
 // Title : TestDrive template design
 // Rev.  : 4/20/2026 Mon (clonextop@gmail.com)
 //================================================================================
-`include "testdrive_system.vh"
+`include "testdrive_system.svh"
 /*verilator tracing_off*/
 //-----------------------------------------------------------------------------
 // The Virtual slave BFM

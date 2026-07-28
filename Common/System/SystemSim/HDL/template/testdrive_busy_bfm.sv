@@ -33,7 +33,7 @@
 // Title : TestDrive template design
 // Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
-`include "testdrive_system.vh"
+`include "testdrive_system.svh"
 
 /*verilator tracing_off*/
 //-----------------------------------------------------------------------------

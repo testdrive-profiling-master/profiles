@@ -33,7 +33,7 @@
 // Title : TestDrive template design
 // Rev.  : 2/2/2024 Fri (clonextop@gmail.com)
 //================================================================================
-`include "testdrive_system.vh"
+`include "testdrive_system.svh"
 /*verilator tracing_off*/
 //-----------------------------------------------------------------------------
 // The AXI 4 LITE Master BFM

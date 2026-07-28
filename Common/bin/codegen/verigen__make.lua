@@ -182,7 +182,7 @@ function module:make_code(is_top)
 	
 	-------------------------------------------------------------------
 	-- common include
-	f:Put("`include \"" .. module.__top.name .. "_defines.vh\"\n\n")
+	f:Put("`include \"" .. module.__top.name .. "_defines.svh\"\n\n")
 
 	-------------------------------------------------------------------
 	-- module declaration
@@ -675,7 +675,7 @@ function module:make_code(is_top)
 						sHtml:erase(iPos, iSize)
 						
 						-- insert link
-						local	sLink	= "<a href=\"" .. module.__top.name .. "_defines.vh.html#" .. i_name .. "\"  target=\"" .. module.__top.name ..  "_defines.vh\"><font color=\"#F00000\"><b>" .. i_name .. "</font></b></a>"
+						local	sLink	= "<a href=\"" .. module.__top.name .. "_defines.svh.html#" .. i_name .. "\"  target=\"" .. module.__top.name ..  "_defines.svh\"><font color=\"#F00000\"><b>" .. i_name .. "</font></b></a>"
 						sHtml:insert(iPos, sLink)
 						iPos	= iPos + #sLink
 					else
@@ -756,16 +756,16 @@ function module:make_code(is_top)
 		self:make_constraint()
 
 		-- common defines
-		if f:Create(sOutPath .. "/" .. self.name .. "_defines.vh") == false then
+		if f:Create(sOutPath .. "/" .. self.name .. "_defines.svh") == false then
 			error("Can't create common definition file.", 2)
 		else
-			LOGI("Make common defines : " .. self.name .. "_defines.vh")
+			LOGI("Make common defines : " .. self.name .. "_defines.svh")
 			
 			f:Put(self:get_inception())
 
 			f:Put(	"`ifndef __" .. self.name:upper() .. "_DEFINES_VH__\n"..
 					"`define __" .. self.name:upper() .. "_DEFINES_VH__\n"..
-					"`include \"testdrive_system.vh\"		// default system defines\n\n")
+					"`include \"testdrive_system.svh\"		// default system defines\n\n")
 			interface.__make_code(f)
 			
 			if __global_defines__.code:Length() > 0 then
@@ -778,10 +778,10 @@ function module:make_code(is_top)
 			
 			-- make html style output
 			do
-				exec("code_highlighter --ilang=verilog -n " .. sOutPath .. "/" .. self.name .. "_defines.vh " .. sOutPath .. "/html/" .. self.name .. "_defines.vh.html")
+				exec("code_highlighter --ilang=verilog -n " .. sOutPath .. "/" .. self.name .. "_defines.svh " .. sOutPath .. "/html/" .. self.name .. "_defines.svh.html")
 				-- add bookmark
 				
-				if f:Open(sOutPath .. "/html/" .. self.name .. "_defines.vh.html") then
+				if f:Open(sOutPath .. "/html/" .. self.name .. "_defines.svh.html") then
 					local	sHtml	= String(f:GetAll())
 
 					f:Close()
@@ -811,7 +811,7 @@ function module:make_code(is_top)
 					end
 					
 					-- write back
-					f:Create(sOutPath .. "/html/" .. self.name .. "_defines.vh.html")
+					f:Create(sOutPath .. "/html/" .. self.name .. "_defines.svh.html")
 					f:Put("<!DOCTYPE html>\n" ..
 						"<html>\n"..
 						"<head>\n"..
@@ -824,7 +824,7 @@ function module:make_code(is_top)
 						"		font-size: 14px;\n"..
 						"	}\n"..
 						"	</style>\n"..
-						"	<title>" .. self.name .. "_defines.vh</title>\n"..
+						"	<title>" .. self.name .. "_defines.svh</title>\n"..
 						"</head>\n"..
 						"<body>\n")
 					f:Put(sHtml.s)
@@ -833,7 +833,7 @@ function module:make_code(is_top)
 				end
 			end
 			
-			__graphviz:Append("\t\"" .. self.name .. "_defines\" [URL=\"html/" .. self.name .. "_defines.vh.html\" target=\"" .. self.name ..  "_defines.vh\" fillcolor=\"#D0FFD0\"];\n")
+			__graphviz:Append("\t\"" .. self.name .. "_defines\" [URL=\"html/" .. self.name .. "_defines.svh.html\" target=\"" .. self.name ..  "_defines.svh\" fillcolor=\"#D0FFD0\"];\n")
 			__graphviz:Append("\t\"MAIN_SCRIPT\" -> \"" .. self.name .. "_defines\" [fillcolor=\"#F0C0C0\" style=dotted];\n")
 		end
 		
@@ -901,7 +901,7 @@ function module:make_code(is_top)
 		end
 		
 		-- include list
-		if f:Create(sOutPath .. "/" .. self.name .. "_includes.vh") then
+		if f:Create(sOutPath .. "/" .. self.name .. "_includes.svh") then
 			f:Put("`ifndef __" .. self.name:upper() .. "_INCLUDES_VH__\n")
 			f:Put("`define __" .. self.name:upper() .. "_INCLUDES_VH__\n")
 			f:Put(__IncludeList.s)

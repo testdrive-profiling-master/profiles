@@ -33,7 +33,7 @@
 // Title : TestDrive template design
 // Rev.  : 10/19/2023 Thu (clonextop@gmail.com)
 //================================================================================
-`include "testdrive_system.vh"
+`include "testdrive_system.svh"
 /*verilator tracing_off*/
 //-----------------------------------------------------------------------------
 // The APB Slave BFM
