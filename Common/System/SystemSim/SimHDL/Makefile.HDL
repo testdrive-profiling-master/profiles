@@ -27,7 +27,7 @@ SRCS := $(SRCS) \
 	$(wildcard ../../../HDL/dpi/*.cpp) \
 	$(wildcard ../verilator/*.cpp)
 
-LIBDIR			:= $(LIBDIR) -lshell32 -lz -lm
+LIBDIR			:= $(LIBDIR) -lshell32 -lz -llz4 -lm
 INC				:= $(INC) -I. -I../../../../Application/include -I../../../HDL -I../../../HDL/dpi -I$(TESTDRIVE_PROFILE)Common/System/SystemSim/HDL/dpi -I$(SIMPATH)/dpi_private -I../verilator -I$(TESTDRIVE_DIR)include/verilator `pkg-config --cflags verilator`
 
 CDEFS			:= $(CDEFS) $(SIM_CDEFS) -D__STDC_FORMAT_MACROS -DSIM_HDL_EXPORTS -DUSE_VERILATOR -DUSE_TESTDRIVE -DVL_USER_FINISH -DVL_USER_STOP -DVL_USER_FATAL -DVL_THREADED -D_FILE_OFFSET_BITS=64
