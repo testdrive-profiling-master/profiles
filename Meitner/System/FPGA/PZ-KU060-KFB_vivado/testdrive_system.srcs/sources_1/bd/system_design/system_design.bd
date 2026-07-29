@@ -7,7 +7,7 @@
       "name": "system_design",
       "rev_ctrl_bd_flag": "RevCtrlBdOff",
       "synth_flow_mode": "Hierarchical",
-      "tool_version": "2025.2"
+      "tool_version": "2025.2.1"
     },
     "design_tree": {
       "ddr4_0": "",
@@ -288,12 +288,21 @@
     "components": {
       "ddr4_0": {
         "vlnv": "xilinx.com:ip:ddr4:2.2",
-        "ip_revision": "28",
+        "ip_revision": "29",
         "xci_name": "system_design_ddr4_0_0",
         "xci_path": "ip\\system_design_ddr4_0_0\\system_design_ddr4_0_0.xci",
         "inst_hier_path": "ddr4_0",
         "has_run_ip_tcl": "true",
         "parameters": {
+          "C0.BANK_GROUP_WIDTH": {
+            "value": "1"
+          },
+          "C0.DDR4_AxiAddressWidth": {
+            "value": "32"
+          },
+          "C0.DDR4_AxiDataWidth": {
+            "value": "512"
+          },
           "C0.DDR4_AxiIDWidth": {
             "value": "1"
           },
@@ -349,12 +358,24 @@
       },
       "pcie_xdma": {
         "vlnv": "xilinx.com:ip:xdma:4.2",
-        "ip_revision": "2",
+        "ip_revision": "3",
         "xci_name": "system_design_xdma_0_0",
         "xci_path": "ip\\system_design_xdma_0_0\\system_design_xdma_0_0.xci",
         "inst_hier_path": "pcie_xdma",
         "has_run_ip_tcl": "true",
         "parameters": {
+          "PF0_DEVICE_ID_mqdma": {
+            "value": "9034"
+          },
+          "PF0_SRIOV_VF_DEVICE_ID": {
+            "value": "A034"
+          },
+          "PF2_DEVICE_ID_mqdma": {
+            "value": "9234"
+          },
+          "PF3_DEVICE_ID_mqdma": {
+            "value": "9334"
+          },
           "axi_data_width": {
             "value": "128_bit"
           },
@@ -364,14 +385,29 @@
           "axist_bypass_en": {
             "value": "false"
           },
+          "axisten_freq": {
+            "value": "250"
+          },
           "cfg_mgmt_if": {
             "value": "false"
+          },
+          "coreclk_freq": {
+            "value": "500"
           },
           "pciebar2axibar_axil_master": {
             "value": "0x00000000"
           },
           "pf0_base_class_menu": {
             "value": "Memory_controller"
+          },
+          "pf0_class_code_base": {
+            "value": "05"
+          },
+          "pf0_class_code_interface": {
+            "value": "00"
+          },
+          "pf0_class_code_sub": {
+            "value": "80"
           },
           "pf0_device_id": {
             "value": "7022"
@@ -396,6 +432,9 @@
           },
           "pl_link_cap_max_link_width": {
             "value": "X4"
+          },
+          "plltype": {
+            "value": "QPLL1"
           },
           "xdma_rnum_chnl": {
             "value": "4"

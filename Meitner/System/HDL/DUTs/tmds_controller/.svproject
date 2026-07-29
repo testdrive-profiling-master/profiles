@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svproject>
+  <defines>
+    <define key="USE_TESTDRIVE" val=""/>
+    <define key="VERILATOR" val=""/>
+  </defines>
+  <includePaths/>
+  <buildPaths/>
+  <pluginPaths/>
+  <libraryPaths/>
+  <argFilePaths>
+    <argFilePath path="${project_loc}/top.f"/>
+  </argFilePaths>
+  <sourceCollections/>
+  <projectRefs/>
+  <templatePaths/>
+</svproject>

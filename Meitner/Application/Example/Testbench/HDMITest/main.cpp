@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Testbench
-// Rev.  : 8/14/2024 Wed (clonextop@gmail.com)
+// Rev.  : 7/29/2026 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "Display.h"
@@ -85,8 +85,10 @@ class Testbench : public TestbenchFramework
 		m_pImg	= NULL;
 
 		// H/W system equality check
-		if (!CheckSimulation("HDMI controller"))
+		if (!CheckSimulation("HDMI controller", false) && !CheckSimulation("TMDS controller", false)) {
+			printf("Can't find HDMI/TMDS controller.\n");
 			return false;
+		}
 
 		m_pHDMI = new HDMI_Controller(m_pDDK, 0x10000, 250.f); // 0x10000 base address, @250Mhz from PCIe's ACLK
 
