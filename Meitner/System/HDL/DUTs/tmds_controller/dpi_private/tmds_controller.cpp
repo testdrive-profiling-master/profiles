@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TMDS controller
-// Rev.  : 7/29/2026 Wed (clonextop@gmail.com)
+// Rev.  : 7/30/2026 Thu (clonextop@gmail.com)
 //================================================================================
 #include "dpi_common.h"
 
@@ -127,7 +127,7 @@ DPI_FUNCTION svBit tmds_out(const svBitVecVal *data_0, const svBitVecVal *data_1
 			uint8_t d2 = tmds_decoding(*data_2);
 
 			if (pBuffer)
-				pBuffer[x + y * __display.width].color = (d2 << 16) | (d1 << 8) | d0;
+				pBuffer[x + y * __display.width].color = (d0 << 16) | (d1 << 8) | d2;
 
 			bSet						 = true;
 			pDisplayConfig->Back.bUpdate = TRUE;
