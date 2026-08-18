@@ -78,6 +78,10 @@ static bool g_bSimOutEnable	  = true;
 #	define DEFAULT_INITIAL_RESET_VALUE 2 // randomize all bits
 #endif
 
+#ifndef DEFAULT_INITIAL_RANDOM_SEED
+#	define DEFAULT_INITIAL_RANDOM_SEED time(NULL)
+#endif
+
 static const char *GetCurrentFileName(void)
 {
 	static string sFileName;
@@ -127,7 +131,11 @@ public:
 			__pSimHDL  = this;
 			__pContext = new VerilatedContext;
 			__pContext->randReset(DEFAULT_INITIAL_RESET_VALUE);
-			__pContext->randSeed(time(NULL));
+			{
+				int rand_seed = (int)(DEFAULT_INITIAL_RANDOM_SEED);
+				LOGI("Verilator(Seed:0x%08X) is initialized.\n", rand_seed);
+				__pContext->randSeed(rand_seed);
+			}
 			__pSimTop = new SimTop(__pContext);
 		} else {
 			LOGI("'SimProcessor' At least one more instances has been created.\n");
