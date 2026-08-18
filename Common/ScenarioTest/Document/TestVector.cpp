@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Scenario test
-// Rev.  : 4/30/2024 Tue (clonextop@gmail.com)
+// Rev.  : 8/18/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #include "TestVector.h"
 #include "ScenarioTest.inl"
@@ -87,9 +87,9 @@ TestVector::TestVector(TestGroup *pGroup, int iID, LPCTSTR sRelativePath, LPCTST
 
 			ExtensionString(sPrefix);
 			ExtensionString(sPostfix);
-			m_pHtmlTable->Control()->CallJScript(_T("SetTBody(\"%s <a href='test:%s'>%d-%d. %s</a> %s\");"),
-												 (LPCTSTR)sPrefix, (LPCTSTR)FullName(), iGroupID + 1, iID + 1,
-												 (LPCTSTR)sTitle, (LPCTSTR)sPostfix);
+			m_pHtmlTable->Control()->CallJScript(
+				_T("SetTBody(\"%s <a href='test:%s'>%d-%d. %s</a> %s\");"), (LPCTSTR)sPrefix, (LPCTSTR)FullName(), iGroupID + 1, iID + 1,
+				(LPCTSTR)sTitle, (LPCTSTR)sPostfix);
 		}
 		m_pHtmlTable->NewCell(CELL_TD, _T("date_%d_%d"), pGroup->GroupID(), m_iID);
 		m_pHtmlTable->SetBoarderWidth(TABLE_BOARDER_RIGHT, 0);
@@ -133,8 +133,7 @@ CString TestVector::GetConfigString(LPCTSTR sKey, LPCTSTR sDefault)
 {
 	CString sConfigFileName;
 	CString sRet;
-	sConfigFileName.Format(_T("%s%s\\%s.%s"), (LPCTSTR)m_sScenarioPath, (LPCTSTR)m_sRelativePath, (LPCTSTR)m_sFileName,
-						   (LPCTSTR)g_sGlobalName);
+	sConfigFileName.Format(_T("%s%s\\%s.%s"), (LPCTSTR)m_sScenarioPath, (LPCTSTR)m_sRelativePath, (LPCTSTR)m_sFileName, (LPCTSTR)g_sGlobalName);
 	sConfigFileName.Replace(_T('/'), _T('\\'));
 	{
 		TCHAR sLine[4096];
@@ -156,7 +155,7 @@ double TestVector::Score(void)
 
 	case TEST_STATUS_SCORE: {
 		TG_SCORE_FORMAT *pScoreFormat = m_pGroup->ScoreFormat();
-		fScore = ((m_fScore - pScoreFormat->min) * 100.0) / (pScoreFormat->max - pScoreFormat->min);
+		fScore						  = ((m_fScore - pScoreFormat->min) * 100.0) / (pScoreFormat->max - pScoreFormat->min);
 	} break;
 
 	default:
@@ -177,8 +176,8 @@ CString TestVector::FullName(void)
 static void PrintTime(CString &str, int r, int g, int b, LPCTSTR sFormat, int iTime = 0, BOOL bBold = FALSE)
 {
 	CString sExFormat;
-	sExFormat.Format(_T("%s%s%s%s%s"), bBold ? _T("<b>") : _T(""), _T("<font color='#%02X%02X%02X'>"), sFormat,
-					 _T("</font>"), bBold ? _T("</b>") : _T(""));
+	sExFormat.Format(
+		_T("%s%s%s%s%s"), bBold ? _T("<b>") : _T(""), _T("<font color='#%02X%02X%02X'>"), sFormat, _T("</font>"), bBold ? _T("</b>") : _T(""));
 	str.Format(sExFormat, r, g, b, iTime);
 }
 
@@ -288,11 +287,9 @@ void TestVector::UpdateTable(void)
 			}
 			sScore.Format(pScoreFormat->sFormat, dwColor, m_fScore);
 		}
-		m_pHtmlTable->Control()->CallJScript(_T("SetBody('result_%d_%d', \"%s\");"), m_pGroup->GroupID(), m_iID,
-											 (LPCTSTR)sScore);
+		m_pHtmlTable->Control()->CallJScript(_T("SetBody('result_%d_%d', \"%s\");"), m_pGroup->GroupID(), m_iID, (LPCTSTR)sScore);
 	} else
-		m_pHtmlTable->Control()->CallJScript(_T("SetBody('result_%d_%d', \"%s\");"), m_pGroup->GroupID(), m_iID,
-											 g_sTestStatus[m_Status]);
+		m_pHtmlTable->Control()->CallJScript(_T("SetBody('result_%d_%d', \"%s\");"), m_pGroup->GroupID(), m_iID, g_sTestStatus[m_Status]);
 
 	if (m_Status == TEST_STATUS_NOT_TESTED) {
 		m_pHtmlTable->Control()->CallJScript(_T("SetBody('date_%d_%d', \"-\");"), m_pGroup->GroupID(), m_iID);
@@ -302,11 +299,10 @@ void TestVector::UpdateTable(void)
 		{
 			time_t today;
 			today		  = GetCurrentDayTime();
-			double d_diff = (long double)(today) -
-							(long double)(m_LastTime); // difftime(today, m_LastTime);	// difftime is not working!
-			days   = d_diff / (60 * 60 * 24);
-			months = (int)((days * 12) / 365);
-			years  = days / 365;
+			double d_diff = (long double)(today) - (long double)(m_LastTime); // difftime(today, m_LastTime);	// difftime is not working!
+			days		  = d_diff / (60 * 60 * 24);
+			months		  = (int)((days * 12) / 365);
+			years		  = days / 365;
 		}
 
 		if (years) {
@@ -330,8 +326,7 @@ void TestVector::UpdateTable(void)
 			}
 		}
 
-		m_pHtmlTable->Control()->CallJScript(_T("SetBody('date_%d_%d', \"%s\");"), m_pGroup->GroupID(), m_iID,
-											 (LPCTSTR)sTime);
+		m_pHtmlTable->Control()->CallJScript(_T("SetBody('date_%d_%d', \"%s\");"), m_pGroup->GroupID(), m_iID, (LPCTSTR)sTime);
 	}
 
 	m_pGroup->UpdateTable();
@@ -342,13 +337,12 @@ void TestVector::DoTest(void)
 	CString sFullPath;
 	CString sArg;
 	g_pSystem->ClearLog();
-	g_pSystem->LogInfo(_T("Test : %d.%s(%d) - %s"), m_pGroup->GroupID() + 1, m_pGroup->GetConfig(TG_DESC_NAME),
-					   m_iID + 1, (LPCTSTR)FullName());
+	g_pSystem->LogInfo(_T("Test : %d.%s(%d) - %s"), m_pGroup->GroupID() + 1, m_pGroup->GetConfig(TG_DESC_NAME), m_iID + 1, (LPCTSTR)FullName());
 	sFullPath.Format(_T("%s%s\\%s"), (LPCTSTR)m_sScenarioPath, (LPCTSTR)m_sRelativePath, (LPCTSTR)m_sFileName);
 	sArg.Format(m_pGroup->GetConfig(TG_DESC_PARAMETERS), (LPCTSTR)sFullPath);
 	m_pHtmlTable->JScript(
-		_T("ShowWait(\"%s<br><font color=#3F3FFF><b>%d-%d. '%s'</b></font><br><small><small>(%s)</small></small>\");"),
-		_L(TEST_IS_RUNNING), m_pGroup->GroupID() + 1, m_iID + 1, (LPCTSTR)FullName(), _L(INFO_FORCE_TO_QUIT_PROGRAM));
+		_T("ShowWait(\"%s<br><font color=#3F3FFF><b>%d-%d. '%s'</b></font><br><small><small>(%s)</small></small>\");"), _L(TEST_IS_RUNNING),
+		m_pGroup->GroupID() + 1, m_iID + 1, (LPCTSTR)FullName(), _L(INFO_FORCE_TO_QUIT_PROGRAM));
 	{
 		// run test
 		CString sProgram;
@@ -393,7 +387,7 @@ void TestVector::DoTest(void)
 
 				// get error code if exist.
 				if (sErrorToken[i]) {
-					LPTSTR sRetValue = _tcsstr(sErrorToken[i], _T("@E:"));
+					LPTSTR sRetValue = (LPTSTR)_tcsstr(sErrorToken[i], _T("@E:"));
 
 					if (sRetValue) {
 						*sRetValue = _T('\0');
@@ -403,15 +397,15 @@ void TestVector::DoTest(void)
 				}
 			}
 		}
-		m_pHtmlTable->Control()->CallJScript(_T("SetBody('result_%d_%d', \"<font color='#FF3FFF'>%s</font>\");"),
-											 m_pGroup->GroupID(), m_iID, _L(TEST_IN_PROGRESS));
+		m_pHtmlTable->Control()->CallJScript(
+			_T("SetBody('result_%d_%d', \"<font color='#FF3FFF'>%s</font>\");"), m_pGroup->GroupID(), m_iID, _L(TEST_IN_PROGRESS));
 		m_pCurrentTestVector = this;
 		double fScore		 = FLT_MAX;
 
 		if (m_bSuppressWaveform) { // suppress simulation output to quick execution
 			SetEnvironmentVariable(_T("SIM_OUTPUT_ENABLE"), _T("0"));
 		}
-
+		// clang-format off
 		int iRet = g_pSystem->ExecuteFile(
 			sProgram, sArg, TRUE, NULL, m_sProgramPath, __sTestStatusList[TEST_STATUS_RUN_PASSED],
 			TEST_STATUS_RUN_PASSED, __sTestStatusList[TEST_STATUS_RUN_FAILED], -TEST_STATUS_RUN_FAILED,
@@ -426,6 +420,7 @@ void TestVector::DoTest(void)
 			sErrorToken[8], iErrorCode[8], sErrorToken[9], iErrorCode[9], sErrorToken[10], iErrorCode[10],
 			sErrorToken[12], iErrorCode[12], sErrorToken[13], iErrorCode[13], sErrorToken[14], iErrorCode[14],
 			sErrorToken[15], iErrorCode[15], NULL);
+		// clang-format on
 		SetEnvironmentVariable(_T("SIM_OUTPUT_ENABLE"), _T("1")); // restore
 		m_pCurrentTestVector = NULL;
 

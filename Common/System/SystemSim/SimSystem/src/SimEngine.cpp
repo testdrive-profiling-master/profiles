@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 4/14/2026 Tue (clonextop@gmail.com)
+// Rev.  : 8/18/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "SimEngine.h"
@@ -131,7 +131,7 @@ bool SimEngine::Clocking(void)
 	// evaluation
 	if (m_bForceToExit || !m_pSimHDL->Eval()) {
 		// finish operation
-		LOGI("Simulation will be forced to shutdown.\n");
+		LOGI("Simulation will be forced to shutdown.");
 		return false;
 	}
 
@@ -176,7 +176,7 @@ void SimEngine::MonitorThread(void)
 	while (Clocking()); // Execute engine
 
 	m_Interrupt.Enable(false);
-	LOGI("Simulation H/W daemon is down.\n");
+	LOGI("Simulation H/W daemon is down.");
 	TRACE_LOG("End thread")
 	VerilatorFlush();
 
