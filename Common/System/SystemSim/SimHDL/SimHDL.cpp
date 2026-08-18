@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Simulation HDL module
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 8/18/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
 #include "TestDriver.inl"
@@ -124,10 +124,10 @@ public:
 	virtual bool Initialize(void)
 	{ // cppcheck-suppress internalAstError
 		if (!__pSimHDL) {
-			srand(time(NULL)); // randomize seed
 			__pSimHDL  = this;
 			__pContext = new VerilatedContext;
 			__pContext->randReset(DEFAULT_INITIAL_RESET_VALUE);
+			__pContext->randSeed(time(NULL));
 			__pSimTop = new SimTop(__pContext);
 		} else {
 			LOGI("'SimProcessor' At least one more instances has been created.\n");
