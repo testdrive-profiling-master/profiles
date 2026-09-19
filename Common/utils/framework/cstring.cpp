@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : utility framework
-// Rev.  : 4/8/2026 Wed (clonextop@gmail.com)
+// Rev.  : 9/19/2026 Sat (clonextop@gmail.com)
 //================================================================================
 #include "STDInterface.h"
 // cstrings
@@ -207,7 +207,7 @@ int cstring::Compare(const char *s)
 
 bool cstring::CompareFront(const char *s) const
 {
-	if (!s)
+	if (!s || !*s || m_sStr.empty())
 		return false;
 
 	return (m_sStr.find(s) == 0);
@@ -215,7 +215,7 @@ bool cstring::CompareFront(const char *s) const
 
 bool cstring::CompareBack(const char *s) const
 {
-	if (!s)
+	if (!s || !*s || m_sStr.empty())
 		return false;
 
 	int64_t iPos = m_sStr.rfind(s);
@@ -228,7 +228,7 @@ bool cstring::CompareBack(const char *s) const
 
 bool cstring::CutFront(const char *s, bool bRecursive)
 {
-	if (s) {
+	if (s && *s && !m_sStr.empty()) {
 		int iPos = bRecursive ? m_sStr.rfind(s) : m_sStr.find(s);
 
 		if (iPos >= 0) {
@@ -242,7 +242,7 @@ bool cstring::CutFront(const char *s, bool bRecursive)
 
 bool cstring::CutBack(const char *s, bool bRecursive)
 {
-	if (s) {
+	if (s && *s && !m_sStr.empty()) {
 		int iPos = bRecursive ? m_sStr.find(s) : m_sStr.rfind(s);
 
 		if (iPos >= 0) {
@@ -256,7 +256,7 @@ bool cstring::CutBack(const char *s, bool bRecursive)
 
 bool cstring::DeleteFront(const char *s)
 {
-	if (s) {
+	if (s && *s && !m_sStr.empty()) {
 		int iPos = m_sStr.find(s);
 
 		if (iPos >= 0) {
@@ -269,7 +269,7 @@ bool cstring::DeleteFront(const char *s)
 }
 bool cstring::DeleteBack(const char *s)
 {
-	if (s) {
+	if (s && *s && !m_sStr.empty()) {
 		int iPos = m_sStr.rfind(s);
 
 		if (iPos >= 0) {
@@ -593,13 +593,13 @@ cstring cstring::Tokenize(int &iPos, const char *sDelim)
 			cstring __sDelim(sDelim);
 
 			// trim deliminator
-			while (*s != '\0' && (__sDelim.find(*s) >= 0)) {
+			while (*s && (__sDelim.find(*s) >= 0)) {
 				iPos++;
 				s++;
 			}
 
 			// gets
-			while (*s != '\0' && (__sDelim.find(*s) < 0)) {
+			while (*s && (__sDelim.find(*s) < 0)) {
 				str += *s;
 				iPos++;
 				s++;
@@ -608,7 +608,7 @@ cstring cstring::Tokenize(int &iPos, const char *sDelim)
 			static cstring __sDelim(" \t\r\n");
 
 			// pass through to first char
-			while (__sDelim.find(*s) >= 0) {
+			while (*s && (__sDelim.find(*s) >= 0)) {
 				iPos++;
 				s++;
 			}
@@ -625,7 +625,7 @@ cstring cstring::Tokenize(int &iPos, const char *sDelim)
 						while (ch) {
 							str += ch;
 
-							if (ch_prev != '\\' && ch == '\"')
+							if (ch_prev && ch_prev != '\\' && ch == '\"')
 								break;
 
 							ch_prev = ch;
@@ -950,11 +950,11 @@ static void setenv(const char *sKey, const char *sData, int replace)
 {
 	cstring sEnv;
 	sEnv.Format("%s=%s", sKey, sData);
-#ifdef _MSC_VER
+#	ifdef _MSC_VER
 	_putenv(sEnv);
-#else
+#	else
 	putenv(sEnv);
-#endif
+#	endif
 }
 #endif
 
