@@ -44,9 +44,9 @@ BOOL RegmapButton::OnUpdate(void)
 	return FALSE;
 }
 
-void RegmapButton::OnBroadcast(LPVOID pData)
+void RegmapButton::OnBroadcast(BROADCAST id, LPVOID pData)
 {
-	if (!pData) {
+	if (id == BROADCAST_INITIALIZE) {
 		UpdateSwitches();
 	}
 }
@@ -90,15 +90,17 @@ BOOL RegmapButton::OnCommand(LPCTSTR lpszURL)
 		break;
 
 	case 1: // push button
-		if (bPressed)
+		if (bPressed) {
 			TestDrivePlaySound(_T("btn_start.wav"));
-		else
-			TestDrivePlaySound(_T("btn_end.wav"));
-
-		if (bPressed)
 			m_pReg->buttons &= ~(1 << iID);
-		else
+		} else {
+			TestDrivePlaySound(_T("btn_end.wav"));
 			m_pReg->buttons |= (1 << iID);
+		}
+
+		if (iID == 31) { // power button
+			Broadcast(BROADCAST_POWER, (LPVOID)bPressed);
+		}
 
 		break;
 

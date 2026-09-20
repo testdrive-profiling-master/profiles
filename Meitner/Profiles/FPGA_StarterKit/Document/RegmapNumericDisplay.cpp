@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Starter Kit document
-// Rev.  : 8/18/2026 Tue (clonextop@gmail.com)
+// Rev.  : 9/20/2026 Sun (clonextop@gmail.com)
 //================================================================================
 #include "RegmapNumericDisplay.h"
 
@@ -49,9 +49,9 @@ BOOL RegmapNumericDisplay::OnUpdate(void)
 	return UpdateData();
 }
 
-void RegmapNumericDisplay::OnBroadcast(LPVOID pData)
+void RegmapNumericDisplay::OnBroadcast(BROADCAST id, LPVOID pData)
 {
-	if (!pData) {
+	if (id == BROADCAST_INITIALIZE) {
 		UpdateData();
 	}
 }

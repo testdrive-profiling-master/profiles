@@ -1,23 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2021. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
-// 
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -29,9 +29,9 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : Starter Kit document
-// Rev.  : 12/28/2021 Tue (clonextop@gmail.com)
+// Rev.  : 9/20/2026 Sun (clonextop@gmail.com)
 //================================================================================
 #ifndef __REGMAP_H__
 #define __REGMAP_H__
@@ -39,41 +39,48 @@
 #include "SystemConfigStarterKit.h"
 #include "Locale.h"
 
-extern ITDDocument*		g_pDoc;
-extern ITDHtml*			g_pHtml;
-extern CString			g_sMediaPath;
+extern ITDDocument *g_pDoc;
+extern ITDHtml	   *g_pHtml;
+extern CString		g_sMediaPath;
 
-void TestDrivePlaySound(LPCTSTR sFilePath);
+void				TestDrivePlaySound(LPCTSTR sFilePath);
 
-class Regmap {
+typedef enum {
+	BROADCAST_INITIALIZE,
+	BROADCAST_POWER,
+} BROADCAST;
+
+class Regmap
+{
 protected:
 	virtual ~Regmap(void);
 
 public:
 	Regmap(LPCTSTR sName = NULL);
-	static void ReleaseAll(void);
-	static BOOL Update(void);
-	static void PostUpdate(void);
-	static void Initialize(void);
-	static void Broadcast(LPVOID pData);
-	static void Command(LPCTSTR lpszURL);
-	inline LPCTSTR Name(void) const	{
+	static void	   ReleaseAll(void);
+	static BOOL	   Update(void);
+	static void	   PostUpdate(void);
+	static void	   Initialize(void);
+	static void	   Broadcast(BROADCAST id, LPVOID pData = NULL);
+	static void	   Command(LPCTSTR lpszURL);
+	inline LPCTSTR Name(void) const
+	{
 		return m_sName;
 	}
 
-	static STARTERKIT_REGMAP*	m_pReg;
+	static STARTERKIT_REGMAP *m_pReg;
 
 protected:
-	static void SetText(LPCTSTR lpszTarget, LPCTSTR lpszFormat, ...);
+	static void	 SetText(LPCTSTR lpszTarget, LPCTSTR lpszFormat, ...);
 
 	virtual BOOL OnUpdate(void) = 0;
-	virtual void OnBroadcast(LPVOID pData);
+	virtual void OnBroadcast(BROADCAST id, LPVOID pData);
 	virtual BOOL OnCommand(LPCTSTR lpszURL);
 
 private:
-	static Regmap*		m_pHead;
-	Regmap*				m_pNext;
-	LPCTSTR				m_sName;
+	static Regmap *m_pHead;
+	Regmap		  *m_pNext;
+	LPCTSTR		   m_sName;
 };
 
-#endif//__REGMAP_H__
+#endif //__REGMAP_H__
