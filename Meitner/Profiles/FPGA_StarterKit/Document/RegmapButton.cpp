@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Starter Kit document
-// Rev.  : 8/4/2026 Tue (clonextop@gmail.com)
+// Rev.  : 9/20/2026 Sun (clonextop@gmail.com)
 //================================================================================
 #include "RegmapButton.h"
 
@@ -78,6 +78,11 @@ BOOL RegmapButton::OnCommand(LPCTSTR lpszURL)
 			case 2: // Numeric Display
 				g_pSystem->ExecuteFile(
 					_T("explorer"), _T("https://cdn-shop.adafruit.com/datasheets/1001datasheet.pdf"), FALSE, NULL, NULL, NULL);
+				break;
+			case 3: // TFT Display
+				g_pSystem->ExecuteFile(
+					_T("explorer"), _T("https://www.fpgalover.com/attachments/article/27/4.3inch-480x272-Touch-LCD-B-UserManual.pdf"), FALSE,
+					NULL, NULL, NULL);
 				break;
 			}
 		}
