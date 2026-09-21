@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Xilinx synthesis
-// Rev.  : 8/1/2024 Thu (clonextop@gmail.com)
+// Rev.  : 9/21/2026 Mon (clonextop@gmail.com)
 //================================================================================
 #include "SourceList.h"
 #include <tchar.h>
@@ -279,15 +279,15 @@ void SourceVector::UpdateTable(void)
 	{
 		CString sBody;
 		auto	GetColor = [](float fRatio) -> DWORD {
-			   DWORD dwColor;
+			DWORD dwColor;
 
-			   if (fRatio > 100)
-				   fRatio = 100;
+			if (fRatio > 100)
+				fRatio = 100;
 
-			   DWORD dwBlack = (159 * (100 - fRatio)) / 100;
-			   DWORD dwRed	 = (159 * (100 - fRatio) + (255 * fRatio)) / 100;
-			   dwColor		 = ((dwRed << 16) | (dwBlack << 8) | dwBlack);
-			   return dwColor;
+			DWORD dwBlack = (159 * (100 - fRatio)) / 100;
+			DWORD dwRed	  = (159 * (100 - fRatio) + (255 * fRatio)) / 100;
+			dwColor		  = ((dwRed << 16) | (dwBlack << 8) | dwBlack);
+			return dwColor;
 		};
 		auto FormatRatio = [&](CString &sBody, int reg_count, float fRatio) {
 			BOOL	bOverflow = (fRatio > 100);
@@ -671,9 +671,10 @@ BOOL SourceVector::Synthesis_Vivado(void)
 		// merge down timing reports...
 		FILE   *fp;
 		FILE   *fp_src;
-		LPCTSTR sFormat = _T("============================================================================================\n"
-							 "= %s\n"
-							 "============================================================================================\n\n");
+		LPCTSTR sFormat =
+			_T("============================================================================================\n"
+			   "= %s\n"
+			   "============================================================================================\n\n");
 		CString sFileName;
 		TCHAR	sLine[4096];
 		// read utilization
@@ -896,7 +897,7 @@ BOOL SourceVector::Synthesis_Vivado(void)
 						if (bFound)
 							break;
 
-						sTok = _tcsstr(sLine, _T(":")) + 1;
+						sTok = (TCHAR *)_tcsstr(sLine, _T(":")) + 1;
 						_stscanf(sTok, _T("%f"), &fSlack);
 						bFound = true;
 					}
