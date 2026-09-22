@@ -8,8 +8,8 @@
 
 #include <cassert>
 
-#if __has_include(<version>)
-#include <version>
+#if __has_include(<LuaBridge/version>)
+#include <LuaBridge/version>
 #endif
 
 #if !(__cplusplus >= 201703L || (defined(_MSC_VER) && _HAS_CXX17))
