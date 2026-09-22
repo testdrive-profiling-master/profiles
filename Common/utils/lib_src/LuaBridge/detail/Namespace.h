@@ -188,7 +188,7 @@ class Namespace : public detail::Registrar
             LUABRIDGE_ASSERT(lua_istable(L, visitedIndex));
             LUABRIDGE_ASSERT(lua_istable(L, baseMetatableIndex));
 
-            const auto appendUnique = [L, parentsIndex, visitedIndex](int metatableIndex)
+            const auto appendUnique = [=](int metatableIndex)
             {
                 metatableIndex = lua_absindex(L, metatableIndex);
 
@@ -566,7 +566,9 @@ class Namespace : public detail::Registrar
                     lua_pop(L, 4); // pop (nil), visited, cast table, cl parents. Stack: ns, co, cl, st
 
                     throw_or_assert<std::logic_error>("Base class is not registered");
+#if !LUABRIDGE_HAS_EXCEPTIONS
                     return;
+#endif
                 }
 
                 lua_rawgetp_x(L, -1, detail::getClassKey()); // Stack: ..., visited, base st, base cl | nil
@@ -575,7 +577,9 @@ class Namespace : public detail::Registrar
                     lua_pop(L, 5); // pop (nil), base st, visited, cast table, cl parents. Stack: ns, co, cl, st
 
                     throw_or_assert<std::logic_error>("Base class is not registered");
+#if !LUABRIDGE_HAS_EXCEPTIONS
                     return;
+#endif
                 }
 
                 appendParentList(L, clParentsIndex, visitedIndex, -1);
@@ -941,7 +945,18 @@ class Namespace : public detail::Registrar
             if (name == std::string_view("__gc"))
             {
                 throw_or_assert<std::logic_error>("__gc metamethod registration is forbidden");
+#if !LUABRIDGE_HAS_EXCEPTIONS
                 return *this;
+#endif
+            }
+
+            if constexpr ((detail::is_reversed_proxy_function_v<T, Functions> || ...))
+            {
+                if (!detail::is_binary_operator_metamethod(name))
+                {
+                    throw_or_assert<std::logic_error>("reversed functions are only allowed on binary operator metamethods");
+                    return *this;
+                }
             }
 
             if constexpr (sizeof...(Functions) == 1)
@@ -988,6 +1003,12 @@ class Namespace : public detail::Registrar
                             using ArgsPack = detail::remove_first_type_t<detail::function_arguments_t<Functions>>;
                             entry.arity = static_cast<int>(detail::member_function_arity_excluding_v<T, Functions, lua_State*>);
                             entry.checker = &detail::overload_type_checker<ArgsPack>;
+                        }
+                        else if constexpr (detail::is_reversed_proxy_function_v<T, Functions>)
+                        {
+                            using ArgsPack = detail::function_arguments_t<Functions>;
+                            entry.arity = static_cast<int>(detail::member_function_arity_excluding_v<T, Functions, lua_State*>) - 1;
+                            entry.checker = &detail::reversed_overload_type_checker<ArgsPack>;
                         }
                         else
                         {
@@ -1045,6 +1066,12 @@ class Namespace : public detail::Registrar
                             using ArgsPack = detail::remove_first_type_t<detail::function_arguments_t<Functions>>;
                             entry.arity = static_cast<int>(detail::member_function_arity_excluding_v<T, Functions, lua_State*>);
                             entry.checker = &detail::overload_type_checker<ArgsPack>;
+                        }
+                        else if constexpr (detail::is_reversed_proxy_function_v<T, Functions>)
+                        {
+                            using ArgsPack = detail::function_arguments_t<Functions>;
+                            entry.arity = static_cast<int>(detail::member_function_arity_excluding_v<T, Functions, lua_State*>) - 1;
+                            entry.checker = &detail::reversed_overload_type_checker<ArgsPack>;
                         }
                         else
                         {
@@ -1842,7 +1869,9 @@ public:
         {
             throw_or_assert<std::logic_error>("endNamespace() called on global namespace");
 
+#if !LUABRIDGE_HAS_EXCEPTIONS
             return Namespace(std::move(*this));
+#endif
         }
 
         LUABRIDGE_ASSERT(m_stackSize > 1);
@@ -1904,7 +1933,9 @@ public:
         {
             throw_or_assert<std::logic_error>("addProperty() called on global namespace");
 
+#if !LUABRIDGE_HAS_EXCEPTIONS
             return *this;
+#endif
         }
 
         detail::push_property_getter(L, std::move(getter), name); // Stack: ns, getter
@@ -1935,7 +1966,9 @@ public:
         {
             throw_or_assert<std::logic_error>("addProperty() called on global namespace");
 
+#if !LUABRIDGE_HAS_EXCEPTIONS
             return *this;
+#endif
         }
 
         detail::push_property_getter(L, std::move(getter), name); // Stack: ns, getter
