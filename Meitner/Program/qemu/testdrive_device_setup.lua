@@ -20,10 +20,10 @@ end
 -- set work folder to 'Program' output path
 lfs.chdir(sProjectPath.s .. "Program")
 
--- setup BAR# (type, byte_size, 64bit_address, prefetchable, bind_address)
-dev:CreateBAR("memory", 1024*64, true, false, 0x20000)				-- BAR #0/1
-dev:CreateBAR("memory", 1024*1024*32, true, false, 0x10000000)		-- BAR #2/3
-dev:CreateBAR("memory", 1024*1024*256, true, false, 0x80000000)		-- BAR #4/5
+-- setup BAR# (type, byte_size, bind_address, 64bit_address, prefetchable)
+dev:CreateBAR("memory", 1024*64, 0x20000, true)						-- BAR #0/1
+dev:CreateBAR("memory", 1024*1024*32, 0x10000000, true)				-- BAR #2/3
+dev:CreateBAR("memory", 1024*1024*256, 0x80000000, true, true)		-- BAR #4/5
 
 -- setup module implementation
 if dev:LoadSystemModule(sSubSystemPath.s) == false then
