@@ -12,6 +12,8 @@ CDROM_IMAGE				= en-us_windows_11_iot_enterprise_ltsc_2024_x64_dvd_f6b14814.iso
 ...
 ```
 
+If you don't like this ISO file, you can make own custom ISO image with [this script](https://github.com/ntdevlabs/nano11).
+
 Once setup reaches the language selection screen, press `Shift+F10` to open a command prompt. Run the following commands: 
 ```bash
 > reg add HKLM\SYSTEM\Setup\LabConfig
