@@ -1,6 +1,6 @@
 # Installation of Ubuntu on QEMU for TestDrive
 Since the Ubuntu image size is very large, we do not provide it separately, but we will provide a method for installation.
-First, download the desired [Ubuntu](https://ubuntu.com/download/desktop) (or another version of the Linux image) ISO file.
+First, download the desired [Ubuntu](https://ubuntu.com/download/desktop) or [linuxmint](https://linuxmint.com/) (or another version of the Linux image) ISO file.
 And please modify the `qemu_testdrive.ini` file as follows.
 
 ```ini
