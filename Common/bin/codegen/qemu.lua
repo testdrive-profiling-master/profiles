@@ -68,12 +68,7 @@ end
 -- check QEMU for TestDrive tool
 if (lfs.IsExist(profile_path .. "qemu-system-x86_64.exe") == false) or IsNeedToUpdate() or (cmd == "install") then
 	if lfs.IsExist(profile_path .. "qemu-system-x86_64.exe") ~= false then
-		LOGI("There is already an installed QEMU.")
-		LOGI("@1    Do you want to continue? (y/n) : ")
-		local answer = io.read():lower()
-		if (answer ~= "y") and (answer ~= "yes") then
-			os.exit(1)
-		end
+		LOGI("There is a new update for QEMU. Attempting the re-compilation procedure...")
 	else -- 'install' command
 		-- install required libraries, but not original qemu
 		os.require("mingw-w64-ucrt-x86_64-qemu mingw-w64-ucrt-x86_64-gtk-vnc mingw-w64-ucrt-x86_64-spice-gtk mingw-w64-ucrt-x86_64-virt-viewer")
