@@ -4,6 +4,8 @@ if not exist vmlinuz (
 	echo Need a installation, please read the 'README.md' first.
 	goto EXIT
 )
-start /WAIT "" cmd /c "codegen qemu boot"
-echo Done!
+
+powershell -Command "Start-Process cmd -ArgumentList '/c', 'title BusyBox (TestDrive) && call codegen qemu boot' -Wait"
+
+echo *I: BusyBox is down!
 :EXIT

@@ -1,3 +1,3 @@
 @echo off
-qemu boot
-echo Done!
+call qemu boot
+echo QEMU is down!
