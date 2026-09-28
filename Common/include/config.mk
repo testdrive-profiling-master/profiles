@@ -306,7 +306,7 @@ $(TARGET_EXE):$(VERSION_HEADER) $(OBJS) $(OBJS_RES) $(TARGET_DEP)
 	@echo '*** Build execution file ***'
 	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(OBJS_RES) $(LIBDIR)
 ifndef USE_DEBUG
-	@strip --strip-all $(TARGET_EXE)
+	@$(STRIP) --strip-all $(TARGET_EXE)
 endif
 ifdef INSTALL_PATH
 ifneq ($(INSTALL_PATH), $(TARGETPATH))
