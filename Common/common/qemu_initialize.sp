@@ -28,7 +28,7 @@ do
 					"#lua\n" .. 
 					"LOG_CLEAR()\n" ..
 					"LOGI(\"" .. sTitle.s .. " is running...\")\n" ..
-					"System.Execute(\"qemu_testdrive.bat\", \"\", \".\", {\"error:\", \"] Error\", {\"*I: \",0}})\n"
+					"System.Execute(\"qemu_testdrive.bat\", \"\", \".\", {\"*E: \", \"error:\", \"] Error\", {\"*I: \",0}, {\"*W: \", \"warning\"}})\n"
 				)
 				f:Close()
 				regmap_tree:AddItem("screen", sTitle.s, qemu_sp_path)

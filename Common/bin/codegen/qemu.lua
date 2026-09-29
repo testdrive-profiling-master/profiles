@@ -127,9 +127,12 @@ function DoRefresh()
 			local sBootFromCDROM = String()
 			sBootFromCDROM:GetEnvironment("BOOT_FROM_CDROM" .. sEnvQEMU)
 			sBootFromCDROM:MakeLower()
-			if (sBootFromCDROM.s ~= "true") and lfs.IsExist("README.md") then
-				run("explorer .")
-				LOGI("Please read the instruction('README.md') first...")
+			if (sBootFromCDROM.s ~= "true") then
+				LOGE("No installed disks found!")
+				if lfs.IsExist("README.md") then
+					run("explorer .")
+					LOGI("Please read the instruction('README.md') first...")
+				end
 				os.exit(1)
 			end
 			
