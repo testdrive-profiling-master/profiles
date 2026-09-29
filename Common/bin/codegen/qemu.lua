@@ -66,8 +66,8 @@ function IsNeedToUpdate()
 end
 
 -- check QEMU for TestDrive tool
-if (lfs.IsExist(profile_path .. "qemu-system-x86_64.exe") == false) or IsNeedToUpdate() or (cmd == "install") then
-	if lfs.IsExist(profile_path .. "qemu-system-x86_64.exe") ~= false then
+if (lfs.IsExist(profile_path .. "qemu/qemu-system-x86_64.exe") == false) or IsNeedToUpdate() or (cmd == "install") then
+	if lfs.IsExist(profile_path .. "qemu/qemu-system-x86_64.exe") ~= false then
 		LOGI("There is a new update for QEMU. Attempting the re-compilation procedure...")
 	else -- 'install' command
 		-- install required libraries, but not original qemu
@@ -81,10 +81,7 @@ if (lfs.IsExist(profile_path .. "qemu-system-x86_64.exe") == false) or IsNeedToU
 	else
 		run("git clone https://github.com/testdrive-profiling-master/qemu_testdrive.git qemu_testdrive")
 	end
-	-- configure
-	if lfs.IsExist("qemu_testdrive/.qemu/build/Makefile") == false then
-		run("cd qemu_testdrive&&run_as_admin scripts\\build_qemu.bat")
-	end
+
 	-- build & install
 	local num_processor = String()
 	num_processor:GetEnvironment("NUMBER_OF_PROCESSORS")
@@ -271,5 +268,5 @@ if cmd == "boot" then
 		cmd:Append(" " .. sEnv.s)
 	end
 	
-	run("qemu-system-" .. sSystem .. " " .. cmd.s)
+	run(profile_path .. "qemu/qemu-system-" .. sSystem .. " " .. cmd.s)
 end
