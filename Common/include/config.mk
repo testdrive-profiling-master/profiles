@@ -21,7 +21,7 @@ LD 			:= $(CROSS)ld
 NM 			:= $(CROSS)nm
 RANLIB 		:= ranlib
 OBJCOPY		:= $(CROSS)objcopy
-STRIP		:= $(CROSS)strip
+STRIP		:= strip
 PWD			:= $(shell pwd)
 
 PLATFORM	:= $(shell uname -m)
