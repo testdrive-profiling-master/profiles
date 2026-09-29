@@ -268,5 +268,5 @@ if cmd == "boot" then
 		cmd:Append(" " .. sEnv.s)
 	end
 	
-	run(profile_path .. "qemu/qemu-system-" .. sSystem .. " " .. cmd.s)
+	os.execute("%TESTDRIVE_PROFILE%Common/bin/qemu/qemu-system-" .. sSystem .. " " .. cmd.s)
 end
