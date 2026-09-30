@@ -39,7 +39,7 @@ function IsNeedToUpdate()
 	local iPrevTimeStamp	= sEnv:IsEmpty() and 0 or tonumber(sEnv.s)
 	local iCurTimeStamp		= math.floor(os.time() / (60*60*24))
 	
-	if (iCurTimeStamp - iPrevTimeStamp) >= 30 then	-- check every 1 month
+	if (iCurTimeStamp - iPrevTimeStamp) >= 7 then	-- check every week
 		-- Get 'QEMU for TestDrive' latest commit number
 		local sCurCommit	= String()
 		sCurCommit.s = exec("git ls-remote https://github.com/testdrive-profiling-master/qemu_testdrive.git HEAD")
@@ -52,7 +52,7 @@ function IsNeedToUpdate()
 			local sPrevCommit = String()
 			sPrevCommit:GetEnvironment("COMMIT" .. sEnvQEMU_Config)
 			
-			if sPrevCommit.s ~= sCurCommit.s then
+			if (#sCurCommit.s == 40) and (sPrevCommit.s ~= sCurCommit.s) then
 				LOGI("New QEMU for TestDrive is released!")
 				sCurCommit:SetEnvironment("COMMIT" .. sEnvQEMU_Config)
 				bRet = true
@@ -66,7 +66,7 @@ function IsNeedToUpdate()
 end
 
 -- check QEMU for TestDrive tool
-if (lfs.IsExist(profile_path .. "qemu/qemu-system-x86_64.exe") == false) or IsNeedToUpdate() or (cmd == "install") then
+if IsNeedToUpdate() or (lfs.IsExist(profile_path .. "qemu/qemu-system-x86_64.exe") == false) or (cmd == "install") then
 	if lfs.IsExist(profile_path .. "qemu/qemu-system-x86_64.exe") ~= false then
 		LOGI("There is a new update for QEMU. Attempting the re-compilation procedure...")
 	else -- 'install' command
