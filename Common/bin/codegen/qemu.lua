@@ -5,7 +5,7 @@ Arg:AddRemark			(nil, "update   : Check for update of QEMU binaries")
 Arg:AddRemark			(nil, "install  : Force to re-install QEMU binaries")
 Arg:AddRemark			(nil, "create   : Create new QEMU project")
 Arg:AddRemark			(nil, "boot     : run QEMU for Testdrive")
-Arg:AddRemark			(nil, "refresh  : Try reduce hard-disk image size")
+Arg:AddRemark			(nil, "refresh  : Try create or reduce&resize disk image")
 Arg:AddRemark			(nil, "devel    : Prepare QEMU open-source project")
 
 if (Arg:DoParse() == false) then
@@ -128,7 +128,7 @@ if cmd == "create" then
 	os.exit(0)
 end
 
-function DoRefresh()
+function DoRefresh(bCreate)
 	local sImagePath = String()
 	local sImageSize = String()
 	if sImagePath:GetEnvironment("HARD_DISK_IMAGE" .. sEnvQEMU) and sImageSize:GetEnvironment("HARD_DISK_SIZE" .. sEnvQEMU) then
@@ -140,10 +140,7 @@ function DoRefresh()
 			exec("mv -f " .. sImagePath.s .. ".reduced " .. sImagePath.s)
 			run("qemu-img info " .. sImagePath.s)
 		else
-			local sBootFromCDROM = String()
-			sBootFromCDROM:GetEnvironment("BOOT_FROM_CDROM" .. sEnvQEMU)
-			sBootFromCDROM:MakeLower()
-			if (sBootFromCDROM.s ~= "true") then
+			if bCreate ~= true then
 				LOGE("No installed disks found!")
 				if lfs.IsExist("README.md") then
 					run("explorer .")
@@ -171,7 +168,7 @@ function DoRefresh()
 end
 
 if cmd == "refresh" then
-	os.exit(DoRefresh() and 0 or 1)
+	os.exit(DoRefresh(true) and 0 or 1)
 end
 
 if cmd == "boot" then
@@ -182,8 +179,8 @@ if cmd == "boot" then
 	
 	local cmd = String()
 	local sEnv = String()
-	local bBootForInstall = false
-	local sSystem = "x86_64"
+	local bDiskNotInitialized = false
+	local sSystem = "x86_64"	-- default system
 	
 	if sEnv:GetEnvironment("TITLE" .. sEnvQEMU) then
 		sEnv:Replace("\"", "\\\"", true)
@@ -224,10 +221,8 @@ if cmd == "boot" then
 		cmd:Append(" -hda " .. sEnv.s)
 		
 		if lfs.IsExist(sEnv.s) == false then
-			DoRefresh()
-		end
-		
-		if sEnv:GetEnvironment("AUTO_REFRESH_DAYS" .. sEnvQEMU) then
+			bDiskNotInitialized = true
+		elseif sEnv:GetEnvironment("AUTO_REFRESH_DAYS" .. sEnvQEMU) then
 			local refresh_days = tonumber(sEnv.s)
 			
 			if sEnv:GetEnvironment("LATEST_REFRESH_TIME" .. sEnvQEMU) then
@@ -248,31 +243,55 @@ if cmd == "boot" then
 		sEnv:Replace("\"", "\\\"", true)
 		cmd:Append(" -append \"" .. sEnv.s .. "\"")
 	end
-	
+
+	-- check CDROM & first install from CDROM
+	local bCDROMSpecified = false
+	if sEnv:GetEnvironment("CDROM_IMAGE" .. sEnvQEMU) then
+		if sEnv.s == "auto" then
+			-- find .iso file list
+			local iso_list = CreateFileList(".", -1, true, "iso")
+			
+			if iso_list:Size() == 1 then
+				local sIsoFileName = iso_list:Pop().data
+				LOGI("ISO image(" .. sIsoFileName .. ") is found.")
+				cmd:Append(" -cdrom " .. sIsoFileName)
+				bCDROMSpecified = true
+			elseif iso_list:Size() > 1 then
+				LOGW("Too many .iso images are existed in project folder. This 'CDROM_IMAGE' option is ignored.")
+			end
+		elseif lfs.IsExist(sEnv.s) then
+			cmd:Append(" -cdrom " .. sEnv.s)
+			bCDROMSpecified = true
+		else
+			LOGE("Can't find CDROM image (" .. sEnv.s .. ")")
+			os.exit(1)
+		end
+	end
+
+	-- check boot from CDROM
 	if sEnv:GetEnvironment("BOOT_FROM_CDROM" .. sEnvQEMU) then
 		sEnv:MakeLower()
-		if sEnv.s == "true" then
-			bBootForInstall = true
-			if sEnv:GetEnvironment("CDROM_IMAGE" .. sEnvQEMU) then
-				if lfs.IsExist(sEnv.s) == false then
-					LOGE("Can't find CDROM image : " .. sEnv.s)
+		if sEnv.s == "auto" then
+			if bDiskNotInitialized then
+				if bCDROMSpecified then
+					DoRefresh(true)
+					cmd:Append(" -boot d")
+				else
+					LOGE("No installed disks found!")
+					if lfs.IsExist("README.md") then
+						run("explorer .")
+						LOGW("Please read the instruction('README.md') first...")
+					end
 					os.exit(1)
 				end
-				cmd:Append(" -cdrom " .. sEnv.s)
-			else
-				LOGE("You must set the 'CDROM_IMAGE' of qemu_testdrive.ini file.")
-				os.exit(1)
 			end
+		elseif sEnv.s == "true" then
 			cmd:Append(" -boot d")
 		end
-		sEnv.s = "false"
-		sEnv:SetEnvironment("BOOT_FROM_CDROM" .. sEnvQEMU)
 	end
 	
-	if bBootForInstall == false then
-		if sEnv:GetEnvironment("VGA" .. sEnvQEMU) then
-			cmd:Append(" -vga " .. sEnv.s)
-		end
+	if sEnv:GetEnvironment("VGA" .. sEnvQEMU) then
+		cmd:Append(" -vga " .. sEnv.s)
 	end
 	
 	if sEnv:GetEnvironment("PROJECT") and sEnv:GetEnvironment("SUB_SYSTEM_PATH") then
