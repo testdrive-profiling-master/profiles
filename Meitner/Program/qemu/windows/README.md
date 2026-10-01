@@ -26,4 +26,6 @@ Once setup reaches the language selection screen, press `Shift+F10` to open a co
 You can now close command prompt and install Windows 11 as normal.
 
 
-(Refer to : [How to install Windows 11 in QEMU](https://computernewb.com/wiki/QEMU/Guests/Windows_11))
+Refer to : [How to install Windows 11 in QEMU](https://computernewb.com/wiki/QEMU/Guests/Windows_11)
+           [guest agent for windows](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio)
+		   [Windows deloat](https://github.com/Raphire/Win11Debloat)

@@ -1,9 +1,9 @@
 local Arg = ArgTable("QEMU(https://www.qemu.org) for TestDrive Profiling Master.")
 
 Arg:AddOptionString		("cmd", nil, nil, nil, "command", "QEMU command")
-Arg:AddRemark			(nil, "install  : install QEMU binaries")
+Arg:AddRemark			(nil, "update   : Check for update of QEMU binaries")
 Arg:AddRemark			(nil, "create   : Create new QEMU project")
-Arg:AddRemark			(nil, "boot     : run QEMU for testdrive")
+Arg:AddRemark			(nil, "boot     : run QEMU for Testdrive")
 Arg:AddRemark			(nil, "refresh  : Refresh QEMU project's hard-disk image")
 
 if (Arg:DoParse() == false) then
@@ -31,6 +31,11 @@ if cmd == "devel" then
 	os.exit(0)
 end
 
+local bCheckUpdate = false
+if cmd == "update" then
+	bCheckUpdate = true
+end
+
 function IsNeedToUpdate()
 	local bRet	= false
 	local sEnv				= String()
@@ -39,7 +44,7 @@ function IsNeedToUpdate()
 	local iPrevTimeStamp	= sEnv:IsEmpty() and 0 or tonumber(sEnv.s)
 	local iCurTimeStamp		= math.floor(os.time() / (60*60*24))
 	
-	if (iCurTimeStamp - iPrevTimeStamp) >= 7 then	-- check every week
+	if ((iCurTimeStamp - iPrevTimeStamp) >= 7) or bCheckUpdate then	-- check every week
 		-- Get 'QEMU for TestDrive' latest commit number
 		local sCurCommit	= String()
 		sCurCommit.s = exec("git ls-remote https://github.com/testdrive-profiling-master/qemu_testdrive.git HEAD")
@@ -53,7 +58,7 @@ function IsNeedToUpdate()
 			sPrevCommit:GetEnvironment("COMMIT" .. sEnvQEMU_Config)
 			
 			if (#sCurCommit.s == 40) and (sPrevCommit.s ~= sCurCommit.s) then
-				LOGI("New QEMU for TestDrive is released!")
+				LOGI("*1New QEMU for TestDrive is released!")
 				sCurCommit:SetEnvironment("COMMIT" .. sEnvQEMU_Config)
 				bRet = true
 			end
@@ -66,7 +71,7 @@ function IsNeedToUpdate()
 end
 
 -- check QEMU for TestDrive tool
-if IsNeedToUpdate() or (lfs.IsExist(profile_path .. "qemu/qemu-system-x86_64.exe") == false) or (cmd == "install") then
+if IsNeedToUpdate() or (lfs.IsExist(profile_path .. "qemu/qemu-system-x86_64.exe") == false) then
 	if lfs.IsExist(profile_path .. "qemu/qemu-system-x86_64.exe") ~= false then
 		LOGI("There is a new update for QEMU. Attempting the re-compilation procedure...")
 	else -- 'install' command
@@ -100,7 +105,12 @@ if cmd == "create" then
 	
 	LOGI("Prepare default QEMU project for TestDrive.")
 	exec("cp \"" .. profile_path .. "codegen/qemu/qemu_testdrive_default.ini\" qemu_testdrive.ini")
-	exec("echo @qemu boot > qemu_testdrive.bat")
+	do
+		local f = TextFile()
+		f:Create("qemu_testdrive.bat")
+		f:Put("@echo off\ncall qemu boot\necho *I: QEMU is down!\n")
+		f:Close()
+	end
 	
 	LOGI("For the initial installation,\n" ..
 	"    you must download preferred OS installation CD image\n" ..
