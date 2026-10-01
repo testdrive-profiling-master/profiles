@@ -4,7 +4,8 @@ Arg:AddOptionString		("cmd", nil, nil, nil, "command", "QEMU command")
 Arg:AddRemark			(nil, "update   : Check for update of QEMU binaries")
 Arg:AddRemark			(nil, "create   : Create new QEMU project")
 Arg:AddRemark			(nil, "boot     : run QEMU for Testdrive")
-Arg:AddRemark			(nil, "refresh  : Refresh QEMU project's hard-disk image")
+Arg:AddRemark			(nil, "refresh  : Try reduce hard-disk image size")
+Arg:AddRemark			(nil, "devel    : Prepare QEMU open-source project")
 
 if (Arg:DoParse() == false) then
 	return
