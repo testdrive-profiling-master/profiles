@@ -21,6 +21,7 @@ Arg:AddRemark			(nil, "'docgen'                 : docgen project")
 Arg:AddRemark			(nil, "'docgen_simplified'      : docgen simplified project")
 Arg:AddRemark			(nil, "'svelte'                 : Svelte.js project")
 Arg:AddRemark			(nil, "'uefi'                   : UEFI firmware project")
+Arg:AddRemark			(nil, "'qemu'                   : QEMU project")
 Arg:AddOptionString		("project_name", nil, nil, nil, "project_name", "Project name")
 
 	
@@ -120,6 +121,29 @@ function MakeDirForVerilog(folder_name)
 	end
 	
 	exec("touch \"" .. folder_path .. "/.TestDrive.nosearch\"")	-- bypass watchdog
+	
+	return folder_path
+end
+
+function MakeDirForQEMU(folder_name)
+	local folder_path = String()
+	if folder_path:GetEnvironment("RECENT_PROJECT@TESTDRIVE") == false then
+		LOGE("You must execute your 'TestDrive' project at least once.")
+		os.exit(1)
+	end
+	folder_path	= folder_path.s .. "Program\\qemu\\" .. folder_name
+
+	local attr = lfs.attributes(folder_path)
+	
+	if attr ~= nil then
+		LOGE("Can't create project, '" .. folder_name .. "'(" .. folder_path .. ") " .. attr.mode .. " is already existed. Please specify a different project name.")
+		os.exit(1)
+	end
+	
+	if lfs.mkdir(folder_path) == false then
+		LOGE("Can't create project directory '" .. folder_name .. "'(" .. folder_path .. ")")
+		os.exit(1)
+	end
 	
 	return folder_path
 end
@@ -334,6 +358,17 @@ elseif (sType == "uefi") then
 	os.execute("mv \"" .. sProjectPath .. "/.PROJECT.dsc\" \"" .. sProjectPath .. "/" .. sProjectName .. ".dsc\"")
 	
 	os.execute("explorer " .. sProjectName)
+elseif (sType == "qemu") then
+	sProjectPath	= MakeDirForQEMU(sProjectName)
+	LOGI("Create QEMU project : '" .. sProjectName .. "'")
+
+	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_qemu/.\" " .. sProjectPath .. "/")
+	
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i \"" .. sProjectPath .. "/qemu_testdrive.ini\"")
+	
+	os.execute("explorer \"" .. sProjectPath .. "\"")
+	print("\nRun 'QEMU/" .. sProjectName .. "' from profile view on TestDrive Profiling Master.")
+	os.exit(0)
 else
 	LOGE("Invalid project type : '" .. sType .. "'. Please refer 'help' with \"create_project --help\" command.")
 	os.exit(1)

@@ -3,7 +3,6 @@ local Arg = ArgTable("QEMU(https://www.qemu.org) for TestDrive Profiling Master.
 Arg:AddOptionString		("cmd", nil, nil, nil, "command", "QEMU command")
 Arg:AddRemark			(nil, "update   : Check for update of QEMU binaries")
 Arg:AddRemark			(nil, "install  : Force to re-install QEMU binaries")
-Arg:AddRemark			(nil, "create   : Create new QEMU project")
 Arg:AddRemark			(nil, "boot     : run QEMU for Testdrive")
 Arg:AddRemark			(nil, "refresh  : Try create or reduce&resize disk image")
 Arg:AddRemark			(nil, "devel    : Prepare QEMU open-source project")
@@ -104,28 +103,6 @@ if IsNeedToUpdate() or (lfs.IsExist(profile_path .. "qemu/qemu-system-x86_64.exe
 	LOGI("Clean up devel. misc...")
 	exec("rm -rf qemu_testdrive")
 	LOGI("Done!")
-end
-
-if cmd == "create" then
-	if lfs.IsExist("qemu_testdrive.ini") or lfs.IsExist("qemu_testdrive.qcow2") then
-		LOGE("Already another QEMU project existed here...")
-		os.exit(1)
-	end
-	
-	LOGI("Prepare default QEMU project for TestDrive.")
-	exec("cp \"" .. profile_path .. "codegen/qemu/qemu_testdrive_default.ini\" qemu_testdrive.ini")
-	do
-		local f = TextFile()
-		f:Create("qemu_testdrive.bat")
-		f:Put("@echo off\ncall qemu boot\necho *I: QEMU is down!\n")
-		f:Close()
-	end
-	
-	LOGI("For the initial installation,\n" ..
-	"    you must download preferred OS installation CD image\n" ..
-	"    and specify the 'CDROM_IMAGE' variable from 'qemu_testdrive.ini'.\n")
-	LOGI("Now Type 'qemu_testdrive' to start.")
-	os.exit(0)
 end
 
 function DoRefresh(bCreate)
