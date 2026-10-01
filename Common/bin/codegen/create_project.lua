@@ -37,11 +37,13 @@ end
 sType				= String(Arg:GetOptionString("type", 0))
 sType:MakeLower()
 sType				= sType.s
-sProjectName		= String(Arg:GetOptionString("project_name", 0))
+sProjectNameOrg		= String(Arg:GetOptionString("project_name", 0))
+sProjectName		= String(sProjectNameOrg.s)
 sProjectName:Replace(" ", "_", true)
 sProjectName:Replace(".", "_", true)
-sProjectName:Trim("_.#@$%^&*()~|\\")
+sProjectName:Trim("_.#@$%^&*~|\\")
 sProjectName		= sProjectName.s
+sProjectNameOrg		= sProjectNameOrg.s
 
 -- upper case of 'project name'
 sProjectNameUpper	= String(sProjectName)
@@ -360,14 +362,15 @@ elseif (sType == "uefi") then
 	os.execute("explorer " .. sProjectName)
 elseif (sType == "qemu") then
 	sProjectPath	= MakeDirForQEMU(sProjectName)
-	LOGI("Create QEMU project : '" .. sProjectName .. "'")
+	LOGI("Create QEMU project : '" .. sProjectNameOrg .. "'")
 
 	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_qemu/.\" " .. sProjectPath .. "/")
 	
-	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i \"" .. sProjectPath .. "/qemu_testdrive.ini\"")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectNameOrg .. "/\" -i \"" .. sProjectPath .. "/qemu_testdrive.ini\"")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectNameOrg .. "/\" -i \"" .. sProjectPath .. "/qemu_testdrive.bat\"")
 	
 	os.execute("explorer \"" .. sProjectPath .. "\"")
-	print("\nRun 'QEMU/" .. sProjectName .. "' from profile view on TestDrive Profiling Master.")
+	print("\nRun 'QEMU/" .. sProjectNameOrg .. "' from profile view on TestDrive Profiling Master.")
 	os.exit(0)
 else
 	LOGE("Invalid project type : '" .. sType .. "'. Please refer 'help' with \"create_project --help\" command.")
