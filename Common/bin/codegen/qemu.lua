@@ -2,6 +2,7 @@ local Arg = ArgTable("QEMU(https://www.qemu.org) for TestDrive Profiling Master.
 
 Arg:AddOptionString		("cmd", nil, nil, nil, "command", "QEMU command")
 Arg:AddRemark			(nil, "update   : Check for update of QEMU binaries")
+Arg:AddRemark			(nil, "install  : Force to re-install QEMU binaries")
 Arg:AddRemark			(nil, "create   : Create new QEMU project")
 Arg:AddRemark			(nil, "boot     : run QEMU for Testdrive")
 Arg:AddRemark			(nil, "refresh  : Try reduce hard-disk image size")
@@ -37,9 +38,14 @@ if cmd == "update" then
 	bCheckUpdate = true
 end
 
+local bReInstall = false
+if cmd == "install" then
+	bReInstall = true
+end
+
 function IsNeedToUpdate()
-	local bRet	= false
-	local sEnv				= String()
+	local bRet	= bReInstall
+	local sEnv	= String()
 	sEnv:GetEnvironment("DATE" .. sEnvQEMU_Config)
 	
 	local iPrevTimeStamp	= sEnv:IsEmpty() and 0 or tonumber(sEnv.s)
@@ -74,7 +80,9 @@ end
 -- check QEMU for TestDrive tool
 if IsNeedToUpdate() or (lfs.IsExist(profile_path .. "qemu/qemu-system-x86_64.exe") == false) then
 	if lfs.IsExist(profile_path .. "qemu/qemu-system-x86_64.exe") ~= false then
-		LOGI("There is a new update for QEMU. Attempting the re-compilation procedure...")
+		if bReInstall == false then
+			LOGI("There is a new update for QEMU. Attempting the re-compilation procedure...")
+		end
 	else -- 'install' command
 		-- install required libraries, but not original qemu
 		os.require("mingw-w64-ucrt-x86_64-qemu mingw-w64-ucrt-x86_64-gtk-vnc mingw-w64-ucrt-x86_64-spice-gtk mingw-w64-ucrt-x86_64-virt-viewer")
