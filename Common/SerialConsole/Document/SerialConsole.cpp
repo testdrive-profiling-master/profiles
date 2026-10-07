@@ -38,7 +38,7 @@
 #include "ProfileConfig.inl"
 
 #define MAX_PORT_SEARCHING 32
-static DWORD   __dwBaudRate[] = {1200, 2400, 4800, 9600, 1440, 19200, 38400, 57600, 115200, 0};
+static DWORD   __dwBaudRate[] = {1200, 2400, 4800, 9600, 1440, 19200, 38400, 57600, 115200, 128000, 134400, 161280, 201600, 230400, 268800, 403200, 460800, 614400, 806400, 921600, 1228800, 3000000, 0};
 static DWORD   __dwDataBits[] = {5, 6, 7, 8, 0};
 
 static LPCTSTR __sParity[] = {
