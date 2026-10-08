@@ -138,6 +138,14 @@ do
 end
 
 if cmd == "build" then
+	-- copy efi file to bin dir.
+	if lfs.IsExist("bin/") == false then
+		lfs.mkdir("bin")
+	end
+	if lfs.IsExist("Conf/") == false then
+		lfs.mkdir("Conf")
+	end
+	
 	local iret = run(edk_path .. "/edksetup.bat Mingw-w64 >nul&build -t CLANGDWARF -a " .. opt.target_arch ..
 		" -b " .. opt.build_target .. 
 		" -p " .. opt.platform_file ..
@@ -152,14 +160,7 @@ if cmd == "build" then
 	if sEnv:GetEnvironment("BASE_NAME@Defines@" .. opt.module_file) then
 		opt.base_name = sEnv.s
 	end
-	
-	-- copy efi file to bin dir.
-	if lfs.IsExist("bin/") == false then
-		lfs.mkdir("bin")
-	end
-	if lfs.IsExist("Conf/") == false then
-		lfs.mkdir("Conf")
-	end
+
 	exec("cp -f ./" ..
 			opt.output_dir .. "/" .. opt.build_target .. "_CLANGDWARF/" .. opt.target_arch ..
 			"/" .. opt.base_name .. ".efi bin/")
