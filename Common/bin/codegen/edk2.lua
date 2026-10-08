@@ -37,7 +37,7 @@ do	-- set EDK2 environment
 	env:SetEnvironment("CYGWIN_HOME")
 	env.s = "X64"
 	env:SetEnvironment("HOST_ARCH")
-	env.s = "python3"
+	env.s = testdrive_path .. "bin/msys64/ucrt64/bin/python3"
 	env:SetEnvironment("PYTHON_COMMAND")
 	env.s = "mingw32-"
 	env:SetEnvironment("CLANG_HOST_BIN")
@@ -64,14 +64,15 @@ local reinstall = (cmd == "install")
 -- check EDK2 tool
 if (lfs.IsExist(profile_path .. "edk2/BaseTools/") == false) or reinstall then
 	LOGI("Installing EDK2...\n")
+	os.require("mingw-w64-ucrt-x86_64-nasm")
 	exec("rm -rf \"" .. edk_path .. "\"")
 	if run("git clone https://github.com/tianocore/edk2 \"" .. edk_path .. "\"") ~= 0 then
 		LOGE("Can't access to internet... Please try again later.")
 		os.exit(1)
 	end
-	exec("cd \"" .. edk_path .. "\"&" .. "git checkout tags/edk2-stable202602")
-	run("cd \"" .. edk_path .. "\"&" .. "git submodule update --init")
-	run("cd \"" .. edk_path .. "\"&" .. "edksetup.bat Mingw-w64 ForceRebuild")
+	run("cd /D \"" .. edk_path .. "\"&" .. "git checkout tags/edk2-stable202608")
+	run("cd /D \"" .. edk_path .. "\"&" .. "git submodule update --init --recursive")
+	run("cd /D \"" .. edk_path .. "\"&" .. "edksetup.bat Mingw-w64 ForceRebuild")
 	LOGI("EDK2 is installed successfully!")
 end
 
@@ -155,6 +156,9 @@ if cmd == "build" then
 	-- copy efi file to bin dir.
 	if lfs.IsExist("bin/") == false then
 		lfs.mkdir("bin")
+	end
+	if lfs.IsExist("Conf/") == false then
+		lfs.mkdir("Conf")
 	end
 	exec("cp -f ./" ..
 			opt.output_dir .. "/" .. opt.build_target .. "_CLANGDWARF/" .. opt.target_arch ..
