@@ -118,6 +118,8 @@ int				 main(int argc, const char *argv[])
 			exit(1);
 		}
 
+		sSED.Replace("[Options]", "[Options]\nUseLongFileName=1");
+
 		// fill file description
 		{
 			cstring sFileList;
