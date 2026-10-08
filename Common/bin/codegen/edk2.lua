@@ -4,6 +4,7 @@ Arg:AddOptionString		("cmd", nil, nil, nil, "command", "EDK2 command")
 Arg:AddRemark			(nil, "install : reinstall EDK2")
 Arg:AddRemark			(nil, "build   : build project")
 Arg:AddRemark			(nil, "clean   : clean project")
+Arg:AddRemark			(nil, "dump    : Dump ROM(-m option) image's header")
 Arg:AddOptionString		("target_arch", "X64", "a", nil, "TARGETARCH", "Target architecture (default:X64)")
 Arg:AddRemark			(nil, "ARCHS is one of list: IA32, X64, AARCH64, RISCV64")
 Arg:AddOptionString		("build_target", "RELEASE", "b", nil, "BUILDTARGET", "Build Target (default:RELEASE)")
@@ -89,6 +90,23 @@ end
 
 if reinstall then
 	os.exit(0)
+end
+
+if cmd == "dump" then
+	if #opt.module_file == 0 then
+		local rom_list = CreateFileList(".", -1, true, "rom")
+		if rom_list:Size() == 0 then
+			LOGI("No .rom file was found.")
+			os.exit(0)
+		end
+		while(rom_list:Size() ~= 0) do
+			opt.module_file = rom_list:Pop().data
+			LOGI("*1ROM File : " .. opt.module_file)
+			run(profile_path .. "edk2/BaseTools/Bin/Win64/EfiRom -d \"" .. opt.module_file .. "\"")
+		end
+		return 0
+	end
+	return run(profile_path .. "edk2/BaseTools/Bin/Win64/EfiRom -d \"" .. opt.module_file .. "\"")
 end
 
 -- find project file if not specified
@@ -187,7 +205,8 @@ if cmd == "build" then
 			os.exit(iret)
 		end
 		
-		LOGI("ROM file : ./bin/" .. opt.base_name .. ".rom")
+		LOGI("Output ROM file : ./bin/" .. opt.base_name .. ".rom")
+		run(profile_path .. "edk2/BaseTools/Bin/Win64/EfiRom -d ./bin/" .. opt.base_name .. ".rom")
 	else
 		LOGW("ROM file creation was skipped because Vendor/Device ID was not specified.")
 	end
