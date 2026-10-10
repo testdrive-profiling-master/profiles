@@ -22,7 +22,7 @@ testdrive_path = testdrive_path.s
 local profile_path = String()
 profile_path:GetEnvironment("TESTDRIVE_PROFILE")
 profile_path = profile_path.s .. "Common/bin/"
-local sEnvQEMU_Config = "@QEMU@" .. profile_path .. "qemu.ini"	-- QEMU configuration file
+local sQEMU_ini = "@QEMU@" .. profile_path .. "qemu.ini"	-- QEMU configuration file
 
 -- Prepare QEMU development project
 if cmd == "devel" then
@@ -45,7 +45,7 @@ end
 function IsNeedToUpdate()
 	local bRet	= bReInstall
 	local sEnv	= String()
-	sEnv:GetEnvironment("DATE" .. sEnvQEMU_Config)
+	sEnv:GetEnvironment("DATE" .. sQEMU_ini)
 	
 	local iPrevTimeStamp	= sEnv:IsEmpty() and 0 or tonumber(sEnv.s)
 	local iCurTimeStamp		= math.floor(os.time() / (60*60*24))
@@ -61,15 +61,15 @@ function IsNeedToUpdate()
 		
 			-- commit check
 			local sPrevCommit = String()
-			sPrevCommit:GetEnvironment("COMMIT" .. sEnvQEMU_Config)
+			sPrevCommit:GetEnvironment("COMMIT" .. sQEMU_ini)
 			
 			if (#sCurCommit.s == 40) and (sPrevCommit.s ~= sCurCommit.s) then
 				LOGI("*1New QEMU for TestDrive is released!")
-				sCurCommit:SetEnvironment("COMMIT" .. sEnvQEMU_Config)
+				sCurCommit:SetEnvironment("COMMIT" .. sQEMU_ini)
 				bRet = true
 			end
 			sEnv.s = tostring(iCurTimeStamp)
-			sEnv:SetEnvironment("DATE" .. sEnvQEMU_Config)
+			sEnv:SetEnvironment("DATE" .. sQEMU_ini)
 		end
 	end
 	

@@ -1,7 +1,8 @@
 local Arg = ArgTable("EDK2 manager")
 
 Arg:AddOptionString		("cmd", nil, nil, nil, "command", "EDK2 command")
-Arg:AddRemark			(nil, "install : reinstall EDK2")
+Arg:AddRemark			(nil, "install : force to install EDK2")
+Arg:AddRemark			(nil, "update  : check for update of EDK2")
 Arg:AddRemark			(nil, "build   : build project")
 Arg:AddRemark			(nil, "clean   : clean project")
 Arg:AddRemark			(nil, "dump    : Dump ROM(-m option) image's header")
@@ -28,8 +29,11 @@ testdrive_path = testdrive_path.s
 
 local profile_path = String()
 profile_path:GetEnvironment("TESTDRIVE_PROFILE")
-profile_path = profile_path.s .. "Common/bin/"
-local edk_path = profile_path .. "edk2"
+profile_path		= profile_path.s .. "Common/bin/"
+local edk_path		= profile_path .. "edk2"
+local sEDK2_ini		= "@EDK2@" .. profile_path .. "edk2.ini"	-- EDK2 configuration file
+local sEDK2_tag		= "edk2-stable202608"
+local iTimeStamp	= math.floor(os.time() / (60*60*24))
 
 do	-- set EDK2 environment
 	local mingw_path = testdrive_path .. "bin/msys64/ucrt64/"
@@ -62,19 +66,40 @@ end
 
 local reinstall = (cmd == "install")
 
+if (cmd == "update") then
+	local sEnv			= String()
+	sEnv:GetEnvironment("TAG" .. sEDK2_ini)
+	
+	if sEnv.s ~= sEDK2_tag then
+		reinstall = true
+		LOGI("New update is ready...")
+	else
+		LOGI("Already up to date.")
+	end
+end
+
 -- check EDK2 tool
 if (lfs.IsExist(profile_path .. "edk2/BaseTools/") == false) or reinstall then
 	LOGI("Installing EDK2...\n")
+	LOGI("Preparing required tools for compiling...\n")
 	os.require("mingw-w64-ucrt-x86_64-nasm")
 	exec("rm -rf \"" .. edk_path .. "\"")
 	if run("git clone https://github.com/tianocore/edk2 \"" .. edk_path .. "\"") ~= 0 then
 		LOGE("Can't access to internet... Please try again later.")
 		os.exit(1)
 	end
-	run("cd /D \"" .. edk_path .. "\"&" .. "git checkout tags/edk2-stable202608")
+	run("cd /D \"" .. edk_path .. "\"&" .. "git checkout tags/" .. sEDK2_tag)
 	run("cd /D \"" .. edk_path .. "\"&" .. "git submodule update --init --recursive")
 	run("cd /D \"" .. edk_path .. "\"&" .. "edksetup.bat Mingw-w64 ForceRebuild")
 	LOGI("EDK2 is installed successfully!")
+	
+	do	-- update edk2.ini
+		local sEnv			= String()
+		sEnv.s				= sEDK2_tag
+		sEnv:SetEnvironment("TAG" .. sEDK2_ini)
+		sEnv.s				= tostring(iTimeStamp)
+		sEnv:SetEnvironment("DATE" .. sEDK2_ini)
+	end
 end
 
 -- check IASL tool

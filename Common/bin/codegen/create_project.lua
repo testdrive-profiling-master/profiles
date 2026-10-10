@@ -6,7 +6,7 @@ end
 local bEclipseEnv	= true
 sProfilePath		= sProfilePath.s
 
-local Arg = ArgTable("Template project generator with TestDrive Profiling Master.")
+local Arg = ArgTable("Project generator for TestDrive Profiling Master.")
 
 Arg:AddOptionString		("type", nil, nil, nil, "type", "Template project type")
 Arg:AddRemark			(nil, "'testdrive'              : TestDrive project")
@@ -28,7 +28,7 @@ Arg:AddOptionString		("project_name", nil, nil, nil, "project_name", "Project na
 if (Arg:DoParse() == false) then
 	print("\n  ex) create_project cpp test")
 	print("")
-	print("  * To create a H/W(verilog, verigen...) project,")
+	print("  * For some projects(testdrive, verilog, verigen, qemu...),")
 	print("    you must run the TestDrive project at least once.")
 	return
 end
