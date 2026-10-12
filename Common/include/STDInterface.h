@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 9/22/2025 Mon (clonextop@gmail.com)
+// Rev.  : 10/12/2026 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __STD_INTERFACE_H__
 #define __STD_INTERFACE_H__
@@ -75,9 +75,13 @@ typedef void *PVOID;
 #		define BYTE unsigned char
 #	endif
 #	if !defined(BOOL)
-#		define BOOL  DWORD
-#		define TRUE  1
-#		define FALSE 0
+#		define BOOL DWORD
+#		if !defined(TRUE)
+#			define TRUE 1
+#		endif
+#		if !defined(FALSE)
+#			define FALSE 0
+#		endif
 #	endif
 #	if !defined(NULL)
 #		define NULL 0
