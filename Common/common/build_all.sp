@@ -4,7 +4,8 @@ LOG_CLEAR()
 do
 	local sProssorCount = String()
 	sProssorCount:GetEnvironment("NUMBER_OF_PROCESSORS")
-	local iHDLBuildCount = math.floor(tonumber(sProssorCount.s) / 3)
+	sProssorCount = sProssorCount.s
+	local iHDLBuildCount = math.floor(tonumber(sProssorCount) / 3)
 	if iHDLBuildCount < 1 then
 		iHDLBuildCount = 1
 	elseif iHDLBuildCount > 4 then
