@@ -1,23 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
-// 
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -29,35 +29,35 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : Common profiles
-// Rev.  : 4/19/2023 Wed (clonextop@gmail.com)
+// Rev.  : 10/12/2026 Mon (clonextop@gmail.com)
 //================================================================================
 #ifndef __INTERRUPT_SERVICE_H__
 #define __INTERRUPT_SERVICE_H__
 #include "ThreadManager.h"
 #include "ddk/SystemHAL.h"
 
-class InterruptService :
-	public ThreadManager {
+class InterruptService : public ThreadManager
+{
 public:
 	InterruptService(void);
 	~InterruptService(void);
 
-	void RegisterService(INTRRUPT_SERVICE service, void* pPrivate);
-	bool Awake(void);
+	void RegisterService(INTRRUPT_SERVICE service, void *pPrivate);
+	bool Awake(int iVector);
 	void ClearPending(void);
 	void Enable(bool bEnable = true);
 
 private:
-	virtual void MonitorThread(void);					// monitor thread
-	virtual void OnThreadKill(bool bForced);			// it will call before kill thread
+	virtual void	 MonitorThread(void);		 // monitor thread
+	virtual void	 OnThreadKill(bool bForced); // it will call before kill thread
 
-	INTRRUPT_SERVICE	m_ISR;
-	void*				m_pPrivate;
-	Semaphore			m_SemaInterrupt;
-	volatile bool		m_bRun;
-	volatile bool		m_bEnable;
-	volatile bool		m_bPending;
+	INTRRUPT_SERVICE m_ISR;
+	void			*m_pPrivate;
+	Semaphore		 m_SemaInterrupt;
+	volatile bool	 m_bRun;
+	volatile bool	 m_bEnable;
+	volatile bool	 m_bPending;
 };
-#endif//__INTERRUPT_SERVICE_H__
+#endif //__INTERRUPT_SERVICE_H__

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 8/18/2026 Tue (clonextop@gmail.com)
+// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "SimEngine.h"
@@ -152,14 +152,11 @@ bool SimEngine::Clocking(void)
 	return bBusy;
 }
 
-bool SimEngine::AwakeInterrupt(void)
+void SimEngine::AwakeInterrupt(int iVector)
 {
-	bool bAwake = m_Interrupt.Awake();
-
-	if (bAwake)
+	if (m_Interrupt.Awake(iVector)) {
 		m_Lock.SetDelay(64);
-
-	return bAwake;
+	}
 }
 
 void SimEngine::MonitorThread(void)

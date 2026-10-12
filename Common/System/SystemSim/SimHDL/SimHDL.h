@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Simulation HDL module
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_HDL_H__
 #define __SIM_HDL_H__
@@ -45,20 +45,20 @@ typedef unsigned int svBitVecVal;
 #endif
 
 struct SimControl {
-	virtual BUS_SLAVE_INTERFACE *CreateSlave(uint64_t ulAddrBase, uint64_t ulAddrHigh)		 = 0;
-	virtual BUS_SLAVE_INTERFACE *FindSlave(uint64_t ulAddress)								 = 0;
-	virtual CLOCK_INTERFACE		*CreateClock(uint8_t *pCLK, uint8_t *pRST)					 = 0;
-	virtual CLOCK_INTERFACE		*FindClock(uint8_t *pCLK)									 = 0;
-	virtual bool				 AwakeInterrupt(void)										 = 0; // true(Awaked), false(Pending)
-	virtual void				 SetMemoryBaseAddress(uint64_t ulAddress)					 = 0;
-	virtual void				 MemoryRead32(int iID, uint64_t ulAddress, uint32_t &dwData) = 0;
-	virtual void				 MemoryWrite32(int iID, uint64_t ulAddress, uint32_t dwData) = 0;
-	virtual void				 MemoryRead16(int iID, uint64_t ulAddress, uint16_t &dwData) = 0;
-	virtual void				 MemoryWrite16(int iID, uint64_t ulAddress, uint16_t dwData) = 0;
-	virtual void				 MemoryRead8(int iID, uint64_t ulAddress, uint8_t &dwData)	 = 0;
-	virtual void				 MemoryWrite8(int iID, uint64_t ulAddress, uint8_t dwData)	 = 0;
-	virtual SYSTEM_CONFIG		*GetSystemConfig(void)										 = 0;
-	virtual DisplayConfig		*GetDisplayConfig(void)										 = 0;
+	virtual BUS_SLAVE_INTERFACE *CreateSlave(uint64_t ulAddrBase, uint64_t ulAddrHigh)							  = 0;
+	virtual BUS_SLAVE_INTERFACE *FindSlave(uint64_t ulAddress)													  = 0;
+	virtual CLOCK_INTERFACE		*CreateClock(uint8_t *pCLK, uint8_t *pRST)										  = 0;
+	virtual CLOCK_INTERFACE		*FindClock(uint8_t *pCLK)														  = 0;
+	virtual void				 AwakeInterrupt(int iVector)													  = 0;
+	virtual void				 SetMemoryBaseAddress(uint64_t ulAddress)										  = 0;
+	virtual void				 MemoryRead32(int iID, uint64_t ulAddress, uint32_t &dwData)					  = 0;
+	virtual void				 MemoryWrite32(int iID, uint64_t ulAddress, uint32_t dwData)					  = 0;
+	virtual void				 MemoryRead16(int iID, uint64_t ulAddress, uint16_t &dwData)					  = 0;
+	virtual void				 MemoryWrite16(int iID, uint64_t ulAddress, uint16_t dwData)					  = 0;
+	virtual void				 MemoryRead8(int iID, uint64_t ulAddress, uint8_t &dwData)						  = 0;
+	virtual void				 MemoryWrite8(int iID, uint64_t ulAddress, uint8_t dwData)						  = 0;
+	virtual SYSTEM_CONFIG		*GetSystemConfig(void)															  = 0;
+	virtual DisplayConfig		*GetDisplayConfig(void)															  = 0;
 	virtual uint8_t				*GetMemoryPointer(uint64_t ulAddress, uint64_t ulSize = 0, bool bDisplay = false) = 0;
 	virtual uint64_t			 GetMemoryBaseAddress(void)														  = 0;
 	virtual bool				 GetMemory(const char *sName, void *&pConfig, void *&pMemory)					  = 0;

@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 1/31/2025 Fri (clonextop@gmail.com)
+// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_ENGINE_H__
 #define __SIM_ENGINE_H__
@@ -93,7 +93,7 @@ protected:
 	virtual BUS_SLAVE_INTERFACE *FindSlave(uint64_t ulAddress);
 	virtual CLOCK_INTERFACE		*CreateClock(uint8_t *pCLK, uint8_t *pRST);
 	virtual CLOCK_INTERFACE		*FindClock(uint8_t *pCLK);
-	virtual bool				 AwakeInterrupt(void); // true(Awaked), false(Pending)
+	virtual void				 AwakeInterrupt(int iVector);
 	virtual void				 SetMemoryBaseAddress(uint64_t ulAddress);
 	virtual void				 MemoryRead32(int iID, uint64_t ulAddress, uint32_t &dwData);
 	virtual void				 MemoryWrite32(int iID, uint64_t ulAddress, uint32_t dwData);

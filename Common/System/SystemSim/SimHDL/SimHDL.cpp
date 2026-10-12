@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Simulation HDL module
-// Rev.  : 8/18/2026 Tue (clonextop@gmail.com)
+// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
 #include "TestDriver.inl"
@@ -238,7 +238,7 @@ public:
 #ifndef SIMULATION_TOP_EX
 			{
 				if (__pSimTop->INTR)
-					__pSimControl->AwakeInterrupt();
+					__pSimControl->AwakeInterrupt(0); // default ISR#0
 			}
 #endif
 #ifdef SIM_TRACE
@@ -519,9 +519,9 @@ void SimulationCreateBusy(BYTE *pBUSY)
 	__pSimControl->SimulationAddBusy(pBUSY);
 }
 
-DPI_FUNCTION int SimulationAwakeInterrupt(void)
+DPI_FUNCTION void SimulationAwakeInterrupt(int iVector)
 {
-	return __pSimControl->AwakeInterrupt();
+	__pSimControl->AwakeInterrupt(iVector);
 }
 
 DPI_FUNCTION void SimulationSetClock(

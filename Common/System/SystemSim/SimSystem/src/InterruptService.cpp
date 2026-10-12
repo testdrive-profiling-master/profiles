@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 1/31/2025 Fri (clonextop@gmail.com)
+// Rev.  : 10/12/2026 Mon (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "InterruptService.h"
@@ -68,7 +68,7 @@ void InterruptService::OnThreadKill(bool bForced)
 	m_SemaInterrupt.Up();
 }
 
-bool InterruptService::Awake(void)
+bool InterruptService::Awake(int iVector)
 {
 	if (m_bEnable && !m_bPending) {
 		m_bPending = true;
