@@ -30,16 +30,26 @@ if not exist "release\vc_redist.x64.exe" (
 )
 
 REM build main tools
+make clean
 make
 
 REM build make release
 cd MakeRelease
+make clean
 Make
 cd ..
 
 MakeRelease\MakeRelease.exe
 
+if exist codesign.bat (
+	call codesign.bat .\release\TestDrive_Installer.exe
+)
+
 iexpress /N TestDriveInstaller.sed
+
+if exist codesign.bat (
+	call codesign.bat .\TestDrive_Profiling_Master.exe
+)
 
 if exist %TESTDRIVE_PROFILE%../testdrive-profiling-master.github.io/ (
 	cp -f TestDrive_Profiling_Master.exe %TESTDRIVE_PROFILE%../testdrive-profiling-master.github.io/download/
