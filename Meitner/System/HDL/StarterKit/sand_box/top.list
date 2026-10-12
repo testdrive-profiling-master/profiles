@@ -1,2 +1,4 @@
 TOP_DESIGN	= top.sv
 	OPTION	= SAND_BOX
+TOP_DESIGN	= top_tft_lcd_solved.sv
+	OPTION	= SAND_BOX

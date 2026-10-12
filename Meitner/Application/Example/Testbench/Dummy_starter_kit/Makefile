@@ -16,7 +16,7 @@ SRCS			:= \
 	$(SRC_PATH)/../framework/Testbench.cpp
 	
 INC				:= -I../framework
-
+LIBDIR			:= -lturbojpeg
 CDEFS			:=
 
 #-------------------------------------------------
