@@ -19,21 +19,21 @@ do
 
 	if lfs.attributes(System.ProjectPath .. "System\\SubSystems\\Simulation\\SimHDL\\", "mode") == "directory" then
 		LOGI("¢Â Simulation HDL module build")
-		System.Execute("mingw32-make", "-j " .. iHDLBuildCount, "%PROJECT%System\\SubSystems\\Simulation\\SimHDL\\", {"error:", "] Error", "undefined reference to ", {"Build succeeded.",0}})
+		System.Execute("mingw32-make", "-j " .. iHDLBuildCount, "%PROJECT%System\\SubSystems\\Simulation\\SimHDL\\", {"*E: ", {"*I: ", 0}, {"*W: ","warning"}, "error:", "] Error", "undefined reference to ", {"Build succeeded.",0}})
 	end
 
 	if lfs.attributes(System.ProjectPath .. "System\\SubSystems\\Simulation\\SimSystem\\", "mode") == "directory" then
 		LOGI("¢Â Simulation Sub-system build")
-		System.Execute("mingw32-make", "-j " .. sProssorCount, "%PROJECT%System\\SubSystems\\Simulation\\SimSystem\\", {"error:", "] Error", "undefined reference to ", {"Build succeeded.",0}})
+		System.Execute("mingw32-make", "-j " .. sProssorCount, "%PROJECT%System\\SubSystems\\Simulation\\SimSystem\\", {"*E: ", {"*I: ", 0}, {"*W: ","warning"}, "error:", "] Error", "undefined reference to ", {"Build succeeded.",0}})
 	end
 
 	if lfs.attributes(System.ProjectPath .. "System\\SubSystems\\PCIeDriver\\", "mode") == "directory" then
 		LOGI("¢Â Driver(PCIe) Sub-system build")
-		System.Execute("mingw32-make", "-j " .. sProssorCount, "%PROJECT%System\\SubSystems\\PCIeDriver\\", {"error:", "] Error", "undefined reference to ", {"Build succeeded.",0}})
+		System.Execute("mingw32-make", "-j " .. sProssorCount, "%PROJECT%System\\SubSystems\\PCIeDriver\\", {"*E: ", {"*I: ", 0}, {"*W: ","warning"}, "error:", "] Error", "undefined reference to ", {"Build succeeded.",0}})
 	end
 
 	LOGI("¢Â Application build")
-	System.Execute("HierarchicalMake", ". -arg \"-j " .. sProssorCount .. "\"", "%PROJECT%Application\\", {"*E: ", "error:", "] Error", "undefined reference to ", {"Build succeeded.",0}})
+	System.Execute("HierarchicalMake", ". -arg \"-j " .. sProssorCount .. "\"", "%PROJECT%Application\\", {"*E: ", {"*I: ", 0}, {"*W: ","warning"}, "error:", "] Error", "undefined reference to ", {"Build succeeded.",0}})
 end
 
 LOGI("¢Â Build all sequence is completed!")

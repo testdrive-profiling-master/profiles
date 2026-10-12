@@ -7,16 +7,16 @@ do
 	
 	if lfs.attributes(System.ProjectPath .. "System\\SubSystems\\Simulation\\SimSystem\\", "mode") == "directory" then
 		LOGI("¢Â Simulation Sub-system build")
-		System.Execute("mingw32-make", "-j " .. sProssorCount, "%PROJECT%System\\SubSystems\\Simulation\\SimSystem\\", {"error:", "] Error", "undefined reference to "})
+		System.Execute("mingw32-make", "-j " .. sProssorCount, "%PROJECT%System\\SubSystems\\Simulation\\SimSystem\\", {"*E: ", {"*I: ", 0}, {"*W: ","warning"}, "error:", "] Error", "undefined reference to "})
 	end
 
 	if lfs.attributes(System.ProjectPath .. "System\\SubSystems\\PCIeDriver\\", "mode") == "directory" then
 		LOGI("¢Â Driver(PCIe) Sub-system build")
-		System.Execute("mingw32-make", "-j " .. sProssorCount, "%PROJECT%System\\SubSystems\\PCIeDriver\\", {"error:", "] Error", "undefined reference to ", {"Build succeeded.", 0}})
+		System.Execute("mingw32-make", "-j " .. sProssorCount, "%PROJECT%System\\SubSystems\\PCIeDriver\\", {"*E: ", {"*I: ", 0}, {"*W: ","warning"}, "error:", "] Error", "undefined reference to ", {"Build succeeded.", 0}})
 	end
 
 	LOGI("¢Â Application build")
-	System.Execute("HierarchicalMake", ". -arg \"-j " .. sProssorCount .. "\"", "%PROJECT%Application\\", {"*E: ", "error:", "] Error", "undefined reference to ", {"Build succeeded.", 0}})
+	System.Execute("HierarchicalMake", ". -arg \"-j " .. sProssorCount .. "\"", "%PROJECT%Application\\", {"*E: ", {"*I: ", 0}, {"*W: ","warning"}, "error:", "] Error", "undefined reference to ", {"Build succeeded.", 0}})
 end
 
 LOGI("\n¢Â S/W build sequence is completed!")

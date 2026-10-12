@@ -18,7 +18,7 @@ do
 	end
 
 	LOGI("¢Â Simulation HDL module build")
-	if System.Execute("mingw32-make", "-j " .. iHDLBuildCount, "%PROJECT%System\\SubSystems\\Simulation\\SimHDL\\", {"error:", "] Error", "undefined reference to ", {"Build succeeded.",0}}) ~= 0 then
+	if System.Execute("mingw32-make", "-j " .. iHDLBuildCount, "%PROJECT%System\\SubSystems\\Simulation\\SimHDL\\", {"error:", "] Error", "undefined reference to ", "*E: ", {"*I: ", 0}, {"*W: ","warning"}, {"Build succeeded.",0}}) ~= 0 then
 		LOGE("H/W build sequence is failed!")
 		return
 	end
