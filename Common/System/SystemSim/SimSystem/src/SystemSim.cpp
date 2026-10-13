@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 4/21/2026 Tue (clonextop@gmail.com)
+// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "STDInterface.h"
@@ -176,11 +176,6 @@ void SystemSim::RegisterInterruptService(INTRRUPT_SERVICE routine, void *pPrivat
 void SystemSim::EnableInterrupt(bool bEnable)
 {
 	m_pSim->Interrupt().Enable(bEnable);
-}
-
-void SystemSim::ClearInterruptPending(void)
-{
-	m_pSim->Interrupt().ClearPending();
 }
 
 uint32_t SystemSim::DriverCommand(void *pCommand)

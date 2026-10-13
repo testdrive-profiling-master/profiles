@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __DDK_CONTEXT_H__
 #define __DDK_CONTEXT_H__
@@ -68,7 +68,6 @@ public:
 	// system
 	virtual void	 RegisterInterruptService(DDK_INTRRUPT_SERVICE routine, void *pPrivate = NULL);
 	virtual void	 EnableInterrupt(bool bEnable = true);
-	virtual void	 ClearInterruptPending(void);
 	virtual uint32_t DriverCommand(void *pCommand);
 
 private:

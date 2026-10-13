@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 4/21/2026 Tue (clonextop@gmail.com)
+// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_SIM_H__
 #define __SYSTEM_SIM_H__
@@ -67,7 +67,6 @@ public:
 	// system
 	virtual void	 RegisterInterruptService(INTRRUPT_SERVICE routine, void *pPrivate); // register interrupt service routine
 	virtual void	 EnableInterrupt(bool bEnable = true);								 // enable interrupt service
-	virtual void	 ClearInterruptPending(void);										 // clear interrupt service pending bit
 	virtual uint32_t DriverCommand(void *pCommand);										 // post driver specific command
 
 	// memory manager

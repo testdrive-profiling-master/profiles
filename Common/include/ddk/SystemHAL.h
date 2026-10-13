@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 4/23/2026 Thu (clonextop@gmail.com)
+// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_HAL_H__
 #define __SYSTEM_HAL_H__
@@ -40,7 +40,7 @@
 //------------------------------------------------------------------------------------------------------------------
 // system control interface
 //------------------------------------------------------------------------------------------------------------------
-typedef void (*INTRRUPT_SERVICE)(void *pPrivate); // interrupt service routine
+typedef void (*INTRRUPT_SERVICE)(int iVector, void *pPrivate); // interrupt service routine
 
 struct ISystem {
 	// Identify
@@ -60,7 +60,6 @@ struct ISystem {
 	// System control
 	virtual void	 RegisterInterruptService(INTRRUPT_SERVICE routine, void *pPrivate) = 0; // register ISR(interrrupt service routine)
 	virtual void	 EnableInterrupt(bool bEnable = true)								= 0; // enable ISR
-	virtual void	 ClearInterruptPending(void)										= 0; // clear interrupt pending bit
 	virtual uint32_t DriverCommand(void *pCommand)										= 0; // post driver specific command
 };
 

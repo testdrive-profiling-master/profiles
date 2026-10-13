@@ -67,14 +67,13 @@ public:
 		SAFE_DELETE(m_pDUT);
 	}
 
-	virtual void OnInterrupt(void) {
+	virtual void OnInterrupt(int iVector) {
 		if(m_pDDK->RegRead(DUT_BASE) & 0x80000000) {		// check interrupt flag
 			printf("*** INTERRUPT is occurred. ***\n");
 			m_pDDK->RegWrite((DUT_BASE | (4 << 2)), 0);		// clear interrupt flag
+			m_pDDK->RegRead(DUT_BASE);						// wait for interrupt deassertion
 			m_IntrSema.Up();								// release waiting for interrupt
 		}
-
-		m_pDDK->ClearInterruptPending();
 	}
 
 	virtual bool OnTestBench(void) {

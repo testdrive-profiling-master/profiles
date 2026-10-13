@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,53 +31,58 @@
 // OF SUCH DAMAGE.
 //
 // Title : Testbench
-// Rev.  : 1/24/2024 Wed (clonextop@gmail.com)
+// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "hw/DUT.h"
 
-class Testbench : public TestbenchFramework {
-	DUT*			m_pDUT;		// Processor (Design Under Testing)
-	DDKMemory*		m_pBuff;
-	Semaphore		m_IntrSema;
+class Testbench : public TestbenchFramework
+{
+	DUT		  *m_pDUT; // Processor (Design Under Testing)
+	DDKMemory *m_pBuff;
+	Semaphore  m_IntrSema;
 
 public:
-	Testbench(void) : m_IntrSema(0) {
-		m_pBuff	= NULL;
+	Testbench(void) : m_IntrSema(0)
+	{
+		m_pBuff = NULL;
 		m_pDUT	= NULL;
 	}
 
-
-	virtual bool OnInitialize(void) {
+	virtual bool OnInitialize(void)
+	{
 		// H/W system equality check
-		if(!CheckSimulation("Processor axi wrapper"))
+		if (!CheckSimulation("Processor axi wrapper"))
 			return false;
 
-		m_pDUT	= new DUT(m_pDDK);
-		m_pDUT->SetClock(300.f);	// set processor clock to 300MHz (High speed.) for performance
-		m_pBuff		= CreateDDKMemory(1024 * 8, 32);	// 8KB, 256bit alignment
+		m_pDUT = new DUT(m_pDDK);
+		m_pDUT->SetClock(300.f);				 // set processor clock to 300MHz (High speed.) for performance
+		m_pBuff = CreateDDKMemory(1024 * 8, 32); // 8KB, 256bit alignment
 		MemoryLog(m_pBuff, "Test buffer memory");
 		return true;
 	}
 
-	virtual void OnRelease(void) {
-		if(m_pDUT) m_pDUT->SetClock(50.f);	// set processor clock to 50MHz (Low speed.) for IDLE status
+	virtual void OnRelease(void)
+	{
+		if (m_pDUT)
+			m_pDUT->SetClock(50.f); // set processor clock to 50MHz (Low speed.) for IDLE status
 
 		SAFE_RELEASE(m_pBuff);
 		SAFE_DELETE(m_pDUT);
 	}
 
-	virtual void OnInterrupt(void) {
-		if(m_pDDK->RegRead(DUT_BASE) & 0x80000000) {		// check interrupt flag
+	virtual void OnInterrupt(int iVector)
+	{
+		if (m_pDDK->RegRead(DUT_BASE) & 0x80000000) { // check interrupt flag
 			printf("*** INTERRUPT is occurred. ***\n");
-			m_pDDK->RegWrite((DUT_BASE | (4 << 2)), 0);		// clear interrupt flag
-			m_IntrSema.Up();								// release waiting for interrupt
+			m_pDDK->RegWrite((DUT_BASE | (4 << 2)), 0); // clear interrupt flag
+			m_pDDK->RegRead(DUT_BASE);					// read interrupt status for interrupt de-assertion
+			m_IntrSema.Up();							// release waiting for interrupt
 		}
-
-		m_pDDK->ClearInterruptPending();
 	}
 
-	virtual bool OnTestBench(void) {
+	virtual bool OnTestBench(void)
+	{
 		//-----------------------------------------------------
 		// slave R/W test
 		//-----------------------------------------------------
@@ -85,8 +90,8 @@ public:
 		printf("\tDUT_CLOCK_GEN STATUS : 0x%X\n", m_pDDK->RegRead(DUT_CLOCKGEN_BASE));
 		printf("\tWrite slave fifo 5 times...\n");
 
-		for(int i = 0; i < 5; i++) {
-			DWORD	dwData	= 0xABCD0000 | i;
+		for (int i = 0; i < 5; i++) {
+			DWORD dwData = 0xABCD0000 | i;
 			printf("\tWrite : 0x%08X\n", dwData);
 			m_pDDK->RegWrite(DUT_BASE | (5 << 2), dwData);
 		}
@@ -94,8 +99,7 @@ public:
 		printf("\tDUT_CLOCK_GEN STATUS : 0x%X\n", m_pDDK->RegRead(DUT_CLOCKGEN_BASE));
 		printf("\tRead slave fifo 5 times...\n");
 
-		for(int i = 0; i < 5; i++)
-			printf("\tRead : 0x%08X\n", m_pDDK->RegRead(DUT_BASE));
+		for (int i = 0; i < 5; i++) printf("\tRead : 0x%08X\n", m_pDDK->RegRead(DUT_BASE));
 
 		//-----------------------------------------------------
 		// master R/W test
@@ -108,78 +112,71 @@ public:
 		// write to system memory
 		m_pBuff->Flush();
 		// write
-		m_pDDK->RegWrite(DUT_BASE | (0 << 2), m_pBuff->Physical());			// set target memory address (low)
-		m_pDDK->RegWrite(DUT_BASE | (1 << 2), m_pBuff->Physical() >> 32);	// set target memory address (high)
-		m_pDDK->RegWrite(DUT_BASE | (2 << 2), 8);		// set transfer size = 8
-		m_pDDK->RegWrite(DUT_BASE | (3 << 2), 1);		// do write
+		m_pDDK->RegWrite(DUT_BASE | (0 << 2), m_pBuff->Physical());		  // set target memory address (low)
+		m_pDDK->RegWrite(DUT_BASE | (1 << 2), m_pBuff->Physical() >> 32); // set target memory address (high)
+		m_pDDK->RegWrite(DUT_BASE | (2 << 2), 8);						  // set transfer size = 8
+		m_pDDK->RegWrite(DUT_BASE | (3 << 2), 1);						  // do write
 
 		// wait for master bus write done
 		// s/w is too fast in the h/w simulation mode, so we will wait a while.
-		for(int i = 0; i < 20; i++) m_pDDK->RegRead(DUT_BASE);
+		for (int i = 0; i < 20; i++) m_pDDK->RegRead(DUT_BASE);
 
 		// read from system memory
 		m_pBuff->Flush(FALSE);
 		{
-			DWORD* pData	= (DWORD*)m_pBuff->Virtual();
+			DWORD *pData = (DWORD *)m_pBuff->Virtual();
 
-			for(int i = 0; i < 20; i++)
-				printf("\tRead : [%d] %08X %08X %08X %08X %08X %08X %08X %08X\n",
-					   i,
-					   pData[i * 8],
-					   pData[i * 8 + 1],
-					   pData[i * 8 + 2],
-					   pData[i * 8 + 3],
-					   pData[i * 8 + 4],
-					   pData[i * 8 + 5],
-					   pData[i * 8 + 6],
-					   pData[i * 8 + 7]);
+			for (int i = 0; i < 20; i++)
+				printf(
+					"\tRead : [%d] %08X %08X %08X %08X %08X %08X %08X %08X\n", i, pData[i * 8], pData[i * 8 + 1], pData[i * 8 + 2],
+					pData[i * 8 + 3], pData[i * 8 + 4], pData[i * 8 + 5], pData[i * 8 + 6], pData[i * 8 + 7]);
 		}
 		//// ***** read test *****
 		printf("\nAsynchronous master read test...\n");
 		{
 			printf("\tInitiailze memory : 0x%X\n", m_pBuff->Physical());
-			DWORD* pData	= (DWORD*)m_pBuff->Virtual();
+			DWORD *pData = (DWORD *)m_pBuff->Virtual();
 
-			for(int i = 0; i < 16; i++) {
-				pData[i * 8]		= 0xABC00000 | (i * 8 + 0);
-				pData[i * 8 + 1]	= 0xABC10000 | (i * 8 + 1);
-				pData[i * 8 + 2]	= 0xABC20000 | (i * 8 + 2);
-				pData[i * 8 + 3]	= 0xABC30000 | (i * 8 + 3);
-				pData[i * 8 + 4]	= 0xABC40000 | (i * 8 + 4);
-				pData[i * 8 + 5]	= 0xABC50000 | (i * 8 + 5);
-				pData[i * 8 + 6]	= 0xABC60000 | (i * 8 + 6);
-				pData[i * 8 + 7]	= 0xABC70000 | (i * 8 + 7);
+			for (int i = 0; i < 16; i++) {
+				pData[i * 8]	 = 0xABC00000 | (i * 8 + 0);
+				pData[i * 8 + 1] = 0xABC10000 | (i * 8 + 1);
+				pData[i * 8 + 2] = 0xABC20000 | (i * 8 + 2);
+				pData[i * 8 + 3] = 0xABC30000 | (i * 8 + 3);
+				pData[i * 8 + 4] = 0xABC40000 | (i * 8 + 4);
+				pData[i * 8 + 5] = 0xABC50000 | (i * 8 + 5);
+				pData[i * 8 + 6] = 0xABC60000 | (i * 8 + 6);
+				pData[i * 8 + 7] = 0xABC70000 | (i * 8 + 7);
 			}
 
 			// write to system memory
 			m_pBuff->Flush(TRUE);
 		}
-		m_pDDK->RegWrite(DUT_BASE | (0 << 2), m_pBuff->Physical());				// set target memory address (low)
-		m_pDDK->RegWrite(DUT_BASE | (1 << 2), m_pBuff->Physical() >> 32);		// set target memory address (high)
-		m_pDDK->RegWrite(DUT_BASE | (2 << 2), 8);		// set transfer size = 8
-		m_pDDK->RegWrite(DUT_BASE | (3 << 2), 0);		// do read
+		m_pDDK->RegWrite(DUT_BASE | (0 << 2), m_pBuff->Physical());		  // set target memory address (low)
+		m_pDDK->RegWrite(DUT_BASE | (1 << 2), m_pBuff->Physical() >> 32); // set target memory address (high)
+		m_pDDK->RegWrite(DUT_BASE | (2 << 2), 8);						  // set transfer size = 8
+		m_pDDK->RegWrite(DUT_BASE | (3 << 2), 0);						  // do read
 
 		// wait for master bus read done
 		// s/w is too fast in the h/w simulation mode, so we will wait a while.
-		for(int i = 0; i < 20; i++) m_pDDK->RegRead(DUT_BASE);
+		for (int i = 0; i < 20; i++) m_pDDK->RegRead(DUT_BASE);
 
 		// check out~~
 		printf("\tCheck out processor's valid read operation from simulation's waveform...\n");
 		//// ***** interrupt test *****
 		printf("\nInterrupt test...\n");
 		m_pDDK->RegWrite((DUT_BASE | (4 << 2)), 1);
-		m_IntrSema.Down();			// wait for interrupt
+		m_IntrSema.Down(); // wait for interrupt
 		printf("process is done!\n");
 		return true;
 	}
 };
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-	Testbench	tb;
+	Testbench tb;
 
-	if(tb.Initialize()) {
-		if(!tb.DoTestbench())
+	if (tb.Initialize()) {
+		if (!tb.DoTestbench())
 			printf("Testbench is failed.\n");
 	} else {
 		printf("Initialization is failed.\n");

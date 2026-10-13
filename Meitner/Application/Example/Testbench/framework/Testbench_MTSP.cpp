@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Testbench
-// Rev.  : 7/19/2024 Fri (clonextop@gmail.com)
+// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Testbench_MTSP.h"
 
@@ -122,11 +122,6 @@ void TestbenchFramework_MTSP::WaitForDone(void)
 	}
 }
 
-short TestbenchFramework_MTSP::ClearInterrupt(void)
-{
-	return RegRead(2 << 2);
-}
-
 short TestbenchFramework_MTSP::GetProceedCount(void)
 {
 	short iProceedCount = m_Info.status.run_count - m_iPrevRunCount;
@@ -134,13 +129,11 @@ short TestbenchFramework_MTSP::GetProceedCount(void)
 	return iProceedCount;
 }
 
-void TestbenchFramework_MTSP::OnInterrupt(void)
+void TestbenchFramework_MTSP::OnInterrupt(int iVector)
 {
 	m_Info.status.m		= RegRead(2 << 2); // clear interrupt and get run count
 	short iProceedCount = m_Info.status.run_count - m_iPrevRunCount;
 	m_iPrevRunCount		= m_Info.status.run_count;
 
 	for (short i = 0; i < iProceedCount; i++) m_SemaIntrrupt.Up();
-
-	m_pDDK->ClearInterruptPending();
 }

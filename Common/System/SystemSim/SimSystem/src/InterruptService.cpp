@@ -31,20 +31,22 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 10/12/2026 Mon (clonextop@gmail.com)
+// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "InterruptService.h"
 #include "SimEngine.h"
 #include <assert.h>
 
-static void __interrupt_service_routine_default(void *pPrivate)
+#define __LOCK__ const lock_guard<shared_mutex> _QLOCK_(m_QeueueLock);
+
+static void __interrupt_service_routine_default(int iVector, void *pPrivate)
 {
-	LOGI("Interrupt signal invoked.");
+	LOGI("Interrupt(%d) is invoked.", iVector);
 }
 
 InterruptService::InterruptService(void)
-	: m_SemaInterrupt(0), m_bRun(true), m_bEnable(false), m_bPending(false), m_ISR(__interrupt_service_routine_default), m_pPrivate(NULL)
+	: m_SemaInterrupt(0), m_bRun(true), m_bEnable(false), m_ISR(__interrupt_service_routine_default), m_pPrivate(NULL)
 {
 }
 
@@ -55,45 +57,57 @@ void InterruptService::MonitorThread(void)
 	while (m_bRun) {
 		m_SemaInterrupt.Down();
 
-		if (m_bEnable)
-			m_ISR(m_pPrivate);
+		if (m_bEnable) {
+			bool bQueue;
+			int	 iVector;
+			{ // check interrupt queue.
+				__LOCK__
+				bQueue = !m_Qeueue.empty();
+				if (bQueue) {
+					iVector = m_Qeueue.front();
+					m_Qeueue.pop();
+				}
+			}
+			if (bQueue) {
+				m_ISR(iVector, m_pPrivate);
+				m_Pending[iVector] = false;
+
+				// wake up simulation a little bit for h/w interrupt deassertion
+				SimResource::Sim()->Unlock();
+				SimResource::Sim()->Lock(1500);
+			}
+		}
 	}
 }
 
 void InterruptService::OnThreadKill(bool bForced)
 {
-	m_bRun	   = false;
-	m_bEnable  = false;
-	m_bPending = false;
+	m_bRun	  = false;
+	m_bEnable = false;
+	m_Pending.clear();
 	m_SemaInterrupt.Up();
 }
 
 bool InterruptService::Awake(int iVector)
 {
-	if (m_bEnable && !m_bPending) {
-		m_bPending = true;
-		m_SemaInterrupt.Up();
-		return true;
+	if (m_bEnable) {
+		__LOCK__
+		if (!m_Pending[iVector]) {
+			m_Pending[iVector] = true;
+			m_Qeueue.push(iVector);
+			m_SemaInterrupt.Up();
+			return true;
+		}
 	}
 
 	return false;
-}
-
-void InterruptService::ClearPending(void)
-{
-	if (m_bPending) {
-		m_bPending = false;
-		// wake up simulation a little bit for h/w interrupt deassertion
-		SimResource::Sim()->Unlock();
-		SimResource::Sim()->Lock(200);
-	}
 }
 
 void InterruptService::Enable(bool bEnable)
 {
 	if (m_bEnable != bEnable) {
 		if (bEnable) {
-			m_bPending = false;
+			m_Pending.clear();
 		}
 
 		m_bEnable = bEnable;
@@ -106,6 +120,10 @@ void InterruptService::RegisterService(INTRRUPT_SERVICE service, void *pPrivate)
 	Enable(false);
 	m_ISR	   = service ? service : __interrupt_service_routine_default;
 	m_pPrivate = pPrivate;
-	ClearPending();
+	{
+		__LOCK__
+		m_Pending.clear();
+		m_Qeueue = {};
+	}
 	Enable(bEnable);
 }

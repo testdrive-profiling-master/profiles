@@ -59,13 +59,10 @@ protected:
 	virtual bool OnInitialize(void)	= 0;
 	virtual bool OnTestBench(void) = 0;
 	virtual void OnRelease(void)	{}
-	virtual void OnInterrupt(void);
+	virtual void OnInterrupt(int iVector);
 	bool CheckSimulation(const char* sRequired = NULL, bool bLogOut = true);
 
 	DDK*			m_pDDK;
-
-private:
-	static void __ISR__(DDK* pDDK);
 };
 
 #endif//__TESTBENCH_H__

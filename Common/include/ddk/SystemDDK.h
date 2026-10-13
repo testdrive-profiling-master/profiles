@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_DDK_H__
 #define __SYSTEM_DDK_H__
@@ -39,7 +39,7 @@
 
 #define DDK_API extern "C"
 
-typedef void (*DDK_INTRRUPT_SERVICE)(void *pPrivate); // user interrupt service routine template
+typedef void (*DDK_INTRRUPT_SERVICE)(int iVector, void *pPrivate); // user interrupt service routine template
 
 struct DDK {
 	// Identify
@@ -61,7 +61,6 @@ struct DDK {
 	// system
 	virtual void RegisterInterruptService(DDK_INTRRUPT_SERVICE routine, void *pPrivate = NULL) = 0; // register ISR(interrrupt service routine)
 	virtual void EnableInterrupt(bool bEnable = true)										   = 0; // enable ISR
-	virtual void ClearInterruptPending(void)												   = 0; // clear interrupt pending bit
 	virtual uint32_t DriverCommand(void *pCommand)											   = 0; // post driver specific command
 };
 

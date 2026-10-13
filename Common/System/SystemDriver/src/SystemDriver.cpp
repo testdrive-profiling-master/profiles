@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive System Driver wrapper
-// Rev.  : 11/4/2025 Tue (clonextop@gmail.com)
+// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #include "SystemDriver.h"
 #include "NativeMemory.h"
@@ -121,13 +121,6 @@ void SystemDriver::EnableInterrupt(bool bEnable)
 	}
 }
 
-void SystemDriver::ClearInterruptPending(void)
-{
-	if (m_pNativeDriver->IsActivateInterrupt()) {
-		m_ISR.ClearPending();
-	}
-}
-
 uint32_t SystemDriver::DriverCommand(void *pCommand)
 {
 	return m_pNativeDriver->Command(pCommand);
@@ -150,11 +143,12 @@ uint64_t SystemDriver::GetMemorySize(void)
 	return 0;
 }
 
-void SystemDriver::InvokeISR(void)
+bool SystemDriver::InvokeISR(int iVector)
 {
 	if (m_pNativeDriver->IsActivateInterrupt()) {
-		m_ISR.Awake();
+		return m_ISR.Awake(iVector);
 	}
+	return false;
 }
 
 IMemoryNative *SystemDriver::CreateMemory(uint64_t ulByteSize, uint64_t ulByteAlignment)

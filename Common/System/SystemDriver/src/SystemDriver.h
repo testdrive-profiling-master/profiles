@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive System Driver wrapper
-// Rev.  : 7/17/2024 Wed (clonextop@gmail.com)
+// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_DRIVER_H__
 #define __SYSTEM_DRIVER_H__
@@ -64,14 +64,13 @@ public:
 	// system
 	virtual void	 RegisterInterruptService(INTRRUPT_SERVICE routine, void *pPrivate); // register ISR
 	virtual void	 EnableInterrupt(bool bEnable = true);								 // enable interrupt
-	virtual void	 ClearInterruptPending(void);										 // clear interrupt pending bit
 	virtual uint32_t DriverCommand(void *pCommand);										 // post driver specific command
 
 	// memory manager
 	virtual IMemoryNative *CreateMemory(uint64_t ulByteSize, uint64_t ulByteAlignment);
 
 protected:
-	virtual void InvokeISR(void);
+	virtual bool InvokeISR(int iVector);
 
 private:
 	SystemDriverInterface *m_pNativeDriver;

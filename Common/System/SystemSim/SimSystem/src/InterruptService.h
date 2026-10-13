@@ -31,12 +31,15 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 10/12/2026 Mon (clonextop@gmail.com)
+// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #ifndef __INTERRUPT_SERVICE_H__
 #define __INTERRUPT_SERVICE_H__
 #include "ThreadManager.h"
 #include "ddk/SystemHAL.h"
+#include <map>
+#include <queue>
+#include <shared_mutex>
 
 class InterruptService : public ThreadManager
 {
@@ -46,18 +49,19 @@ public:
 
 	void RegisterService(INTRRUPT_SERVICE service, void *pPrivate);
 	bool Awake(int iVector);
-	void ClearPending(void);
 	void Enable(bool bEnable = true);
 
 private:
-	virtual void	 MonitorThread(void);		 // monitor thread
-	virtual void	 OnThreadKill(bool bForced); // it will call before kill thread
+	virtual void		 MonitorThread(void);		 // monitor thread
+	virtual void		 OnThreadKill(bool bForced); // it will call before kill thread
 
-	INTRRUPT_SERVICE m_ISR;
-	void			*m_pPrivate;
-	Semaphore		 m_SemaInterrupt;
-	volatile bool	 m_bRun;
-	volatile bool	 m_bEnable;
-	volatile bool	 m_bPending;
+	INTRRUPT_SERVICE	 m_ISR;
+	void				*m_pPrivate;
+	Semaphore			 m_SemaInterrupt;
+	volatile bool		 m_bRun;
+	volatile bool		 m_bEnable;
+	map<int, bool>		 m_Pending;
+	queue<int>			 m_Qeueue;
+	mutable shared_mutex m_QeueueLock;
 };
 #endif //__INTERRUPT_SERVICE_H__

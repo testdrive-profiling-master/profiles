@@ -31,26 +31,20 @@
 // OF SUCH DAMAGE.
 //
 // Title : Testbench
-// Rev.  : 8/7/2024 Wed (clonextop@gmail.com)
+// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "TestDriver.inl"
 
-static TestbenchFramework *__pTestbench = NULL;
-
 // interrupt service routine
-void TestbenchFramework::__ISR__(DDK *pDDK)
+static void __ISR__(int iVector, TestbenchFramework *pTestbench)
 {
-	if (__pTestbench)
-		__pTestbench->OnInterrupt();
-	else
-		pDDK->ClearInterruptPending();
+	pTestbench->OnInterrupt(iVector);
 }
 
 TestbenchFramework::TestbenchFramework(void)
 {
 	m_pDDK		 = NULL;
-	__pTestbench = this;
 }
 
 TestbenchFramework::~TestbenchFramework(void)
@@ -69,8 +63,7 @@ bool TestbenchFramework::Initialize(void)
 			printf("*I: Current system is \"%s\".\n", m_pDDK->GetSystemDescription());
 			fflush(stdout);
 			// activate interrupt
-			m_pDDK->RegisterInterruptService((DDK_INTRRUPT_SERVICE)__ISR__); // register interrupt service routine
-			m_pDDK->ClearInterruptPending();								 // clear interrupt pending
+			m_pDDK->RegisterInterruptService((DDK_INTRRUPT_SERVICE)__ISR__, this); // register interrupt service routine
 			m_pDDK->EnableInterrupt();										 // enable interrupt
 			g_mmapview.Initialize(m_pDDK->GetMemoryBase());
 			return OnInitialize();
@@ -80,10 +73,9 @@ bool TestbenchFramework::Initialize(void)
 	return IsInitialized();
 }
 
-void TestbenchFramework::OnInterrupt(void)
+void TestbenchFramework::OnInterrupt(int iVector)
 {
-	printf("ISR done.\n");
-	m_pDDK->ClearInterruptPending();
+	printf("ISR(%d) is done.\n", iVector);
 }
 
 bool TestbenchFramework::CheckSimulation(const char *sRequired, bool bLogOut)

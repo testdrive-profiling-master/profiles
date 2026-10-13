@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2025. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 9/22/2025 Mon (clonextop@gmail.com)
+// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #include "DDK_Context.h"
 
@@ -56,10 +56,10 @@ DDK_API DDKMemory *CreateDDKMemoryEx(uint64_t ulByteSize, uint64_t ulByteAlignme
 	return (DDKMemory *)CreateMemory(ulByteSize, ulByteAlignment, ulPhyAddress);
 }
 
-static void _ISR_(void *pPrivate)
+static void _ISR_(int iVector, void *pPrivate)
 {
 	UNUSED(pPrivate);
-	printf("*I: [DDK] Interrupt occurred.\n");
+	printf("*I: [DDK] Interrupt(%d) occurred.\n", iVector);
 }
 
 void EnumerateDDKMemory(ENUMERATE_DDK_MEMORY_FUNCTION func, void *pPrivate)
@@ -132,11 +132,6 @@ void DDKContext::RegisterInterruptService(DDK_INTRRUPT_SERVICE routine, void *pP
 void DDKContext::EnableInterrupt(bool bEnable)
 {
 	m_pSystem->EnableInterrupt(bEnable);
-}
-
-void DDKContext::ClearInterruptPending(void)
-{
-	m_pSystem->ClearInterruptPending();
 }
 
 uint32_t DDKContext::DriverCommand(void *pCommand)

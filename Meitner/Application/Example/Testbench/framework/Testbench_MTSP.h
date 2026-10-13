@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Testbench
-// Rev.  : 7/19/2024 Fri (clonextop@gmail.com)
+// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "SystemConfigMTSP.h"
@@ -57,8 +57,7 @@ public:
 	short		 GetProceedCount(void);
 
 protected:
-	virtual void OnInterrupt(void);
-	short		 ClearInterrupt(void); // clear interrupt and get run count
+	virtual void OnInterrupt(int iVector);
 
 	uint32_t	 m_dwCoreSize;
 	uint32_t	 m_dwCommandFiFoSize;
