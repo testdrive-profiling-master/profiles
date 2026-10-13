@@ -2,9 +2,9 @@
 # Project
 #-------------------------------------------------
 SRC_PATH		:= .
-TARGETPATH		:= .
+TARGETPATH		:= ../lib
 TARGETNAME		:= webgui
-INSTALL_PATH	:= $(TESTDRIVE_PROFILE)Common/bin
+#INSTALL_PATH	:= $(TESTDRIVE_PROFILE)Common/bin
 #USE_DEBUG		:= 1
 #CPP_STANDARD	:= c++20
 #MAIN_COMPILER	:= clang

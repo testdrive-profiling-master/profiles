@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : WebGUI project
-// Rev.  : 6/8/2026 Mon (clonextop@gmail.com)
+// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
 //================================================================================
 #include "WebGUI.h"
 #include <time.h>
@@ -52,6 +52,7 @@ WebGUI::WebGUI(bool bDebug) : httpServer(bDebug), browser_engine(bDebug, nullptr
 	m_bEnableClose = true;
 	m_pIcon		   = NULL;
 }
+
 WebGUI::~WebGUI(void)
 {
 #ifdef WIN32
@@ -95,9 +96,42 @@ bool WebGUI::Initialize(WEBGUI_MODE mode, uint16_t iPort, const char *sHttpsKey,
 	return m_hHwnd ? OnInitialize() : false;
 }
 
+static string __GetSelfRootPath(void)
+{
+	cstring sPath;
+	char	buffer[4096];
+#ifdef WIN32
+	GetModuleFileName(NULL, buffer, 4096);
+	sPath = buffer;
+	sPath.Replace("\\", "/", true);
+#else
+	ssize_t len					= readlink("/proc/self/exe", buffer, sizeof(buffer) - 1);
+	buffer[(len > 0) ? len : 0] = '\0';
+	sPath						= buffer;
+#endif
+	sPath.CutBack("/");
+	sPath += "/";
+
+	return sPath.c_string();
+}
+
 void WebGUI::SetRootPath(const char *sRootPath)
 {
-	m_sRootPath = sRootPath;
+	{ // check relative or absolute path
+		cstring sPath = sRootPath;
+		if (
+#ifdef WIN32
+			sPath.find(":") < 0
+#else
+			!sPath.CompareFront("/")
+#endif
+		) {
+			m_sRootPath = __GetSelfRootPath();
+		} else
+			m_sRootPath.clear();
+	}
+
+	m_sRootPath += sRootPath;
 	m_sRootPath.Replace("\\", "/", true);
 	if (!m_sRootPath.CompareBack("/"))
 		m_sRootPath += "/";
