@@ -41,31 +41,35 @@
 // edged interrupt
 //-----------------------------------------------------------------------------
 module testdrive_interrupt_edge_bfm #(
-	parameter			C_ACTIVE	= 1,	// level : 1(active high), 0(active low)
-	parameter			C_VECTOR	= 0		// interrupt vector
+	parameter			C_VECTOR	= 0,	// interrupt vector's start number
+	parameter			C_WIDTH		= 1		// vector size
 ) (
-	input				CLK,		// clock
-	input				nRST,		// reset active low
-	input				EN,			// enable
-	input				INTR		// interrupt
+	input						CLK,		// clock
+	input						nRST,		// reset active low
+	input						EN,			// enable
+	input	[(C_WIDTH-1):0]		INTR		// interrupt
 );
 
 // definition & assignment ---------------------------------------------------
-wire	_Active			= C_ACTIVE;
-reg		_prev_INTR;
+genvar	i;
+reg		[(C_WIDTH-1):0]			_prev_INTR;
 
 // implementation ------------------------------------------------------------
-
 always@(posedge CLK, negedge nRST) begin
-	if(nRST) begin
-		_prev_INTR	<= INTR;
-	end begin
-		if(EN && (INTR^_prev_INTR) && (INTR == _Active)) begin
-			SimulationAwakeInterrupt(C_VECTOR);
-		end
-		_prev_INTR	<= INTR;
-	end
+	_prev_INTR	<= INTR;
 end
+
+generate
+	for(i=0;i<C_WIDTH;i++) begin
+		always@(posedge CLK, negedge nRST) begin
+			if(nRST) begin
+				if(EN && INTR[i] && !_prev_INTR[i]) begin
+					SimulationAwakeInterrupt(C_VECTOR + i);
+				end
+			end
+		end
+	end
+endgenerate
 
 endmodule
 
@@ -73,29 +77,30 @@ endmodule
 // leveled interrupt
 //-----------------------------------------------------------------------------
 module testdrive_interrupt_level_bfm #(
-	parameter			C_ACTIVE	= 1,	// level : 1(active high), 0(active low)
-	parameter			C_VECTOR	= 0		// interrupt vector
+	parameter			C_VECTOR	= 0,	// interrupt vector's start number
+	parameter			C_WIDTH		= 1		// vector size
 ) (
-	input				CLK,		// clock
-	input				nRST,		// reset active low
-	input				EN,			// enable
-	input				INTR		// interrupt
+	input						CLK,		// clock
+	input						nRST,		// reset active low
+	input						EN,			// enable
+	input	[(C_WIDTH-1):0]		INTR		// interrupt
 );
 
 // definition & assignment ---------------------------------------------------
-int		__dummy;
-wire	_Active			= C_ACTIVE;
+genvar	i;
 
 // implementation ------------------------------------------------------------
-
-always@(posedge CLK, negedge nRST) begin
-	if(nRST) begin
-	end begin
-		if(EN && (INTR == _Active)) begin
-			SimulationAwakeInterrupt(C_VECTOR);
+generate
+	for(i=0;i<C_WIDTH;i++) begin
+		always@(posedge CLK, negedge nRST) begin
+			if(nRST) begin
+				if(EN && INTR[i]) begin
+					SimulationAwakeInterrupt(C_VECTOR + i);
+				end
+			end
 		end
 	end
-end
+endgenerate
 
 endmodule
 
@@ -103,25 +108,25 @@ endmodule
 // edged/leveled interrupt
 //-----------------------------------------------------------------------------
 module testdrive_interrupt_bfm #(
-	parameter			C_EDGE_DETECT	= 1,	// edge : 1(edge), 0(level)
-	parameter			C_ACTIVE		= 1,	// level : 1(high), 0(low)
-	parameter			C_VECTOR		= 0		// interrupt vector
+	parameter			C_EDGE		= 1,	// edge : 1(edge), 0(level)
+	parameter			C_VECTOR	= 0,	// interrupt vector's start number
+	parameter			C_WIDTH		= 1		// vector size
 ) (
-	input				CLK,		// clock
-	input				nRST,		// reset active low
-	input				EN,			// enable
-	input				INTR		// interrupt
+	input						CLK,		// clock
+	input						nRST,		// reset active low
+	input						EN,			// enable
+	input	[(C_WIDTH-1):0]		INTR		// interrupt
 );
 
 // definition & assignment ---------------------------------------------------
 
 // implementation ------------------------------------------------------------
 generate
-	if(C_EDGE_DETECT==1) begin : gen_edge
-		testdrive_interrupt_edge_bfm #(.C_ACTIVE(C_ACTIVE), .C_VECTOR(C_VECTOR)) intr (.*)       ;
+	if(C_EDGE == 1) begin : gen_edge
+		testdrive_interrupt_edge_bfm #(.C_VECTOR(C_VECTOR), .C_WIDTH(C_WIDTH)) intr (.*);
 	end
 	else begin : gen_level
-		testdrive_interrupt_level_bfm #(.C_ACTIVE(C_ACTIVE), .C_VECTOR(C_VECTOR)) intr (.*)       ;
+		testdrive_interrupt_level_bfm #(.C_VECTOR(C_VECTOR), .C_WIDTH(C_WIDTH)) intr (.*);
 	end
 endgenerate
 

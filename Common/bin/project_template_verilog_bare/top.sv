@@ -27,8 +27,9 @@ testdrive_busy_bfm busy_inst (			// if BUSY is asserted, simulation is go on con
 
 // interrupt instance
 testdrive_interrupt_bfm #(
-	.C_EDGE_DETECT			(1),		// edge detection
-	.C_ACTIVE				(1)			// active high
+	.C_EDGE					(1),		// edge detection
+	.C_VECTOR				(0),		// interrupt vector's start number
+	.C_WIDTH				(1)			// vector size
 ) intr_inst (
 	.CLK					(MCLK),
 	.nRST					(nRST),
