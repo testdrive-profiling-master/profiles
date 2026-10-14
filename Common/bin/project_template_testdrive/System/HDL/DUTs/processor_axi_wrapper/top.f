@@ -1,21 +1,21 @@
 +incdir+${TESTDRIVE_PROFILE}common/System/SystemSim/HDL
 +incdir+./
 
-testdrive_system.vh
-includes.vh
+testdrive_system.svh
+includes.svh
 
-library/SRAM_Single.v
-library/SRAM_Dual_Distributed.v
-library/FiFo_Async.v
-library/FiFo.v
-library/mux_by_index.v
-library/CommandQueue.v
-library/ControlSlice.v
+library/SRAM_Single.sv
+library/SRAM_Dual_Distributed.sv
+library/FiFo_Async.sv
+library/FiFo.sv
+library/mux_by_index.sv
+library/CommandQueue.sv
+library/ControlSlice.sv
 
-processor_async_master.v
-processor_async_slave.v
-processor_clkgen_slave.v
-processor_clkgen.v
-processor_axi_wrapper.v
-processor_top.v
+processor_async_master.sv
+processor_async_slave.sv
+processor_clkgen_slave.sv
+processor_clkgen.sv
+processor_axi_wrapper.sv
+processor_top.sv
 top.sv

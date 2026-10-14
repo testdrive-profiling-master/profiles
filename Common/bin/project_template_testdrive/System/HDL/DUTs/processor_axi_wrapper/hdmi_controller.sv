@@ -1,23 +1,23 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2023. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
-// 
+//
 // Redistribution and use in source and binary forms,
 // with or without modification, are permitted provided
 // that the following conditions are met:
-// 
+//
 // 1. Redistributions of source code must retain the above copyright notice,
 //    this list of conditions and the following disclaimer.
-// 
+//
 // 2. Redistributions in binary form must reproduce the above copyright notice,
 //    this list of conditions and the following disclaimer in the documentation
 //    and/or other materials provided with the distribution.
-// 
+//
 // 3. Neither the name of the copyright holder nor the names of its contributors
 //    may be used to endorse or promote products derived from this software
 //    without specific prior written permission.
-// 
+//
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 // AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 // THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -29,27 +29,28 @@
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
-// 
+//
 // Title : processor AXI wrapper
-// Rev.  : 5/25/2023 Thu (clonextop@gmail.com)
+// Rev.  : 4/20/2026 Mon (clonextop@gmail.com)
 //================================================================================
 `timescale 1ns/1ns
-`include "testdrive_system.vh"
+`include "testdrive_system.svh"
 `include "template/testdrive_virtual_slave_bfm.sv"
 /*verilator tracing_off*/
 /* HIDDEN */
 // virtual hdmi controller
 module hdmi_controller #(
 	parameter		C_S_AXI_ADDR			= 64'h00010000,
-	parameter		C_DEFAULT_VIDEO_BASE	= 32'h80000000
+	parameter		C_DEFAULT_VIDEO_BASE	= 64'h00000000_80000000,
+	parameter		M_AXI_ADDR_WIDTH		= 32
 ) (
 	//// system
-	input							CLK, nRST		// clock & reset (active low)
+	input							CLK, nRST	// clock & reset (active low)
 );
 
 // definition & assignment ---------------------------------------------------
 `DPI_FUNCTION void VirtualDisplayInitialize(input int bReverse);
-`DPI_FUNCTION void VirtualDisplayBaseAddress(input int unsigned dwBaseAddress, input int bFront);
+`DPI_FUNCTION void VirtualDisplayBaseAddress(input longint unsigned dwBaseAddress, input int bFront);
 `DPI_FUNCTION void VirtualDisplayFormat(input int iWidth, input int iHeight, input int unsigned dwByteStride, input int unsigned Format);
 
 initial begin
@@ -57,12 +58,13 @@ initial begin
 	VirtualDisplayInitialize(0);
 	VirtualDisplayBaseAddress(C_DEFAULT_VIDEO_BASE, 0);
 	VirtualDisplayBaseAddress(C_DEFAULT_VIDEO_BASE, 1);
-	VirtualDisplayFormat(1920, 1080, 0, 8);
+	VirtualDisplayFormat(1920, 1080, 0, 7);
 end
 
 wire					we;
 wire	[9:0]			waddr;
 wire	[`RANGE_DWORD]	wdata;
+wire	[3:0]			wstrb;
 
 // implementation ------------------------------------------------------------
 testdrive_virtual_slave_bfm #(
@@ -75,18 +77,21 @@ testdrive_virtual_slave_bfm #(
 	.WE				(we),
 	.WADDR			(waddr),
 	.WDATA			(wdata),
+	.WSTRB			(wstrb),
 	.RE				(),
 	.RADDR			(),
 	.RDATA			({16'd0, 1'b0, 1'b1, 1'b1, 10'd0, 3'd0})	// clkgen_RDATA(0), HDMI_nEN(0), clkgen_READY(1), clkgen_LOCKED(1), dummy(0), i2c(0)
 );
 
 int unsigned hdmi_reg[8];
+reg	[31:0]	video_base_hi;
 
 `ALWAYS_CLOCK_RESET begin
 	`ON_RESET begin
+		video_base_hi	<= 'd0;
 	end
 	else begin
-		if(we) begin
+		if(we && (wstrb == 'h4)) begin
 			if(waddr[9:2] == 'd1) begin
 				for(int i=0;i<7;i++) begin
 					hdmi_reg[i] = hdmi_reg[i+1];
@@ -97,10 +102,13 @@ int unsigned hdmi_reg[8];
 			else
 				if(waddr[9:2] == 'd3) begin
 					if(wdata[31]) begin
-						VirtualDisplayBaseAddress(wdata, 1/*Front*/);
+						VirtualDisplayBaseAddress({video_base_hi, wdata}, 1/*Front*/);
 					end
 				end
 
+			if(waddr[9:2] == 'd4) begin
+				video_base_hi	<= wdata;
+			end
 		end
 	end
 end

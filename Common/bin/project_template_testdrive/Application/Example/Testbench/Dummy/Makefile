@@ -9,9 +9,6 @@ SRC_PATH		:= .
 TARGETPATH		:= ../../../../Program
 #TD_FILE_NAME	:= %%PROJECT%%Program\%s.exe
 TARGETNAME		:= Testbench_Dummy
-#USE_DEBUG		:= 1
-#CPP_STANDARD	:= c++20
-#MAIN_COMPILER	:= clang
 
 SRCS			:= \
 	$(wildcard $(SRC_PATH)/*.cpp) \

@@ -37,7 +37,7 @@
 #include "TestDriver.inl"
 
 // interrupt service routine
-static void __ISR__(int iVector, TestbenchFramework *pTestbench)
+void TestbenchFramework::__ISR__(int iVector, TestbenchFramework *pTestbench)
 {
 	pTestbench->OnInterrupt(iVector);
 }
@@ -49,7 +49,6 @@ TestbenchFramework::TestbenchFramework(void)
 
 TestbenchFramework::~TestbenchFramework(void)
 {
-	__pTestbench = NULL;
 	Release();
 }
 

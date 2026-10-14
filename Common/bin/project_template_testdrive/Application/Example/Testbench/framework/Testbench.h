@@ -63,6 +63,9 @@ protected:
 	bool CheckSimulation(const char* sRequired = NULL, bool bLogOut = true);
 
 	DDK*			m_pDDK;
+
+private:
+	static void __ISR__(int iVector, TestbenchFramework *pTestbench);
 };
 
 #endif//__TESTBENCH_H__

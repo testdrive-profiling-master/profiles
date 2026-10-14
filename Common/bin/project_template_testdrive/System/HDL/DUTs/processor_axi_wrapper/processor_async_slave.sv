@@ -33,7 +33,7 @@
 // Title : processor AXI wrapper
 // Rev.  : 3/16/2023 Thu (clonextop@gmail.com)
 //================================================================================
-`include "testdrive_system.vh"
+`include "testdrive_system.svh"
 
 module processor_async_slave #(
 	parameter	ADDR_WIDTH			= 4,

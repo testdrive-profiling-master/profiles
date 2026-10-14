@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Testbench
-// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
+// Rev.  : 10/14/2026 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "hw/DUT.h"
@@ -171,7 +171,7 @@ public:
 	}
 };
 
-int main(int argc, char **argv)
+int main(int argc, const char *argv[])
 {
 	Testbench tb;
 
@@ -183,4 +183,6 @@ int main(int argc, char **argv)
 	}
 
 	tb.Release();
+
+	return 0;
 }

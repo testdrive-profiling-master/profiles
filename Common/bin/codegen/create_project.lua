@@ -9,27 +9,27 @@ sProfilePath		= sProfilePath.s
 local Arg = ArgTable("Project generator for TestDrive Profiling Master.")
 
 Arg:AddOptionString		("type", nil, nil, nil, "type", "Template project type")
-Arg:AddRemark			(nil, "'testdrive'              : TestDrive project")
+Arg:AddRemark			(nil, "'testdrive'              : TestDrive project [!]")
 Arg:AddRemark			(nil, "'c', 'c++', 'cpp'        : C++(Pure) project")
 Arg:AddRemark			(nil, "'util'                   : C++(Util) project")
 Arg:AddRemark			(nil, "'lua'                    : C++(Lua) project")
 Arg:AddRemark			(nil, "'webgui'                 : C++(WebGUI) project")
-Arg:AddRemark			(nil, "'v', 'verilog'           : verilog project")
-Arg:AddRemark			(nil, "'v_bare', 'verilog_bare' : bared verilog project")
-Arg:AddRemark			(nil, "'verigen'                : verigen project")
+Arg:AddRemark			(nil, "'v', 'verilog'           : verilog project [!]")
+Arg:AddRemark			(nil, "'v_bare', 'verilog_bare' : bared verilog project [!]")
+Arg:AddRemark			(nil, "'verigen'                : verigen project [!]")
 Arg:AddRemark			(nil, "'docgen'                 : docgen project")
 Arg:AddRemark			(nil, "'docgen_simplified'      : docgen simplified project")
 Arg:AddRemark			(nil, "'svelte'                 : Svelte.js project")
 Arg:AddRemark			(nil, "'uefi'                   : UEFI firmware project")
-Arg:AddRemark			(nil, "'qemu'                   : QEMU project")
+Arg:AddRemark			(nil, "'qemu'                   : QEMU project [!]")
 Arg:AddOptionString		("project_name", nil, nil, nil, "project_name", "Project name")
 
 	
 if (Arg:DoParse() == false) then
 	print("\n  ex) create_project cpp test")
 	print("")
-	print("  * For some projects(testdrive, verilog, verigen, qemu...),")
-	print("    you must run the TestDrive project at least once.")
+	print(" [!] This project will be created under the latest TestDrive project.")
+	print("     So you must run the TestDrive project at least once.")
 	return
 end
 
