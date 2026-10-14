@@ -1,4 +1,4 @@
-`include "testdrive_system.vh"
+`include "testdrive_system.svh"
 
 /* HIDDEN */
 module top (

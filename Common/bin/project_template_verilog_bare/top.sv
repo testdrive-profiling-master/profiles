@@ -1,7 +1,7 @@
-`include "testdrive_system.vh"
-`include "top/testdrive_clock_bfm.sv"
-`include "top/testdrive_busy_bfm.sv"
-`include "top/testdrive_interrupt_bfm.sv"
+`include "testdrive_system.svh"
+`include "template/testdrive_clock_bfm.sv"
+`include "template/testdrive_busy_bfm.sv"
+`include "template/testdrive_interrupt_bfm.sv"
 
 module top ();
 
