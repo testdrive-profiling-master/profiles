@@ -31,29 +31,24 @@
 // OF SUCH DAMAGE.
 //
 // Title : Testbench
-// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
+// Rev.  : 10/14/2026 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Testbench.h"
 #include "TestDriver.inl"
 
-static TestbenchFramework *__pTestbench = NULL;
-
 // interrupt service routine
-void TestbenchFramework::__ISR__(int iVector, DDK *pDDK)
+void TestbenchFramework::__ISR__(int iVector, TestbenchFramework *pTestbench)
 {
-	if (__pTestbench)
-		__pTestbench->OnInterrupt(iVector);
+	pTestbench->OnInterrupt(iVector);
 }
 
 TestbenchFramework::TestbenchFramework(void)
 {
-	m_pDDK		 = NULL;
-	__pTestbench = this;
+	m_pDDK = NULL;
 }
 
 TestbenchFramework::~TestbenchFramework(void)
 {
-	__pTestbench = NULL;
 	Release();
 }
 
@@ -67,8 +62,8 @@ bool TestbenchFramework::Initialize(void)
 			printf("*I: Current system is \"%s\".\n", m_pDDK->GetSystemDescription());
 			fflush(stdout);
 			// activate interrupt
-			m_pDDK->RegisterInterruptService((DDK_INTRRUPT_SERVICE)__ISR__); // register interrupt service routine
-			m_pDDK->EnableInterrupt();										 // enable interrupt
+			m_pDDK->RegisterInterruptService((DDK_INTRRUPT_SERVICE)__ISR__, this); // register interrupt service routine
+			m_pDDK->EnableInterrupt();											   // enable interrupt
 			g_mmapview.Initialize(m_pDDK->GetMemoryBase());
 			return OnInitialize();
 		}

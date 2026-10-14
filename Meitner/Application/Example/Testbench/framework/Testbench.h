@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Testbench
-// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
+// Rev.  : 10/14/2026 Wed (clonextop@gmail.com)
 //================================================================================
 #include "common.h"
 
@@ -69,7 +69,7 @@ protected:
 	DDK			*m_pDDK;
 
 private:
-	static void __ISR__(int iVector, DDK *pDDK);
+	static void __ISR__(int iVector, TestbenchFramework *pTestbench);
 };
 
 #endif //__TESTBENCH_H__
