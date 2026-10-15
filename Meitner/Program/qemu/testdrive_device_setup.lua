@@ -1,3 +1,9 @@
+-- set DPI awareness mode
+--    unaware           : 96 DPI fixed(default)
+--    system_aware      : main monitor's DPI
+--    per_monitor_aware : each monitor's DPI auto change
+SetDpiAwareness("per_monitor_aware")
+
 local dev = TestDriveDevice()
 
 local sProjectPath = String()
