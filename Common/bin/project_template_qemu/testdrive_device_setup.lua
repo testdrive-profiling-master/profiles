@@ -25,7 +25,9 @@ if dev:LoadSystemModule(sSubSystemPath.s) == false then
 	os.exit(1)
 end
 
--- setup BAR# (type, byte_size, bind_address, 64bit_address, prefetchable)
+-- setup BAR (type, byte_size, bind_address, 64bit_address, prefetchable)
+--            type      : "memory", "io"
+--            byte_size : 2^N size
 dev:CreateBAR("memory", 1024*64, 0x20000, true)									-- BAR #0/1 : registers
 dev:CreateBAR("memory", 1024*1024*32, 0x10000000, true)							-- BAR #2/3 : just sample
 dev:CreateBAR("memory", dev:GetMemorySize(), dev:GetMemoryBase(), true, true)	-- BAR #4/5 : zero copy memory area
