@@ -31,6 +31,9 @@ if dev:LoadSystemModule(sSubSystemPath.s) == false then
 	os.exit(1)
 end
 
+-- Device total description
+LOGI("Device name : " .. dev:GetDescription())
+
 -- setup BAR (type, byte_size, bind_address, 64bit_address, prefetchable)
 --            type      : "memory", "io"
 --            byte_size : 2^N size
