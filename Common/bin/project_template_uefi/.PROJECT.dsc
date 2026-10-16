@@ -1,5 +1,5 @@
 [Defines]
-        PLATFORM_NAME = PROJECT_Platform
+        PLATFORM_NAME = __PROJECT___Platform
         PLATFORM_GUID = __GUID__
         PLATFORM_VERSION = 0.1
         DSC_SPECIFICATION = 0x00010005
@@ -21,7 +21,9 @@
         MemoryAllocationLib|MdePkg/Library/UefiMemoryAllocationLib/UefiMemoryAllocationLib.inf
 
         PrintLib|MdePkg/Library/BasePrintLib/BasePrintLib.inf
-        DebugLib|MdePkg/Library/UefiDebugLibConOut/UefiDebugLibConOut.inf
+        DebugLib|OvmfPkg/Library/PlatformDebugLibIoPort/PlatformDebugLibIoPort.inf
+        IoLib|MdePkg/Library/BaseIoLibIntrinsic/BaseIoLibIntrinsic.inf
+        MemDebugLogLib|OvmfPkg/Library/MemDebugLogLib/MemDebugLogLibNull.inf
         DebugPrintErrorLevelLib|MdePkg/Library/BaseDebugPrintErrorLevelLib/BaseDebugPrintErrorLevelLib.inf
 
         PcdLib|MdePkg/Library/BasePcdLibNull/BasePcdLibNull.inf
@@ -29,6 +31,10 @@
         RegisterFilterLib|MdePkg/Library/RegisterFilterLibNull/RegisterFilterLibNull.inf
         StackCheckLib|MdePkg/Library/StackCheckLibNull/StackCheckLibNull.inf
 
+[PcdsFixedAtBuild]
+        gEfiMdePkgTokenSpaceGuid.PcdDebugPropertyMask|0x02
+        gEfiMdePkgTokenSpaceGuid.PcdDebugPrintErrorLevel|0x80000040
+        gUefiOvmfPkgTokenSpaceGuid.PcdDebugIoPort|0x402
 
 [Components]
-        ./PROJECT.inf
+        ./__PROJECT__.inf

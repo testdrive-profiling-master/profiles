@@ -23,6 +23,7 @@ local profile_path = String()
 profile_path:GetEnvironment("TESTDRIVE_PROFILE")
 profile_path = profile_path.s .. "Common/bin/"
 local sQEMU_ini = "@QEMU@" .. profile_path .. "qemu.ini"	-- QEMU configuration file
+local default_bios_path = profile_path .. "qemu/share/"
 
 -- Prepare QEMU development project
 if cmd == "devel" then
@@ -226,7 +227,7 @@ if cmd == "boot" then
 	if sEnv:GetEnvironment("CDROM_IMAGE" .. sEnvQEMU) then
 		if sEnv.s == "auto" then
 			-- find .iso file list
-			local iso_list = CreateFileList(".", -1, true, "iso")
+			local iso_list = CreateFileList(".", 0, true, "iso")
 			
 			if iso_list:Size() == 1 then
 				local sIsoFileName = iso_list:Pop().data
@@ -281,6 +282,22 @@ if cmd == "boot" then
 	
 	if sEnv:GetEnvironment("EXTRA_OPTIONS" .. sEnvQEMU) then
 		cmd:Append(" " .. sEnv.s)
+	end
+	
+	if sEnv:GetEnvironment("BIOS_IMAGE" .. sEnvQEMU) then
+		if lfs.IsExist(sEnv.s) == false then
+			sEnv:insert(0, default_bios_path)
+		end
+		cmd:Append(" -bios " .. sEnv.s)
+		
+		if sEnv:GetEnvironment("BIOS_DEBUG" .. sEnvQEMU) then
+			local iStart = cmd:find("-serial")
+			if iStart > 0 then -- cut out '-serial' option
+				local iEnd = cmd:find("-", iStart + 7)
+				cmd:erase(iStart, (iEnd < 0) and -1 or (iEnd - iStart))
+			end
+			cmd:Append(" -chardev stdio,id=romdebug,signal=off -device isa-debugcon,iobase=0x402,chardev=romdebug")
+		end
 	end
 	
 	os.execute("%TESTDRIVE_PROFILE%Common/bin/qemu/qemu-system-" .. sSystem .. " " .. cmd.s)

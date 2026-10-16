@@ -18,9 +18,10 @@
   BASE_NAME						= HelloWorld
   MODULE_UNI_FILE				= HelloWorld.uni
   FILE_GUID						= 6987936E-ED34-44db-AE97-1FA5E4ED2116
-  MODULE_TYPE					= UEFI_APPLICATION
+  MODULE_TYPE					= UEFI_DRIVER
   VERSION_STRING				= 1.0
   ENTRY_POINT					= UefiMain
+  UNLOAD_IMAGE					= UefiUnload
 
 ## for TestDrive specific defines  
   VENDOR_ID						= 0x1234
@@ -47,7 +48,12 @@
   MdeModulePkg/MdeModulePkg.dec
 
 [LibraryClasses]
-  UefiApplicationEntryPoint
+  BaseMemoryLib
+  MemoryAllocationLib
+  PrintLib
+  DebugLib
+  UefiBootServicesTableLib
+  UefiDriverEntryPoint
   UefiLib
   PcdLib
 
