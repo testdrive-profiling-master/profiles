@@ -239,7 +239,7 @@ if cmd == "boot" then
 				local sISO_filename = iso_list:Pop().data
 				LOGI("ISO image(" .. sISO_filename .. ") is found.")
 				
-				if (sBootFromCDROM == "true") or (sBootFromCDROM == "auto" and bDiskNotInitialized) then
+				if (sBootFromCDROM == "true") or ((sBootFromCDROM == "auto") and bDiskNotInitialized) then
 					if bDiskNotInitialized then
 						DoRefresh(true)
 					end
@@ -261,7 +261,7 @@ if cmd == "boot" then
 			bISO_Specified		= true
 			cmd:Append(" -cdrom " .. sEnv.s)
 			
-			if (sBootFromCDROM == "true") or (sBootFromCDROM == "auto" and bDiskNotInitialized) then
+			if (sBootFromCDROM == "true") or ((sBootFromCDROM == "auto") and bDiskNotInitialized) then
 				cmd:Append(" -boot d")
 			end
 		else
