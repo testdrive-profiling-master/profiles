@@ -354,9 +354,13 @@ elseif (sType == "uefi") then
 	sGUID:Trim(" \r\n")
 	sGUID:MakeUpper()
 	os.execute("sed \"s/__GUID__/" .. sGUID.s .. "/\" -i ./" .. sProjectName .. "/.PROJECT.dsc")
+	sGUID.s = exec("uuidgen")
+	sGUID:Trim(" \r\n")
+	sGUID:MakeUpper()
+	os.execute("sed \"s/__GUID__/" .. sGUID.s .. "/\" -i ./" .. sProjectName .. "/.PROJECT.inf")
 	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/.PROJECT.dsc")
-	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/main.c")
-
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/common.h")
+	
 	os.execute("mv \"" .. sProjectPath .. "/.PROJECT.inf\" \"" .. sProjectPath .. "/" .. sProjectName .. ".inf\"")
 	os.execute("mv \"" .. sProjectPath .. "/.PROJECT.dsc\" \"" .. sProjectPath .. "/" .. sProjectName .. ".dsc\"")
 	

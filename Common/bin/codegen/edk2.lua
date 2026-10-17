@@ -90,9 +90,10 @@ if (lfs.IsExist(profile_path .. "edk2/BaseTools/") == false) or reinstall then
 	end
 	run("cd /D \"" .. edk_path .. "\"&" .. "git checkout tags/" .. sEDK2_tag)
 	run("cd /D \"" .. edk_path .. "\"&" .. "git submodule update --init --recursive")
-	run("cd /D \"" .. edk_path .. "\"&" .. "sed \"s/-Wno-unused-result -nostdlib -g/-Wno-unused -nostdlib -g/g\" -i BaseTools/Source/C/Makefiles/header.makefile")	-- suppress temporary error
+	run("cd /D \"" .. edk_path .. "\"&" .. "sed \"s/-Wno-unused-result -nostdlib -g/-Wno-unused -nostdlib -g/g\" -i BaseTools/Source/C/Makefiles/header.makefile")	-- fix build broken by warning as error
 	run("cd /D \"" .. edk_path .. "\"&" .. "edksetup.bat Mingw-w64 ForceRebuild")
 	run("cd /D \"" .. edk_path .. "\"&" .. "git checkout BaseTools/Source/C/Makefiles/header.makefile")
+	run("cd /D \"" .. edk_path .. "\"&" .. "sed '/\\*\\.pdb \\$(OUTPUT_DIR)/d' -i BaseTools/Conf/build_rule.template")	-- fix for mingw build error
 	LOGI("EDK2 is installed successfully!")
 	
 	do	-- update edk2.ini
@@ -189,6 +190,15 @@ if cmd == "build" then
 	end
 	if lfs.IsExist("Conf/") == false then
 		lfs.mkdir("Conf")
+	end
+	if lfs.IsExist("Build/") == false then
+		lfs.mkdir("Build")
+		if lfs.IsExist("Build/.TestDrive.notouch") == false then
+			run("touch Build/.TestDrive.notouch")
+		end
+		if lfs.IsExist("Build/.TestDrive.nobuild") == false then
+			run("touch Build/.TestDrive.nobuild")
+		end
 	end
 	
 	local iret = run(edk_path .. "/edksetup.bat Mingw-w64 >nul&build -t CLANGDWARF -a " .. opt.target_arch ..

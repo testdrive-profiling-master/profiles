@@ -3,7 +3,7 @@
 #-------------------------------------------------
 SRC_PATH		:= .
 TARGET_ARCH		:= X64
-BUILD_TARGET	:= DEBUG
+BUILD_TARGET	?= DEBUG
 
 SRCS			:= \
 	$(wildcard $(SRC_PATH)/*.dsc) \
