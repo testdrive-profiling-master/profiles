@@ -46,6 +46,7 @@ Once setup reaches the language selection screen, press `Shift+F10` to open a co
 ```
 
 You can now close command prompt and install Windows 11 as normal.
+When second boot installation, run ncpa.cpl to open the Network control panel. Right click the Ethernet adapter and Disable it.
 
 Refer to : [How to install Windows 11 in QEMU](https://computernewb.com/wiki/QEMU/Guests/Windows_11)
            [guest agent for windows](https://fedorapeople.org/groups/virt/virtio-win/direct-downloads/archive-virtio)
