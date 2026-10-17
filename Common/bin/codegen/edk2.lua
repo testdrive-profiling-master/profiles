@@ -90,7 +90,9 @@ if (lfs.IsExist(profile_path .. "edk2/BaseTools/") == false) or reinstall then
 	end
 	run("cd /D \"" .. edk_path .. "\"&" .. "git checkout tags/" .. sEDK2_tag)
 	run("cd /D \"" .. edk_path .. "\"&" .. "git submodule update --init --recursive")
+	run("cd /D \"" .. edk_path .. "\"&" .. "sed \"s/-Wno-unused-result -nostdlib -g/-Wno-unused -nostdlib -g/g\" -i BaseTools/Source/C/Makefiles/header.makefile")	-- suppress temporary error
 	run("cd /D \"" .. edk_path .. "\"&" .. "edksetup.bat Mingw-w64 ForceRebuild")
+	run("cd /D \"" .. edk_path .. "\"&" .. "sed \"s/-Wno-unused -nostdlib -g/-Wno-unused-result -nostdlib -g/g\" -i BaseTools/Source/C/Makefiles/header.makefile")
 	LOGI("EDK2 is installed successfully!")
 	
 	do	-- update edk2.ini
