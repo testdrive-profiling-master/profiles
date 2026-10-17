@@ -155,10 +155,10 @@ if cmd == "boot" then
 		os.exit(1)
 	end
 	
-	local cmd = String()
-	local sEnv = String()
-	local bDiskNotInitialized = false
-	local sSystem = "x86_64"	-- default system
+	local cmd					= String()
+	local sEnv					= String()
+	local bDiskNotInitialized	= false
+	local sSystem				= "x86_64"	-- default system
 	
 	if sEnv:GetEnvironment("TITLE" .. sEnvQEMU) then
 		sEnv:Replace("\"", "\\\"", true)
@@ -195,6 +195,11 @@ if cmd == "boot" then
 		cmd:Append(" -initrd " .. sEnv.s)
 	end
 	
+	if sEnv:GetEnvironment("BOOT_COMMAND" .. sEnvQEMU) then
+		sEnv:Replace("\"", "\\\"", true)
+		cmd:Append(" -append \"" .. sEnv.s .. "\"")
+	end
+
 	if sEnv:GetEnvironment("HARD_DISK_IMAGE" .. sEnvQEMU) then
 		cmd:Append(" -hda " .. sEnv.s)
 		
@@ -217,54 +222,51 @@ if cmd == "boot" then
 		end
 	end
 	
-	if sEnv:GetEnvironment("BOOT_COMMAND" .. sEnvQEMU) then
-		sEnv:Replace("\"", "\\\"", true)
-		cmd:Append(" -append \"" .. sEnv.s .. "\"")
-	end
-
 	-- check CDROM & first install from CDROM
-	local bCDROMSpecified = false
+	local sBootFromCDROM = "false";
+	if sEnv:GetEnvironment("BOOT_FROM_CDROM" .. sEnvQEMU) then
+		sEnv:MakeLower()
+		sBootFromCDROM = sEnv.s
+	end
 	if sEnv:GetEnvironment("CDROM_IMAGE" .. sEnvQEMU) then
+		local bISO_Specified	= false
+		
 		if sEnv.s == "auto" then
 			-- find .iso file list
 			local iso_list = CreateFileList(".", 0, true, "iso")
 			
 			if iso_list:Size() == 1 then
-				local sIsoFileName = iso_list:Pop().data
-				LOGI("ISO image(" .. sIsoFileName .. ") is found.")
-				cmd:Append(" -cdrom " .. sIsoFileName)
-				bCDROMSpecified = true
+				local sISO_filename = iso_list:Pop().data
+				LOGI("ISO image(" .. sISO_filename .. ") is found.")
+				
+				if (sBootFromCDROM == "true") or (sBootFromCDROM == "auto" and bDiskNotInitialized) then
+					if bDiskNotInitialized then
+						DoRefresh(true)
+					end
+					
+					cmd:Append(" -cdrom " .. sISO_filename .. " -boot d")
+				end
+			elseif (iso_list:Size() == 0) and (sBootFromCDROM == "auto") and bDiskNotInitialized then
+				LOGE("No installed disks found!")
+				if lfs.IsExist("README.md") then
+					run("explorer .")
+					LOGW("Please read the instruction('README.md') first...")
+				end
+				os.exit(1)
 			elseif iso_list:Size() > 1 then
-				LOGW("Too many .iso images are existed in project folder. This 'CDROM_IMAGE' option is ignored.")
+				LOGW("Too many .iso images are existed in project folder. This 'CDROM_IMAGE' option will be ignored.")
 			end
 		elseif lfs.IsExist(sEnv.s) then
+			sISO_filename		= sEnv.s
+			bISO_Specified		= true
 			cmd:Append(" -cdrom " .. sEnv.s)
-			bCDROMSpecified = true
+			
+			if (sBootFromCDROM == "true") or (sBootFromCDROM == "auto" and bDiskNotInitialized) then
+				cmd:Append(" -boot d")
+			end
 		else
 			LOGE("Can't find CDROM image (" .. sEnv.s .. ")")
 			os.exit(1)
-		end
-	end
-
-	-- check boot from CDROM
-	if sEnv:GetEnvironment("BOOT_FROM_CDROM" .. sEnvQEMU) then
-		sEnv:MakeLower()
-		if sEnv.s == "auto" then
-			if bDiskNotInitialized then
-				if bCDROMSpecified then
-					DoRefresh(true)
-					cmd:Append(" -boot d")
-				else
-					LOGE("No installed disks found!")
-					if lfs.IsExist("README.md") then
-						run("explorer .")
-						LOGW("Please read the instruction('README.md') first...")
-					end
-					os.exit(1)
-				end
-			end
-		elseif sEnv.s == "true" then
-			cmd:Append(" -boot d")
 		end
 	end
 	
