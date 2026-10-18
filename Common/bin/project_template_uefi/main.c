@@ -33,14 +33,10 @@
 // Title : UEFI sample project
 // Rev.  : 10/17/2026 Sat (clonextop@gmail.com)
 //================================================================================
-#include <Uefi.h>
-#include <Library/PcdLib.h>
-#include <Library/UefiLib.h>
-#include <Library/DebugLib.h>
-#include <Library/UefiDriverEntryPoint.h>
+#include "common.h"
 
 EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
 {
-	DEBUG((DEBUG_INFO, "[UEFI-__PROJECT__] UefiMain()\n"));
+	LOGI("UefiMain() : Hellow world!\n");
 	return EFI_SUCCESS;
 }
