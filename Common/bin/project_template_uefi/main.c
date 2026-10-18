@@ -37,6 +37,6 @@
 
 EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
 {
-	LOGI("UefiMain() : Hellow world!\n");
+	LOGI("UefiMain() : Hello world!\n");
 	return EFI_SUCCESS;
 }
