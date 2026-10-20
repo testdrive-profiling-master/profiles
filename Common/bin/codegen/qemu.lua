@@ -111,12 +111,14 @@ function DoRefresh(bCreate)
 	local sImageSize = String()
 	if sImagePath:GetEnvironment("HARD_DISK_IMAGE" .. sEnvQEMU) and sImageSize:GetEnvironment("HARD_DISK_SIZE" .. sEnvQEMU) then
 		if lfs.IsExist(sImagePath.s) then
-			-- change to requested size
-			run("qemu-img resize " .. sImagePath.s .. " " .. sImageSize.s)
-			-- refresh image
-			run("qemu-img convert -O qcow2 -p " .. sImagePath.s .. " " .. sImagePath.s .. ".reduced")
-			exec("mv -f " .. sImagePath.s .. ".reduced " .. sImagePath.s)
-			run("qemu-img info " .. sImagePath.s)
+			if bCreate ~= true then
+				-- change to requested size
+				run("qemu-img resize " .. sImagePath.s .. " " .. sImageSize.s)
+				-- refresh image
+				run("qemu-img convert -O qcow2 -p " .. sImagePath.s .. " " .. sImagePath.s .. ".reduced")
+				exec("mv -f " .. sImagePath.s .. ".reduced " .. sImagePath.s)
+				run("qemu-img info " .. sImagePath.s)
+			end
 		else
 			if bCreate ~= true then
 				LOGE("No installed disks found!")
@@ -247,7 +249,7 @@ if cmd == "boot" then
 					cmd:Append(" -cdrom " .. sISO_filename .. " -boot d")
 				end
 			elseif (iso_list:Size() == 0) and (sBootFromCDROM == "auto") and bDiskNotInitialized then
-				LOGE("No installed disks found!")
+				LOGE("No installed disks!")
 				if lfs.IsExist("README.md") then
 					run("explorer .")
 					LOGW("Please read the instruction('README.md') first...")
@@ -264,6 +266,8 @@ if cmd == "boot" then
 			if (sBootFromCDROM == "true") or ((sBootFromCDROM == "auto") and bDiskNotInitialized) then
 				cmd:Append(" -boot d")
 			end
+			
+			DoRefresh(true)
 		else
 			LOGE("Can't find CDROM image (" .. sEnv.s .. ")")
 			os.exit(1)
