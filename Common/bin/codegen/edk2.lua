@@ -193,11 +193,8 @@ if cmd == "build" then
 	end
 	if lfs.IsExist("Build/") == false then
 		lfs.mkdir("Build")
-		if lfs.IsExist("Build/.TestDrive.notouch") == false then
-			run("touch Build/.TestDrive.notouch")
-		end
-		if lfs.IsExist("Build/.TestDrive.nobuild") == false then
-			run("touch Build/.TestDrive.nobuild")
+		if lfs.IsExist("Build/..TestDrive.nosearch") == false then
+			run("touch Build/..TestDrive.nosearch")
 		end
 	end
 	
