@@ -148,7 +148,7 @@ function DoRefresh(bCreate)
 end
 
 if cmd == "refresh" then
-	os.exit(DoRefresh(true) and 0 or 1)
+	os.exit(DoRefresh(false) and 0 or 1)
 end
 
 if cmd == "boot" then
