@@ -15,3 +15,7 @@ all: $(SRCS)
 
 clean:
 	@edk2.bat clean
+
+usb:
+	@run_as_admin codegen make_uefi_disk __PROJECT__.inf
+	@echo Done!

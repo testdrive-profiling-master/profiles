@@ -360,6 +360,7 @@ elseif (sType == "uefi") then
 	os.execute("sed \"s/__GUID__/" .. sGUID.s .. "/\" -i ./" .. sProjectName .. "/.PROJECT.inf")
 	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/.PROJECT.dsc")
 	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/common.h")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/Makefile")
 	
 	os.execute("mv \"" .. sProjectPath .. "/.PROJECT.inf\" \"" .. sProjectPath .. "/" .. sProjectName .. ".inf\"")
 	os.execute("mv \"" .. sProjectPath .. "/.PROJECT.dsc\" \"" .. sProjectPath .. "/" .. sProjectName .. ".dsc\"")
