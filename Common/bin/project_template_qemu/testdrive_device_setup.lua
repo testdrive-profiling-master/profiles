@@ -45,5 +45,6 @@ dev:CreateBAR("memory", 1024*1024*32, 0x10000000, true)							-- BAR #2/3 : just
 dev:CreateBAR("memory", dev:GetMemorySize(), dev:GetMemoryBase(), true, true)	-- BAR #4/5 : zero copy memory area
 
 -- setup MSI
-dev:EnableMSI(4, false)	-- iVectorCount, bMaskPerVector
---dev:EnableDisplay(640, 480)	-- for VGA device
+dev:EnableMSI(4, false)							-- iVectorCount, bMaskPerVector
+--dev:EnableMSIX(4, false, 0, 0x1000, 0x1500)	-- iVectorCount, bMaskPerVector, iBar, iOffset_table, iOffset_PBA
+--dev:EnableDisplay(640, 480)					-- for VGA device

@@ -5,6 +5,7 @@ SRC_PATH		:= .
 TARGETPATH		:= .
 INSTALL_PATH	:= .
 TARGETNAME		:= Test
+# Auto version generation: (1)local based, (2)git tag based
 BUILD_VERSION	:= 1
 #USE_DEBUG		:= 1
 #CPP_STANDARD	:= c++20

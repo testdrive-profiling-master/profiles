@@ -86,7 +86,11 @@ ifndef BUILD_VERSION
 	BUILD_VERSION	:= 0
 endif
 
-ifeq ($(BUILD_VERSION), 1)
+VERSION_OPTION		:=
+ifneq ($(BUILD_VERSION), 0)
+	ifeq ($(BUILD_VERSION), 2)
+		VERSION_OPTION	:= -t
+	endif
 	VERSION_HEADER	:= .$(TARGETNAME)_version.inl
 else
 	VERSION_HEADER	:=
@@ -181,15 +185,15 @@ endif
 
 # version management
 ifeq ($(OS),Windows_NT)
-ifeq ($(BUILD_VERSION), 1)
+ifneq ($(BUILD_VERSION), 0)
 $(VERSION_HEADER): $(SRCS)
-	@codegen.exe gen_version -p $(TARGETNAME) .$(TARGETNAME)_version.inl
+	@codegen.exe gen_version -p $(TARGETNAME) $(VERSION_OPTION) $(VERSION_HEADER)
 
 version_minor:
-	@codegen.exe gen_version -n -p $(TARGETNAME) .$(TARGETNAME)_version.inl
+	@codegen.exe gen_version -n -p $(TARGETNAME) $(VERSION_OPTION) $(VERSION_HEADER)
 
 version_major:
-	@codegen.exe gen_version -m -p $(TARGETNAME) .$(TARGETNAME)_version.inl
+	@codegen.exe gen_version -m -p $(TARGETNAME) $(VERSION_OPTION) $(VERSION_HEADER)
 else
 version_minor:
 	@echo *E: Version control is not enabled for this project.

@@ -2,9 +2,11 @@ local Arg = ArgTable("Version file generator.")
 
 Arg:AddOption		("MAJOR", "m", "major", "count up major version")
 Arg:AddOption		("MINOR", "n", "minor", "count up minor version")
+Arg:AddOption		("GIT_TAG", "t", "git_tag", "follow latest git tag version")
+Arg:AddRemark		(nil, "MAJOR/MINOR option will be ignored.")
 Arg:AddOptionString	("PREFIX", "", "p", "prefix", "prefix", "Set prefix string")
 Arg:AddOptionFile	("version_file", nil, nil, nil, "version_file", "version file")
---Arg:AddRemark		(nil, "default : 'version.inl'")
+
 if (Arg:DoParse() == false) then
 	return
 end
@@ -12,6 +14,7 @@ end
 -- parameters
 local	bUpMajor		= Arg:GetOption("MAJOR")
 local	bUpMinor		= Arg:GetOption("MINOR")
+local	bGitTag			= Arg:GetOption("GIT_TAG")
 local	sPREFIX			= Arg:GetOptionString("PREFIX")
 local	sFileName		= Arg:GetOptionFile("version_file", 0)
 
@@ -26,12 +29,13 @@ if #sPREFIX ~= 0 then
 end
 
 -- 
-local	f 				= TextFile()
+local	f 		= TextFile()
 iVersionMajor	= 0
 iVersionMinor	= 1
-iBuildCount		= 0
+iVersionPatch	= 0
+sDATE			= os.date("%d %B %Y")
 
-local sVersionBuild = "VERSION_BUILD"
+local sVersionPatch = "VERSION_PATCH"
 
 -- get version number
 if f:Open(sFileName) then
@@ -46,12 +50,11 @@ if f:Open(sFileName) then
 				iVersionMajor	= iNumber
 			elseif def_name == (sPREFIX .. "VERSION_MINOR") then
 				iVersionMinor	= iNumber
-			elseif def_name == (sPREFIX .. "VERSION_BUILD") then
-				iBuildCount		= iNumber
-				sVersionBuild	= "VERSION_BUILD"
 			elseif def_name == (sPREFIX .. "VERSION_PATCH") then
-				iBuildCount		= iNumber
-				sVersionBuild	= "VERSION_PATCH"
+				iVersionPatch	= iNumber
+			elseif def_name == (sPREFIX .. "VERSION_BUILD") then
+				iVersionPatch	= iNumber
+				sVersionPatch	= "VERSION_BUILD"
 			end
 		end
 	end
@@ -66,15 +69,32 @@ if bUpMajor then
 elseif bUpMinor then
 	iVersionMinor	= iVersionMinor + 1
 else
-	iBuildCount		= iBuildCount + 1
+	iVersionPatch	= iVersionPatch + 1
 end
 
-LOGI("Version generated : " .. tostring(iVersionMajor) .. "." .. tostring(iVersionMinor) .. " (build #" .. tostring(iBuildCount) .. ")")
+if bGitTag then
+	local sTag = String(exec("git log -1 --format=%cd --date=format:\"%d %b %Y\""))
+	sTag:Trim(" \t\r\n")
+	sDATE = sTag.s
+	sTag.s = exec("git describe --tags --abbrev=0")
+	sTag:Trim(" \t\r\n")
+	
+	if sTag:CompareFront("fatal:") == false then
+		sTag:MakeLower()
+		local sDelim	= " abcdefghijklmnopqrstuvwxyz#@()[]{}./\\\t\r\n"
+		iVersionMajor	= tonumber(sTag:Tokenize(sDelim).s)
+		iVersionMinor	= tonumber(sTag:Tokenize(sDelim).s)
+		iVersionPatch	= tonumber(sTag:Tokenize(sDelim).s)
+	end
+	LOGI("Git TAG(" .. sTag.s .. ") applied : v" .. tostring(iVersionMajor) .. "." .. tostring(iVersionMinor) .. "." .. tostring(iVersionPatch))
+else
+	LOGI("Version generated : v" .. tostring(iVersionMajor) .. "." .. tostring(iVersionMinor) .. "." .. tostring(iVersionPatch))
+end
 
 -- save version number
 f:Create(sFileName)
 f:Put("#define		" .. sPREFIX .. "VERSION_MAJOR		" .. tostring(iVersionMajor) .. "\n")
 f:Put("#define		" .. sPREFIX .. "VERSION_MINOR		" .. tostring(iVersionMinor) .. "\n")
-f:Put("#define		" .. sPREFIX .. sVersionBuild .. "		" .. tostring(iBuildCount) .. "\n")
-f:Put("#define		" .. sPREFIX .. "VERSION_DATE		\"" .. os.date("%d %B %Y") .. "\"\n")
+f:Put("#define		" .. sPREFIX .. sVersionPatch .. "		" .. tostring(iVersionPatch) .. "\n")
+f:Put("#define		" .. sPREFIX .. "VERSION_DATE		\"" .. sDATE .. "\"\n")
 f:Close()
