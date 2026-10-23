@@ -73,7 +73,7 @@ else
 end
 
 if bGitTag then
-	local sTag = String(exec("git log -1 --format=%cd --date=format:\"%d %b %Y\""))
+	local sTag = String(exec("git log -1 --format=%cd --date=format:\"%d %B %Y\""))
 	sTag:Trim(" \t\r\n")
 	sDATE = sTag.s
 	sTag.s = exec("git describe --tags --abbrev=0")
