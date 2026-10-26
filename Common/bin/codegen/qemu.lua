@@ -24,6 +24,9 @@ profile_path:GetEnvironment("TESTDRIVE_PROFILE")
 profile_path = profile_path.s .. "Common/bin/"
 local sQEMU_ini = "@QEMU@" .. profile_path .. "qemu.ini"	-- QEMU configuration file
 local default_bios_path = profile_path .. "qemu/share/"
+local current_path = String(".")
+current_path:MakeFullPath()
+current_path = current_path.s
 
 -- Prepare QEMU development project
 if cmd == "devel" then
@@ -305,6 +308,9 @@ if cmd == "boot" then
 			cmd:Append(" -chardev stdio,id=romdebug,signal=off -device isa-debugcon,iobase=0x402,chardev=romdebug")
 		end
 	end
+	
+	-- environment
+	cmd:Replace("%CUR_PATH%", current_path)
 	
 	os.execute("%TESTDRIVE_PROFILE%Common/bin/qemu/qemu-system-" .. sSystem .. " " .. cmd.s)
 end
