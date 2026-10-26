@@ -6,6 +6,15 @@ end
 local bEclipseEnv	= true
 sProfilePath		= sProfilePath.s
 
+sTestDriveProjectPath = String()
+if sTestDriveProjectPath:GetEnvironment("RECENT_PROJECT@TESTDRIVE") == false then
+	LOGE("You must execute your 'TestDrive' project at least once.")
+	os.exit(1)
+end
+sTestDriveProjectPath	= sTestDriveProjectPath.s
+
+local sProjectPath = ""
+
 local Arg = ArgTable("Project generator for TestDrive Profiling Master.")
 
 Arg:AddOptionString		("type", nil, nil, nil, "type", "Template project type")
@@ -20,7 +29,8 @@ Arg:AddRemark			(nil, "'verigen'                : verigen project [!]")
 Arg:AddRemark			(nil, "'docgen'                 : docgen project")
 Arg:AddRemark			(nil, "'docgen_simplified'      : docgen simplified project")
 Arg:AddRemark			(nil, "'svelte'                 : Svelte.js project")
-Arg:AddRemark			(nil, "'uefi'                   : UEFI firmware project")
+Arg:AddRemark			(nil, "'uefi','uefi_driver'     : UEFI driver project [!]")
+Arg:AddRemark			(nil, "'uefi_application'       : UEFI application project [!]")
 Arg:AddRemark			(nil, "'qemu'                   : QEMU project [!]")
 Arg:AddOptionString		("project_name", nil, nil, nil, "project_name", "Project name")
 
@@ -68,91 +78,106 @@ if (sProjectType == "v")     	then sProjectType = "verilog"		end
 if (sProjectType == "v_bare")   then sProjectType = "verilog_bare"	end
 
 
-function MakeDir(folder_name)
-	local attr = lfs.attributes(folder_name)
+function MakeDir(name)
+	local attr = lfs.IsExist(name)
 	
-	if attr ~= nil then
-		LOGE("Can't create project, '" .. folder_name .. "' " .. attr.mode .. " is already existed. Please specify a different project name.")
+	if lfs.IsExist(name) then
+		LOGE("Can't create project, '" .. name .. "' is already existed. Please specify a different project name.")
 		os.exit(1)
 	end
 	
-	if lfs.mkdir(folder_name) == false then
-		LOGE("Can't create project directory '" .. folder_name .. "'")
+	if lfs.mkdir(name) == false then
+		LOGE("Can't create project directory '" .. name .. "'")
 		os.exit(1)
 	end
 	
-	return folder_name .. "/"
+	return name .. "/"
 end
 
-function MakeDirForTestDrive(folder_name)
-	local folder_path = sProfilePath .. folder_name
+function MakeDirForTestDrive(name)
+	local project_path = sProfilePath .. name
 
-	local attr = lfs.attributes(folder_path)
-	
-	if attr ~= nil then
-		LOGE("Can't create project, '" .. folder_name .. "'(" .. folder_path .. ") " .. attr.mode .. " is already existed. Please specify a different project name.")
+	if lfs.IsExist(project_path) then
+		LOGE("Can't create project, '" .. name .. "'(" .. project_path .. ") is already existed. Please specify a different project name.")
 		os.exit(1)
 	end
 	
-	if lfs.mkdir(folder_path) == false then
-		LOGE("Can't create project directory '" .. folder_name .. "'(" .. folder_path .. ")")
+	if lfs.mkdir(project_path) == false then
+		LOGE("Can't create project directory '" .. name .. "'(" .. project_path .. ")")
 		os.exit(1)
 	end
 	
-	return folder_path
+	--local sEnv = String(project_path)
+	--sEnv:SetEnvironment("RECENT_PROJECT@TESTDRIVE")
+	
+	return project_path
 end
 
-function MakeDirForVerilog(folder_name)
-	local folder_path = String()
-	if folder_path:GetEnvironment("RECENT_PROJECT@TESTDRIVE") == false then
-		LOGE("You must execute your 'TestDrive' project at least once.")
-		os.exit(1)
-	end
-	folder_path	= folder_path.s .. "System\\HDL\\DUTs\\" .. folder_name
+function MakeDirForVerilog(name)
+	local project_path	= sTestDriveProjectPath .. "System\\HDL\\DUTs\\" .. name
 
-	local attr = lfs.attributes(folder_path)
+	local attr = lfs.attributes(project_path)
 	
 	if attr ~= nil then
-		LOGE("Can't create project, '" .. folder_name .. "'(" .. folder_path .. ") " .. attr.mode .. " is already existed. Please specify a different project name.")
+		LOGE("Can't create project, '" .. name .. "'(" .. project_path .. ") " .. attr.mode .. " is already existed. Please specify a different project name.")
 		os.exit(1)
 	end
 	
-	if lfs.mkdir(folder_path) == false then
-		LOGE("Can't create project directory '" .. folder_name .. "'(" .. folder_path .. ")")
+	if lfs.mkdir(project_path) == false then
+		LOGE("Can't create project directory '" .. name .. "'(" .. project_path .. ")")
 		os.exit(1)
 	end
 	
-	exec("touch \"" .. folder_path .. "/.TestDrive.nosearch\"")	-- bypass watchdog
+	exec("touch \"" .. project_path .. "/.TestDrive.nosearch\"")	-- bypass watchdog
 	
-	return folder_path
+	return project_path
 end
 
-function MakeDirForQEMU(folder_name)
-	local folder_path = String()
-	if folder_path:GetEnvironment("RECENT_PROJECT@TESTDRIVE") == false then
-		LOGE("You must execute your 'TestDrive' project at least once.")
-		os.exit(1)
-	end
-	folder_path	= folder_path.s .. "Program\\qemu\\" .. folder_name
+function MakeDirForApplication(name)
+	local project_path	= sTestDriveProjectPath .. "Application\\API\\" .. name
 
-	local attr = lfs.attributes(folder_path)
+	local attr = lfs.attributes(project_path)
 	
 	if attr ~= nil then
-		LOGE("Can't create project, '" .. folder_name .. "'(" .. folder_path .. ") " .. attr.mode .. " is already existed. Please specify a different project name.")
+		LOGE("Can't create project, '" .. name .. "'(" .. project_path .. ") " .. attr.mode .. " is already existed. Please specify a different project name.")
 		os.exit(1)
 	end
 	
-	if lfs.mkdir(folder_path) == false then
-		LOGE("Can't create project directory '" .. folder_name .. "'(" .. folder_path .. ")")
+	if lfs.mkdir(project_path) == false then
+		LOGE("Can't create project directory '" .. name .. "'(" .. project_path .. ")")
 		os.exit(1)
 	end
 	
-	return folder_path
+	exec("touch \"" .. project_path .. "/.TestDrive.nosearch\"")	-- bypass watchdog
+	
+	return project_path
 end
 
-function CleanForVerilog(folder_path)
+function MakeDirForQEMU(name)
+	local project_path	= sTestDriveProjectPath .. "Program\\qemu\\" .. name
+
+	local attr = lfs.attributes(project_path)
+	
+	if attr ~= nil then
+		LOGE("Can't create project, '" .. name .. "'(" .. project_path .. ") " .. attr.mode .. " is already existed. Please specify a different project name.")
+		os.exit(1)
+	end
+	
+	if lfs.mkdir(project_path) == false then
+		LOGE("Can't create project directory '" .. name .. "'(" .. project_path .. ")")
+		os.exit(1)
+	end
+	
+	return project_path
+end
+
+function MakeDone(project_path)
 	Sleep(1000)	-- wait for watchdog check
-	exec("rm -f \"" .. folder_path .. "/.TestDrive.nosearch\"")
+	exec("rm -f \"" .. project_path .. "/.TestDrive.nosearch\"")
+end
+
+function MakeDoneVerilog(project_path)
+	MakeDone(project_path)
 
 	local	sHandle	= String()
 	if sHandle:GetEnvironment("SYSTEM_MANAGER@TESTDRIVE") then
@@ -161,8 +186,6 @@ function CleanForVerilog(folder_path)
 		end
 	end
 end
-
-local sProjectPath = ""
 
 if (sType == "testdrive") then
 	sProjectPath			= MakeDirForTestDrive(sProjectName)	-- make folder
@@ -243,7 +266,7 @@ elseif (sType == "v" or sType == "verilog") then
 	os.execute("sed \"s/HDL/" .. sProjectName .. " project/\" -i \"" .. sProjectPath .. "/.inception\"")
 	
 	os.execute("explorer " .. sProjectPath)
-	CleanForVerilog(sProjectPath)
+	MakeDoneVerilog(sProjectPath)
 elseif (sType == "v_bare" or sType == "verilog_bare") then
 	sProjectPath	= MakeDirForVerilog(sProjectName)
 	LOGI("Create Bared-Verilog project : '" .. sProjectName .. "'(" .. sProjectPath .. ")")
@@ -254,7 +277,7 @@ elseif (sType == "v_bare" or sType == "verilog_bare") then
 	os.execute("sed \"s/HDL/" .. sProjectName .. " project/\" -i \"" .. sProjectPath .. "/.inception\"")
 
 	os.execute("explorer " .. sProjectPath)
-	CleanForVerilog(sProjectPath)
+	MakeDoneVerilog(sProjectPath)
 elseif (sType == "verigen") then
 	if sProjectName == "common" then
 		LOGE("Invalid project name for verigen : " .. sProjectName)
@@ -282,7 +305,7 @@ elseif (sType == "verigen") then
 	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/g\" -i \"" .. sProjectPath .. "/verigen_src/__BusMaster.sv\"")
 	
 	os.execute("explorer " .. sProjectPath)
-	CleanForVerilog(sProjectPath)
+	MakeDoneVerilog(sProjectPath)
 elseif (sType == "docgen") then
 	sProjectPath	= MakeDir(sProjectName)
 	LOGI("Create DocGen project : '" .. sProjectName .. "'")
@@ -339,33 +362,66 @@ elseif (sType == "svelte") then
 	os.execute("explorer " .. sProjectName)
 	print("Execute 'run.bat' to run.")
 	bEclipseEnv = false
-elseif (sType == "uefi") then
-	sProjectPath	= MakeDir(sProjectName)
-	LOGI("Create UEFI firmware project : '" .. sProjectName .. "'")
+elseif (sType == "uefi") or (sType == "uefi_driver") then
+	sProjectPath	= MakeDirForApplication(sProjectName)
+	LOGI("Create UEFI driver project : '" .. sProjectName .. "'")
 
-	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_uefi/.\" " .. sProjectPath .. "/")
+	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_uefi_driver/.\" " .. sProjectPath .. "/")
 	
-	os.execute("sed \"s/Test/" .. sProjectName .. " UEFI/\" -i ./" .. sProjectName .. "/.project")
-	os.execute("sed \"s/Test/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/Makefile")
-	os.execute("sed \"s/Test/" .. sProjectName .. " UEFI project/\" -i ./" .. sProjectName .. "/.inception")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. " UEFI/\" -i " .. sProjectPath .. "/.project")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/Makefile")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. " UEFI project/\" -i " .. sProjectPath .. "/.inception")
 	
 	local sGUID = String()
 	sGUID.s = exec("uuidgen")
 	sGUID:Trim(" \r\n")
 	sGUID:MakeUpper()
-	os.execute("sed \"s/__GUID__/" .. sGUID.s .. "/\" -i ./" .. sProjectName .. "/.PROJECT.dsc")
+	os.execute("sed \"s/__GUID__/" .. sGUID.s .. "/\" -i " .. sProjectPath .. "/.PROJECT.dsc")
 	sGUID.s = exec("uuidgen")
 	sGUID:Trim(" \r\n")
 	sGUID:MakeUpper()
-	os.execute("sed \"s/__GUID__/" .. sGUID.s .. "/\" -i ./" .. sProjectName .. "/.PROJECT.inf")
-	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/.PROJECT.dsc")
-	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/common.h")
-	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/Makefile")
+	os.execute("sed \"s/__GUID__/" .. sGUID.s .. "/\" -i " .. sProjectPath .. "/.PROJECT.inf")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/.PROJECT.inf")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/.PROJECT.dsc")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/main.c")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/common.c")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/common.h")
 	
 	os.execute("mv \"" .. sProjectPath .. "/.PROJECT.inf\" \"" .. sProjectPath .. "/" .. sProjectName .. ".inf\"")
 	os.execute("mv \"" .. sProjectPath .. "/.PROJECT.dsc\" \"" .. sProjectPath .. "/" .. sProjectName .. ".dsc\"")
 	
-	os.execute("explorer " .. sProjectName)
+	MakeDone(sProjectPath)
+	os.execute("explorer " .. sProjectPath)
+elseif (sType == "uefi_application") then
+	sProjectPath	= MakeDirForApplication(sProjectName)
+	LOGI("Create UEFI application project : '" .. sProjectName .. "'")
+
+	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_uefi_application/.\" " .. sProjectPath .. "/")
+	
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. " UEFI/\" -i " .. sProjectPath .. "/.project")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/Makefile")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. " UEFI project/\" -i " .. sProjectPath .. "/.inception")
+	
+	local sGUID = String()
+	sGUID.s = exec("uuidgen")
+	sGUID:Trim(" \r\n")
+	sGUID:MakeUpper()
+	os.execute("sed \"s/__GUID__/" .. sGUID.s .. "/\" -i " .. sProjectPath .. "/.PROJECT.dsc")
+	sGUID.s = exec("uuidgen")
+	sGUID:Trim(" \r\n")
+	sGUID:MakeUpper()
+	os.execute("sed \"s/__GUID__/" .. sGUID.s .. "/\" -i " .. sProjectPath .. "/.PROJECT.inf")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/.PROJECT.inf")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/.PROJECT.dsc")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/main.c")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/common.c")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/common.h")
+	
+	os.execute("mv \"" .. sProjectPath .. "/.PROJECT.inf\" \"" .. sProjectPath .. "/" .. sProjectName .. ".inf\"")
+	os.execute("mv \"" .. sProjectPath .. "/.PROJECT.dsc\" \"" .. sProjectPath .. "/" .. sProjectName .. ".dsc\"")
+	
+	MakeDone(sProjectPath)
+	os.execute("explorer " .. sProjectPath)
 elseif (sType == "qemu") then
 	sProjectPath	= MakeDirForQEMU(sProjectName)
 	LOGI("Create QEMU project : '" .. sProjectNameOrg .. "'")

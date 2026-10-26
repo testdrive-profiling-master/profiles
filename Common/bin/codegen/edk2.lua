@@ -5,6 +5,7 @@ Arg:AddRemark			(nil, "install : force to install EDK2")
 Arg:AddRemark			(nil, "update  : check for update of EDK2")
 Arg:AddRemark			(nil, "build   : build project")
 Arg:AddRemark			(nil, "clean   : clean project")
+Arg:AddRemark			(nil, "qemu    : create QEMU project for this")
 Arg:AddRemark			(nil, "dump    : Dump ROM(-m option) image's header")
 Arg:AddOptionString		("target_arch", "X64", "a", nil, "TARGETARCH", "Target architecture (default:X64)")
 Arg:AddRemark			(nil, "ARCHS is one of list: IA32, X64, AARCH64, RISCV64")
@@ -183,6 +184,10 @@ do
 	opt.module_name = sName.s
 end
 
+if cmd == "qemu" then
+	return 0
+end
+
 if cmd == "build" then
 	-- copy efi file to bin dir.
 	if lfs.IsExist("bin/") == false then
@@ -248,6 +253,18 @@ if cmd == "build" then
 		else
 			LOGW("ROM file creation was skipped because Vendor/Device ID was not specified.")
 		end
+	elseif opt.module_type == "UEFI_APPLICATION" then
+		if lfs.IsExist("bin/NvVars") == false then
+			exec("echo > bin/NvVars")
+		end
+		
+		if lfs.IsExist("bin/EFI/BOOT") == false then
+			exec("mkdir bin\\EFI\\BOOT")
+		end
+		
+		exec("cp -f bin/" .. opt.base_name .. ".efi bin/EFI/BOOT/BOOTX64.efi")
+		
+		LOGI("Output EFI file : ./bin/" .. opt.base_name .. ".efi")
 	end
 
 	os.exit(iret)

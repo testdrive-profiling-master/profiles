@@ -30,7 +30,7 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 //
-// Title : UEFI sample project
+// Title : __PROJECT__ driver
 // Rev.  : 10/17/2026 Sat (clonextop@gmail.com)
 //================================================================================
 #include "common.h"

@@ -1,6 +1,6 @@
 [Defines]
 	INF_VERSION					= 0x00010005
-	BASE_NAME					= HelloWorld
+	BASE_NAME					= __PROJECT__
 	FILE_GUID					= __GUID__
 	MODULE_TYPE					= UEFI_DRIVER
 	VERSION_STRING				= 1.0

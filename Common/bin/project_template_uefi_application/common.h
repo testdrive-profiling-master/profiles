@@ -30,13 +30,38 @@
 // ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 // OF SUCH DAMAGE.
 //
-// Title : UEFI sample project
-// Rev.  : 10/17/2026 Sat (clonextop@gmail.com)
+// Title : __PROJECT__ application
+// Rev.  : 10/26/2026 Mon (clonextop@gmail.com)
 //================================================================================
-#include "common.h"
+#ifndef __COMMON_H__
+#define __COMMON_H__
+#include <Uefi.h>
+#include <Library/UefiLib.h>
+#include <Library/UefiApplicationEntryPoint.h>
+#include <Library/MemoryAllocationLib.h>
+#include <Protocol/PciIo.h>
+#include <Protocol/SimpleFileSystem.h>
 
-EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable)
-{
-	LOGI("UefiMain() : Hello world!\n");
-	return EFI_SUCCESS;
-}
+extern EFI_SYSTEM_TABLE *g_SysTable;
+
+// for debug output
+#define LOG(...)						AsciiPrint(__VA_ARGS__)
+#define LOGI(...)						AsciiPrint("*I: " __VA_ARGS__)
+#define LOGW(...)						AsciiPrint("*W: " __VA_ARGS__)
+#define LOGE(...)						AsciiPrint("*E: " __VA_ARGS__)
+
+#define Sleep(ms)						gBS->Stall(ms * 1000)
+#define ConsoleClearScreen()			g_SysTable->ConOut->ClearScreen(g_SysTable->ConOut)
+#define ConsoleEnableCursor(bEnable)	g_SysTable->ConOut->EnableCursor(g_SysTable->ConOut, bEnable)
+#define ConsoleSetAttribute(attr)		g_SysTable->ConOut->SetAttribute(g_SysTable->ConOut, attr)
+#define ConsoleCursorPosition(col, row) g_SysTable->ConOut->SetCursorPosition(g_SysTable->ConOut, col, row)
+
+typedef struct {
+	const char *sTitle;
+} MENU_ITEM;
+
+int	 DoMenu(const char **pMenuList, int iMenuCount, const char *sHeader, const char *sFooter);
+void Pause(const char *sMsg);
+#define PAUSE Pause(NULL);
+
+#endif //__COMMON_H__

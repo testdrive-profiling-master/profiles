@@ -1,0 +1,28 @@
+[Defines]
+	INF_VERSION					= 0x00010005
+	BASE_NAME					= __PROJECT__
+	FILE_GUID					= __GUID__
+	MODULE_TYPE					= UEFI_APPLICATION
+	VERSION_STRING				= 1.0
+	ENTRY_POINT					= UefiMain
+
+##  This flag specifies whether HII resource section is generated into PE image.
+	UEFI_HII_RESOURCE_SECTION	= TRUE
+
+[Sources]
+	common.c
+	main.c
+
+[Packages]
+	MdePkg/MdePkg.dec
+	MdeModulePkg/MdeModulePkg.dec
+
+[LibraryClasses]
+	BaseMemoryLib
+	MemoryAllocationLib
+	PrintLib
+	UefiApplicationEntryPoint
+	UefiLib
+
+[Protocols]
+	gEfiPciIoProtocolGuid
