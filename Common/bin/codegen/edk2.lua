@@ -227,22 +227,27 @@ if cmd == "build" then
 	end
 	sEnv:GetEnvironment("ROM_COMPRESSION@Defines@" .. opt.module_file)
 	opt.rom_compression = (sEnv.s == "TRUE")
+	
+	sEnv:GetEnvironment("MODULE_TYPE@Defines@" .. opt.module_file)
+	opt.module_type = sEnv.s
 
 	-- make ROM binary file
-	if (opt.vendor_id ~= nil) and (opt.device_id ~= nil) then
-		iret = run(edk_path .. "/edksetup.bat Mingw-w64 >nul&EfiRom" ..
-			" -f " .. opt.vendor_id .. " -i " .. opt.device_id ..
-			" -o ./bin/" .. opt.base_name .. ".rom -e" .. (opt.rom_compression and "c" or "") .. " ./bin/" .. opt.base_name .. ".efi")
+	if opt.module_type == "UEFI_DRIVER" then
+		if (opt.vendor_id ~= nil) and (opt.device_id ~= nil) then
+			iret = run(edk_path .. "/edksetup.bat Mingw-w64 >nul&EfiRom" ..
+				" -f " .. opt.vendor_id .. " -i " .. opt.device_id ..
+				" -o ./bin/" .. opt.base_name .. ".rom -e" .. (opt.rom_compression and "c" or "") .. " ./bin/" .. opt.base_name .. ".efi")
+				
+			if iret ~= 0 then
+				LOGE("ROM file generation is failed")
+				os.exit(iret)
+			end
 			
-		if iret ~= 0 then
-			LOGE("ROM file generation is failed")
-			os.exit(iret)
+			LOGI("Output ROM file : ./bin/" .. opt.base_name .. ".rom")
+			run(profile_path .. "edk2/BaseTools/Bin/Win64/EfiRom -d ./bin/" .. opt.base_name .. ".rom")
+		else
+			LOGW("ROM file creation was skipped because Vendor/Device ID was not specified.")
 		end
-		
-		LOGI("Output ROM file : ./bin/" .. opt.base_name .. ".rom")
-		run(profile_path .. "edk2/BaseTools/Bin/Win64/EfiRom -d ./bin/" .. opt.base_name .. ".rom")
-	else
-		LOGW("ROM file creation was skipped because Vendor/Device ID was not specified.")
 	end
 
 	os.exit(iret)
