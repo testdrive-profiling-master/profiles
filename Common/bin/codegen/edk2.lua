@@ -32,7 +32,6 @@ local profile_path = String()
 profile_path:GetEnvironment("TESTDRIVE_PROFILE")
 profile_path		= profile_path.s .. "Common/bin/"
 local edk_path		= profile_path .. "edk2"
-local sEDK2_ini		= "@EDK2@" .. profile_path .. "edk2.ini"	-- EDK2 configuration file
 local sEDK2_tag		= "edk2-stable202608"
 local iTimeStamp	= math.floor(os.time() / (60*60*24))
 
@@ -69,7 +68,7 @@ local reinstall = (cmd == "install")
 
 if (cmd == "update") then
 	local sEnv			= String()
-	sEnv:GetEnvironment("TAG" .. sEDK2_ini)
+	sEnv:GetEnvironment("TAG@EDK2")
 	
 	if sEnv.s ~= sEDK2_tag then
 		reinstall = true
@@ -100,9 +99,9 @@ if (lfs.IsExist(profile_path .. "edk2/BaseTools/") == false) or reinstall then
 	do	-- update edk2.ini
 		local sEnv			= String()
 		sEnv.s				= sEDK2_tag
-		sEnv:SetEnvironment("TAG" .. sEDK2_ini)
+		sEnv:SetEnvironment("TAG@EDK2")
 		sEnv.s				= tostring(iTimeStamp)
-		sEnv:SetEnvironment("DATE" .. sEDK2_ini)
+		sEnv:SetEnvironment("DATE@EDK2")
 	end
 end
 

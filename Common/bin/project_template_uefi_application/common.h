@@ -38,6 +38,8 @@
 #include <Uefi.h>
 #include <Library/UefiLib.h>
 #include <Library/UefiApplicationEntryPoint.h>
+#include <Library/UefiBootServicesTableLib.h>
+#include <Library/UefiRuntimeServicesTableLib.h>
 #include <Library/MemoryAllocationLib.h>
 #include <Protocol/PciIo.h>
 #include <Protocol/SimpleFileSystem.h>
