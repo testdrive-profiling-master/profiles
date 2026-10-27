@@ -184,6 +184,52 @@ do
 end
 
 if cmd == "qemu" then
+	LOGI("Make QEMU's UEFI Application environment.")
+	
+	if lfs.IsExist(opt.module_file) == false then
+		LOGE("Can't find UEFI module project file.")
+		os.exit(1)
+	end
+	
+	local sProjectPath = String()
+	local sCurPath = String(".")
+	-- check same project environment
+	sProjectPath:GetEnvironment("RECENT_PROJECT@TESTDRIVE")
+	sCurPath:MakeFullPath()
+	if sCurPath:CompareFront(sProjectPath.s) == false then
+		LOGE("Recent TestDrive project is not your parent project, you should run your TestDrive project first.")
+		os.exit(1)
+	end
+	local sRelativeCurPath = String(sCurPath.s)
+	sRelativeCurPath:DeleteFront(sProjectPath.s)
+	LOGI("sRelativeCurPath : " .. sRelativeCurPath.s)
+	sRelativeCurPath = sRelativeCurPath.s
+
+	-- create QEMU project
+	sProjectPath = sProjectPath.s .. "Program\\qemu\\" .. opt.module_name	-- target QEMU path
+	if lfs.IsExist(sProjectPath) then
+		LOGW("Already same QEMU's UEFI project is existed. Requested process is canceled.")
+		os.execute("explorer \"" .. sProjectPath .. "\"")
+	else
+		os.execute("create_project qemu " .. opt.module_name)
+		
+		local sProject_ini = "@QEMU@" .. sProjectPath .. "\\qemu_testdrive.ini"
+		local sEnv = String()
+		sEnv:SetEnvironment("VGA" .. sProject_ini)
+		sEnv:SetEnvironment("DISPLAY" .. sProject_ini)
+		sEnv:SetEnvironment("HARD_DISK_IMAGE" .. sProject_ini)
+		sEnv:SetEnvironment("HARD_DISK_SIZE" .. sProject_ini)
+		sEnv:SetEnvironment("BOOT_FROM_CDROM" .. sProject_ini)
+		sEnv:SetEnvironment("CDROM_IMAGE" .. sProject_ini)
+		sEnv:SetEnvironment("BIOS_DEBUG" .. sProject_ini)
+		sEnv.s = "4G"
+		sEnv:SetEnvironment("MEMORY_SIZE" .. sProject_ini)
+		sEnv.s = "-cpu host -net none -drive file=fat:rw:%PROJECT%\\" .. sRelativeCurPath .. "\\bin" .. ",format=raw"
+		sEnv:SetEnvironment("EXTRA_OPTIONS" .. sProject_ini)
+		sEnv.s = "UEFI : " .. opt.module_name
+		sEnv:SetEnvironment("TITLE" .. sProject_ini)
+	end
+
 	return 0
 end
 

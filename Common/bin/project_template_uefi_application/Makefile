@@ -7,8 +7,8 @@ SRC_PATH		:= .
 TARGET_ARCH		:= X64
 
 SRCS			:= \
-	__PROJECT__.dsc \
-	__PROJECT__.inf \
+	$(PROJECT).dsc \
+	$(PROJECT).inf \
 	$(wildcard $(SRC_PATH)/*.c)
 
 #-------------------------------------------------

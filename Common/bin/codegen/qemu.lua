@@ -22,6 +22,14 @@ testdrive_path = testdrive_path.s
 local profile_path = String()
 profile_path:GetEnvironment("TESTDRIVE_PROFILE")
 profile_path = profile_path.s .. "Common/bin/"
+
+local parent_project_path = String()
+parent_project_path:GetEnvironment("PROJECT")
+if parent_project_path:IsEmpty() then
+	parent_project_path.s = "."
+end
+parent_project_path = parent_project_path.s
+
 local default_bios_path = profile_path .. "qemu/share/"
 local current_path = String(".")
 current_path:MakeFullPath()
@@ -310,6 +318,7 @@ if cmd == "boot" then
 	
 	-- environment
 	cmd:Replace("%CUR_PATH%", current_path)
+	cmd:Replace("%PROJECT%", parent_project_path)
 	
 	os.execute("%TESTDRIVE_PROFILE%Common/bin/qemu/qemu-system-" .. sSystem .. " " .. cmd.s)
 end
