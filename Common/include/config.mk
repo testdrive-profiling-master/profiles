@@ -239,7 +239,7 @@ define MAKEFILE_USAGE
     dep           : Build all dependencies.
     static        : Do static code analysis(cppcheck).
 
-  - Version control (must set 'BUILD_VERSION' to 1)
+  - Version control (must set 'BUILD_VERSION' to 1/2)
     version_minor : Increase minor version number.
     version_major : Increase major version number.
  
