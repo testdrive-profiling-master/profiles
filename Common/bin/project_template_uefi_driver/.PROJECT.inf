@@ -15,8 +15,15 @@
 	UEFI_HII_RESOURCE_SECTION	= TRUE
 
 [Sources]
-	common.c
-	main.c
+	common.cpp
+	main.cpp
+
+[BuildOptions]
+  MSFT:*_*_*_CC_FLAGS = /GR- /EHs-c-
+  GCC:*_*_*_CC_FLAGS = -fno-rtti -fno-exceptions -fno-threadsafe-statics
+  CLANG:*_*_*_CC_FLAGS = -fno-rtti -fno-exceptions -fno-threadsafe-statics
+  CLANGPDB:*_*_*_CC_FLAGS = -fno-rtti -fno-exceptions -fno-threadsafe-statics
+  *_*_*_DLINK_FLAGS = -nodefaultlibs
 
 [Packages]
 	MdePkg/MdePkg.dec

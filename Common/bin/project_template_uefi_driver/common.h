@@ -35,6 +35,9 @@
 //================================================================================
 #ifndef __COMMON_H__
 #define __COMMON_H__
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include ".__PROJECT___version.inl"
 #include <Uefi.h>
 #include <Library/PcdLib.h>
@@ -42,10 +45,17 @@
 #include <Library/DebugLib.h>
 #include <Library/UefiDriverEntryPoint.h>
 
+EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable);
+
 // for debug output
 #define LOG(mode, ...) DEBUG((DEBUG_##mode, "[UEFI-__PROJECT__] " __VA_ARGS__))
 #define LOGI(...)	   LOG(INFO, __VA_ARGS__)
 #define LOGW(...)	   LOG(WARN, __VA_ARGS__)
 #define LOGE(...)	   LOG(ERROR, __VA_ARGS__)
+#define _L(s)		   ((CHAR16 *)u##s)
 
+#ifdef __cplusplus
+}
+// C++ headers here.
+#endif
 #endif //__COMMON_H__

@@ -10,6 +10,7 @@ BUILD_VERSION	:= 1
 SRCS			:= \
 	$(PROJECT).dsc \
 	$(PROJECT).inf \
+	$(wildcard $(SRC_PATH)/*.cpp) \
 	$(wildcard $(SRC_PATH)/*.c)
 
 #-------------------------------------------------

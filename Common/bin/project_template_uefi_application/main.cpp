@@ -136,7 +136,7 @@ void TestReadFile(void)
 				continue;
 
 			// try to open target file("test.txt")
-			if (!EFI_ERROR(RootVolume->Open(RootVolume, &FileHandle, L"test.txt", EFI_FILE_MODE_READ, 0))) {
+			if (!EFI_ERROR(RootVolume->Open(RootVolume, &FileHandle, _L("test.txt"), EFI_FILE_MODE_READ, 0))) {
 				LOGI("Successfully opened 'test.txt' on drive fs#%d:!\n", i);
 
 				// read file

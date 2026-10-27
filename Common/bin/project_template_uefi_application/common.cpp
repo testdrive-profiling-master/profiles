@@ -78,22 +78,22 @@ int DoMenu(const char **pMenuList, int iMenuCount, const char *sHeader, const ch
 	// show selection box
 	{
 		ConsoleCursorPosition(0, iStartRow);
-		Print(L"┌");
-		for (i = 2; i < iWidth; i++) Print(L"─");
-		Print(L"┐");
+		Print(_L("┌"));
+		for (i = 2; i < iWidth; i++) Print(_L("─"));
+		Print(_L("┐"));
 
 		iStartRow++;
 		for (i = 0; i < iMenuCount; i++) {
 			ConsoleCursorPosition(0, iStartRow + i);
-			Print(L"│");
+			Print(_L("│"));
 			ConsoleCursorPosition(iWidth - 1, iStartRow + i);
-			Print(L"│");
+			Print(_L("│"));
 		}
 
 		ConsoleCursorPosition(0, iStartRow + iMenuCount);
-		Print(L"└");
-		for (i = 2; i < iWidth; i++) Print(L"─");
-		Print(L"┘");
+		Print(_L("└"));
+		for (i = 2; i < iWidth; i++) Print(_L("─"));
+		Print(_L("┘"));
 	}
 
 	while (bRunning) {

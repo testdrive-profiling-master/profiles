@@ -35,6 +35,9 @@
 //================================================================================
 #ifndef __COMMON_H__
 #define __COMMON_H__
+#ifdef __cplusplus
+extern "C" {
+#endif
 #include ".__PROJECT___version.inl"
 #include <Uefi.h>
 #include <Library/UefiLib.h>
@@ -45,6 +48,8 @@
 #include <Protocol/PciIo.h>
 #include <Protocol/SimpleFileSystem.h>
 
+EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable);
+
 extern EFI_SYSTEM_TABLE *g_SysTable;
 
 // for debug output
@@ -52,6 +57,7 @@ extern EFI_SYSTEM_TABLE *g_SysTable;
 #define LOGI(...)						AsciiPrint("*I: " __VA_ARGS__)
 #define LOGW(...)						AsciiPrint("*W: " __VA_ARGS__)
 #define LOGE(...)						AsciiPrint("*E: " __VA_ARGS__)
+#define _L(s)							((CHAR16 *)u##s)
 
 #define Sleep(ms)						gBS->Stall(ms * 1000)
 #define ConsoleClearScreen()			g_SysTable->ConOut->ClearScreen(g_SysTable->ConOut)
@@ -68,5 +74,10 @@ int	 DoMenu(const char **pMenuList, int iMenuCount, const char *sHeader, const c
 
 void Pause(const char *sMsg);
 #define PAUSE Pause(NULL);
+
+#ifdef __cplusplus
+}
+// C++ headers here.
+#endif
 
 #endif //__COMMON_H__
