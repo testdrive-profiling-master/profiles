@@ -9,6 +9,7 @@ clean:
 
 ifeq ($(PROJECT_TYPE), APPLICATION)
 usb:
+	@edk2.bat build -a $(TARGET_ARCH) -b RELEASE
 	@run_as_admin codegen make_uefi_disk $(PROJECT).inf
 	@echo Done!
 
