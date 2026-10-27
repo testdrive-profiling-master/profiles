@@ -93,8 +93,9 @@ end
 
 -- save version number
 f:Create(sFileName)
-f:Put("#define		" .. sPREFIX .. "VERSION_MAJOR		" .. tostring(iVersionMajor) .. "\n")
-f:Put("#define		" .. sPREFIX .. "VERSION_MINOR		" .. tostring(iVersionMinor) .. "\n")
-f:Put("#define		" .. sPREFIX .. sVersionPatch .. "		" .. tostring(iVersionPatch) .. "\n")
-f:Put("#define		" .. sPREFIX .. "VERSION_DATE		\"" .. sDATE .. "\"\n")
+f:Put("#define		" .. sPREFIX .. "VERSION_MAJOR    " .. tostring(iVersionMajor) .. "\n")
+f:Put("#define		" .. sPREFIX .. "VERSION_MINOR    " .. tostring(iVersionMinor) .. "\n")
+f:Put("#define		" .. sPREFIX .. sVersionPatch .. "    " .. tostring(iVersionPatch) .. "\n")
+f:Put("#define		" .. sPREFIX .. "VERSION          \"" .. tostring(iVersionMajor) .. "." .. tostring(iVersionMinor) .. "." .. tostring(iVersionPatch) .. "\"\n")
+f:Put("#define		" .. sPREFIX .. "VERSION_DATE     \"" .. sDATE .. "\"\n")
 f:Close()

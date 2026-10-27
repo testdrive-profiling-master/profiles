@@ -35,6 +35,7 @@
 //================================================================================
 #ifndef __COMMON_H__
 #define __COMMON_H__
+#include ".__PROJECT___version.inl"
 #include <Uefi.h>
 #include <Library/PcdLib.h>
 #include <Library/UefiLib.h>

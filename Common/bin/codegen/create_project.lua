@@ -226,9 +226,9 @@ elseif (sType == "util") then
 	os.execute("sed \"s/Test/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/.project")
 	os.execute("sed \"s/Test/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/Makefile")
 	os.execute("sed \"s/Test/" .. sProjectName .. " project/\" -i ./" .. sProjectName .. "/.inception")
-	os.execute("sed \"s/PROJECT_LOWER/" .. sProjectNameLower .. "/\" -i ./" .. sProjectName .. "/main.cpp")
-	os.execute("sed \"s/PROJECT_UPPER/" .. sProjectNameUpper .. "/\" -i ./" .. sProjectName .. "/main.cpp")
-	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/main.cpp")
+	os.execute("sed \"s/PROJECT_LOWER/" .. sProjectNameLower .. "/g\" -i ./" .. sProjectName .. "/main.cpp")
+	os.execute("sed \"s/PROJECT_UPPER/" .. sProjectNameUpper .. "/g\" -i ./" .. sProjectName .. "/main.cpp")
+	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/g\" -i ./" .. sProjectName .. "/main.cpp")
 	
 	os.execute("explorer " .. sProjectName)
 elseif (sType == "lua") then
@@ -240,9 +240,9 @@ elseif (sType == "lua") then
 	os.execute("sed \"s/Test/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/Makefile")
 	os.execute("sed \"s/Test/" .. sProjectName .. " project/\" -i ./" .. sProjectName .. "/.inception")
 	os.execute("sed \"s/Test/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/test/do_test.bat")
-	os.execute("sed \"s/PROJECT_LOWER/" .. sProjectNameLower .. "/\" -i ./" .. sProjectName .. "/main.cpp")
-	os.execute("sed \"s/PROJECT_UPPER/" .. sProjectNameUpper .. "/\" -i ./" .. sProjectName .. "/main.cpp")
-	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/\" -i ./" .. sProjectName .. "/main.cpp")
+	os.execute("sed \"s/PROJECT_LOWER/" .. sProjectNameLower .. "/g\" -i ./" .. sProjectName .. "/main.cpp")
+	os.execute("sed \"s/PROJECT_UPPER/" .. sProjectNameUpper .. "/g\" -i ./" .. sProjectName .. "/main.cpp")
+	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/g\" -i ./" .. sProjectName .. "/main.cpp")
 	
 	os.execute("explorer " .. sProjectName)
 elseif (sType == "webgui") then
@@ -357,7 +357,7 @@ elseif (sType == "svelte") then
 	
 	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_svelte/.\" " .. sProjectPath .. "/")
 	
-	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/\" -i ./" .. sProjectPath .. "/public/index.html")
+	os.execute("sed \"s/PROJECT/" .. sProjectName .. "/g\" -i ./" .. sProjectPath .. "/public/index.html")
 	
 	os.execute("explorer " .. sProjectName)
 	print("Execute 'run.bat' to run.")
@@ -368,9 +368,9 @@ elseif (sType == "uefi") or (sType == "uefi_driver") then
 
 	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_uefi_driver/.\" " .. sProjectPath .. "/")
 	
-	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. " UEFI/\" -i " .. sProjectPath .. "/.project")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. " driver/\" -i " .. sProjectPath .. "/.project")
 	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/Makefile")
-	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. " UEFI project/\" -i " .. sProjectPath .. "/.inception")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. " driver/\" -i " .. sProjectPath .. "/.inception")
 	
 	local sGUID = String()
 	sGUID.s = exec("uuidgen")
@@ -381,11 +381,12 @@ elseif (sType == "uefi") or (sType == "uefi_driver") then
 	sGUID:Trim(" \r\n")
 	sGUID:MakeUpper()
 	os.execute("sed \"s/__GUID__/" .. sGUID.s .. "/\" -i " .. sProjectPath .. "/.PROJECT.inf")
-	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/.PROJECT.inf")
-	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/.PROJECT.dsc")
-	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/main.c")
-	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/common.c")
-	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/common.h")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/g\" -i " .. sProjectPath .. "/.PROJECT.inf")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/g\" -i " .. sProjectPath .. "/.PROJECT.dsc")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/g\" -i " .. sProjectPath .. "/main.c")
+	os.execute("sed \"s/__PROJECT_UPPER__/" .. sProjectNameUpper .. "/g\" -i " .. sProjectPath .. "/main.c")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/g\" -i " .. sProjectPath .. "/common.c")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/g\" -i " .. sProjectPath .. "/common.h")
 	
 	os.execute("mv \"" .. sProjectPath .. "/.PROJECT.inf\" \"" .. sProjectPath .. "/" .. sProjectName .. ".inf\"")
 	os.execute("mv \"" .. sProjectPath .. "/.PROJECT.dsc\" \"" .. sProjectPath .. "/" .. sProjectName .. ".dsc\"")
@@ -398,9 +399,9 @@ elseif (sType == "uefi_application") then
 
 	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_uefi_application/.\" " .. sProjectPath .. "/")
 	
-	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. " UEFI/\" -i " .. sProjectPath .. "/.project")
-	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/Makefile")
-	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. " UEFI project/\" -i " .. sProjectPath .. "/.inception")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. " application/g\" -i " .. sProjectPath .. "/.project")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/g\" -i " .. sProjectPath .. "/Makefile")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. " application/g\" -i " .. sProjectPath .. "/.inception")
 	
 	local sGUID = String()
 	sGUID.s = exec("uuidgen")
@@ -411,11 +412,12 @@ elseif (sType == "uefi_application") then
 	sGUID:Trim(" \r\n")
 	sGUID:MakeUpper()
 	os.execute("sed \"s/__GUID__/" .. sGUID.s .. "/\" -i " .. sProjectPath .. "/.PROJECT.inf")
-	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/.PROJECT.inf")
-	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/.PROJECT.dsc")
-	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/main.c")
-	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/common.c")
-	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/\" -i " .. sProjectPath .. "/common.h")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/g\" -i " .. sProjectPath .. "/.PROJECT.inf")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/g\" -i " .. sProjectPath .. "/.PROJECT.dsc")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/g\" -i " .. sProjectPath .. "/main.c")
+	os.execute("sed \"s/__PROJECT_UPPER__/" .. sProjectNameUpper .. "/g\" -i " .. sProjectPath .. "/main.c")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/g\" -i " .. sProjectPath .. "/common.c")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectName .. "/g\" -i " .. sProjectPath .. "/common.h")
 	
 	os.execute("mv \"" .. sProjectPath .. "/.PROJECT.inf\" \"" .. sProjectPath .. "/" .. sProjectName .. ".inf\"")
 	os.execute("mv \"" .. sProjectPath .. "/.PROJECT.dsc\" \"" .. sProjectPath .. "/" .. sProjectName .. ".dsc\"")
@@ -428,8 +430,8 @@ elseif (sType == "qemu") then
 
 	os.execute("cp -rf \"" .. sProfilePath .. "Common/bin/project_template_qemu/.\" " .. sProjectPath .. "/")
 	
-	os.execute("sed \"s/__PROJECT__/" .. sProjectNameOrg .. "/\" -i \"" .. sProjectPath .. "/qemu_testdrive.ini\"")
-	os.execute("sed \"s/__PROJECT__/" .. sProjectNameOrg .. "/\" -i \"" .. sProjectPath .. "/qemu_testdrive.bat\"")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectNameOrg .. "/g\" -i \"" .. sProjectPath .. "/qemu_testdrive.ini\"")
+	os.execute("sed \"s/__PROJECT__/" .. sProjectNameOrg .. "/g\" -i \"" .. sProjectPath .. "/qemu_testdrive.bat\"")
 	
 	os.execute("explorer \"" .. sProjectPath .. "\"")
 	print("\nRun 'QEMU/" .. sProjectNameOrg .. "' from profile view on TestDrive Profiling Master.")
