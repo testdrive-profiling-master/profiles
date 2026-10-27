@@ -2,6 +2,7 @@
 # __PROJECT__ driver
 #-------------------------------------------------
 PROJECT			:= __PROJECT__
+PROJECT_TYPE	:= DRIVER
 SRC_PATH		:= .
 TARGET_ARCH		:= X64
 BUILD_TARGET	?= DEBUG
@@ -14,4 +15,4 @@ SRCS			:= \
 #-------------------------------------------------
 # common document config
 #-------------------------------------------------
-include $(TESTDRIVE_PROFILE)/Common/include/config_uefi_driver.mk
+include $(TESTDRIVE_PROFILE)/Common/include/config_uefi.mk
