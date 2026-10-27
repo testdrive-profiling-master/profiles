@@ -1,5 +1,8 @@
-all: $(SRCS)
-	@edk2.bat build -a $(TARGET_ARCH) -b $(BUILD_TARGET)
+debug: $(SRCS)
+	@edk2.bat build -a $(TARGET_ARCH) -b DEBUG
+
+release: $(SRCS)
+	@edk2.bat build -a $(TARGET_ARCH) -b RELEASE
 
 clean:
 	@edk2.bat clean
@@ -15,12 +18,12 @@ qemu:
 endif
 
 help:
-	@echo "   help  : Display this help and exit"
-	@echo "   all   : Build project DEBUG(default)/RELEASE"
-	@echo "           * Options"
-	@echo "             BUILD_TARGET={RELEASE/DEBUG}"
-	@echo "   clean : Clean project"
+	@echo "** Makefile command list **"
+	@echo "   help    : Display this help and exit"
+	@echo "   debug   : Build project debug(default) mode"
+	@echo "   release : Build project release mode"
+	@echo "   clean   : Clean project"
 ifeq ($(PROJECT_TYPE), APPLICATION)
-	@echo "   usb   : Make physical USB booting disk"
-	@echo "   qemu  : Make QEMU environment for test"
+	@echo "   usb     : Make physical USB booting disk"
+	@echo "   qemu    : Make QEMU environment for test"
 endif
