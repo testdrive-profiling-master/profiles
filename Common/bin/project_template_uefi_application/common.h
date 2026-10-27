@@ -63,6 +63,8 @@ typedef struct {
 } MENU_ITEM;
 
 int	 DoMenu(const char **pMenuList, int iMenuCount, const char *sHeader, const char *sFooter);
+#define DO_MENU(memnu_list, sHeader, sFooter) DoMenu(memnu_list, ARRAY_SIZE(memnu_list), sHeader, sFooter)
+
 void Pause(const char *sMsg);
 #define PAUSE Pause(NULL);
 

@@ -176,9 +176,7 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
 		};
 
 		while (bRun) {
-			int iSel = DoMenu(Menu, 4, "* __PROJECT__ Application test.", "* Use [Up/Down] to move, [Enter] to select.");
-
-			switch (iSel) {
+			switch (DO_MENU(Menu, "* __PROJECT__ Application test.", "* Use [Up/Down] to move, [Enter] to select.")) {
 			case 0: // show devices
 				ShowDevices();
 				break;
@@ -197,7 +195,7 @@ EFI_STATUS EFIAPI UefiMain(EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable
 				gRT->ResetSystem(EfiResetShutdown, EFI_SUCCESS, 0, NULL);
 				break;
 			default:
-				LOGI("Selection : %d", iSel);
+				LOGI("Invalid operation.\n");
 				break;
 			}
 		}
