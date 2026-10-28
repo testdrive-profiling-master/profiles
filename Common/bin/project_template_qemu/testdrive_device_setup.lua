@@ -13,14 +13,6 @@ if sProjectPath:IsEmpty() then
 	error("The TestDrive device will be activated under the testdrive execution. You should run the TestDrive project first.")
 end
 
-do	-- check 'simulation' mode
-	local sSubSystemName = String()
-	sSubSystemName:GetEnvironment("SUB_SYSTEM_NAME")
-	if sSubSystemName.s ~= "Simulation" then
-		error("Subsystem must be 'Simulation' mode.")
-	end
-end
-
 -- set work folder to 'Program' output path
 lfs.chdir(sProjectPath.s .. "Program")
 
@@ -40,11 +32,11 @@ LOGI("Device name : " .. dev:GetDescription())
 -- setup BAR (type, byte_size, bind_address, 64bit_address, prefetchable)
 --            type      : "memory", "io"
 --            byte_size : 2^N size
-dev:CreateBAR("memory", 1024*64, 0x20000, true)									-- BAR #0/1 : registers
-dev:CreateBAR("memory", 1024*1024*32, 0x10000000, true)							-- BAR #2/3 : just sample
-dev:CreateBAR("memory", dev:GetMemorySize(), dev:GetMemoryBase(), true, true)	-- BAR #4/5 : zero copy memory area
+--dev:CreateBAR("memory", 1024*64, 0x20000, true)									-- BAR #0/1 : registers
+--dev:CreateBAR("memory", 1024*1024*32, 0x10000000, true)							-- BAR #2/3 : just sample
+--dev:CreateBAR("memory", dev:GetMemorySize(), dev:GetMemoryBase(), true, true)		-- BAR #4/5 : zero copy memory area
 
 -- setup MSI
-dev:EnableMSI(4, false)							-- iVectorCount, bMaskPerVector
+--dev:EnableMSI(4, false)						-- iVectorCount, bMaskPerVector
 --dev:EnableMSIX(4, false, 0, 0x1000, 0x1500)	-- iVectorCount, bMaskPerVector, iBar, iOffset_table, iOffset_PBA
 --dev:EnableDisplay(640, 480)					-- for VGA device

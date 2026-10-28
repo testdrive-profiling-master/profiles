@@ -213,6 +213,14 @@ public:
 		}
 #endif
 
+#if __has_embed(QEMU_LUA_PATH)
+static const char __qemu_lua[] = {
+        #embed QEMU_LUA_PATH
+		, '\0'
+    };
+	SimulationScript(SIMULATION_SCRIPT_QEMU, __qemu_lua);
+#endif
+
 		return DPI_Initialize();
 	}
 
