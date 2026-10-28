@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Virtual FPGA Starter Kit Template design
-// Rev.  : 5/10/2024 Fri (clonextop@gmail.com)
+// Rev.  : 10/28/2026 Wed (clonextop@gmail.com)
 //================================================================================
 #include "StarterKit.h"
 #include "Buzzer.h"
@@ -39,7 +39,8 @@
 static StarterKit __starter_kit;
 static Buzzer	  __Buzzer;
 
-static bool		  __Initialize(void)
+// DPI constructor
+bool DPI_Initialize(void)
 {
 	SetSystemDescription("FPGA Starter Kit");
 
@@ -50,16 +51,15 @@ static bool		  __Initialize(void)
 	return true;
 }
 
-static void __Finalize(void)
+// DPI destructor
+void DPI_Finalize(void)
 {
 	g_Sound.ReleaseAll();
 }
 
 StarterKit::StarterKit(void)
 {
-	DPI_Initialize = __Initialize;
-	DPI_Finalize   = __Finalize;
-	m_pReg		   = NULL;
+	m_pReg = NULL;
 }
 
 StarterKit::~StarterKit(void) {}
@@ -176,8 +176,7 @@ void StarterKit::Motor(uint8_t PWM, uint8_t DIR, uint8_t &SENSOR)
 	int			  iRatio	= m_pReg->motor.iRatio;
 	m_Motor.cw.Eval(PWM & ~DIR);
 	m_Motor.ccw.Eval(PWM & DIR);
-	fValocity =
-		((fValocity * (1024 * 1024 - 1)) + ((double)(m_Motor.cw.Level() - m_Motor.ccw.Level()))) / (1024 * 1024);
+	fValocity = ((fValocity * (1024 * 1024 - 1)) + ((double)(m_Motor.cw.Level() - m_Motor.ccw.Level()))) / (1024 * 1024);
 	iRatio += (int)(fValocity * (1024 - 32 + (rand() & 31))); // randomize forced.
 
 	if (iRatio < 0) {
@@ -195,8 +194,8 @@ void StarterKit::Motor(uint8_t PWM, uint8_t DIR, uint8_t &SENSOR)
 
 void StarterKit::TFTLCD_Display(uint8_t EN, uint8_t DE, uint8_t VSYNC, uint8_t HSYNC, uint32_t dwRGB)
 {
-	static int	 x = 0, y = 0;
-	static uint8_t	 vsync_pre = 0, hsync_pre = 0;
+	static int		x = 0, y = 0;
+	static uint8_t	vsync_pre = 0, hsync_pre = 0;
 	static uint32_t dwOffset = 0;
 
 	if (EN) {
@@ -223,8 +222,7 @@ void StarterKit::TFTLCD_Display(uint8_t EN, uint8_t DE, uint8_t VSYNC, uint8_t H
 			y		 = 0;
 			x		 = 0;
 			dwOffset = 0;
-			memcpy(m_pReg->tft_lcd_display.buffer.front, m_pReg->tft_lcd_display.buffer.back,
-				   sizeof(m_pReg->tft_lcd_display.buffer.front));
+			memcpy(m_pReg->tft_lcd_display.buffer.front, m_pReg->tft_lcd_display.buffer.back, sizeof(m_pReg->tft_lcd_display.buffer.front));
 			m_pReg->tft_lcd_display.bUpdate = true;
 		}
 
@@ -255,7 +253,7 @@ void StarterKit_MainLoop(void)
 {
 	{
 		uint32_t dwFrequency;
-		float fVolume;
+		float	 fVolume;
 		__Buzzer.Get(dwFrequency, fVolume);
 
 		if (dwFrequency && fVolume) {
