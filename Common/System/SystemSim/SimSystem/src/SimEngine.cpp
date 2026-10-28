@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
+// Rev.  : 10/28/2026 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "SimEngine.h"
@@ -337,6 +337,26 @@ void SimEngine::SimulationDebugMode(bool bDebug)
 
 	if (bDebug)
 		SimulationFlush();
+}
+
+void SimEngine::SimulationScript(SIMULATION_SCRIPT id, const char *sScript)
+{
+	if (sScript) {
+		if (!m_ScriptList.contains(id)) {
+			m_ScriptList[id] = sScript;
+		} else { // append
+			m_ScriptList[id] += "\n";
+			m_ScriptList[id] += sScript;
+		}
+	}
+}
+
+const char *SimEngine::GetSimulationScript(SIMULATION_SCRIPT id)
+{
+	if (m_ScriptList.contains(id)) {
+		return m_ScriptList[id].c_str();
+	}
+	return NULL;
 }
 
 void SimEngine::SetSystemDescription(const char *sDesc)

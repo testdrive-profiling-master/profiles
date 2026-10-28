@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
+// Rev.  : 10/28/2026 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_ENGINE_H__
 #define __SIM_ENGINE_H__
@@ -40,6 +40,7 @@
 #include "InterruptService.h"
 #include "DelayLock.h"
 #include <string>
+#include <map>
 
 class SimEngine;
 
@@ -110,6 +111,7 @@ protected:
 	virtual void				 SimulationUnLock(void);
 	virtual void				 SimulationAddBusy(uint8_t *pBusy);
 	virtual void				 SimulationDebugMode(bool bDebug = true);
+	virtual void				 SimulationScript(SIMULATION_SCRIPT id, const char *sScript);
 	virtual void				 SetSystemDescription(const char *sDesc);
 	virtual void				 SetError(bool bError = true);
 	virtual void				 RegisterDriverCommand(DRIVER_COMMAND func);
@@ -147,6 +149,8 @@ public:
 		return m_bErrorOccured;
 	}
 
+	const char *GetSimulationScript(SIMULATION_SCRIPT id);
+
 private:
 	std::string		 m_sSystemDesc;
 	bool			 m_bErrorOccured;
@@ -154,5 +158,6 @@ private:
 	InterruptService m_Interrupt;
 	SimHDL			*m_pSimHDL;
 	DRIVER_COMMAND	 m_DriverCommand;
+	map<int, string> m_ScriptList;
 };
 #endif //__SIM_ENGINE_H__

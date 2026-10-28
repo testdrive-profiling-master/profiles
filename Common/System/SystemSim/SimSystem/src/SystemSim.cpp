@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
+// Rev.  : 10/28/2026 Wed (clonextop@gmail.com)
 //================================================================================
 #include "Common.h"
 #include "STDInterface.h"
@@ -181,6 +181,11 @@ void SystemSim::EnableInterrupt(bool bEnable)
 uint32_t SystemSim::DriverCommand(void *pCommand)
 {
 	return m_pSim->DriverCommand(pCommand);
+}
+
+const char *SystemSim::SimulationScript(SIMULATION_SCRIPT id)
+{
+	return m_pSim->GetSimulationScript(id);
 }
 
 // Memory interface

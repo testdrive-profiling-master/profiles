@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : TestDrive System Driver wrapper
-// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
+// Rev.  : 10/28/2026 Wed (clonextop@gmail.com)
 //================================================================================
 #include "SystemDriver.h"
 #include "NativeMemory.h"
@@ -124,6 +124,11 @@ void SystemDriver::EnableInterrupt(bool bEnable)
 uint32_t SystemDriver::DriverCommand(void *pCommand)
 {
 	return m_pNativeDriver->Command(pCommand);
+}
+
+const char *SystemDriver::SimulationScript(SIMULATION_SCRIPT id)
+{
+	return NULL;
 }
 
 // Memory interface

@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Simulation HDL module
-// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
+// Rev.  : 10/28/2026 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIM_HDL_H__
 #define __SIM_HDL_H__
@@ -39,6 +39,7 @@
 #include "SystemConfig.h"
 #include "VirtualDisplayConfig.h"
 #include "dpi_interfaces.h"
+#include "ddk/SystemSimulation.h"
 
 #ifndef svBitVecVal
 typedef unsigned int svBitVecVal;
@@ -66,6 +67,7 @@ struct SimControl {
 	virtual void				 SimulationUnLock(void)															  = 0;
 	virtual void				 SimulationAddBusy(uint8_t *pBusy)												  = 0;
 	virtual void				 SimulationDebugMode(bool bDebug = true)										  = 0;
+	virtual void				 SimulationScript(SIMULATION_SCRIPT id, const char *sScript)					  = 0;
 	virtual void				 SetSystemDescription(const char *sDesc)										  = 0;
 	virtual void				 SetError(bool bError = true)													  = 0;
 	virtual void				 RegisterDriverCommand(DRIVER_COMMAND func)										  = 0;

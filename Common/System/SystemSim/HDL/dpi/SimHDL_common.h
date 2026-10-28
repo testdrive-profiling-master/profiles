@@ -1,5 +1,5 @@
 //================================================================================
-// Copyright (c) 2013 ~ 2024. HyungKi Jeong(clonextop@gmail.com)
+// Copyright (c) 2013 ~ 2026. HyungKi Jeong(clonextop@gmail.com)
 // Freely available under the terms of the 3-Clause BSD License
 // (https://opensource.org/licenses/BSD-3-Clause)
 //
@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common DPI
-// Rev.  : 6/27/2024 Thu (clonextop@gmail.com)
+// Rev.  : 10/28/2026 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SIMHDL_COMMON_H__
 #define __SIMHDL_COMMON_H__
@@ -40,6 +40,7 @@
 #include <assert.h>
 #include "TestDriver.h"
 #include "SystemConfig.h"
+#include "ddk/SystemSimulation.h"
 #include "vltstd/svdpi.h"
 #include "VirtualDisplayConfig.h"
 #include "dpi_interfaces.h"
@@ -63,8 +64,9 @@ const char	   *GetConfigString(const char *sKeyName, const char *sDefault = NULL
 void			SetConfigString(const char *sKeyName, const char *sData = NULL);
 int				GetConfigInt(const char *sKeyName, int iDefault = 0);
 void			SetConfigInt(const char *sKeyName, int iData);
-extern bool (*DPI_Initialize)(void);
-extern void (*DPI_Finalize)(void);
+void			SimulationScript(SIMULATION_SCRIPT id, const char *sScript);
+extern bool		DPI_Initialize(void); // DPI constructor
+extern void		DPI_Finalize(void);	  // DPI desctructor
 
 // DPI functions
 DPI_FUNCTION void	  SimulationLock(int iDelayTicks = 0);

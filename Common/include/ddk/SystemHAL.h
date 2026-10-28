@@ -31,11 +31,12 @@
 // OF SUCH DAMAGE.
 //
 // Title : Common profiles
-// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
+// Rev.  : 10/28/2026 Wed (clonextop@gmail.com)
 //================================================================================
 #ifndef __SYSTEM_HAL_H__
 #define __SYSTEM_HAL_H__
 #include "STDInterface.h"
+#include "SystemSimulation.h"
 
 //------------------------------------------------------------------------------------------------------------------
 // system control interface
@@ -61,6 +62,9 @@ struct ISystem {
 	virtual void	 RegisterInterruptService(INTRRUPT_SERVICE routine, void *pPrivate) = 0; // register ISR(interrrupt service routine)
 	virtual void	 EnableInterrupt(bool bEnable = true)								= 0; // enable ISR
 	virtual uint32_t DriverCommand(void *pCommand)										= 0; // post driver specific command
+
+	// Simulation extention
+	virtual const char *SimulationScript(SIMULATION_SCRIPT id) = 0;
 };
 
 #if defined(SYSTEM_IMPLEMENTATION) || defined(SYSTEM_EXPORTS)

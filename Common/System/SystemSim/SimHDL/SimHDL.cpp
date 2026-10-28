@@ -31,7 +31,7 @@
 // OF SUCH DAMAGE.
 //
 // Title : Simulation HDL module
-// Rev.  : 10/13/2026 Tue (clonextop@gmail.com)
+// Rev.  : 10/28/2026 Wed (clonextop@gmail.com)
 //================================================================================
 #include "SimHDL_common.h"
 #include "TestDriver.inl"
@@ -51,8 +51,6 @@ static SimTop			*__pSimTop			  = NULL;
 static char				 __sEnvName[MAX_PATH] = "SimHDL";
 static bool				 __bStopSimulation	  = false;
 static bool				 __bFlushSimulation	  = false;
-bool (*DPI_Initialize)(void)				  = NULL;
-void (*DPI_Finalize)(void)					  = NULL;
 #ifndef SIMULATION_TOP_EX
 #endif
 #ifdef SIM_TRACE
@@ -215,10 +213,7 @@ public:
 		}
 #endif
 
-		if (DPI_Initialize)
-			return DPI_Initialize();
-
-		return true;
+		return DPI_Initialize();
 	}
 
 	virtual bool IsTrace(void)
@@ -270,9 +265,7 @@ public:
 
 	virtual void Release(void)
 	{
-		if (DPI_Finalize)
-			DPI_Finalize();
-
+		DPI_Finalize();
 		delete this;
 	}
 };
@@ -485,6 +478,14 @@ void SimulationDebugMode(bool bDebug)
 	__pSimControl->SimulationDebugMode(bDebug);
 }
 
+void SimulationScript(SIMULATION_SCRIPT id, const char *sScript)
+{
+	if (!__pSimControl)
+		return;
+
+	__pSimControl->SimulationScript((SIMULATION_SCRIPT)id, sScript);
+}
+
 void SimulationLock(int iDelayTicks)
 {
 	if (!__pSimControl)
@@ -536,4 +537,14 @@ DPI_FUNCTION void SimulationSetReset(void *hHandle, unsigned int dwCycles)
 {
 	CLOCK_INTERFACE *pClock = (CLOCK_INTERFACE *)hHandle;
 	pClock->DoReset(dwCycles);
+}
+
+__attribute__((weak)) bool DPI_Initialize(void)
+{
+	return true;
+}
+
+__attribute__((weak)) void DPI_Finalize(void)
+{
+	// do nothing.
 }
