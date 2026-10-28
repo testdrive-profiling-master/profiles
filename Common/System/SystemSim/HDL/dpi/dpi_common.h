@@ -35,7 +35,8 @@
 //================================================================================
 #ifndef __DPI_COMMON_H__
 #define __DPI_COMMON_H__
-#include <string>
+#include "cstring.h"
+#include "TextFile.h"
 #include "SimHDL_common.h"
 #include "SelfDestory.h"
 #include "ChainList.h"
