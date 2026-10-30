@@ -85,7 +85,7 @@ int main(int argc, const char *argv[])
 		sTitle.Format("PROJECT Program. v%d.%d (build #%d date : " PROJECT_UPPER_VERSION_DATE ")",
 			PROJECT_UPPER_VERSION_MAJOR,
 			PROJECT_UPPER_VERSION_MINOR,
-			PROJECT_UPPER_VERSION_BUILD
+			PROJECT_UPPER_VERSION_PATCH
 		);
 		ArgTable arg_table(sTitle);
 
