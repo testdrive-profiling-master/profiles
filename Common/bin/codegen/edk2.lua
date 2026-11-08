@@ -75,6 +75,7 @@ if (cmd == "update") then
 		LOGI("New update is ready...")
 	else
 		LOGI("Already up to date.")
+		os.exit(0);
 	end
 end
 
